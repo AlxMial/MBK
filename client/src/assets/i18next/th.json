@@ -1,0 +1,136 @@
+{
+  "home": {
+    "lblhome": "สวัสดี...",
+    "lblwelcome": "ยินดีต้อนรับสู่ห้องเรียนออร์แกนิค",
+    "lblCalendar" : "ปฏิทิน",
+    "lblProduction" : "การปลูก",
+    "lblProcessing" : "การแปรรูป"
+  },
+  "Account":{
+    "list":{
+      "lblFullName":"ชื่อ",
+      "lblStatus":"สถานะ",
+      "lblEmail":"อีเมล",
+      "lblRole":"บทบาท",
+      "lblLearningPath":"เส้นทางการเรียนรู้"
+    },
+    "info": {
+      "lblAccountCode":"รหัสบัญชีผู้ใช้",
+      "lblTitle":"คำนำหน้า",
+      "lblFirstName" :"ชื่อ",
+      "lblLastName":"นามสกุล",
+      "lblActive":"เปิดใช้งาน",
+      "lblInActive":"ปิดใช้งาน",
+      "lblPhoneNumber":"เบอร์โทร",
+      "lblBirthDate":"วันเกิด",
+      "lblAge":"อายุ",
+      "lblGender":"เพศ",
+      "lblGroup":"ชื่อกลุ่ม",
+      "lblPassword":"รหัสผ่าน",
+      "lblConfirmPassword":"ยืนยันรหัสผ่าน",
+      "lblAddress":"ที่อยู่",
+      "lblDescription":"รายละเอียด",
+      "lblProvince":"จังหวัด",
+      "lblDistrict":"อำเภอ",
+      "lblSubDistrict":"ตำบล"
+    }
+  },
+  "Learning":{
+    "list":{
+      "lblLearningNameTH":"ชื่อเส้นทางการเรียนรู้ (ไทย)",
+      "lblLearningNameENG":"ชื่อเส้นทางการเรียนรู้ (ENG)",
+      "lblAmountCourse":"จำนวนหลักสูตร"
+    },
+    "info":{
+      "lblLearningCode":"รหัสเส้นทางการเรียนรู้",
+      "lblDescriptionTH":"รายละเอียดเส้นทางการเรียนรู้ (ไทย)",
+      "lblDescriptionENG":"รายละเอียดเส้นทางการเรียนรู้ (ENG)"
+    }
+  },
+  "Course": {
+    "list":{
+      "lblCourseCode":"รหัสหลักสูตร",
+      "lblCourseNameTH":"ชื่อหลักสูตร (ไทย)",
+      "lblCourseNameENG":"ชื่อหลักสูตร (ENG)",
+      "lblAmountSubject":"จำนวนหัวข้อการเรียนรู้",
+      "lblAmountMin":"เวลา (นาที)"
+    },
+    "info":{
+      "lblTabCourse":"หัวข้อการเรียนรู้ / เนื้อหา",
+      "lblTabSubject":"จัดการหัวข้อการเรียนรู้",
+      "lblCourseType":"ประเภทหลักสูตร",
+      "lblAmountHourse":"จำนวนชั่วโมง",
+      "lblHour":"ชั่วโมง",
+      "lblMin":"นาที",
+      "lblCourseContentTH":"ขอบเขตเนื้อหา (ไทย)",
+      "lblCourseContentENG":"ขอบเขตเนื้อหา (ENG)",
+      "lblCourseImage":"รูปภาพหลักสูตร",
+      "lblEquipment":"สื่อวัสดุ / อุปกรณ์",
+      "lblDocTraining":"เอกสาร / คู่มือ",
+      "lblComputer":"คอมพิวเตอร์",
+      "lblLCD":"LCD",
+      "lblOther":"อื่นๆ",
+      "lblDocument":"เอกสารอบรม",
+      "lblVDO":"สื่อ VDO",
+      "lblLearning":"เส้นทางการเรียนรู้",
+      "lblCourse":"หลักสูตร"
+
+    }
+  },
+  "Subject":{
+    "list":{
+      "lblAddSubject" : "เพิ่มหัวข้อการเรียนรู้",
+      "lblSubjectTime":"ระยะเวลา",
+      "lblSubject":"หัวข้อการเรียนรู้"
+    },
+    "info":{
+      "lblSubjectCode":"รหัสหัวข้อการเรียนรู้",
+      "lblSubjectMinute":"นาที",
+      "lblSubjectTH":"ชื่อหัวข้อการเรียนรู้ (ไทย)",
+      "lblSubjectENG":"ชื่อหัวข้อการเรียนรู้ (ENG)",
+      "lblSubjectContentTH":"เนื้อหา (ไทย)",
+      "lblSubjectContentENG":"เนื้อหา (ENG)",
+      "lblFileName":"ชื่อ",
+      "lblFileDate":"วันที่"
+    }
+  },
+  "Main" : {
+    "lblCourseSearch": "ค้นหาหลักสูตร",
+    "lblSearch": "ค้นหา",
+    "lblBack" : "กลับ",
+    "lblClear" : "ล้างค่า",
+    "lblFilter" : "ใช้ตัวกรอง",
+    "lblListAttach" : "ไฟล์แนบ",
+    "lblAttach":"แนบไฟล์",
+    "lblItem":"รายการ",
+    "lblTag":"แท็ก",
+    "lblComment":"ความคิดเห็น",
+    "lblYourComment":"ความคิดเห็นของคุณ",
+    "lblPost":"โพสต์",
+    "lblMinute":"นาที",
+    "lblDownload":"ดาวน์โหลด",
+    "lblWarning":"แจ้งเตือน",
+    "lblChoose":"รายการที่เลือก",
+    "lblLogout":"ออกจากระบบ"
+  },
+  "Menu" : {
+    "lblAccount" : "จัดการบัญชีผู้ใช้",
+    "lblLearning" : "จัดการเส้นทางการเรียนรู้",
+    "lblCourse":"จัดการหลักสูตร",
+    "lblHome":"หน้าบ้าน",
+    "lblBackEnd":"หลังบ้าน"
+  },
+  "Button":{
+    "lblInsert":"เพิ่ม",
+    "lblEdit":"แก้ไข",
+    "lblDelete":"ลบ",
+    "lblDrop":"ละทิ้ง",
+    "lblSave":"บันทึก",
+    "lblCancel":"ยกเลิก",
+    "lblBack":"ปิด",
+    "lblPrint":"พิมพ์"
+  },
+  "Warning":{
+    "lblDelete":"คุณต้องการทำการลบข้อมูลใช่หรือไม่"
+  }
+}

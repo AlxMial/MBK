@@ -1,30 +1,45 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import { Provider }  from 'react-redux';
+import thunk from "redux-thunk";
+import {
+  loadTranslations,
+  setLocale,
+  syncTranslationWithStore,
+  i18nReducer
+} from "react-redux-i18n";
 
-import "@fortawesome/fontawesome-free/css/all.min.css";
-import "assets/styles/tailwind.css";
+import en from "assets/i18next/en.json";
+import th from "assets/i18next/th.json";
 
-// layouts
+import { createStore,combineReducers,applyMiddleware } from "redux";
+import reducers  from "../src/services/reducers";
+import * as Storage from "../src/services/Storage.service";
+import { BrowserRouter} from "react-router-dom";
+const translateionsObject = {
+  th: th,
+  en: en,
+}
 
-import Admin from "layouts/Admin.js";
-import Auth from "layouts/Auth.js";
+const store = createStore(
+  combineReducers(
+    {
+      ...reducers,
+      i18n:i18nReducer,
+    }),
+    applyMiddleware(thunk)
+)
 
-// views without layouts
-
-import Landing from "views/Landing.js";
-import Profile from "views/Profile.js";
-import Index from "views/Index.js";
+syncTranslationWithStore(store);
+store.dispatch(loadTranslations(translateionsObject));
+store.dispatch(setLocale(Storage.GetLanguage()));
 
 ReactDOM.render(
-  <BrowserRouter>
-    <Switch>
-      <Route path="/admin" component={Admin} />
-      <Route path="/auth" component={Auth} />
-      <Route path="/landing" exact component={Landing} />
-      <Route path="/profile" exact component={Profile} />
-      <Redirect from="*" to="/auth" />
-    </Switch>
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
   document.getElementById("root")
 );

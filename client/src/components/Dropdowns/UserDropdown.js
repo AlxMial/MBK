@@ -1,9 +1,11 @@
-import React from "react";
+import React,{useEffect,useContext, useState} from "react";
 import { createPopper } from "@popperjs/core";
+import { Link } from "react-router-dom";
 
 const UserDropdown = () => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
+  const [isDropDown, setIsDropDown] = React.useState(true);
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
   const openDropdownPopover = () => {
@@ -15,6 +17,24 @@ const UserDropdown = () => {
   const closeDropdownPopover = () => {
     setDropdownPopoverShow(false);
   };
+
+  useEffect(() => {
+
+    const checkIfClickedOutside = (e) => {
+      setIsDropDown(true);
+      if (dropdownPopoverShow && e.toElement.id !== "member" && e.toElement.id !== "username" && e.toElement.id !== "logout"  && e.toElement.id !== "user" &&  btnDropdownRef.current || e.toElement.id === "") {
+          setDropdownPopoverShow(false);
+          if(dropdownPopoverShow)
+            setIsDropDown(false);
+      }
+    };
+    document.addEventListener("mousedown", checkIfClickedOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
+  }, [dropdownPopoverShow]);
+
   return (
     <>
       <a
@@ -22,16 +42,15 @@ const UserDropdown = () => {
         href="#pablo"
         ref={btnDropdownRef}
         onClick={(e) => {
-          e.preventDefault();
-          dropdownPopoverShow ? closeDropdownPopover() : openDropdownPopover();
+          (dropdownPopoverShow || !isDropDown) ? closeDropdownPopover() : openDropdownPopover();
         }}
       >
         <div className="items-center flex">
-          <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
+          <span className="w-10 h-10 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
             <img
               alt="..."
-              className="w-full rounded-full align-middle border-none shadow-lg"
-              src={require("assets/img/team-1-800x800.jpg").default}
+              className="w-full rounded-full align-middle border-none"
+              src={require("assets/img/mbk/user-no-profile.png").default}
             />
           </span>
         </div>
@@ -40,45 +59,48 @@ const UserDropdown = () => {
         ref={popoverDropdownRef}
         className={
           (dropdownPopoverShow ? "block " : "hidden ") +
-          "bg-white text-base z-50 float-left py-2 list-none text-left rounded shadow-lg min-w-48"
+          "bg-white text-base z-50 float-left py-4 list-none text-left rounded shadow-lg min-w-48 margin-t-im "
         }
+        id="UserMenu"
       >
         <a
           href="#pablo"
           className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
+            "text-base py-2 text-center px-4 font-normal block w-full whitespace-nowrap bg-transparent text-green-mbk font-bold"
           }
           onClick={(e) => e.preventDefault()}
+          id="username"
         >
-          Action
+          Username
         </a>
         <a
           href="#pablo"
           className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
+            "text-base py-4 text-center px-4 font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
           }
           onClick={(e) => e.preventDefault()}
+          id="member"
         >
-          Another action
+          ข้อมูลส่วนตัว
         </a>
+        <hr className="w-10/12 margin-a bg-green-mbk" style={{borderTop: '1px solid #047738',  opacity:'0.25'}}/>
+        <Link
+          className="text-base py-4 text-center px-4 font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
+          to="/admin/users"
+          id="user"
+        >
+          จัดการผู้ใช้
+        </Link>
+        <hr className="w-10/12 margin-a bg-green-mbk" style={{borderTop: '1px solid #047738',  opacity:'0.25'}}/>
         <a
           href="#pablo"
           className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
+            "text-base text-center py-4 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
           }
           onClick={(e) => e.preventDefault()}
+          id="logout"
         >
-          Something else here
-        </a>
-        <div className="h-0 my-2 border border-solid border-blueGray-100" />
-        <a
-          href="#pablo"
-          className={
-            "text-sm py-2 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-blueGray-700"
-          }
-          onClick={(e) => e.preventDefault()}
-        >
-          Seprated link
+          ออกจากระบบ
         </a>
       </div>
     </>

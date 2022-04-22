@@ -1,7 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 export default function Login() {
+
+  let history = useHistory();
+
+  const OnHomePage = () => {
+    history.push("/admin/dashboard");
+  }
+
+
   return (
     <>
       <div className="container mx-auto px-4 h-full">
@@ -22,7 +30,7 @@ export default function Login() {
               <div className="rounded-t mb-0 px-3 py-3">
               </div>
               <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-                <form>
+                <form >
                   <div className="flex flex-wrap mt-6 relative">
                     <div className="lg:w-3/12  margin-auto ">
                       <label
@@ -34,9 +42,9 @@ export default function Login() {
                     </div>
                     <div className="lg:w-9/12 ">
                       <input
-                        type="email"
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="Email"
+                        type="text"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        placeholder="Username"
                       />
                     </div>
                   </div>
@@ -52,7 +60,7 @@ export default function Login() {
                     <div className="lg:w-9/12">
                       <input
                         type="password"
-                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         placeholder="Password"
                       />
                     </div>
@@ -86,13 +94,7 @@ export default function Login() {
                       </label>
                     </div>
                     <div className="w-1/2 text-right">
-                      <a
-                        href="#pablo"
-                        onClick={(e) => e.preventDefault()}
-                        className="text-black"
-                      >
-                        <small>Forgot password?</small>
-                      </a>
+                      <Link className="cursor-pointer link-focus text-sm font-bold" to="/auth/forgotpassword"> Forgot Password? </Link>
                     </div>
                   </div>
 
@@ -108,8 +110,9 @@ export default function Login() {
                     </div>
                     <div className="w-1/2 text-right">
                         <button
-                          className="bg-green-mbk text-white active:bg-green-mbk text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
-                          type="button"
+                          className="bg-gold-mbk text-white active:bg-gold-mbk text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
+                          type="submit"
+                          onClick={() => {OnHomePage()}}
                         >
                           Login
                         </button>

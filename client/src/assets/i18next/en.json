@@ -1,0 +1,138 @@
+{
+  "home": {
+    "lblhome": "Hello...",
+    "lblwelcome": "Welcome to Organic Masterclass",
+    "lblCalendar" : "Calendar",
+    "lblProduction" : "Production",
+    "lblProcessing" : "Processing"
+  },
+  "Account":{
+    "list":{
+      "lblFullName":"Name",
+      "lblStatus":"Status",
+      "lblEmail":"Email",
+      "lblRole":"Role",
+      "lblLearningPath":"Learning Path"
+    },
+    "info": {
+      "lblAccountCode":"Account Code",
+      "lblTitle":"Title",
+      "lblFirstName" :"First Name",
+      "lblLastName":"Last Name",
+      "lblActive":"Active",
+      "lblInActive":"Not Active",
+      "lblPhoneNumber":"Phone Number",
+      "lblBirthDate":"Date of Birth",
+      "lblAge":"Age",
+      "lblGender":"Gender",
+      "lblGroup":"Group",
+      "lblPassword":"Password",
+      "lblConfirmPassword":"Confirm Password",
+      "lblAddress":"Address",
+      "lblDescription":"Description",
+      "lblProvince":"Province",
+      "lblDistrict":"District",
+      "lblSubDistrict":"Sub-District"
+    }
+  },
+  "Learning":{
+    "list":{
+      "lblLearningNameTH":"Learning Path Name (THAI)",
+      "lblLearningNameENG":"Learning Path Name (ENG)",
+      "lblAmountCourse":"Amount of Curriculum"
+    },
+    "info":{
+      "lblLearningCode":"Learning Path Code",
+      "lblDescriptionTH":"Description (THAI)",
+      "lblDescriptionENG":"Description (ENG)"
+    }
+  },
+  "Course": {
+    "list":{
+      "lblCourseCode":"Curriculum Code",
+      "lblCourseNameTH":"Curriculum Name (THAI)",
+      "lblCourseNameENG":"Curriculum Name (ENG)",
+      "lblAmountSubject":"Amount of Subject",
+      "lblAmountMin":"Time (min)"
+    },
+    "info":{
+      "lblTabCourse":"Subject / Content",
+      "lblTabSubject":"Subject Management",
+      "lblCourseType":"Curriculum Type",
+      "lblAmountHourse":"Amount of Hours",
+      "lblCourseImage":"Curriculum Image",
+      "lblHour":"Hour",
+      "lblMin":"Minute",
+      "lblCourseContentTH":"Content Scope (THAI)",
+      "lblCourseContentENG":"Content Scope (ENG)",
+      "lblEquipment":"Material / Equipment Media",
+      "lblDocTraining":"Documents / Manuals",
+      "lblComputer":"Computer",
+      "lblLCD":"LCD",
+      "lblOther":"Other",
+      "lblDocument":"Training Document",
+      "lblVDO":"VDO",
+      "lblLearning":"Learning Path",
+      "lblCourse":"Curriculum"
+
+    }
+  },
+  "Subject":{
+    "list":{
+      "lblAddSubject" : "Add Subject",
+      "lblSubjectTime":"Time",
+      "lblSubject":"Subject Name"
+    },
+    "info":{
+      "lblSubjectCode":"Subject Code",
+      "lblSubjectMinute":"Minute",
+      "lblSubjectTH":"Subject (THAI)",
+      "lblSubjectENG":"Subject (Eng)",
+      "lblSubjectContentTH":"Content (THAI)",
+      "lblSubjectContentENG":"Content (Eng)",
+      "lblFileName":"Name",
+      "lblFileDate":"Date"
+    
+    }
+  },
+  "Main" : {
+    "lblCourseSearch": "Curriculum Search",
+    "lblSearch": "Search",
+    "lblBack" : "Back",
+    "lblClear" : "Clear",
+    "lblFilter" : "Apply Filter",
+    "lblListAttach" : "Attachment",
+    "lblAttach":"Attachment File",
+    "lblItem":"Item",
+    "lblTag":"Tag",
+    "lblComment":"Comment",
+    "lblYourComment":"Your Comment",
+    "lblCancel":"Cancel",
+    "lblPost":"Post",
+    "lblMinute":"Minute",
+    "lblDownload":"Download",
+    "lblWarning":"Warning",
+    "lblChoose":"Selected Item",
+    "lblLogout":"Log out"
+  },
+  "Menu" : {
+    "lblAccount" : "Account Management",
+    "lblLearning" : "Learning Path Management",
+    "lblCourse":"Curriculum Management",
+    "lblHome":"Home Page",
+    "lblBackEnd":"Console"
+  },
+  "Button":{
+    "lblInsert":"Add",
+    "lblEdit":"Edit",
+    "lblDelete":"Delete",
+    "lblDrop":"Cancel",
+    "lblSave":"Save",
+    "lblCancel":"Cancel",
+    "lblBack":"Close",
+    "lblPrint":"Print"
+  },
+  "Warning":{
+    "lblDelete":"Do you want to delete the data?"
+  }
+}
