@@ -123,6 +123,17 @@ export default function UserList() {
     }
   };
 
+  const deleteUser = (e) => {
+    axios.delete(`/users/${e}`).then(() => {
+      setListUser(
+        listUser.filter((val) => {
+          return val.id !== e;
+        })
+      );
+      closeModalSubject();
+    });
+  };
+
   useEffect(() => {
     axios.get("users").then((response) => {
       if (response.data.error) {
@@ -139,15 +150,15 @@ export default function UserList() {
   return (
     <>
       <div className="flex flex-warp">
-        <span className="text-lg font-bold margin-auto-t-b">
+        <span className="text-base font-bold margin-auto-t-b">
           <i className="fas fa-user-circle"></i>&nbsp;
         </span>
         <span className="text-base margin-auto font-bold">ข้อมูลผู้ใช้</span>
       </div>
 
-      <div className="flex flex-wrap minHeight">
+      <div className="flex flex-wrap ">
         <div className="w-full px-4">
-          <div className="flex flex-warp py-2 mt-4 ">
+          <div className="flex flex-warp py-2 mt-6 ">
             <span className="text-lg  text-green-mbk margin-auto font-bold">
               จัดการข้อมูลผู้ใช้
             </span>
@@ -166,7 +177,7 @@ export default function UserList() {
                   <input
                     type="text"
                     placeholder="Search here..."
-                    className="border-0 pl-12 w-44 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring"
+                    className="border-0 pl-12 w-64 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded-xl text-sm shadow outline-none focus:outline-none focus:ring"
                     onChange={(e) => {
                       InputSearch(e.target.value);
                     }}
@@ -289,7 +300,7 @@ export default function UserList() {
                         onChange={handleChange}
                         className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
                       /> */}
-                      ลำดับ
+                      ลำดับที่
                     </th>
                     <th
                       className={
@@ -328,7 +339,7 @@ export default function UserList() {
                     </th>
                     <th
                       className={
-                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
+                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                       }
                     >
                       จัดการ
@@ -341,7 +352,7 @@ export default function UserList() {
                     .map(function (value, key) {
                       return (
                         <tr key={key}>
-                          <th className="border-t-0 px-4 align-middle border-b border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-center flex items-center">
+                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap p-3 text-center cursor-pointer">
                             {/* <input
                               type="checkbox"
                               name={value.id}
@@ -350,29 +361,35 @@ export default function UserList() {
                               className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
                             /> */}
                             <span className="px-4 margin-a">{key + 1}</span>
-                          </th>
+                          </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link to={`/admin/usersinfo/${value.id}`}>
+                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/usersinfo/${value.id}`}>
                               {value.userName}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <div className="TextWordWarpCode">{value.role}</div>
+                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/usersinfo/${value.id}`}>
+                              <div className="TextWordWarpCode">
+                                {value.role}
+                              </div>
+                            </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link to={`/admin/usersinfo/${value.id}`}>
+                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/usersinfo/${value.id}`}>
                               {value.firstName} {value.lastName}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link to={`/admin/usersinfo/${value.id}`}>
+                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/usersinfo/${value.id}`}>
                               {value.email}
                             </Link>
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            {value.identityCard}
+                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
+                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/usersinfo/${value.id}`}>
+                              {value.identityCard}
+                            </Link>
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                             <i
                               className="fas fa-trash text-red-500 cursor-pointer"
                               onClick={() => {
@@ -390,7 +407,7 @@ export default function UserList() {
                                 closeModalSubject();
                               }}
                               confirmModal={() => {
-                                deleteByList();
+                                deleteUser(value.id);
                               }}
                             />
                           </td>

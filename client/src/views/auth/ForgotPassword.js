@@ -14,7 +14,7 @@ export default function ForgotPassword() {
                   onClick={(e) => e.preventDefault()}
                   className="text-green-mbk text-6xl"
                 >
-                  <p>Forgot Password</p>
+                  <p className="mb-0">Forgot Password</p>
                 </a>
               </div>
             </div>

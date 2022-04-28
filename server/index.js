@@ -15,6 +15,10 @@ const SendMailRouter = require('./routes/sendmail/SendMail');
 app.use("/mails",SendMailRouter);
 const UsersRouter = require('./routes/register/Users');
 app.use("/users",UsersRouter);
+const MembersRouter = require('./routes/members/member');
+app.use("/members",MembersRouter);
+const pointCodeRouter = require('./routes/points/pointCode');
+app.use("/pointCode",pointCodeRouter);
 initRoutes(app);
 
 const port = process.env.PORT || 3001;

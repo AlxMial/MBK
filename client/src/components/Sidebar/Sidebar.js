@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 import useWindowDimensions from "services/useWindowDimensions";
@@ -7,6 +7,21 @@ import useWindowDimensions from "services/useWindowDimensions";
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   const { height, width } = useWindowDimensions();
+  const [ isCRM , setIsCRM ] = useState(false);
+  const [ isEcommerce , setIsEcommerce ] = useState(false);
+  const [ isReport , setIsReport ] = useState(false);
+
+  const ClickCRM = () => {
+    setIsCRM(!isCRM);
+  }
+
+  const ClickEcommerce = () => {
+    setIsEcommerce(!isEcommerce);
+  }
+
+  const ClickReport = () => {
+    setIsReport(!isReport);
+  }
 
   return (
     <>
@@ -33,11 +48,11 @@ export default function Sidebar() {
               ></img>
             </div>
             <div className="mobile">
-              <p>ข้าวมาบุญครอง</p>
+              <p className="text-white mb-0">ข้าวมาบุญครอง</p>
             </div>
           </Link>
           {/* User */}
-          <ul className="md:hidden items-center flex flex-wrap list-none">
+          <ul className="md:hidden items-center flex flex-wrap list-none margin-auto-t-b">
             <li className="inline-block relative">
               <UserDropdown />
             </li>
@@ -81,7 +96,7 @@ export default function Sidebar() {
             <h6
               className={
                 "md:min-w-full  text-sm uppercase font-bold block pt-1 pb-4 no-underline text-center" +
-                (width < 1024 ? " text-blueGray-700" : " text-white")
+                (width < 765 ? " text-blueGray-700" : " text-white")
               }
             >
               <i className="fas fa-th"></i> <span className="px-2">เมนู</span>
@@ -94,7 +109,7 @@ export default function Sidebar() {
                     "text-sm uppercase py-4 px-2 font-bold block " +
                     (window.location.href.indexOf("/admin/users") !== -1
                       ? "text-gold-mbk hover:text-gold-mbk"
-                      : width < 1024
+                      : width < 765
                       ? " text-blueGray-700 hover:text-gold-mbk"
                       : " text-white hover:text-gold-mbk")
                   }
@@ -102,10 +117,10 @@ export default function Sidebar() {
                 >
                   <i
                     className={
-                      "fas fa-user-friends mr-2 text-sm " +
+                      "fas fa-user-circle mr-2 text-sm " +
                       (window.location.href.indexOf("/admin/users") !== -1
                         ? "opacity-75"
-                        : width < 1024
+                        : width < 765
                         ? " text-blueGray-700"
                         : " text-white")
                     }
@@ -113,118 +128,119 @@ export default function Sidebar() {
                   จัดการผู้ดูแลระบบ
                 </Link>
               </li>
-              <li>
-                <button
-                  type="button"
-                  className={
-                    "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
-                    (width < 1024 ? " text-blueGray-700" : " text-white")
-                  }
-                  aria-controls="dropdown-example"
-                  data-collapse-toggle="dropdown-example"
-                >
-                  <i className="fas fa-cog"></i>
-                  <span className="text-sm px-4 uppercase pt-1 font-bold block">
-                    CRM
-                  </span>
-                  <svg
-                    className="w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                </button>
-                <ul id="dropdown-example" className="hidden py-2 space-y-2">
-                  <li className="items-center">
-                    <Link
-                      className={
-                        "text-sm uppercase py-3 pl-11 font-bold block " +
-                        (window.location.href.indexOf("/admin/dashboard") !== -1
-                          ? "text-gold-mbk hover:text-gold-mbk"
-                          : width < 1024
-                          ? " text-blueGray-700 hover:text-gold-mbk"
-                          : " text-white hover:text-gold-mbk")
-                      }
-                      to="/admin/dashboard"
-                    >
-                      <i
-                        className={
-                          "fas fa-user-friends mr-2 text-sm " +
-                          (window.location.href.indexOf("/admin/dashboard") !==
-                          -1
-                            ? "opacity-75"
-                            : "text-blueGray-700")
-                        }
-                      ></i>{" "}
-                      จัดการสมาชิก
-                    </Link>
-                  </li>
-                  <li className="items-center">
-                    <Link
-                      className={
-                        "text-sm uppercase py-3 pl-11 font-bold block " +
-                        (window.location.href.indexOf("/admin/dashboard") !== -1
-                          ? "text-gold-mbk hover:text-gold-mbk"
-                          : width < 1024
-                          ? " text-blueGray-700 hover:text-gold-mbk"
-                          : " text-white hover:text-gold-mbk")
-                      }
-                      to="/admin/dashboard"
-                    >
-                      <i
-                        className={
-                          "fas fa-chess mr-2 text-sm " +
-                          (window.location.href.indexOf("/admin/dashboard") !==
-                          -1
-                            ? "opacity-75"
-                            : "text-blueGray-700")
-                        }
-                      ></i>{" "}
-                      คะแนน
-                    </Link>
-                  </li>
-                  <li className="items-center">
-                    <Link
-                      className={
-                        "text-sm uppercase py-3 pl-11 font-bold block " +
-                        (window.location.href.indexOf("/admin/settings") !== -1
-                          ? "text-gold-mbk hover:text-gold-mbk"
-                          : width < 1024
-                          ? " text-blueGray-700 hover:text-gold-mbk"
-                          : " text-white hover:text-gold-mbk")
-                      }
-                      to="/admin/settings"
-                    >
-                      <i
-                        className={
-                          "fas fa-gift mr-2 text-sm " +
-                          (window.location.href.indexOf("/admin/settings") !==
-                          -1
-                            ? "opacity-75"
-                            : "text-blueGray-700")
-                        }
-                      ></i>{" "}
-                      แลกของรางวัล
-                    </Link>
-                  </li>
-                </ul>
-              </li>
-            
-              
+
               <button
                 type="button"
                 className={
                   "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
-                  (width < 1024 ? " text-blueGray-700" : " text-white")
+                  (width < 765 ? " text-blueGray-700" : " text-white")
                 }
-                aria-controls="dropdown-example-cart"
-                data-collapse-toggle="dropdown-example-cart"
+
+                onClick={()=> ClickCRM() }
+              >
+                <i className="fas fa-cog text-xs"></i>
+                <span className="text-sm px-4 pt-1 font-bold block">CRM</span>
+                <svg
+                  className="w-6 h-6"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  ></path>
+                </svg>
+              </button>
+              <ul
+  
+                className={"py-2 space-y-2" + ((isCRM) ? " block" : " hidden")}
+              >
+                <li className="items-center">
+                  <Link
+                    className={
+                      "text-sm uppercase py-3 pl-11 font-bold block " +
+                      (window.location.href.indexOf("/admin/members") !== -1
+                        ? "text-gold-mbk hover:text-gold-mbk"
+                        : width < 765
+                        ? " text-blueGray-700 hover:text-gold-mbk"
+                        : " text-white hover:text-gold-mbk")
+                    }
+                    to="/admin/members"
+                  >
+                    <i
+                      className={
+                        "fas fa-user-friends mr-2 text-sm " +
+                        (window.location.href.indexOf("/admin/members") !== -1
+                          ? "opacity-75"
+                          : width < 765
+                          ? " text-blueGray-700"
+                          : " text-white")
+                      }
+                    ></i>{" "}
+                    จัดการสมาชิก
+                  </Link>
+                </li>
+                <li className="items-center">
+                  <Link
+                    className={
+                      "text-sm uppercase py-3 pl-11 font-bold block " +
+                      (window.location.href.indexOf("/admin/points") !== -1
+                        ? "text-gold-mbk hover:text-gold-mbk"
+                        : width < 765
+                        ? " text-blueGray-700 hover:text-gold-mbk"
+                        : " text-white hover:text-gold-mbk")
+                    }
+                    to="/admin/points"
+                  >
+                    <i
+                      className={
+                        "fas fa-chess mr-2 text-sm " +
+                        (window.location.href.indexOf("/admin/points") !== -1
+                          ? "opacity-75"
+                          : width < 765
+                          ? " text-blueGray-700"
+                          : " text-white")
+                      }
+                    ></i>{" "}
+                    เงื่อนไขคะแนน
+                  </Link>
+                </li>
+                <li className="items-center">
+                  <Link
+                    className={
+                      "text-sm uppercase py-3 pl-11 font-bold block " +
+                      (window.location.href.indexOf("/admin/settings") !== -1
+                        ? "text-gold-mbk hover:text-gold-mbk"
+                        : width < 765
+                        ? " text-blueGray-700 hover:text-gold-mbk"
+                        : " text-white hover:text-gold-mbk")
+                    }
+                    to="/admin/settings"
+                  >
+                    <i
+                      className={
+                        "fas fa-gift mr-2 text-sm " +
+                        (window.location.href.indexOf("/admin/settings") !== -1
+                          ? "opacity-75"
+                          : width < 765
+                          ? " text-blueGray-700"
+                          : " text-white")
+                      }
+                    ></i>{" "}
+                    เงื่อนไขแลกของรางวัล
+                  </Link>
+                </li>
+              </ul>
+
+              <button
+                type="button"
+                className={
+                  "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
+                  (width < 765 ? " text-blueGray-700" : " text-white")
+                }
+                onClick={()=> ClickEcommerce() }
               >
                 <i className="fas fa-shopping-cart text-xs"></i>
                 <span className="text-sm px-4 pt-1 font-bold block">
@@ -243,14 +259,14 @@ export default function Sidebar() {
                   ></path>
                 </svg>
               </button>
-              <ul id="dropdown-example-cart" className="hidden py-2 space-y-2">
+              <ul className={"py-2 space-y-2 " + ((isEcommerce) ? " block" : " hidden") }>
                 <li className="items-center">
                   <Link
                     className={
                       "text-sm uppercase py-3 pl-11 font-bold block " +
                       (window.location.href.indexOf("/admin/dashboard") !== -1
                         ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 1024
+                        : width < 765
                         ? " text-blueGray-700 hover:text-gold-mbk"
                         : " text-white hover:text-gold-mbk")
                     }
@@ -261,7 +277,7 @@ export default function Sidebar() {
                         "fas fa-dolly mr-2 text-sm " +
                         (window.location.href.indexOf("/admin/dashboard") !== -1
                           ? "opacity-75"
-                          : width < 1024
+                          : width < 765
                           ? " text-blueGray-700"
                           : " text-white")
                       }
@@ -275,7 +291,7 @@ export default function Sidebar() {
                       "text-sm uppercase py-3 pl-11 font-bold block " +
                       (window.location.href.indexOf("/admin/settings") !== -1
                         ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 1024
+                        : width < 765
                         ? " text-blueGray-700 hover:text-gold-mbk"
                         : " text-white hover:text-gold-mbk")
                     }
@@ -286,7 +302,7 @@ export default function Sidebar() {
                         "fas fa-store mr-2 text-sm " +
                         (window.location.href.indexOf("/admin/settings") !== -1
                           ? "opacity-75"
-                          : width < 1024
+                          : width < 765
                           ? " text-blueGray-700"
                           : " text-white")
                       }
@@ -300,7 +316,7 @@ export default function Sidebar() {
                       "text-sm uppercase py-3 pl-11 font-bold block " +
                       (window.location.href.indexOf("/admin/settings") !== -1
                         ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 1024
+                        : width < 765
                         ? " text-blueGray-700 hover:text-gold-mbk"
                         : " text-white hover:text-gold-mbk")
                     }
@@ -311,7 +327,7 @@ export default function Sidebar() {
                         "fas fa-receipt mr-2 text-sm " +
                         (window.location.href.indexOf("/admin/settings") !== -1
                           ? "opacity-75"
-                          : width < 1024
+                          : width < 765
                           ? " text-blueGray-700"
                           : " text-white")
                       }
@@ -325,7 +341,7 @@ export default function Sidebar() {
                       "text-sm uppercase py-3 pl-11 font-bold block " +
                       (window.location.href.indexOf("/admin/settings") !== -1
                         ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 1024
+                        : width < 765
                         ? " text-blueGray-700 hover:text-gold-mbk"
                         : " text-white hover:text-gold-mbk")
                     }
@@ -336,7 +352,7 @@ export default function Sidebar() {
                         "fas fa-window-close mr-2 text-sm " +
                         (window.location.href.indexOf("/admin/settings") !== -1
                           ? "opacity-75"
-                          : width < 1024
+                          : width < 765
                           ? " text-blueGray-700"
                           : " text-white")
                       }
@@ -349,10 +365,9 @@ export default function Sidebar() {
                 type="button"
                 className={
                   "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
-                  (width < 1024 ? " text-blueGray-700" : " text-white")
+                  (width < 765 ? " text-blueGray-700" : " text-white")
                 }
-                aria-controls="dropdown-example-report"
-                data-collapse-toggle="dropdown-example-report"
+                onClick={()=> ClickReport() }
               >
                 <i className="fas fa-scroll text-xs"></i>
                 <span className="text-sm px-4 uppercase pt-1 font-bold block">
@@ -373,7 +388,7 @@ export default function Sidebar() {
               </button>
               <ul
                 id="dropdown-example-report"
-                className="hidden py-2 space-y-2"
+                className={" py-2 space-y-2 " + ((isReport) ? " block" : " hidden") }
               >
                 <li className="items-center">
                   <Link
@@ -381,7 +396,7 @@ export default function Sidebar() {
                       "text-sm uppercase py-3 pl-11 font-bold block " +
                       (window.location.href.indexOf("/admin/dashboard") !== -1
                         ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 1024
+                        : width < 765
                         ? " text-blueGray-700 hover:text-gold-mbk"
                         : " text-white hover:text-gold-mbk")
                     }
@@ -392,7 +407,7 @@ export default function Sidebar() {
                         "fas fa-dice mr-2 text-sm " +
                         (window.location.href.indexOf("/admin/dashboard") !== -1
                           ? "opacity-75"
-                          : width < 1024
+                          : width < 765
                           ? " text-blueGray-700"
                           : " text-white")
                       }
@@ -406,7 +421,7 @@ export default function Sidebar() {
                       "text-sm uppercase py-3 pl-11 font-bold block " +
                       (window.location.href.indexOf("/admin/settings") !== -1
                         ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 1024
+                        : width < 765
                         ? " text-blueGray-700 hover:text-gold-mbk"
                         : " text-white hover:text-gold-mbk")
                     }
@@ -417,7 +432,7 @@ export default function Sidebar() {
                         "fas fa-gift mr-2 text-sm " +
                         (window.location.href.indexOf("/admin/settings") !== -1
                           ? "opacity-75"
-                          : width < 1024
+                          : width < 765
                           ? " text-blueGray-700"
                           : " text-white")
                       }

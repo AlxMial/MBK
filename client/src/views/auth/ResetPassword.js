@@ -14,7 +14,7 @@ export default function ResetPassword() {
                   onClick={(e) => e.preventDefault()}
                   className="text-green-mbk text-6xl"
                 >
-                  <p>Reset Password</p>
+                  <p className="mb-0">Reset Password</p>
                 </a>
               </div>
             </div>

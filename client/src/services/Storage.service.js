@@ -1,6 +1,6 @@
 import {IsNullOrEmpty} from "./default.service"
 
-const name = "MJU";
+const name = "MBK";
 
 export const SetLanguage = (lang) => {
   localStorage.setItem(name + "-Language",lang)
@@ -38,4 +38,8 @@ export const GetEnum = (_name) => {
     Remember ="";
   }
   return Remember
+};
+
+export const RemoveEnum = (_name) => {
+  localStorage.removeItem(name + "-Enum-"+_name)
 };

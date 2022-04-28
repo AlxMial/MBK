@@ -8,22 +8,22 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await tbUser.findOne({ where: { email: email } });
+  const { userName, password } = req.body;
+  const user = await tbUser.findOne({ where: { userName: userName } });
   if (!user) {
     res.json({ error: "User Doesn't Exist" });
   } else {
     bcrypt.compare(password, user.password).then(async (match) => {
       if (!match) {
-        res.json({ error: "Wrong email And Password Combination" });
+        res.json({ error: "Wrong Username And Password Combination" });
       } else {
         const accessToken = sign(
-          { email: user.email, id: user.id, role: user.role },
+          { userName: user.userName, id: user.id, role: user.role },
           "MBKPROJECT"
         );
         res.json({
           token: accessToken,
-          email: email,
+          userName: userName,
           id: user.id,
           role: user.role,
           firstName: user.firstName,
@@ -54,7 +54,6 @@ router.post("/", async (req, res) => {
         res.json({ status: true, message: "success", tbUser: listUser });
       });
     } else {
-
       if(user.email === req.body.email)
         res.json({ status: false, message: "Email ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่", tbUser: null });
       else if (user.userName === req.body.userName)
@@ -99,13 +98,17 @@ router.delete("/multidelete/:userId", (req, res) => {
   const words = userId.split(',');
   for (const type of words) { 
     req.body.isDeleted = true;
-    console.log(req.body.isDeleted)
-    console.log(req.body)
     tbUser.update(req.body,{where : {id: type }})
   }
   //res.json("DELETED SUCCESSFULLY");
   res.json({status: true, message: "success", tbUser : null});
 });
 
+router.delete("/:userId" , async (req, res) => {
+  const userId = req.params.userId;
+  req.body.isDeleted = true;
+  tbUser.update(req.body,{where : {id: userId }});
+  res.json({status: true, message: "success", tbUser : null});
+});
 
 module.exports = router;

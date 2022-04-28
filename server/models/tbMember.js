@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
     const tbMember = sequelize.define("tbMember", {
-      memberCode: {
+      memberCard: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -16,31 +16,23 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      birthDateDay: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
-      birthDateMonth: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      birthDateYear: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-      },
       email: {
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      birthDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      registerDate: {
+        type: DataTypes.DATE,
+        allowNull: false,
       },
       address: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      addressNo: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      province: {
+      subDistrict: {
         type: DataTypes.STRING,
         allowNull: true,
       },
@@ -48,7 +40,11 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      subdistrict: {
+      province: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      country: {
         type: DataTypes.STRING,
         allowNull: true,
       },

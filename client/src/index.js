@@ -17,6 +17,7 @@ import { createStore,combineReducers,applyMiddleware } from "redux";
 import reducers  from "../src/services/reducers";
 import * as Storage from "../src/services/Storage.service";
 import { BrowserRouter} from "react-router-dom";
+import 'flowbite';
 const translateionsObject = {
   th: th,
   en: en,

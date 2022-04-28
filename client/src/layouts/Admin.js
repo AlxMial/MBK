@@ -17,6 +17,9 @@ import Tables from "views/admin/Tables.js";
 import UserList from "views/admin/user/Userlist";
 import useWindowDimensions from "services/useWindowDimensions"; 
 import UserInfo from "views/admin/user/UserInfo";
+import MemberList from "views/admin/member/Memberlist";
+import MemberInfo from "views/admin/member/MemberInfo";
+import PointManage from "views/admin/point/PointManage";
 
 export default function Admin() {
   const { height, width } = useWindowDimensions();
@@ -27,8 +30,8 @@ export default function Admin() {
         <AdminNavbar />
         {/* Header */}
         <HeaderStats />
-        <div className={"transprent-body bg-white mx-auto w-full border-5 rounded-lg minHeightInfo  "}>
-          <div className={ " border-body px-4" +((width<1024)? " pt-4" : " md:px-10 pt-12")}>
+        <div className={"transprent-body bg-white mx-auto w-full border-5 rounded-lg   "}>
+          <div className={ " border-body px-4 minHeight " +((width<1024)? " pt-4" : " md:px-10 pt-12") }>
             <Switch>
               <Route path="/admin/dashboard" exact component={Dashboard} />
               <Route path="/admin/maps" exact component={Maps} />
@@ -37,9 +40,13 @@ export default function Admin() {
               <Route path="/admin/users" exact component={UserList} />
               <Route path="/admin/usersinfo" exact component={UserInfo} />
               <Route path="/admin/usersinfo/:id" exact component={UserInfo} />
+              <Route path="/admin/members" exact component={MemberList} />
+              <Route path="/admin/membersinfo" exact component={MemberInfo} />
+              <Route path="/admin/membersinfo/:id" exact component={MemberInfo} />
+              <Route path="/admin/points" exact component={PointManage} />
               <Redirect from="/admin" to="/admin/dashboard" />
             </Switch>
-            <FooterAdmin />
+            {/* <FooterAdmin /> */}
           </div>
         </div>
       </div>

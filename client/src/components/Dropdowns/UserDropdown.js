@@ -1,6 +1,7 @@
 import React,{useEffect,useContext, useState} from "react";
 import { createPopper } from "@popperjs/core";
-import { Link } from "react-router-dom";
+import { useHistory, Link } from "react-router-dom";
+import { AuthContext } from '../../services/AuthContext';
 
 const UserDropdown = () => {
   // dropdown props
@@ -8,6 +9,8 @@ const UserDropdown = () => {
   const [isDropDown, setIsDropDown] = React.useState(true);
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
+  const { authState } = useContext(AuthContext);
+  let history = useHistory();
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
       placement: "bottom-start",
@@ -18,8 +21,15 @@ const UserDropdown = () => {
     setDropdownPopoverShow(false);
   };
 
-  useEffect(() => {
+  const OnLogOut = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("roleUser");
+    localStorage.removeItem("username");
+    localStorage.removeItem("fullName");
+    history.push("/auth/login");
+  }
 
+  useEffect(() => {
     const checkIfClickedOutside = (e) => {
       setIsDropDown(true);
       if (dropdownPopoverShow && e.toElement.id !== "member" && e.toElement.id !== "username" && e.toElement.id !== "logout"  && e.toElement.id !== "user" &&  btnDropdownRef.current || e.toElement.id === "") {
@@ -66,7 +76,7 @@ const UserDropdown = () => {
         <a
           href="#pablo"
           className={
-            "text-base py-2 text-center px-4 font-normal block w-full whitespace-nowrap bg-transparent text-green-mbk font-bold"
+            "text-base py-2 text-center px-2 font-normal block w-full whitespace-nowrap bg-transparent text-green-mbk font-bold"
           }
           onClick={(e) => e.preventDefault()}
           id="username"
@@ -76,7 +86,7 @@ const UserDropdown = () => {
         <a
           href="#pablo"
           className={
-            "text-base py-4 text-center px-4 font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
+            "text-sm py-2 text-center px-2 hover:text-gold-mbk font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
           }
           onClick={(e) => e.preventDefault()}
           id="member"
@@ -85,7 +95,7 @@ const UserDropdown = () => {
         </a>
         <hr className="w-10/12 margin-a bg-green-mbk" style={{borderTop: '1px solid #047738',  opacity:'0.25'}}/>
         <Link
-          className="text-base py-4 text-center px-4 font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
+          className="text-sm py-2 hover:text-gold-mbk text-center px-2 font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
           to="/admin/users"
           id="user"
         >
@@ -95,9 +105,9 @@ const UserDropdown = () => {
         <a
           href="#pablo"
           className={
-            "text-base text-center py-4 px-4 font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
+            "text-sm hover:text-gold-mbk text-center py-2 px-2 font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
           }
-          onClick={(e) => e.preventDefault()}
+          onClick={(e) => OnLogOut()}
           id="logout"
         >
           ออกจากระบบ
