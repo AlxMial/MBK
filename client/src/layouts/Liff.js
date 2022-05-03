@@ -10,8 +10,8 @@ export default function Liff() {
   return (
     <>
       <Switch>
-        <Route path="/auth/login" exact component={Line} />
-        <Redirect from="/" to="/auth/login" />
+        <Route path="/line/liff" exact component={Line} />
+        <Redirect from="/" to="/line/liff" />
       </Switch>
     </>
   );

@@ -204,6 +204,7 @@ export default function PointCode() {
       ),
     }),
     onSubmit: (values) => {
+
       if (values.pointCodeQuantityCode === "")
         values.pointCodeQuantityCode = null;
       if (values.pointCodeLengthSymbol === "")
@@ -314,7 +315,7 @@ export default function PointCode() {
         }
         formik.setFieldValue(
           columns,
-          response.data.tbPointCodeHD[columns],
+          (response.data.tbPointCodeHD[columns] === null) ? "" : response.data.tbPointCodeHD[columns],
           false
         );
       }

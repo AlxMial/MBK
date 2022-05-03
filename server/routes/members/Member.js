@@ -61,7 +61,7 @@ router.put("/", async (req, res) => {
       [Op.or]: [{ memberCard: req.body.memberCard }, { phone: req.body.phone }],
       isDeleted: false,
       id: {
-        [Op.ne]:id,
+        [Op.ne]:req.body.id,
       }
     },
   });

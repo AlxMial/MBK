@@ -163,6 +163,7 @@ export default function MemberInfo() {
           }
         });
       } else {
+        console.log(values);
         axios.put("members", values).then((res) => {
           if (res.data.status) {
             addToast(
