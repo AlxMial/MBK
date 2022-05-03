@@ -19,6 +19,10 @@ const MembersRouter = require('./routes/members/member');
 app.use("/members",MembersRouter);
 const pointCodeRouter = require('./routes/points/pointCode');
 app.use("/pointCode",pointCodeRouter);
+const pointStoreRouter = require('./routes/points/pointStore');
+app.use("/pointStore",pointStoreRouter);
+const pointRegisterRouter = require('./routes/points/pointRegister');
+app.use("/pointRegister",pointRegisterRouter);
 initRoutes(app);
 
 const port = process.env.PORT || 3001;

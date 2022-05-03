@@ -29,6 +29,7 @@ export default function UserList() {
   const [pageNumber, setPageNumber] = useState(0);
   const [deleteNumber, setDeleteNumber] = useState(0);
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
+  const [deleteValue, setDeleteValue] = useState("");
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
 
@@ -39,7 +40,8 @@ export default function UserList() {
   ];
 
   /* Modal */
-  function openModalSubject() {
+  function openModalSubject(id) {
+    setDeleteValue(id);
     setIsOpenSubject(true);
   }
 
@@ -363,29 +365,44 @@ export default function UserList() {
                             <span className="px-4 margin-a">{key + 1}</span>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/usersinfo/${value.id}`}>
+                            <Link
+                              className="text-gray-mbk hover:text-gray-mbk "
+                              to={`/admin/usersinfo/${value.id}`}
+                            >
                               {value.userName}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/usersinfo/${value.id}`}>
+                            <Link
+                              className="text-gray-mbk hover:text-gray-mbk "
+                              to={`/admin/usersinfo/${value.id}`}
+                            >
                               <div className="TextWordWarpCode">
                                 {value.role}
                               </div>
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/usersinfo/${value.id}`}>
+                            <Link
+                              className="text-gray-mbk hover:text-gray-mbk "
+                              to={`/admin/usersinfo/${value.id}`}
+                            >
                               {value.firstName} {value.lastName}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/usersinfo/${value.id}`}>
+                            <Link
+                              className="text-gray-mbk hover:text-gray-mbk "
+                              to={`/admin/usersinfo/${value.id}`}
+                            >
                               {value.email}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
-                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/usersinfo/${value.id}`}>
+                            <Link
+                              className="text-gray-mbk hover:text-gray-mbk "
+                              to={`/admin/usersinfo/${value.id}`}
+                            >
                               {value.identityCard}
                             </Link>
                           </td>
@@ -393,29 +410,29 @@ export default function UserList() {
                             <i
                               className="fas fa-trash text-red-500 cursor-pointer"
                               onClick={() => {
-                                openModalSubject();
+                                openModalSubject(value.id);
                               }}
                             ></i>
-                            <ConfirmDialog
-                              showModal={modalIsOpenSubject}
-                              message={
-                                Storage.GetLanguage() === "th"
-                                  ? "จัดการข้อมูลผู้ใช้"
-                                  : "Users Management"
-                              }
-                              hideModal={() => {
-                                closeModalSubject();
-                              }}
-                              confirmModal={() => {
-                                deleteUser(value.id);
-                              }}
-                            />
                           </td>
                         </tr>
                       );
                     })}
                 </tbody>
               </table>
+              <ConfirmDialog
+                showModal={modalIsOpenSubject}
+                message={
+                  Storage.GetLanguage() === "th"
+                    ? "จัดการข้อมูลผู้ใช้"
+                    : "Users Management"
+                }
+                hideModal={() => {
+                  closeModalSubject();
+                }}
+                confirmModal={() => {
+                  deleteUser(deleteValue);
+                }}
+              />
             </div>
             <div className="py-4">
               <ReactPaginate

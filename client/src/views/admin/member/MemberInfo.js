@@ -143,7 +143,7 @@ export default function MemberInfo() {
               { appearance: "success", autoDismiss: true }
             );
           } else {
-            if (res.data.isPhone) {
+            if (!res.data.isPhone) {
               addToast(
                 "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
                 {
@@ -151,7 +151,7 @@ export default function MemberInfo() {
                   autoDismiss: true,
                 }
               );
-            } else if (res.data.isMemberCard) {
+            } else if (!res.data.isMemberCard) {
               addToast(
                 "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
                 {
@@ -248,13 +248,13 @@ export default function MemberInfo() {
 
   useEffect(() => {
     /* Default Value for Testing */
-    formik.values.memberCard = "MEM00001";
-    formik.values.firstName = "ชาคริต";
-    formik.values.lastName = "กันพรมกาศ";
-    formik.values.email = "weatherzilla@gmail.com";
-    formik.values.phone = "0804988589";
-    formik.values.address =
-      "บริษัทอันดีไฟนด์ จำกัด สำนักงานใหญ 333/64 หมู่ 6 ตำบล หนองจ๊อม อำเภอ สันทราย จังหวัด เชียงใหม่ 50210";
+    // formik.values.memberCard = "MEM00001";
+    // formik.values.firstName = "ชาคริต";
+    // formik.values.lastName = "กันพรมกาศ";
+    // formik.values.email = "weatherzilla@gmail.com";
+    // formik.values.phone = "0804988589";
+    // formik.values.address =
+    //   "บริษัทอันดีไฟนด์ จำกัด สำนักงานใหญ 333/64 หมู่ 6 ตำบล หนองจ๊อม อำเภอ สันทราย จังหวัด เชียงใหม่ 50210";
     fatchAddress();
     defaultValue();
     fetchData();

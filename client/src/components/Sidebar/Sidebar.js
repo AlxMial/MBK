@@ -207,7 +207,7 @@ export default function Sidebar() {
                     เงื่อนไขคะแนน
                   </Link>
                 </li>
-                <li className="items-center">
+                {/* <li className="items-center">
                   <Link
                     className={
                       "text-sm uppercase py-3 pl-11 font-bold block " +
@@ -231,10 +231,10 @@ export default function Sidebar() {
                     ></i>{" "}
                     เงื่อนไขแลกของรางวัล
                   </Link>
-                </li>
+                </li> */}
               </ul>
 
-              <button
+              {/* <button
                 type="button"
                 className={
                   "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
@@ -360,8 +360,8 @@ export default function Sidebar() {
                     ยกเลิกและคืนสินค้า
                   </Link>
                 </li>
-              </ul>
-              <button
+              </ul> */}
+              {/* <button
                 type="button"
                 className={
                   "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
@@ -440,7 +440,7 @@ export default function Sidebar() {
                     แลกของรางวัล
                   </Link>
                 </li>
-              </ul>
+              </ul> */}
             </ul>
           </div>
         </div>

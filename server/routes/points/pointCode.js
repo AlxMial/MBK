@@ -83,10 +83,10 @@ router.put("/", async (req, res) => {
   }
 });
 
-router.delete("/:postCodeId", async (req, res) => {
-  const postCodeId = req.params.postCodeId;
+router.delete("/:pointCodeId", async (req, res) => {
+  const pointCodeId = req.params.pointCodeId;
   req.body.isDeleted = true;
-  tbPointCodeHD.update(req.body, { where: { id: postCodeId } });
+  tbPointCodeHD.update(req.body, { where: { id: pointCodeId } });
   res.json({ status: true, message: "success", tbPointCodeHD: null });
 });
 

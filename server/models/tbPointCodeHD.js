@@ -6,11 +6,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     pointCodeSymbol: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     pointCodeLengthSymbol: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     pointCodePoint: {
       type: DataTypes.INTEGER,
@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
     endDate: {
       type: DataTypes.DATE,
       allowNull: false,
+    },
+    isType: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     isActive: {
       type: DataTypes.STRING,

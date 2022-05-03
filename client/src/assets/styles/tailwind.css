@@ -2776,12 +2776,25 @@ select {
   width: 50%;
 }
 
+.w-3-3\/12 {
+  width: 25%;
+}
+
 .w-6\/12 {
   width: 50%;
+}
+.w-6-5\/12 {
+  width: 55%;
+}
+.w-6-7\/12 {
+  width: 57%;
 }
 
 .w-10\/12 {
   width: 83.333333%;
+}
+.w-11\/12 {
+  width: 93.333333%;
 }
 
 .w-full {
@@ -3627,6 +3640,82 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled,input[
   box-shadow: 0 0 0 3px #dfe7e3 !important;
 }
 
+
+/*Upload file*/
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+  padding:0px;
+}
+.custom-file-input::before {
+  content: 'เลือกไฟล์';
+  display: inline-block;
+  outline: none;
+  background-color: rgba(105, 172, 43, var(--tw-bg-opacity));
+  color:white;
+  border-radius: 0.5rem;
+  border:0px;
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  width: 10vh;
+  height: 30px;
+  padding-top: 8px;
+  text-align: center;
+
+}
+
+
+.buttonIn {
+  position: relative;
+}
+
+.imageUpload>input {
+  display: none;
+}
+
+.image-upload>input {
+  display: none;
+}
+
+.inputUpload {
+  margin: 0px;
+  padding: 0px;
+  outline: none;
+  border-radius: 5px;
+}
+
+.spanUpload {
+  position: absolute;
+  top: 0;
+  border-radius: 5px;
+  right: 5px;
+  border: none;
+  top: 2px;
+  cursor: pointer;
+  color: white;
+
+  /* transform: translateX(2px);
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow); */
+}
+
+.buttonOutlineNone{
+  outline: none !important;
+}
+
+.CourseFilePic{
+  max-width: 20px;
+  max-height: 20px;
+}
+
+/* Text Code */
+.TextWordWarpCode{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+  /* width:100px; */
+}
+
 @media only screen and (max-width: 2500px) {
   .mobile{
     display: none;
@@ -3661,6 +3750,14 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled,input[
     min-height: 873px;
 
   }
+  .w-11\/12 {
+    width:  94.333333%;
+  }
+
+  .w-6-7\/12 {
+    width: 61%;
+  }
+
 }
 
 @media only screen and (max-width: 1536px) {
@@ -3670,6 +3767,13 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled,input[
   .minHeightInfo{
     min-height:657px;
   }
+  .w-11\/12 {
+    width:  93.333333%;
+  }
+  .w-6-7\/12 {
+    width: 57%;
+  }
+
 }
 
 @media only screen and (max-width: 1280px) {
@@ -3704,6 +3808,26 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled,input[
   .minHeight{
     min-height: 91vh;
   }
+  .w-6-5\/12 {
+    width: 78.5%;
+  }
+
+  .w-6-7\/12 {
+    width: 78.5%;
+  }
+
+  .w-11\/12 {
+    width: 78.5%;
+  }
+
+  .w-3-3\/12 {
+    width:78.5%;
+  }
+
+  .w-64{
+    width: 8rem;
+  }
+
 }
 
 @media only screen and (max-width: 413px) {

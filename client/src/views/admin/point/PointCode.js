@@ -3,6 +3,7 @@ import { useHistory, useParams, Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "services/axios";
+import axiosUpload from "services/axiosUpload";
 import { useToasts } from "react-toast-notifications";
 import "antd/dist/antd.css";
 import ReactPaginate from "react-paginate";
@@ -10,6 +11,7 @@ import moment from "moment";
 import { Radio, DatePicker, Space, ConfigProvider } from "antd";
 import locale from "antd/lib/locale/th_TH";
 import Modal from "react-modal";
+import Select from "react-select";
 import {
   customStyles,
   customStylesMobile,
@@ -19,25 +21,40 @@ import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
 import * as Storage from "../../../services/Storage.service";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
+import styleSelect from "assets/styles/theme/ReactSelect.js";
 Modal.setAppElement("#root");
 
 export default function PointCode() {
   /* Set useState */
   const [Active, setActive] = useState("1");
-  const [score, setScore] = useState(0);
+  const [Type, setType] = useState("1");
   const [isNew, setIsNew] = useState(0);
   const { height, width } = useWindowDimensions();
   const [listPointCode, setListPointCode] = useState([]);
   const [langSymbo, setlangSymbo] = useState("");
   const [listSearch, setListSerch] = useState([]);
+  const [optionCampaign, setOptionCampaign] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
+  const [file, setFile] = useState();
+  const [fileName, setFileName] = useState();
+  const [isError, setIsError] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [modalIsOpenImport, setIsOpenImport] = useState(false);
   const pageCount = Math.ceil(listPointCode.length / usersPerPage);
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
+  const [deleteValue, setDeleteValue] = useState("");
+  const [isEnable, setIsEnable] = useState(false);
   const useStyle = customStyles();
   const useStyleMobile = customStylesMobile();
+  const useStyleSelect = styleSelect();
+  const [errorPointCodeSymbol, setErrorPointCodeSymbol] = useState(false);
+  const [errorPointCodeLengthSymbol, setErrorPointCodeLengthSymbol] =
+    useState(false);
+  const [errorPointCodeQuantityCode, setErrorPointCodeQuantityCode] =
+    useState(false);
+
   const { addToast } = useToasts();
 
   const changePage = ({ selected }) => {
@@ -49,6 +66,9 @@ export default function PointCode() {
       fetchDataById(id);
       setIsNew(false);
     } else {
+      setActive("1");
+      setType("1");
+      setIsEnable(false);
       formik.resetForm();
       setIsNew(true);
     }
@@ -63,8 +83,21 @@ export default function PointCode() {
     setIsOpen(false);
   }
 
+  function openModalImport() {
+    setOptionCampaign([]);
+    formikImport.resetForm();
+    fetchData();
+    setIsError(false);
+    setIsOpenImport(true);
+  }
+
+  function closeModalImport() {
+    setIsOpenImport(false);
+  }
+
   /* Modal */
-  function openModalSubject() {
+  function openModalSubject(id) {
+    setDeleteValue(id);
     setIsOpenSubject(true);
   }
 
@@ -76,6 +109,12 @@ export default function PointCode() {
   const options = [
     { label: "Active", value: "1" },
     { label: "Inactive", value: "2" },
+  ];
+
+  /* Method Condition */
+  const optionsImport = [
+    { label: "Auto", value: "1" },
+    { label: "Import", value: "2" },
   ];
 
   const InputSearch = (e) => {
@@ -94,6 +133,24 @@ export default function PointCode() {
     }
   };
 
+  const onValidate = () => {
+    if(formik.values.pointCodeSymbol === ""){
+      setErrorPointCodeSymbol(true);
+    }
+    if(formik.values.pointCodeQuantityCode === ""){
+      setErrorPointCodeQuantityCode(true);
+    }
+    if(formik.values.pointCodeLengthSymbol === ""){
+      setErrorPointCodeLengthSymbol(true);
+    }
+  };
+
+  const selectFile = (e) => {
+    setFile(e.target.files[0]);
+    setFileName(e.target.files[0].name);
+    formikImport.setFieldValue("fileName", e.target.files[0].name);
+  };
+
   /* formik */
   const formik = useFormik({
     initialValues: {
@@ -105,7 +162,8 @@ export default function PointCode() {
       pointCodeQuantityCode: "",
       startDate: new Date(),
       endDate: new Date(),
-      isActive: false,
+      isActive: "1",
+      isType: "1",
       isDeleted: false,
     },
     validationSchema: Yup.object({
@@ -114,38 +172,44 @@ export default function PointCode() {
           ? "* กรุณากรอก ชื่อแคมเปญ"
           : "* Please enter your Member Card"
       ),
-      pointCodeSymbol: Yup.string().required(
-        Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก รหัสแคมเปญ"
-          : "* Please enter your First Name"
-      ),
-      pointCodeLengthSymbol: Yup.string().required(
-        Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก จำนวนตัวอักษร"
-          : "* Please enter your Last Name"
-      ),
+      // pointCodeSymbol: Yup.string().required(
+      //   Storage.GetLanguage() === "th"
+      //     ? "* กรุณากรอก รหัสแคมเปญ"
+      //     : "* Please enter your First Name"
+      // ),
+      // pointCodeLengthSymbol: Yup.string().required(
+      //   Storage.GetLanguage() === "th"
+      //     ? "* กรุณากรอก จำนวนตัวอักษร"
+      //     : "* Please enter your Last Name"
+      // ),
       pointCodePoint: Yup.string().required(
         Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก วันที่สมัคร"
+          ? "* กรุณากรอก คะแนน"
           : "* Please enter your Register Date"
       ),
-      pointCodeQuantityCode: Yup.string().required(
-        Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก วันที่สมัคร"
-          : "* Please enter your Register Date"
-      ),
+      // pointCodeQuantityCode: Yup.string().required(
+      //   Storage.GetLanguage() === "th"
+      //     ? "* กรุณากรอก จำนวน Code"
+      //     : "* Please enter your Register Date"
+      // ),
       startDate: Yup.string().required(
         Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก วันที่สมัคร"
+          ? "* กรุณากรอก วันที่เริ่มสมัคร"
           : "* Please enter your Register Date"
       ),
       endDate: Yup.string().required(
         Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก วันที่สมัคร"
+          ? "* กรุณากรอก วันที่สิ้นสุดสมัคร"
           : "* Please enter your Register Date"
       ),
     }),
     onSubmit: (values) => {
+      if (values.pointCodeQuantityCode === "")
+        values.pointCodeQuantityCode = null;
+      if (values.pointCodeLengthSymbol === "")
+        values.pointCodeLengthSymbol = null;
+      if (values.pointCodeSymbol === "") values.pointCodeSymbol = null;
+
       if (isNew) {
         axios.post("pointCode", values).then((res) => {
           if (res.data.status) {
@@ -170,9 +234,7 @@ export default function PointCode() {
           }
         });
       } else {
-        console.log(values)
         axios.put("pointCode", values).then((res) => {
-          console.log(res)
           if (res.data.status) {
             formik.values.id = res.data.tbPointCodeHD.id;
             fetchData();
@@ -198,10 +260,38 @@ export default function PointCode() {
     },
   });
 
+  const formikImport = useFormik({
+    initialValues: {
+      id: "",
+      pointCodeId: "",
+      fileName: "",
+    },
+    onSubmit: (values) => {
+      if (values.pointCodeId === "" || values.pointCodeId === null) {
+        setIsError(true);
+      } else {
+        let formData = new FormData();
+        formData.append("file", file);
+        formData.append("pointCodeId", formikImport.values.pointCodeId);
+        axios.post("api/excel/upload", formData).then((res) => {});
+      }
+    },
+  });
+
   const fetchData = async () => {
     axios.get("pointCode").then((response) => {
       if (response.data.error) {
       } else {
+        var JsonCampaign = [];
+        response.data.tbPointCodeHD.forEach((field) =>
+          JsonCampaign.push({
+            value: field.id.toString(),
+            label: field.pointCodeName,
+          })
+        );
+        if (JsonCampaign.length > 0)
+          formikImport.setFieldValue("pointCodeId", JsonCampaign[0].value);
+        setOptionCampaign(JsonCampaign);
         setListPointCode(response.data.tbPointCodeHD);
         setListSerch(response.data.tbPointCodeHD);
       }
@@ -209,13 +299,18 @@ export default function PointCode() {
   };
 
   const fetchDataById = async (id) => {
+    formik.resetForm();
     let response = await axios.get(`/pointCode/byId/${id}`);
     let pointCode = await response.data.tbPointCodeHD;
     if (pointCode !== null) {
       for (var columns in response.data.tbPointCodeHD) {
         if (columns === "isActive") {
-          console.log(response.data.tbPointCodeHD[columns].toString());
           setActive(response.data.tbPointCodeHD[columns].toString());
+        } else if (columns === "isType") {
+          setType(response.data.tbPointCodeHD[columns].toString());
+        }
+        if (columns === "pointCodeSymbol") {
+          if (response.data.tbPointCodeHD[columns] === null) setIsEnable(true);
         }
         formik.setFieldValue(
           columns,
@@ -256,7 +351,6 @@ export default function PointCode() {
 
   useEffect(() => {
     /* Default Value for Testing */
-
     //DefaultValue();
     fetchData();
   }, []);
@@ -266,7 +360,7 @@ export default function PointCode() {
       <div className="w-full">
         <div
           className={
-            "relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white  px-4 py-4"
+            "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white "
           }
         >
           <div className="rounded-t mb-0 px-4 py-3 border-0">
@@ -288,9 +382,153 @@ export default function PointCode() {
                 <button
                   className="bg-lemon-mbk text-blueGray-600  mr-2 active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                   type="button"
+                  onClick={() => {
+                    openModalImport();
+                  }}
                 >
                   <span className="= text-sm px-2">Import</span>
                 </button>
+                <Modal
+                  isOpen={modalIsOpenImport}
+                  // onAfterOpen={afterOpenModal}
+                  onRequestClose={closeModalImport}
+                  style={width <= 1180 ? useStyleMobile : useStyle}
+                  contentLabel="Example Modal"
+                  shouldCloseOnOverlayClick={false}
+                >
+                  <div className="flex flex-wrap">
+                    <div className="w-full ">
+                      <>
+                        <div className={"flex-auto "}>
+                          <div className="w-full mt-2">
+                            <form>
+                              <div className="relative w-full mb-3">
+                                <div className=" align-middle  mb-3">
+                                  <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
+                                    <label>Import</label>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex flex-wrap px-24">
+                                <div className="w-full lg:w-1/12 px-4  ">
+                                  <label
+                                    className="text-blueGray-600 text-sm font-bold "
+                                    htmlFor="grid-password"
+                                  >
+                                    ชื่อแคมเปญ
+                                  </label>
+                                  <span className="text-sm ml-2 text-red-500">
+                                    *
+                                  </span>
+                                </div>
+                                <div className="w-full lg:w-11/12 px-4 ">
+                                  <Select
+                                    id="pointCodeId"
+                                    name="pointCodeId"
+                                    onChange={(value) => {
+                                      formikImport.setFieldValue(
+                                        "pointCodeId",
+                                        value.value
+                                      );
+                                    }}
+                                    className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                    options={optionCampaign}
+                                    value={ValidateService.defaultValue(
+                                      optionCampaign,
+                                      formikImport.values.pointCodeId
+                                    )}
+                                    styles={useStyleSelect}
+                                  />
+                                  {isError ? (
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      * กรุณาเลือก ชื่อแคมเปญ
+                                    </div>
+                                  ) : null}
+                                </div>
+                                <div className="w-full mb-4"></div>
+                                <div className="w-full lg:w-1/12 px-4  ">
+                                  <label
+                                    className="text-blueGray-600 text-sm font-bold "
+                                    htmlFor="grid-password"
+                                  >
+                                    เลือกไฟล์
+                                  </label>
+                                  <span className="text-sm ml-2 text-red-500">
+                                    *
+                                  </span>
+                                </div>
+                                <div className="w-full lg:w-11/12 px-4 ">
+                                  <div className="buttonIn image-upload ">
+                                    <label
+                                      htmlFor="file-input"
+                                      className="cursor-pointer"
+                                    >
+                                      <input
+                                        type="text"
+                                        className={
+                                          "border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                        }
+                                        id="fileName"
+                                        name="fileName"
+                                        value={formikImport.values.fileName}
+                                        readOnly
+                                      />
+                                      <span
+                                        className={
+                                          "spanUpload px-1 py-1 text-xs font-bold"
+                                        }
+                                      >
+                                        <i className="fas fa-upload text-blueGray-600"></i>
+                                      </span>
+                                    </label>
+                                    <input
+                                      id="file-input"
+                                      type="file"
+                                      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                      onChange={(e) => {
+                                        selectFile(e);
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                                <div className={"w-full mb-4"}></div>
+                              </div>
+                              <div className="relative w-full mb-3">
+                                <div className=" flex justify-between align-middle ">
+                                  <div></div>
+                                  <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
+                                    <button
+                                      className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                      type="button"
+                                      onClick={() => {
+                                        closeModalImport();
+                                      }}
+                                    >
+                                      ย้อนกลับ
+                                    </button>
+                                    <button
+                                      className={
+                                        "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                      }
+                                      type="button"
+                                      onClick={() => {
+                                        onValidate();
+                                        formik.handleSubmit();
+                                      }}
+                                    >
+                                      บันทึกข้อมูล
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </>
+                    </div>
+                  </div>
+                </Modal>
                 <button
                   className="bg-lemon-mbk text-blueGray-600 active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                   type="button"
@@ -321,9 +559,47 @@ export default function PointCode() {
                                   </div>
                                 </div>
                               </div>
-
                               <div className="flex flex-wrap px-24">
-                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
+                                <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                                  <label
+                                    className="text-blueGray-600 text-sm font-bold mb-2"
+                                    htmlFor="grid-password"
+                                  >
+                                    ประเภทโครงสร้าง
+                                  </label>
+                                </div>
+                                <div className={"w-full lg:w-11/12 px-4 "}>
+                                  <Radio.Group
+                                    options={optionsImport}
+                                    onChange={(e) => {
+                                      setType(e.target.value);
+                                      formik.setFieldValue(
+                                        "isType",
+                                        e.target.value
+                                      );
+                                      if (e.target.value === "2") {
+                                        formik.setFieldValue(
+                                          "pointCodeSymbol",
+                                          ""
+                                        );
+                                        formik.setFieldValue(
+                                          "pointCodeLengthSymbol",
+                                          ""
+                                        );
+                                        formik.setFieldValue(
+                                          "pointCodeQuantityCode",
+                                          ""
+                                        );
+                                      }
+                                      setIsEnable(
+                                        e.target.value === "1" ? false : true
+                                      );
+                                    }}
+                                    value={Type}
+                                  />
+                                </div>
+                                <div className="w-full mb-4"></div>
+                                <div className="w-full lg:w-1/12 px-4">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -334,7 +610,8 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+
+                                <div className="w-full lg:w-11/12 px-4">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -354,7 +631,7 @@ export default function PointCode() {
                                   ) : null}
                                 </div>
                                 <div className="w-full mb-4"></div>
-                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
+                                <div className="w-full lg:w-1/12 px-4  ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -365,10 +642,10 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                <div className="w-full lg:w-5/12 px-4 ">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeSymbol"
                                     name="pointCodeSymbol"
                                     maxLength={100}
@@ -376,11 +653,12 @@ export default function PointCode() {
                                     onBlur={formik.handleBlur}
                                     value={formik.values.pointCodeSymbol}
                                     autoComplete="pointCodeSymbol"
+                                    disabled={isEnable}
                                   />
                                   {formik.touched.pointCodeSymbol &&
-                                  formik.errors.pointCodeSymbol ? (
+                                  errorPointCodeSymbol ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
-                                      {formik.errors.pointCodeSymbol}
+                                      * กรุณากรอก รหัสแคมเปญ
                                     </div>
                                   ) : null}
                                 </div>
@@ -390,7 +668,7 @@ export default function PointCode() {
                                     (width < 1024 ? " block" : " hidden")
                                   }
                                 ></div>
-                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
+                                <div className="w-full lg:w-1/12 px-4  ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -401,7 +679,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                <div className="w-full lg:w-5/12 px-4 ">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -418,6 +696,7 @@ export default function PointCode() {
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointCodeLengthSymbol"
                                     value={formik.values.pointCodeLengthSymbol}
+                                    disabled={isEnable}
                                   />
                                   {formik.touched.pointCodeLengthSymbol &&
                                   formik.errors.pointCodeLengthSymbol ? (
@@ -427,7 +706,7 @@ export default function PointCode() {
                                   ) : null}
                                 </div>
                                 <div className={"w-full mb-4"}></div>
-                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
+                                <div className="w-full lg:w-1/12 px-4  ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -438,7 +717,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                <div className="w-full lg:w-5/12 px-4 ">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -464,7 +743,7 @@ export default function PointCode() {
                                   ) : null}
                                 </div>
                                 <div className={"w-full mb-4"}></div>
-                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
+                                <div className="w-full lg:w-1/12 px-4  ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -475,7 +754,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                <div className="w-full lg:w-5/12 px-4 ">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -492,6 +771,7 @@ export default function PointCode() {
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointCodeQuantityCode"
                                     value={formik.values.pointCodeQuantityCode}
+                                    disabled={isEnable}
                                   />
                                   {formik.touched.pointCodeQuantityCode &&
                                   formik.errors.pointCodeQuantityCode ? (
@@ -501,7 +781,7 @@ export default function PointCode() {
                                   ) : null}
                                 </div>
                                 <div className="w-full mb-4"></div>
-                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
+                                <div className="w-full lg:w-1/12 px-4  ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -512,7 +792,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                <div className="w-full lg:w-5/12 px-4 ">
                                   <div className="relative">
                                     <ConfigProvider locale={locale}>
                                       <DatePicker
@@ -569,7 +849,7 @@ export default function PointCode() {
                                     (width < 1024 ? " block" : " hidden")
                                   }
                                 ></div>
-                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
+                                <div className="w-full lg:w-1/12 px-4  ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -581,7 +861,7 @@ export default function PointCode() {
                                   </span>
                                 </div>
 
-                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                <div className="w-full lg:w-5/12 px-4 ">
                                   <ConfigProvider locale={locale}>
                                     <DatePicker
                                       format={"DD/MM/yyyy"}
@@ -696,7 +976,7 @@ export default function PointCode() {
                 <tr>
                   <th
                     className={
-                      "px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                      "px-6 w-5 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
                     ลำดับที่
@@ -829,7 +1109,7 @@ export default function PointCode() {
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {value.isActive ? "Active" : "Inactive"}
+                          {value.isActive === "2" ? "Inactive" : "Active"}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
@@ -850,29 +1130,25 @@ export default function PointCode() {
                           <i
                             className="fas fa-trash text-red-500 cursor-pointer"
                             onClick={() => {
-                              openModalSubject();
+                              openModalSubject(value.id);
                             }}
                           ></i>
-                          <ConfirmDialog
-                            showModal={modalIsOpenSubject}
-                            message={
-                              Storage.GetLanguage() === "th"
-                                ? "จัดการข้อมูลผู้ใช้"
-                                : "Users Management"
-                            }
-                            hideModal={() => {
-                              closeModalSubject();
-                            }}
-                            confirmModal={() => {
-                              deleteUser(value.id);
-                            }}
-                          />
                         </td>
                       </tr>
                     );
                   })}
               </tbody>
             </table>
+            <ConfirmDialog
+              showModal={modalIsOpenSubject}
+              message={"จัดการข้อมูล Code"}
+              hideModal={() => {
+                closeModalSubject();
+              }}
+              confirmModal={(e) => {
+                deleteUser(deleteValue);
+              }}
+            />
           </div>
           <div className="py-4">
             <ReactPaginate

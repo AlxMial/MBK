@@ -31,6 +31,7 @@ export default function MemberList() {
   const [pageNumber, setPageNumber] = useState(0);
   const [deleteNumber, setDeleteNumber] = useState(0);
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
+  const [deleteValue, setDeleteValue] = useState("");
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
 
@@ -41,7 +42,8 @@ export default function MemberList() {
   ];
 
   /* Modal */
-  function openModalSubject() {
+  function openModalSubject(id) {
+    setDeleteValue(id);
     setIsOpenSubject(true);
   }
 
@@ -93,14 +95,6 @@ export default function MemberList() {
     setPageNumber(selected);
   };
 
-  // const ChangeSelect = (options, value) => {
-  //   if (value === "") {
-  //     value = "1";
-  //   }
-  //   return (value = options.filter((x) => x.value === value.toString())[0]
-  //     .label);
-  // };
-
   /* API Deleted */
   const deleteByList = async () => {
     if (deleteNumber > 0) {
@@ -148,7 +142,6 @@ export default function MemberList() {
 
   return (
     <>
-     
       <div className="flex flex-warp">
         <span className="text-sm font-bold margin-auto-t-b">
           <i className="fas fa-user-friends"></i>&nbsp;
@@ -189,9 +182,7 @@ export default function MemberList() {
                       type="button"
                     >
                       <i className="fas fa-plus-circle text-white "></i>{" "}
-                      <span className="text-white text-sm px-2">
-                        เพิ่ม
-                      </span>
+                      <span className="text-white text-sm px-2">เพิ่ม</span>
                     </button>
                   </Link>
                 </div>
@@ -277,35 +268,53 @@ export default function MemberList() {
                             <span className="px-4 margin-a">{key + 1}</span>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link className="text-gray-mbk  hover:text-gray-mbk " to={`/admin/membersInfo/${value.id}`}>
+                            <Link
+                              className="text-gray-mbk  hover:text-gray-mbk "
+                              to={`/admin/membersInfo/${value.id}`}
+                            >
                               {value.memberCard}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link className="text-gray-mbk hover:text-gray-mbk " to={`/admin/membersInfo/${value.id}`}>
+                            <Link
+                              className="text-gray-mbk hover:text-gray-mbk "
+                              to={`/admin/membersInfo/${value.id}`}
+                            >
                               <div className="TextWordWarpCode">
                                 {value.firstName} {value.lastName}
                               </div>
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link className="text-gray-mbk  hover:text-gray-mbk " to={`/admin/membersInfo/${value.id}`}>
+                            <Link
+                              className="text-gray-mbk  hover:text-gray-mbk "
+                              to={`/admin/membersInfo/${value.id}`}
+                            >
                               {value.phone}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link className="text-gray-mbk  hover:text-gray-mbk" to={`/admin/membersInfo/${value.id}`}>
+                            <Link
+                              className="text-gray-mbk  hover:text-gray-mbk"
+                              to={`/admin/membersInfo/${value.id}`}
+                            >
                               {value.email}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
-                            <Link className="text-gray-mbk  hover:text-gray-mbk " to={`/admin/membersInfo/${value.id}`}>
-                            {moment(value.birthDate).format("DD/MM/YYYY")}
+                            <Link
+                              className="text-gray-mbk  hover:text-gray-mbk "
+                              to={`/admin/membersInfo/${value.id}`}
+                            >
+                              {moment(value.birthDate).format("DD/MM/YYYY")}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
-                            <Link className="text-gray-mbk  hover:text-gray-mbk " to={`/admin/membersInfo/${value.id}`}>
-                            {moment(value.registerDate).format("DD/MM/YYYY")}
+                            <Link
+                              className="text-gray-mbk  hover:text-gray-mbk "
+                              to={`/admin/membersInfo/${value.id}`}
+                            >
+                              {moment(value.registerDate).format("DD/MM/YYYY")}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
@@ -315,23 +324,9 @@ export default function MemberList() {
                             <i
                               className="fas fa-trash text-red-500 cursor-pointer"
                               onClick={() => {
-                                openModalSubject();
+                                openModalSubject(value.id);
                               }}
                             ></i>
-                            <ConfirmDialog
-                              showModal={modalIsOpenSubject}
-                              message={
-                                Storage.GetLanguage() === "th"
-                                  ? "จัดการข้อมูลผู้ใช้"
-                                  : "Users Management"
-                              }
-                              hideModal={() => {
-                                closeModalSubject();
-                              }}
-                              confirmModal={() => {
-                                deleteUser(value.id);
-                              }}
-                            />
                           </td>
                         </tr>
                       );
@@ -339,6 +334,16 @@ export default function MemberList() {
                 </tbody>
               </table>
             </div>
+            <ConfirmDialog
+              showModal={modalIsOpenSubject}
+              message={"จัดการข้อมูลสมาชิก"}
+              hideModal={() => {
+                closeModalSubject();
+              }}
+              confirmModal={() => {
+                deleteUser(deleteValue);
+              }}
+            />
             <div className="py-4">
               <ReactPaginate
                 previousLabel={" < "}

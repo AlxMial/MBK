@@ -39,9 +39,9 @@ export default function PointManage() {
         <TabPane tab="Register" key="1">
           <PointRegister />
         </TabPane>
-        <TabPane tab="E-Commerce" key="2">
+        {/* <TabPane tab="E-Commerce" key="2">
           <PointEcommerce />
-        </TabPane>
+        </TabPane> */}
         <TabPane tab="Code" key="3">
           <PointCode />
         </TabPane>

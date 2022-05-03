@@ -19,7 +19,7 @@ const customStyles = {
   },overlay: {zIndex: 100, backgroundColor: 'rgba(70, 70, 70, 0.5)',}
 };
 
-const ConfirmDialog = ({ showModal, hideModal,afterOpenModal, confirmModal, id, type, message }) => {
+function ConfirmDialog({ showModal, hideModal,afterOpenModal, confirmModal, id, type, message })  {
     return (
         <Modal
             isOpen={showModal}
@@ -47,7 +47,7 @@ const ConfirmDialog = ({ showModal, hideModal,afterOpenModal, confirmModal, id, 
                             <div className="relative w-full mb-3">
                                 <div className=" align-middle  mb-2">
                                     <div  className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                        {(Storage.GetLanguage() === "th") ? <label className="cursor-pointer">คุณต้องการลบข้อมูล{message}ใช่หรือไม่</label> : <label className="cursor-pointer">Do you want to delete {message} data?</label> }
+                                        {(Storage.GetLanguage() === "th") ? <label className="cursor-pointer">คุณต้องการลบข้อมูล{message} ใช่หรือไม่</label> : <label className="cursor-pointer">Do you want to delete {message} data?</label> }
                                     </div>
                                 </div>
                             </div>

@@ -172,13 +172,13 @@ export default function UserInfo() {
 
   useEffect(() => {
     /* Default Value for Testing */
-    formik.values.firstName = "ชาคริต";
-    formik.values.lastName = "กันพรมกาศ";
-    formik.values.identityCard = "1-5099-00956-04-8";
-    formik.values.email = "weatherzilla@gmail.com";
-    formik.values.userName = "weatherblocker";
-    formik.values.password = "123456";
-    setValueConfirm("123456");
+    // formik.values.firstName = "ชาคริต";
+    // formik.values.lastName = "กันพรมกาศ";
+    // formik.values.identityCard = "1-5099-00956-04-8";
+    // formik.values.email = "weatherzilla@gmail.com";
+    // formik.values.userName = "weatherblocker";
+    // formik.values.password = "123456";
+    // setValueConfirm("123456");
     fetchData();
   }, []);
 
