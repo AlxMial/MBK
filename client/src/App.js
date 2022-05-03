@@ -12,6 +12,7 @@ import { AuthContext } from "./services/AuthContext";
 import { connect } from "react-redux";
 import { setLocale } from "react-redux-i18n";
 import useGaTracker from './services/useGaTracker'
+import Liff from "layouts/Liff";
 
 function App() {
     const [authState, setAuthState] = useState({
@@ -59,6 +60,7 @@ function App() {
                   <Switch>
                       <Route path="/admin" component={Admin} />
                       <Route path="/auth" component={Auth} />
+                      <Route path="/line" component={Liff} />
                       <Redirect from="*/" to="/auth/login" />
                   </Switch>
                 </ToastProvider>
