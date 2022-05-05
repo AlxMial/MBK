@@ -1,0 +1,30 @@
+{
+  "development": {
+    "username": "monty",
+    "password": "undefined@090421",
+    "database": "mbk_temp",
+    "host": "undefined.ddns.net",
+    "port":"3306",
+    "dialect": "mysql",
+    "pool" : {
+      "max": 5,
+      "min": 0,
+      "acquire": 30000,
+      "idle": 10000
+    }
+  },
+  "test": {
+    "username": "monty",
+    "password": "undefined@090421",
+    "database": "mbk_database",
+    "host": "undefined.ddns.net",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "monty",
+    "password": "undefined@090421",
+    "database": "mbk_database",
+    "host": "undefined.ddns.net",
+    "dialect": "mysql"
+  }
+}
