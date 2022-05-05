@@ -1722,6 +1722,15 @@ select {
   line-height: 1rem;
 }
 
+
+.text-ss {
+  font-size:0.625rem;
+  line-height: 0.875rem;
+}
+.text-xxs {
+  font-size:0.875rem;
+  line-height: 1rem;
+}
 .text-2xs {
   font-size:1rem;
   line-height: 1.25rem;
@@ -2364,6 +2373,14 @@ select {
   --tw-placeholder-opacity: 1;
   color: rgba(203, 213, 225, var(--tw-placeholder-opacity));
 }
+
+.placeholder-gray::placeholder
+,.placeholder-gray:-ms-input-placeholder
+,.placeholder-gray::-webkit-input-placeholder  {
+  opacity: 1 !important;
+  color: #FFF !important;
+}
+
 
 .pointer-events-none {
   pointer-events: none;
@@ -3394,6 +3411,16 @@ select {
 .css-80a6v4-Icon{
   margin-top:6px;
 }
+
+.select-line{
+  border-bottom: 1px solid #d6d6d6;
+}
+.select-line div{
+  border:none
+}
+.select-line span {
+  background-color: unset;
+}
 /* 
 .css-1klfh0r-Button{
   margin-top:7px;
@@ -3616,6 +3643,29 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled,input[
   background: transparent !important;
 }
 
+
+
+.Tabs-line .ant-tabs-tab{
+  background:#fff !important;
+  border : none !important;
+  width: 50% !important;
+  justify-content: center;
+  border-radius :0   !important;
+}
+.Tabs-line .ant-tabs-nav-list{
+  width: 100% 
+}
+.Tabs-line  .ant-tabs-tab + .ant-tabs-tab{
+  margin: 0;
+  
+}
+.Tabs-line  .ant-tabs-tab{
+  border-bottom: 5px solid transparent !important;
+}
+.Tabs-line  .ant-tabs-tab-active{
+  border-bottom: 5px solid #047738 !important;
+}
+
 /*Radio Antd*/
 .ant-radio-checked .ant-radio-inner{
   border-color: #047738 !important;
@@ -3714,6 +3764,30 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled,input[
   text-overflow: ellipsis;
   max-width: 100px;
   /* width:100px; */
+}
+
+
+.OtpInput input {
+  width: 30px !important;
+  height: 30px;
+  margin: 0 10px ;
+  border-top: transparent;
+  border-left: transparent;
+  border-right:  transparent;
+  background-color: transparent;
+}
+
+.circle {
+  border-radius: 50%;
+  text-align: center;
+}
+
+.line-scroll {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.line-scroll::-webkit-scrollbar {
+  display: none;
 }
 
 @media only screen and (max-width: 2500px) {
