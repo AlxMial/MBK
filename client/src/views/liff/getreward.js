@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Select from "react-select";
 import InputMask from "react-input-mask";
 import { useHistory } from "react-router-dom";
+import { path } from "../../layouts/Liff";
 // components
 
 const GetReward = () => {
@@ -113,7 +114,7 @@ const GetReward = () => {
                     type="button"
                     style={{ width: "50%" }}
                     onClick={() => {
-                      history.push("/line/member");
+                      history.push(path.member);
                     }}
                   >
                     {"Cancel"}
@@ -146,7 +147,7 @@ const GetReward = () => {
               <div
                 className="text-lg text-white font-bold text-center "
                 onClick={() => {
-                  history.push("/line/member");
+                  history.push(path.member);
                 }}
               >
                 {"กลับหน้าหลัก"}

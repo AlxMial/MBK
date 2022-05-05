@@ -3,7 +3,7 @@ import { Tabs } from "antd";
 import MyAward from "./member.myAward";
 import MyOrder from "./member.myOrder";
 import { useHistory } from "react-router-dom";
-
+import { path } from "../../layouts/Liff";
 // components
 
 const Member = () => {
@@ -29,8 +29,10 @@ const Member = () => {
             margin: "auto",
             height: "180px",
             borderRadius: "10px",
-            backgroundImage: `url(${require("assets/img/mbk/Green.png").default})` ,
-            backgroundSize: 'cover',
+            backgroundImage: `url(${
+              require("assets/img/mbk/Green.png").default
+            })`,
+            backgroundSize: "cover",
           }}
         >
           <div className="relative" style={{ width: "70%", height: "100%" }}>
@@ -111,7 +113,7 @@ const Member = () => {
             }}
             onClick={() => {
               console.log("GetReward");
-              history.push("/line/getreward");
+              history.push(path.getreward);
             }}
           >
             <div className="px-2">

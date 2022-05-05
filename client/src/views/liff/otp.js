@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import OtpInput from "react-otp-input";
 import { useHistory } from "react-router-dom";
 import InputMask from "react-input-mask";
+import { path } from "../../layouts/Liff";
 // components
 
 const Otp = () => {
@@ -62,7 +63,7 @@ const Otp = () => {
   const confirmotp = () => {
     if (Data.otp == Data.generateOTP) {
       console.log("confirmotp : " + true);
-      history.push("/line/register");
+      history.push(path.register);
     } else {
       console.log("confirmotp : " + false);
     }
@@ -94,7 +95,6 @@ const Otp = () => {
                 {"กรอกเบอร์มือถือ"}
               </div>
               <div className="mt-5">
-
                 <InputMask
                   className={
                     "border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-base text-center shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
