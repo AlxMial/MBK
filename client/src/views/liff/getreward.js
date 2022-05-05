@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import Select from "react-select";
 import InputMask from "react-input-mask";
+import { useHistory } from "react-router-dom";
 // components
 
 const GetReward = () => {
+  const history = useHistory();
   const [rewardCode, setrewardCode] = useState([
     { code: "" },
     { code: "" },
@@ -110,7 +112,9 @@ const GetReward = () => {
                     className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                     type="button"
                     style={{ width: "50%" }}
-                    // onClick={windowclose}
+                    onClick={() => {
+                      history.push("/line/member");
+                    }}
                   >
                     {"Cancel"}
                   </button>
@@ -139,8 +143,11 @@ const GetReward = () => {
               <div className="text-lg text-white font-bold text-center ">
                 {"สถานะ : รอยืนยัน"}
               </div>
-              <div className="text-lg text-white font-bold text-center "
-              
+              <div
+                className="text-lg text-white font-bold text-center "
+                onClick={() => {
+                  history.push("/line/member");
+                }}
               >
                 {"กลับหน้าหลัก"}
               </div>

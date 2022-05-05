@@ -14,7 +14,7 @@ const Liff = () => {
   console.log("pathname : " + pathname);
   let bg = "100px";
   let ismemberpage = false;
-  if (pathname.includes("Member")) {
+  if (pathname.includes("member")) {
     bg = "180px";
     ismemberpage = true;
   }

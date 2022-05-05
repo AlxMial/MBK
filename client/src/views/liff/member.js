@@ -22,13 +22,15 @@ const Member = () => {
       {/* card */}
       <div style={{ marginTop: "-50px", position: "absolute", width: "100%" }}>
         <div
-          className="bg-green-mbk flex"
+          className=" flex"
           style={{
             width: "90%",
-            padding: "10px",
+            padding: "20px",
             margin: "auto",
-            height: "140px",
+            height: "180px",
             borderRadius: "10px",
+            backgroundImage: `url(${require("assets/img/mbk/Green.png").default})` ,
+            backgroundSize: 'cover',
           }}
         >
           <div className="relative" style={{ width: "70%", height: "100%" }}>
@@ -78,12 +80,18 @@ const Member = () => {
             </div>
             <div className="absolute right-0 bottom-0">
               <div>
-                <div>img point</div>
+                <div className="flex" style={{ justifyContent: "right" }}>
+                  <img
+                    src={require("assets/img/mbk/Coint1.png").default}
+                    alt="..."
+                    className="w-15 h-15 rounded-full border-2 border-blueGray-50 shadow"
+                  ></img>
+                </div>
               </div>
-              <div className="text-right">
+              <div className="text-right mt-2 ">
                 <span className="text-white font-bold text-lg ">{point}</span>
               </div>
-              <div className="text-right">
+              <div className="text-right mt-2">
                 <span className=" text-ss text-white ">
                   {"Expire : " + Expire}
                 </span>
@@ -103,7 +111,7 @@ const Member = () => {
             }}
             onClick={() => {
               console.log("GetReward");
-              history.push("/line/getreward")
+              history.push("/line/getreward");
             }}
           >
             <div className="px-2">
