@@ -82,6 +82,7 @@ export default function MemberInfo() {
       country: "",
       postcode: "",
       isDeleted: false,
+      uid: ""
     },
     validationSchema: Yup.object({
       memberCard: Yup.string().required(
