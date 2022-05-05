@@ -3790,6 +3790,11 @@ input[type=text]:disabled,input[type=password]:disabled,textarea:disabled,input[
   display: none;
 }
 
+.imgExcel{
+  width:25px;
+  height: 25px;
+}
+
 @media only screen and (max-width: 2500px) {
   .mobile{
     display: none;
