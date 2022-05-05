@@ -3,6 +3,10 @@ const Tutorial = db.tutorials;
 
 const readXlsxFile = require("read-excel-file/node");
 const excel = require("exceljs");
+const fsExtra = require("fs-extra");
+const { writeJson } = require("fs-extra");
+const { writeFileSync,readFileSync  } = require("fs");
+const fs = require("fs");
 
 const upload = async (req, res) => {
   try {
@@ -13,6 +17,13 @@ const upload = async (req, res) => {
 
     let path =
       __basedir + "/server/resources/static/assets/uploads/" + req.file.filename;
+      __basedir +
+      "/server/resources/static/assets/uploads/" +
+      req.file.filename;
+
+    let pathJson =
+      __basedir +
+      "/server/resources/static/assets/json/" + req.body.pointCodeId +".json";
 
     readXlsxFile(path).then((rows) => {
       // skip header
@@ -30,7 +41,10 @@ const upload = async (req, res) => {
 
         tutorials.push(tutorial);
       });
-      Tutorial.bulkCreate(tutorials)
+      writeFileSync(pathJson, JSON.stringify(tutorials, null, 2), 'utf8');
+      const data = readFileSync(pathJson);
+      Tutorial
+        .bulkCreate(JSON.parse(data))
         .then(() => {
           res.status(200).send({
             message: "Uploaded the file successfully: " + req.file.originalname,

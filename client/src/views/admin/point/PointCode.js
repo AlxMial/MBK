@@ -12,6 +12,7 @@ import { Radio, DatePicker, Space, ConfigProvider } from "antd";
 import locale from "antd/lib/locale/th_TH";
 import Modal from "react-modal";
 import Select from "react-select";
+import Spinner from "components/Loadings/spinner/Spinner";
 import {
   customStyles,
   customStylesMobile,
@@ -50,6 +51,7 @@ export default function PointCode() {
   const useStyleMobile = customStylesMobile();
   const useStyleSelect = styleSelect();
   const [errorPointCodeSymbol, setErrorPointCodeSymbol] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorPointCodeLengthSymbol, setErrorPointCodeLengthSymbol] =
     useState(false);
   const [errorPointCodeQuantityCode, setErrorPointCodeQuantityCode] =
@@ -70,6 +72,7 @@ export default function PointCode() {
       setType("1");
       setIsEnable(false);
       formik.resetForm();
+      DefaultValue();
       setIsNew(true);
     }
     setIsOpen(true);
@@ -134,13 +137,13 @@ export default function PointCode() {
   };
 
   const onValidate = () => {
-    if(formik.values.pointCodeSymbol === ""){
+    if (formik.values.pointCodeSymbol === "") {
       setErrorPointCodeSymbol(true);
     }
-    if(formik.values.pointCodeQuantityCode === ""){
+    if (formik.values.pointCodeQuantityCode === "") {
       setErrorPointCodeQuantityCode(true);
     }
-    if(formik.values.pointCodeLengthSymbol === ""){
+    if (formik.values.pointCodeLengthSymbol === "") {
       setErrorPointCodeLengthSymbol(true);
     }
   };
@@ -172,26 +175,26 @@ export default function PointCode() {
           ? "* กรุณากรอก ชื่อแคมเปญ"
           : "* Please enter your Member Card"
       ),
-      // pointCodeSymbol: Yup.string().required(
-      //   Storage.GetLanguage() === "th"
-      //     ? "* กรุณากรอก รหัสแคมเปญ"
-      //     : "* Please enter your First Name"
-      // ),
-      // pointCodeLengthSymbol: Yup.string().required(
-      //   Storage.GetLanguage() === "th"
-      //     ? "* กรุณากรอก จำนวนตัวอักษร"
-      //     : "* Please enter your Last Name"
-      // ),
+      pointCodeSymbol: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก รหัสแคมเปญ"
+          : "* Please enter your First Name"
+      ),
+      pointCodeLengthSymbol: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก จำนวนตัวอักษร"
+          : "* Please enter your Last Name"
+      ),
       pointCodePoint: Yup.string().required(
         Storage.GetLanguage() === "th"
           ? "* กรุณากรอก คะแนน"
           : "* Please enter your Register Date"
       ),
-      // pointCodeQuantityCode: Yup.string().required(
-      //   Storage.GetLanguage() === "th"
-      //     ? "* กรุณากรอก จำนวน Code"
-      //     : "* Please enter your Register Date"
-      // ),
+      pointCodeQuantityCode: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก จำนวน Code"
+          : "* Please enter your Register Date"
+      ),
       startDate: Yup.string().required(
         Storage.GetLanguage() === "th"
           ? "* กรุณากรอก วันที่เริ่มสมัคร"
@@ -204,59 +207,70 @@ export default function PointCode() {
       ),
     }),
     onSubmit: (values) => {
-
       if (values.pointCodeQuantityCode === "")
         values.pointCodeQuantityCode = null;
       if (values.pointCodeLengthSymbol === "")
         values.pointCodeLengthSymbol = null;
       if (values.pointCodeSymbol === "") values.pointCodeSymbol = null;
 
-      if (isNew) {
-        axios.post("pointCode", values).then((res) => {
-          if (res.data.status) {
-            formik.values.id = res.data.tbPointCodeHD.id;
-            fetchData();
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            if (res.data.isPointCodeName) {
+      setErrorPointCodeLengthSymbol(false);
+      if (
+        values.pointCodeLengthSymbol < 10 ||
+        values.pointCodeLengthSymbol > 16
+      ) {
+        setErrorPointCodeLengthSymbol(true);
+      }
+      if (
+        values.pointCodeLengthSymbol >= 10 &&
+        values.pointCodeLengthSymbol <= 16
+      ) {
+        if (isNew) {
+          axios.post("pointCode", values).then((res) => {
+            if (res.data.status) {
+              formik.values.id = res.data.tbPointCodeHD.id;
+              formik.setFieldValue("id", res.data.tbPointCodeHD.id);
+              fetchData();
               addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
               );
+            } else {
+              if (res.data.isPointCodeName) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
             }
-          }
-        });
-      } else {
-        axios.put("pointCode", values).then((res) => {
-          if (res.data.status) {
-            formik.values.id = res.data.tbPointCodeHD.id;
-            fetchData();
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            if (res.data.isPointCodeName) {
+          });
+        } else {
+          axios.put("pointCode", values).then((res) => {
+            if (res.data.status) {
+              fetchData();
               addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
               );
+            } else {
+              if (res.data.isPointCodeName) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
             }
-          }
-        });
+          });
+        }
       }
     },
   });
@@ -267,14 +281,27 @@ export default function PointCode() {
       pointCodeId: "",
       fileName: "",
     },
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       if (values.pointCodeId === "" || values.pointCodeId === null) {
         setIsError(true);
       } else {
+        setIsLoading(true);
         let formData = new FormData();
         formData.append("file", file);
         formData.append("pointCodeId", formikImport.values.pointCodeId);
-        axios.post("api/excel/upload", formData).then((res) => {});
+        await axiosUpload
+          .post("api/excel/upload", formData)
+          .then(async (res) => {
+            await axios.post("/uploadExcel").then((res) => {
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
+            });
+          });
+        setIsLoading(false);
       }
     },
   });
@@ -315,7 +342,9 @@ export default function PointCode() {
         }
         formik.setFieldValue(
           columns,
-          (response.data.tbPointCodeHD[columns] === null) ? "" : response.data.tbPointCodeHD[columns],
+          response.data.tbPointCodeHD[columns] === null
+            ? ""
+            : response.data.tbPointCodeHD[columns],
           false
         );
       }
@@ -358,6 +387,14 @@ export default function PointCode() {
 
   return (
     <>
+      {isLoading ? (
+        <>
+          {" "}
+          <Spinner customText={"Loading"} />
+        </>
+      ) : (
+        <></>
+      )}
       <div className="w-full">
         <div
           className={
@@ -515,7 +552,7 @@ export default function PointCode() {
                                       type="button"
                                       onClick={() => {
                                         onValidate();
-                                        formik.handleSubmit();
+                                        formikImport.handleSubmit();
                                       }}
                                     >
                                       บันทึกข้อมูล
@@ -561,7 +598,7 @@ export default function PointCode() {
                                 </div>
                               </div>
                               <div className="flex flex-wrap px-24">
-                                <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                                {/* <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold mb-2"
                                     htmlFor="grid-password"
@@ -599,7 +636,7 @@ export default function PointCode() {
                                     value={Type}
                                   />
                                 </div>
-                                <div className="w-full mb-4"></div>
+                                <div className="w-full mb-4"></div> */}
                                 <div className="w-full lg:w-1/12 px-4">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
@@ -649,7 +686,7 @@ export default function PointCode() {
                                     className="border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeSymbol"
                                     name="pointCodeSymbol"
-                                    maxLength={100}
+                                    maxLength={10}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     value={formik.values.pointCodeSymbol}
@@ -686,7 +723,7 @@ export default function PointCode() {
                                     className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeLengthSymbol"
                                     name="pointCodeLengthSymbol"
-                                    maxLength={100}
+                                    maxLength={2}
                                     onChange={(event) => {
                                       setlangSymbo(
                                         ValidateService.onHandleScore(event)
@@ -703,6 +740,12 @@ export default function PointCode() {
                                   formik.errors.pointCodeLengthSymbol ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       {formik.errors.pointCodeLengthSymbol}
+                                    </div>
+                                  ) : null}
+                                  {errorPointCodeLengthSymbol ? (
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      * จำนวนตัวอักษรจะสามารถกำหนดได้ ตั้งแต่ 10
+                                      - 16 ตัวอักษรเท่านั้น
                                     </div>
                                   ) : null}
                                 </div>
@@ -724,7 +767,7 @@ export default function PointCode() {
                                     className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodePoint"
                                     name="pointCodePoint"
-                                    maxLength={100}
+                                    maxLength={10}
                                     onChange={(event) => {
                                       setlangSymbo(
                                         ValidateService.onHandleScore(event)
@@ -761,7 +804,7 @@ export default function PointCode() {
                                     className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeQuantityCode"
                                     name="pointCodeQuantityCode"
-                                    maxLength={100}
+                                    maxLength={10}
                                     onChange={(event) => {
                                       setlangSymbo(
                                         ValidateService.onHandleScore(event)
@@ -1124,7 +1167,11 @@ export default function PointCode() {
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.pointCodeLengthSymbol}
+                            <img
+                              src={require("assets/img/mbk/excel.png").default}
+                              alt="..."
+                              className="imgExcel margin-a"
+                            ></img>
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
