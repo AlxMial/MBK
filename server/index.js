@@ -23,6 +23,8 @@ const pointStoreRouter = require('./routes/points/pointStore');
 app.use("/pointStore",pointStoreRouter);
 const pointRegisterRouter = require('./routes/points/pointRegister');
 app.use("/pointRegister",pointRegisterRouter);
+const uploadExcelRouter = require('./routes/uploadExcel/uploadExcel');
+app.use("/uploadExcel",uploadExcelRouter);
 initRoutes(app);
 
 const port = process.env.PORT || 3001;
