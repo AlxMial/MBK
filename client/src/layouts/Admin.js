@@ -33,10 +33,10 @@ export default function Admin() {
         <div className={"transprent-body bg-white mx-auto w-full border-5 rounded-lg   "}>
           <div className={ " border-body px-4 minHeight " +((width<1024)? " pt-4" : " md:px-10 pt-12") }>
             <Switch>
-              <Route path="/admin/dashboard" exact component={Dashboard} />
+              {/* <Route path="/admin/dashboard" exact component={Dashboard} />
               <Route path="/admin/maps" exact component={Maps} />
               <Route path="/admin/settings" exact component={Settings} />
-              <Route path="/admin/tables" exact component={Tables} />
+              <Route path="/admin/tables" exact component={Tables} /> */}
               <Route path="/admin/users" exact component={UserList} />
               <Route path="/admin/usersinfo" exact component={UserInfo} />
               <Route path="/admin/usersinfo/:id" exact component={UserInfo} />
@@ -44,7 +44,7 @@ export default function Admin() {
               <Route path="/admin/membersinfo" exact component={MemberInfo} />
               <Route path="/admin/membersinfo/:id" exact component={MemberInfo} />
               <Route path="/admin/points" exact component={PointManage} />
-              <Redirect from="/admin" to="/admin/dashboard" />
+              <Redirect from="/admin" to="/admin/users" />
             </Switch>
             {/* <FooterAdmin /> */}
           </div>

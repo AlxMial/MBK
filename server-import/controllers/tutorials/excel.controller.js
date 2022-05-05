@@ -6,14 +6,13 @@ const excel = require("exceljs");
 
 const upload = async (req, res) => {
   try {
-    console.log(req)
     if (req.file == undefined) {
       return res.status(400).send("Please upload an excel file!");
     }
 
     let path =
       __basedir + "/server-import/resources/static/assets/uploads/" + req.file.filename;
-
+      
     readXlsxFile(path).then((rows) => {
       // skip header
       rows.shift();
@@ -23,7 +22,7 @@ const upload = async (req, res) => {
       rows.forEach((row) => {
         let tutorial = {
           code: row[0],
-          pointCodeId: req.body.pointCodeId,
+          tbPointCodeHDId: req.body.tbPointCodeHDId,
           memberId: null,
           isUse: 0,
           isDeleted: 0,

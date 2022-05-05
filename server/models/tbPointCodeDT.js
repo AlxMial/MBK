@@ -4,10 +4,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    pointCodeId: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     memberId: {
       type: DataTypes.STRING,
       allowNull: false,

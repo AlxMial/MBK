@@ -4,10 +4,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      pointCodeId: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
       memberId: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -20,7 +16,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
+      tbPointCodeHDId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
     });
-  
     return Tutorial;
   };

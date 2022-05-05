@@ -64,13 +64,15 @@ export default function PointCode() {
   };
 
   function openModal(id) {
+    setIsEnable(false);
+    setErrorPointCodeLengthSymbol(false);
     if (id) {
       fetchDataById(id);
       setIsNew(false);
     } else {
       setActive("1");
       setType("1");
-      setIsEnable(false);
+
       formik.resetForm();
       DefaultValue();
       setIsNew(true);
@@ -278,31 +280,71 @@ export default function PointCode() {
   const formikImport = useFormik({
     initialValues: {
       id: "",
-      pointCodeId: "",
+      pointCodeName: "",
+      pointCodePoint: "",
+      startDate: new Date(),
+      endDate: new Date(),
+      isActive: "1",
+      isType: "1",
+      isDeleted: false,
       fileName: "",
     },
+    validationSchema: Yup.object({
+      pointCodeName: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก ชื่อแคมเปญ"
+          : "* Please enter your Member Card"
+      ),
+      pointCodePoint: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก คะแนน"
+          : "* Please enter your Register Date"
+      ),
+      startDate: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่เริ่มสมัคร"
+          : "* Please enter your Register Date"
+      ),
+      endDate: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่สิ้นสุดสมัคร"
+          : "* Please enter your Register Date"
+      ),
+    }),
     onSubmit: async (values) => {
-      if (values.pointCodeId === "" || values.pointCodeId === null) {
-        setIsError(true);
-      } else {
-        setIsLoading(true);
-        let formData = new FormData();
-        formData.append("file", file);
-        formData.append("pointCodeId", formikImport.values.pointCodeId);
-        await axiosUpload
-          .post("api/excel/upload", formData)
-          .then(async (res) => {
-            await axios.post("/uploadExcel").then((res) => {
-              addToast(
-                Storage.GetLanguage() === "th"
-                  ? "บันทึกข้อมูลสำเร็จ"
-                  : "Save data successfully",
-                { appearance: "success", autoDismiss: true }
-              );
+      setIsLoading(true);
+      let formData = new FormData();
+      formData.append("file", file);
+      axios.post("pointCode", values).then(async (res) => {
+        if (res.data.status) {
+          formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
+          await axiosUpload
+            .post("api/excel/upload", formData)
+            .then(async (res) => {
+              await axios.post("/uploadExcel").then((res) => {
+                fetchData();
+                addToast(
+                  Storage.GetLanguage() === "th"
+                    ? "บันทึกข้อมูลสำเร็จ"
+                    : "Save data successfully",
+                  { appearance: "success", autoDismiss: true }
+                );
+              });
             });
-          });
-        setIsLoading(false);
-      }
+        } else {
+          if (res.data.isPointCodeName) {
+            addToast(
+              "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+              {
+                appearance: "warning",
+                autoDismiss: true,
+              }
+            );
+          }
+        }
+      });
+      setIsLoading(false);
+      modalIsOpenImport(false);
     },
   });
 
@@ -310,16 +352,17 @@ export default function PointCode() {
     axios.get("pointCode").then((response) => {
       if (response.data.error) {
       } else {
-        var JsonCampaign = [];
-        response.data.tbPointCodeHD.forEach((field) =>
-          JsonCampaign.push({
-            value: field.id.toString(),
-            label: field.pointCodeName,
-          })
-        );
-        if (JsonCampaign.length > 0)
-          formikImport.setFieldValue("pointCodeId", JsonCampaign[0].value);
-        setOptionCampaign(JsonCampaign);
+        // var JsonCampaign = [];
+        // response.data.tbPointCodeHD.forEach((field) =>
+        //   JsonCampaign.push({
+        //     value: field.id.toString(),
+        //     label: field.pointCodeName,
+        //   })
+        // );
+        // if (JsonCampaign.length > 0)
+        //   formikImport.setFieldValue("tbPointCodeHDId", JsonCampaign[0].value);
+        // setOptionCampaign(JsonCampaign);
+        setErrorPointCodeLengthSymbol(false);
         setListPointCode(response.data.tbPointCodeHD);
         setListSerch(response.data.tbPointCodeHD);
       }
@@ -461,12 +504,12 @@ export default function PointCode() {
                                   </span>
                                 </div>
                                 <div className="w-full lg:w-11/12 px-4 ">
-                                  <Select
-                                    id="pointCodeId"
-                                    name="pointCodeId"
+                                  {/* <Select
+                                    id="tbPointCodeHDId	"
+                                    name="tbPointCodeHDId	"
                                     onChange={(value) => {
                                       formikImport.setFieldValue(
-                                        "pointCodeId",
+                                        "tbPointCodeHDId	",
                                         value.value
                                       );
                                     }}
@@ -474,13 +517,30 @@ export default function PointCode() {
                                     options={optionCampaign}
                                     value={ValidateService.defaultValue(
                                       optionCampaign,
-                                      formikImport.values.pointCodeId
+                                      formikImport.values.tbPointCodeHDId
                                     )}
                                     styles={useStyleSelect}
                                   />
                                   {isError ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       * กรุณาเลือก ชื่อแคมเปญ
+                                    </div>
+                                  ) : null} */}
+                                  <input
+                                    type="text"
+                                    className="border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    id="pointCodeName"
+                                    name="pointCodeName"
+                                    maxLength={100}
+                                    onChange={formikImport.handleChange}
+                                    onBlur={formikImport.handleBlur}
+                                    value={formikImport.values.pointCodeName}
+                                    autoComplete="pointCodeName"
+                                  />
+                                  {formikImport.touched.pointCodeName &&
+                                  formikImport.errors.pointCodeName ? (
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      {formikImport.errors.pointCodeName}
                                     </div>
                                   ) : null}
                                 </div>
@@ -531,6 +591,199 @@ export default function PointCode() {
                                   </div>
                                 </div>
                                 <div className={"w-full mb-4"}></div>
+                                <div className="w-full lg:w-1/12 px-4  ">
+                                  <label
+                                    className="text-blueGray-600 text-sm font-bold "
+                                    htmlFor="grid-password"
+                                  >
+                                    จำนวนคะแนน
+                                  </label>
+                                  <span className="text-sm ml-2 text-red-500">
+                                    *
+                                  </span>
+                                </div>
+                                <div className="w-full lg:w-5/12 px-4 ">
+                                  <input
+                                    type="text"
+                                    className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    id="pointCodePoint"
+                                    name="pointCodePoint"
+                                    maxLength={10}
+                                    onChange={(event) => {
+                                      setlangSymbo(
+                                        ValidateService.onHandleScore(event)
+                                      );
+                                      formikImport.values.pointCodePoint =
+                                        ValidateService.onHandleScore(event);
+                                    }}
+                                    onBlur={formikImport.handleBlur}
+                                    autoComplete="pointCodePoint"
+                                    value={formikImport.values.pointCodePoint}
+                                  />
+                                  {formikImport.touched.pointCodePoint &&
+                                  formikImport.errors.pointCodePoint ? (
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      {formikImport.errors.pointCodePoint}
+                                    </div>
+                                  ) : null}
+                                </div>
+                                <div className={"w-full mb-4"}></div>
+
+                                <div className="w-full lg:w-1/12 px-4  ">
+                                  <label
+                                    className="text-blueGray-600 text-sm font-bold "
+                                    htmlFor="grid-password"
+                                  >
+                                    วันที่เริ่มต้น
+                                  </label>
+                                  <span className="text-sm ml-2 text-red-500">
+                                    *
+                                  </span>
+                                </div>
+                                <div className="w-full lg:w-5/12 px-4 ">
+                                  <div className="relative">
+                                    <ConfigProvider locale={locale}>
+                                      <DatePicker
+                                        format={"DD/MM/yyyy"}
+                                        placeholder="เลือกวันที่"
+                                        showToday={false}
+                                        defaultValue={moment(
+                                          new Date(),
+                                          "DD/MM/YYYY"
+                                        )}
+                                        style={{
+                                          height: "100%",
+                                          width: "100%",
+                                          borderRadius: "0.25rem",
+                                          cursor: "pointer",
+                                          margin: "0px",
+                                          paddingTop: "0.25rem",
+                                          paddingBottom: "0.25rem",
+                                          paddingLeft: "0.5rem",
+                                          paddingRight: "0.5rem",
+                                        }}
+                                        onChange={(e) => {
+                                          if (e === null) {
+                                            formikImport.setFieldValue(
+                                              "startDate",
+                                              new Date(),
+                                              false
+                                            );
+                                          } else {
+                                            formikImport.setFieldValue(
+                                              "startDate",
+                                              moment(e).toDate(),
+                                              false
+                                            );
+                                          }
+                                        }}
+                                        value={moment(
+                                          new Date(
+                                            formikImport.values.startDate
+                                          ),
+                                          "DD/MM/YYYY"
+                                        )}
+                                      />
+                                    </ConfigProvider>
+                                    {formikImport.touched.startDate &&
+                                    formikImport.errors.startDate ? (
+                                      <div className="text-sm py-2 px-2 text-red-500">
+                                        {formikImport.errors.startDate}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                </div>
+                                <div
+                                  className={
+                                    "w-full mb-4" +
+                                    (width < 1024 ? " block" : " hidden")
+                                  }
+                                ></div>
+                                <div className="w-full lg:w-1/12 px-4  ">
+                                  <label
+                                    className="text-blueGray-600 text-sm font-bold "
+                                    htmlFor="grid-password"
+                                  >
+                                    วันที่สิ้นสุด
+                                  </label>
+                                  <span className="text-sm ml-2 text-red-500">
+                                    *
+                                  </span>
+                                </div>
+
+                                <div className="w-full lg:w-5/12 px-4 ">
+                                  <ConfigProvider locale={locale}>
+                                    <DatePicker
+                                      format={"DD/MM/yyyy"}
+                                      placeholder="เลือกวันที่"
+                                      showToday={false}
+                                      defaultValue={moment(
+                                        new Date(),
+                                        "DD/MM/YYYY"
+                                      )}
+                                      style={{
+                                        height: "100%",
+                                        width: "100%",
+                                        borderRadius: "0.25rem",
+                                        cursor: "pointer",
+                                        margin: "0px",
+                                        paddingTop: "0.25rem",
+                                        paddingBottom: "0.25rem",
+                                        paddingLeft: "0.5rem",
+                                        paddingRight: "0.5rem",
+                                      }}
+                                      onChange={(e) => {
+                                        if (e === null) {
+                                          formikImport.setFieldValue(
+                                            "endDate",
+                                            new Date(),
+                                            false
+                                          );
+                                        } else {
+                                          formikImport.setFieldValue(
+                                            "endDate",
+                                            moment(e).toDate(),
+                                            false
+                                          );
+                                        }
+                                      }}
+                                      value={moment(
+                                        new Date(formikImport.values.endDate),
+                                        "DD/MM/YYYY"
+                                      )}
+                                    />
+                                  </ConfigProvider>
+                                  {formikImport.touched.endDate &&
+                                  formikImport.errors.endDate ? (
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      {formikImport.errors.endDate}
+                                    </div>
+                                  ) : null}
+                                </div>
+                                <div className="w-full lg:w-1/12 px-4 mb-2 mt-4">
+                                  <label
+                                    className="text-blueGray-600 text-sm font-bold mb-2"
+                                    htmlFor="grid-password"
+                                  ></label>
+                                </div>
+                                <div
+                                  className={
+                                    "w-full lg:w-11/12 px-4 " +
+                                    (width < 1024 ? " " : "  mb-4 mt-4")
+                                  }
+                                >
+                                  <Radio.Group
+                                    options={options}
+                                    onChange={(e) => {
+                                      setActive(e.target.value);
+                                      formikImport.setFieldValue(
+                                        "isActive",
+                                        e.target.value
+                                      );
+                                    }}
+                                    value={Active}
+                                  />
+                                </div>
                               </div>
                               <div className="relative w-full mb-3">
                                 <div className=" flex justify-between align-middle ">
@@ -1157,15 +1410,20 @@ export default function PointCode() {
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.pointCodeQuantityCode}
+                          {value.codeCount}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            0
+                          0
                           </span>
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
+                        <td
+                          onClick={() => {
+                            openModal(value.id);
+                          }}
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center"
+                        >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
                             <img
                               src={require("assets/img/mbk/excel.png").default}

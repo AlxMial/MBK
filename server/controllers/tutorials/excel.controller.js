@@ -23,7 +23,7 @@ const upload = async (req, res) => {
 
     let pathJson =
       __basedir +
-      "/server/resources/static/assets/json/" + req.body.pointCodeId +".json";
+      "/server/resources/static/assets/json/" + req.body.tbPointCodeHDId +".json";
 
     readXlsxFile(path).then((rows) => {
       // skip header

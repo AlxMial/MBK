@@ -56,6 +56,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
+      uid:{
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      }
     });
     return tbMember;
   };

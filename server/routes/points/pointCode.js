@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbPointCodeHD } = require("../../models");
+const { tbPointCodeHD,tbPointCodeDT } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -32,9 +32,16 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", validateToken, async (req, res) => {
+router.get("/", async (req, res) => {
   const listPointCodeHD = await tbPointCodeHD.findAll({
     where: { isDeleted: false },
+    attributes: { 
+      include: [[Sequelize.fn("COUNT", Sequelize.col("tbpointcodedts.id")), "codeCount"]] 
+    },
+    include: [{
+        model: tbPointCodeDT, attributes: []
+    }],
+    group: ['tbPointCodeHD.id']
   });
   res.json({
     status: true,
@@ -83,10 +90,10 @@ router.put("/", async (req, res) => {
   }
 });
 
-router.delete("/:pointCodeId", async (req, res) => {
-  const pointCodeId = req.params.pointCodeId;
+router.delete("/:tbPointCodeHDId", async (req, res) => {
+  const tbPointCodeHDId = req.params.tbPointCodeHDId;
   req.body.isDeleted = true;
-  tbPointCodeHD.update(req.body, { where: { id: pointCodeId } });
+  tbPointCodeHD.update(req.body, { where: { id: tbPointCodeHDId } });
   res.json({ status: true, message: "success", tbPointCodeHD: null });
 });
 

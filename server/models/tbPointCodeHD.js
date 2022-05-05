@@ -41,5 +41,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
   });
+  
+  tbPointCodeHD.associate = (models) => {
+    tbPointCodeHD.hasMany(models.tbPointCodeDT, {
+      onDelete: "cascade",
+    });
+  };
   return tbPointCodeHD;
 };

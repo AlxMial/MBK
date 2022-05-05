@@ -163,7 +163,6 @@ export default function MemberInfo() {
           }
         });
       } else {
-        console.log(values);
         axios.put("members", values).then((res) => {
           if (res.data.status) {
             addToast(
@@ -249,13 +248,13 @@ export default function MemberInfo() {
 
   useEffect(() => {
     /* Default Value for Testing */
-    // formik.values.memberCard = "MEM00001";
-    // formik.values.firstName = "ชาคริต";
-    // formik.values.lastName = "กันพรมกาศ";
-    // formik.values.email = "weatherzilla@gmail.com";
-    // formik.values.phone = "0804988589";
-    // formik.values.address =
-    //   "บริษัทอันดีไฟนด์ จำกัด สำนักงานใหญ 333/64 หมู่ 6 ตำบล หนองจ๊อม อำเภอ สันทราย จังหวัด เชียงใหม่ 50210";
+    formik.values.memberCard = "MEM00001";
+    formik.values.firstName = "ชาคริต";
+    formik.values.lastName = "กันพรมกาศ";
+    formik.values.email = "weatherzilla@gmail.com";
+    formik.values.phone = "0804988589";
+    formik.values.address =
+      "บริษัทอันดีไฟนด์ จำกัด สำนักงานใหญ 333/64 หมู่ 6 ตำบล หนองจ๊อม อำเภอ สันทราย จังหวัด เชียงใหม่ 50210";
     fatchAddress();
     defaultValue();
     fetchData();
