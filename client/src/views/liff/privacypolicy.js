@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
+import { path } from "../../layouts/Liff";
 // components
 const Privacypolicy = () => {
   let history = useHistory();
@@ -22,7 +23,7 @@ const Privacypolicy = () => {
   const allow = () => {
     ///
     console.log(Data);
-    history.push("/line/otp");
+    history.push(path.otp);
   };
   return (
     <>
@@ -74,7 +75,7 @@ const Privacypolicy = () => {
                 checked={Data.policy2}
               />
               <span
-                  className="ml-2 text-sm font-normal text-white"
+                className="ml-2 text-sm font-normal text-white"
                 style={{ whiteSpace: "pre-wrap" }}
               >
                 {
@@ -94,7 +95,7 @@ const Privacypolicy = () => {
                 checked={Data.policy3}
               />
               <span
-                 className="ml-2 text-sm font-normal text-white"
+                className="ml-2 text-sm font-normal text-white"
                 style={{ whiteSpace: "pre-wrap" }}
               >
                 {
