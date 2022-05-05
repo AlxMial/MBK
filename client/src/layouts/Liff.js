@@ -49,27 +49,27 @@ const getRoutes = () => {
 };
 
 const initLine = (callback) => {
-  runApp(callback);
-  // liff.init(
-  //   { liffId: window.config.liffId },
-  //   () => {
-  //     if (liff.isLoggedIn()) {
-  //       runApp(callback);
-  //     } else {
-  //       liff.login();
-  //     }
-  //   },
-  //   (err) => console.error(err)
-  // );
+  // runApp(callback);
+  liff.init(
+    { liffId: "1657109260-L0jrqxlN" },
+    () => {
+      if (liff.isLoggedIn()) {
+        runApp(callback);
+      } else {
+        liff.login();
+      }
+    },
+    (err) => console.error(err)
+  );
 };
 const runApp = (callback) => {
 
-  Session.setLiff({
-    uid: "U4d81d62e7ae7795c18f3e2c770595108",
-    displayName: "test",
-    pictureUrl: "test",
-    email: "test",
-  });
+  // Session.setLiff({
+  //   uid: "U4d81d62e7ae7795c18f3e2c770595108",
+  //   displayName: "test",
+  //   pictureUrl: "test",
+  //   email: "test",
+  // });
   liff
     .getProfile()
     .then((profile) => {
