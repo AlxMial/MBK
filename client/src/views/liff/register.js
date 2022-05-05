@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import InputMask from "react-input-mask";
 import Select from "react-select";
 import * as Address from "../../../src/services/GetAddress.js";
+import * as Session from "../../services/Session.service";
+import { Radio } from "antd";
+import { DropdownDate } from "react-dropdown-date";
+import moment from "moment";
 // components
 
 const Register = () => {
@@ -18,14 +22,24 @@ const Register = () => {
   };
   // address();
   const [Data, setData] = useState({
-    fname: "",
-    lname: "",
-    phonenumber: "",
-    sex: "0",
-
+    id: "",
+    memberCard: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    birthDate: "",
+    registerDate: "",
+    address: "",
     subDistrict: "",
     district: "",
-    province: "1",
+    province: "",
+    country: "",
+    postcode: "",
+    isDeleted: false,
+    sex: "1",
+    isMemberType: "1",
+    uid: Session.getLiff().uid,
   });
 
   const handleChange = (e) => {
@@ -40,6 +54,11 @@ const Register = () => {
   useEffect(() => {
     address();
   }, []);
+
+  const validation = () => {
+    console.log(Data);
+  };
+  const DoSave = () => {};
   return (
     <>
       <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
@@ -61,27 +80,27 @@ const Register = () => {
             }}
           >
             <InputUC
-              name="fname"
+              name="firstName"
               lbl="ชื่อ"
               length={255}
               type="text"
               onChange={handleChange}
-              value={Data.fname}
+              value={Data.firstName}
             />
             <InputUC
-              name="lname"
+              name="lastName"
               lbl="นามสกุล"
               length={255}
               type="text"
               onChange={handleChange}
-              value={Data.lname}
+              value={Data.lastName}
             />
             <InputUC
-              name="phonenumber"
+              name="phone"
               lbl="เบอร์โทร"
               type="tel"
               onChange={handleChange}
-              value={Data.phonenumber}
+              value={Data.phone}
             />
             <SelectUC
               name="sex"
@@ -91,18 +110,53 @@ const Register = () => {
               }}
               value={Data.sex}
               options={[
-                { value: "0", label: "ชาย" },
-                { value: "1", label: "หณิง" },
+                { value: "1", label: "ชาย" },
+                { value: "2", label: "หณิง" },
               ]}
             />
             {/* วันเกิด */}
+
+            <div>
+              <DropdownDate
+                startDate={
+                  // optional, if not provided 1900-01-01 is startDate
+                  "1990-01-01" // 'yyyy-mm-dd' format only
+                }
+                endDate={
+                  // optional, if not provided current date is endDate
+                  "2050-12-31" // 'yyyy-mm-dd' format only
+                }
+                selectedDate={moment(new Date()).format("YYYY-MM-DD")}
+                onDateChange={(date) => {
+                  // optional
+                  // console.log(moment(new Date()).format("YYYY-MM-DD"));
+                  // this.setState({ date: date, selectedDate: formatDate(date) });
+                }}
+              />
+            </div>
             <InputUC
               name="email"
               lbl="อีเมล"
-              type="email"
+              type="text"
               onChange={handleChange}
               value={Data.email}
             />
+            <div className="mb-5">
+              <Radio.Group
+                options={[
+                  { label: "ค้าปลีก/Retail", value: "1" },
+                  { label: "ค้าส่ง/Wholesale", value: "2" },
+                ]}
+                onChange={(e) => {
+                  setData((prevState) => ({
+                    ...prevState,
+                    ["isMemberType"]: e.target.value,
+                  }));
+                }}
+                value={Data.isMemberType}
+              />
+            </div>
+
             <InputUC
               name="address"
               lbl="ที่อยู่"
@@ -111,10 +165,9 @@ const Register = () => {
               value={Data.address}
             />
             <SelectUC
-              name="provice"
+              name="province"
               lbl="จังหวัด"
               onChange={async (e) => {
-                // handleChange({ target: { name: "provice", value: e.value } });
                 const district = await Address.getAddress("district", e.value);
                 const subDistrict = await Address.getAddress(
                   "subDistrict",
@@ -129,7 +182,7 @@ const Register = () => {
 
                 setData((prevState) => ({
                   ...prevState,
-                  ["provice"]: e.value,
+                  ["province"]: e.value,
                   ["district"]: district[0].value,
                   ["subDistrict"]: subDistrict[0].value,
                   ["postcode"]: postcode,
@@ -200,7 +253,7 @@ const Register = () => {
                 className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
                 style={{ width: "50%" }}
-                // onClick={allow}
+                onClick={validation}
               >
                 {"Register"}
               </button>
@@ -210,6 +263,19 @@ const Register = () => {
       </div>
     </>
   );
+};
+
+const formatDate = (date) => {
+  // formats a JS date to 'yyyy-mm-dd'
+  var d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
 };
 
 const InputUC = ({ name, lbl, length, type, onChange, value }) => {
@@ -239,8 +305,8 @@ const InputUC = ({ name, lbl, length, type, onChange, value }) => {
             name={name}
             type={type}
             onChange={onChange}
-            placeholder={name == "phonenumber" ? "0X-XXXX-XXXX" : lbl}
-            mask={name == "phonenumber" ? "099-999-9999" : "99999"}
+            placeholder={name == "phone" ? "0X-XXXX-XXXX" : lbl}
+            mask={name == "phone" ? "099-999-9999" : "99999"}
             maskChar=" "
           />
         )}
