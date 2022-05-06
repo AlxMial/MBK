@@ -4,14 +4,44 @@ import Select from "react-select";
 import * as Address from "../../../src/services/GetAddress.js";
 import * as Session from "../../services/Session.service";
 import { Radio } from "antd";
-import { DropdownDate } from "react-dropdown-date";
+import DatePicker from 'react-mobile-datepicker';
 import moment from "moment";
+import styled from "styled-components";
+import axios from "services/axios";
+import { useToasts } from "react-toast-notifications";
+import * as Yup from "yup";
 // components
+const DatePickerContainer = styled.div`
+  .datepicker {
+    position: initial;
+  }
 
+  .datepicker-navbar {
+    display: none;
+  }
+`;
+const monthMap = {
+  "1": "Jan",
+  "2": "Feb",
+  "3": "Mar",
+  "4": "Apr",
+  "5": "May",
+  "6": "Jun",
+  "7": "Jul",
+  "8": "Aug",
+  "9": "Sep",
+  "10": "Oct",
+  "11": "Nov",
+  "12": "Dec"
+};
 const Register = () => {
+  const { addToast } = useToasts();
   const [dataProvice, setDataProvice] = useState([]);
   const [dataDistrict, setDataDistrict] = useState([]);
   const [dataSubDistrict, setSubDistrict] = useState([]);
+
+  const [validationSchema, setvalidationSchema] = useState([]);
+
   const address = async () => {
     const province = await Address.getProvince();
     const district = await Address.getAddress("district", "1");
@@ -28,7 +58,7 @@ const Register = () => {
     lastName: "",
     phone: "",
     email: "",
-    birthDate: "",
+    birthDate: moment(new Date()).toDate(),
     registerDate: "",
     address: "",
     subDistrict: "",
@@ -41,6 +71,7 @@ const Register = () => {
     isMemberType: "1",
     uid: Session.getLiff().uid,
   });
+  const [errors, setErrors] = useState({})
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,10 +86,59 @@ const Register = () => {
     address();
   }, []);
 
-  const validation = () => {
+  const validation = async () => {
     console.log(Data);
+    let validationSchema = Yup.object({
+      // memberCard: Yup.string().required(
+      //   Storage.GetLanguage() === "th"
+      //     ? "* กรุณากรอก รหัสสมาชิก"
+      //     : "* Please enter your Member Card"
+      // ),
+      firstName: Yup.string().required("* กรุณากรอก ชื่อ"),
+      lastName: Yup.string().required("* กรุณากรอก นามสกุล"),
+    })
+    const isFormValid = await validationSchema.isValid(Data, {
+      abortEarly: false
+    })
+
+    console.log(validationSchema)
+    if (isFormValid) {
+      DoSave()
+    } else {
+      validationSchema.validate(Data, {
+        abortEarly: true
+      }).catch((err) => {
+        const errors = err.inner.reduce((acc, error) => {
+          return {
+            ...acc,
+            [error.path]: true
+          }
+        }, {})
+        console.log(errors)
+        setErrors(errors);
+      })
+    }
+
+    // validationSchema.fields.firstName.tests[0].OPTIONS.message
   };
-  const DoSave = () => {};
+  const DoSave = () => {
+    axios.post("members", Data).then((res) => {
+      let msg = { msg: "", appearance: "warning" }
+
+      res.data.status ?
+        msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" }
+        :
+        !res.data.isPhone ?
+          msg.msg = "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว"
+          : !res.data.isMemberCard ?
+            msg.msg = "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว"
+            : msg.msg = "บันทึกข้อมูลไม่สำเร็จ"
+
+
+      addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
+
+    });
+  };
   return (
     <>
       <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
@@ -86,6 +166,7 @@ const Register = () => {
               type="text"
               onChange={handleChange}
               value={Data.firstName}
+              error={errors.firstName}
             />
             <InputUC
               name="lastName"
@@ -116,24 +197,47 @@ const Register = () => {
             />
             {/* วันเกิด */}
 
-            <div>
-              <DropdownDate
-                startDate={
-                  // optional, if not provided 1900-01-01 is startDate
-                  "1990-01-01" // 'yyyy-mm-dd' format only
-                }
-                endDate={
-                  // optional, if not provided current date is endDate
-                  "2050-12-31" // 'yyyy-mm-dd' format only
-                }
-                selectedDate={moment(new Date()).format("YYYY-MM-DD")}
-                onDateChange={(date) => {
-                  // optional
-                  // console.log(moment(new Date()).format("YYYY-MM-DD"));
-                  // this.setState({ date: date, selectedDate: formatDate(date) });
-                }}
-              />
+            <div className="mb-5">
+              <div className="flex text-green-mbk font-bold text-lg ">{"วันเกิด"}</div>
+              <DatePickerContainer>
+                <DatePicker
+                  isOpen={true}
+                  isPopup={false}
+                  showHeader={false}
+                  // showCaption={true}
+                  min={new Date(1970, 0, 1)}
+                  max={new Date(2050, 0, 1)}
+                  value={Data.birthDate}
+                  dateConfig={{
+                    year: {
+                      format: "YYYY",
+                      caption: "Year",
+                      step: 1
+                    },
+                    month: {
+                      format: value => monthMap[value.getMonth() + 1],
+                      caption: "Mon",
+                      step: 1
+                    },
+                    date: {
+                      format: "D",
+                      caption: "Day",
+                      step: 1
+                    },
+
+                  }}
+                  onChange={(e) => {
+
+                    // console.log(moment(new Date()).toDate())
+                    setData((prevState) => ({
+                      ...prevState,
+                      ["birthDate"]: moment(new Date(e)).toDate(),
+                    }));
+                  }}
+                />
+              </DatePickerContainer>
             </div>
+
             <InputUC
               name="email"
               lbl="อีเมล"
@@ -219,9 +323,6 @@ const Register = () => {
               name="subDistrict"
               lbl="ตำบล"
               onChange={async (e) => {
-                // handleChange({
-                //   target: { name: "subDistrict", value: e.value },
-                // });
                 const postcode = await Address.getAddress("postcode", e.value);
                 setData((prevState) => ({
                   ...prevState,
@@ -245,7 +346,7 @@ const Register = () => {
                 className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
                 style={{ width: "50%" }}
-                // onClick={windowclose}
+              // onClick={windowclose}
               >
                 {"Cancel"}
               </button>
@@ -265,20 +366,7 @@ const Register = () => {
   );
 };
 
-const formatDate = (date) => {
-  // formats a JS date to 'yyyy-mm-dd'
-  var d = new Date(date),
-    month = "" + (d.getMonth() + 1),
-    day = "" + d.getDate(),
-    year = d.getFullYear();
-
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
-
-  return [year, month, day].join("-");
-};
-
-const InputUC = ({ name, lbl, length, type, onChange, value }) => {
+const InputUC = ({ name, lbl, length, type, onChange, value, error }) => {
   return (
     <>
       <div className="mb-5">
@@ -310,7 +398,10 @@ const InputUC = ({ name, lbl, length, type, onChange, value }) => {
             maskChar=" "
           />
         )}
-      </div>
+        {error == true ?
+          <div>{lbl}</div>
+          : null
+        }</div>
     </>
   );
 };
