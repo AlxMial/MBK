@@ -1,8 +1,8 @@
 const db = require("../../models");
 const Tutorial = db.tutorials;
-
 const readXlsxFile = require("read-excel-file/node");
 const excel = require("exceljs");
+const crypto = require('crypto');
 
 const upload = async (req, res) => {
   try {
@@ -12,7 +12,7 @@ const upload = async (req, res) => {
 
     let path =
       __basedir + "/server-import/resources/static/assets/uploads/" + req.file.filename;
-      
+
     readXlsxFile(path).then((rows) => {
       // skip header
       rows.shift();
@@ -30,6 +30,7 @@ const upload = async (req, res) => {
 
         tutorials.push(tutorial);
       });
+  
       Tutorial.bulkCreate(tutorials)
         .then(() => {
           res.status(200).send({
@@ -50,6 +51,18 @@ const upload = async (req, res) => {
     });
   }
 };
+
+const generateCode = (req,res) => {
+  const algorithm = 'aes-256-ctr';
+  const secretKey = 'undefined';
+  const iv = crypto.randomBytes(16);
+
+  
+
+
+
+  res.json(req.body);
+}
 
 const getTutorials = (req, res) => {
   Tutorial.findAll()
@@ -109,4 +122,5 @@ module.exports = {
   upload,
   getTutorials,
   download,
+  generateCode,
 };

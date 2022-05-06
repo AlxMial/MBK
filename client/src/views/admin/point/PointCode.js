@@ -226,53 +226,57 @@ export default function PointCode() {
         values.pointCodeLengthSymbol >= 10 &&
         values.pointCodeLengthSymbol <= 16
       ) {
-        if (isNew) {
-          axios.post("pointCode", values).then((res) => {
-            if (res.data.status) {
-              formik.values.id = res.data.tbPointCodeHD.id;
-              formik.setFieldValue("id", res.data.tbPointCodeHD.id);
-              fetchData();
-              addToast(
-                Storage.GetLanguage() === "th"
-                  ? "บันทึกข้อมูลสำเร็จ"
-                  : "Save data successfully",
-                { appearance: "success", autoDismiss: true }
-              );
-            } else {
-              if (res.data.isPointCodeName) {
-                addToast(
-                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                  {
-                    appearance: "warning",
-                    autoDismiss: true,
-                  }
-                );
-              }
-            }
-          });
-        } else {
-          axios.put("pointCode", values).then((res) => {
-            if (res.data.status) {
-              fetchData();
-              addToast(
-                Storage.GetLanguage() === "th"
-                  ? "บันทึกข้อมูลสำเร็จ"
-                  : "Save data successfully",
-                { appearance: "success", autoDismiss: true }
-              );
-            } else {
-              if (res.data.isPointCodeName) {
-                addToast(
-                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                  {
-                    appearance: "warning",
-                    autoDismiss: true,
-                  }
-                );
-              }
-            }
-          });
-        }
+        axiosUpload.post("api/excel/generateCode", values).then(async (res) => {
+          console.log(res)
+        });
+
+        // if (isNew) {
+        //   axios.post("pointCode", values).then((res) => {
+        //     if (res.data.status) {
+        //       formik.values.id = res.data.tbPointCodeHD.id;
+        //       formik.setFieldValue("id", res.data.tbPointCodeHD.id);
+        //       fetchData();
+        //       addToast(
+        //         Storage.GetLanguage() === "th"
+        //           ? "บันทึกข้อมูลสำเร็จ"
+        //           : "Save data successfully",
+        //         { appearance: "success", autoDismiss: true }
+        //       );
+        //     } else {
+        //       if (res.data.isPointCodeName) {
+        //         addToast(
+        //           "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+        //           {
+        //             appearance: "warning",
+        //             autoDismiss: true,
+        //           }
+        //         );
+        //       }
+        //     }
+        //   });
+        // } else {
+        //   axios.put("pointCode", values).then((res) => {
+        //     if (res.data.status) {
+        //       fetchData();
+        //       addToast(
+        //         Storage.GetLanguage() === "th"
+        //           ? "บันทึกข้อมูลสำเร็จ"
+        //           : "Save data successfully",
+        //         { appearance: "success", autoDismiss: true }
+        //       );
+        //     } else {
+        //       if (res.data.isPointCodeName) {
+        //         addToast(
+        //           "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+        //           {
+        //             appearance: "warning",
+        //             autoDismiss: true,
+        //           }
+        //         );
+        //       }
+        //     }
+        //   });
+        // }
       }
     },
   });
@@ -320,15 +324,30 @@ export default function PointCode() {
           formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
           await axiosUpload
             .post("api/excel/upload", formData)
-            .then(async (res) => {
-              await axios.post("/uploadExcel").then((res) => {
-                fetchData();
-                addToast(
-                  Storage.GetLanguage() === "th"
-                    ? "บันทึกข้อมูลสำเร็จ"
-                    : "Save data successfully",
-                  { appearance: "success", autoDismiss: true }
-                );
+            .then(async (resExcel) => {
+              await axios.post("/uploadExcel").then((resUpload) => {
+                if (resUpload.data.error) {
+                  axios
+                    .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
+                    .then((resDelete) => {
+                      fetchData();
+                      addToast(
+                        "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
+                        {
+                          appearance: "warning",
+                          autoDismiss: true,
+                        }
+                      );
+                    });
+                } else {
+                  fetchData();
+                  addToast(
+                    Storage.GetLanguage() === "th"
+                      ? "บันทึกข้อมูลสำเร็จ"
+                      : "Save data successfully",
+                    { appearance: "success", autoDismiss: true }
+                  );
+                }
               });
             });
         } else {
@@ -344,7 +363,7 @@ export default function PointCode() {
         }
       });
       setIsLoading(false);
-      modalIsOpenImport(false);
+      closeModalImport();
     },
   });
 
@@ -1410,12 +1429,12 @@ export default function PointCode() {
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          {value.codeCount}
+                            {value.codeCount}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          0
+                            0
                           </span>
                         </td>
                         <td

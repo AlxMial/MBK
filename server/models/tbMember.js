@@ -2,19 +2,19 @@ module.exports = (sequelize, DataTypes) => {
     const tbMember = sequelize.define("tbMember", {
       memberCard: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       firstName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       lastName: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       phone: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       email: {
         type: DataTypes.STRING,
@@ -22,11 +22,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       birthDate: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
       },
       registerDate: {
         type: DataTypes.DATE,
-        allowNull: false,
+        allowNull: true,
       },
       address: {
         type: DataTypes.STRING,

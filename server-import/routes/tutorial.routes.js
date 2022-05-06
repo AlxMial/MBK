@@ -5,6 +5,7 @@ const upload = require("../middlewares/upload");
 
 let routes = (app) => {
   router.post("/upload", upload.single("file"), excelController.upload);
+  router.post("/generateCode", excelController.generateCode);
   router.get("/tutorials", excelController.getTutorials);
 
   router.get("/download", excelController.download);
