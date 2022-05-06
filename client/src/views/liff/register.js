@@ -4,10 +4,33 @@ import Select from "react-select";
 import * as Address from "../../../src/services/GetAddress.js";
 import * as Session from "../../services/Session.service";
 import { Radio } from "antd";
-import { DropdownDate } from "react-dropdown-date";
+import DatePicker from 'react-mobile-datepicker';
 import moment from "moment";
+import styled from "styled-components";
 // components
+const DatePickerContainer = styled.div`
+  .datepicker {
+    position: initial;
+  }
 
+  .datepicker-navbar {
+    display: none;
+  }
+`;
+const monthMap = {
+  "1": "Jan",
+  "2": "Feb",
+  "3": "Mar",
+  "4": "Apr",
+  "5": "May",
+  "6": "Jun",
+  "7": "Jul",
+  "8": "Aug",
+  "9": "Sep",
+  "10": "Oct",
+  "11": "Nov",
+  "12": "Dec"
+};
 const Register = () => {
   const [dataProvice, setDataProvice] = useState([]);
   const [dataDistrict, setDataDistrict] = useState([]);
@@ -58,7 +81,7 @@ const Register = () => {
   const validation = () => {
     console.log(Data);
   };
-  const DoSave = () => {};
+  const DoSave = () => { };
   return (
     <>
       <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
@@ -116,24 +139,42 @@ const Register = () => {
             />
             {/* วันเกิด */}
 
-            <div>
-              <DropdownDate
-                startDate={
-                  // optional, if not provided 1900-01-01 is startDate
-                  "1990-01-01" // 'yyyy-mm-dd' format only
-                }
-                endDate={
-                  // optional, if not provided current date is endDate
-                  "2050-12-31" // 'yyyy-mm-dd' format only
-                }
-                selectedDate={moment(new Date()).format("YYYY-MM-DD")}
-                onDateChange={(date) => {
-                  // optional
-                  // console.log(moment(new Date()).format("YYYY-MM-DD"));
-                  // this.setState({ date: date, selectedDate: formatDate(date) });
-                }}
-              />
+            <div className="mb-5">
+              <div className="flex text-green-mbk font-bold text-lg ">{"วันเกิด"}</div>
+              <DatePickerContainer>
+                <DatePicker
+                  isOpen={true}
+                  isPopup={false}
+                  showHeader={false}
+                  // showCaption={true}
+                  min={new Date(1970, 0, 1)}
+                  max={new Date(2050, 0, 1)}
+                  value={new Date()}
+                  dateConfig={{
+                    year: {
+                      format: "YYYY",
+                      caption: "Year",
+                      step: 1
+                    },
+                    month: {
+                      format: value => monthMap[value.getMonth() + 1],
+                      caption: "Mon",
+                      step: 1
+                    },
+                    date: {
+                      format: "D",
+                      caption: "Day",
+                      step: 1
+                    },
+
+                  }}
+                  onChange={(e) => {
+                    console.log(e)
+                  }}
+                />
+              </DatePickerContainer>
             </div>
+
             <InputUC
               name="email"
               lbl="อีเมล"
@@ -219,9 +260,6 @@ const Register = () => {
               name="subDistrict"
               lbl="ตำบล"
               onChange={async (e) => {
-                // handleChange({
-                //   target: { name: "subDistrict", value: e.value },
-                // });
                 const postcode = await Address.getAddress("postcode", e.value);
                 setData((prevState) => ({
                   ...prevState,
@@ -245,7 +283,7 @@ const Register = () => {
                 className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
                 style={{ width: "50%" }}
-                // onClick={windowclose}
+              // onClick={windowclose}
               >
                 {"Cancel"}
               </button>
@@ -263,19 +301,6 @@ const Register = () => {
       </div>
     </>
   );
-};
-
-const formatDate = (date) => {
-  // formats a JS date to 'yyyy-mm-dd'
-  var d = new Date(date),
-    month = "" + (d.getMonth() + 1),
-    day = "" + d.getDate(),
-    year = d.getFullYear();
-
-  if (month.length < 2) month = "0" + month;
-  if (day.length < 2) day = "0" + day;
-
-  return [year, month, day].join("-");
 };
 
 const InputUC = ({ name, lbl, length, type, onChange, value }) => {
