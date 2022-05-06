@@ -59,6 +59,14 @@ module.exports = (sequelize, DataTypes) => {
       uid:{
         type: DataTypes.INTEGER,
         allowNull: true,
+      },
+      sex:{
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      isMemberType:{
+        type: DataTypes.STRING,
+        allowNull: true,
       }
     });
     return tbMember;
