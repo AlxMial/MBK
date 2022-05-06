@@ -113,7 +113,7 @@ const Privacypolicy = () => {
             style={{ width: "50%" }}
             onClick={windowclose}
           >
-            {"Cancel"}
+            {"ยกเลิก"}
           </button>
           <button
             className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
@@ -121,7 +121,7 @@ const Privacypolicy = () => {
             style={{ width: "50%" }}
             onClick={allow}
           >
-            {"Allow"}
+            {"อนุญาต"}
           </button>
         </div>
       </div>

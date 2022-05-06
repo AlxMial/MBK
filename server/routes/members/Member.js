@@ -61,7 +61,7 @@ router.put("/", async (req, res) => {
       [Op.or]: [{ memberCard: req.body.memberCard }, { phone: req.body.phone }],
       isDeleted: false,
       id: {
-        [Op.ne]:req.body.id,
+        [Op.ne]: req.body.id,
       }
     },
   });
@@ -96,6 +96,29 @@ router.delete("/:memberId", async (req, res) => {
   req.body.isDeleted = true;
   tbMember.update(req.body, { where: { id: memberId } });
   res.json({ status: true, message: "success", tbMember: null });
+});
+
+router.post("/checkRegister", async (req, res) => {
+  let isRegister = false
+  let code = 500
+  let members;
+  try {
+    const member = await tbMember.findOne({ where: { uid: req.body.uid,isDeleted: false } });
+
+    if (member) {
+      members = member;
+      isRegister = true
+      code = 200
+    }
+  } catch {
+
+  }
+  res.json({
+    code: code,
+    isRegister: isRegister,
+    tbMember: members,
+  });
+
 });
 
 module.exports = router;

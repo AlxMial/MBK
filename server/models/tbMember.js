@@ -57,7 +57,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       uid:{
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: true,
       },
       sex:{

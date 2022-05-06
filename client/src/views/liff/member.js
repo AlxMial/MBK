@@ -62,7 +62,7 @@ const Member = () => {
                 <div className="flex">
                   <div>
                     <i
-                      class="fas fa-solid fa-user"
+                      className="fas fa-solid fa-user"
                       style={{ color: "#084223" }}
                     ></i>
                   </div>
@@ -78,7 +78,7 @@ const Member = () => {
           </div>
           <div className="relative" style={{ width: "30%", height: "100%" }}>
             <div className="absolute right-0">
-              <i class="fas fa-solid fa-pen text-white"></i>
+              <i className="fas fa-solid fa-pen text-white"></i>
             </div>
             <div className="absolute right-0 bottom-0">
               <div>
@@ -117,11 +117,11 @@ const Member = () => {
             }}
           >
             <div className="px-2">
-              <i class="fas fa-solid fa-pen "></i>
+              <i className="fas fa-solid fa-pen "></i>
             </div>
             <div className="">กรอกโค้ดเพื่อสะสมคะแนน</div>
             <div className="px-2 absolute right-0">
-              <i class="fas fa-solid fa-angle-right "></i>
+              <i className="fas fa-solid fa-angle-right "></i>
             </div>
           </div>
         </div>

@@ -3,6 +3,7 @@ import OtpInput from "react-otp-input";
 import { useHistory } from "react-router-dom";
 import InputMask from "react-input-mask";
 import { path } from "../../layouts/Liff";
+import * as Session from "../../services/Session.service";
 // components
 
 const Otp = () => {
@@ -16,15 +17,12 @@ const Otp = () => {
   });
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // let value = !Data[name];
-    console.log(value);
     setData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
   };
   const generate = () => {
-    console.log("PhoneNumber : " + Data.PhoneNumber);
     let PhoneNumber = Data.PhoneNumber.replaceAll("-", "");
     if (PhoneNumber.length == 10) {
       const digits = "0123456789";
@@ -38,8 +36,6 @@ const Otp = () => {
       for (let i = 0; i < 6; i++) {
         ref += refdigits[Math.floor(Math.random() * 62)];
       }
-      console.log("otp : " + otp);
-      console.log("ref : " + ref);
       setData((prevState) => ({
         ...prevState,
         ["isotp"]: true,
@@ -47,6 +43,7 @@ const Otp = () => {
         ["generateref"]: ref,
       }));
 
+      Session.setphonnnumber(PhoneNumber)
       senderOTP(PhoneNumber);
     }
   };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import InputMask from "react-input-mask";
 import Select from "react-select";
 import * as Address from "../../../src/services/GetAddress.js";
@@ -10,6 +11,7 @@ import styled from "styled-components";
 import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 import * as Yup from "yup";
+import { path } from "../../layouts/Liff";
 // components
 const DatePickerContainer = styled.div`
   .datepicker {
@@ -34,13 +36,27 @@ const monthMap = {
   "11": "Nov",
   "12": "Dec"
 };
+
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+const EmailRegExp = /^[A-Za-z0-9_.@]+$/;
+const validationSchema = Yup.object({
+  firstName: Yup.string().required("* กรุณากรอก ชื่อ"),
+  lastName: Yup.string().required("* กรุณากรอก นามสกุล"),
+  phone: Yup.string().matches(phoneRegExp, "* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง")
+    .required("* กรุณากรอก เบอร์โทรศัพท์"),
+  email: Yup.string()
+    .matches(EmailRegExp, "* ขออภัย อนุญาตให้ใช้เฉพาะตัวอักษร (a-z), ตัวเลข (0-9) และเครื่องหมายมหัพภาค (.) เท่านั้น")
+    .email("* กรุณากรอก อีเมล"),
+})
 const Register = () => {
+  let history = useHistory();
   const { addToast } = useToasts();
   const [dataProvice, setDataProvice] = useState([]);
   const [dataDistrict, setDataDistrict] = useState([]);
   const [dataSubDistrict, setSubDistrict] = useState([]);
 
-  const [validationSchema, setvalidationSchema] = useState([]);
+  // const [validationSchema, setvalidationSchema] = useState([]);
 
   const address = async () => {
     const province = await Address.getProvince();
@@ -56,7 +72,7 @@ const Register = () => {
     memberCard: "",
     firstName: "",
     lastName: "",
-    phone: "",
+    phone: Session.getphonnnumber(),
     email: "",
     birthDate: moment(new Date()).toDate(),
     registerDate: "",
@@ -71,6 +87,7 @@ const Register = () => {
     isMemberType: "1",
     uid: Session.getLiff().uid,
   });
+
   const [errors, setErrors] = useState({})
 
   const handleChange = (e) => {
@@ -88,15 +105,7 @@ const Register = () => {
 
   const validation = async () => {
     console.log(Data);
-    let validationSchema = Yup.object({
-      // memberCard: Yup.string().required(
-      //   Storage.GetLanguage() === "th"
-      //     ? "* กรุณากรอก รหัสสมาชิก"
-      //     : "* Please enter your Member Card"
-      // ),
-      firstName: Yup.string().required("* กรุณากรอก ชื่อ"),
-      lastName: Yup.string().required("* กรุณากรอก นามสกุล"),
-    })
+
     const isFormValid = await validationSchema.isValid(Data, {
       abortEarly: false
     })
@@ -106,7 +115,7 @@ const Register = () => {
       DoSave()
     } else {
       validationSchema.validate(Data, {
-        abortEarly: true
+        abortEarly: false
       }).catch((err) => {
         const errors = err.inner.reduce((acc, error) => {
           return {
@@ -119,7 +128,7 @@ const Register = () => {
       })
     }
 
-    // validationSchema.fields.firstName.tests[0].OPTIONS.message
+    console.log(validationSchema.fields["firstName"].tests[0].OPTIONS.message)
   };
   const DoSave = () => {
     axios.post("members", Data).then((res) => {
@@ -136,7 +145,8 @@ const Register = () => {
 
 
       addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
-
+      res.data.status ?
+        history.push(path.member) : console.log("warning")
     });
   };
   return (
@@ -175,6 +185,7 @@ const Register = () => {
               type="text"
               onChange={handleChange}
               value={Data.lastName}
+              error={errors.lastName}
             />
             <InputUC
               name="phone"
@@ -182,6 +193,7 @@ const Register = () => {
               type="tel"
               onChange={handleChange}
               value={Data.phone}
+              error={errors.phone}
             />
             <SelectUC
               name="sex"
@@ -194,6 +206,7 @@ const Register = () => {
                 { value: "1", label: "ชาย" },
                 { value: "2", label: "หณิง" },
               ]}
+              error={errors.sex}
             />
             {/* วันเกิด */}
 
@@ -244,6 +257,7 @@ const Register = () => {
               type="text"
               onChange={handleChange}
               value={Data.email}
+              error={errors.email}
             />
             <div className="mb-5">
               <Radio.Group
@@ -267,6 +281,7 @@ const Register = () => {
               type="text"
               onChange={handleChange}
               value={Data.address}
+              error={errors.address}
             />
             <SelectUC
               name="province"
@@ -294,6 +309,7 @@ const Register = () => {
               }}
               value={Data.provice}
               options={dataProvice}
+              error={errors.province}
             />
             <SelectUC
               name="district"
@@ -318,6 +334,7 @@ const Register = () => {
               }}
               value={Data.district}
               options={dataDistrict}
+              error={errors.district}
             />
             <SelectUC
               name="subDistrict"
@@ -332,6 +349,7 @@ const Register = () => {
               }}
               value={Data.subDistrict}
               options={dataSubDistrict}
+              error={errors.subDistrict}
             />
             <InputUC
               name="postcode"
@@ -339,6 +357,7 @@ const Register = () => {
               type="tel"
               onChange={handleChange}
               value={Data.postcode}
+              error={errors.postcode}
             />
 
             <div className="relative  px-4  flex-grow flex-1 flex mt-5">
@@ -348,7 +367,7 @@ const Register = () => {
                 style={{ width: "50%" }}
               // onClick={windowclose}
               >
-                {"Cancel"}
+                {"ยกเลิก"}
               </button>
               <button
                 className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
@@ -356,7 +375,7 @@ const Register = () => {
                 style={{ width: "50%" }}
                 onClick={validation}
               >
-                {"Register"}
+                {"ลงทะเบียน"}
               </button>
             </div>
           </div>
@@ -396,10 +415,11 @@ const InputUC = ({ name, lbl, length, type, onChange, value, error }) => {
             placeholder={name == "phone" ? "0X-XXXX-XXXX" : lbl}
             mask={name == "phone" ? "099-999-9999" : "99999"}
             maskChar=" "
+            disabled={name == "phone" ? true : false}
           />
         )}
         {error == true ?
-          <div>{lbl}</div>
+          <div className="text-sm py-2 px-2 text-red-500">{validationSchema.fields[name].tests[0].OPTIONS.message}</div>
           : null
         }</div>
     </>
