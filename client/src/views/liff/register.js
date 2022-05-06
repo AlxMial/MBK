@@ -7,6 +7,8 @@ import { Radio } from "antd";
 import DatePicker from 'react-mobile-datepicker';
 import moment from "moment";
 import styled from "styled-components";
+import axios from "services/axios";
+import { useToasts } from "react-toast-notifications";
 // components
 const DatePickerContainer = styled.div`
   .datepicker {
@@ -32,6 +34,7 @@ const monthMap = {
   "12": "Dec"
 };
 const Register = () => {
+  const { addToast } = useToasts();
   const [dataProvice, setDataProvice] = useState([]);
   const [dataDistrict, setDataDistrict] = useState([]);
   const [dataSubDistrict, setSubDistrict] = useState([]);
@@ -51,7 +54,7 @@ const Register = () => {
     lastName: "",
     phone: "",
     email: "",
-    birthDate: "",
+    birthDate: moment(new Date()).toDate(),
     registerDate: "",
     address: "",
     subDistrict: "",
@@ -80,8 +83,26 @@ const Register = () => {
 
   const validation = () => {
     console.log(Data);
+    DoSave()
   };
-  const DoSave = () => { };
+  const DoSave = () => {
+    axios.post("members", Data).then((res) => {
+      let msg = { msg: "", appearance: "warning" }
+
+      res.data.status ?
+        msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" }
+        :
+        !res.data.isPhone ?
+          msg.msg = "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว"
+          : !res.data.isMemberCard ?
+            msg.msg = "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว"
+            : msg.msg="บันทึกข้อมูลไม่สำเร็จ"
+
+
+      addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
+
+    });
+  };
   return (
     <>
       <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
@@ -149,7 +170,7 @@ const Register = () => {
                   // showCaption={true}
                   min={new Date(1970, 0, 1)}
                   max={new Date(2050, 0, 1)}
-                  value={new Date()}
+                  value={Data.birthDate}
                   dateConfig={{
                     year: {
                       format: "YYYY",
@@ -169,7 +190,12 @@ const Register = () => {
 
                   }}
                   onChange={(e) => {
-                    console.log(e)
+
+                    // console.log(moment(new Date()).toDate())
+                    setData((prevState) => ({
+                      ...prevState,
+                      ["birthDate"]: moment(new Date(e)).toDate(),
+                    }));
                   }}
                 />
               </DatePickerContainer>
