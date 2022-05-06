@@ -1,5 +1,8 @@
 import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
+import axios from "services/axios";
+import * as Session from "../services/Session.service";
+import { useHistory } from "react-router-dom";
 import liff from "@line/liff";
 // components
 import privacypolicy from "views/liff/privacypolicy";
@@ -7,11 +10,7 @@ import register from "views/liff/register";
 import member from "views/liff/member";
 import otp from "views/liff/otp";
 import getreward from "views/liff/getreward";
-import axios from "services/axios";
-import * as Session from "../services/Session.service";
-import { useHistory } from "react-router-dom";
-
-// import { path } from "../../layouts/Liff";
+import updateprofile from "views/liff/updateprofile";
 
 export const path = {
   privacypolicy: "/line/privacypolicy",
@@ -19,6 +18,7 @@ export const path = {
   member: "/line/member",
   otp: "/line/otp",
   getreward: "/line/getreward",
+  updateprofile: "/line/updateprofile",
 };
 const routes = [
   {
@@ -40,6 +40,10 @@ const routes = [
   {
     path: path.getreward,
     component: getreward,
+  },
+  {
+    path: path.updateprofile,
+    component: updateprofile,
   },
 ];
 
