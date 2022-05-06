@@ -67,6 +67,10 @@ module.exports = (sequelize, DataTypes) => {
       isMemberType:{
         type: DataTypes.STRING,
         allowNull: true,
+      },
+      memberPoint:{
+        type: DataTypes.INTEGER,
+        allowNull: true,
       }
     });
     return tbMember;

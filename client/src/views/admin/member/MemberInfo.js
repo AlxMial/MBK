@@ -82,7 +82,10 @@ export default function MemberInfo() {
       country: "",
       postcode: "",
       isDeleted: false,
-      uid: ""
+      uid: "",
+      sex: "1",
+      isMemberType: "1",
+      memberPoint:0,
     },
     validationSchema: Yup.object({
       memberCard: Yup.string().required(
