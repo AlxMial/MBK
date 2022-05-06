@@ -9,6 +9,7 @@ import moment from "moment";
 import styled from "styled-components";
 import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
+import * as Yup from "yup";
 // components
 const DatePickerContainer = styled.div`
   .datepicker {
@@ -38,6 +39,9 @@ const Register = () => {
   const [dataProvice, setDataProvice] = useState([]);
   const [dataDistrict, setDataDistrict] = useState([]);
   const [dataSubDistrict, setSubDistrict] = useState([]);
+
+  const [validationSchema, setvalidationSchema] = useState([]);
+
   const address = async () => {
     const province = await Address.getProvince();
     const district = await Address.getAddress("district", "1");
@@ -67,6 +71,7 @@ const Register = () => {
     isMemberType: "1",
     uid: Session.getLiff().uid,
   });
+  const [errors, setErrors] = useState({})
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,9 +86,40 @@ const Register = () => {
     address();
   }, []);
 
-  const validation = () => {
+  const validation = async () => {
     console.log(Data);
-    DoSave()
+    let validationSchema = Yup.object({
+      // memberCard: Yup.string().required(
+      //   Storage.GetLanguage() === "th"
+      //     ? "* กรุณากรอก รหัสสมาชิก"
+      //     : "* Please enter your Member Card"
+      // ),
+      firstName: Yup.string().required("* กรุณากรอก ชื่อ"),
+      lastName: Yup.string().required("* กรุณากรอก นามสกุล"),
+    })
+    const isFormValid = await validationSchema.isValid(Data, {
+      abortEarly: false
+    })
+
+    console.log(validationSchema)
+    if (isFormValid) {
+      DoSave()
+    } else {
+      validationSchema.validate(Data, {
+        abortEarly: true
+      }).catch((err) => {
+        const errors = err.inner.reduce((acc, error) => {
+          return {
+            ...acc,
+            [error.path]: true
+          }
+        }, {})
+        console.log(errors)
+        setErrors(errors);
+      })
+    }
+
+    // validationSchema.fields.firstName.tests[0].OPTIONS.message
   };
   const DoSave = () => {
     axios.post("members", Data).then((res) => {
@@ -96,7 +132,7 @@ const Register = () => {
           msg.msg = "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว"
           : !res.data.isMemberCard ?
             msg.msg = "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว"
-            : msg.msg="บันทึกข้อมูลไม่สำเร็จ"
+            : msg.msg = "บันทึกข้อมูลไม่สำเร็จ"
 
 
       addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
@@ -130,6 +166,7 @@ const Register = () => {
               type="text"
               onChange={handleChange}
               value={Data.firstName}
+              error={errors.firstName}
             />
             <InputUC
               name="lastName"
@@ -329,7 +366,7 @@ const Register = () => {
   );
 };
 
-const InputUC = ({ name, lbl, length, type, onChange, value }) => {
+const InputUC = ({ name, lbl, length, type, onChange, value, error }) => {
   return (
     <>
       <div className="mb-5">
@@ -361,7 +398,10 @@ const InputUC = ({ name, lbl, length, type, onChange, value }) => {
             maskChar=" "
           />
         )}
-      </div>
+        {error == true ?
+          <div>{lbl}</div>
+          : null
+        }</div>
     </>
   );
 };
