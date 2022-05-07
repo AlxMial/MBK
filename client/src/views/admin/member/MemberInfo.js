@@ -16,9 +16,6 @@ import "moment/locale/th";
 import locale from "antd/lib/locale/th_TH";
 import { DatePicker, Space, ConfigProvider } from "antd";
 import * as Address from "../../../services/GetAddress.js";
-import api_province from "../../../assets/data/api_province.json";
-import api_amphure from "../../../assets/data/api_amphure.json";
-import api_tombon from "../../../assets/data/api_tombon.json";
 
 export default function MemberInfo() {
   /* Option Select */
@@ -155,9 +152,9 @@ export default function MemberInfo() {
                   autoDismiss: true,
                 }
               );
-            } else if (!res.data.isMemberCard) {
+            } else if (!res.data.isEmail) {
               addToast(
-                "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
+                "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
                 {
                   appearance: "warning",
                   autoDismiss: true,
@@ -260,7 +257,7 @@ export default function MemberInfo() {
     formik.values.address =
       "บริษัทอันดีไฟนด์ จำกัด สำนักงานใหญ 333/64 หมู่ 6 ตำบล หนองจ๊อม อำเภอ สันทราย จังหวัด เชียงใหม่ 50210";
     fatchAddress();
-    defaultValue();
+    // defaultValue();
     fetchData();
   }, []);
 

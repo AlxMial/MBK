@@ -4,6 +4,7 @@ const readXlsxFile = require("read-excel-file/node");
 const excel = require("exceljs");
 const crypto = require('crypto');
 
+
 const upload = async (req, res) => {
   try {
     if (req.file == undefined) {
@@ -45,7 +46,6 @@ const upload = async (req, res) => {
         });
     });
   } catch (error) {
-    console.log(error);
     res.status(500).send({
       message: "Could not upload the file: " + req.file.originalname,
     });
@@ -53,13 +53,20 @@ const upload = async (req, res) => {
 };
 
 const generateCode = (req,res) => {
-  const algorithm = 'aes-256-ctr';
-  const secretKey = 'undefined';
-  const iv = crypto.randomBytes(16);
 
-  
-
-
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var splitCha = characters.split('');
+  const n = crypto.randomInt(0, 9999999999);
+  const verificationCode = n.toString().padStart(req.body.pointCodeLengthSymbol-3, "0");
+  var splitVar = verificationCode.split('');
+  console.log(verificationCode.split(''));
+  var numberRandom1 = req.body.pointCodeLengthSymbol-3;
+  var numberRandom2 = splitCha.length-3;
+  var numCode =  Math.floor(Math.random() * numberRandom1);//Math.floor(Math.random() * (req.body.pointCodeLengthSymbol-1));
+  var numCha = Math.floor(Math.random() * numberRandom2);
+  console.log((numCode));
+  console.log(splitVar[numCode]);
+  console.log(splitCha[numCha]);
 
   res.json(req.body);
 }

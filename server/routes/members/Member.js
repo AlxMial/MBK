@@ -21,7 +21,7 @@ router.get("/byId/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const member = await tbMember.findOne({
     where: {
-      [Op.or]: [{ memberCard: req.body.memberCard }, { phone: req.body.phone }],
+      [Op.or]: [{ email: req.body.email }, { phone: req.body.phone }],
       isDeleted: false,
     },
   });
@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
     const members = await tbMember.create(req.body);
     res.json({
       status: true,
-      isMemberCard: true,
+      isEmail: true,
       isPhone: true,
       message: "success",
       tbMember: members,
@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
     if (member.memberCard === req.body.memberCard)
       res.json({
         status: false,
-        isMemberCard: false,
+        isEmail: false,
         isPhone: true,
         message: "Unsuccess",
         tbMember: null,
@@ -47,7 +47,7 @@ router.post("/", async (req, res) => {
     else if (member.phone === req.body.phone)
       res.json({
         status: false,
-        isMemberCard: true,
+        isEmail: true,
         isPhone: false,
         message: "Unsuccess",
         tbMember: null,
@@ -58,7 +58,7 @@ router.post("/", async (req, res) => {
 router.put("/", async (req, res) => {
   const member = await tbMember.findOne({
     where: {
-      [Op.or]: [{ memberCard: req.body.memberCard }, { phone: req.body.phone }],
+      [Op.or]: [{ email: req.body.email }, { phone: req.body.phone }],
       isDeleted: false,
       id: {
         [Op.ne]: req.body.id,
@@ -75,7 +75,7 @@ router.put("/", async (req, res) => {
     if (member.memberCard === req.body.memberCard)
       res.json({
         status: false,
-        isMemberCard: false,
+        isEmail: false,
         isPhone: true,
         message: "Unsuccess",
         tbMember: null,
@@ -83,7 +83,7 @@ router.put("/", async (req, res) => {
     else if (member.phone === req.body.phone)
       res.json({
         status: false,
-        isMemberCard: true,
+        isEmail: true,
         isPhone: false,
         message: "Unsuccess",
         tbMember: null,
