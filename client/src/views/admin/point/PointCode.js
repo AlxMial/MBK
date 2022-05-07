@@ -13,6 +13,9 @@ import locale from "antd/lib/locale/th_TH";
 import Modal from "react-modal";
 import Select from "react-select";
 import Spinner from "components/Loadings/spinner/Spinner";
+import fs from "fs";
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
 import {
   customStyles,
   customStylesMobile,
@@ -156,6 +159,38 @@ export default function PointCode() {
     formikImport.setFieldValue("fileName", e.target.files[0].name);
   };
 
+  const ExportFile = async (id, pointCodeName) => {
+    setIsLoading(true);
+    await axiosUpload.get(`/api/excel/download/${id}`).then((res) => {
+      let exports = [];
+      exports.push({ category: "pointCodeName", data: res.data });
+      exportToCSV(exports, pointCodeName);
+    });
+    setIsLoading(false);
+  };
+
+  const exportToCSV = (dataExport, pointCodeName) => {
+    const fileType = "xlsx";
+    dataExport.map((item, index) => {
+      item["json"] = XLSX.utils.json_to_sheet(item.data);
+    });
+
+    const obj = {
+      Sheets: {},
+      SheetNames: [],
+    };
+    dataExport.map((item, key) => {
+      return (
+        (obj.Sheets[item.category] = item.json),
+        obj.SheetNames.push(item.category)
+      );
+    });
+    const test = { ...obj };
+    const excelBuffer = XLSX.write(test, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: fileType });
+    saveAs(data, pointCodeName + ".xlsx");
+  };
+
   /* formik */
   const formik = useFormik({
     initialValues: {
@@ -226,57 +261,45 @@ export default function PointCode() {
         values.pointCodeLengthSymbol >= 10 &&
         values.pointCodeLengthSymbol <= 16
       ) {
-        axiosUpload.post("api/excel/generateCode", values).then(async (res) => {
-          console.log(res)
+        setIsLoading(true);
+        axios.post("pointCode", values).then(async (res) => {
+          if (res.data.status) {
+            values.tbPointCodeHDId = res.data.tbPointCodeHD.id;
+            fetchData();
+            await axiosUpload
+              .post("api/excel/generateCode", values)
+              .then(async (resGenerate) => {
+                await axios.post("/uploadExcel").then((resUpload) => {
+                  if (resUpload.data.error) {
+                    axios
+                      .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
+                      .then( async (resDelete) => {
+                        await axiosUpload.delete(`api/excel/delete/${res.data.tbPointCodeHD.id}`).then(() =>{})
+                        fetchData();
+                        setIsLoading(false);
+                        addToast(
+                          "บันทึกข้อมูลไม่สำเร็จ เนื่องจากการ Generate มีปัญหา",
+                          {
+                            appearance: "warning",
+                            autoDismiss: true,
+                          }
+                        );
+                      });
+                  } else {
+                    fetchData();
+                    closeModal();
+                    setIsLoading(false);
+                    addToast(
+                      Storage.GetLanguage() === "th"
+                        ? "บันทึกข้อมูลสำเร็จ"
+                        : "Save data successfully",
+                      { appearance: "success", autoDismiss: true }
+                    );
+                  }
+                });
+              });
+          }
         });
-
-        // if (isNew) {
-        //   axios.post("pointCode", values).then((res) => {
-        //     if (res.data.status) {
-        //       formik.values.id = res.data.tbPointCodeHD.id;
-        //       formik.setFieldValue("id", res.data.tbPointCodeHD.id);
-        //       fetchData();
-        //       addToast(
-        //         Storage.GetLanguage() === "th"
-        //           ? "บันทึกข้อมูลสำเร็จ"
-        //           : "Save data successfully",
-        //         { appearance: "success", autoDismiss: true }
-        //       );
-        //     } else {
-        //       if (res.data.isPointCodeName) {
-        //         addToast(
-        //           "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-        //           {
-        //             appearance: "warning",
-        //             autoDismiss: true,
-        //           }
-        //         );
-        //       }
-        //     }
-        //   });
-        // } else {
-        //   axios.put("pointCode", values).then((res) => {
-        //     if (res.data.status) {
-        //       fetchData();
-        //       addToast(
-        //         Storage.GetLanguage() === "th"
-        //           ? "บันทึกข้อมูลสำเร็จ"
-        //           : "Save data successfully",
-        //         { appearance: "success", autoDismiss: true }
-        //       );
-        //     } else {
-        //       if (res.data.isPointCodeName) {
-        //         addToast(
-        //           "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-        //           {
-        //             appearance: "warning",
-        //             autoDismiss: true,
-        //           }
-        //         );
-        //       }
-        //     }
-        //   });
-        // }
       }
     },
   });
@@ -1439,9 +1462,9 @@ export default function PointCode() {
                         </td>
                         <td
                           onClick={() => {
-                            openModal(value.id);
+                            ExportFile(value.id, value.pointCodeName);
                           }}
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center"
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
                             <img

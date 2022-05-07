@@ -8,8 +8,8 @@ let routes = (app) => {
   router.post("/generateCode", excelController.generateCode);
   router.get("/tutorials", excelController.getTutorials);
 
-  router.get("/download", excelController.download);
-
+  router.get("/download/:id", excelController.download);
+  router.delete("/delete/:id", excelController.deleteCode);
   app.use("/api/excel", router);
 };
 

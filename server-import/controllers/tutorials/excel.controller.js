@@ -3,7 +3,9 @@ const Tutorial = db.tutorials;
 const readXlsxFile = require("read-excel-file/node");
 const excel = require("exceljs");
 const crypto = require('crypto');
-
+const { encrypt, decrypt } = require('../../services/crypto');
+const iv = '283d0ce11c80a9a4da9eebcb40e7c7d9';
+const content = '1fda3b405f0edf98ef80';
 
 const upload = async (req, res) => {
   try {
@@ -12,7 +14,9 @@ const upload = async (req, res) => {
     }
 
     let path =
-      __basedir + "/server-import/resources/static/assets/uploads/" + req.file.filename;
+      __basedir +
+      "/server-import/resources/static/assets/uploads/" +
+      req.file.filename;
 
     readXlsxFile(path).then((rows) => {
       // skip header
@@ -31,7 +35,7 @@ const upload = async (req, res) => {
 
         tutorials.push(tutorial);
       });
-  
+
       Tutorial.bulkCreate(tutorials)
         .then(() => {
           res.status(200).send({
@@ -52,23 +56,82 @@ const upload = async (req, res) => {
   }
 };
 
-const generateCode = (req,res) => {
 
-  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var splitCha = characters.split('');
-  const n = crypto.randomInt(0, 9999999999);
-  const verificationCode = n.toString().padStart(req.body.pointCodeLengthSymbol-3, "0");
-  var splitVar = verificationCode.split('');
-  console.log(verificationCode.split(''));
-  var numberRandom1 = req.body.pointCodeLengthSymbol-3;
-  var numberRandom2 = splitCha.length-3;
-  var numCode =  Math.floor(Math.random() * numberRandom1);//Math.floor(Math.random() * (req.body.pointCodeLengthSymbol-1));
-  var numCha = Math.floor(Math.random() * numberRandom2);
-  console.log((numCode));
-  console.log(splitVar[numCode]);
-  console.log(splitCha[numCha]);
+const deleteCode = (req, res) => {
+  Tutorial.destroy({
+    where: {
+      tbPointCodeHDId: req.params.id,
+    },
+  });
+  res.json({ status: true, message: "success", tbPointCodeDT: null });
+}
 
-  res.json(req.body);
+const generateCode = (req, res) => {
+  var characters = "abcdefghijklmnopqrstuvwxyz";
+  var splitCha = characters.split("");
+  var splitEncrypt = content.split('');
+  let ArrayCoupons = [];
+
+  for (var x = 1; x > 0; x++) {
+  
+    const n = crypto.randomInt(1000000000, 9999999999);
+    const verificationCode = n
+      .toString()
+      .padStart(req.body.pointCodeLengthSymbol, "0");
+    var splitVar = verificationCode.split("");
+    var codeCoupon = "";
+    for (var i = 0; i < 6; i++) {
+      var numCha = Math.floor(Math.random() * splitCha.length);
+      var numCode = Math.floor(Math.random() * req.body.pointCodeLengthSymbol);
+      splitVar[numCode] = splitCha[numCha];
+    }
+
+    for (var i = 0; i < splitVar.length; i++) {
+      if(splitVar.length-1 === i || splitVar.length-2 === i || splitVar.length-3 === i || splitVar.length-4 === i)
+      {
+        var numEncrypt = Math.floor(Math.random() * splitEncrypt.length);
+        codeCoupon += splitEncrypt[numEncrypt];
+      } else codeCoupon += splitVar[i];
+    }
+    codeCoupon = req.body.pointCodeSymbol + "-" + codeCoupon;
+    let ArrayCoupon = {
+      code: codeCoupon,
+      tbPointCodeHDId: req.body.tbPointCodeHDId,
+      memberId: null,
+      isUse: 0,
+      isDeleted: 0,
+    };
+    var Duplicate = ArrayCoupons.some((item) => item.code === codeCoupon);
+    //console.log(req.body.tbPointCodeHDId)
+    if (ArrayCoupons.length === parseInt(req.body.pointCodeQuantityCode)) break;
+    else if (!Duplicate) ArrayCoupons.push(ArrayCoupon);
+  }
+  //decryptCoupon(ArrayCoupons[0].code, ArrayCoupons[0].code.length)
+  Tutorial.bulkCreate(ArrayCoupons)
+  .then(() => {
+    res.status(200).send({
+      message: "Generate successfully: ",
+    });
+  })
+  .catch((error) => {
+    res.status(500).send({
+      message: "Fail to Generate data into database!",
+      error: error.message,
+    });
+  });
+};
+
+
+
+const decryptCoupon = (codeCoupon,length) =>{
+  var code = codeCoupon.substring(length-4, length).split('');
+  var isMatch = 0;
+  for(var i = 0 ; i < 4 ; i++){
+    isMatch = content.indexOf(code[0]);
+    if(isMatch < 0)
+      break;
+  }
+  return (isMatch < 0) ? false : true;
 }
 
 const getTutorials = (req, res) => {
@@ -85,43 +148,42 @@ const getTutorials = (req, res) => {
 };
 
 const download = (req, res) => {
-  Tutorial.findAll().then((objs) => {
+  const id = req.params.id;
+  console.log(id)
+  Tutorial.findAll({ where: { tbPointCodeHDId: id } }).then((objs) => {
+
     let tutorials = [];
 
     objs.forEach((obj) => {
       tutorials.push({
-        id: obj.id,
-        title: obj.title,
-        description: obj.description,
-        published: obj.published,
+        code: obj.code,
+        memberId: obj.memberId,
+        isUse: obj.isUse,
       });
     });
+    res.json(tutorials);
 
-    let workbook = new excel.Workbook();
-    let worksheet = workbook.addWorksheet("Tutorials");
+    // let workbook = new excel.Workbook();
+    // let worksheet = workbook.addWorksheet("Tutorials");
 
-    worksheet.columns = [
-      { header: "Id", key: "id", width: 5 },
-      { header: "Title", key: "title", width: 25 },
-      { header: "Description", key: "description", width: 25 },
-      { header: "Published", key: "published", width: 10 },
-    ];
+    // worksheet.columns = [
+    //   { header: "code", key: "code", width: 25 }
+    // ];
+    // // Add Array Rows
+    // worksheet.addRows(tutorials);
 
-    // Add Array Rows
-    worksheet.addRows(tutorials);
+    // res.setHeader(
+    //   "Content-Type",
+    //   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    // );
+    // res.setHeader(
+    //   "Content-Disposition",
+    //   "attachment; filename=" + "tutorials.xlsx"
+    // );
 
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    );
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=" + "tutorials.xlsx"
-    );
-
-    return workbook.xlsx.write(res).then(function () {
-      res.status(200).end();
-    });
+    // return workbook.xlsx.write(res).then(function () {
+    //   res.status(200).end();
+    // });
   });
 };
 
@@ -130,4 +192,5 @@ module.exports = {
   getTutorials,
   download,
   generateCode,
+  deleteCode,
 };
