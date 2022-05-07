@@ -313,6 +313,7 @@ export default function PointCode() {
       endDate: new Date(),
       isActive: "1",
       isType: "1",
+      isExpire: false,
       isDeleted: false,
       fileName: "",
     },

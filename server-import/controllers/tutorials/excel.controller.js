@@ -99,6 +99,7 @@ const generateCode = (req, res) => {
       tbPointCodeHDId: req.body.tbPointCodeHDId,
       memberId: null,
       isUse: 0,
+      isExpire: 0,
       isDeleted: 0,
     };
     var Duplicate = ArrayCoupons.some((item) => item.code === codeCoupon);
@@ -149,7 +150,6 @@ const getTutorials = (req, res) => {
 
 const download = (req, res) => {
   const id = req.params.id;
-  console.log(id)
   Tutorial.findAll({ where: { tbPointCodeHDId: id } }).then((objs) => {
 
     let tutorials = [];
@@ -157,8 +157,8 @@ const download = (req, res) => {
     objs.forEach((obj) => {
       tutorials.push({
         code: obj.code,
-        memberId: obj.memberId,
         isUse: obj.isUse,
+        isExpire: obj.isExpire,
       });
     });
     res.json(tutorials);

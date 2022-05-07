@@ -102,6 +102,7 @@ router.delete("/:tbPointCodeHDId",validateToken, async (req, res) => {
   const tbPointCodeHDId = req.params.tbPointCodeHDId;
   req.body.isDeleted = true;
   tbPointCodeHD.update(req.body, { where: { id: tbPointCodeHDId } });
+  tbPointCodeDT.update(req.body, { where: { tbPointCodeHDId: tbPointCodeHDId } });
   res.json({ status: true, message: "success", tbPointCodeHD: null });
 });
 

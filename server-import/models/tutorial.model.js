@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
+      isExpire: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+      },
       isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
