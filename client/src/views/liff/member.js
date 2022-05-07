@@ -1,21 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "services/axios";
 import { Tabs } from "antd";
 import MyAward from "./member.myAward";
 import MyOrder from "./member.myOrder";
 import { useHistory } from "react-router-dom";
 import { path } from "../../layouts/Liff";
+import * as Session from "../../services/Session.service";
 // components
 
 const Member = () => {
   const history = useHistory();
   const { TabPane } = Tabs;
-  const tabsChange = () => {};
+  const tabsChange = () => { };
   const [point, setpoint] = useState(50);
   const [Expire, setExpire] = useState("01/05/2565");
-  const [MemberCard, setMemberCard] = useState("111-111-111");
+
+  // const [MemberCard, setMemberCard] = useState("111-111-111");
   const [member, setmember] = useState("Green MEMBER");
   const [memberName, setmemberName] = useState("แสนดี มีนานะชัย");
   const [membertype, setmembertype] = useState("Retail");
+
+  const [tbMember, settbMember] = useState({});
+
+  const getMembers = async () => {
+    axios.post("/members/checkRegister", { uid: Session.getLiff().uid }).then((res) => {
+      console.log(res)
+      if (res.data.code === 200) {
+        settbMember(res.data.tbMember)
+      } else {
+
+      }
+    })
+  };
+
+  useEffect(() => {
+    getMembers();
+  }, []);
 
   return (
     <>
@@ -29,9 +49,8 @@ const Member = () => {
             margin: "auto",
             height: "180px",
             borderRadius: "10px",
-            backgroundImage: `url(${
-              require("assets/img/mbk/Green.png").default
-            })`,
+            backgroundImage: `url(${require("assets/img/mbk/Green.png").default
+              })`,
             backgroundSize: "cover",
           }}
         >
@@ -57,7 +76,7 @@ const Member = () => {
                   {member}
                 </div>
                 <div className="text-white font-bold text-xs mt-2">
-                  {memberName}
+                  {tbMember.firstName + " " + tbMember.lastName}
                 </div>
                 <div className="flex">
                   <div>
@@ -67,17 +86,20 @@ const Member = () => {
                     ></i>
                   </div>
                   <div className="px-2 text-white font-bold text-xs ">
-                    {membertype}
+                    {tbMember.isMemberType === "1" ? "Retail" : "Wholesale"}
                   </div>
                 </div>
               </div>
             </div>
             <div className="absolute bottom-0 text-white font-bold text-xs ">
-              {"Member Card : " + MemberCard}
+              {"Member Card : " + tbMember.memberCard}
             </div>
           </div>
           <div className="relative" style={{ width: "30%", height: "100%" }}>
-            <div className="absolute right-0">
+            <div className="absolute right-0" onClick={() => {
+              // updateprofile
+              history.push(path.updateprofile)
+            }}>
               <i className="fas fa-solid fa-pen text-white"></i>
             </div>
             <div className="absolute right-0 bottom-0">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "services/axios";
+
 import * as Address from "../../../src/services/GetAddress.js";
 import * as Session from "../../services/Session.service";
 import { Radio } from "antd";
@@ -10,7 +11,8 @@ import { useToasts } from "react-toast-notifications";
 import { path } from "../../layouts/Liff";
 import { InputUC, SelectUC, validationSchema, DatePickerContainer, monthMap } from "./profile";
 
-const Register = () => {
+
+const Updateprofile = () => {
   let history = useHistory();
   const { addToast } = useToasts();
   const [dataProvice, setDataProvice] = useState([]);
@@ -25,40 +27,31 @@ const Register = () => {
     setDataDistrict(district);
     setSubDistrict(subDistrict);
   };
-  const [Data, setData] = useState({
-    id: "",
-    memberCard: "",
-    firstName: "",
-    lastName: "",
-    phone: Session.getphonnnumber(),
-    email: "",
-    birthDate: moment(new Date()).toDate(),
-    registerDate: "",
-    address: "",
-    subDistrict: "",
-    district: "",
-    province: "",
-    country: "",
-    postcode: "",
-    isDeleted: false,
-    sex: "1",
-    isMemberType: "1",
-    uid: Session.getLiff().uid,
-  });
+  const [Data, settbMember] = useState({});
 
   const [errors, setErrors] = useState({})
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // // let value = !Data[name];
-    // console.log(value);
-    setData((prevState) => ({
+
+    settbMember((prevState) => ({
       ...prevState,
       [name]: value,
     }));
   };
+  const getMembers = async () => {
+    axios.post("/members/checkRegister", { uid: Session.getLiff().uid }).then((res) => {
+      console.log(res)
+      if (res.data.code === 200) {
+        settbMember(res.data.tbMember)
+      } else {
+
+      }
+    })
+  };
   useEffect(() => {
     address();
+    getMembers()
   }, []);
 
   const validation = async () => {
@@ -89,7 +82,7 @@ const Register = () => {
     console.log(validationSchema.fields["firstName"].tests[0].OPTIONS.message)
   };
   const DoSave = () => {
-    axios.post("members", Data).then((res) => {
+    axios.put("members", Data).then((res) => {
       let msg = { msg: "", appearance: "warning" }
 
       res.data.status ?
@@ -97,14 +90,14 @@ const Register = () => {
         :
         !res.data.isPhone ?
           msg.msg = "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว"
-          : !res.data.email ?
-            msg.msg = "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว"
+          : !res.data.isMemberCard ?
+            msg.msg = "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว"
             : msg.msg = "บันทึกข้อมูลไม่สำเร็จ"
 
 
       addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
-      res.data.status ?
-        history.push(path.member) : console.log("warning")
+      // res.data.status ?
+      //   history.push(path.member) : console.log("warning")
     });
   };
   return (
@@ -178,7 +171,7 @@ const Register = () => {
                   // showCaption={true}
                   min={new Date(1970, 0, 1)}
                   max={new Date(2050, 0, 1)}
-                  value={Data.birthDate}
+                  value={moment(new Date(Data.birthDate)).toDate()}
                   dateConfig={{
                     year: {
                       format: "YYYY",
@@ -200,7 +193,7 @@ const Register = () => {
                   onChange={(e) => {
 
                     // console.log(moment(new Date()).toDate())
-                    setData((prevState) => ({
+                    settbMember((prevState) => ({
                       ...prevState,
                       ["birthDate"]: moment(new Date(e)).toDate(),
                     }));
@@ -224,7 +217,7 @@ const Register = () => {
                   { label: "ค้าส่ง/Wholesale", value: "2" },
                 ]}
                 onChange={(e) => {
-                  setData((prevState) => ({
+                  settbMember((prevState) => ({
                     ...prevState,
                     ["isMemberType"]: e.target.value,
                   }));
@@ -257,7 +250,7 @@ const Register = () => {
                 setDataDistrict(district);
                 setSubDistrict(subDistrict);
 
-                setData((prevState) => ({
+                settbMember((prevState) => ({
                   ...prevState,
                   ["province"]: e.value,
                   ["district"]: district[0].value,
@@ -283,7 +276,7 @@ const Register = () => {
                   subDistrict[0].value
                 );
                 setSubDistrict(subDistrict);
-                setData((prevState) => ({
+                settbMember((prevState) => ({
                   ...prevState,
                   ["district"]: e.value,
                   ["subDistrict"]: subDistrict[0].value,
@@ -299,7 +292,7 @@ const Register = () => {
               lbl="ตำบล"
               onChange={async (e) => {
                 const postcode = await Address.getAddress("postcode", e.value);
-                setData((prevState) => ({
+                settbMember((prevState) => ({
                   ...prevState,
                   ["subDistrict"]: e.value,
                   ["postcode"]: postcode,
@@ -323,7 +316,9 @@ const Register = () => {
                 className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
                 style={{ width: "50%" }}
-              // onClick={windowclose}
+                onClick={() => {
+                  history.push(path.member)
+                }}
               >
                 {"ยกเลิก"}
               </button>
@@ -333,7 +328,7 @@ const Register = () => {
                 style={{ width: "50%" }}
                 onClick={validation}
               >
-                {"ลงทะเบียน"}
+                {"บันทึก"}
               </button>
             </div>
           </div>
@@ -343,4 +338,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Updateprofile;
