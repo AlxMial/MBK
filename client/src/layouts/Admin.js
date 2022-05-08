@@ -20,6 +20,8 @@ import UserInfo from "views/admin/user/UserInfo";
 import MemberList from "views/admin/member/Memberlist";
 import MemberInfo from "views/admin/member/MemberInfo";
 import PointManage from "views/admin/point/PointManage";
+import StockInfo from "views/admin/ecommerce/stock/StockInfo";
+import StockList from "views/admin/ecommerce/stock/Stocklist";
 
 export default function Admin() {
   const { height, width } = useWindowDimensions();
@@ -43,6 +45,9 @@ export default function Admin() {
               <Route path="/admin/members" exact component={MemberList} />
               <Route path="/admin/membersinfo" exact component={MemberInfo} />
               <Route path="/admin/membersinfo/:id" exact component={MemberInfo} />
+              <Route path="/admin/stocks" exact component={StockList} />
+              <Route path="/admin/stocksinfo" exact component={StockInfo} />
+              <Route path="/admin/stocksinfo/:id" exact component={StockInfo} />
               <Route path="/admin/points" exact component={PointManage} />
               <Redirect from="/admin" to="/admin/users" />
             </Switch>

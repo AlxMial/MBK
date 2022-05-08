@@ -234,7 +234,7 @@ export default function Sidebar() {
                 </li> */}
               </ul>
 
-              {/* <button
+              <button
                 type="button"
                 className={
                   "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
@@ -289,18 +289,18 @@ export default function Sidebar() {
                   <Link
                     className={
                       "text-sm uppercase py-3 pl-11 font-bold block " +
-                      (window.location.href.indexOf("/admin/settings") !== -1
+                      (window.location.href.indexOf("/admin/stocks") !== -1
                         ? "text-gold-mbk hover:text-gold-mbk"
                         : width < 765
                         ? " text-blueGray-700 hover:text-gold-mbk"
                         : " text-white hover:text-gold-mbk")
                     }
-                    to="/admin/settings"
+                    to="/admin/stocks"
                   >
                     <i
                       className={
                         "fas fa-store mr-2 text-sm " +
-                        (window.location.href.indexOf("/admin/settings") !== -1
+                        (window.location.href.indexOf("/admin/stocks") !== -1
                           ? "opacity-75"
                           : width < 765
                           ? " text-blueGray-700"
@@ -360,7 +360,7 @@ export default function Sidebar() {
                     ยกเลิกและคืนสินค้า
                   </Link>
                 </li>
-              </ul> */}
+              </ul>
               {/* <button
                 type="button"
                 className={

@@ -77,7 +77,7 @@ export default function PointCode() {
       setType("1");
 
       formik.resetForm();
-      DefaultValue();
+      //DefaultValue();
       setIsNew(true);
     }
     setIsOpen(true);

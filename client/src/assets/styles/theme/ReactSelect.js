@@ -19,6 +19,7 @@ const styleSelect = () => ({
     "&:hover": {
       backgroundColor: state.isSelected ? "#D0B027" : "#fff",
     },
+    
   }),
 });
 

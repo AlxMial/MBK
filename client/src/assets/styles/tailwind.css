@@ -1208,6 +1208,11 @@ select {
   background-color: #047a40;
 }
 
+.bg-gray-mbk {
+  --tw-bg-opacity: 1;
+  background-color: #737373;
+}
+
 .bg-lemon-mbk {
   background-color: #DCE2A4;
 }
@@ -1518,6 +1523,11 @@ select {
 
 .rounded-b-l {
   border-bottom-left-radius: 0.25rem;
+}
+
+.rounded-b-l-r {
+  border-bottom-left-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
 }
 
 .rounded-t-lg {
@@ -2450,6 +2460,10 @@ select {
 
 .left-0 {
   left: 0px;
+}
+
+.right-2 {
+  right: 0.25rem;
 }
 
 .top-auto {
@@ -3882,6 +3896,30 @@ input[type=email]:disabled {
 .imgExcel {
   width: 25px;
   height: 25px;
+}
+/* Image Stock */
+
+.image-upload-stock>input {
+  display: none;
+}
+.img-stock {
+  width: 140px ;
+  height: 120px ;
+  margin:auto;
+  background-image: cover;
+}
+
+.img-stock-container {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+.img-stock-container .centered {
+  position: absolute;
+  top: 90%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 @media only screen and (max-width: 2500px) {

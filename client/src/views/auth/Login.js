@@ -13,11 +13,15 @@ export default function Login() {
   const { setAuthState } = useContext(AuthContext);
   const { addToast } = useToasts();
   const { height, width } = useWindowDimensions();
-
+  const [passwordShown, setPasswordShown] = useState(false);
   let history = useHistory();
 
   const OnHomePage = () => {
     history.push("/admin/dashboard");
+  };
+
+  const togglePassword = () => {
+    setPasswordShown(!passwordShown);
   };
 
   const formik = useFormik({
@@ -31,7 +35,7 @@ export default function Login() {
       password: Yup.string().required("* Please enter your Password"),
     }),
     onSubmit: (values) => {
-      const data = { userName: values.userName, password: values.password };      
+      const data = { userName: values.userName, password: values.password };
       axios.post("/users/login", data).then((response) => {
         if (response.data.error) {
           addToast("Can't login because Invalid username or password", {
@@ -48,7 +52,10 @@ export default function Login() {
           if (formik.values.isRemember)
             localStorage.setItem(
               "login",
-              JSON.stringify({ userName: values.userName, password: values.password })
+              JSON.stringify({
+                userName: values.userName,
+                password: values.password,
+              })
             );
           else localStorage.removeItem("login");
 
@@ -78,15 +85,14 @@ export default function Login() {
     },
   });
 
-
-  useEffect( ()=>  {
-    var retrievedObject = JSON.parse(localStorage.getItem('login'));
-    if(retrievedObject !== null) {
-        formik.setFieldValue('userName',retrievedObject.userName);
-        formik.setFieldValue('password',retrievedObject.password);
-        formik.setFieldValue('isRemember',true);
+  useEffect(() => {
+    var retrievedObject = JSON.parse(localStorage.getItem("login"));
+    if (retrievedObject !== null) {
+      formik.setFieldValue("userName", retrievedObject.userName);
+      formik.setFieldValue("password", retrievedObject.password);
+      formik.setFieldValue("isRemember", true);
     }
-  },[]);
+  }, []);
 
   return (
     <>
@@ -145,16 +151,21 @@ export default function Login() {
                       </label>
                     </div>
                     <div className="lg:w-9/12">
-                      <input
-                        type="password"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        placeholder="Password"
-                        id="password"
-                        name="password"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.password}
-                      />
+                      <div>
+                        <span onClick={togglePassword} className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2">
+                          <i class={(passwordShown) ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                        </span>
+                        <input
+                          type={passwordShown ? "text" : "password"}
+                          className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          placeholder="Password"
+                          name="password"
+                          id="password"
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.password}
+                        />
+                      </div>
                       {formik.touched.password && formik.errors.password ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.password}

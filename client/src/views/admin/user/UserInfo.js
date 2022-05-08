@@ -188,14 +188,14 @@ export default function UserInfo() {
         <span className="text-base font-bold margin-auto-t-b">
           <i className="fas fa-user-circle"></i>&nbsp;
         </span>
-        <span className="text-base margin-auto font-bold">ข้อมูลผู้ใช้</span>
+        <span className="text-base margin-auto font-bold">ข้อมูลผู้ดูแลระบบ</span>
       </div>
       <div className="w-full">
         <form onSubmit={formik.handleSubmit}>
           <div className="w-full">
             <div className="flex justify-between py-2 mt-4">
               <span className="text-lg  text-green-mbk margin-auto font-bold">
-                จัดการข้อมูลผู้ใช้
+                จัดการข้อมูลผู้ดูแลระบบ
               </span>
               {/* <div
               className={

@@ -9,21 +9,26 @@ import { useToasts } from "react-toast-notifications";
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
 import styleSelect from "assets/styles/theme/ReactSelect.js";
-import * as Storage from "../../../services/Storage.service";
+import * as Storage from "../../../../services/Storage.service";
 import "antd/dist/antd.css";
 import moment from "moment";
 import "moment/locale/th";
 import locale from "antd/lib/locale/th_TH";
 import { DatePicker, Space, ConfigProvider } from "antd";
-import * as Address from "../../../services/GetAddress.js";
+import * as Address from "../../../../services/GetAddress";
+import FilesService from "../../../../services/files";
+import CreatableSelect from "react-select/creatable";
+import { ActionMeta, OnChangeValue } from "react-select";
 
-export default function MemberInfo() {
+
+export default function StockInfo() {
   /* Option Select */
   const options = [
     { value: "1", label: "ผู้ดูแลระบบ" },
     { value: "2", label: "บัญชี" },
     { value: "3", label: "การตลาด" },
   ];
+
   const useStyle = styleSelect();
   /* Service Function */
   const { height, width } = useWindowDimensions();
@@ -41,14 +46,19 @@ export default function MemberInfo() {
   const [dataProvice, setDataProvice] = useState([]);
   const [dataDistrict, setDataDistrict] = useState([]);
   const [dataSubDistrict, setSubDistrict] = useState([]);
-  const [dataProviceEng, setDataProviceEng] = useState([]);
-  const [dataDistrictEng, setDataDistrictEng] = useState([]);
-  const [dataSubDistrictEng, setSubDistrictEng] = useState([]);
+  const [postImage, setPostImage] = useState("");
+  const [ isLoadingSelect , setIsLoadingSelect] = useState(false);
+
+  let ProductImage = [];
   let history = useHistory();
   const { addToast } = useToasts();
   /* Method Condition */
   const OnBack = () => {
     history.push("/admin/members");
+  };
+  const handleFileUpload = async (e) => {
+    const base64 = await FilesService.convertToBase64(e.target.files[0]);
+    setPostImage(base64);
   };
   /*พิมพ์เบอร์โทรศัพท์*/
   const onHandleTelephoneChange = (e) => {
@@ -59,6 +69,28 @@ export default function MemberInfo() {
       setPhoneNumber(e.target.value);
       formik.values.phone = e.target.value;
     }
+  };
+
+  const createOption = (label) => ({
+    label,
+    value: label.toLowerCase().replace(/\W/g, ''),
+  });
+
+  const handleCreate = (inputValue) => {
+    this.setState({ isLoading: true });
+    console.group('Option created');
+    console.log('Wait a moment...');
+    setTimeout(() => {
+      const { options } = this.state;
+      const newOption = createOption(inputValue);
+      console.log(newOption);
+      console.groupEnd();
+      this.setState({
+        isLoading: false,
+        options: [...options, newOption],
+        value: newOption,
+      });
+    }, 1000);
   };
 
   /* Form insert value */
@@ -220,13 +252,6 @@ export default function MemberInfo() {
   }
 
   const defaultValue = () => {
-    formik.values.memberCard = "MEM00001";
-    formik.values.firstName = "ชาคริต";
-    formik.values.lastName = "กันพรมกาศ";
-    formik.values.email = "weatherzilla@gmail.com";
-    formik.values.phone = "0804988589";
-    formik.values.address =
-      "บริษัทอันดีไฟนด์ จำกัด สำนักงานใหญ 333/64 หมู่ 6 ตำบล หนองจ๊อม อำเภอ สันทราย จังหวัด เชียงใหม่ 50210";
     formik.values.province =
       formik.values.province === "" ? "1" : formik.values.province;
     formik.values.district =
@@ -256,14 +281,13 @@ export default function MemberInfo() {
 
   useEffect(() => {
     /* Default Value for Testing */
-    formik.values.birthDate =
-      formik.values.birthDate === ""
-        ? new moment(new Date()).toDate()
-        : formik.values.birthDate;
-    formik.values.registerDate =
-      formik.values.registerDate === ""
-        ? new moment(new Date()).toDate()
-        : formik.values.registerDate;
+    formik.values.memberCard = "MEM00001";
+    formik.values.firstName = "ชาคริต";
+    formik.values.lastName = "กันพรมกาศ";
+    formik.values.email = "weatherzilla@gmail.com";
+    formik.values.phone = "0804988589";
+    formik.values.address =
+      "บริษัทอันดีไฟนด์ จำกัด สำนักงานใหญ 333/64 หมู่ 6 ตำบล หนองจ๊อม อำเภอ สันทราย จังหวัด เชียงใหม่ 50210";
     fatchAddress();
     // defaultValue();
     fetchData();
@@ -275,14 +299,16 @@ export default function MemberInfo() {
         <span className="text-sm font-bold margin-auto-t-b">
           <i className="fas fa-user-circle"></i>&nbsp;
         </span>
-        <span className="text-base margin-auto font-bold">ข้อมูลสมาชิก</span>
+        <span className="text-base margin-auto font-bold">
+          ข้อมูลคลังสินค้า
+        </span>
       </div>
       <div className="w-full">
         <form onSubmit={formik.handleSubmit}>
           <div className="w-full">
             <div className="flex justify-between py-2 mt-4">
               <span className="text-lg  text-green-mbk margin-auto font-bold">
-                จัดการสมาชิก
+                จัดการคลังสินค้า
               </span>
             </div>
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg">
@@ -294,7 +320,153 @@ export default function MemberInfo() {
                         className=" text-blueGray-600 text-sm font-bold "
                         htmlFor="grid-password"
                       >
-                        Member Card
+                        รูปภาพสินค้า
+                      </label>
+                      <span className="text-sm ml-2 text-red-500">*</span>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                    <div className="relative flex">
+                      <div className="image-upload mr-4">
+                        <label htmlFor="file-input" className="cursor-pointer">
+                          <div className="img-stock-container">
+                            <img
+                              alt="..."
+                              className={
+                                "img-stock  rounded align-middle border-none shadow-lg"
+                              }
+                              src={
+                                postImage
+                                  ? postImage
+                                  : require("assets/img/noimg.png").default
+                              }
+                            />
+                            <div class="centered text-white font-bold rounded-b-l-r w-full bg-gray-mbk ">
+                              เลือกรูปภาพ
+                            </div>
+                          </div>
+                        </label>
+                        <input
+                          id="file-input"
+                          type="file"
+                          accept="image/jpg, image/jpeg, image/png"
+                          onChange={(e) => handleFileUpload(e)}
+                        />
+                      </div>
+                      <div className="image-upload mr-4">
+                        <label htmlFor="file-input" className="cursor-pointer">
+                          <div className="img-stock-container">
+                            <img
+                              alt="..."
+                              className={
+                                "img-stock  rounded align-middle border-none shadow-lg"
+                              }
+                              src={
+                                postImage
+                                  ? postImage
+                                  : require("assets/img/noimg.png").default
+                              }
+                            />
+                            <div class="centered text-white font-bold rounded-b-l-r w-full bg-gray-mbk ">
+                              เลือกรูปภาพ
+                            </div>
+                          </div>
+                        </label>
+                        <input
+                          id="file-input"
+                          type="file"
+                          accept="image/jpg, image/jpeg, image/png"
+                          onChange={(e) => handleFileUpload(e)}
+                        />
+                      </div>
+                      <div className="image-upload mr-4">
+                        <label htmlFor="file-input" className="cursor-pointer">
+                          <div className="img-stock-container">
+                            <img
+                              alt="..."
+                              className={
+                                "img-stock  rounded align-middle border-none shadow-lg"
+                              }
+                              src={
+                                postImage
+                                  ? postImage
+                                  : require("assets/img/noimg.png").default
+                              }
+                            />
+                            <div class="centered text-white font-bold rounded-b-l-r w-full bg-gray-mbk ">
+                              เลือกรูปภาพ
+                            </div>
+                          </div>
+                        </label>
+                        <input
+                          id="file-input"
+                          type="file"
+                          accept="image/jpg, image/jpeg, image/png"
+                          onChange={(e) => handleFileUpload(e)}
+                        />
+                      </div>
+                      <div className="image-upload mr-4">
+                        <label htmlFor="file-input" className="cursor-pointer">
+                          <div className="img-stock-container">
+                            <img
+                              alt="..."
+                              className={
+                                "img-stock  rounded align-middle border-none shadow-lg"
+                              }
+                              src={
+                                postImage
+                                  ? postImage
+                                  : require("assets/img/noimg.png").default
+                              }
+                            />
+                            <div class="centered text-white font-bold rounded-b-l-r w-full bg-gray-mbk ">
+                              เลือกรูปภาพ
+                            </div>
+                          </div>
+                        </label>
+                        <input
+                          id="file-input"
+                          type="file"
+                          accept="image/jpg, image/jpeg, image/png"
+                          onChange={(e) => handleFileUpload(e)}
+                        />
+                      </div>
+                      <div className="image-upload mr-4">
+                        <label htmlFor="file-input" className="cursor-pointer">
+                          <div className="img-stock-container">
+                            <img
+                              alt="..."
+                              className={
+                                "img-stock  rounded align-middle border-none shadow-lg"
+                              }
+                              src={
+                                postImage
+                                  ? postImage
+                                  : require("assets/img/noimg.png").default
+                              }
+                            />
+                            <div class="centered text-white font-bold rounded-b-l-r w-full bg-gray-mbk ">
+                              เลือกรูปภาพ
+                            </div>
+                          </div>
+                        </label>
+
+                        <input
+                          id="file-input"
+                          type="file"
+                          accept="image/jpg, image/jpeg, image/png"
+                          onChange={(e) => handleFileUpload(e)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                    <div className="relative w-full margin-a">
+                      <label
+                        className=" text-blueGray-600 text-sm font-bold "
+                        htmlFor="grid-password"
+                      >
+                        ชื่อสินค้า
                       </label>
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
@@ -325,29 +497,20 @@ export default function MemberInfo() {
                         className=" text-blueGray-600 text-sm font-bold"
                         htmlFor="grid-password"
                       >
-                        ชื่อ
+                        หมวดหมู่สินค้า
                       </label>
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
                   <div className="w-full lg:w-8/12 px-4  mb-4">
                     <div className="relative w-full">
-                      <input
-                        type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        id="firstName"
-                        name="firstName"
-                        maxLength={100}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.firstName}
-                        autoComplete="firstName"
+                      <CreatableSelect
+                        isClearable
+                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        styles={useStyle}
+                        isLoading={isLoadingSelect}
+                        options={options}
                       />
-                      {formik.touched.firstName && formik.errors.firstName ? (
-                        <div className="text-sm py-2 px-2 text-red-500">
-                          {formik.errors.firstName}
-                        </div>
-                      ) : null}
                     </div>
                   </div>
                   <div className="w-full lg:w-2/12 px-4  mb-2">
@@ -356,7 +519,7 @@ export default function MemberInfo() {
                         className=" text-blueGray-600 text-sm font-bold"
                         htmlFor="grid-password"
                       >
-                        นามสกุล
+                        ราคา
                       </label>
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
@@ -387,7 +550,7 @@ export default function MemberInfo() {
                         className=" text-blueGray-600 text-sm font-bold "
                         htmlFor="grid-password"
                       >
-                        เบอร์โทร
+                        ส่วนลด
                       </label>
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
@@ -450,7 +613,7 @@ export default function MemberInfo() {
                         className=" text-blueGray-600 text-sm font-bold mb-2"
                         htmlFor="grid-password"
                       >
-                        วันเกิด
+                        จำนวนสินค้าในคลัง
                       </label>
                     </div>
                   </div>
@@ -504,7 +667,7 @@ export default function MemberInfo() {
                         className="text-blueGray-600 text-sm font-bold"
                         htmlFor="grid-password"
                       >
-                        วันที่สมัคร
+                        น้ำหนัก
                       </label>
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
@@ -565,7 +728,7 @@ export default function MemberInfo() {
                         className="text-blueGray-600 text-sm font-bold"
                         htmlFor="grid-password"
                       >
-                        ที่อยู่
+                        รายละเอียด
                       </label>
                     </div>
                   </div>
