@@ -126,7 +126,7 @@ export default function Login() {
                     <div className="lg:w-9/12 ">
                       <input
                         type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         placeholder="Username"
                         id="userName"
                         name="userName"
@@ -153,11 +153,11 @@ export default function Login() {
                     <div className="lg:w-9/12">
                       <div>
                         <span onClick={togglePassword} className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2">
-                          <i class={(passwordShown) ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                          <i className={(passwordShown) ? "fas fa-eye-slash" : "fas fa-eye"}></i>
                         </span>
                         <input
                           type={passwordShown ? "text" : "password"}
-                          className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                           placeholder="Password"
                           name="password"
                           id="password"

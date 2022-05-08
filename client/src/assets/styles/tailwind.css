@@ -10,6 +10,7 @@ Document
 /**
 Use a better box model (opinionated).
 */
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans&display=swap');
 
 *,
 *::before,
@@ -83,7 +84,7 @@ body {
 
 
 * {
-  font-family: 'THSarabun';
+  font-family: 'Noto Sans', sans-serif;
 }
 
 @font-face {
@@ -99,6 +100,11 @@ body {
 @font-face {
   font-family: 'THSarabunBold';
   src: url('../../assets/fonts/THSarabun Bold.ttf') format("opentype");
+}
+
+@font-face {
+  font-family: 'Noto Sans';
+  src: url('../../assets/fonts/NotoSansThai-Regular.ttf');
 }
 
 .THSarabun {
@@ -376,7 +382,7 @@ fieldset {
 ol,
 ul {
   list-style: none;
-  margin: 0;
+  margin: 0 !important;
   padding: 0;
 }
 
@@ -1769,78 +1775,53 @@ select {
 }
 
 
-.text-ss {
-  font-size: 0.625rem;
-  line-height: 0.875rem;
-}
-
-.text-xxs {
-  font-size: 0.875rem;
+.text-xs {
+  font-size: 0.7rem;
   line-height: 1rem;
 }
 
-.text-2xs {
-  font-size: 1rem;
-  line-height: 1.25rem;
-}
-
-.text-xs {
-  font-size: 1.1rem;
-  line-height: 1.1rem;
-}
-
 .text-sm {
+  font-size: 0.88rem;
+  line-height: 1rem;
+}
+
+.text-base {
+  font-size: 1rem;
+  line-height: 1rem;
+}
+
+.text-lg {
   font-size: 1.2rem;
   line-height: 1.2rem;
 }
 
-.text-sm-select {
-  font-size: 1.4rem;
-  line-height: 1.4rem;
-}
-
-.text-sm-texteditor {
-  font-size: 1rem !important;
-  line-height: 1rem !important;
-}
-
-.text-base {
-  font-size: 1.5rem;
-  line-height: 1.25rem;
-}
-
-.text-lg {
-  font-size: 1.8rem;
-  line-height: 1.5rem;
-}
-
 .text-xl {
-  font-size: 2rem;
+  font-size: 1.5rem;
   line-height: 1.5rem;
 }
 
 .text-2xl {
-  font-size: 2.25rem;
-  line-height: 1.75rem;
+  font-size: 1.8rem;
+  line-height: 1.8rem;
 }
 
 .text-3xl {
-  font-size: 2.5rem;
-  line-height: 2.25rem;
+  font-size: 2rem;
+  line-height: 2rem;
 }
 
 .text-4xl {
-  font-size: 2.8rem;
-  line-height: 2.25rem;
+  font-size: 2.2rem;
+  line-height: 2.2rem;
 }
 
 .text-5xl {
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   line-height: 1;
 }
 
 .text-6xl {
-  font-size: 4rem;
+  font-size: 3rem;
   line-height: 1.25;
 }
 
@@ -3593,7 +3574,7 @@ select {
   margin: 2px;
   box-shadow: 0 0 2px 0 rgba(10, 10, 10, 0.29);
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.8rem;
 
 }
 
@@ -3658,8 +3639,8 @@ input[type=email]:disabled {
 }
 
 .ant-picker-input input {
-  font-size: 1.2rem !important;
-  line-height: 1.2rem !important;
+  font-size: 0.88rem !important;
+  line-height: 1rem !important;
 
 }
 
@@ -3693,7 +3674,7 @@ input[type=email]:disabled {
 
 /*Ant Tabs*/
 .ant-tabs-tab {
-  font-size: 1.25rem !important;
+  font-size: 0.9rem !important;
   font-weight: bold !important;
   border: 2px solid #DBE2A4 !important;
   border-radius: 0.5rem !important;
@@ -3762,7 +3743,7 @@ input[type=email]:disabled {
 }
 
 .ant-radio-wrapper {
-  font-size: 1.25rem !important;
+  font-size: 0.9rem !important;
   font-weight: bold;
 }
 
@@ -3920,6 +3901,11 @@ input[type=email]:disabled {
   top: 90%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+/* Menu Info */
+.isMenu{
+ inset: 0px auto auto 0px; margin: 0px; transform: translate3d(250px, 100px, 0px);
 }
 
 @media only screen and (max-width: 2500px) {

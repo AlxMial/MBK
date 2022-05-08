@@ -95,7 +95,7 @@ const Otp = () => {
               <div className="mt-5">
                 <InputMask
                   className={
-                    "border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-base text-center shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    "border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-base text-center shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   }
                   value={Data.PhoneNumber}
                   name="PhoneNumber"

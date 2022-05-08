@@ -303,7 +303,7 @@ export default function MemberInfo() {
                     <div className="relative w-full">
                       <input
                         type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="memberCard"
                         name="memberCard"
                         maxLength={100}
@@ -334,7 +334,7 @@ export default function MemberInfo() {
                     <div className="relative w-full">
                       <input
                         type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="firstName"
                         name="firstName"
                         maxLength={100}
@@ -365,7 +365,7 @@ export default function MemberInfo() {
                     <div className="relative w-full">
                       <input
                         type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="lastName"
                         name="lastName"
                         maxLength={100}
@@ -396,7 +396,7 @@ export default function MemberInfo() {
                     <div className="relative w-full ">
                       <input
                         type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="phone"
                         name="phone"
                         maxLength={100}
@@ -428,7 +428,7 @@ export default function MemberInfo() {
                     <div className="relative w-full">
                       <input
                         type="email"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="email"
                         name="email"
                         maxLength={100}
@@ -469,8 +469,8 @@ export default function MemberInfo() {
                               borderRadius: "0.25rem",
                               cursor: "pointer",
                               margin: "0px",
-                              paddingTop: "0.25rem",
-                              paddingBottom: "0.25rem",
+                              paddingTop: "0.5rem",
+                              paddingBottom: "0.5rem",
                               paddingLeft: "0.5rem",
                               paddingRight: "0.5rem",
                             }}
@@ -524,8 +524,8 @@ export default function MemberInfo() {
                               borderRadius: "0.25rem",
                               cursor: "pointer",
                               margin: "0px",
-                              paddingTop: "0.25rem",
-                              paddingBottom: "0.25rem",
+                              paddingTop: "0.5rem",
+                              paddingBottom: "0.5rem",
                               paddingLeft: "0.5rem",
                               paddingRight: "0.5rem",
                             }}
@@ -730,7 +730,7 @@ export default function MemberInfo() {
                     <div className="relative w-full">
                       <input
                         type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="postcode"
                         name="postcode"
                         maxLength={100}

@@ -700,8 +700,8 @@ export default function PointCode() {
                                           borderRadius: "0.25rem",
                                           cursor: "pointer",
                                           margin: "0px",
-                                          paddingTop: "0.25rem",
-                                          paddingBottom: "0.25rem",
+                                          paddingTop: "0.5rem",
+                                          paddingBottom: "0.5rem",
                                           paddingLeft: "0.5rem",
                                           paddingRight: "0.5rem",
                                         }}
@@ -770,8 +770,8 @@ export default function PointCode() {
                                         borderRadius: "0.25rem",
                                         cursor: "pointer",
                                         margin: "0px",
-                                        paddingTop: "0.25rem",
-                                        paddingBottom: "0.25rem",
+                                        paddingTop: "0.5rem",
+                                        paddingBottom: "0.5rem",
                                         paddingLeft: "0.5rem",
                                         paddingRight: "0.5rem",
                                       }}
@@ -1149,8 +1149,8 @@ export default function PointCode() {
                                           borderRadius: "0.25rem",
                                           cursor: "pointer",
                                           margin: "0px",
-                                          paddingTop: "0.25rem",
-                                          paddingBottom: "0.25rem",
+                                          paddingTop: "0.5rem",
+                                          paddingBottom: "0.5rem",
                                           paddingLeft: "0.5rem",
                                           paddingRight: "0.5rem",
                                         }}
@@ -1217,8 +1217,8 @@ export default function PointCode() {
                                         borderRadius: "0.25rem",
                                         cursor: "pointer",
                                         margin: "0px",
-                                        paddingTop: "0.25rem",
-                                        paddingBottom: "0.25rem",
+                                        paddingTop: "0.5rem",
+                                        paddingBottom: "0.5rem",
                                         paddingLeft: "0.5rem",
                                         paddingRight: "0.5rem",
                                       }}

@@ -34,6 +34,7 @@ export default function UserInfo() {
   const [confirmPassword, setConfirmPassword] = useState(false);
   const [valueConfirm, setValueConfirm] = useState("");
   const [enableControl, setIsEnableControl] = useState(true);
+  const [isMenu, setIsMenu] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const useStyle = styleSelect();
   let history = useHistory();
@@ -45,6 +46,10 @@ export default function UserInfo() {
   const validateConfirm = (e) => {
     if (e !== formik.values.password) setConfirmPassword(true);
     else setConfirmPassword(false);
+  };
+
+  const ClickMenu = () => {
+    setIsMenu(!isMenu);
   };
 
   const OnBack = () => {
@@ -180,6 +185,16 @@ export default function UserInfo() {
     // formik.values.password = "123456";
     // setValueConfirm("123456");
     fetchData();
+    const checkIfClickedOutside = (e) => {
+      if ((isMenu && ( e.toElement.id !== "back" ||  e.toElement.id !== "save")) || e.toElement.id === "") {
+        setIsMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", checkIfClickedOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
   }, []);
 
   return (
@@ -188,7 +203,9 @@ export default function UserInfo() {
         <span className="text-base font-bold margin-auto-t-b">
           <i className="fas fa-user-circle"></i>&nbsp;
         </span>
-        <span className="text-base margin-auto font-bold">ข้อมูลผู้ดูแลระบบ</span>
+        <span className="text-base margin-auto font-bold">
+          ข้อมูลผู้ดูแลระบบ
+        </span>
       </div>
       <div className="w-full">
         <form onSubmit={formik.handleSubmit}>
@@ -197,69 +214,85 @@ export default function UserInfo() {
               <span className="text-lg  text-green-mbk margin-auto font-bold">
                 จัดการข้อมูลผู้ดูแลระบบ
               </span>
-              {/* <div
-              className={
-                "margin-auto-t-b" + (width < 1024 ? " hidden" : " block")
-              }
-            > */}
-
-              {/* </div> */}
-              {/* <div
-              className={
-                "margin-auto-t-b" + (width < 1024 ? " block" : " hidden")
-              }
-            >
-              <button
-                id="dropdownDefault"
-                data-dropdown-toggle="dropdownmenu"
-                className="flex items-center py-4 px-2 w-full text-base font-normal bg-transparent outline-none button-focus"
-                type="button"
-              >
-                <i className="fas fa-bars"></i>
-              </button>
               <div
-                id="dropdownmenu"
-                className="hidden z-10 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 buttonInfo"
+                className={
+                  "margin-auto-t-b" + (width < 1024 ? " hidden" : " block")
+                }
               >
-                <ul
-                  className="py-1 text-sm text-gray-700 dark:text-gray-200"
-                  aria-labelledby="dropdownDefault"
-                >
-                  <li>
-                    <div className="flex flex-wrap">
-                      <span className="block py-2 pl-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-2/12 text-center">
-                        <i className="fas fa-save"></i>
-                      </span>
-                      <span className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
-                        บันทึก
-                      </span>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex flex-wrap">
-                      <span className="block py-2 pl-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-2/12 text-center">
-                        <i className="fas fa-arrow-left"></i>
-                      </span>
-                      <span className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
-                        ย้อนกลับ
-                      </span>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex flex-wrap">
-                      <span className="block py-2 pl-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-2/12 text-center">
-                        <i className="fas fa-edit"></i>
-                      </span>
-                      <span className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
-                        แก้ไข
-                      </span>
-                    </div>
-                  </li>
-                </ul>
+                <div className="w-full px-4">
+                  <div className="relative w-full text-right">
+                    <button
+                      className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                      type="button"
+                      onClick={() => {
+                        OnBack();
+                      }}
+                    >
+                      ย้อนกลับ
+                    </button>
+                    <button
+                      className={
+                        "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                      }
+                      type="submit"
+                    >
+                      บันทึกข้อมูล
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div> */}
+              <div
+                className={
+                  "margin-auto-t-b" + (width < 1024 ? " block" : " hidden")
+                }
+              >
+                <button
+                  id="dropdownDefault"
+                  // data-dropdown-toggle="dropdownmenu"
+                  className="flex items-center py-4 px-2 w-full text-base font-normal bg-transparent outline-none button-focus"
+                  type="button"
+                  onClick={() => ClickMenu()}
+                >
+                  <i className="fas fa-bars"></i>
+                </button>
+                <div
+                  id="dropdownmenu"
+                  className={
+                    "z-10 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 buttonInfo" +
+                    (isMenu ? " block absolute isMenu" : " hidden")
+                  }
+                >
+                  <ul
+                    className="py-1 text-sm text-gray-700 dark:text-gray-200"
+                    aria-labelledby="dropdownDefault"
+                  >
+                    <li>
+                      <div className="flex flex-wrap" id="save">
+                        <span id="save" onClick={()=>{formik.handleSubmit();}} className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
+                        <i className="fas fa-save mr-2"></i>
+                          บันทึก
+                        </span>
+                      </div>
+                    </li>
+                    <li>
+                      <div className="flex flex-wrap" id="back">
+                        <span
+                          onClick={() => {
+                            OnBack();
+                          }}
+                          id="back"
+                          className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
+                        >
+                          <i className="fas fa-arrow-left mr-2"></i>
+                          ย้อนกลับ
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </div>
-            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg">
+            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg overflow-y-auto">
               {/* <div className="rounded-t bg-white mb-0 px-2 py-4">
                 <div className="flex justify-between">
                   <div className="margin-auto-t-b">
@@ -368,7 +401,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <input
                         type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="userName"
                         name="userName"
                         maxLength={100}
@@ -400,7 +433,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <input
                         type="password"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="password"
                         name="password"
                         maxLength={100}
@@ -441,7 +474,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <input
                         type="password"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="confirmPassword"
                         name="confirmPassword"
                         onBlur={formik.handleBlur}
@@ -504,7 +537,7 @@ export default function UserInfo() {
                     <div className="relative w-full ">
                       <input
                         type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="firstName"
                         name="firstName"
                         maxLength={100}
@@ -535,7 +568,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <input
                         type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="lastName"
                         name="lastName"
                         maxLength={100}
@@ -566,7 +599,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <input
                         type="email"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="email"
                         name="email"
                         maxLength={100}
@@ -597,7 +630,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <input
                         type="text"
-                        className="border-0 px-2 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="identityCard"
                         name="identityCard"
                         maxLength={17}
@@ -608,27 +641,6 @@ export default function UserInfo() {
                         value={formik.values.identityCard}
                         autoComplete="new-password"
                       />
-                    </div>
-                  </div>
-                  <div className="w-full px-4">
-                    <div className="relative w-full text-right">
-                      <button
-                        className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                        type="button"
-                        onClick={() => {
-                          OnBack();
-                        }}
-                      >
-                        ย้อนกลับ
-                      </button>
-                      <button
-                        className={
-                          "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                        }
-                        type="submit"
-                      >
-                        บันทึกข้อมูล
-                      </button>
                     </div>
                   </div>
                 </div>

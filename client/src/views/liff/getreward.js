@@ -90,7 +90,7 @@ const GetReward = () => {
                           <div className="px-5">
                             <InputMask
                               className={
-                                "border-0 px-2 py-1 placeholder-blueGray-300 text-gray-mbk bg-white  text-base  focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                "border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-base  focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                               }
                               style={{ borderBottom: "1px solid #d6d6d6" }}
                               value={e.code}
