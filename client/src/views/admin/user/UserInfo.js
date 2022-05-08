@@ -11,6 +11,7 @@ import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
 import * as Storage from "../../../services/Storage.service";
 import styleSelect from "assets/styles/theme/ReactSelect.js";
+import useMenu from "services/useMenu";
 
 export default function UserInfo() {
   /* Option Select */
@@ -22,6 +23,7 @@ export default function UserInfo() {
 
   /* Service Function */
   const { height, width } = useWindowDimensions();
+  const { menu } = useMenu();
   let { id } = useParams();
 
   /* RegEx formatter */
@@ -34,7 +36,7 @@ export default function UserInfo() {
   const [confirmPassword, setConfirmPassword] = useState(false);
   const [valueConfirm, setValueConfirm] = useState("");
   const [enableControl, setIsEnableControl] = useState(true);
-  const [isMenu, setIsMenu] = useState(false);
+  // const [isMenu, setIsMenu] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const useStyle = styleSelect();
   let history = useHistory();
@@ -48,9 +50,9 @@ export default function UserInfo() {
     else setConfirmPassword(false);
   };
 
-  const ClickMenu = () => {
-    setIsMenu(!isMenu);
-  };
+  // const ClickMenu = () => {
+  //   setIsMenu(!isMenu);
+  // };
 
   const OnBack = () => {
     history.push("/admin/users");
@@ -127,7 +129,7 @@ export default function UserInfo() {
               Storage.GetLanguage() === "th"
                 ? "บันทึกข้อมูลสำเร็จ"
                 : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
+              { appearance: "success", autoDismiss: false }
             );
           } else {
             addToast(
@@ -147,7 +149,7 @@ export default function UserInfo() {
               Storage.GetLanguage() === "th"
                 ? "บันทึกข้อมูลสำเร็จ"
                 : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
+              { appearance: "success", autoDismiss: false }
             );
           } else
             addToast(
@@ -185,16 +187,17 @@ export default function UserInfo() {
     // formik.values.password = "123456";
     // setValueConfirm("123456");
     fetchData();
-    const checkIfClickedOutside = (e) => {
-      if ((isMenu && ( e.toElement.id !== "back" ||  e.toElement.id !== "save")) || e.toElement.id === "") {
-        setIsMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", checkIfClickedOutside);
+    console.log(menu)
+    // const checkIfClickedOutside = (e) => {
+    //   if ((isMenu && ( e.toElement.id !== "back" ||  e.toElement.id !== "save")) || e.toElement.id === "") {
+    //     setIsMenu(false);
+    //   }
+    // };
+    // document.addEventListener("mousedown", checkIfClickedOutside);
 
-    return () => {
-      document.removeEventListener("mousedown", checkIfClickedOutside);
-    };
+    // return () => {
+    //   document.removeEventListener("mousedown", checkIfClickedOutside);
+    // };
   }, []);
 
   return (
@@ -247,19 +250,18 @@ export default function UserInfo() {
                 }
               >
                 <button
-                  id="dropdownDefault"
                   // data-dropdown-toggle="dropdownmenu"
                   className="flex items-center py-4 px-2 w-full text-base font-normal bg-transparent outline-none button-focus"
                   type="button"
-                  onClick={() => ClickMenu()}
+                  // onClick={() => ClickMenu()}
                 >
-                  <i className="fas fa-bars"></i>
+                  <i className="fas fa-bars" id="dropdownDefault"></i>
                 </button>
                 <div
                   id="dropdownmenu"
                   className={
                     "z-10 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 buttonInfo" +
-                    (isMenu ? " block absolute isMenu" : " hidden")
+                    (menu ? " block absolute isMenu" : " hidden")
                   }
                 >
                   <ul

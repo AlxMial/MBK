@@ -3537,7 +3537,7 @@ select {
 
 /* React toast */
 .react-toast-notifications__toast__content {
-  font-size: 1.25rem !important;
+  font-size: 1rem !important;
 }
 
 .react-toast-notifications__toast__icon-wrapper {

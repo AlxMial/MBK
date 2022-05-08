@@ -16,6 +16,7 @@ import "moment/locale/th";
 import locale from "antd/lib/locale/th_TH";
 import { DatePicker, Space, ConfigProvider } from "antd";
 import * as Address from "../../../services/GetAddress.js";
+import useMenu from "services/useMenu";
 
 export default function MemberInfo() {
   /* Option Select */
@@ -27,6 +28,7 @@ export default function MemberInfo() {
   const useStyle = styleSelect();
   /* Service Function */
   const { height, width } = useWindowDimensions();
+  const { menu } = useMenu();
   let { id } = useParams();
 
   /* RegEx formatter */
@@ -60,7 +62,6 @@ export default function MemberInfo() {
       formik.values.phone = e.target.value;
     }
   };
-
   /* Form insert value */
   const formik = useFormik({
     initialValues: {
@@ -285,7 +286,89 @@ export default function MemberInfo() {
                 จัดการสมาชิก
               </span>
             </div>
-            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg">
+
+            <div className="flex justify-between py-2 mt-4">
+              <span className="text-lg  text-green-mbk margin-auto font-bold">
+                จัดการข้อมูลผู้ดูแลระบบ
+              </span>
+              <div
+                className={
+                  "margin-auto-t-b" + (width < 1024 ? " hidden" : " block")
+                }
+              >
+                <div className="w-full px-4">
+                  <div className="relative w-full text-right">
+                    <button
+                      className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                      type="button"
+                      onClick={() => {
+                        OnBack();
+                      }}
+                    >
+                      ย้อนกลับ
+                    </button>
+                    <button
+                      className={
+                        "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                      }
+                      type="submit"
+                    >
+                      บันทึกข้อมูล
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                className={
+                  "margin-auto-t-b" + (width < 1024 ? " block" : " hidden")
+                }
+              >
+                <button
+           
+                  // data-dropdown-toggle="dropdownmenu"
+                  className="flex items-center py-4 px-2 w-full text-base font-normal bg-transparent outline-none button-focus"
+                  type="button"
+                >
+                  <i className="fas fa-bars" id="dropdownDefault"></i>
+                </button>
+                <div
+                  id="dropdownmenu"
+                  className={
+                    "z-10 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 buttonInfo" +
+                    (menu ? " block absolute isMenu" : " hidden")
+                  }
+                >
+                  <ul
+                    className="py-1 text-sm text-gray-700 dark:text-gray-200"
+                    aria-labelledby="dropdownDefault"
+                  >
+                    <li>
+                      <div className="flex flex-wrap" id="save">
+                        <span id="save" onClick={()=>{formik.handleSubmit();}} className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
+                        <i className="fas fa-save mr-2"></i>
+                          บันทึก
+                        </span>
+                      </div>
+                    </li>
+                    <li>
+                      <div className="flex flex-wrap" id="back">
+                        <span
+                          onClick={() => {
+                            OnBack();
+                          }}
+                          id="back"
+                          className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
+                        >
+                          <i className="fas fa-arrow-left mr-2"></i>
+                          ย้อนกลับ
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg overflow-y-auto">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
                   <div className="w-full lg:w-2/12 px-4 mb-2">
@@ -741,7 +824,7 @@ export default function MemberInfo() {
                       />
                     </div>
                   </div>
-                  <div className="w-full px-4">
+                  {/* <div className="w-full px-4">
                     <div className="relative w-full text-right">
                       <button
                         className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
@@ -761,7 +844,7 @@ export default function MemberInfo() {
                         บันทึกข้อมูล
                       </button>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
