@@ -3,7 +3,6 @@ const Tutorial = db.tutorials;
 const readXlsxFile = require("read-excel-file/node");
 const excel = require("exceljs");
 const crypto = require('crypto');
-const { encrypt, decrypt } = require('../../services/crypto');
 const iv = '283d0ce11c80a9a4da9eebcb40e7c7d9';
 const content = '1fda3b405f0edf98ef80';
 
@@ -103,11 +102,9 @@ const generateCode = (req, res) => {
       isDeleted: 0,
     };
     var Duplicate = ArrayCoupons.some((item) => item.code === codeCoupon);
-    //console.log(req.body.tbPointCodeHDId)
     if (ArrayCoupons.length === parseInt(req.body.pointCodeQuantityCode)) break;
     else if (!Duplicate) ArrayCoupons.push(ArrayCoupon);
   }
-  //decryptCoupon(ArrayCoupons[0].code, ArrayCoupons[0].code.length)
   Tutorial.bulkCreate(ArrayCoupons)
   .then(() => {
     res.status(200).send({
@@ -121,8 +118,6 @@ const generateCode = (req, res) => {
     });
   });
 };
-
-
 
 const decryptCoupon = (codeCoupon,length) =>{
   var code = codeCoupon.substring(length-4, length).split('');

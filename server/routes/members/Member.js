@@ -26,32 +26,48 @@ router.post("/", async (req, res) => {
     },
   });
 
-  if (!member) {
-    const members = await tbMember.create(req.body);
-    res.json({
-      status: true,
-      isEmail: true,
-      isPhone: true,
-      message: "success",
-      tbMember: members,
-    });
-  } else {
-    if (member.memberCard === req.body.memberCard)
+  if (
+    (req.body.firstName !== "",
+    req.body.lastName !== "",
+    req.body.phone !== "",
+    req.body.email !== "",
+    req.body.birthDate !== "",
+    req.body.registerDate !== "",
+    req.body.address !== "",
+    req.body.uid !== "",
+    req.body.sex !== "",
+    req.body.sMemberType !== "",
+    req.body.memberType !== "")
+  ) {
+    if (!member) {
+      const members = await tbMember.create(req.body);
       res.json({
-        status: false,
-        isEmail: false,
-        isPhone: true,
-        message: "Unsuccess",
-        tbMember: null,
-      });
-    else if (member.phone === req.body.phone)
-      res.json({
-        status: false,
+        status: true,
         isEmail: true,
-        isPhone: false,
-        message: "Unsuccess",
-        tbMember: null,
+        isPhone: true,
+        message: "success",
+        tbMember: members,
       });
+    } else {
+      if (member.memberCard === req.body.memberCard)
+        res.json({
+          status: false,
+          isEmail: false,
+          isPhone: true,
+          message: "Unsuccess",
+          tbMember: null,
+        });
+      else if (member.phone === req.body.phone)
+        res.json({
+          status: false,
+          isEmail: true,
+          isPhone: false,
+          message: "Unsuccess",
+          tbMember: null,
+        });
+    }
+  } else {
+    res.json({ status: false, error: "value is empty" });
   }
 });
 
@@ -66,32 +82,48 @@ router.put("/", async (req, res) => {
     },
   });
 
-  if (!member) {
-    const members = await tbMember.update(req.body, {
-      where: { id: req.body.id },
-    });
-    res.json({ status: true, message: "success", tbMember: members });
+  if (
+    (req.body.firstName !== "",
+    req.body.lastName !== "",
+    req.body.phone !== "",
+    req.body.email !== "",
+    req.body.birthDate !== "",
+    req.body.registerDate !== "",
+    req.body.address !== "",
+    req.body.uid !== "",
+    req.body.sex !== "",
+    req.body.sMemberType !== "",
+    req.body.memberType !== "")
+  ) {
+    if (!member) {
+      const members = await tbMember.update(req.body, {
+        where: { id: req.body.id },
+      });
+      res.json({ status: true, message: "success", tbMember: members });
+    } else {
+      if (member.memberCard === req.body.memberCard)
+        res.json({
+          status: false,
+          isEmail: false,
+          isPhone: true,
+          message: "Unsuccess",
+          tbMember: null,
+        });
+      else if (member.phone === req.body.phone)
+        res.json({
+          status: false,
+          isEmail: true,
+          isPhone: false,
+          message: "Unsuccess",
+          tbMember: null,
+        });
+    }
   } else {
-    if (member.memberCard === req.body.memberCard)
-      res.json({
-        status: false,
-        isEmail: false,
-        isPhone: true,
-        message: "Unsuccess",
-        tbMember: null,
-      });
-    else if (member.phone === req.body.phone)
-      res.json({
-        status: false,
-        isEmail: true,
-        isPhone: false,
-        message: "Unsuccess",
-        tbMember: null,
-      });
+    res.json({ status: false, error: "value is empty" });
   }
 });
 
-router.delete("/:memberId", async (req, res) => {
+router.delete("/:memberId", validateToken, async (req, res) => {
   const memberId = req.params.memberId;
   req.body.isDeleted = true;
   tbMember.update(req.body, { where: { id: memberId } });
