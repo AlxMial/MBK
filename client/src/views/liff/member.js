@@ -14,8 +14,6 @@ const Member = () => {
   const history = useHistory();
   const { TabPane } = Tabs;
   const tabsChange = () => {};
-  // const [member, setmember] = useState("Green MEMBER");
-
   const [tbMember, settbMember] = useState({});
   const getMembers = async () => {
     axios
