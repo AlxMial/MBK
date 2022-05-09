@@ -38,6 +38,7 @@ export default function UserInfo() {
   const [enableControl, setIsEnableControl] = useState(true);
   const [enablePassword, setenablePassword] = useState(true);
   const [errorPassword, setErrorPassword] = useState(false);
+  const [errorCurrentPassword, seterrorCurrentPassword] = useState(false);
   const [passwordShown, setPasswordShown] = useState(false);
   const [confirmpasswordShown, setConfirmpasswordShown] = useState(false);
   const [currentpasswordShown, setcurrentpasswordShown] = useState(false);
@@ -94,6 +95,7 @@ export default function UserInfo() {
       isDeleted: false,
       empCode: "",
       position: "",
+      currentPassword: "",
     },
     validationSchema: Yup.object({
       userName: Yup.string().required(
@@ -140,51 +142,59 @@ export default function UserInfo() {
       ),
     }),
     onSubmit: (values) => {
-      if (isNew) {
-        formik.values.role =
-          formik.values.role === "" ? "1" : formik.values.role;
-        axios.post("users", values).then((res) => {
-          if (res.data.status) {
-            setIsNew(false);
-            formik.values.id = res.data.tbUser.id;
-            setenablePassword(true);
-            setConfirmPassword(false);
-            formik.setFieldValue('confirmPassword','');
-            formik.setFieldValue('password','');
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? res.data.message
-                : res.data.message,
-              { appearance: "warning", autoDismiss: true }
-            );
-          }
-        });
-      } else {
-        formik.values.role =
-          formik.values.role === "" ? "1" : formik.values.role;
-        axios.put("users", values).then((res) => {
-          if (res.data.status) {
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? res.data.message
-                : res.data.message,
-              { appearance: "warning", autoDismiss: true }
-            );
-        });
+      console.log(errorCurrentPassword);
+      console.log(errorPassword);
+      if (!errorCurrentPassword && !errorPassword) {
+        if (isNew) {
+          formik.values.role =
+            formik.values.role === "" ? "1" : formik.values.role;
+          axios.post("users", values).then((res) => {
+            if (res.data.status) {
+              setIsNew(false);
+              formik.values.id = res.data.tbUser.id;
+              setenablePassword(true);
+              setConfirmPassword(false);
+              formik.setFieldValue("confirmPassword", "");
+              formik.setFieldValue("password", "");
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
+            } else {
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? res.data.message
+                  : res.data.message,
+                { appearance: "warning", autoDismiss: true }
+              );
+            }
+          });
+        } else {
+          formik.values.role =
+            formik.values.role === "" ? "1" : formik.values.role;
+          axios.put("users", values).then((res) => {
+            if (res.data.status) {
+              setenablePassword(true);
+              setConfirmPassword(false);
+              formik.setFieldValue("confirmPassword", "");
+              formik.setFieldValue("password", "");
+              formik.setFieldValue("currentPassword", "");
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
+            } else if (!res.data.isMatch) {
+              addToast(
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสผ่านปัจจุบันไม่ถูกต้อง",
+                { appearance: "warning", autoDismiss: true }
+              );
+            }
+          });
+        }
       }
     },
   });
@@ -193,12 +203,11 @@ export default function UserInfo() {
     let response = await axios.get(`/users/byId/${id}`);
     let user = await response.data.tbUser;
     formik.resetForm();
-    setValueConfirm('');
-    validateConfirm('');
+    setValueConfirm("");
+    validateConfirm("");
     if (user !== null) {
       for (var columns in response.data.tbUser) {
-        if(columns !== 'password')
-        {
+        if (columns !== "password") {
           formik.setFieldValue(columns, response.data.tbUser[columns], false);
         }
       }
@@ -234,7 +243,7 @@ export default function UserInfo() {
         </span>
       </div>
       <div className="w-full">
-        <form onSubmit={formik.handleSubmit}>
+        <form>
           <div className="w-full">
             <div className="flex justify-between py-2 mt-4">
               <span className="text-lg  text-green-mbk margin-auto font-bold">
@@ -260,7 +269,23 @@ export default function UserInfo() {
                       className={
                         "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                       }
-                      type="submit"
+                      type="button"
+                      onClick={() => {
+                        if (!enablePassword) {
+                          if (
+                            formik.values.password === "" ||
+                            formik.values.password === undefined
+                          )
+                            setErrorPassword(true);
+                          if (
+                            (formik.values.currentPassword === "" ||
+                              formik.values.currentPassword === undefined) &&
+                            !isNew
+                          )
+                            seterrorCurrentPassword(true);
+                        }
+                        formik.handleSubmit();
+                      }}
                     >
                       บันทึกข้อมูล
                     </button>
@@ -299,6 +324,21 @@ export default function UserInfo() {
                         <span
                           id="save"
                           onClick={() => {
+                            if (!enablePassword) {
+                              if (
+                                formik.values.password === "" ||
+                                formik.values.password === undefined
+                              )
+                                setErrorPassword(true);
+                              if (
+                                (formik.values.currentPassword === "" ||
+                                  formik.values.currentPassword ===
+                                    undefined) &&
+                                !isNew
+                              )
+                                seterrorCurrentPassword(true);
+                            }
+
                             formik.handleSubmit();
                           }}
                           className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
@@ -326,95 +366,7 @@ export default function UserInfo() {
                 </div>
               </div>
             </div>
-            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg overflow-y-auto">
-              {/* <div className="rounded-t bg-white mb-0 px-2 py-4">
-                <div className="flex justify-between">
-                  <div className="margin-auto-t-b">
-                    <h6 className="text-blueGray-700 text-lg font-bold ">
-                      จัดการข้อมูลผู้ใช้
-                    </h6>
-                  </div>
-           
-                  <div
-                    className={
-                      "margin-auto-t-b" + (width < 1024 ? " hidden" : " block")
-                    }
-                  >
-                    <button
-                      className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                      type="button"
-                      onClick={() => {
-                        OnBack();
-                      }}
-                    >
-                      ย้อนกลับ
-                    </button>
-                    <button
-                      className={
-                        "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                      }
-                      type="submit"
-                    >
-                      บันทึกข้อมูล
-                    </button>
-                  </div>
-                  <div
-                    className={
-                      "margin-auto-t-b" + (width < 1024 ? " block" : " hidden")
-                    }
-                  >
-
-                    <button
-                      id="dropdownDefault"
-                      data-dropdown-toggle="dropdown"
-                      className="flex items-center py-4 px-2 w-full text-base font-normal bg-transparent outline-none button-focus"
-                      type="button"
-                    >
-                      <i className="fas fa-bars"></i>
-                    </button>
-                    <div
-                      id="dropdown"
-                      className="hidden z-10 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 buttonInfo"
-                    >
-                      <ul
-                        className="py-1 text-sm text-gray-700 dark:text-gray-200"
-                        aria-labelledby="dropdownDefault"
-                      >
-                        <li>
-                          <div className="flex flex-wrap">
-                            <span className="block py-2 pl-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-2/12 text-center">
-                              <i className="fas fa-save"></i>
-                            </span>
-                            <span className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
-                              บันทึก
-                            </span>
-                          </div>
-                        </li>
-                        <li>
-                          <div className="flex flex-wrap">
-                            <span className="block py-2 pl-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-2/12 text-center">
-                              <i className="fas fa-arrow-left"></i>
-                            </span>
-                            <span className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
-                              ย้อนกลับ
-                            </span>
-                          </div>
-                        </li>
-                        <li>
-                          <div className="flex flex-wrap">
-                            <span className="block py-2 pl-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-2/12 text-center">
-                              <i className="fas fa-edit"></i>
-                            </span>
-                            <span className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
-                              แก้ไข
-                            </span>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
+            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
                   <div className="w-full">
@@ -428,14 +380,26 @@ export default function UserInfo() {
                         <button
                           className={
                             "bg-green-mbk text-white active:bg-green-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" +
-                            (isNew ? " hidden" : "")
+                            (isNew || !enablePassword ? " hidden" : "")
                           }
                           type="button"
                           onClick={() => {
-                            OnBack();
+                            setenablePassword(false);
                           }}
                         >
                           เปลี่ยนแปลงรหัสผ่าน
+                        </button>
+                        <button
+                          className={
+                            "bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" +
+                            (isNew || enablePassword ? " hidden" : "")
+                          }
+                          type="button"
+                          onClick={() => {
+                            setenablePassword(true);
+                          }}
+                        >
+                          ยกเลิกเปลี่ยนแปลงรหัสผ่าน
                         </button>
                       </div>
                     </div>
@@ -499,7 +463,9 @@ export default function UserInfo() {
                       >
                         <i
                           className={
-                            currentpasswordShown ? "fas fa-eye-slash" : "fas fa-eye"
+                            currentpasswordShown
+                              ? "fas fa-eye-slash"
+                              : "fas fa-eye"
                           }
                         ></i>
                       </span>
@@ -509,16 +475,21 @@ export default function UserInfo() {
                         id="currentPassword"
                         name="currentPassword"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+
+                          if (e.target.value.length <= 0)
+                            seterrorCurrentPassword(true);
+                          else seterrorCurrentPassword(false);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.currentPassword}
                         autoComplete="password"
-            
                         disabled={enablePassword}
                       />
-                      {formik.touched.password && formik.errors.password ? (
+                      {errorCurrentPassword ? (
                         <div className="text-sm py-2 px-2 text-red-500">
-                          {formik.errors.password}
+                          * กรุณาทำการกรอกรหัสผ่านปัจจุบัน
                         </div>
                       ) : null}
                     </div>
@@ -607,7 +578,9 @@ export default function UserInfo() {
                       >
                         <i
                           className={
-                            confirmpasswordShown ? "fas fa-eye-slash" : "fas fa-eye"
+                            confirmpasswordShown
+                              ? "fas fa-eye-slash"
+                              : "fas fa-eye"
                           }
                         ></i>
                       </span>

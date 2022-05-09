@@ -45,7 +45,7 @@ export default function Login() {
         } else if (width < 1180 && response.data.role === "1") {
           /*ปรับการ Login Mobile ให้ตรวจสอบเฉพาะ Admin*/
           addToast(
-            "Can't open Adminstrator management page, must use on Computer only.",
+            "ไม่สามารถทำการเข้าสู่ระบบได้ เนื่องจากรหัสผ่านหรือชื่อผู้เข้าใช้งานไม่ถูกต้อง",
             { appearance: "error", autoDismiss: true }
           );
         } else {

@@ -48,11 +48,24 @@ router.post("/", async (req, res) => {
     });
 
     if (!user) {
-      bcrypt.hash(req.body.password, 10).then(async (hash) => {
-        req.body.password = hash;
-        const listUser = await tbUser.create(req.body);
-        res.json({ status: true, message: "success", tbUser: listUser });
-      });
+      if (
+        req.body.role !== "" ||
+        req.body.firstName !== "" ||
+        req.body.lastName !== "" ||
+        req.body.email !== "" ||
+        req.body.empCode !== "" ||
+        req.body.position !== "" ||
+        req.body.userName !== "" ||
+        req.body.password !== ""
+      ) {
+        bcrypt.hash(req.body.password, 10).then(async (hash) => {
+          req.body.password = hash;
+          const listUser = await tbUser.create(req.body);
+          res.json({ status: true, message: "success", tbUser: listUser });
+        });
+      } else {
+        res.json({ status: false, error: "value is empty" });
+      }
     } else {
       if (user.email === req.body.email)
         res.json({
@@ -85,22 +98,52 @@ router.get("/byId/:id", async (req, res) => {
 
 router.put("/", async (req, res) => {
   const user = await tbUser.findOne({ where: { id: req.body.id } });
+
   if (!user) {
-    res.json({ error: "User Doesn't Exist" });
+    res.json({ status: false, error: "user not found" });
   } else {
-    if (user.password === req.body.password) {
-      const listUser = await tbUser.update(req.body, {
-        where: { id: req.body.id },
-      });
-      res.json({ status: true, message: "success", tbUser: listUser });
-    } else {
-      bcrypt.hash(req.body.password, 10).then(async (hash) => {
-        req.body.password = hash;
+    if (
+      req.body.role !== "" ||
+      req.body.firstName !== "" ||
+      req.body.lastName !== "" ||
+      req.body.email !== "" ||
+      req.body.empCode !== "" ||
+      req.body.position !== "" ||
+      req.body.userName !== ""
+    ) {
+      if (req.body.currentPassword !== "" && req.body.password !== "") {
+        bcrypt
+          .compare(req.body.currentPassword, user.password)
+          .then(async (match) => {
+            if (!match) {
+              res.json({
+                status: false,
+                isMatch: false,
+                error: "Wrong Password Combination",
+              });
+            } else {
+              bcrypt.hash(req.body.password, 10).then(async (hash) => {
+                req.body.password = hash;
+                const listUser = await tbUser.update(req.body, {
+                  where: { id: req.body.id },
+                });
+                res.json({
+                  status: true,
+                  message: "success",
+                  tbUser: listUser,
+                });
+              });
+            }
+          });
+      } else {
+        req.body.password = user.password;
         const listUser = await tbUser.update(req.body, {
           where: { id: req.body.id },
         });
         res.json({ status: true, message: "success", tbUser: listUser });
-      });
+      }
+    } else {
+      res.json({ status: false, error: "value is empty" });
     }
   }
 });

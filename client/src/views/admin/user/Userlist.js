@@ -337,7 +337,14 @@ export default function UserList() {
                         "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                       }
                     >
-                      เลขบัตรประชาชน
+                      รหัสพนักงาน
+                    </th>
+                    <th
+                      className={
+                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
+                      }
+                    >
+                      ตำแหน่ง
                     </th>
                     <th
                       className={
@@ -403,7 +410,15 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              {value.identityCard}
+                              {value.empCode}
+                            </Link>
+                          </td>
+                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
+                            <Link
+                              className="text-gray-mbk hover:text-gray-mbk "
+                              to={`/admin/usersinfo/${value.id}`}
+                            >
+                              {value.position}
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
