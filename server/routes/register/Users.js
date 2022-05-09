@@ -54,40 +54,52 @@ router.post("/", async (req, res) => {
         res.json({ status: true, message: "success", tbUser: listUser });
       });
     } else {
-      if(user.email === req.body.email)
-        res.json({ status: false, message: "Email ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่", tbUser: null });
+      if (user.email === req.body.email)
+        res.json({
+          status: false,
+          message: "Email ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
+          tbUser: null,
+        });
       else if (user.userName === req.body.userName)
-        res.json({ status: false, message: "Username ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่", tbUser: null });
+        res.json({
+          status: false,
+          message: "Username ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
+          tbUser: null,
+        });
     }
   } catch (err) {
     res.json({ status: false, message: err.message, tbUesr: null });
   }
 });
 
-router.get("/" , async (req, res) => {
-  const listUser = await tbUser.findAll({where:{isDeleted:false}});
-  res.json({status: true, message: "success", tbUser : listUser});
+router.get("/", async (req, res) => {
+  const listUser = await tbUser.findAll({ where: { isDeleted: false } });
+  res.json({ status: true, message: "success", tbUser: listUser });
 });
 
-router.get("/byId/:id" , async (req, res) => {
+router.get("/byId/:id", async (req, res) => {
   const id = req.params.id;
-  const listUser = await tbUser.findOne({where:{id:id}});
-  res.json({status: true, message: "success", tbUser : listUser});
+  const listUser = await tbUser.findOne({ where: { id: id } });
+  res.json({ status: true, message: "success", tbUser: listUser });
 });
 
-router.put("/" , async (req,res) =>{
+router.put("/", async (req, res) => {
   const user = await tbUser.findOne({ where: { id: req.body.id } });
-  if(!user) {
+  if (!user) {
     res.json({ error: "User Doesn't Exist" });
   } else {
-    if(user.password === req.body.password){
-      const listUser = await tbUser.update(req.body,{where : {id: req.body.id }})
-      res.json({status: true, message: "success", tbUser : listUser});
+    if (user.password === req.body.password) {
+      const listUser = await tbUser.update(req.body, {
+        where: { id: req.body.id },
+      });
+      res.json({ status: true, message: "success", tbUser: listUser });
     } else {
-      bcrypt.hash(req.body.password, 10).then( async (hash) => {
+      bcrypt.hash(req.body.password, 10).then(async (hash) => {
         req.body.password = hash;
-        const listUser = await tbUser.update(req.body,{where : {id: req.body.id }})
-        res.json({status: true, message: "success", tbUser : listUser});
+        const listUser = await tbUser.update(req.body, {
+          where: { id: req.body.id },
+        });
+        res.json({ status: true, message: "success", tbUser: listUser });
       });
     }
   }
@@ -95,20 +107,20 @@ router.put("/" , async (req,res) =>{
 
 router.delete("/multidelete/:userId", (req, res) => {
   const userId = req.params.userId;
-  const words = userId.split(',');
-  for (const type of words) { 
+  const words = userId.split(",");
+  for (const type of words) {
     req.body.isDeleted = true;
-    tbUser.update(req.body,{where : {id: type }})
+    tbUser.update(req.body, { where: { id: type } });
   }
   //res.json("DELETED SUCCESSFULLY");
-  res.json({status: true, message: "success", tbUser : null});
+  res.json({ status: true, message: "success", tbUser: null });
 });
 
-router.delete("/:userId" , async (req, res) => {
+router.delete("/:userId", async (req, res) => {
   const userId = req.params.userId;
   req.body.isDeleted = true;
-  tbUser.update(req.body,{where : {id: userId }});
-  res.json({status: true, message: "success", tbUser : null});
+  tbUser.update(req.body, { where: { id: userId } });
+  res.json({ status: true, message: "success", tbUser: null });
 });
 
 module.exports = router;

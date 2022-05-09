@@ -62,7 +62,7 @@ router.put("/", async (req, res) => {
       isDeleted: false,
       id: {
         [Op.ne]: req.body.id,
-      }
+      },
     },
   });
 
@@ -99,26 +99,28 @@ router.delete("/:memberId", async (req, res) => {
 });
 
 router.post("/checkRegister", async (req, res) => {
-  let isRegister = false
-  let code = 500
+  let isRegister = false;
+  let code = 500;
   let members;
   try {
-    const member = await tbMember.findOne({ where: { uid: req.body.uid,isDeleted: false } });
+    const member = await tbMember.findOne({
+      where: { uid: req.body.uid, isDeleted: false },
+    });
 
     if (member) {
       members = member;
-      isRegister = true
-      code = 200
+      isRegister = true;
+      code = 200;
+    } else {
+      isRegister = false;
+      code = 200;
     }
-  } catch {
-
-  }
+  } catch {}
   res.json({
     code: code,
     isRegister: isRegister,
     tbMember: members,
   });
-
 });
 
 module.exports = router;

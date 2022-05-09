@@ -4,11 +4,17 @@ import axios from "services/axios";
 import * as Address from "../../../src/services/GetAddress.js";
 import * as Session from "../../services/Session.service";
 import { Radio } from "antd";
-import DatePicker from 'react-mobile-datepicker';
+import DatePicker from "react-mobile-datepicker";
 import moment from "moment";
 import { useToasts } from "react-toast-notifications";
 import { path } from "../../layouts/Liff";
-import { InputUC, SelectUC, validationSchema, DatePickerContainer, monthMap } from "./profile";
+import {
+  InputUC,
+  SelectUC,
+  validationSchema,
+  DatePickerContainer,
+  monthMap,
+} from "./profile";
 
 const Register = () => {
   let history = useHistory();
@@ -33,7 +39,7 @@ const Register = () => {
     phone: Session.getphonnnumber(),
     email: "",
     birthDate: moment(new Date()).toDate(),
-    registerDate: "",
+    registerDate: moment(new Date()).toDate(),
     address: "",
     subDistrict: "",
     district: "",
@@ -43,10 +49,13 @@ const Register = () => {
     isDeleted: false,
     sex: "1",
     isMemberType: "1",
+    memberType: "1",
+    memberPoint: 0,
+    memberPointExpire: moment(new Date()).toDate(),
     uid: Session.getLiff().uid,
   });
 
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,46 +74,47 @@ const Register = () => {
     console.log(Data);
 
     const isFormValid = await validationSchema.isValid(Data, {
-      abortEarly: false
-    })
+      abortEarly: false,
+    });
 
-    console.log(validationSchema)
+    console.log(validationSchema);
     if (isFormValid) {
-      DoSave()
+      DoSave();
     } else {
-      validationSchema.validate(Data, {
-        abortEarly: false
-      }).catch((err) => {
-        const errors = err.inner.reduce((acc, error) => {
-          return {
-            ...acc,
-            [error.path]: true
-          }
-        }, {})
-        console.log(errors)
-        setErrors(errors);
-      })
+      validationSchema
+        .validate(Data, {
+          abortEarly: false,
+        })
+        .catch((err) => {
+          const errors = err.inner.reduce((acc, error) => {
+            return {
+              ...acc,
+              [error.path]: true,
+            };
+          }, {});
+          console.log(errors);
+          setErrors(errors);
+        });
     }
 
-    console.log(validationSchema.fields["firstName"].tests[0].OPTIONS.message)
+    console.log(validationSchema.fields["firstName"].tests[0].OPTIONS.message);
   };
   const DoSave = () => {
     axios.post("members", Data).then((res) => {
-      let msg = { msg: "", appearance: "warning" }
+      let msg = { msg: "", appearance: "warning" };
 
-      res.data.status ?
-        msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" }
-        :
-        !res.data.isPhone ?
-          msg.msg = "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว"
-          : !res.data.email ?
-            msg.msg = "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว"
-            : msg.msg = "บันทึกข้อมูลไม่สำเร็จ"
-
+      res.data.status
+        ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
+        : !res.data.isPhone
+        ? (msg.msg =
+            "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
+        : !res.data.email
+        ? (msg.msg =
+            "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+        : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
       addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
-      res.data.status ?
-        history.push(path.member) : console.log("warning")
+      res.data.status ? history.push(path.member) : console.log("warning");
     });
   };
   return (
@@ -169,7 +179,9 @@ const Register = () => {
             {/* วันเกิด */}
 
             <div className="mb-5">
-              <div className="flex text-green-mbk font-bold text-lg ">{"วันเกิด"}</div>
+              <div className="flex text-green-mbk font-bold text-lg ">
+                {"วันเกิด"}
+              </div>
               <DatePickerContainer>
                 <DatePicker
                   isOpen={true}
@@ -183,22 +195,20 @@ const Register = () => {
                     year: {
                       format: "YYYY",
                       caption: "Year",
-                      step: 1
+                      step: 1,
                     },
                     month: {
-                      format: value => monthMap[value.getMonth() + 1],
+                      format: (value) => monthMap[value.getMonth() + 1],
                       caption: "Mon",
-                      step: 1
+                      step: 1,
                     },
                     date: {
                       format: "D",
                       caption: "Day",
-                      step: 1
+                      step: 1,
                     },
-
                   }}
                   onChange={(e) => {
-
                     // console.log(moment(new Date()).toDate())
                     setData((prevState) => ({
                       ...prevState,
@@ -323,7 +333,7 @@ const Register = () => {
                 className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
                 style={{ width: "50%" }}
-              // onClick={windowclose}
+                // onClick={windowclose}
               >
                 {"ยกเลิก"}
               </button>
