@@ -36,6 +36,11 @@ export default function UserInfo() {
   const [confirmPassword, setConfirmPassword] = useState(false);
   const [valueConfirm, setValueConfirm] = useState("");
   const [enableControl, setIsEnableControl] = useState(true);
+  const [enablePassword, setenablePassword] = useState(true);
+  const [errorPassword, setErrorPassword] = useState(false);
+  const [passwordShown, setPasswordShown] = useState(false);
+  const [confirmpasswordShown, setConfirmpasswordShown] = useState(false);
+  const [currentpasswordShown, setcurrentpasswordShown] = useState(false);
   // const [isMenu, setIsMenu] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const useStyle = styleSelect();
@@ -43,6 +48,17 @@ export default function UserInfo() {
   const { addToast } = useToasts();
 
   /* Method Condition */
+  const togglePassword = () => {
+    setPasswordShown(!passwordShown);
+  };
+
+  const toggleConfirmPassword = () => {
+    setConfirmPassword(!confirmpasswordShown);
+  };
+
+  const toggleCurrentPassword = () => {
+    setcurrentpasswordShown(!currentpasswordShown);
+  };
 
   /*ตรวจสอบข้อมูล รหัสผ่านตรงกัน*/
   const validateConfirm = (e) => {
@@ -76,6 +92,8 @@ export default function UserInfo() {
       email: "",
       identityCard: "",
       isDeleted: false,
+      empCode: "",
+      position: "",
     },
     validationSchema: Yup.object({
       userName: Yup.string().required(
@@ -110,10 +128,15 @@ export default function UserInfo() {
             ? "* กรุณากรอก อีเมล"
             : "* Please enter your email"
         ),
-      password: Yup.string().required(
+      empCode: Yup.string().required(
         Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก รหัสผ่าน"
-          : "* Please enter your password"
+          ? "* กรุณากรอก รหัสพนักงาน"
+          : "* Please enter your emp code"
+      ),
+      position: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก ตำแหน่ง"
+          : "* Please enter your position"
       ),
     }),
     onSubmit: (values) => {
@@ -124,12 +147,15 @@ export default function UserInfo() {
           if (res.data.status) {
             setIsNew(false);
             formik.values.id = res.data.tbUser.id;
-            history.push(`/admin/usersinfo/${res.data.tbUser.id}`);
+            setenablePassword(true);
+            setConfirmPassword(false);
+            formik.setFieldValue('confirmPassword','');
+            formik.setFieldValue('password','');
             addToast(
               Storage.GetLanguage() === "th"
                 ? "บันทึกข้อมูลสำเร็จ"
                 : "Save data successfully",
-              { appearance: "success", autoDismiss: false }
+              { appearance: "success", autoDismiss: true }
             );
           } else {
             addToast(
@@ -149,7 +175,7 @@ export default function UserInfo() {
               Storage.GetLanguage() === "th"
                 ? "บันทึกข้อมูลสำเร็จ"
                 : "Save data successfully",
-              { appearance: "success", autoDismiss: false }
+              { appearance: "success", autoDismiss: true }
             );
           } else
             addToast(
@@ -166,13 +192,21 @@ export default function UserInfo() {
   async function fetchData() {
     let response = await axios.get(`/users/byId/${id}`);
     let user = await response.data.tbUser;
+    formik.resetForm();
+    setValueConfirm('');
+    validateConfirm('');
     if (user !== null) {
       for (var columns in response.data.tbUser) {
-        formik.setFieldValue(columns, response.data.tbUser[columns], false);
+        if(columns !== 'password')
+        {
+          formik.setFieldValue(columns, response.data.tbUser[columns], false);
+        }
       }
       setIsNew(false);
-      setValueConfirm(response.data.tbUser.password);
+      // setValueConfirm(response.data.tbUser.password);
+      setenablePassword(true);
     } else {
+      setenablePassword(false);
       setIsNew(true);
     }
   }
@@ -183,21 +217,10 @@ export default function UserInfo() {
     // formik.values.lastName = "กันพรมกาศ";
     // formik.values.identityCard = "1-5099-00956-04-8";
     // formik.values.email = "weatherzilla@gmail.com";
-    // formik.values.userName = "weatherblocker";
-    // formik.values.password = "123456";
-    // setValueConfirm("123456");
+    // formik.values.userName = "weatherzilla";
+    // formik.values.empCode = "CM56-218";
+    // formik.values.position = "โปรแกรมเมอร์";
     fetchData();
-    console.log(menu)
-    // const checkIfClickedOutside = (e) => {
-    //   if ((isMenu && ( e.toElement.id !== "back" ||  e.toElement.id !== "save")) || e.toElement.id === "") {
-    //     setIsMenu(false);
-    //   }
-    // };
-    // document.addEventListener("mousedown", checkIfClickedOutside);
-
-    // return () => {
-    //   document.removeEventListener("mousedown", checkIfClickedOutside);
-    // };
   }, []);
 
   return (
@@ -255,7 +278,10 @@ export default function UserInfo() {
                   type="button"
                   // onClick={() => ClickMenu()}
                 >
-                  <i className="fas fa-bars" id="dropdownDefault"></i>
+                  <i
+                    className="fas fa-bars"
+                    id={menu ? "dropdownDefaults" : "dropdownDefault"}
+                  ></i>
                 </button>
                 <div
                   id="dropdownmenu"
@@ -270,8 +296,14 @@ export default function UserInfo() {
                   >
                     <li>
                       <div className="flex flex-wrap" id="save">
-                        <span id="save" onClick={()=>{formik.handleSubmit();}} className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
-                        <i className="fas fa-save mr-2"></i>
+                        <span
+                          id="save"
+                          onClick={() => {
+                            formik.handleSubmit();
+                          }}
+                          className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
+                        >
+                          <i className="fas fa-save mr-2"></i>
                           บันทึก
                         </span>
                       </div>
@@ -384,10 +416,30 @@ export default function UserInfo() {
                 </div>
               </div> */}
               <div className="flex-auto lg:px-10 py-10">
-                {/* <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase px-4">
-                  User Information
-                </h6> */}
                 <div className="flex flex-wrap">
+                  <div className="w-full">
+                    <div className="flex">
+                      <div className="w-full lg:w-2/12">
+                        <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase px-4">
+                          Login Information
+                        </h6>
+                      </div>
+                      <div className="w-full lg:w-8/12 px-4 mb-4 text-right">
+                        <button
+                          className={
+                            "bg-green-mbk text-white active:bg-green-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150" +
+                            (isNew ? " hidden" : "")
+                          }
+                          type="button"
+                          onClick={() => {
+                            OnBack();
+                          }}
+                        >
+                          เปลี่ยนแปลงรหัสผ่าน
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                   <div className="w-full lg:w-2/12 px-4 mb-2">
                     <div className="relative w-full">
                       <label
@@ -411,10 +463,62 @@ export default function UserInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.userName}
                         autoComplete="userName"
+                        disabled={enablePassword}
                       />
                       {formik.touched.userName && formik.errors.userName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.userName}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div
+                    className={
+                      "w-full lg:w-2/12 px-4 mb-2" + (isNew ? " hidden" : " ")
+                    }
+                  >
+                    <div className="relative w-full">
+                      <label
+                        className="text-blueGray-600 text-sm font-bold"
+                        htmlFor="grid-password"
+                      >
+                        Current Password
+                      </label>
+                      <span className="text-sm ml-2 text-red-500">*</span>
+                    </div>
+                  </div>
+                  <div
+                    className={
+                      "w-full lg:w-8/12 px-4 mb-4" + (isNew ? " hidden" : " ")
+                    }
+                  >
+                    <div className="relative w-full">
+                      <span
+                        onClick={toggleCurrentPassword}
+                        className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                      >
+                        <i
+                          className={
+                            currentpasswordShown ? "fas fa-eye-slash" : "fas fa-eye"
+                          }
+                        ></i>
+                      </span>
+                      <input
+                        type={currentpasswordShown ? "text" : "password"}
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        id="currentPassword"
+                        name="currentPassword"
+                        maxLength={100}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.currentPassword}
+                        autoComplete="password"
+            
+                        disabled={enablePassword}
+                      />
+                      {formik.touched.password && formik.errors.password ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {formik.errors.password}
                         </div>
                       ) : null}
                     </div>
@@ -433,8 +537,18 @@ export default function UserInfo() {
                   </div>
                   <div className="w-full lg:w-8/12 px-4 mb-4">
                     <div className="relative w-full">
+                      <span
+                        onClick={togglePassword}
+                        className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                      >
+                        <i
+                          className={
+                            passwordShown ? "fas fa-eye-slash" : "fas fa-eye"
+                          }
+                        ></i>
+                      </span>
                       <input
-                        type="password"
+                        type={passwordShown ? "text" : "password"}
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="password"
                         name="password"
@@ -449,19 +563,28 @@ export default function UserInfo() {
                             setConfirmPassword(null);
                           }
                           formik.handleChange(e);
+
+                          if (e.target.value.length <= 0)
+                            setErrorPassword(true);
+                          else setErrorPassword(false);
                         }}
-                        onBlur={formik.handleBlur}
+                        // onBlur={() => { if(formik.values.password.length <= 0) setErrorPassword(true); else  setErrorPassword(false);  }}\
                         value={formik.values.password}
                         autoComplete="password"
+                        disabled={enablePassword}
                       />
-                      {formik.touched.password && formik.errors.password ? (
+                      {errorPassword ? (
                         <div className="text-sm py-2 px-2 text-red-500">
-                          {formik.errors.password}
+                          * รหัสผ่านไม่สามารถเป็นค่าว่างได้
                         </div>
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div
+                    className={
+                      "w-full lg:w-2/12 px-4 mb-2" + (isNew ? " " : " ")
+                    }
+                  >
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -472,10 +595,24 @@ export default function UserInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div
+                    className={
+                      "w-full lg:w-8/12 px-4 mb-4" + (isNew ? " " : " ")
+                    }
+                  >
                     <div className="relative w-full">
+                      <span
+                        onClick={toggleConfirmPassword}
+                        className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                      >
+                        <i
+                          className={
+                            confirmpasswordShown ? "fas fa-eye-slash" : "fas fa-eye"
+                          }
+                        ></i>
+                      </span>
                       <input
-                        type="password"
+                        type={confirmpasswordShown ? "text" : "password"}
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="confirmPassword"
                         name="confirmPassword"
@@ -486,7 +623,8 @@ export default function UserInfo() {
                           validateConfirm(e.target.value);
                           setValueConfirm(e.target.value);
                         }}
-                        value={valueConfirm}
+                        value={formik.values.confirmPassword}
+                        disabled={enablePassword}
                       />
                       {confirmPassword ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -494,6 +632,12 @@ export default function UserInfo() {
                         </div>
                       ) : null}
                     </div>
+                  </div>
+
+                  <div className="w-full">
+                    <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase px-4">
+                      User Information
+                    </h6>
                   </div>
                   <div className="w-full lg:w-2/12 px-4 mb-2">
                     <div className="relative w-full">
@@ -617,7 +761,7 @@ export default function UserInfo() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  {/* <div className="w-full lg:w-2/12 px-4 mb-2">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -643,6 +787,68 @@ export default function UserInfo() {
                         value={formik.values.identityCard}
                         autoComplete="new-password"
                       />
+                    </div>
+                  </div> */}
+                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                    <div className="relative w-full">
+                      <label
+                        className="text-blueGray-600 text-sm font-bold"
+                        htmlFor="grid-password"
+                      >
+                        รหัสพนักงาน
+                      </label>
+                      <span className="text-sm ml-2 text-red-500">*</span>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                    <div className="relative w-full">
+                      <input
+                        type="text"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        id="empCode"
+                        name="empCode"
+                        maxLength={100}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.empCode}
+                        autoComplete="new-password"
+                      />
+                      {formik.touched.email && formik.errors.email ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {formik.errors.email}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                    <div className="relative w-full">
+                      <label
+                        className="text-blueGray-600 text-sm font-bold"
+                        htmlFor="grid-password"
+                      >
+                        ตำแหน่ง
+                      </label>
+                      <span className="text-sm ml-2 text-red-500">*</span>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                    <div className="relative w-full">
+                      <input
+                        type="text"
+                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        id="position"
+                        name="position"
+                        maxLength={100}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.position}
+                        autoComplete="new-password"
+                      />
+                      {formik.touched.position && formik.errors.position ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {formik.errors.position}
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                 </div>

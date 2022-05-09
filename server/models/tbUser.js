@@ -32,6 +32,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
+      empCode: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      position: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     });
     return tbUser;
   };

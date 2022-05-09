@@ -71,7 +71,21 @@ module.exports = (sequelize, DataTypes) => {
       memberPoint:{
         type: DataTypes.INTEGER,
         allowNull: true,
-      }
+      },
+      memberPointExpire:{
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      memberType:{
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     });
+
+    tbMember.associate = (models) => {
+      tbMember.hasMany(models.tbMemberPoint, {
+        onDelete: "cascade",
+      });
+    };
     return tbMember;
   };

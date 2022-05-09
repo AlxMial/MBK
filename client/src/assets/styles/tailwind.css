@@ -36,6 +36,7 @@ html {
   line-height: 1.15;
   /* 1 */
   -webkit-text-size-adjust: 100%;
+  overflow: hidden;
   /* 2 */
 }
 
@@ -2148,6 +2149,10 @@ select {
   outline-offset: 2px;
 }
 
+.overflow-scroll {
+  overflow: scroll;
+}
+
 .overflow-hidden {
   overflow: hidden;
 }
@@ -2818,7 +2823,7 @@ select {
 }
 
 .w-64 {
-  width: 14rem;
+  width: 25rem;
 }
 
 .w-auto {
@@ -3905,9 +3910,14 @@ input[type=email]:disabled {
 
 /* Menu Info */
 .isMenu{
- inset: 0px auto auto 0px; margin: 0px; transform: translate3d(250px, 100px, 0px);
+ inset: 0px auto auto 0px; margin: 0px; 
+ transform: translate3d(250px, 100px, 0px);
+}
+.Justify-right{
+  justify-content: right;
 }
 
+/* Overflow Info */
 @media only screen and (max-width: 2500px) {
   .mobile {
     display: none;
@@ -3925,6 +3935,10 @@ input[type=email]:disabled {
   .minHeightInfo {
     min-height: 873px;
 
+  }
+  .Overflow-info{
+    height: 75vh;
+    overflow-y: auto;
   }
 }
 
@@ -3954,6 +3968,10 @@ input[type=email]:disabled {
   .w-6-7\/12 {
     width: 61%;
   }
+  .Overflow-info{
+    height: 75vh;
+    overflow-y: auto;
+  }
 
 }
 
@@ -3972,6 +3990,11 @@ input[type=email]:disabled {
 
   .w-6-7\/12 {
     width: 57%;
+  }
+
+  .Overflow-info{
+    height: 71vh;
+    overflow-y: auto;
   }
 
 }
@@ -4003,6 +4026,50 @@ input[type=email]:disabled {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
+  .Overflow-info{
+    height: 71vh;
+    overflow-y: auto;
+  }
+  .minHeight {
+    min-height: 91vh;
+  }
+}
+
+@media only screen and (max-width: 820px) {
+  .mobile {
+    display: block;
+  }
+
+  .pc {
+    display: none;
+  }
+
+  .buttonInfo {
+    margin-left: -2rem !important;
+    width: 150px;
+  }
+
+  .px-24 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  .Overflow-info{
+    height: 82vh;
+    overflow-y: auto;
+  }
+  .minHeight {
+    min-height: 94vh;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .minHeight {
+    min-height: 91vh;
+  }
+  .Overflow-info{
+    height: 80vh;
+    overflow-y: auto;
+  }
 }
 
 @media only screen and (max-width: 720px) {
@@ -4027,14 +4094,29 @@ input[type=email]:disabled {
   }
 
   .w-64 {
-    width: 8rem;
+    width: 10rem;
   }
 
 }
 
+@media only screen and (max-width: 415px) {
+  .minHeight {
+    min-height: 90vh;
+  }
+  .Overflow-info{
+    height: 75vh;
+    overflow-y: auto;
+  }
+}
+
+
 @media only screen and (max-width: 413px) {
   .minHeight {
     min-height: 90vh;
+  }
+  .Overflow-info{
+    height: 73vh;
+    overflow-y: auto;
   }
 }
 
@@ -4050,8 +4132,22 @@ input[type=email]:disabled {
   }
 }
 
+@media only screen and (max-width: 375px) {
+  .minHeight {
+    min-height: 87vh;
+  }
+  .Overflow-info{
+    height: 67vh;
+    overflow-y: auto;
+  }
+}
+
 @media only screen and (max-width: 361px) {
   .minHeight {
-    min-height: 90vh;
+    min-height: 88vh;
+  }
+  .Overflow-info{
+    height: 70vh;
+    overflow-y: auto;
   }
 }

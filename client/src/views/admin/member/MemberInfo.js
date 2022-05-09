@@ -84,6 +84,8 @@ export default function MemberInfo() {
       sex: "1",
       isMemberType: "1",
       memberPoint: 0,
+      memberPointExpire: new Date(),
+      memberType: '1'
     },
     validationSchema: Yup.object({
       memberCard: Yup.string().required(
@@ -266,7 +268,7 @@ export default function MemberInfo() {
         ? new moment(new Date()).toDate()
         : formik.values.registerDate;
     fatchAddress();
-    // defaultValue();
+    defaultValue();
     fetchData();
   }, []);
 
@@ -283,13 +285,7 @@ export default function MemberInfo() {
           <div className="w-full">
             <div className="flex justify-between py-2 mt-4">
               <span className="text-lg  text-green-mbk margin-auto font-bold">
-                จัดการสมาชิก
-              </span>
-            </div>
-
-            <div className="flex justify-between py-2 mt-4">
-              <span className="text-lg  text-green-mbk margin-auto font-bold">
-                จัดการข้อมูลผู้ดูแลระบบ
+              จัดการสมาชิก
               </span>
               <div
                 className={
@@ -329,7 +325,7 @@ export default function MemberInfo() {
                   className="flex items-center py-4 px-2 w-full text-base font-normal bg-transparent outline-none button-focus"
                   type="button"
                 >
-                  <i className="fas fa-bars" id="dropdownDefault"></i>
+                  <i className="fas fa-bars" id={(menu ? "dropdownDefaults" : "dropdownDefault")}></i>
                 </button>
                 <div
                   id="dropdownmenu"
@@ -368,7 +364,7 @@ export default function MemberInfo() {
                 </div>
               </div>
             </div>
-            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg overflow-y-auto">
+            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info ">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
                   <div className="w-full lg:w-2/12 px-4 mb-2">

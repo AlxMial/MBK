@@ -133,6 +133,7 @@ export default function MemberList() {
   useEffect(() => {
     axios.get("members").then((response) => {
       if (response.data.error) {
+        console.log(response.data.error)
       } else {
         setListUser(response.data.tbMember);
         setListSerch(response.data.tbMember);

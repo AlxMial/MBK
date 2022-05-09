@@ -26,6 +26,7 @@ import ValidateService from "services/validateValue";
 import * as Storage from "../../../services/Storage.service";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import styleSelect from "assets/styles/theme/ReactSelect.js";
+import useMenu from "services/useMenu";
 Modal.setAppElement("#root");
 
 export default function PointCode() {
@@ -59,7 +60,7 @@ export default function PointCode() {
     useState(false);
   const [errorPointCodeQuantityCode, setErrorPointCodeQuantityCode] =
     useState(false);
-
+ const { menu } = useMenu();
   const { addToast } = useToasts();
 
   const changePage = ({ selected }) => {
@@ -273,8 +274,12 @@ export default function PointCode() {
                   if (resUpload.data.error) {
                     axios
                       .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
-                      .then( async (resDelete) => {
-                        await axiosUpload.delete(`api/excel/delete/${res.data.tbPointCodeHD.id}`).then(() =>{})
+                      .then(async (resDelete) => {
+                        await axiosUpload
+                          .delete(
+                            `api/excel/delete/${res.data.tbPointCodeHD.id}`
+                          )
+                          .then(() => {});
                         fetchData();
                         setIsLoading(false);
                         addToast(
@@ -502,7 +507,68 @@ export default function PointCode() {
                   }}
                 />
               </div>
-              <div className="lg:w-6/12 text-right">
+              <div
+                className={
+                  "lg:w-6/12 text-right" + (width < 1024 ? " block" : " hidden")
+                }
+              >
+                <button
+                  // data-dropdown-toggle="dropdownmenu"
+                  className="flex items-center py-4 px-2 w-full text-base font-normal bg-transparent outline-none button-focus"
+                  type="button"
+                >
+                  <i
+                    className="fas fa-bars"
+                    id={menu ? "dropdownDefaults" : "dropdownDefault"}
+                  ></i>
+                </button>
+                <div
+                  id="dropdownmenu"
+                  className={
+                    "z-10 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 buttonInfo" +
+                    (menu ? " block absolute isMenu" : " hidden")
+                  }
+                >
+                  <ul
+                    className="py-1 text-sm text-gray-700 dark:text-gray-200"
+                    aria-labelledby="dropdownDefault"
+                  >
+                    <li>
+                      <div className="flex flex-wrap" id="save">
+                        <span
+                          id="save"
+                          onClick={() => {
+                            openModalImport();
+                          }}
+                          className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
+                        >
+                          <i className="fas fa-save mr-2"></i>
+                          Import
+                        </span>
+                      </div>
+                    </li>
+                    <li>
+                      <div className="flex flex-wrap" id="back">
+                        <span
+                          onClick={() => {
+                            openModal();
+                          }}
+                          id="back"
+                          className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
+                        >
+                          <i className="fas fa-arrow-left mr-2"></i>
+                          เพิ่มแคมเปญ
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div
+                className={
+                  "lg:w-6/12 text-right" + (width < 1024 ? " hidden" : " block")
+                }
+              >
                 <button
                   className="bg-lemon-mbk text-blueGray-600  mr-2 active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                   type="button"
@@ -571,7 +637,7 @@ export default function PointCode() {
                                   ) : null} */}
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeName"
                                     name="pointCodeName"
                                     maxLength={100}
@@ -608,7 +674,7 @@ export default function PointCode() {
                                       <input
                                         type="text"
                                         className={
-                                          "border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                          "border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                         }
                                         id="fileName"
                                         name="fileName"
@@ -648,7 +714,7 @@ export default function PointCode() {
                                 <div className="w-full lg:w-5/12 px-4 ">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodePoint"
                                     name="pointCodePoint"
                                     maxLength={10}
@@ -948,7 +1014,7 @@ export default function PointCode() {
                                 <div className="w-full lg:w-11/12 px-4">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeName"
                                     name="pointCodeName"
                                     maxLength={100}
@@ -979,7 +1045,7 @@ export default function PointCode() {
                                 <div className="w-full lg:w-5/12 px-4 ">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeSymbol"
                                     name="pointCodeSymbol"
                                     maxLength={10}
@@ -1016,7 +1082,7 @@ export default function PointCode() {
                                 <div className="w-full lg:w-5/12 px-4 ">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeLengthSymbol"
                                     name="pointCodeLengthSymbol"
                                     maxLength={2}
@@ -1060,7 +1126,7 @@ export default function PointCode() {
                                 <div className="w-full lg:w-5/12 px-4 ">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodePoint"
                                     name="pointCodePoint"
                                     maxLength={10}
@@ -1097,7 +1163,7 @@ export default function PointCode() {
                                 <div className="w-full lg:w-5/12 px-4 ">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeQuantityCode"
                                     name="pointCodeQuantityCode"
                                     maxLength={10}

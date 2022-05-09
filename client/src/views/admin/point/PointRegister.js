@@ -122,7 +122,7 @@ export default function PointRegister() {
                   <div className="w-full lg:w-8/12 px-4 mb-4 margin-auto-t-b">
                     <input
                       type="text"
-                      className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-10/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                      className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-10/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                       id="pointRegisterScore"
                       name="pointRegisterScore"
                       maxLength={100}
