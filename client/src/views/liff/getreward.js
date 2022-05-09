@@ -8,16 +8,19 @@ import { path } from "../../layouts/Liff";
 const GetReward = () => {
   const history = useHistory();
   const [rewardCode, setrewardCode] = useState([
-    { code: "" },
-    { code: "" },
-    { code: "" },
-    { code: "" },
+    { index: 0, code: "" },
+    { index: 1, code: "" },
+    { index: 2, code: "" },
+    { index: 3, code: "" },
+    { index: 4, code: "" },
   ]);
   const [confirmsucceed, setconfirmsucceed] = useState(false);
   const confirmreward = () => {
     /// check api
+    // console.log(rewardCode)
     setconfirmsucceed(true);
   };
+
   return (
     <>
       <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
@@ -66,12 +69,12 @@ const GetReward = () => {
                 </div>
                 <div
                   className="line-scroll"
-                  style={{ overflow: "scroll", height: "calc(100% - 120px)" }}
+                  style={{ overflow: "scroll", height: "calc(100% - 180px)" }}
                 >
                   {[...rewardCode].map((e, i) => {
                     return (
                       <>
-                        <div className="flex mt-5">
+                        <div className="flex mt-5" key={i}>
                           <div
                             className="bg-green-mbk relative circle"
                             style={{
@@ -96,7 +99,17 @@ const GetReward = () => {
                               value={e.code}
                               name={"code-" + (i + 1)}
                               type={"text"}
-                              //   onChange={onChange}
+                              onChange={(e) => {
+                                console.log(e.target.value);
+                                let item = rewardCode.map((item) => {
+                                  if (item.index == i) {
+                                    return { ...item, code: e.target.value }; 
+                                  }
+                                  return item;
+                                });
+
+                                setrewardCode(item);
+                              }}
                               placeholder={"XXXX-XXXX-XXXX-XXXX"}
                               mask={"9999-9999-9999-9999"}
                               maskChar=" "
@@ -107,26 +120,49 @@ const GetReward = () => {
                     );
                   })}
                 </div>
-
-                <div className="relative  px-4  flex-grow flex-1 flex mt-5">
-                  <button
-                    className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    type="button"
-                    style={{ width: "50%" }}
+                <div className="relative  px-4  flex-grow flex-1 mt-5">
+                  <div
+                    className="bg-green-mbk relative circle"
+                    style={{
+                      width: "40px",
+                      height: "40px",
+                      lineHeight: "40px",
+                      margin: "auto",
+                    }}
                     onClick={() => {
-                      history.push(path.member);
+                      setrewardCode((oldArray) => [
+                        ...oldArray,
+                        { index: oldArray.length, code: "" },
+                      ]);
                     }}
                   >
-                    {"Cancel"}
-                  </button>
-                  <button
-                    className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                    type="button"
-                    style={{ width: "50%" }}
-                    onClick={confirmreward}
-                  >
-                    {"OK"}
-                  </button>
+                    <spen
+                      className="text-white font-bold text-xs"
+                      style={{ padding: "10px" }}
+                    >
+                      {"+"}
+                    </spen>
+                  </div>
+                  <div className="relative  px-4  flex-grow flex-1 flex mt-5">
+                    <button
+                      className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                      type="button"
+                      style={{ width: "50%" }}
+                      onClick={() => {
+                        history.push(path.member);
+                      }}
+                    >
+                      {"Cancel"}
+                    </button>
+                    <button
+                      className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                      type="button"
+                      style={{ width: "50%" }}
+                      onClick={confirmreward}
+                    >
+                      {"OK"}
+                    </button>
+                  </div>
                 </div>
               </div>
             </>

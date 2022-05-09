@@ -5,38 +5,30 @@ import MyAward from "./member.myAward";
 import MyOrder from "./member.myOrder";
 import { useHistory } from "react-router-dom";
 import { path } from "../../layouts/Liff";
+import { IsNullOrEmpty } from "../../services/default.service";
 import * as Session from "../../services/Session.service";
+import moment from "moment";
 // components
 
 const Member = () => {
   const history = useHistory();
   const { TabPane } = Tabs;
-  const tabsChange = () => { };
-  const [point, setpoint] = useState(50);
-  const [Expire, setExpire] = useState("01/05/2565");
-
-  // const [MemberCard, setMemberCard] = useState("111-111-111");
-  const [member, setmember] = useState("Green MEMBER");
-  const [memberName, setmemberName] = useState("แสนดี มีนานะชัย");
-  const [membertype, setmembertype] = useState("Retail");
-
+  const tabsChange = () => {};
   const [tbMember, settbMember] = useState({});
-
   const getMembers = async () => {
-    axios.post("/members/checkRegister", { uid: Session.getLiff().uid }).then((res) => {
-      console.log(res)
-      if (res.data.code === 200) {
-        settbMember(res.data.tbMember)
-      } else {
-
-      }
-    })
+    axios
+      .post("/members/checkRegister", { uid: Session.getLiff().uid })
+      .then((res) => {
+        console.log(res);
+        if (res.data.code === 200) {
+          settbMember(res.data.tbMember);
+        } else {
+        }
+      });
   };
-
   useEffect(() => {
     getMembers();
   }, []);
-
   return (
     <>
       {/* card */}
@@ -49,8 +41,13 @@ const Member = () => {
             margin: "auto",
             height: "180px",
             borderRadius: "10px",
-            backgroundImage: `url(${require("assets/img/mbk/Green.png").default
-              })`,
+            backgroundImage: `url(${
+              require(tbMember.memberType === "1"
+                ? "assets/img/mbk/Green.png"
+                : tbMember.memberType === "2"
+                ? "assets/img/mbk/Silver.png"
+                : "assets/img/mbk/Gold.png").default
+            })`,
             backgroundSize: "cover",
           }}
         >
@@ -67,13 +64,28 @@ const Member = () => {
                 <div
                   className="mt-2 font-bold text-green-mbk"
                   style={{
-                    backgroundColor: "#cbe8ba",
+                    backgroundColor:
+                      tbMember.memberType === "1"
+                        ? "#cbe8ba"
+                        : tbMember.memberType === "2"
+                        ? "#ebebeb"
+                        : "#f3eac1",
+                    color:
+                      tbMember.memberType === "1"
+                        ? "#047738"
+                        : tbMember.memberType === "2"
+                        ? "#929292"
+                        : "#d0af2c",
                     borderRadius: "20px",
                     paddingLeft: "10px",
                     paddingRight: "10px",
                   }}
                 >
-                  {member}
+                  {tbMember.memberType === "1"
+                    ? "Green MEMBER"
+                    : tbMember.memberType === "2"
+                    ? "Sliver MEMBER"
+                    : "Gold MEMBER"}
                 </div>
                 <div className="text-white font-bold text-xs mt-2">
                   {tbMember.firstName + " " + tbMember.lastName}
@@ -82,7 +94,7 @@ const Member = () => {
                   <div>
                     <i
                       className="fas fa-solid fa-user"
-                      style={{ color: "#084223" }}
+                      style={{ color: "#faae3e" }}
                     ></i>
                   </div>
                   <div className="px-2 text-white font-bold text-xs ">
@@ -96,10 +108,13 @@ const Member = () => {
             </div>
           </div>
           <div className="relative" style={{ width: "30%", height: "100%" }}>
-            <div className="absolute right-0" onClick={() => {
-              // updateprofile
-              history.push(path.updateprofile)
-            }}>
+            <div
+              className="absolute right-0"
+              onClick={() => {
+                // updateprofile
+                history.push(path.updateprofile);
+              }}
+            >
               <i className="fas fa-solid fa-pen text-white"></i>
             </div>
             <div className="absolute right-0 bottom-0">
@@ -113,11 +128,16 @@ const Member = () => {
                 </div>
               </div>
               <div className="text-right mt-2 ">
-                <span className="text-white font-bold text-lg ">{point}</span>
+                <span className="text-white font-bold text-lg ">
+                  {tbMember.memberPoint === null ? 0 : tbMember.memberPoint}
+                </span>
               </div>
               <div className="text-right mt-2">
-                <span className=" text-ss text-white ">
-                  {"Expire : " + Expire}
+                <span className=" text-2xs text-white ">
+                  {"Expire : " +
+                    (IsNullOrEmpty(tbMember.memberPointExpire)
+                      ? "-"
+                      : moment(tbMember.memberPointExpire.split("T")[0]).locale("th").add(543, "year").format("DD/MM/yyyy") )}
                 </span>
               </div>
             </div>

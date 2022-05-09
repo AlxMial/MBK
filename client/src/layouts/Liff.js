@@ -58,7 +58,6 @@ const getRoutes = () => {
 const initLine = (callback) => {
   runApp(callback);
 
-
   // liff.init(
   //   { liffId: "1657109260-L0jrqxlN" },
   //   () => {
@@ -72,27 +71,26 @@ const initLine = (callback) => {
   // );
 };
 const runApp = (callback) => {
-
   Session.setLiff({
     uid: "U4d81d62e7ae7795c18f3e2c770595108",
     displayName: "test",
     pictureUrl: "test",
     email: "test",
   });
-  let checkRegister = Session.getcheckRegister()
-  if (checkRegister !== 'true') {
-    axios.post("/members/checkRegister", { uid: Session.getLiff().uid }).then((res) => {
-      console.log(res)
-      if (res.data.code === 200) {
-        Session.setcheckRegister(res.data.isRegister)
-
-      } else {
-
-      }
-      callback(checkRegister)
-    })
+  let checkRegister = Session.getcheckRegister();
+  if (checkRegister !== "true") {
+    axios
+      .post("/members/checkRegister", { uid: Session.getLiff().uid })
+      .then((res) => {
+        console.log(res);
+        if (res.data.code === 200) {
+        } else {
+        }
+        Session.setcheckRegister(res.data.isRegister);
+        callback(checkRegister);
+      });
   } else {
-    callback(checkRegister)
+    callback(checkRegister);
   }
   // liff
   //   .getProfile()
@@ -122,17 +120,21 @@ const Liff = () => {
     ismemberpage = true;
   }
 
-
-
   initLine((e) => {
-    if (e === 'true') {
-      if (pathname.includes("privacypolicy")) {
-        history.push(path.member)
+    if (e === "true") {
+      if (pathname.includes("privacypolicy") || pathname.includes("otp")) {
+        history.push(path.member);
       }
-    }else{
-      history.push(path.privacypolicy)
+    } else {
+      if (
+        !pathname.includes("privacypolicy") &&
+        !pathname.includes("otp") &&
+        !pathname.includes("register")
+      ) {
+        history.push(path.privacypolicy);
+      }
     }
-  })
+  });
   return (
     <>
       <div
