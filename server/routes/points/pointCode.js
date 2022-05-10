@@ -115,4 +115,6 @@ router.delete("/delete/:tbPointCodeHDId",validateToken, async (req, res) => {
   res.json({ status: true, message: "success", tbPointCodeHD: null });
 });
 
+
+
 module.exports = router;

@@ -15,7 +15,7 @@ function authentication(req, res, next) {
         var err = new Error('You are not authenticated!');
         res.setHeader('WWW-Authenticate', 'Basic');
         err.status = 401;
-        return next(err)
+        return res.status(401).json({status: 401 , message: 'You are not authenticated!'})
     }
  
     var auth = new Buffer.from(authheader.split(' ')[1],
@@ -30,7 +30,7 @@ function authentication(req, res, next) {
         var err = new Error('You are not authenticated!');
         res.setHeader('WWW-Authenticate', 'Basic');
         err.status = 401;
-        return next(err);
+        return res.status(401).json({status: 401 , message: 'You are not authenticated!'})
     }
  
 }
@@ -53,6 +53,8 @@ const pointRegisterRouter = require('./routes/points/pointRegister');
 app.use("/pointRegister",pointRegisterRouter);
 const uploadExcelRouter = require('./routes/uploadExcel/uploadExcel');
 app.use("/uploadExcel",uploadExcelRouter);
+const redeemRouter = require('./routes/redeem/redeem');
+app.use("/redeem",redeemRouter);
 initRoutes(app);
 
 const port = process.env.PORT || 3001;

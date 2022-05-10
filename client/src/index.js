@@ -18,6 +18,7 @@ import reducers  from "../src/services/reducers";
 import * as Storage from "../src/services/Storage.service";
 import { BrowserRouter} from "react-router-dom";
 import 'flowbite';
+import { disableReactDevTools } from '@fvilers/disable-react-devtools'
 const translateionsObject = {
   th: th,
   en: en,
@@ -35,6 +36,8 @@ const store = createStore(
 syncTranslationWithStore(store);
 store.dispatch(loadTranslations(translateionsObject));
 store.dispatch(setLocale(Storage.GetLanguage()));
+
+disableReactDevTools();
 
 ReactDOM.render(
   <Provider store={store}>
