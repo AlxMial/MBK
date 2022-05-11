@@ -8,7 +8,7 @@ const useGaTracker = () => {
 
     useEffect(() => {
         if (!window.location.href.includes("undefined.ddns.net")) {
-        ReactGA.initialize("UA-219143900-1");
+        ReactGA.initialize("G-ZHDK5E89FQ");
         }
         setInitialized(true);
     }, []);

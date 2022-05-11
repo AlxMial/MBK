@@ -152,9 +152,9 @@ const download = (req, res) => {
 
     objs.forEach((obj) => {
       tutorials.push({
-        'รหัส Coupon': obj.code.toUpperCase(),
-        'สถานะการใช้งาน': (obj.isUse) ? 'ใช้งาน' : 'ยังไม่ได้ใช้งาน',
-        'สถานะหมดอายุ': (obj.isExpire) ? 'หมดอายุ' : 'ยังไม่หมดอายุ', 
+        code: obj.code.toUpperCase(),
+        isUse: (obj.isUse) ? 'ใช้งาน' : 'ยังไม่ได้ใช้งาน',
+        isExpire: (obj.isExpire) ? 'หมดอายุ' : 'ยังไม่หมดอายุ', 
       });
     });
     res.json(tutorials);

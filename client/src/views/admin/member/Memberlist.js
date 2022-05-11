@@ -5,6 +5,9 @@ import ReactPaginate from "react-paginate";
 import Modal from "react-modal";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import * as Storage from "../../../services/Storage.service";
+import { Workbook } from "exceljs";
+import { exportExcel } from "services/exportExcel";
+import * as fs from "file-saver";
 import moment from "moment";
 
 // components
@@ -130,9 +133,12 @@ export default function MemberList() {
     });
   };
 
-  const exportExcel  = () => {
-
-  }
+  const Excel = async () => {
+    let member = await axios.get("members/export");
+    const TitleColumns = ['รหัสสมาชิก','ชื่อ','นามสกุล','เบอร์โทร','อีเมล','ที่อยู่','วันเกิด','วันที่สมัคร'];
+    const columns = ['memberCard','firstName','lastName','phone','email','address','birthDate','registerDate'];
+    exportExcel(member.data.tbMember,'ข้อมูลสมาชิก',TitleColumns,columns);
+  };
 
   useEffect(() => {
     axios.get("members").then((response) => {
@@ -185,13 +191,14 @@ export default function MemberList() {
                   <button
                     className=" text-black font-bold  text-xs px-2 py-2 rounded outline-none focus:outline-none  ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => exportExcel()}
+                    onClick={() => Excel("xlsx")}
                   >
                     <img
                       src={require("assets/img/mbk/excel.png").default}
                       alt="..."
                       className="imgExcel margin-a"
-                    ></img> Export Excel
+                    ></img>{" "}
+                    Export Excel
                   </button>
                   {/* </Link>  */}
                 </div>

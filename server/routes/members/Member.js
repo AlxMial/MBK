@@ -20,6 +20,15 @@ router.get("/", async (req, res) => {
   } else res.status(403).json({ status: false, message: "not found member", tbMember: null });
 });
 
+router.get("/export", async (req, res) => {
+  const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
+  if (listMembers.length > 0) {
+  const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
+  Encrypt.encryptValueIdArray(ValuesDecrypt);
+  res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
+  } else res.status(403).json({ status: false, message: "not found member", tbMember: null });
+});
+
 router.get("/byId/:id", async (req, res) => {
   if(req.params.id !== "undefined"){
     const id = Encrypt.DecodeKey(req.params.id);

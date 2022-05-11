@@ -27,6 +27,7 @@ import * as Storage from "../../../services/Storage.service";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import styleSelect from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
+import { exportExcel } from "services/exportExcel";
 Modal.setAppElement("#root");
 
 export default function PointCode() {
@@ -160,36 +161,13 @@ export default function PointCode() {
     formikImport.setFieldValue("fileName", e.target.files[0].name);
   };
 
-  const ExportFile = async (id, pointCodeName) => {
+  const ExportFile = async (id) => {
     setIsLoading(true);
-    await axiosUpload.get(`/api/excel/download/${id}`).then((res) => {
-      let exports = [];
-      exports.push({ category: "pointCodeName", data: res.data });
-      exportToCSV(exports, pointCodeName);
-    });
+    let coupon = await axiosUpload.get(`/api/excel/download/${id}`);
+    const TitleColumns = ['รหัส Coupon','สถานะใช้งาน','สถานะหมดอายุ'];
+    const columns = ['code','isUse','isExpire'];
+    exportExcel(coupon.data,'ข้อมูล Coupon',TitleColumns,columns);
     setIsLoading(false);
-  };
-
-  const exportToCSV = (dataExport, pointCodeName) => {
-    const fileType = "xlsx";
-    dataExport.map((item, index) => {
-      item["json"] = XLSX.utils.json_to_sheet(item.data);
-    });
-
-    const obj = {
-      Sheets: {},
-      SheetNames: [],
-    };
-    dataExport.map((item, key) => {
-      return (
-        (obj.Sheets['Coupon'] = item.json),
-        obj.SheetNames.push('Coupon')
-      );
-    });
-    const test = { ...obj };
-    const excelBuffer = XLSX.write(test, { bookType: "xlsx", type: "array" });
-    const data = new Blob([excelBuffer], { type: fileType });
-    saveAs(data, pointCodeName + ".xlsx");
   };
 
   /* formik */
@@ -542,7 +520,7 @@ export default function PointCode() {
                           }}
                           className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
                         >
-                          <i class="fas fa-file-excel mr-2"></i>
+                          <i className="fas fa-file-excel mr-2"></i>
                           Import
                         </span>
                       </div>
@@ -556,7 +534,7 @@ export default function PointCode() {
                           id="back"
                           className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
                         >
-                          <i class="fas fa-save mr-2"></i>
+                          <i className="fas fa-save mr-2"></i>
                           เพิ่มแคมเปญ
                         </span>
                       </div>

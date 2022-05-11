@@ -15,6 +15,7 @@
     "autoprefixer": "10.2.5",
     "axios": "^0.26.1",
     "chart.js": "2.9.4",
+    "exceljs": "^4.3.0",
     "flowbite": "^1.4.2",
     "formik": "^2.2.9",
     "gulp": "4.0.2",
