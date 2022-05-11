@@ -134,7 +134,7 @@ export default function MemberList() {
     });
   };
 
-  const Excel = async () => {
+  const Excel = async (sheetname) => {
     setIsLoading(true);
     let member = await axios.get("members/export");
     const TitleColumns = [
@@ -157,7 +157,7 @@ export default function MemberList() {
       "birthDate",
       "registerDate",
     ];
-    exportExcel(member.data.tbMember, "ข้อมูลสมาชิก", TitleColumns, columns);
+    exportExcel(member.data.tbMember, "ข้อมูลสมาชิก", TitleColumns, columns, sheetname);
     setIsLoading(false);
   };
 
@@ -220,7 +220,7 @@ export default function MemberList() {
                   <button
                     className=" text-black font-bold  text-xs px-2 py-2 rounded outline-none focus:outline-none  ease-linear transition-all duration-150"
                     type="button"
-                    onClick={() => Excel("xlsx")}
+                    onClick={() => Excel("ข้อมูลสมาชิก")}
                   >
                     <img
                       src={require("assets/img/mbk/excel.png").default}

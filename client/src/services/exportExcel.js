@@ -3,7 +3,7 @@ import { Workbook } from "exceljs";
 import * as fs from "file-saver";
 import moment from "moment";
 
-export const exportExcel = async (dataExport, Title, TitleColumns, columns) => {
+export const exportExcel = async (dataExport, Title, TitleColumns, columns,sheetName) => {
   //Excel Title, Header, Data
   const title = Title;
   const header = TitleColumns;
@@ -25,7 +25,7 @@ export const exportExcel = async (dataExport, Title, TitleColumns, columns) => {
 
   //Create workbook and worksheet
   let workbook = new Workbook();
-  let worksheet = workbook.addWorksheet(Title);
+  let worksheet = workbook.addWorksheet(sheetName);
 
   //Add Row and formatting
   let titleRow = worksheet.addRow([title]);

@@ -44,6 +44,8 @@ export default function PointCode() {
   const [file, setFile] = useState();
   const [fileName, setFileName] = useState();
   const [isError, setIsError] = useState(false);
+  const [startDateCode, setStartDateCode] = useState("");
+  const [endDateCode, setEndDateCode] = useState("");
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -61,23 +63,24 @@ export default function PointCode() {
     useState(false);
   const [errorPointCodeQuantityCode, setErrorPointCodeQuantityCode] =
     useState(false);
- const { menu } = useMenu();
+  const { menu } = useMenu();
   const { addToast } = useToasts();
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
   };
 
-  function openModal(id) {
+  async function openModal(id) {
     setIsEnable(false);
     setErrorPointCodeLengthSymbol(false);
     if (id) {
-      fetchDataById(id);
+      await fetchDataById(id);
       setIsNew(false);
     } else {
       setActive("1");
       setType("1");
-
+      setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
+      setEndDateCode(moment(new Date(), "DD/MM/YYYY"));
       formik.resetForm();
       //DefaultValue();
       setIsNew(true);
@@ -95,6 +98,8 @@ export default function PointCode() {
 
   function openModalImport() {
     setOptionCampaign([]);
+    setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
+    setEndDateCode(moment(new Date(), "DD/MM/YYYY"));
     formikImport.resetForm();
     fetchData();
     setIsError(false);
@@ -161,12 +166,12 @@ export default function PointCode() {
     formikImport.setFieldValue("fileName", e.target.files[0].name);
   };
 
-  const ExportFile = async (id) => {
+  const ExportFile = async (id,name) => {
     setIsLoading(true);
     let coupon = await axiosUpload.get(`/api/excel/download/${id}`);
-    const TitleColumns = ['รหัส Coupon','สถานะใช้งาน','สถานะหมดอายุ'];
-    const columns = ['code','isUse','isExpire'];
-    exportExcel(coupon.data,'ข้อมูล Coupon',TitleColumns,columns);
+    const TitleColumns = ["รหัส Coupon", "สถานะใช้งาน", "สถานะหมดอายุ"];
+    const columns = ["code", "isUse", "isExpire"];
+    exportExcel(coupon.data, name, TitleColumns, columns,'Coupon');
     setIsLoading(false);
   };
 
@@ -241,48 +246,69 @@ export default function PointCode() {
         values.pointCodeLengthSymbol <= 16
       ) {
         setIsLoading(true);
-        axios.post("pointCode", values).then(async (res) => {
-          if (res.data.status) {
-            values.tbPointCodeHDId = res.data.tbPointCodeHD.id;
-            fetchData();
-            await axiosUpload
-              .post("api/excel/generateCode", values)
-              .then(async (resGenerate) => {
-                await axios.post("/uploadExcel").then((resUpload) => {
-                  if (resUpload.data.error) {
-                    axios
-                      .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
-                      .then(async (resDelete) => {
-                        await axiosUpload
-                          .delete(
-                            `api/excel/delete/${res.data.tbPointCodeHD.id}`
-                          )
-                          .then(() => {});
-                        fetchData();
-                        setIsLoading(false);
-                        addToast(
-                          "บันทึกข้อมูลไม่สำเร็จ เนื่องจากการ Generate มีปัญหา",
-                          {
-                            appearance: "warning",
-                            autoDismiss: true,
-                          }
-                        );
-                      });
-                  } else {
-                    fetchData();
-                    closeModal();
-                    setIsLoading(false);
-                    addToast(
-                      Storage.GetLanguage() === "th"
-                        ? "บันทึกข้อมูลสำเร็จ"
-                        : "Save data successfully",
-                      { appearance: "success", autoDismiss: true }
-                    );
-                  }
-                });
+        if (values.id) {
+          axios.put("pointCode", values).then((res) => {
+            if (res.data.status) {
+              setIsLoading(false);
+              fetchData();
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
+            } else {
+              addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                appearance: "warning",
+                autoDismiss: true,
               });
-          }
-        });
+            }
+          });
+        } else {
+          axios.post("pointCode", values).then(async (res) => {
+            if (res.data.status) {
+              values.tbPointCodeHDId = res.data.tbPointCodeHD.id;
+              fetchData();
+              await axiosUpload
+                .post("api/excel/generateCode", values)
+                .then(async (resGenerate) => {
+                  await axios.post("/uploadExcel").then((resUpload) => {
+                    if (resUpload.data.error) {
+                      axios
+                        .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
+                        .then(async (resDelete) => {
+                          await axiosUpload
+                            .delete(
+                              `api/excel/delete/${res.data.tbPointCodeHD.id}`
+                            )
+                            .then(() => {});
+                          fetchData();
+                          setIsLoading(false);
+
+                          addToast(
+                            "บันทึกข้อมูลไม่สำเร็จ เนื่องจากการ Generate มีปัญหา",
+                            {
+                              appearance: "warning",
+                              autoDismiss: true,
+                            }
+                          );
+                        });
+                    } else {
+                      fetchData();
+                      closeModal();
+                      setIsLoading(false);
+                      addToast(
+                        Storage.GetLanguage() === "th"
+                          ? "บันทึกข้อมูลสำเร็จ"
+                          : "Save data successfully",
+                        { appearance: "success", autoDismiss: true }
+                      );
+                    }
+                  });
+                });
+            }
+          });
+        }
       }
     },
   });
@@ -324,58 +350,78 @@ export default function PointCode() {
     }),
     onSubmit: async (values) => {
       setIsLoading(true);
-      let formData = new FormData();
-      formData.append("file", file);
-      axios.post("pointCode", values).then(async (res) => {
-        if (res.data.status) {
-          formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
-          await axiosUpload
-            .post("api/excel/upload", formData)
-            .then(async (resExcel) => {
-              await axios.post("/uploadExcel").then((resUpload) => {
-                if (resUpload.data.error) {
-                  axios
-                    .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
-                    .then((resDelete) => {
-                      fetchData();
-                      addToast(
-                        "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
-                        {
-                          appearance: "warning",
-                          autoDismiss: true,
-                        }
-                      );
-                    });
-                } else {
-                  fetchData();
-                  addToast(
-                    Storage.GetLanguage() === "th"
-                      ? "บันทึกข้อมูลสำเร็จ"
-                      : "Save data successfully",
-                    { appearance: "success", autoDismiss: true }
-                  );
-                }
-              });
-            });
-        } else {
-          if (res.data.isPointCodeName) {
+      if (values.id) {
+        axios.put("pointCode", values).then((res) => {
+          if (res.data.status) {
+            setIsLoading(false);
+            fetchData();
             addToast(
-              "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-              {
-                appearance: "warning",
-                autoDismiss: true,
-              }
+              Storage.GetLanguage() === "th"
+                ? "บันทึกข้อมูลสำเร็จ"
+                : "Save data successfully",
+              { appearance: "success", autoDismiss: true }
             );
+          } else {
+            addToast("บันทึกข้อมูลไม่สำเร็จ", {
+              appearance: "warning",
+              autoDismiss: true,
+            });
           }
-        }
-      });
-      setIsLoading(false);
-      closeModalImport();
+        });
+      } else {
+        let formData = new FormData();
+        formData.append("file", file);
+        axios.post("pointCode", values).then(async (res) => {
+          if (res.data.status) {
+            formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
+            await axiosUpload
+              .post("api/excel/upload", formData)
+              .then(async (resExcel) => {
+                await axios.post("/uploadExcel").then((resUpload) => {
+                  if (resUpload.data.error) {
+                    axios
+                      .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
+                      .then((resDelete) => {
+                        fetchData();
+                        addToast(
+                          "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
+                          {
+                            appearance: "warning",
+                            autoDismiss: true,
+                          }
+                        );
+                      });
+                  } else {
+                    fetchData();
+                    addToast(
+                      Storage.GetLanguage() === "th"
+                        ? "บันทึกข้อมูลสำเร็จ"
+                        : "Save data successfully",
+                      { appearance: "success", autoDismiss: true }
+                    );
+                  }
+                });
+              });
+          } else {
+            if (res.data.isPointCodeName) {
+              addToast(
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                {
+                  appearance: "warning",
+                  autoDismiss: true,
+                }
+              );
+            }
+          }
+        });
+        setIsLoading(false);
+        closeModalImport();
+      }
     },
   });
 
   const fetchData = async () => {
-    axios.get("pointCode").then((response) => {
+    await axios.get("pointCode").then((response) => {
       if (response.data.error) {
       } else {
         // var JsonCampaign = [];
@@ -387,7 +433,8 @@ export default function PointCode() {
         // );
         // if (JsonCampaign.length > 0)
         //   formikImport.setFieldValue("tbPointCodeHDId", JsonCampaign[0].value);
-        // setOptionCampaign(JsonCampaign);
+        // setOptionCamp(aign(JsonCampaign);
+
         setErrorPointCodeLengthSymbol(false);
         setListPointCode(response.data.tbPointCodeHD);
         setListSerch(response.data.tbPointCodeHD);
@@ -405,10 +452,19 @@ export default function PointCode() {
           setActive(response.data.tbPointCodeHD[columns].toString());
         } else if (columns === "isType") {
           setType(response.data.tbPointCodeHD[columns].toString());
-        }
+        } else if (columns === "startDate")
+          setStartDateCode(
+            moment(new Date(response.data.tbPointCodeHD[columns]), "DD/MM/YYYY")
+          );
+        else if (columns === "endDate")
+          setEndDateCode(
+            moment(new Date(response.data.tbPointCodeHD[columns]), "DD/MM/YYYY")
+          );
+
         if (columns === "pointCodeSymbol") {
           if (response.data.tbPointCodeHD[columns] === null) setIsEnable(true);
         }
+
         formik.setFieldValue(
           columns,
           response.data.tbPointCodeHD[columns] === null
@@ -451,6 +507,8 @@ export default function PointCode() {
   useEffect(() => {
     /* Default Value for Testing */
     //DefaultValue();
+    setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
+    setEndDateCode(moment(new Date(), "DD/MM/YYYY"));
     fetchData();
   }, []);
 
@@ -734,10 +792,7 @@ export default function PointCode() {
                                         format={"DD/MM/yyyy"}
                                         placeholder="เลือกวันที่"
                                         showToday={false}
-                                        defaultValue={moment(
-                                          new Date(),
-                                          "DD/MM/YYYY"
-                                        )}
+                                        defaultValue={startDateCode}
                                         style={{
                                           height: "100%",
                                           width: "100%",
@@ -764,12 +819,12 @@ export default function PointCode() {
                                             );
                                           }
                                         }}
-                                        value={moment(
-                                          new Date(
-                                            formikImport.values.startDate
-                                          ),
-                                          "DD/MM/YYYY"
-                                        )}
+                                        // value={moment(
+                                        //   new Date(
+                                        //     formikImport.values.startDate
+                                        //   ),
+                                        //   "DD/MM/YYYY"
+                                        // )}
                                       />
                                     </ConfigProvider>
                                     {formikImport.touched.startDate &&
@@ -804,10 +859,7 @@ export default function PointCode() {
                                       format={"DD/MM/yyyy"}
                                       placeholder="เลือกวันที่"
                                       showToday={false}
-                                      defaultValue={moment(
-                                        new Date(),
-                                        "DD/MM/YYYY"
-                                      )}
+                                      defaultValue={endDateCode}
                                       style={{
                                         height: "100%",
                                         width: "100%",
@@ -834,10 +886,10 @@ export default function PointCode() {
                                           );
                                         }
                                       }}
-                                      value={moment(
-                                        new Date(formikImport.values.endDate),
-                                        "DD/MM/YYYY"
-                                      )}
+                                      // value={moment(
+                                      //   new Date(formikImport.values.endDate),
+                                      //   "DD/MM/YYYY"
+                                      // )}
                                     />
                                   </ConfigProvider>
                                   {formikImport.touched.endDate &&
@@ -1183,10 +1235,7 @@ export default function PointCode() {
                                         format={"DD/MM/yyyy"}
                                         placeholder="เลือกวันที่"
                                         showToday={false}
-                                        defaultValue={moment(
-                                          new Date(),
-                                          "DD/MM/YYYY"
-                                        )}
+                                        defaultValue={startDateCode}
                                         style={{
                                           height: "100%",
                                           width: "100%",
@@ -1213,10 +1262,10 @@ export default function PointCode() {
                                             );
                                           }
                                         }}
-                                        value={moment(
-                                          new Date(formik.values.startDate),
-                                          "DD/MM/YYYY"
-                                        )}
+                                        // value={moment(
+                                        //   new Date(formik.values.startDate),
+                                        //   "DD/MM/YYYY"
+                                        // )}
                                       />
                                     </ConfigProvider>
                                     {formik.touched.startDate &&
@@ -1251,10 +1300,7 @@ export default function PointCode() {
                                       format={"DD/MM/yyyy"}
                                       placeholder="เลือกวันที่"
                                       showToday={false}
-                                      defaultValue={moment(
-                                        new Date(),
-                                        "DD/MM/YYYY"
-                                      )}
+                                      defaultValue={endDateCode}
                                       style={{
                                         height: "100%",
                                         width: "100%",
@@ -1281,10 +1327,10 @@ export default function PointCode() {
                                           );
                                         }
                                       }}
-                                      value={moment(
-                                        new Date(formik.values.endDate),
-                                        "DD/MM/YYYY"
-                                      )}
+                                      // value={moment(
+                                      //   new Date(formik.values.endDate),
+                                      //   "DD/MM/YYYY"
+                                      // )}
                                     />
                                   </ConfigProvider>
                                   {formik.touched.endDate &&

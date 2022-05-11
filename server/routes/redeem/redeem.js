@@ -10,11 +10,23 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
 const decodeCoupon = require("../../services/decryptCoupon");
 const Op = Sequelize.Op;
+const ValidateEncrypt = require("../../services/crypto");
+const Encrypt = new ValidateEncrypt();
 
 router.post("/", async (req, res) => {
   const decode = new decodeCoupon();
   let redeemCode = req.body.redeemCode;
   try {
+    for (var x = 0; x < redeemCode.length; x++) {
+      const splitValue = redeemCode[x].split("-");
+      if (splitValue.length > 1) {
+        redeemCode[x] = Encrypt.EncodeKey(
+          splitValue[0] + "-" + splitValue[1].toLowerCase()
+        );
+      } 
+    }
+
+
     let statusRedeem = [];
     let status;
     for (var i = 0; i < redeemCode.length; i++) {
@@ -22,12 +34,14 @@ router.post("/", async (req, res) => {
         where: { code: redeemCode[i].toLowerCase(),isDeleted:false },
       });
       const Point = await tbPointCodeHD.findOne({
-        include: { model: tbPointCodeDT, where: { code: redeemCode[i].toLowerCase(),isDeleted:false } },
+        where : { isActive:'1',isDeleted:false },
+        include: { model: tbPointCodeDT, where: { code: redeemCode[i].toLowerCase(),isDeleted:false} },
       });
-      if (PointDt) {
+      
+      if (PointDt && Point) {
         if (PointDt.dataValues.isExpire) {
           status = {
-            coupon: redeemCode[i],
+            coupon:  Encrypt.DecodeKey(redeemCode[i]).toLocaleUpperCase(),
             isValid: false,
             isInvalid: false,
             isExpire: true,
@@ -35,7 +49,7 @@ router.post("/", async (req, res) => {
           };
         } else if (PointDt.dataValues.isUse) {
           status = {
-            coupon: redeemCode[i],
+            coupon:  Encrypt.DecodeKey(redeemCode[i]).toLocaleUpperCase(),
             isValid: false,
             isInvalid: false,
             isExpire: false,
@@ -45,13 +59,12 @@ router.post("/", async (req, res) => {
           if (Point) {
             if (Point.dataValues.isType === "1") {
               var isMatch = decode.decryptCoupon(
-                redeemCode[i].toLowerCase(),
-                redeemCode[i].length
+                Encrypt.DecodeKey(redeemCode[i]),
+                Encrypt.DecodeKey(redeemCode[i]).length
               );
-              console.log(isMatch)
               if (isMatch) {
                 status = {
-                  coupon: redeemCode[i],
+                  coupon:  Encrypt.DecodeKey(redeemCode[i]).toLocaleUpperCase(),
                   isValid: true,
                   isInvalid: false,
                   isExpire: false,
@@ -59,7 +72,7 @@ router.post("/", async (req, res) => {
                 };
               } else {
                 status = {
-                  coupon: redeemCode[i],
+                  coupon: Encrypt.DecodeKey(redeemCode[i]).toLocaleUpperCase(),
                   isValid: false,
                   isInvalid: true,
                   isExpire: false,
@@ -68,7 +81,7 @@ router.post("/", async (req, res) => {
               }
             } else if (Point.dataValues.isType === "2") {
               status = {
-                coupon: redeemCode[i],
+                coupon:  Encrypt.DecodeKey(redeemCode[i]).toLocaleUpperCase(),
                 isValid: true,
                 isInvalid: false,
                 isExpire: false,
@@ -77,6 +90,7 @@ router.post("/", async (req, res) => {
             }
           }
         }
+
         if (status.isValid) {
           PointDt.dataValues.isUse = true;
           PointDt.dataValues.memberId = req.body.memberId;
@@ -116,7 +130,7 @@ router.post("/", async (req, res) => {
         }
       } else {
         status = {
-          coupon: redeemCode[i],
+          coupon:  Encrypt.DecodeKey(redeemCode[i]).toLocaleUpperCase(),
           isValid: false,
           isInvalid: true,
           isExpire: false,

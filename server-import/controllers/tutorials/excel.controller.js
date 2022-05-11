@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const ValidateEncrypt = require("../../services/crypto");
 const iv = '283d0ce11c80a9a4da9eebcb40e7c7d9';
 const content = '1fda3b405f0edf98ef80';
+const Encrypt = new ValidateEncrypt();
 
 const upload = async (req, res) => {
   try {
@@ -95,7 +96,7 @@ const generateCode = (req, res) => {
     }
     codeCoupon = req.body.pointCodeSymbol + "-" + codeCoupon;
     let ArrayCoupon = {
-      code: codeCoupon,
+      code: Encrypt.EncodeKey(codeCoupon),
       tbPointCodeHDId: req.body.tbPointCodeHDId,
       memberId: null,
       isUse: 0,
@@ -120,17 +121,6 @@ const generateCode = (req, res) => {
   });
 };
 
-const decryptCoupon = (codeCoupon,length) =>{
-  var code = codeCoupon.substring(length-4, length).split('');
-  var isMatch = 0;
-  for(var i = 0 ; i < 4 ; i++){
-    isMatch = content.indexOf(code[0]);
-    if(isMatch < 0)
-      break;
-  }
-  return (isMatch < 0) ? false : true;
-}
-
 const getTutorials = (req, res) => {
   Tutorial.findAll()
     .then((data) => {
@@ -152,7 +142,7 @@ const download = (req, res) => {
 
     objs.forEach((obj) => {
       tutorials.push({
-        code: obj.code.toUpperCase(),
+        code: Encrypt.DecodeKey(obj.code).toUpperCase(),
         isUse: (obj.isUse) ? 'ใช้งาน' : 'ยังไม่ได้ใช้งาน',
         isExpire: (obj.isExpire) ? 'หมดอายุ' : 'ยังไม่หมดอายุ', 
       });
