@@ -130,10 +130,14 @@ export default function MemberList() {
     });
   };
 
+  const exportExcel  = () => {
+
+  }
+
   useEffect(() => {
     axios.get("members").then((response) => {
       if (response.data.error) {
-        console.log(response.data.error)
+        console.log(response.data.error);
       } else {
         setListUser(response.data.tbMember);
         setListSerch(response.data.tbMember);
@@ -161,7 +165,7 @@ export default function MemberList() {
               "relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white"
             }
           >
-            <div className="rounded-t mb-0 px-4 py-3 border-0">
+            <div className="rounded-t mb-0 px-4 border-0">
               <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
                 <div className="lg:w-6/12">
                   <span className="z-3 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-2">
@@ -177,15 +181,19 @@ export default function MemberList() {
                   />
                 </div>
                 <div className="lg:w-6/12 text-right">
-                  <Link to="/admin/membersInfo">
-                    <button
-                      className="bg-gold-mbk text-black active:bg-gold-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
-                      type="button"
-                    >
-                      <i className="fas fa-plus-circle text-white "></i>{" "}
-                      <span className="text-white text-sm px-2">เพิ่ม</span>
-                    </button>
-                  </Link>
+                  {/* <Link to="/admin/membersInfo"> */}
+                  <button
+                    className=" text-black font-bold  text-xs px-2 py-2 rounded outline-none focus:outline-none  ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={() => exportExcel()}
+                  >
+                    <img
+                      src={require("assets/img/mbk/excel.png").default}
+                      alt="..."
+                      className="imgExcel margin-a"
+                    ></img> Export Excel
+                  </button>
+                  {/* </Link>  */}
                 </div>
               </div>
             </div>
@@ -250,13 +258,13 @@ export default function MemberList() {
                     >
                       คะแนนคงเหลือ
                     </th>
-                    <th
+                    {/* <th
                       className={
                         "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                       }
                     >
                       จัดการ
-                    </th>
+                    </th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -273,7 +281,9 @@ export default function MemberList() {
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/membersInfo/${value.id}`}
                             >
-                              {value.memberCard}
+                              <div className="TextWordWarp-150">
+                                {value.memberCard}
+                              </div>
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
@@ -281,7 +291,7 @@ export default function MemberList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/membersInfo/${value.id}`}
                             >
-                              <div className="TextWordWarpCode">
+                              <div className="TextWordWarp-150">
                                 {value.firstName} {value.lastName}
                               </div>
                             </Link>
@@ -299,7 +309,9 @@ export default function MemberList() {
                               className="text-gray-mbk  hover:text-gray-mbk"
                               to={`/admin/membersInfo/${value.id}`}
                             >
-                              {value.email}
+                              <div className="TextWordWarp-200">
+                                {value.email}
+                              </div>
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
@@ -319,16 +331,16 @@ export default function MemberList() {
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                            0
+                            {value.memberPoint}
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
+                          {/* <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                             <i
                               className="fas fa-trash text-red-500 cursor-pointer"
                               onClick={() => {
                                 openModalSubject(value.id);
                               }}
                             ></i>
-                          </td>
+                          </td> */}
                         </tr>
                       );
                     })}
@@ -345,7 +357,7 @@ export default function MemberList() {
                 deleteUser(deleteValue);
               }}
             />
-            <div className="py-4">
+            <div className="py-4 px-4">
               <ReactPaginate
                 previousLabel={" < "}
                 nextLabel={" > "}

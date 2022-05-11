@@ -96,6 +96,7 @@ export default function UserInfo() {
       empCode: "",
       position: "",
       currentPassword: "",
+      confirmPassword: "",
     },
     validationSchema: Yup.object({
       userName: Yup.string().required(
@@ -142,8 +143,6 @@ export default function UserInfo() {
       ),
     }),
     onSubmit: (values) => {
-      console.log(errorCurrentPassword);
-      console.log(errorPassword);
       if (!errorCurrentPassword && !errorPassword) {
         if (isNew) {
           formik.values.role =
@@ -153,15 +152,18 @@ export default function UserInfo() {
               setIsNew(false);
               formik.values.id = res.data.tbUser.id;
               setenablePassword(true);
-              setConfirmPassword(false);
               formik.setFieldValue("confirmPassword", "");
               formik.setFieldValue("password", "");
+              // formik.setFieldValue("currentPassword", "");
+              // formik.resetForm();
+              // fetchData();
               addToast(
                 Storage.GetLanguage() === "th"
                   ? "บันทึกข้อมูลสำเร็จ"
                   : "Save data successfully",
                 { appearance: "success", autoDismiss: true }
               );
+              setConfirmPassword(false);
             } else {
               addToast(
                 Storage.GetLanguage() === "th"
@@ -177,19 +179,30 @@ export default function UserInfo() {
           axios.put("users", values).then((res) => {
             if (res.data.status) {
               setenablePassword(true);
+
+              formik.resetForm();
+              fetchData();
               setConfirmPassword(false);
-              formik.setFieldValue("confirmPassword", "");
-              formik.setFieldValue("password", "");
-              formik.setFieldValue("currentPassword", "");
+              // formik.setFieldValue("confirmPassword", "");
+              // formik.setFieldValue("password", "");
+              // formik.setFieldValue("currentPassword", "");
               addToast(
                 Storage.GetLanguage() === "th"
                   ? "บันทึกข้อมูลสำเร็จ"
                   : "Save data successfully",
                 { appearance: "success", autoDismiss: true }
               );
-            } else if (!res.data.isMatch) {
+              setConfirmPassword(false);
+            } else if (res.data.isMatch === false) {
               addToast(
                 "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสผ่านปัจจุบันไม่ถูกต้อง",
+                { appearance: "warning", autoDismiss: true }
+              );
+            } else {
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? res.data.message
+                  : res.data.message,
                 { appearance: "warning", autoDismiss: true }
               );
             }
@@ -214,6 +227,7 @@ export default function UserInfo() {
       setIsNew(false);
       // setValueConfirm(response.data.tbUser.password);
       setenablePassword(true);
+      setConfirmPassword(false);
     } else {
       setenablePassword(false);
       setIsNew(true);
@@ -397,6 +411,9 @@ export default function UserInfo() {
                           type="button"
                           onClick={() => {
                             setenablePassword(true);
+                            seterrorCurrentPassword(false);
+                            setErrorPassword(false);
+                            setConfirmPassword(false);
                           }}
                         >
                           ยกเลิกเปลี่ยนแปลงรหัสผ่าน
@@ -427,7 +444,7 @@ export default function UserInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.userName}
                         autoComplete="userName"
-                        disabled={enablePassword}
+                        disabled={isNew ? false : true}
                       />
                       {formik.touched.userName && formik.errors.userName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -526,13 +543,14 @@ export default function UserInfo() {
                         maxLength={100}
                         onChange={(e) => {
                           if (e.target.value !== valueConfirm) {
-                            setConfirmPassword(e.target.value);
+                            setConfirmPassword(true);
                           } else if (
                             e.target.value === "" &&
                             valueConfirm === ""
                           ) {
                             setConfirmPassword(null);
-                          }
+                          } else if (e.target.value === valueConfirm)
+                            setConfirmPassword(false);
                           formik.handleChange(e);
 
                           if (e.target.value.length <= 0)
@@ -593,6 +611,7 @@ export default function UserInfo() {
                         autoComplete="confirmPassword"
                         maxLength={100}
                         onChange={(e) => {
+                          formik.handleChange(e);
                           validateConfirm(e.target.value);
                           setValueConfirm(e.target.value);
                         }}
@@ -786,9 +805,9 @@ export default function UserInfo() {
                         value={formik.values.empCode}
                         autoComplete="new-password"
                       />
-                      {formik.touched.email && formik.errors.email ? (
+                      {formik.touched.empCode && formik.errors.empCode ? (
                         <div className="text-sm py-2 px-2 text-red-500">
-                          {formik.errors.email}
+                          {formik.errors.empCode}
                         </div>
                       ) : null}
                     </div>

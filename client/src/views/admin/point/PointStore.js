@@ -216,7 +216,7 @@ export default function PointStore() {
       <div className="w-full">
         <div
           className={
-            " py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white"
+            " py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white"
           }
         >
           <div className="rounded-t mb-0 px-4 py-3 border-0">
@@ -406,7 +406,7 @@ export default function PointStore() {
               }}
             />
           </div>
-          <div className="py-4">
+          <div className="py-4 px-4">
             <ReactPaginate
               previousLabel={" < "}
               nextLabel={" > "}

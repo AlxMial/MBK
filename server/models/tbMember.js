@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       birthDate: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: true,
       },
       registerDate: {
@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       address: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: true,
       },
       subDistrict: {

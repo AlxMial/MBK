@@ -35,7 +35,7 @@ export default function PointManage() {
         </span>
         <span className="text-base margin-auto font-bold">เงื่อนไขคะแนน</span>
       </div>
-      <Tabs defaultActiveKey="1" onChange={callback}>
+      <Tabs defaultActiveKey="1" onChange={callback} type="card">
         <TabPane tab="Register" key="1">
           <PointRegister />
         </TabPane>

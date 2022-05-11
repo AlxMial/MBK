@@ -108,7 +108,7 @@ export default function PointRegister() {
       <div className="w-full">
         <form onSubmit={formik.handleSubmit}>
           <div className="w-full ">
-            <div className=" py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg">
+            <div className=" py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-b">
               <div className="flex-auto lg:px-10 py-4">
                 <div className="flex flex-wrap">
                   <div className="w-full lg:w-2/12 px-4 mb-2 margin-auto-t-b">

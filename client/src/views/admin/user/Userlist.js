@@ -155,7 +155,9 @@ export default function UserList() {
         <span className="text-base font-bold margin-auto-t-b">
           <i className="fas fa-user-circle"></i>&nbsp;
         </span>
-        <span className="text-base margin-auto font-bold">ข้อมูลผู้ดูแลระบบ</span>
+        <span className="text-base margin-auto font-bold">
+          ข้อมูลผู้ดูแลระบบ
+        </span>
       </div>
 
       <div className="flex flex-wrap ">
@@ -309,34 +311,6 @@ export default function UserList() {
                         "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                       }
                     >
-                      User name
-                    </th>
-                    <th
-                      className={
-                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
-                      }
-                    >
-                      Role
-                    </th>
-                    <th
-                      className={
-                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
-                      }
-                    >
-                      ชื่อ - นามสกุล
-                    </th>
-                    <th
-                      className={
-                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
-                      }
-                    >
-                      Email
-                    </th>
-                    <th
-                      className={
-                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
-                      }
-                    >
                       รหัสพนักงาน
                     </th>
                     <th
@@ -344,7 +318,28 @@ export default function UserList() {
                         "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                       }
                     >
+                        ชื่อ - นามสกุล
+                    </th>
+                    <th
+                      className={
+                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
+                      }
+                    >
+                      อีเมล
+                    </th>
+                    <th
+                      className={
+                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
+                      }
+                    >
                       ตำแหน่ง
+                    </th>
+                    <th
+                      className={
+                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
+                      }
+                    >
+                      ระดับ
                     </th>
                     <th
                       className={
@@ -376,16 +371,8 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              {value.userName}
-                            </Link>
-                          </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                            <Link
-                              className="text-gray-mbk hover:text-gray-mbk "
-                              to={`/admin/usersinfo/${value.id}`}
-                            >
-                              <div className="TextWordWarpCode">
-                                {value.role}
+                              <div className="TextWordWarp-150">
+                                {value.empCode}
                               </div>
                             </Link>
                           </td>
@@ -394,7 +381,9 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              {value.firstName} {value.lastName}
+                              <div className="TextWordWarp-200">
+                                {value.firstName} {value.lastName}
+                              </div>
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
@@ -402,7 +391,19 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              {value.email}
+                              <div className="TextWordWarp-200">
+                              {value.email}   
+                              </div>
+                            </Link>
+                          </td>
+                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                            <Link
+                              className="text-gray-mbk hover:text-gray-mbk "
+                              to={`/admin/usersinfo/${value.id}`}
+                            >
+                              <div className="TextWordWarp-200">
+                                {value.position}
+                              </div>
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
@@ -410,17 +411,12 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              {value.empCode}
+                              <div className="TextWordWarp-150">
+                                {value.role}
+                              </div>
                             </Link>
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
-                            <Link
-                              className="text-gray-mbk hover:text-gray-mbk "
-                              to={`/admin/usersinfo/${value.id}`}
-                            >
-                              {value.position}
-                            </Link>
-                          </td>
+                     
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                             <i
                               className="fas fa-trash text-red-500 cursor-pointer"
@@ -449,7 +445,7 @@ export default function UserList() {
                 }}
               />
             </div>
-            <div className="py-4">
+            <div className="py-4 px-4">
               <ReactPaginate
                 previousLabel={" < "}
                 nextLabel={" > "}

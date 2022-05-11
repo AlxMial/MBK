@@ -10,6 +10,7 @@ const UserDropdown = () => {
   const btnDropdownRef = React.createRef();
   const popoverDropdownRef = React.createRef();
   const { authState } = useContext(AuthContext);
+  const [fullName , setFullName] = useState('');
   let history = useHistory();
   const openDropdownPopover = () => {
     createPopper(btnDropdownRef.current, popoverDropdownRef.current, {
@@ -30,6 +31,8 @@ const UserDropdown = () => {
   }
 
   useEffect(() => {
+    const getFullName = localStorage.getItem('userName');
+    setFullName(getFullName);
     const checkIfClickedOutside = (e) => {
       setIsDropDown(true);
       if (dropdownPopoverShow && e.toElement.id !== "member" && e.toElement.id !== "username" && e.toElement.id !== "logout"  && e.toElement.id !== "user" &&  btnDropdownRef.current || e.toElement.id === "") {
@@ -76,31 +79,13 @@ const UserDropdown = () => {
         <a
           href="#pablo"
           className={
-            "text-base py-2 text-center px-2 font-normal block w-full whitespace-nowrap bg-transparent text-green-mbk font-bold"
-          }
-          onClick={(e) => e.preventDefault()}
-          id="username"
-        >
-          Username
-        </a>
-        <a
-          href="#pablo"
-          className={
             "text-sm py-2 text-center px-2 hover:text-gold-mbk font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
           }
           onClick={(e) => e.preventDefault()}
           id="member"
         >
-          ข้อมูลส่วนตัว
+          { fullName }
         </a>
-        <hr className="w-10/12 margin-a bg-green-mbk" style={{borderTop: '1px solid #047738',  opacity:'0.25'}}/>
-        <Link
-          className="text-sm py-2 hover:text-gold-mbk text-center px-2 font-normal block w-full whitespace-nowrap bg-transparent text-black font-bold"
-          to="/admin/users"
-          id="user"
-        >
-          จัดการผู้ใช้
-        </Link>
         <hr className="w-10/12 margin-a bg-green-mbk" style={{borderTop: '1px solid #047738',  opacity:'0.25'}}/>
         <a
           href="#pablo"

@@ -19,10 +19,10 @@ router.post("/", async (req, res) => {
     let status;
     for (var i = 0; i < redeemCode.length; i++) {
       const PointDt = await tbPointCodeDT.findOne({
-        where: { code: redeemCode[i] },
+        where: { code: redeemCode[i].toLowerCase() },
       });
       const Point = await tbPointCodeHD.findOne({
-        include: { model: tbPointCodeDT, where: { code: redeemCode[i] } },
+        include: { model: tbPointCodeDT, where: { code: redeemCode[i].toLowerCase() } },
       });
       if (PointDt) {
         if (PointDt.dataValues.isExpire) {
@@ -42,13 +42,13 @@ router.post("/", async (req, res) => {
             isUse: true,
           };
         } else {
-
           if (Point) {
             if (Point.dataValues.isType === "1") {
               var isMatch = decode.decryptCoupon(
-                redeemCode[i],
+                redeemCode[i].toLowerCase(),
                 redeemCode[i].length
               );
+              console.log(isMatch)
               if (isMatch) {
                 status = {
                   coupon: redeemCode[i],
@@ -86,31 +86,33 @@ router.post("/", async (req, res) => {
               where: { id: PointDt.dataValues.id },
             }
           );
-          let historyPoint ={
-            campaignType : (Point.dataValues.isType == "1") ? 1 : 2,
-            code:redeemCode[i],
-            point:Point.dataValues.pointCodePoint,
+          let historyPoint = {
+            campaignType: Point.dataValues.isType == "1" ? 1 : 2,
+            code: redeemCode[i],
+            point: Point.dataValues.pointCodePoint,
             redeemDate: new Date(),
-            expireDate: new Date(new Date().getFullYear()+2, 11, 32),
+            expireDate: new Date(new Date().getFullYear() + 2, 11, 32),
             isDeleted: false,
             tbMemberId: req.body.memberId,
-            tbPointCodeHDId:Point.dataValues.id
-          }
+            tbPointCodeHDId: Point.dataValues.id,
+          };
           const memberPoint = await tbMemberPoint.create(historyPoint);
 
           const member = await tbMember.findOne({
-            where : { id : req.body.memberId }
+            where: { id: req.body.memberId },
           });
 
-          member.dataValues.memberPointExpire = new Date(new Date().getFullYear()+2, 11, 32);
-          member.dataValues.memberPoint =   member.dataValues.memberPoint + Point.dataValues.pointCodePoint;
-
-          const updateMember = await tbMember.update(
-            member.dataValues,
-            {
-              where: { id: member.dataValues.id },
-            }
+          member.dataValues.memberPointExpire = new Date(
+            new Date().getFullYear() + 2,
+            11,
+            32
           );
+          member.dataValues.memberPoint =
+            member.dataValues.memberPoint + Point.dataValues.pointCodePoint;
+
+          const updateMember = await tbMember.update(member.dataValues, {
+            where: { id: member.dataValues.id },
+          });
         }
       } else {
         status = {

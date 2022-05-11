@@ -5,6 +5,7 @@ const token = Buffer.from(`${username}:${password}`, 'utf8').toString('base64')
 
 
 export default axios.create({
+  // baseURL: `http://undefined.ddns.net:8084/`,
   baseURL: `http://localhost:3002/`,
   headers: {
     'Authorization': `Basic ${token}`,

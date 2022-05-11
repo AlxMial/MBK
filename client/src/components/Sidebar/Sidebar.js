@@ -38,7 +38,7 @@ export default function Sidebar() {
           {/* Brand */}
           <Link
             className="md:block text-left md:pb-2 text-white mr-0 inline-block whitespace-nowrap text-xl uppercase font-bold p-4 px-0"
-            to="/"
+            to="/admin/users"
           >
             <div className="pc">
               <img

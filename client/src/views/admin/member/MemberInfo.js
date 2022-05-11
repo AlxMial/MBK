@@ -55,7 +55,7 @@ export default function MemberInfo() {
   /*พิมพ์เบอร์โทรศัพท์*/
   const onHandleTelephoneChange = (e) => {
     if (
-      ValidateService.onHandleNumberChange(e.target.value) !== "" ||
+      ValidateService.onHandlePhoneChange(e.target.value) !== "" ||
       e.target.value === ""
     ) {
       setPhoneNumber(e.target.value);
@@ -104,12 +104,12 @@ export default function MemberInfo() {
           : "* Please enter your Last Name"
       ),
       phone: Yup.string()
-        .matches(
-          phoneRegExp,
-          Storage.GetLanguage() === "th"
-            ? "* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง"
-            : "* The Phone Number format is invalid"
-        )
+        // .matches(
+        //   phoneRegExp,
+        //   Storage.GetLanguage() === "th"
+        //     ? "* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง"
+        //     : "* The Phone Number format is invalid"
+        // )
         .required(
           Storage.GetLanguage() === "th"
             ? "* กรุณากรอก เบอร์โทรศัพท์"
@@ -268,7 +268,7 @@ export default function MemberInfo() {
         ? new moment(new Date()).toDate()
         : formik.values.registerDate;
     fatchAddress();
-    defaultValue();
+    // defaultValue();
     fetchData();
   }, []);
 
@@ -305,7 +305,7 @@ export default function MemberInfo() {
                     </button>
                     <button
                       className={
-                        "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                        "hidden bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                       }
                       type="submit"
                     >
@@ -338,7 +338,7 @@ export default function MemberInfo() {
                     className="py-1 text-sm text-gray-700 dark:text-gray-200"
                     aria-labelledby="dropdownDefault"
                   >
-                    <li>
+                    <li className="hidden">
                       <div className="flex flex-wrap" id="save">
                         <span id="save" onClick={()=>{formik.handleSubmit();}} className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
                         <i className="fas fa-save mr-2"></i>
@@ -390,6 +390,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.memberCard}
                         autoComplete="memberCard"
+                        disabled={true}
                       />
                       {formik.touched.memberCard && formik.errors.memberCard ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -421,6 +422,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.firstName}
                         autoComplete="firstName"
+                        disabled={true}
                       />
                       {formik.touched.firstName && formik.errors.firstName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -452,6 +454,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.lastName}
                         autoComplete="lastName"
+                        disabled={true}
                       />
                       {formik.touched.lastName && formik.errors.lastName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -478,13 +481,14 @@ export default function MemberInfo() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="phone"
                         name="phone"
-                        maxLength={100}
+                        maxLength={10}
                         onChange={(event) => {
                           onHandleTelephoneChange(event);
                         }}
                         onBlur={formik.handleBlur}
                         value={formik.values.phone}
                         autoComplete="phoneaddress"
+                        disabled={true}
                       />
                       {formik.touched.phone && formik.errors.phone ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -515,6 +519,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.email}
                         autoComplete="emailaddress"
+                        disabled={true}
                       />
                       {formik.touched.email && formik.errors.email ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -541,6 +546,7 @@ export default function MemberInfo() {
                             format={"DD/MM/yyyy"}
                             placeholder="เลือกวันที่"
                             showToday={false}
+                            disabled={true}
                             defaultValue={moment(new Date(), "DD/MM/YYYY")}
                             style={{
                               height: "100%",
@@ -596,6 +602,7 @@ export default function MemberInfo() {
                             format={"DD/MM/yyyy"}
                             placeholder="เลือกวันที่"
                             showToday={false}
+                            disabled={true}
                             defaultValue={moment(new Date(), "DD/MM/YYYY")}
                             style={{
                               height: "100%",
@@ -660,6 +667,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.address}
                         autoComplete="new-password"
+                        disabled={true}
                       ></textarea>
                     </div>
                   </div>
@@ -678,6 +686,7 @@ export default function MemberInfo() {
                       <Select
                         id="province"
                         name="province"
+                        isDisabled={true}
                         onChange={async (value) => {
                           formik.setFieldValue("province", value.value);
                           const district = await Address.getAddress(
@@ -728,6 +737,7 @@ export default function MemberInfo() {
                       <Select
                         id="district"
                         name="district"
+                        isDisabled={true}
                         onChange={async (value) => {
                           formik.setFieldValue("district", value.value);
                           const subDistrict = await Address.getAddress(
@@ -772,6 +782,7 @@ export default function MemberInfo() {
                       <Select
                         id="role"
                         name="role"
+                        isDisabled={true}
                         onChange={async (value) => {
                           formik.setFieldValue("subDistrict", value.value);
                           const postcode = await Address.getAddress(
@@ -809,6 +820,7 @@ export default function MemberInfo() {
                     <div className="relative w-full">
                       <input
                         type="text"
+                        disabled={true}
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="postcode"
                         name="postcode"

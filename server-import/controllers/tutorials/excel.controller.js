@@ -3,6 +3,7 @@ const Tutorial = db.tutorials;
 const readXlsxFile = require("read-excel-file/node");
 const excel = require("exceljs");
 const crypto = require('crypto');
+const ValidateEncrypt = require("../../services/crypto");
 const iv = '283d0ce11c80a9a4da9eebcb40e7c7d9';
 const content = '1fda3b405f0edf98ef80';
 
@@ -151,9 +152,9 @@ const download = (req, res) => {
 
     objs.forEach((obj) => {
       tutorials.push({
-        code: obj.code,
-        isUse: obj.isUse,
-        isExpire: obj.isExpire,
+        'รหัส Coupon': obj.code.toUpperCase(),
+        'สถานะการใช้งาน': (obj.isUse) ? 'ใช้งาน' : 'ยังไม่ได้ใช้งาน',
+        'สถานะหมดอายุ': (obj.isExpire) ? 'หมดอายุ' : 'ยังไม่หมดอายุ', 
       });
     });
     res.json(tutorials);

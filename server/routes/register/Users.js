@@ -5,11 +5,16 @@ const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
+const ValidateEncrypt = require("../../services/crypto");
 const Op = Sequelize.Op;
+const Encrypt = new ValidateEncrypt();
 
 router.post("/login", async (req, res) => {
   const { userName, password } = req.body;
-  const user = await tbUser.findOne({ where: { userName: userName } });
+  const user = await tbUser.findOne({
+    where: { userName: Encrypt.EncodeKey(userName) },
+  });
+
   if (!user) {
     res.json({ error: "User Doesn't Exist" });
   } else {
@@ -18,16 +23,22 @@ router.post("/login", async (req, res) => {
         res.json({ error: "Wrong Username And Password Combination" });
       } else {
         const accessToken = sign(
-          { userName: user.userName, id: user.id, role: user.role },
+          {
+            userName: Encrypt.DecodeKey(user.userName),
+            id: user.id,
+            role: Encrypt.DecodeKey(user.role),
+            firstName: Encrypt.DecodeKey(user.firstName),
+            lastName: Encrypt.DecodeKey(user.lastName),
+          },
           "MBKPROJECT"
         );
         res.json({
           token: accessToken,
-          userName: userName,
+          userName: Encrypt.EncodeKey(userName),
           id: user.id,
-          role: user.role,
-          firstName: user.firstName,
-          lastName: user.lastName,
+          role: Encrypt.EncodeKey(user.role),
+          firstName: Encrypt.EncodeKey(user.firstName),
+          lastName: Encrypt.EncodeKey(user.lastName),
         });
       }
     });
@@ -42,38 +53,44 @@ router.post("/", async (req, res) => {
   try {
     const user = await tbUser.findOne({
       where: {
-        [Op.or]: [{ email: req.body.email }, { userName: req.body.userName }],
+        [Op.or]: [
+          { email: Encrypt.EncodeKey(req.body.email) },
+          { userName: Encrypt.EncodeKey(req.body.userName) },
+        ],
         isDeleted: false,
       },
     });
 
     if (!user) {
       if (
-        req.body.role !== "" ||
-        req.body.firstName !== "" ||
-        req.body.lastName !== "" ||
-        req.body.email !== "" ||
-        req.body.empCode !== "" ||
-        req.body.position !== "" ||
-        req.body.userName !== "" ||
+        req.body.role !== "" &&
+        req.body.firstName !== "" &&
+        req.body.lastName !== "" &&
+        req.body.email !== "" &&
+        req.body.empCode !== "" &&
+        req.body.position !== "" &&
+        req.body.userName !== "" &&
         req.body.password !== ""
       ) {
         bcrypt.hash(req.body.password, 10).then(async (hash) => {
           req.body.password = hash;
-          const listUser = await tbUser.create(req.body);
-          res.json({ status: true, message: "success", tbUser: listUser });
+          const ValuesReq = Encrypt.encryptAllData(req.body);
+          const listUser = await tbUser.create(ValuesReq);
+          const ValuesDecrypt = Encrypt.decryptAllData(listUser);
+          Encrypt.encryptValueId(ValuesDecrypt);
+          res.json({ status: true, message: "success", tbUser: ValuesDecrypt });
         });
       } else {
         res.json({ status: false, error: "value is empty" });
       }
     } else {
-      if (user.email === req.body.email)
+      if (user.email === Encrypt.EncodeKey(req.body.email))
         res.json({
           status: false,
           message: "Email ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
           tbUser: null,
         });
-      else if (user.userName === req.body.userName)
+      else if (user.userName === Encrypt.EncodeKey(req.body.userName))
         res.json({
           status: false,
           message: "Username ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
@@ -87,70 +104,114 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
   const listUser = await tbUser.findAll({ where: { isDeleted: false } });
-  res.json({ status: true, message: "success", tbUser: listUser });
+  if (listUser.length > 0) {
+    const valueData = Encrypt.decryptAllDataArray(listUser);
+    Encrypt.encryptValueIdArray(valueData);
+    res.json({ status: true, message: "success", tbUser: valueData });
+  } else
+    res
+      .status(403)
+      .json({ status: false, message: "not found user", tbUser: null });
 });
 
 router.get("/byId/:id", async (req, res) => {
-  const id = req.params.id;
-  const listUser = await tbUser.findOne({ where: { id: id } });
-  res.json({ status: true, message: "success", tbUser: listUser });
+  if (req.params.id !== "undefined") {
+    const id = Encrypt.DecodeKey(req.params.id);
+    const listUser = await tbUser.findOne({ where: { id: id } });
+    const valueData = Encrypt.decryptAllData(listUser);
+    Encrypt.encryptValueId(valueData);
+    res.json({ status: true, message: "success", tbUser: valueData });
+  } else {
+    res.json({ status: true, message: "success", tbUser: null });
+  }
 });
 
 router.put("/", async (req, res) => {
+  req.body.id = Encrypt.DecodeKey(req.body.id);
   const user = await tbUser.findOne({ where: { id: req.body.id } });
 
-  if (!user) {
-    res.json({ status: false, error: "user not found" });
-  } else {
-    if (
-      req.body.role !== "" ||
-      req.body.firstName !== "" ||
-      req.body.lastName !== "" ||
-      req.body.email !== "" ||
-      req.body.empCode !== "" ||
-      req.body.position !== "" ||
-      req.body.userName !== ""
-    ) {
-      if (req.body.currentPassword !== "" && req.body.password !== "") {
-        bcrypt
-          .compare(req.body.currentPassword, user.password)
-          .then(async (match) => {
-            if (!match) {
-              res.json({
-                status: false,
-                isMatch: false,
-                error: "Wrong Password Combination",
-              });
-            } else {
-              bcrypt.hash(req.body.password, 10).then(async (hash) => {
-                req.body.password = hash;
-                const listUser = await tbUser.update(req.body, {
-                  where: { id: req.body.id },
-                });
-                res.json({
-                  status: true,
-                  message: "success",
-                  tbUser: listUser,
-                });
-              });
-            }
-          });
-      } else {
-        req.body.password = user.password;
-        const listUser = await tbUser.update(req.body, {
-          where: { id: req.body.id },
-        });
-        res.json({ status: true, message: "success", tbUser: listUser });
-      }
+  const userCheck = await tbUser.findOne({
+    where: {
+      [Op.or]: [
+        { userName: Encrypt.EncodeKey(req.body.userName) },
+        { email: Encrypt.EncodeKey(req.body.email) },
+      ],
+      isDeleted: false,
+      id: {
+        [Op.ne]: req.body.id,
+      },
+    },
+  });
+
+  if (!userCheck) {
+    if (!user) {
+      res.json({ status: false, error: "user not found" });
     } else {
-      res.json({ status: false, error: "value is empty" });
+      if (
+        req.body.role !== "" &&
+        req.body.firstName !== "" &&
+        req.body.lastName !== "" &&
+        req.body.email !== "" &&
+        req.body.empCode !== "" &&
+        req.body.position !== "" &&
+        req.body.userName !== ""
+      ) {
+        if (req.body.currentPassword !== "" && req.body.password !== "") {
+          bcrypt
+            .compare(req.body.currentPassword, user.password)
+            .then(async (match) => {
+              if (!match) {
+                res.json({
+                  status: false,
+                  isMatch: false,
+                  error: "Wrong Password Combination",
+                });
+              } else {
+                bcrypt.hash(req.body.password, 10).then(async (hash) => {
+                  req.body.password = hash;
+                  const ValuesReq = Encrypt.encryptAllData(req.body);
+                  const listUser = await tbUser.update(ValuesReq, {
+                    where: { id: req.body.id },
+                  });
+                  res.json({
+                    status: true,
+                    message: "success",
+                    tbUser: null,
+                  });
+                });
+              }
+            });
+        } else {
+          req.body.password = user.password;
+          const ValuesReq = Encrypt.encryptAllData(req.body);
+          const listUser = await tbUser.update(ValuesReq, {
+            where: { id: req.body.id },
+          });
+          res.json({ status: true, message: "success", tbUser: null });
+        }
+      } else {
+        res.json({ status: false, error: "value is empty" });
+      }
     }
+  } else {
+    if (userCheck.email === Encrypt.EncodeKey(req.body.email))
+      res.json({
+        status: false,
+        message: "Email ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
+        tbUser: null,
+      });
+    else if (userCheck.userName === Encrypt.EncodeKey(req.body.userName))
+      res.json({
+        status: false,
+        message: "Username ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
+        tbUser: null,
+      });
   }
 });
 
 router.delete("/multidelete/:userId", (req, res) => {
-  const userId = req.params.userId;
-  const words = userId.split(",");
+  const userId = Encrypt.DecodeKey(req.params.userId);
+  const words = Encrypt.encryptValueIdArray(userId.split(","));
   for (const type of words) {
     req.body.isDeleted = true;
     tbUser.update(req.body, { where: { id: type } });
@@ -160,7 +221,7 @@ router.delete("/multidelete/:userId", (req, res) => {
 });
 
 router.delete("/:userId", async (req, res) => {
-  const userId = req.params.userId;
+  const userId = Encrypt.DecodeKey(req.params.userId);
   req.body.isDeleted = true;
   tbUser.update(req.body, { where: { id: userId } });
   res.json({ status: true, message: "success", tbUser: null });

@@ -279,7 +279,7 @@ export default function StockList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/membersInfo/${value.id}`}
                             >
-                              <div className="TextWordWarpCode">
+                              <div className="TextWordWarp-150">
                                 {value.firstName} {value.lastName}
                               </div>
                             </Link>

@@ -31,25 +31,22 @@ function App() {
           //   console.log(res);
           //   console.log(res.data);
           // })
-
-          // axios
-          //   .get(urlPath+"/users/auth", {
-          //     headers: {
-          //       accessToken: localStorage.getItem("accessToken"),
-          //     },
-          //   })
-          //   .then((response) => {
-          //     if (response.data.error) {
-          //       setAuthState({ ...authState, status: false });
-          //     } else {
-          //       setAuthState({
-          //         email: response.data.email,
-          //         id: response.data.id,
-          //         status: true,
-          //         role:response.data.role,
-          //       });
-          //     }
-          //   });
+          axios
+            .get("/users/auth")
+            .then((response) => {
+              console.log(response.data)
+              if (response.data.error) {
+                setAuthState({ ...authState, status: false });
+              } else {
+                localStorage.setItem('userName',response.data.firstName +" " + response.data.lastName);
+                setAuthState({
+                  email: response.data.email,
+                  id: response.data.id,
+                  status: true,
+                  role:response.data.role,
+                });
+              }
+            });
       
     }, []);
 

@@ -182,8 +182,8 @@ export default function PointCode() {
     };
     dataExport.map((item, key) => {
       return (
-        (obj.Sheets[item.category] = item.json),
-        obj.SheetNames.push(item.category)
+        (obj.Sheets['Coupon'] = item.json),
+        obj.SheetNames.push('Coupon')
       );
     });
     const test = { ...obj };
@@ -489,7 +489,7 @@ export default function PointCode() {
       <div className="w-full">
         <div
           className={
-            "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white "
+            "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white "
           }
         >
           <div className="rounded-t mb-0 px-4 py-3 border-0">
@@ -542,7 +542,7 @@ export default function PointCode() {
                           }}
                           className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
                         >
-                          <i className="fas fa-save mr-2"></i>
+                          <i class="fas fa-file-excel mr-2"></i>
                           Import
                         </span>
                       </div>
@@ -556,7 +556,7 @@ export default function PointCode() {
                           id="back"
                           className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
                         >
-                          <i className="fas fa-arrow-left mr-2"></i>
+                          <i class="fas fa-save mr-2"></i>
                           เพิ่มแคมเปญ
                         </span>
                       </div>
@@ -1048,7 +1048,7 @@ export default function PointCode() {
                                     className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeSymbol"
                                     name="pointCodeSymbol"
-                                    maxLength={10}
+                                    maxLength={5}
                                     onChange={formik.handleChange}
                                     onBlur={formik.handleBlur}
                                     value={formik.values.pointCodeSymbol}
@@ -1565,7 +1565,7 @@ export default function PointCode() {
               }}
             />
           </div>
-          <div className="py-4">
+          <div className="py-4 px-4">
             <ReactPaginate
               previousLabel={" < "}
               nextLabel={" > "}

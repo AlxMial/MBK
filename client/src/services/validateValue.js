@@ -9,6 +9,21 @@ class ValidateService {
     }
   };
 
+  onHandlePhoneChange = (e) => {
+    const re = /^[0-9\b]+$/;
+    // if value is not blank, then test the regex
+    if(e === "" ||  re.test(e) || e.includes('x') )
+      return  e;
+    else return "";
+        
+    // if ((e === "" || re.test(e)) && e.indexOf('x') === -1 ) {
+    //   return e;
+    // } else {
+    //   return "";
+    // }
+  };
+
+
   /*พิมพ์เบอร์โทรศัพท์*/
   onHandleScore = (e) => {
     var value = this.onHandleNumberChange(e.target.value);

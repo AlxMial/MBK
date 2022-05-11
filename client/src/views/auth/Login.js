@@ -38,14 +38,14 @@ export default function Login() {
       const data = { userName: values.userName, password: values.password };
       axios.post("/users/login", data).then((response) => {
         if (response.data.error) {
-          addToast("Can't login because Invalid username or password", {
+          addToast("ไม่สามารถทำการเข้าสู่ระบบได้ เนื่องจากรหัสผ่านหรือชื่อผู้เข้าใช้งานไม่ถูกต้อง", {
             appearance: "error",
             autoDismiss: true,
           });
         } else if (width < 1180 && response.data.role === "1") {
           /*ปรับการ Login Mobile ให้ตรวจสอบเฉพาะ Admin*/
           addToast(
-            "ไม่สามารถทำการเข้าสู่ระบบได้ เนื่องจากรหัสผ่านหรือชื่อผู้เข้าใช้งานไม่ถูกต้อง",
+            "ไม่สามารถทำการเข้าสู่ระบบได้ ต้องใช้งานผ่านระบบ Computer เท่านั้น",
             { appearance: "error", autoDismiss: true }
           );
         } else {
