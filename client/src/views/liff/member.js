@@ -32,13 +32,12 @@ const Member = () => {
   return (
     <>
       {/* card */}
-      <div style={{ marginTop: "-50px", position: "absolute", width: "100%" }}>
+      <div className="absolute w-full" style={{ marginTop: "-50px" }}>
         <div
-          className=" flex"
+          className=" flex margin-a"
           style={{
             width: "90%",
             padding: "20px",
-            margin: "auto",
             height: "180px",
             borderRadius: "10px",
             backgroundImage: `url(${
@@ -137,7 +136,10 @@ const Member = () => {
                   {"Expire : " +
                     (IsNullOrEmpty(tbMember.memberPointExpire)
                       ? "-"
-                      : moment(tbMember.memberPointExpire.split("T")[0]).locale("th").add(543, "year").format("DD/MM/yyyy") )}
+                      : moment(tbMember.memberPointExpire.split("T")[0])
+                          .locale("th")
+                          .add(543, "year")
+                          .format("DD/MM/yyyy"))}
                 </span>
               </div>
             </div>
@@ -145,11 +147,10 @@ const Member = () => {
         </div>
         <div className="mt-2">
           <div
-            className="bg-green-mbk flex text-white font-bold text-xs relative"
+            className="bg-green-mbk flex text-white font-bold text-xs relative margin-a"
             style={{
               width: "90%",
               padding: "10px",
-              margin: "auto",
               height: "40px",
               borderRadius: "10px",
             }}
@@ -172,7 +173,11 @@ const Member = () => {
           style={{ height: "20px", backgroundColor: "#ebebeb" }}
         ></div>
 
-        <Tabs className="Tabs-line" defaultActiveKey="1" onChange={tabsChange}>
+        <Tabs
+          className="Tabs-line noselect"
+          defaultActiveKey="1"
+          onChange={tabsChange}
+        >
           <TabPane tab="รางวัลของฉัน" key="1">
             <MyAward />
           </TabPane>
