@@ -19,10 +19,10 @@ router.post("/", async (req, res) => {
     let status;
     for (var i = 0; i < redeemCode.length; i++) {
       const PointDt = await tbPointCodeDT.findOne({
-        where: { code: redeemCode[i].toLowerCase() },
+        where: { code: redeemCode[i].toLowerCase(),isDeleted:false },
       });
       const Point = await tbPointCodeHD.findOne({
-        include: { model: tbPointCodeDT, where: { code: redeemCode[i].toLowerCase() } },
+        include: { model: tbPointCodeDT, where: { code: redeemCode[i].toLowerCase(),isDeleted:false } },
       });
       if (PointDt) {
         if (PointDt.dataValues.isExpire) {

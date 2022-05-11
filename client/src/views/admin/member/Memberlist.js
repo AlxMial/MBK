@@ -9,7 +9,7 @@ import { Workbook } from "exceljs";
 import { exportExcel } from "services/exportExcel";
 import * as fs from "file-saver";
 import moment from "moment";
-
+import Spinner from "components/Loadings/spinner/Spinner";
 // components
 Modal.setAppElement("#root");
 const customStyles = {
@@ -35,6 +35,7 @@ export default function MemberList() {
   const [deleteNumber, setDeleteNumber] = useState(0);
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
 
@@ -134,10 +135,30 @@ export default function MemberList() {
   };
 
   const Excel = async () => {
+    setIsLoading(true);
     let member = await axios.get("members/export");
-    const TitleColumns = ['รหัสสมาชิก','ชื่อ','นามสกุล','เบอร์โทร','อีเมล','ที่อยู่','วันเกิด','วันที่สมัคร'];
-    const columns = ['memberCard','firstName','lastName','phone','email','address','birthDate','registerDate'];
-    exportExcel(member.data.tbMember,'ข้อมูลสมาชิก',TitleColumns,columns);
+    const TitleColumns = [
+      "รหัสสมาชิก",
+      "ชื่อ",
+      "นามสกุล",
+      "เบอร์โทร",
+      "อีเมล",
+      "ที่อยู่",
+      "วันเกิด",
+      "วันที่สมัคร",
+    ];
+    const columns = [
+      "memberCard",
+      "firstName",
+      "lastName",
+      "phone",
+      "email",
+      "address",
+      "birthDate",
+      "registerDate",
+    ];
+    exportExcel(member.data.tbMember, "ข้อมูลสมาชิก", TitleColumns, columns);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -153,6 +174,14 @@ export default function MemberList() {
 
   return (
     <>
+      {isLoading ? (
+        <>
+          {" "}
+          <Spinner customText={"Loading"} />
+        </>
+      ) : (
+        <></>
+      )}
       <div className="flex flex-warp">
         <span className="text-sm font-bold margin-auto-t-b">
           <i className="fas fa-user-friends"></i>&nbsp;
