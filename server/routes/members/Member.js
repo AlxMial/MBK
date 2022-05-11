@@ -176,12 +176,13 @@ router.post("/checkRegister", async (req, res) => {
   let isRegister = false;
   let code = 500;
   let members;
+
   try {
-    const member = await tbMember.findOne({
+    let member = await tbMember.findOne({
       where: { uid: req.body.uid, isDeleted: false },
     });
     if (member) {
-      Encrypt.encryptValueId(member);
+      member =  Encrypt.decryptAllData(member);
       members = member;
       isRegister = true;
       code = 200;
