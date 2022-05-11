@@ -11,6 +11,7 @@ import member from "views/liff/member";
 import otp from "views/liff/otp";
 import getreward from "views/liff/getreward";
 import updateprofile from "views/liff/updateprofile";
+import point from "views/liff/point";
 
 export const path = {
   privacypolicy: "/line/privacypolicy",
@@ -19,6 +20,7 @@ export const path = {
   otp: "/line/otp",
   getreward: "/line/getreward",
   updateprofile: "/line/updateprofile",
+  point: "/line/point",
 };
 const routes = [
   {
@@ -44,6 +46,10 @@ const routes = [
   {
     path: path.updateprofile,
     component: updateprofile,
+  },
+  {
+    path: path.point,
+    component: point,
   },
 ];
 
@@ -76,6 +82,7 @@ const runApp = (callback) => {
     displayName: "test",
     pictureUrl: "test",
     email: "test",
+    memberId: "4",
   });
   let checkRegister = Session.getcheckRegister();
   if (checkRegister !== "true") {
@@ -87,6 +94,7 @@ const runApp = (callback) => {
         } else {
         }
         Session.setcheckRegister(res.data.isRegister);
+        // res.data.tbMember.id;
         callback(checkRegister);
       });
   } else {
@@ -115,8 +123,12 @@ const Liff = () => {
   // console.log("pathname : " + pathname);
   let bg = "100px";
   let ismemberpage = false;
-  if (pathname.includes("member")) {
+  if (pathname.toLowerCase().includes("member") || pathname.toLowerCase().includes("point")) {
     bg = "180px";
+
+    if (pathname.includes("point")) {
+      bg = "280px";
+    }
     ismemberpage = true;
   }
 
@@ -148,7 +160,7 @@ const Liff = () => {
               alt="line_head_img"
               style={{
                 objectFit: "fill",
-                height: "200px",
+                height: bg,
                 width: "100%",
               }}
             ></img>

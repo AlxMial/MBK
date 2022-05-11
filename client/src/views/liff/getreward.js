@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import Select from "react-select";
+import axios from "services/axios";
 import InputMask from "react-input-mask";
 import { useHistory } from "react-router-dom";
 import { path } from "../../layouts/Liff";
+import { IsNullOrEmpty } from "../../../src/services/default.service";
+import * as Session from "../../services/Session.service";
 // components
 
 const GetReward = () => {
@@ -14,11 +17,38 @@ const GetReward = () => {
     { index: 3, code: "" },
     { index: 4, code: "" },
   ]);
+  const [succeedData, setsucceedData] = useState([]);
+
   const [confirmsucceed, setconfirmsucceed] = useState(false);
   const confirmreward = () => {
     /// check api
-    // console.log(rewardCode)
-    setconfirmsucceed(true);
+    let code = [];
+
+    rewardCode.map((e, i) => {
+      if (!IsNullOrEmpty(e.code)) {
+        code.push(e.code.replaceAll(" ", ""));
+      }
+    });
+    // console.log(code);
+    console.log({ memberId: Session.getLiff().memberId, redeemCode: code });
+
+    // setconfirmsucceed(true);
+    axios
+      .post("/redeem", {
+        memberId: Session.getLiff().memberId,
+        redeemCode: code,
+      })
+      .then((res) => {
+        console.log(res.data.data);
+
+        setconfirmsucceed(true);
+        setsucceedData(res.data.data);
+        // if (res.data.data === 200) {
+        //   // settbMember(res.data.tbMember);
+        //   // setconfirmsucceed(true);
+        // } else {
+        // }
+      });
   };
 
   return (
@@ -103,15 +133,15 @@ const GetReward = () => {
                                 console.log(e.target.value);
                                 let item = rewardCode.map((item) => {
                                   if (item.index == i) {
-                                    return { ...item, code: e.target.value }; 
+                                    return { ...item, code: e.target.value };
                                   }
                                   return item;
                                 });
 
                                 setrewardCode(item);
                               }}
-                              placeholder={"XXXX-XXXX-XXXX-XXXX"}
-                              mask={"9999-9999-9999-9999"}
+                              placeholder={"XXX-XXXXXXXXXXXXXXXX"}
+                              mask={"***-****************"}
                               maskChar=" "
                             />
                           </div>
@@ -174,19 +204,48 @@ const GetReward = () => {
               <div className="text-lg text-white font-bold text-center ">
                 {"โค้ด"}
               </div>
-              <div className="text-lg text-white font-bold text-center ">
-                {"XXXX-XXXX-XXXX-XXXX"}
-              </div>
-              <div className="text-lg text-white font-bold text-center ">
-                {"สถานะ : รอยืนยัน"}
-              </div>
+              {[...succeedData].map((e, i) => {
+                return (
+                  <div key={i} className="mb-5">
+                    <div className="text-lg text-white font-bold text-center ">
+                      {e.coupon}
+                    </div>
+                    <div className="text-lg text-white font-bold text-center ">
+                      {"สถานะ : " +
+                        (e.isInvalid
+                          ? "Invalid"
+                          : e.isExpire
+                          ? "Expire"
+                          : e.isUse
+                          ? "is Use"
+                          : "รอยืนยัน")}
+                    </div>
+                  </div>
+                );
+              })}
+
               <div
                 className="text-lg text-white font-bold text-center "
+                style={{
+                  position: "absolute",
+                  bottom: "50px",
+                }}
                 onClick={() => {
                   history.push(path.member);
                 }}
               >
-                {"กลับหน้าหลัก"}
+                <div
+                  style={{
+                    width: "150px",
+                    border: "2px solid #FFF",
+                    borderRadius: "20px",
+                    padding: "10px 10px",
+                    position: "relative",
+                    left: "60%",
+                  }}
+                >
+                  {"กลับหน้าหลัก"}
+                </div>
               </div>
             </>
           )}
