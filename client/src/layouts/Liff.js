@@ -14,6 +14,11 @@ import updateprofile from "views/liff/updateprofile";
 import point from "views/liff/point";
 import coupon from "views/liff/coupon/coupon";
 import reward from "views/liff/reward/reward";
+
+import rewardRedeem from "views/liff/reward/reward.redeem";
+import rewardSpin from "views/liff/reward/reward.spin";
+import rewardExchange from "views/liff/reward/reward.exchange";
+
 export const path = {
   privacypolicy: "/line/privacypolicy",
   register: "/line/register",
@@ -24,6 +29,10 @@ export const path = {
   point: "/line/point",
   coupon: "/line/coupon",
   reward: "/line/reward",
+
+  rewardredeem: "/line/rewardredeem/:id",
+  rewardspin: "/line/rewardspin/:id",
+  rewardexchange: "/line/rewardexchange/:id",
 };
 const routes = [
   {
@@ -61,6 +70,19 @@ const routes = [
   {
     path: path.reward,
     component: reward,
+  },
+
+  {
+    path: path.rewardredeem,
+    component: rewardRedeem,
+  },
+  {
+    path: path.rewardspin,
+    component: rewardSpin,
+  },
+  {
+    path: path.rewardexchange,
+    component: rewardExchange,
   },
 ];
 
@@ -138,11 +160,14 @@ const Liff = () => {
     pathname.toLowerCase().includes("member") ||
     pathname.toLowerCase().includes("point") ||
     pathname.toLowerCase().includes("coupon") ||
-    pathname.toLowerCase().includes("reward")
+    pathname.toLowerCase() == "reward"
   ) {
     bg = "180px";
 
-    if (pathname.includes("point") || pathname.toLowerCase().includes("reward")) {
+    if (
+      pathname.includes("point") ||
+      pathname.toLowerCase().includes("reward")
+    ) {
       bg = "280px";
     }
     ismemberpage = true;
