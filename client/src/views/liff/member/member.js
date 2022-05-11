@@ -4,9 +4,9 @@ import { Tabs } from "antd";
 import MyAward from "./member.myAward";
 import MyOrder from "./member.myOrder";
 import { useHistory } from "react-router-dom";
-import { path } from "../../layouts/Liff";
-import { IsNullOrEmpty } from "../../services/default.service";
-import * as Session from "../../services/Session.service";
+import { path } from "../../../layouts/Liff";
+import { IsNullOrEmpty } from "../../../services/default.service";
+import * as Session from "../../../services/Session.service";
 import moment from "moment";
 // components
 
