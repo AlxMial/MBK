@@ -11,6 +11,8 @@ import member from "views/liff/member";
 import otp from "views/liff/otp";
 import getreward from "views/liff/getreward";
 import updateprofile from "views/liff/updateprofile";
+import point from "views/liff/point";
+import coupon from "views/liff/coupon";
 
 export const path = {
   privacypolicy: "/line/privacypolicy",
@@ -19,6 +21,8 @@ export const path = {
   otp: "/line/otp",
   getreward: "/line/getreward",
   updateprofile: "/line/updateprofile",
+  point: "/line/point",
+  coupon: "/line/coupon",
 };
 const routes = [
   {
@@ -44,6 +48,14 @@ const routes = [
   {
     path: path.updateprofile,
     component: updateprofile,
+  },
+  {
+    path: path.point,
+    component: point,
+  },
+  {
+    path: path.coupon,
+    component: coupon,
   },
 ];
 
@@ -76,6 +88,7 @@ const runApp = (callback) => {
     displayName: "test",
     pictureUrl: "test",
     email: "test",
+    memberId: "4",
   });
   let checkRegister = Session.getcheckRegister();
   if (checkRegister !== "true") {
@@ -87,6 +100,7 @@ const runApp = (callback) => {
         } else {
         }
         Session.setcheckRegister(res.data.isRegister);
+        // res.data.tbMember.id;
         callback(checkRegister);
       });
   } else {
@@ -115,8 +129,16 @@ const Liff = () => {
   // console.log("pathname : " + pathname);
   let bg = "100px";
   let ismemberpage = false;
-  if (pathname.includes("member")) {
+  if (
+    pathname.toLowerCase().includes("member") ||
+    pathname.toLowerCase().includes("point") ||
+    pathname.toLowerCase().includes("coupon")
+  ) {
     bg = "180px";
+
+    if (pathname.includes("point")) {
+      bg = "280px";
+    }
     ismemberpage = true;
   }
 
@@ -138,18 +160,18 @@ const Liff = () => {
   return (
     <>
       <div
-        className={!ismemberpage ? "bg-green-mbk flex" : ""}
+        className={"noselect " + (!ismemberpage ? "bg-green-mbk flex" : "")}
         style={{ height: bg }}
       >
-        <div style={{ width: "100%" }}>
+        <div className="w-full">
           {ismemberpage ? (
             <img
+              className="w-full"
               src={require("assets/img/mbk/line_head_img.jpg").default}
               alt="line_head_img"
               style={{
                 objectFit: "fill",
-                height: "200px",
-                width: "100%",
+                height: bg,
               }}
             ></img>
           ) : (
