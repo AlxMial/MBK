@@ -1782,12 +1782,12 @@ select {
 
 .text-xs {
   font-size: 0.7rem;
-  line-height: 1rem;
+  line-height: 1.2rem;
 }
 
 .text-sm {
   font-size: 0.88rem;
-  line-height: 1rem;
+  line-height: 1.2rem;
 }
 
 .text-base {
@@ -3968,6 +3968,11 @@ input[type=email]:disabled {
     height: 75vh;
     overflow-y: auto;
   }
+
+  .OverflowModal-info{
+    max-height: 65vh;
+    overflow-y: auto;
+  }
 }
 
 @media only screen and (max-width: 1920px) {
@@ -4022,6 +4027,11 @@ input[type=email]:disabled {
 
   .Overflow-info{
     height: 71vh;
+    overflow-y: auto;
+  }
+
+  .OverflowModal-info{
+    max-height: 60vh;
     overflow-y: auto;
   }
 
@@ -4087,6 +4097,10 @@ input[type=email]:disabled {
   }
   .minHeight {
     min-height: 94vh;
+  }
+
+  .w-64{
+    width: 20rem;
   }
 }
 

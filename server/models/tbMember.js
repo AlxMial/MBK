@@ -80,6 +80,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      consentDate:{
+        type: DataTypes.DATE,
+        allowNull: true,
+      }
     });
 
     tbMember.associate = (models) => {

@@ -55,6 +55,7 @@ export default function PointStore() {
       fetchDataById(id);
       setIsNew(false);
     } else {
+      setArr([]);
       formik.resetForm();
       setIsNew(true);
     }
@@ -95,17 +96,6 @@ export default function PointStore() {
     }
   };
 
-  /*พิมพ์เบอร์โทรศัพท์*/
-  const onHandleScore = (e) => {
-    if (
-      ValidateService.onHandleNumberChange(e.target.value) !== "" ||
-      e.target.value === ""
-    ) {
-      setScore(e.target.value);
-      formik.values.score = e.target.value;
-    }
-  };
-
   /* formik */
   const formik = useFormik({
     initialValues: {
@@ -122,9 +112,10 @@ export default function PointStore() {
     }),
     onSubmit: (values) => {
       if (isNew) {
+        values["branch"] = arr;
         axios.post("pointStore", values).then((res) => {
           if (res.data.status) {
-            formik.values.id = res.data.tbPointStore.id;
+            formik.values.id = res.data.tbPointStoreHD.id;
             fetchData();
             addToast(
               Storage.GetLanguage() === "th"
@@ -145,9 +136,9 @@ export default function PointStore() {
           }
         });
       } else {
+        values["branch"] = arr;
         axios.put("pointStore", values).then((res) => {
           if (res.data.status) {
-            formik.values.id = res.data.tbPointStore.id;
             fetchData();
             addToast(
               Storage.GetLanguage() === "th"
@@ -158,7 +149,7 @@ export default function PointStore() {
           } else {
             if (res.data.isPointStoreName) {
               addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อร้านค้าเคยมีการบันทึกเรียบร้อยแล้ว",
                 {
                   appearance: "warning",
                   autoDismiss: true,
@@ -184,15 +175,27 @@ export default function PointStore() {
 
   const fetchDataById = async (id) => {
     let response = await axios.get(`/pointStore/byId/${id}`);
-    let pointStore = await response.data.tbPointStore;
+    let pointStore = await response.data.tbPointStoreHD;
+    let pointStoreDT = await response.data.tbPointStoreDT;
     if (pointStore !== null) {
-      for (var columns in response.data.tbPointStore) {
+      for (var columns in response.data.tbPointStoreHD) {
         formik.setFieldValue(
           columns,
-          response.data.tbPointStore[columns],
+          response.data.tbPointStoreHD[columns],
           false
         );
       }
+      let storeDt = [];
+      var i = 0;
+      await pointStoreDT.forEach((field) => {
+        storeDt.push({
+          type: "text",
+          id: field.id,
+          value: field.pointBranchName,
+        });
+        i++;
+      });
+      setArr(storeDt);
     }
   };
 
@@ -200,9 +203,44 @@ export default function PointStore() {
     axios.get("pointStore").then((response) => {
       if (response.data.error) {
       } else {
-        setlistStore(response.data.tbPointStore);
-        setListSerch(response.data.tbPointStore);
+        setlistStore(response.data.tbPointStoreHD);
+        setListSerch(response.data.tbPointStoreHD);
       }
+    });
+  };
+
+  const inputArr = [];
+
+  const [arr, setArr] = useState(inputArr);
+
+  const addInput = () => {
+    setArr((s) => {
+      return [
+        ...s,
+        {
+          type: "text",
+          value: "",
+          id:"",
+        },
+      ];
+    });
+  };
+
+  const handleRemove = (index) => {
+    const rows = [...arr];
+    rows.splice(index, 1);
+    setArr(rows);
+  };
+
+  const handleChangeBranch = (e) => {
+    e.preventDefault();
+
+    const index = e.target.id;
+    setArr((s) => {
+      const newArr = s.slice();
+      newArr[index].value = e.target.value;
+
+      return newArr;
     });
   };
 
@@ -305,10 +343,94 @@ export default function PointStore() {
                               </div>
                               <div className="w-full px-24">
                                 <div
-                                  className={" py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white" }>
-                                  <div className="rounded-t mb-0 px-4 py-3 border-0">
-                                    <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
+                                  className={
+                                    " py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white OverflowModal-info"
+                                  }
+                                >
+                                  <div className="rounded-t mb-0 px-4 border-0">
+                                    <div className="w-full mx-autp items-center ">
+                                      <div className="flex flex-wrap w-full">
+                                        <div className="w-full mb-3 flex justify-between">
+                                          <div>
+                                            <label className="text-blueGray-600 text-sm font-bold "></label>
+                                          </div>
+                                          <div>
+                                            <button
+                                              className={
+                                                "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                              }
+                                              onClick={addInput}
+                                              type="button"
+                                            >
+                                              เพิ่มข้อมูลสาขา
+                                            </button>
+                                          </div>
+                                        </div>
 
+                                        <table className="items-center w-full border ">
+                                          <thead>
+                                            <tr>
+                                              <th
+                                                className={
+                                                  "px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 w-8"
+                                                }
+                                              >
+                                                ลำดับที่
+                                              </th>
+                                              <th
+                                                className={
+                                                  "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
+                                                }
+                                              >
+                                                ชื่อสาขา
+                                              </th>
+                                              <th
+                                                className={
+                                                  "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                                                }
+                                              >
+                                                จัดการ
+                                              </th>
+                                            </tr>
+                                          </thead>
+
+                                          <tbody>
+                                            {arr.map((item, i) => {
+                                              return (
+                                                <tr key={i}>
+                                                  <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8">
+                                                    <span className="px-4 margin-a">
+                                                      {i + 1}
+                                                    </span>
+                                                  </td>
+                                                  <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                                                    <div className="w-full margin-auto-t-b">
+                                                      <input
+                                                        onChange={
+                                                          handleChangeBranch
+                                                        }
+                                                        value={item.value}
+                                                        id={i}
+                                                        maxLength={100}
+                                                        type={item.type}
+                                                        className="border-0 margin-auto-t-b px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full  text-sm  focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                                      />
+                                                    </div>
+                                                  </td>
+                                                  <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
+                                                    <i
+                                                      className="fas fa-trash text-red-500 cursor-pointer"
+                                                      onClick={() => {
+                                                        handleRemove(i);
+                                                      }}
+                                                    ></i>
+                                                  </td>
+                                                </tr>
+                                              );
+                                            })}
+                                          </tbody>
+                                        </table>
+                                      </div>
                                     </div>
                                   </div>
                                 </div>

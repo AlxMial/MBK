@@ -275,7 +275,7 @@ export default function PointEcommerce() {
                                 <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full  text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full  text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointEcommerceName"
                                     name="pointEcommerceName"
                                     maxLength={100}
@@ -329,7 +329,7 @@ export default function PointEcommerce() {
                                 <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-left py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-11/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-11/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointEcommerceSymbol"
                                     name="pointEcommerceSymbol"
                                     maxLength={100}

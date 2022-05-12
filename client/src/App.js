@@ -33,6 +33,7 @@ function App() {
                 setAuthState({ ...authState, status: false });
               } else {
                 localStorage.setItem('userName',response.data.firstName +" " + response.data.lastName);
+                localStorage.setItem('user',response.data.userName);
                 setAuthState({
                   email: response.data.email,
                   id: response.data.id,

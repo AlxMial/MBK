@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-    const tbPointStore = sequelize.define("tbPointStore", {
-      pointStoreName: {
+    const tbPointStoreDT = sequelize.define("tbPointStoreDT", {
+      pointBranchName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
@@ -9,6 +9,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
     });
-    return tbPointStore;
+    return tbPointStoreDT;
   };
   

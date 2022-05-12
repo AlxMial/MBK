@@ -59,6 +59,7 @@ export default function PointCode() {
   const useStyleSelect = styleSelect();
   const [errorPointCodeSymbol, setErrorPointCodeSymbol] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [ enableCode , setEnableCode] = useState(false);
   const [errorPointCodeLengthSymbol, setErrorPointCodeLengthSymbol] =
     useState(false);
   const [errorPointCodeQuantityCode, setErrorPointCodeQuantityCode] =
@@ -76,7 +77,9 @@ export default function PointCode() {
     if (id) {
       await fetchDataById(id);
       setIsNew(false);
+      setEnableCode(true);
     } else {
+      setEnableCode(false);
       setActive("1");
       setType("1");
       setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
@@ -1083,7 +1086,7 @@ export default function PointCode() {
                                     onBlur={formik.handleBlur}
                                     value={formik.values.pointCodeSymbol}
                                     autoComplete="pointCodeSymbol"
-                                    disabled={isEnable}
+                                    disabled={isEnable || enableCode}
                                   />
                                   {formik.touched.pointCodeSymbol &&
                                   errorPointCodeSymbol ? (
@@ -1126,7 +1129,7 @@ export default function PointCode() {
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointCodeLengthSymbol"
                                     value={formik.values.pointCodeLengthSymbol}
-                                    disabled={isEnable}
+                                    disabled={isEnable || enableCode}
                                   />
                                   {formik.touched.pointCodeLengthSymbol &&
                                   formik.errors.pointCodeLengthSymbol ? (
@@ -1207,7 +1210,7 @@ export default function PointCode() {
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointCodeQuantityCode"
                                     value={formik.values.pointCodeQuantityCode}
-                                    disabled={isEnable}
+                                    disabled={isEnable || enableCode}
                                   />
                                   {formik.touched.pointCodeQuantityCode &&
                                   formik.errors.pointCodeQuantityCode ? (

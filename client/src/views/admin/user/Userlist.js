@@ -125,15 +125,19 @@ export default function UserList() {
     }
   };
 
-  const deleteUser = (e) => {
-    axios.delete(`/users/${e}`).then(() => {
-      setListUser(
-        listUser.filter((val) => {
-          return val.id !== e;
-        })
-      );
+  const deleteUser = (e, userName) => {
+    if (localStorage.getItem("user") === userName) {
       closeModalSubject();
-    });
+    } else {
+      axios.delete(`/users/${e}`).then(() => {
+        setListUser(
+          listUser.filter((val) => {
+            return val.id !== e;
+          })
+        );
+        closeModalSubject();
+      });
+    }
   };
 
   useEffect(() => {
@@ -318,7 +322,7 @@ export default function UserList() {
                         "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                       }
                     >
-                        ชื่อ - นามสกุล
+                      ชื่อ - นามสกุล
                     </th>
                     <th
                       className={
@@ -392,7 +396,7 @@ export default function UserList() {
                               to={`/admin/usersinfo/${value.id}`}
                             >
                               <div className="TextWordWarp-200">
-                              {value.email}   
+                                {value.email}
                               </div>
                             </Link>
                           </td>
@@ -416,12 +420,19 @@ export default function UserList() {
                               </div>
                             </Link>
                           </td>
-                     
+
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                             <i
-                              className="fas fa-trash text-red-500 cursor-pointer"
-                              onClick={() => {
-                                openModalSubject(value.id);
+                              className={
+                                "fas fa-trash cursor-pointer" +
+                                (localStorage.getItem("user") === value.userName
+                                  ? " text-gray-500"
+                                  : " text-red-500")
+                              }
+                              onClick={(e) => {
+                                localStorage.getItem("user") === value.userName
+                                  ? e.preventDefault()
+                                  : openModalSubject(value.id,value.userName);
                               }}
                             ></i>
                           </td>
