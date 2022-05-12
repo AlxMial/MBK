@@ -1212,7 +1212,7 @@ select {
 
 .bg-green-mbk {
   --tw-bg-opacity: 1;
-  background-color: #047a40;
+  background-color: #007A40;
 }
 
 .bg-gray-mbk {
@@ -1221,7 +1221,7 @@ select {
 }
 
 .bg-lemon-mbk {
-  background-color: #DCE2A4;
+  background-color: #D2B12B;
 }
 
 .bg-gold-mbk {
@@ -1431,7 +1431,7 @@ select {
 
 .active\:bg-lemon-mbk:active {
   --tw-bg-opacity: 1;
-  background-color: #DCE2A4;
+  background-color: #D2B12B;
 }
 
 .active\:bg-gold-mbk:active {
@@ -1479,7 +1479,7 @@ select {
 
 .border-green-mbk {
   --tw-border-opacity: 1;
-  border-color: #047a40;
+  border-color: #007A40;
 }
 
 .border-blueGray-100 {
@@ -1686,6 +1686,10 @@ select {
   float: left;
 }
 
+.float-right {
+  float: right;
+}
+
 .font-light {
   font-weight: 300;
 }
@@ -1786,7 +1790,7 @@ select {
 }
 
 .text-sm {
-  font-size: 0.88rem;
+  font-size: 0.875rem;
   line-height: 1.2rem;
 }
 
@@ -3593,17 +3597,17 @@ select {
 }
 
 .paginationBttns li a.active {
-  background-color: #4caf50;
+  background-color: #007A40;
   color: #fff;
 }
 
 .paginationBttns a:hover {
-  background-color: #4caf50;
+  background-color: #007A40;
   color: #fff;
 }
 
 .paginationActive a {
-  background-color: #4caf50;
+  background-color: #007A40;
   color: #fff;
 }
 
@@ -3684,8 +3688,7 @@ input[type=email]:disabled {
 .ant-tabs-tab {
   font-size: 0.9rem !important;
   font-weight: bold !important;
-  border: 0px;
-  /* border: 2px solid #DBE2A4 !important; */
+  /* border: 0px; */
   border-top-left-radius: 0.5rem !important;
   border-top-right-radius: 0.5rem !important;
   padding: 0.5rem 2rem !important;
@@ -3709,11 +3712,13 @@ input[type=email]:disabled {
 }
 
 .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: #334155 !important;
+  color: white !important;
 }
 
 .ant-tabs-tab.ant-tabs-tab-active {
-  background: #DBE2A4 !important;
+  background: #007A40 !important;
+  
+  border: 1px solid #D0B027 !important;
 }
 
 .ant-tabs-ink-bar {
@@ -3753,7 +3758,7 @@ input[type=email]:disabled {
 }
 
 .ant-radio-wrapper {
-  font-size: 0.9rem !important;
+  font-size: 0.875rem !important;
   font-weight: bold;
 }
 
@@ -4100,7 +4105,7 @@ input[type=email]:disabled {
   }
 
   .w-64{
-    width: 20rem;
+    width: 13rem;
   }
 }
 
@@ -4136,7 +4141,7 @@ input[type=email]:disabled {
   }
 
   .w-64 {
-    width: 10rem;
+    width: 8rem;
   }
 
 }

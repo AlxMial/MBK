@@ -609,7 +609,7 @@ export default function PointCode() {
                 }
               >
                 <button
-                  className="bg-lemon-mbk text-blueGray-600  mr-2 active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                  className="bg-lemon-mbk text-white  mr-2 active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                   type="button"
                   onClick={() => {
                     openModalImport();
@@ -963,7 +963,7 @@ export default function PointCode() {
                   </div>
                 </Modal>
                 <button
-                  className="bg-lemon-mbk text-blueGray-600 active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                  className="bg-lemon-mbk text-white active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                   type="button"
                   onClick={() => {
                     openModal();

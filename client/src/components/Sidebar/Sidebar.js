@@ -1,8 +1,9 @@
 /*eslint-disable*/
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState,useEffect } from "react";
+import { Link,useHistory } from "react-router-dom";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 import useWindowDimensions from "services/useWindowDimensions";
+import { getPermissionByUserName } from "services/Permission";
 
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
@@ -10,7 +11,8 @@ export default function Sidebar() {
   const [ isCRM , setIsCRM ] = useState(false);
   const [ isEcommerce , setIsEcommerce ] = useState(false);
   const [ isReport , setIsReport ] = useState(false);
-
+  const [typePermission, setTypePermission] = useState("");
+  let history = useHistory();
   const ClickCRM = () => {
     setIsCRM(!isCRM);
   }
@@ -22,6 +24,27 @@ export default function Sidebar() {
   const ClickReport = () => {
     setIsReport(!isReport);
   }
+
+  const fetchPermission = async  () => {
+    const role = await getPermissionByUserName();
+    setTypePermission(role);
+    console.log(role)
+    if(role === "3")
+    {
+      history.push("/admin/members");
+      setIsCRM(true);
+    } 
+    else if (role === "2")
+    {
+      history.push("/admin/empty");
+      setIsCRM(true);
+    }
+  }
+
+  useEffect( () => {
+    fetchPermission();
+  }, []);
+
 
   return (
     <>
@@ -103,7 +126,7 @@ export default function Sidebar() {
             </h6>
             {/* Navigation */}
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-              <li className="items-center">
+              <li className= {"items-center" + ((typePermission !== "1") ? " hidden" : " ")}>
                 <Link
                   className={
                     "text-sm uppercase py-4 px-2 font-bold block " +
@@ -133,7 +156,7 @@ export default function Sidebar() {
                 type="button"
                 className={
                   "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
-                  (width < 765 ? " text-blueGray-700" : " text-white")
+                  (width < 765 ? " text-blueGray-700" : " text-white") + ((typePermission === "2") ? " hidden" : " ")
                 }
 
                 onClick={()=> ClickCRM() }
@@ -155,7 +178,7 @@ export default function Sidebar() {
               </button>
               <ul
   
-                className={"py-2 space-y-2" + ((isCRM) ? " block" : " hidden")}
+                className={"py-2 space-y-2" + ((isCRM) ? " block" : " hidden") +  ((typePermission === "2") ? " hidden" : " ")}
               >
                 <li className="items-center">
                   <Link

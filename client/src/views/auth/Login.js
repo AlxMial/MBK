@@ -65,9 +65,9 @@ export default function Login() {
           });
 
           localStorage.setItem("accessToken", response.data.token);
-          console.log(localStorage.getItem("accessToken"));
+
           localStorage.setItem("roleUser", response.data.role);
-          localStorage.setItem("username", response.data.userName);
+          localStorage.setItem("user", response.data.userName);
           localStorage.setItem(
             "fullName",
             response.data.firstName + " " + response.data.lastName

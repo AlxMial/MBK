@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
   Encrypt.encryptValueIdArray(ValuesDecrypt);
   Encrypt.encryptPhoneArray(ValuesDecrypt);
   Encrypt.encryptEmailArray(ValuesDecrypt);
-  res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
+  res.json({ status: true, message: "success", tbMember: listMembers });
   } else res.status(403).json({ status: false, message: "not found member", tbMember: null });
 });
 

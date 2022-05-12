@@ -13,13 +13,16 @@ export const exportExcel = async (dataExport, Title, TitleColumns, columns,sheet
   for (let val of dataExport) {
     GenerateData = "";
     for (let valueColumns of columns) {
-      if (GenerateData === "") GenerateData = val[valueColumns];
+      if (GenerateData === "") {
+        GenerateData = (val[valueColumns] === '') ? " " : val[valueColumns] ;
+      }
       else {
         if (valueColumns.toLocaleLowerCase().includes("date"))
           GenerateData += "," + moment(val[valueColumns]).format("DD/MM/YYYY");
-        else GenerateData += "," + val[valueColumns];
+        else GenerateData += "," + ( (val[valueColumns] === '') ? " ": val[valueColumns]);
       }
     }
+    console.log(GenerateData)
     data.push(GenerateData.split(','));
   }
 

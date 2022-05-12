@@ -17,6 +17,7 @@ import locale from "antd/lib/locale/th_TH";
 import { DatePicker, Space, ConfigProvider } from "antd";
 import * as Address from "../../../services/GetAddress.js";
 import useMenu from "services/useMenu";
+import { getPermissionByUserName } from "services/Permission";
 
 export default function MemberInfo() {
   /* Option Select */
@@ -46,6 +47,7 @@ export default function MemberInfo() {
   const [dataProviceEng, setDataProviceEng] = useState([]);
   const [dataDistrictEng, setDataDistrictEng] = useState([]);
   const [dataSubDistrictEng, setSubDistrictEng] = useState([]);
+  const [typePermission,setTypePermission] = useState('');
   let history = useHistory();
   const { addToast } = useToasts();
   /* Method Condition */
@@ -222,6 +224,11 @@ export default function MemberInfo() {
     }
   }
 
+  const fetchPermission = async  () => {
+    const role = await getPermissionByUserName();
+    setTypePermission(role);
+  }
+
   const defaultValue = () => {
     formik.values.memberCard = "MEM00001";
     formik.values.firstName = "ชาคริต";
@@ -268,6 +275,7 @@ export default function MemberInfo() {
         ? new moment(new Date()).toDate()
         : formik.values.registerDate;
     fatchAddress();
+    fetchPermission();
     // defaultValue();
     fetchData();
   }, []);
@@ -278,7 +286,7 @@ export default function MemberInfo() {
         <span className="text-sm font-bold margin-auto-t-b">
           <i className="fas fa-user-circle"></i>&nbsp;
         </span>
-        <span className="text-base margin-auto font-bold">ข้อมูลสมาชิก</span>
+        <span className="text-base margin-auto font-bold">ข้อมูลสมาชิก </span>
       </div>
       <div className="w-full">
         <form onSubmit={formik.handleSubmit}>
@@ -289,7 +297,7 @@ export default function MemberInfo() {
               </span>
               <div
                 className={
-                  "margin-auto-t-b" + (width < 1024 ? " hidden" : " block")
+                  "margin-auto-t-b" + (width < 764 ? " hidden" : " block")
                 }
               >
                 <div className="w-full px-4">
@@ -305,7 +313,7 @@ export default function MemberInfo() {
                     </button>
                     <button
                       className={
-                        "hidden bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                        " bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 " + ((typePermission === "1") ? " " : " hidden") 
                       }
                       type="submit"
                     >
@@ -316,7 +324,7 @@ export default function MemberInfo() {
               </div>
               <div
                 className={
-                  "margin-auto-t-b" + (width < 1024 ? " block" : " hidden")
+                  "margin-auto-t-b" + (width < 764 ? " block" : " hidden")
                 }
               >
                 <button
@@ -338,7 +346,7 @@ export default function MemberInfo() {
                     className="py-1 text-sm text-gray-700 dark:text-gray-200"
                     aria-labelledby="dropdownDefault"
                   >
-                    <li className="hidden">
+                    <li className={(typePermission === "1") ? " " : " hidden" }>
                       <div className="flex flex-wrap" id="save">
                         <span id="save" onClick={()=>{formik.handleSubmit();}} className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12">
                         <i className="fas fa-save mr-2"></i>
@@ -390,7 +398,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.memberCard}
                         autoComplete="memberCard"
-                        disabled={true}
+                        disabled={(typePermission === "1") ? false : true}
                       />
                       {formik.touched.memberCard && formik.errors.memberCard ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -422,7 +430,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.firstName}
                         autoComplete="firstName"
-                        disabled={true}
+                        disabled={(typePermission === "1") ? false : true}
                       />
                       {formik.touched.firstName && formik.errors.firstName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -454,7 +462,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.lastName}
                         autoComplete="lastName"
-                        disabled={true}
+                        disabled={(typePermission === "1") ? false : true}
                       />
                       {formik.touched.lastName && formik.errors.lastName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -488,7 +496,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.phone}
                         autoComplete="phoneaddress"
-                        disabled={true}
+                        disabled={(typePermission === "1") ? false : true}
                       />
                       {formik.touched.phone && formik.errors.phone ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -519,7 +527,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.email}
                         autoComplete="emailaddress"
-                        disabled={true}
+                        disabled={(typePermission === "1") ? false : true}
                       />
                       {formik.touched.email && formik.errors.email ? (
                         <div className="text-sm py-2 px-2 text-red-500">
@@ -546,7 +554,7 @@ export default function MemberInfo() {
                             format={"DD/MM/yyyy"}
                             placeholder="เลือกวันที่"
                             showToday={false}
-                            disabled={true}
+                            disabled={(typePermission === "1") ? false : true}
                             defaultValue={moment(new Date(), "DD/MM/YYYY")}
                             style={{
                               height: "100%",
@@ -602,7 +610,7 @@ export default function MemberInfo() {
                             format={"DD/MM/yyyy"}
                             placeholder="เลือกวันที่"
                             showToday={false}
-                            disabled={true}
+                            disabled={(typePermission === "1") ? false : true}
                             defaultValue={moment(new Date(), "DD/MM/YYYY")}
                             style={{
                               height: "100%",
@@ -667,7 +675,7 @@ export default function MemberInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.address}
                         autoComplete="new-password"
-                        disabled={true}
+                        disabled={(typePermission === "1") ? false : true}
                       ></textarea>
                     </div>
                   </div>
@@ -686,7 +694,7 @@ export default function MemberInfo() {
                       <Select
                         id="province"
                         name="province"
-                        isDisabled={true}
+                        isDisabled={(typePermission === "1") ? false : true}
                         onChange={async (value) => {
                           formik.setFieldValue("province", value.value);
                           const district = await Address.getAddress(
@@ -737,7 +745,7 @@ export default function MemberInfo() {
                       <Select
                         id="district"
                         name="district"
-                        isDisabled={true}
+                        isDisabled={(typePermission === "1") ? false : true}
                         onChange={async (value) => {
                           formik.setFieldValue("district", value.value);
                           const subDistrict = await Address.getAddress(
@@ -782,7 +790,7 @@ export default function MemberInfo() {
                       <Select
                         id="role"
                         name="role"
-                        isDisabled={true}
+                        isDisabled={(typePermission === "1") ? false : true}
                         onChange={async (value) => {
                           formik.setFieldValue("subDistrict", value.value);
                           const postcode = await Address.getAddress(
@@ -820,7 +828,7 @@ export default function MemberInfo() {
                     <div className="relative w-full">
                       <input
                         type="text"
-                        disabled={true}
+                        disabled={(typePermission === "1") ? false : true}
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="postcode"
                         name="postcode"

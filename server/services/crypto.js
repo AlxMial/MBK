@@ -150,6 +150,7 @@ class ValidateEncrypt {
         columns !== "uid" &&
         columns !== "country" &&
         columns !== "memberPoint" &&
+        columns !== "consentDate" &&
         list[columns] !== ""
       ) {
         list[columns] = this.EncodeKey(list[columns]);
@@ -178,6 +179,7 @@ class ValidateEncrypt {
         columns !== "uid" &&
         columns !== "country" &&
         columns !== "memberPoint" &&
+        columns !== "consentDate" &&
         list[columns] !== ""
       ) {
         list.dataValues[columns] = this.DecodeKey(list.dataValues[columns]);
@@ -207,6 +209,7 @@ class ValidateEncrypt {
         columns !== "uid" &&
         columns !== "country" &&
         columns !== "memberPoint" &&
+        columns !== "consentDate" &&
         list[columns] !== ""
       ) {
         for (var i = 0; i < list.length; i++) {

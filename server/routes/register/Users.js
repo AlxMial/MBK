@@ -34,11 +34,11 @@ router.post("/login", async (req, res) => {
         );
         res.json({
           token: accessToken,
-          userName: Encrypt.EncodeKey(userName),
+          userName: userName,
           id: user.id,
-          role: Encrypt.EncodeKey(user.role),
-          firstName: Encrypt.EncodeKey(user.firstName),
-          lastName: Encrypt.EncodeKey(user.lastName),
+          role: Encrypt.DecodeKey(user.role),
+          firstName: Encrypt.DecodeKey(user.firstName),
+          lastName: Encrypt.DecodeKey(user.lastName),
         });
       }
     });
@@ -123,6 +123,18 @@ router.get("/byId/:id", async (req, res) => {
     res.json({ status: true, message: "success", tbUser: valueData });
   } else {
     res.json({ status: true, message: "success", tbUser: null });
+  }
+});
+
+router.get("/permission/:username", async (req, res) => {
+  if (req.params.username !== "undefined") {
+    const username = req.params.username;
+    const listUser = await tbUser.findOne({ where: { userName: Encrypt.EncodeKey(username) } });
+    const valueData = Encrypt.decryptAllData(listUser);
+    Encrypt.encryptValueId(valueData);
+    res.json({ status: true, message: "success", tbUser: valueData });
+  } else {
+    res.json({ status: true, message: "unsuccess", tbUser: null });
   }
 });
 

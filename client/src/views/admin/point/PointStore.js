@@ -274,7 +274,7 @@ export default function PointStore() {
               </div>
               <div className="lg:w-6/12 text-right">
                 <button
-                  className="bg-lemon-mbk text-blueGray-600 active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                  className="bg-lemon-mbk text-white active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                   type="button"
                   onClick={() => {
                     openModal();

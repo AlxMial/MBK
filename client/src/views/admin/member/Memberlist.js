@@ -7,6 +7,7 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import * as Storage from "../../../services/Storage.service";
 import { Workbook } from "exceljs";
 import { exportExcel } from "services/exportExcel";
+import { getPermissionByUserName } from "services/Permission";
 import * as fs from "file-saver";
 import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
@@ -36,6 +37,7 @@ export default function MemberList() {
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [typePermission, setTypePermission] = useState("");
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
 
@@ -157,11 +159,23 @@ export default function MemberList() {
       "birthDate",
       "registerDate",
     ];
-    exportExcel(member.data.tbMember, "ข้อมูลสมาชิก", TitleColumns, columns, sheetname);
+    exportExcel(
+      member.data.tbMember,
+      "ข้อมูลสมาชิก",
+      TitleColumns,
+      columns,
+      sheetname
+    );
     setIsLoading(false);
   };
 
-  useEffect(() => {
+  const fetchPermission = async  () => {
+    const role = await getPermissionByUserName();
+    setTypePermission(role);
+  }
+
+  useEffect( () => {
+    fetchPermission();
     axios.get("members").then((response) => {
       if (response.data.error) {
         console.log(response.data.error);
@@ -202,23 +216,23 @@ export default function MemberList() {
           >
             <div className="rounded-t mb-0 px-4 border-0">
               <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
-                <div className="lg:w-6/12">
+                <div className="lg:w-6/12 mt-4">
                   <span className="z-3 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-2">
                     <i className="fas fa-search"></i>
                   </span>
                   <input
                     type="text"
                     placeholder="Search here..."
-                    className="border-0 pl-12 w-64 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded-xl text-sm shadow outline-none focus:outline-none focus:ring"
+                    className="border-0 pl-12 w-64  placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded-xl text-sm shadow outline-none focus:outline-none focus:ring"
                     onChange={(e) => {
                       InputSearch(e.target.value);
                     }}
                   />
                 </div>
-                <div className="lg:w-6/12 text-right">
+                <div className="lg:w-6/12">
                   {/* <Link to="/admin/membersInfo"> */}
-                  <button
-                    className=" text-black font-bold  text-xs px-2 py-2 rounded outline-none focus:outline-none  ease-linear transition-all duration-150"
+                  {/* <button
+                    className=" text-black font-bold margin-auto text-xs px-2 py-2 rounded outline-none focus:outline-none  ease-linear transition-all duration-150"
                     type="button"
                     onClick={() => Excel("ข้อมูลสมาชิก")}
                   >
@@ -226,9 +240,43 @@ export default function MemberList() {
                       src={require("assets/img/mbk/excel.png").default}
                       alt="..."
                       className="imgExcel margin-a"
-                    ></img>{" "}
-                    Export Excel
-                  </button>
+                    ></img>{" "}Export Excel
+                  </button> */}
+
+                  <div className="flex mt-2 float-right">
+             
+                      <img
+                        src={require("assets/img/mbk/excel.png").default}
+                        alt="..."
+                        onClick={() => Excel("ข้อมูลสมาชิก")}
+                        className="imgExcel margin-auto-t-b cursor-pointer "
+                      ></img>
+                      {/* <span onClick={() => Excel("ข้อมูลสมาชิก")} className="text-gray-500 font-bold margin-auto-t-b ml-2 cursor-pointer ">Export Excel</span> */}
+                      <Link to="/admin/membersinfo" className={(typePermission === "1") ? " " : " hidden"}>
+                        <button
+                          className="bg-gold-mbk text-black ml-2 active:bg-gold-mbk font-bold text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                          type="button"
+                        >
+                          <i className="fas fa-plus-circle text-white "></i>{" "}
+                          <span className="text-white text-sm px-2">
+                            เพิ่มข้อมูล
+                          </span>
+                        </button>
+                      </Link>
+      
+                  </div>
+
+                  {/* <button
+                    className="bg-gold-mbk border w-full text-black active:bg-gold-mbk font-bold mt-2 text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                    type="button"
+                  >
+                      <img
+                        src={require("assets/img/mbk/excel.png").default}
+                        alt="..."
+                        className="imgExcel"
+                      ></img>
+                  </button> */}
+
                   {/* </Link>  */}
                 </div>
               </div>
@@ -294,13 +342,13 @@ export default function MemberList() {
                     >
                       คะแนนคงเหลือ
                     </th>
-                    {/* <th
+                    <th
                       className={
-                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 " + ((typePermission === "1" ? " " : " hidden"))
                       }
                     >
                       จัดการ
-                    </th> */}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -369,14 +417,14 @@ export default function MemberList() {
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                             {value.memberPoint}
                           </td>
-                          {/* <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
+                          <td className={"border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center" + ((typePermission === "1" ? " " : " hidden"))}>
                             <i
                               className="fas fa-trash text-red-500 cursor-pointer"
                               onClick={() => {
                                 openModalSubject(value.id);
                               }}
                             ></i>
-                          </td> */}
+                          </td>
                         </tr>
                       );
                     })}

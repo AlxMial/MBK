@@ -31,7 +31,7 @@ const UserDropdown = () => {
   }
 
   useEffect(() => {
-    const getFullName = localStorage.getItem('userName');
+    const getFullName = localStorage.getItem('fullName');
     setFullName(getFullName);
     const checkIfClickedOutside = (e) => {
       setIsDropDown(true);

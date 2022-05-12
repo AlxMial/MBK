@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useEffect ,useState } from "react";
 import "antd/dist/antd.css";
 import { Tabs } from "antd";
 /* Service */
@@ -6,10 +6,11 @@ import PointRegister from "./PointRegister";
 import PointEcommerce from "./PointEcommerce";
 import PointCode from "./PointCode";
 import PointStore from "./PointStore";
+import { getPermissionByUserName } from "services/Permission";
 
 export default function PointManage() {
   const { TabPane } = Tabs;
-
+  const [typePermission, setTypePermission] = useState("");
   /* Set useState */
 
   /* Method Condition */
@@ -20,6 +21,16 @@ export default function PointManage() {
 
   /*ตรวจสอบข้อมูล รหัสผ่านตรงกัน*/
   async function fetchData() {}
+
+  const fetchPermission = async  () => {
+    const role = await getPermissionByUserName();
+    setTypePermission(role);
+  }
+
+  
+  useEffect( () => {
+    fetchPermission();
+  }, []);
 
   return (
     <>
@@ -42,7 +53,7 @@ export default function PointManage() {
         {/* <TabPane tab="E-Commerce" key="2">
           <PointEcommerce />
         </TabPane> */}
-        <TabPane tab="Code" key="3">
+        <TabPane tab="Code" key="3" disabled={((typePermission === "1") ? false : true)}>
           <PointCode />
         </TabPane>
         <TabPane tab="Store" key="4">
