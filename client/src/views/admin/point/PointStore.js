@@ -266,7 +266,7 @@ export default function PointStore() {
                                 </div>
                               </div>
 
-                              <div className="flex flex-wrap px-24">
+                              <div className="flex flex-wrap px-24 mb-6">
                                 <div
                                   className={
                                     "w-full lg:w-1/12 margin-auto-t-b" +
@@ -303,6 +303,17 @@ export default function PointStore() {
                                   ) : null}
                                 </div>
                               </div>
+                              <div className="w-full px-24">
+                                <div
+                                  className={" py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white" }>
+                                  <div className="rounded-t mb-0 px-4 py-3 border-0">
+                                    <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
+
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
                               <div className="relative w-full mb-3">
                                 <div className=" flex justify-between align-middle ">
                                   <div></div>

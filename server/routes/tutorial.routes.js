@@ -9,7 +9,7 @@ let routes = (app) => {
 
   router.get("/download", excelController.download);
 
-  app.use("/api/excel", router);
+  app.use("/mbkserver/api/excel", router);
 };
 
 module.exports = routes;

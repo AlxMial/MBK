@@ -10,7 +10,7 @@ let routes = (app) => {
 
   router.get("/download/:id", excelController.download);
   router.delete("/delete/:id", excelController.deleteCode);
-  app.use("/api/excel", router);
+  app.use("mbkimport/api/excel", router);
 };
 
 module.exports = routes;

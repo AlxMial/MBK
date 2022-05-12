@@ -104,7 +104,6 @@ export default function StockList() {
         } else field.isDeleted = false;
       });
       if (ArrayDeleted.length > 0) {
-        console.log(ArrayDeleted);
         axios.delete(`/members/multidelete/${ArrayDeleted}`).then(() => {
           setDeleteNumber(0);
           setListUser(

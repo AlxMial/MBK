@@ -16,7 +16,7 @@ function authentication(req, res, next) {
         var err = new Error('You are not authenticated!');
         res.setHeader('WWW-Authenticate', 'Basic');
         err.status = 401;
-        return next(err)
+        return res.status(401).json({status: 401 , message: 'You are not authenticated!'})
     }
  
     var auth = new Buffer.from(authheader.split(' ')[1],
@@ -31,7 +31,7 @@ function authentication(req, res, next) {
         var err = new Error('You are not authenticated!');
         res.setHeader('WWW-Authenticate', 'Basic');
         err.status = 401;
-        return next(err);
+        return res.status(401).json({status: 401 , message: 'You are not authenticated!'})
     }
  
 }

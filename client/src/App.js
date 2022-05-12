@@ -25,12 +25,6 @@ function App() {
     useGaTracker();
 
     useEffect(() => {
-      
-          // axios.delete(`users/${this.state.id}`)
-          // .then(res => {
-          //   console.log(res);
-          //   console.log(res.data);
-          // })
           axios
             .get("/users/auth")
             .then((response) => {

@@ -40,21 +40,21 @@ const db = require('./models');
 
 // // Routers
 const SendMailRouter = require('./routes/sendmail/SendMail');
-app.use("/mails",SendMailRouter);
+app.use("/mbkserver/mails",SendMailRouter);
 const UsersRouter = require('./routes/register/Users');
-app.use("/users",UsersRouter);
+app.use("/mbkserver/users",UsersRouter);
 const MembersRouter = require('./routes/members/member');
-app.use("/members",MembersRouter);
+app.use("/mbkserver/members",MembersRouter);
 const pointCodeRouter = require('./routes/points/pointCode');
-app.use("/pointCode",pointCodeRouter);
+app.use("/mbkserver/pointCode",pointCodeRouter);
 const pointStoreRouter = require('./routes/points/pointStore');
-app.use("/pointStore",pointStoreRouter);
+app.use("/mbkserver/pointStore",pointStoreRouter);
 const pointRegisterRouter = require('./routes/points/pointRegister');
-app.use("/pointRegister",pointRegisterRouter);
+app.use("/mbkserver/pointRegister",pointRegisterRouter);
 const uploadExcelRouter = require('./routes/uploadExcel/uploadExcel');
-app.use("/uploadExcel",uploadExcelRouter);
+app.use("/mbkserver/uploadExcel",uploadExcelRouter);
 const redeemRouter = require('./routes/redeem/redeem');
-app.use("/redeem",redeemRouter);
+app.use("/mbkserver/redeem",redeemRouter);
 initRoutes(app);
 
 const port = process.env.PORT || 3001;
