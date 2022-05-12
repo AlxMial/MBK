@@ -111,7 +111,7 @@ const initLine = (callback) => {
 };
 const runApp = (callback) => {
   Session.setLiff({
-    uid: "U4d81d62e7ae7795c18f3e2c770595109",
+    uid: "U4d81d62e7ae7795c18f3e2c770595108",
     displayName: "test",
     pictureUrl: "test",
     email: "test",
@@ -177,7 +177,7 @@ const Liff = () => {
     if (e === "true") {
       if (
         pathname.includes("privacypolicy") ||
-        pathname.includes("otp") ||
+        // pathname.includes("otp") ||
         pathname.includes("register")
       ) {
         history.push(path.member);
