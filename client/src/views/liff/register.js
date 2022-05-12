@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "services/axios";
-import * as Address from "../../../src/services/GetAddress.js";
-import * as Session from "../../services/Session.service";
+import * as Address from "@services/GetAddress.js";
+import * as Session from "@services/Session.service";
 import { Radio } from "antd";
 import DatePicker from "react-mobile-datepicker";
 import moment from "moment";
@@ -36,7 +36,8 @@ const Register = () => {
     memberCard: "",
     firstName: "",
     lastName: "",
-    phone: Session.getphonnnumber(),
+    // phone: Session.getphonnnumber(),
+    phone: "",
     email: "",
     birthDate: moment(new Date()).toDate(),
     registerDate: moment(new Date()).toDate(),
@@ -59,8 +60,6 @@ const Register = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // // let value = !Data[name];
-    // console.log(value);
     setData((prevState) => ({
       ...prevState,
       [name]: value,
@@ -71,13 +70,9 @@ const Register = () => {
   }, []);
 
   const validation = async () => {
-    console.log(Data);
-
     const isFormValid = await validationSchema.isValid(Data, {
       abortEarly: false,
     });
-
-    console.log(validationSchema);
     if (isFormValid) {
       DoSave();
     } else {
@@ -96,8 +91,6 @@ const Register = () => {
           setErrors(errors);
         });
     }
-
-    console.log(validationSchema.fields["firstName"].tests[0].OPTIONS.message);
   };
   const DoSave = () => {
     axios.post("members", Data).then((res) => {
@@ -114,7 +107,10 @@ const Register = () => {
         : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
       addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
-      res.data.status ? history.push(path.member) : console.log("warning");
+      if (res.data.status) {
+        Session.setphon(Data.phone);
+        history.push(path.privacypolicy);
+      }
     });
   };
   return (
@@ -227,7 +223,7 @@ const Register = () => {
               value={Data.email}
               error={errors.email}
             />
-            <div className="mb-5">
+            <div className="mb-5" style={{ display: "none" }}>
               <Radio.Group
                 options={[
                   { label: "ค้าปลีก/Retail", value: "1" },

@@ -50,10 +50,10 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build && gulp licenses",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build && gulp licenses",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm run build:tailwind && npm start",
     "build:tailwind": "tailwind build src/assets/styles/index.css -o src/assets/styles/tailwind.css"
   },
@@ -75,5 +75,9 @@
   "optionalDependencies": {
     "typescript": "4.2.3"
   },
-  "main": "index.js"
+  "main": "index.js",
+  "devDependencies": {
+    "react-app-rewire-aliases": "^0.2.0",
+    "react-app-rewired": "^2.2.1"
+  }
 }

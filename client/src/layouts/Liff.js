@@ -111,7 +111,7 @@ const initLine = (callback) => {
 };
 const runApp = (callback) => {
   Session.setLiff({
-    uid: "U4d81d62e7ae7795c18f3e2c770595108",
+    uid: "U4d81d62e7ae7795c18f3e2c770595109",
     displayName: "test",
     pictureUrl: "test",
     email: "test",
@@ -175,7 +175,11 @@ const Liff = () => {
 
   initLine((e) => {
     if (e === "true") {
-      if (pathname.includes("privacypolicy") || pathname.includes("otp")) {
+      if (
+        pathname.includes("privacypolicy") ||
+        pathname.includes("otp") ||
+        pathname.includes("register")
+      ) {
         history.push(path.member);
       }
     } else {
@@ -184,7 +188,7 @@ const Liff = () => {
         !pathname.includes("otp") &&
         !pathname.includes("register")
       ) {
-        history.push(path.privacypolicy);
+        history.push(path.register);
       }
     }
   });

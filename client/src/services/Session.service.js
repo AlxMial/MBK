@@ -13,7 +13,6 @@ export const removeLiff = () => {
   sessionStorage.removeItem(name + "-Liff");
 };
 
-
 export const setphonnnumber = (phon) => {
   sessionStorage.setItem(name + "-Liff-phon", phon);
 };
@@ -38,3 +37,14 @@ export const removecheckRegister = () => {
   sessionStorage.removeItem(name + "-Liff-checkRegister");
 };
 
+export const setphon = (phon) => {
+  sessionStorage.setItem(name + "-phon", phon);
+};
+export const getphon = () => {
+  let phon = sessionStorage.getItem(name + "-phon");
+  phon = IsNullOrEmpty(phon) ? "" : phon;
+  return phon;
+};
+export const removephon = () => {
+  sessionStorage.removeItem(name + "-phon");
+};

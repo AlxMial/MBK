@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "services/axios";
 
-import * as Address from "../../../src/services/GetAddress.js";
-import * as Session from "../../services/Session.service";
+import * as Address from "@services/GetAddress.js";
+import * as Session from "@services/Session.service";
 import { Radio } from "antd";
 import DatePicker from 'react-mobile-datepicker';
 import moment from "moment";
