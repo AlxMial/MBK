@@ -3866,6 +3866,7 @@ input[type=email]:disabled {
   border-left: transparent;
   border-right: transparent;
   background-color: transparent;
+  padding: 0;
 }
 
 .circle {

@@ -41,11 +41,13 @@ const Member = () => {
             height: "180px",
             borderRadius: "10px",
             backgroundImage: `url(${
-              require(tbMember.memberType === "1"
-                ? "assets/img/mbk/Green.png"
-                : tbMember.memberType === "2"
-                ? "assets/img/mbk/Silver.png"
-                : "assets/img/mbk/Gold.png").default
+              IsNullOrEmpty(tbMember)
+                ? null
+                : require(tbMember.memberType === "1"
+                    ? "assets/img/mbk/Green.png"
+                    : tbMember.memberType === "2"
+                    ? "assets/img/mbk/Silver.png"
+                    : "assets/img/mbk/Gold.png").default
             })`,
             backgroundSize: "cover",
           }}

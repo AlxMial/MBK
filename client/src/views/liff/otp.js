@@ -43,8 +43,6 @@ const Otp = () => {
         ["generateOTP"]: otp,
         ["generateref"]: ref,
       }));
-
-      Session.setphonnnumber(PhoneNumber);
       senderOTP(PhoneNumber);
     }
   };
