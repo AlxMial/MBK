@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import OtpInput from "react-otp-input";
 import { useHistory } from "react-router-dom";
 import InputMask from "react-input-mask";
 import { path } from "../../layouts/Liff";
-import * as Session from "../../services/Session.service";
+import * as Session from "@services/Session.service";
 // components
 
 const Otp = () => {
   let history = useHistory();
   const [Data, setData] = useState({
-    isotp: false,
-    PhoneNumber: "",
+    isotp: true,
+    PhoneNumber: Session.getphon(),
     generateOTP: null,
     generateref: null,
     otp: null,
@@ -24,6 +24,7 @@ const Otp = () => {
   };
   const generate = () => {
     let PhoneNumber = Data.PhoneNumber.replaceAll("-", "");
+    // let PhoneNumber = Session.getphon().replaceAll("-", "");
     if (PhoneNumber.length == 10) {
       const digits = "0123456789";
       const refdigits =
@@ -43,7 +44,7 @@ const Otp = () => {
         ["generateref"]: ref,
       }));
 
-      Session.setphonnnumber(PhoneNumber)
+      Session.setphonnnumber(PhoneNumber);
       senderOTP(PhoneNumber);
     }
   };
@@ -59,13 +60,15 @@ const Otp = () => {
   };
   const confirmotp = () => {
     if (Data.otp == Data.generateOTP) {
-      console.log("confirmotp : " + true);
-      history.push(path.register);
+      // history.push(path.register);
+      history.push(path.member);
     } else {
-      console.log("confirmotp : " + false);
     }
   };
 
+  useEffect(() => {
+    generate();
+  }, []);
   return (
     <>
       <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>

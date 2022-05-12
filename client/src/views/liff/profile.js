@@ -68,7 +68,7 @@ export const InputUC = ({ name, lbl, length, type, onChange, value, error }) => 
                         placeholder={name == "phone" ? "0X-XXXX-XXXX" : lbl}
                         mask={name == "phone" ? "099-999-9999" : "99999"}
                         maskChar=" "
-                        disabled={name == "phone" ? true : false}
+                        // disabled={name == "phone" ? true : false}
                     />
                 )}
                 {error == true ?

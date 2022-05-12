@@ -4,8 +4,8 @@ import axios from "services/axios";
 import InputMask from "react-input-mask";
 import { useHistory } from "react-router-dom";
 import { path } from "../../layouts/Liff";
-import { IsNullOrEmpty } from "../../../src/services/default.service";
-import * as Session from "../../services/Session.service";
+import { IsNullOrEmpty } from "@services/default.service";
+import * as Session from "@services/Session.service";
 // components
 
 const GetReward = () => {
