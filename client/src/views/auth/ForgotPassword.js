@@ -71,7 +71,7 @@ export default function ForgotPassword() {
               <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                 <form onSubmit={formik.handleSubmit}>
                   <div className="flex flex-wrap mt-6 relative">
-                    <div className="lg:w-3/12  margin-auto ">
+                    <div className="lg:w-3/12  margin-auto-t-r ">
                       <label
                         className="block text-blueGray-600 text-sm font-bold mb-2"
                         htmlFor="grid-password"
@@ -89,8 +89,14 @@ export default function ForgotPassword() {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.email}
+                        autoComplete="emailxxx"
                       />
-                       {formik.touched.email && formik.errors.email ? (
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap relative">
+                    <div className="lg:w-3/12 margin-auto-t-r "></div>
+                    <div className="lg:w-9/12">
+                      {formik.touched.email && formik.errors.email ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.email}
                         </div>

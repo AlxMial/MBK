@@ -68,7 +68,6 @@ export default function Login() {
           });
 
           localStorage.setItem("accessToken", response.data.token);
-
           localStorage.setItem("roleUser", response.data.role);
           localStorage.setItem("user", response.data.userName);
           localStorage.setItem(
@@ -82,8 +81,8 @@ export default function Login() {
             status: true,
             role: response.data.role,
           });
-
-          history.push("/admin/dashboard");
+          const getToken = localStorage.getItem("accessToken");
+          history.push("/admin/users");
         }
       });
     },
@@ -114,8 +113,8 @@ export default function Login() {
               <div className="rounded-t mb-0 px-3 py-3"></div>
               <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                 <form onSubmit={formik.handleSubmit}>
-                  <div className="flex flex-wrap mt-6 relative">
-                    <div className="lg:w-3/12">
+                  <div className="flex flex-wrap mt-6 relative ">
+                    <div className="lg:w-3/12 margin-auto-t-r">
                       <label
                         className="block text-blueGray-600 text-sm font-bold mb-2"
                         htmlFor="grid-password"
@@ -134,6 +133,16 @@ export default function Login() {
                         onBlur={formik.handleBlur}
                         value={formik.values.userName}
                       />
+                      {/* {formik.touched.userName && formik.errors.userName ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {formik.errors.userName}
+                        </div>
+                      ) : null} */}
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap relative">
+                    <div className="lg:w-3/12 margin-auto-t-r "></div>
+                    <div className="lg:w-9/12">
                       {formik.touched.userName && formik.errors.userName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.userName}
@@ -142,7 +151,7 @@ export default function Login() {
                     </div>
                   </div>
                   <div className="flex flex-wrap mt-6 relative">
-                    <div className="lg:w-3/12 ">
+                    <div className="lg:w-3/12 margin-auto-t-r ">
                       <label
                         className="block text-blueGray-600 text-sm font-bold mb-2"
                         htmlFor="grid-password"
@@ -173,6 +182,11 @@ export default function Login() {
                           value={formik.values.password}
                         />
                       </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap relative">
+                    <div className="lg:w-3/12 margin-auto-t-r "></div>
+                    <div className="lg:w-9/12">
                       {formik.touched.password && formik.errors.password ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.password}

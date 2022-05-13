@@ -1,16 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const { tbPointCodeHD, tbPointCodeDT,tbMemberPoint } = require("../../models");
+const { tbPointCodeHD, tbPointCodeDT, tbMemberPoint } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
-router.post("/",validateToken, async (req, res) => {
+router.post("/", validateToken, async (req, res) => {
   const postCodeHD = await tbPointCodeHD.findOne({
     where: {
-      pointCodeName: req.body.pointCodeName,
+      [Op.or]: [
+        { pointCodeName: req.body.pointCodeName },
+        { pointCodeSymbol: req.body.pointCodeSymbol },
+      ],
       isDeleted: false,
     },
   });
@@ -23,16 +26,27 @@ router.post("/",validateToken, async (req, res) => {
       tbPointCodeHD: postCode,
     });
   } else {
-    res.json({
-      status: false,
-      isPointCodeName: true,
-      message: "success",
-      tbPointCodeHD: null,
-    });
+    if (postCodeHD.pointCodeName === req.body.pointCodeName) {
+      res.json({
+        status: false,
+        isPointCodeName: true,
+        isPointCodeSymbol: false,
+        message: "unsuccess",
+        tbPointCodeHD: null,
+      });
+    } else {
+      res.json({
+        status: false,
+        isPointCodeName: false,
+        isPointCodeSymbol: true,
+        message: "unsuccess",
+        tbPointCodeHD: null,
+      });
+    }
   }
 });
 
-router.get("/",validateToken, async (req, res) => {
+router.get("/", validateToken, async (req, res) => {
   const listPointCodeHD = await tbPointCodeHD.findAll({
     where: { isDeleted: false },
     attributes: {
@@ -47,8 +61,9 @@ router.get("/",validateToken, async (req, res) => {
               FROM tbMemberPoints AS mebmerPoint
               WHERE
                 mebmerPoint.tbPointCodeHDId = tbPointCodeHD.id
-          )`),'useCount'
-      ]
+          )`),
+          "useCount",
+        ],
       ],
     },
     include: [
@@ -66,7 +81,7 @@ router.get("/",validateToken, async (req, res) => {
   });
 });
 
-router.get("/byId/:id",validateToken, async (req, res) => {
+router.get("/byId/:id", validateToken, async (req, res) => {
   const id = req.params.id;
   const listPointCodeHD = await tbPointCodeHD.findOne({ where: { id: id } });
   res.json({
@@ -76,7 +91,7 @@ router.get("/byId/:id",validateToken, async (req, res) => {
   });
 });
 
-router.put("/",validateToken, async (req, res) => {
+router.put("/", validateToken, async (req, res) => {
   const postCodeHD = await tbPointCodeHD.findOne({
     where: {
       pointCodeName: req.body.pointCodeName,
@@ -106,15 +121,17 @@ router.put("/",validateToken, async (req, res) => {
   }
 });
 
-router.delete("/:tbPointCodeHDId",validateToken, async (req, res) => {
+router.delete("/:tbPointCodeHDId", validateToken, async (req, res) => {
   const tbPointCodeHDId = req.params.tbPointCodeHDId;
   req.body.isDeleted = true;
   tbPointCodeHD.update(req.body, { where: { id: tbPointCodeHDId } });
-  tbPointCodeDT.update(req.body, { where: { tbPointCodeHDId: tbPointCodeHDId } });
+  tbPointCodeDT.update(req.body, {
+    where: { tbPointCodeHDId: tbPointCodeHDId },
+  });
   res.json({ status: true, message: "success", tbPointCodeHD: null });
 });
 
-router.delete("/delete/:tbPointCodeHDId",validateToken, async (req, res) => {
+router.delete("/delete/:tbPointCodeHDId", validateToken, async (req, res) => {
   tbPointCodeHD.destroy({
     where: {
       id: req.params.tbPointCodeHDId,
@@ -122,7 +139,5 @@ router.delete("/delete/:tbPointCodeHDId",validateToken, async (req, res) => {
   });
   res.json({ status: true, message: "success", tbPointCodeHD: null });
 });
-
-
 
 module.exports = router;

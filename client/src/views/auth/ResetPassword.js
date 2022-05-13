@@ -74,7 +74,7 @@ export default function ResetPassword() {
               <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                 <form onSubmit={formik.handleSubmit}>
                   <div className="flex flex-wrap mt-6 relative">
-                    <div className="lg:w-3/12   ">
+                    <div className="lg:w-3/12 margin-auto-t-r  ">
                       <label
                         className="block text-blueGray-600 text-sm font-bold mb-2"
                         htmlFor="grid-password"
@@ -114,6 +114,11 @@ export default function ResetPassword() {
                         onBlur={formik.handleBlur}
                         value={formik.values.password}
                       />
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap relative">
+                    <div className="lg:w-3/12 margin-auto-t-r "></div>
+                    <div className="lg:w-9/12">
                       {formik.touched.password && formik.errors.password ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.password}
@@ -122,7 +127,7 @@ export default function ResetPassword() {
                     </div>
                   </div>
                   <div className="flex flex-wrap mt-6 relative">
-                    <div className="lg:w-3/12  ">
+                    <div className="lg:w-3/12 margin-auto-t-r ">
                       <label
                         className="block text-blueGray-600 text-sm font-bold mb-2"
                         htmlFor="grid-password"
@@ -137,7 +142,9 @@ export default function ResetPassword() {
                       >
                         <i
                           className={
-                            passwordConfirmShown ? "fas fa-eye-slash" : "fas fa-eye"
+                            passwordConfirmShown
+                              ? "fas fa-eye-slash"
+                              : "fas fa-eye"
                           }
                         ></i>
                       </span>
@@ -154,6 +161,11 @@ export default function ResetPassword() {
                         }}
                         value={valueConfirm}
                       />
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap relative">
+                    <div className="lg:w-3/12 margin-auto-t-r "></div>
+                    <div className="lg:w-9/12">
                       {confirmPassword ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           * รหัสผ่านไม่ตรงกัน

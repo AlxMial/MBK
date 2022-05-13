@@ -59,7 +59,7 @@ export default function PointCode() {
   const useStyleSelect = styleSelect();
   const [errorPointCodeSymbol, setErrorPointCodeSymbol] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [ enableCode , setEnableCode] = useState(false);
+  const [enableCode, setEnableCode] = useState(false);
   const [errorPointCodeLengthSymbol, setErrorPointCodeLengthSymbol] =
     useState(false);
   const [errorPointCodeQuantityCode, setErrorPointCodeQuantityCode] =
@@ -169,12 +169,12 @@ export default function PointCode() {
     formikImport.setFieldValue("fileName", e.target.files[0].name);
   };
 
-  const ExportFile = async (id,name) => {
+  const ExportFile = async (id, name) => {
     setIsLoading(true);
     let coupon = await axiosUpload.get(`/api/excel/download/${id}`);
     const TitleColumns = ["รหัส Coupon", "สถานะใช้งาน", "สถานะหมดอายุ"];
     const columns = ["code", "isUse", "isExpire"];
-    exportExcel(coupon.data, name, TitleColumns, columns,'Coupon');
+    exportExcel(coupon.data, name, TitleColumns, columns, "Coupon");
     setIsLoading(false);
   };
 
@@ -309,6 +309,25 @@ export default function PointCode() {
                     }
                   });
                 });
+            } else {
+              if (res.data.isPointCodeName) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              } else if (res.data.isPointCodeSymbol) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสแคมเปญซ้ำกับรหัสที่เคยมีการสร้างไว้ก่อนหน้า",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
+              setIsLoading(false);
             }
           });
         }
@@ -409,6 +428,14 @@ export default function PointCode() {
             if (res.data.isPointCodeName) {
               addToast(
                 "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                {
+                  appearance: "warning",
+                  autoDismiss: true,
+                }
+              );
+            } else if (res.data.isPointCodeSymbol) {
+              addToast(
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสแคมเปญซ้ำกับในระบบ",
                 {
                   appearance: "warning",
                   autoDismiss: true,

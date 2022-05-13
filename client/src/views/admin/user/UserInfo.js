@@ -54,7 +54,8 @@ export default function UserInfo() {
   };
 
   const toggleConfirmPassword = () => {
-    setConfirmPassword(!confirmpasswordShown);
+    console.log(confirmpasswordShown);
+    setConfirmpasswordShown(!confirmpasswordShown);
   };
 
   const toggleCurrentPassword = () => {
@@ -101,7 +102,7 @@ export default function UserInfo() {
     validationSchema: Yup.object({
       userName: Yup.string().required(
         Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก รหัสบัญชีผู้ใช้"
+          ? "* กรุณากรอก Username"
           : "* Please enter your username"
       ),
       firstName: Yup.string().required(
@@ -253,7 +254,7 @@ export default function UserInfo() {
           <i className="fas fa-user-circle"></i>&nbsp;
         </span>
         <span className="text-base margin-auto font-bold">
-          ข้อมูลผู้ดูแลระบบ
+          จัดการผู้ดูแลระบบ
         </span>
       </div>
       <div className="w-full">
@@ -261,7 +262,7 @@ export default function UserInfo() {
           <div className="w-full">
             <div className="flex justify-between py-2 mt-4">
               <span className="text-lg  text-green-mbk margin-auto font-bold">
-                จัดการข้อมูลผู้ดูแลระบบ
+                เพิ่ม / แก้ไขข้อมูลผู้ดูแลระบบ
               </span>
               <div
                 className={
@@ -421,7 +422,7 @@ export default function UserInfo() {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -432,7 +433,7 @@ export default function UserInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <input
                         type="text"
@@ -446,6 +447,13 @@ export default function UserInfo() {
                         autoComplete="userName"
                         disabled={isNew ? false : true}
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.userName && formik.errors.userName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.userName}
@@ -455,10 +463,11 @@ export default function UserInfo() {
                   </div>
                   <div
                     className={
-                      "w-full lg:w-2/12 px-4 mb-2" + (isNew ? " hidden" : " ")
+                      "w-full lg:w-2/12 px-4 margin-auto-t-b " +
+                      (isNew ? " hidden" : " ")
                     }
                   >
-                    <div className="relative w-full">
+                    <div className="relative w-full ">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
                         htmlFor="grid-password"
@@ -470,7 +479,8 @@ export default function UserInfo() {
                   </div>
                   <div
                     className={
-                      "w-full lg:w-8/12 px-4 mb-4" + (isNew ? " hidden" : " ")
+                      "w-full lg:w-8/12 px-4 margin-auto-t-b " +
+                      (isNew ? " hidden" : " ")
                     }
                   >
                     <div className="relative w-full">
@@ -504,15 +514,31 @@ export default function UserInfo() {
                         autoComplete="password"
                         disabled={enablePassword}
                       />
+                    </div>
+                  </div>
+                  <div
+                    className={
+                      "w-full lg:w-2/12 px-4 mb-4" + (isNew ? " hidden" : " ")
+                    }
+                  >
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div
+                    className={
+                      "w-full lg:w-8/12 px-4 margin-auto-t-b" +
+                      (isNew ? " hidden" : " ")
+                    }
+                  >
+                    <div className="relative w-full mb-2">
                       {errorCurrentPassword ? (
                         <div className="text-sm py-2 px-2 text-red-500">
-                          * กรุณาทำการกรอกรหัสผ่านปัจจุบัน
+                          * กรุณาทำการกรอก Current Password
                         </div>
                       ) : null}
                     </div>
                   </div>
 
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -523,7 +549,7 @@ export default function UserInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <span
                         onClick={togglePassword}
@@ -562,18 +588,21 @@ export default function UserInfo() {
                         autoComplete="password"
                         disabled={enablePassword}
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {errorPassword ? (
                         <div className="text-sm py-2 px-2 text-red-500">
-                          * รหัสผ่านไม่สามารถเป็นค่าว่างได้
+                          * Password ไม่สามารถเป็นค่าว่างได้
                         </div>
                       ) : null}
                     </div>
                   </div>
-                  <div
-                    className={
-                      "w-full lg:w-2/12 px-4 mb-2" + (isNew ? " " : " ")
-                    }
-                  >
+                  <div className={"w-full lg:w-2/12 px-4 margin-auto-t-b"}>
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -584,11 +613,7 @@ export default function UserInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div
-                    className={
-                      "w-full lg:w-8/12 px-4 mb-4" + (isNew ? " " : " ")
-                    }
-                  >
+                  <div className={"w-full lg:w-8/12 px-4 margin-auto-t-b"}>
                     <div className="relative w-full">
                       <span
                         onClick={toggleConfirmPassword}
@@ -618,9 +643,16 @@ export default function UserInfo() {
                         value={formik.values.confirmPassword}
                         disabled={enablePassword}
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {confirmPassword ? (
                         <div className="text-sm py-2 px-2 text-red-500">
-                          * รหัสผ่านไม่ตรงกัน
+                          * Password ไม่ตรงกัน
                         </div>
                       ) : null}
                     </div>
@@ -631,7 +663,7 @@ export default function UserInfo() {
                       User Information
                     </h6>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -642,7 +674,7 @@ export default function UserInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <Select
                         id="role"
@@ -660,7 +692,13 @@ export default function UserInfo() {
                       />
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2"></div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full ">
                       <label
                         className="text-blueGray-600 text-sm font-bold mb-2"
@@ -671,7 +709,7 @@ export default function UserInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full ">
                       <input
                         type="text"
@@ -684,6 +722,13 @@ export default function UserInfo() {
                         value={formik.values.firstName}
                         autoComplete="firstName"
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.firstName && formik.errors.firstName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.firstName}
@@ -691,7 +736,7 @@ export default function UserInfo() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="uppercase text-blueGray-600 text-sm font-bold mb-2"
@@ -702,7 +747,7 @@ export default function UserInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <input
                         type="text"
@@ -715,6 +760,13 @@ export default function UserInfo() {
                         value={formik.values.lastName}
                         autoComplete="lastName"
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.lastName && formik.errors.lastName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.lastName}
@@ -722,7 +774,7 @@ export default function UserInfo() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -733,7 +785,7 @@ export default function UserInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <input
                         type="email"
@@ -746,6 +798,13 @@ export default function UserInfo() {
                         value={formik.values.email}
                         autoComplete="emailaddress"
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.email && formik.errors.email ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.email}
@@ -781,7 +840,7 @@ export default function UserInfo() {
                       />
                     </div>
                   </div> */}
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -792,7 +851,7 @@ export default function UserInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <input
                         type="text"
@@ -805,6 +864,13 @@ export default function UserInfo() {
                         value={formik.values.empCode}
                         autoComplete="new-password"
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.empCode && formik.errors.empCode ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.empCode}
@@ -812,7 +878,7 @@ export default function UserInfo() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -823,7 +889,7 @@ export default function UserInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <input
                         type="text"
@@ -836,6 +902,13 @@ export default function UserInfo() {
                         value={formik.values.position}
                         autoComplete="new-password"
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.position && formik.errors.position ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.position}

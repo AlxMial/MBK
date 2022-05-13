@@ -46,7 +46,7 @@ router.get("/byId/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const member = await tbMember.findOne({
     where: {
-      [Op.or]: [{ email: req.body.email }, { phone: req.body.phone }],
+      [Op.or]: [{ email:  Encrypt.EncodeKey(req.body.email) }, { phone: Encrypt.EncodeKey(req.body.phone) }],
       isDeleted: false,
     },
   });
@@ -82,16 +82,16 @@ router.post("/", async (req, res) => {
       if (member.email === req.body.email)
         res.json({
           status: false,
-          isEmail: false,
-          isPhone: true,
+          isEmail: true,
+          isPhone: false,
           message: "Unsuccess",
           tbMember: null,
         });
       else if (member.phone === req.body.phone)
         res.json({
           status: false,
-          isEmail: true,
-          isPhone: false,
+          isEmail: false,
+          isPhone: true,
           message: "Unsuccess",
           tbMember: null,
         });
@@ -147,16 +147,16 @@ router.put("/", async (req, res) => {
       if (member.email === req.body.email)
         res.json({
           status: false,
-          isEmail: false,
-          isPhone: true,
-          message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสบัตรสมาชิกซ้ำ",
+          isEmail: true,
+          isPhone: false,
+          message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Email ซ้ำภายในระบบ",
           tbMember: null,
         });
       else if (member.phone === req.body.phone)
         res.json({
           status: false,
-          isEmail: true,
-          isPhone: false,
+          isEmail: false,
+          isPhone: true,
           message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์ซ้ำ",
           tbMember: null,
         });

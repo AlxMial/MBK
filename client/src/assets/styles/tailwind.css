@@ -3454,6 +3454,12 @@ select {
   margin-bottom: auto;
 }
 
+.margin-auto-t-r {
+  margin-top: auto;
+  margin-right: auto;
+}
+
+
 .margin-a {
   margin: auto;
 }

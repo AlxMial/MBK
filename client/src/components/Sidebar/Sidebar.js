@@ -28,7 +28,6 @@ export default function Sidebar() {
   const fetchPermission = async  () => {
     const role = await getPermissionByUserName();
     setTypePermission(role);
-    console.log(role)
     if(role === "3")
     {
       history.push("/admin/members");
@@ -257,7 +256,7 @@ export default function Sidebar() {
                 </li> */}
               </ul>
 
-              <button
+              {/* <button
                 type="button"
                 className={
                   "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
@@ -383,7 +382,7 @@ export default function Sidebar() {
                     ยกเลิกและคืนสินค้า
                   </Link>
                 </li>
-              </ul>
+              </ul> */}
               {/* <button
                 type="button"
                 className={

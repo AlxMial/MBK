@@ -160,7 +160,7 @@ export default function UserList() {
           <i className="fas fa-user-circle"></i>&nbsp;
         </span>
         <span className="text-base margin-auto font-bold">
-          ข้อมูลผู้ดูแลระบบ
+          จัดการผู้ดูแลระบบ
         </span>
       </div>
 
@@ -168,7 +168,7 @@ export default function UserList() {
         <div className="w-full px-4">
           <div className="flex flex-warp py-2 mt-6 ">
             <span className="text-lg  text-green-mbk margin-auto font-bold">
-              จัดการข้อมูลผู้ดูแลระบบ
+              ข้อมูลผู้ดูแลระบบ
             </span>
           </div>
           <div

@@ -206,7 +206,7 @@ export default function MemberList() {
         <div className="w-full px-4">
           <div className="flex flex-warp py-2 mt-6 ">
             <span className="text-lg  text-green-mbk margin-auto font-bold">
-              จัดการสมาชิก
+              ข้อมูลสมาชิก
             </span>
           </div>
           <div
