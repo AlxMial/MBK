@@ -12,6 +12,7 @@ import ValidateService from "services/validateValue";
 import * as Storage from "../../../services/Storage.service";
 import styleSelect from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
+import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 
 export default function UserInfo() {
   /* Option Select */
@@ -42,11 +43,13 @@ export default function UserInfo() {
   const [passwordShown, setPasswordShown] = useState(false);
   const [confirmpasswordShown, setConfirmpasswordShown] = useState(false);
   const [currentpasswordShown, setcurrentpasswordShown] = useState(false);
+  const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
   // const [isMenu, setIsMenu] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const useStyle = styleSelect();
   let history = useHistory();
   const { addToast } = useToasts();
+  const [isModefied, setIsModified] = useState(false);
 
   /* Method Condition */
   const togglePassword = () => {
@@ -68,12 +71,12 @@ export default function UserInfo() {
     else setConfirmPassword(false);
   };
 
-  // const ClickMenu = () => {
-  //   setIsMenu(!isMenu);
-  // };
-
   const OnBack = () => {
-    history.push("/admin/users");
+    if (isModefied) {
+      openModalSubject();
+    } else {
+      history.push("/admin/users");
+    }
   };
 
   const onHandleIdentityCardChange = (e) => {
@@ -81,6 +84,26 @@ export default function UserInfo() {
     setinputIdentityCard(identity);
     formik.values.identityCard = identity;
   };
+
+  function openModalSubject() {
+    setIsOpenEdit(true);
+  }
+
+  function closeModalSubject() {
+    setIsOpenEdit(false);
+  }
+
+  const onEditValue = () =>{
+    formik.handleSubmit();
+    setIsModified(false);
+    history.push("/admin/users");
+  }
+
+  const onReturn = ()=>{
+    setIsModified(false);
+    history.push("/admin/users");
+  }
+
 
   /* Form insert value */
   const formik = useFormik({
@@ -441,7 +464,10 @@ export default function UserInfo() {
                         id="userName"
                         name="userName"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.userName}
                         autoComplete="userName"
@@ -504,6 +530,7 @@ export default function UserInfo() {
                         maxLength={100}
                         onChange={(e) => {
                           formik.handleChange(e);
+                          setIsModified(true);
 
                           if (e.target.value.length <= 0)
                             seterrorCurrentPassword(true);
@@ -568,6 +595,7 @@ export default function UserInfo() {
                         name="password"
                         maxLength={100}
                         onChange={(e) => {
+                          setIsModified(true);
                           if (e.target.value !== valueConfirm) {
                             setConfirmPassword(true);
                           } else if (
@@ -637,6 +665,7 @@ export default function UserInfo() {
                         maxLength={100}
                         onChange={(e) => {
                           formik.handleChange(e);
+                          setIsModified(true);
                           validateConfirm(e.target.value);
                           setValueConfirm(e.target.value);
                         }}
@@ -681,6 +710,7 @@ export default function UserInfo() {
                         name="role"
                         onChange={(value) => {
                           formik.setFieldValue("role", value.value);
+                          setIsModified(true);
                         }}
                         className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         options={options}
@@ -717,7 +747,10 @@ export default function UserInfo() {
                         id="firstName"
                         name="firstName"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.firstName}
                         autoComplete="firstName"
@@ -755,7 +788,10 @@ export default function UserInfo() {
                         id="lastName"
                         name="lastName"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.lastName}
                         autoComplete="lastName"
@@ -793,7 +829,10 @@ export default function UserInfo() {
                         id="email"
                         name="email"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.email}
                         autoComplete="emailaddress"
@@ -859,7 +898,10 @@ export default function UserInfo() {
                         id="empCode"
                         name="empCode"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.empCode}
                         autoComplete="new-password"
@@ -897,7 +939,10 @@ export default function UserInfo() {
                         id="position"
                         name="position"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.position}
                         autoComplete="new-password"
@@ -927,6 +972,19 @@ export default function UserInfo() {
           </div>
         </form>
       </div>
+      <ConfirmEdit
+        showModal={modalIsOpenEdit}
+        message={"ผู้ดูแลระบบ"}
+        hideModal={() => {
+          closeModalSubject();
+        }}
+        confirmModal={() => {
+          onEditValue();
+        }}
+        returnModal={() => {
+          onReturn();
+        }}
+      />
     </>
   );
 }

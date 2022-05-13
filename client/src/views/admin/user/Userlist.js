@@ -441,7 +441,7 @@ export default function UserList() {
                 showModal={modalIsOpenSubject}
                 message={
                   Storage.GetLanguage() === "th"
-                    ? "จัดการข้อมูลผู้ใช้"
+                    ? "จัดการข้อมูลผู้ดูแลระบบ"
                     : "Users Management"
                 }
                 hideModal={() => {
