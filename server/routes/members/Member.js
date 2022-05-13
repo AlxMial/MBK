@@ -193,8 +193,6 @@ router.post("/checkRegister", async (req, res) => {
     if (member) {
       member =  Encrypt.decryptAllData(member);
       Encrypt.encryptValueId(member);
-      Encrypt.encryptPhone(member);
-      Encrypt.encryptEmail(member);
       members = member;
       isRegister = true;
       code = 200;

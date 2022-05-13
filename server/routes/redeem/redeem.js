@@ -16,6 +16,7 @@ const Encrypt = new ValidateEncrypt();
 router.post("/", async (req, res) => {
   const decode = new decodeCoupon();
   let redeemCode = req.body.redeemCode;
+  req.body.memberId = Encrypt.DecodeKey(req.body.memberId);
   try {
     for (var x = 0; x < redeemCode.length; x++) {
       const splitValue = redeemCode[x].split("-");
