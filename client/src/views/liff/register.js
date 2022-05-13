@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import axios from "services/axios";
+import {senderOTP} from "services/axios";
 import * as Address from "@services/GetAddress.js";
 import * as Session from "@services/Session.service";
 import { Radio } from "antd";
@@ -110,7 +111,7 @@ const Register = () => {
       ["generateOTP"]: otp,
       ["generateref"]: ref,
     }));
-    senderOTP(Data.phone.replaceAll("-", ""));
+    SenderOTP(Data.phone.replaceAll("-", ""));
     // }
   };
   const onOTPChange = (e) => {
@@ -131,8 +132,10 @@ const Register = () => {
       }));
     }
   };
-  const senderOTP = (PhoneNumber) => {
-    console.log("senderOTP : " + PhoneNumber);
+  const SenderOTP = (phone) => {
+    console.log("senderOTP : " + phone);
+    // axios.
+    senderOTP(phone,otp.generateOTP,otp.generateref)
   };
 
   const [errors, setErrors] = useState({});
