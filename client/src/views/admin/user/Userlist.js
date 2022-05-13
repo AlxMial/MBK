@@ -171,11 +171,7 @@ export default function UserList() {
               ข้อมูลผู้ดูแลระบบ
             </span>
           </div>
-          <div
-            className={
-              "relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white"
-            }
-          >
+          <div className={"relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white"}>
             <div className="rounded-t mb-0 px-4 py-3 border-0">
               <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
                 <div className="lg:w-6/12">
