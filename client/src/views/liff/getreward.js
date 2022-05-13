@@ -116,8 +116,8 @@ const GetReward = () => {
     axios.get("pointStore").then((response) => {
       if (response.data.error) {
       } else {
-        setlistStore(response.data.tbPointStoreHD);
-        setListSerch(response.data.tbPointStoreHD);
+        // setlistStore(response.data.tbPointStoreHD);
+        // setListSerch(response.data.tbPointStoreHD);
       }
     });
   };
