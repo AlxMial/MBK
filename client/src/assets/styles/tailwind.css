@@ -3479,7 +3479,8 @@ select {
 }
 
 .select-line {
-  border-bottom: 1px solid #d6d6d6;
+  border: 1px solid rgb(214, 214, 214);
+  border-radius: 10px;
 }
 
 .select-line div {
@@ -3730,7 +3731,7 @@ input[type=email]:disabled {
 .ant-tabs-ink-bar {
   background: transparent !important;
 }
-/*
+
 
 
 .Tabs-line .ant-tabs-tab {
@@ -3739,6 +3740,7 @@ input[type=email]:disabled {
   width: 50% !important;
   justify-content: center;
   border-radius: 0 !important;
+  color:#000 !important;
 }
 
 .Tabs-line .ant-tabs-nav-list {
@@ -3756,8 +3758,11 @@ input[type=email]:disabled {
 
 .Tabs-line .ant-tabs-tab-active {
   border-bottom: 5px solid #047738 !important;
-} */
-
+ 
+} 
+.Tabs-line .ant-tabs-tab-active .ant-tabs-tab-btn{
+  color:#000 !important;
+}
 /*Radio Antd*/
 .ant-radio-checked .ant-radio-inner {
   border-color: #047738 !important;
@@ -3908,7 +3913,10 @@ input[type=email]:disabled {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
-
+.line-input{
+border: 1px solid rgb(214, 214, 214);
+border-radius: 10px;
+}
 
 .datepicker .datepicker-viewport {
   height: 40px !important;

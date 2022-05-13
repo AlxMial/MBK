@@ -4,6 +4,7 @@ import axios from "services/axios";
 import * as Session from "../services/Session.service";
 import { useHistory } from "react-router-dom";
 import liff from "@line/liff";
+import { IsNullOrEmpty } from "@services/default.service";
 // components
 import privacypolicy from "views/liff/privacypolicy";
 import register from "views/liff/register";
@@ -110,23 +111,31 @@ const initLine = (callback) => {
   // );
 };
 const runApp = (callback) => {
-  Session.setLiff({
-    uid: "U4d81d62e7ae7795c18f3e2c770595108",
-    displayName: "test",
-    pictureUrl: "test",
-    email: "test",
-    memberId: "4",
-  });
+  // Session.setLiff({
+  //   uid: "U4d81d62e7ae7795c18f3e2c770595110",
+  //   displayName: "test",
+  //   pictureUrl: "test",
+  //   email: "test",
+  // });
   let checkRegister = Session.getcheckRegister();
-  if (checkRegister !== "true") {
+  if (IsNullOrEmpty(checkRegister)) {
     axios
       .post("/members/checkRegister", { uid: Session.getLiff().uid })
       .then((res) => {
-        console.log(res);
+        // console.log(res);
+        let lifdata = Session.getLiff();
+
         if (res.data.code === 200) {
+          if (res.data.isRegister) {
+            lifdata.memberId = res.data.tbMember.id;
+            Session.setLiff(lifdata);
+          }
         } else {
         }
-        Session.setcheckRegister(res.data.isRegister);
+        Session.setcheckRegister({
+          isRegister: res.data.isRegister,
+          isConsent: res.data.isConsent,
+        });
         // res.data.tbMember.id;
         callback(checkRegister);
       });
@@ -160,7 +169,7 @@ const Liff = () => {
     pathname.toLowerCase().includes("member") ||
     pathname.toLowerCase().includes("point") ||
     pathname.toLowerCase().includes("coupon") ||
-    pathname.toLowerCase() == "reward"
+    pathname.toLowerCase() === "reward"
   ) {
     bg = "180px";
 
@@ -174,7 +183,8 @@ const Liff = () => {
   }
 
   initLine((e) => {
-    if (e === "true") {
+    let checkRegister = Session.getcheckRegister();
+    if (checkRegister.isRegister === true) {
       if (
         pathname.includes("privacypolicy") ||
         // pathname.includes("otp") ||

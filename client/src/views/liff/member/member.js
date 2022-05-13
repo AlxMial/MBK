@@ -32,7 +32,7 @@ const Member = () => {
   return (
     <>
       {/* card */}
-      <div className="absolute w-full" style={{ marginTop: "-50px" }}>
+      <div className="noselect absolute w-full" style={{ marginTop: "-50px" }}>
         <div
           className=" flex margin-a"
           style={{
