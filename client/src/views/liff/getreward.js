@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import axios from "services/axios";
 import InputMask from "react-input-mask";
@@ -7,18 +7,34 @@ import { path } from "../../layouts/Liff";
 import { IsNullOrEmpty } from "@services/default.service";
 import * as Session from "@services/Session.service";
 import Spinner from "components/Loadings/spinner/Spinner";
+import { useToasts } from "react-toast-notifications";
 // components
 
 const GetReward = () => {
   const history = useHistory();
+  const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
   const [rewardCode, setrewardCode] = useState([
     { index: 0, code: "", state: null },
     { index: 1, code: "", state: null },
     { index: 2, code: "", state: null },
-    { index: 3, code: "", state: null },
-    { index: 4, code: "", state: null },
   ]);
+  const [tbMember, settbMember] = useState({});
+  const [valueStore, setvalueStore] = useState("1");
+  const [valueBranch, setvalueBranch] = useState("1");
+  const [isbranch, setisbranch] = useState(true);
+
+  const [optionsStore, setoptionsStore] = useState([
+    { value: "1", label: "ผู้ดูแลระบบ" },
+    { value: "2", label: "บัญชี" },
+    { value: "3", label: "การตลาด" },
+  ]);
+  const [optionsbranch, setoptionsbranch] = useState([
+    { value: "1", label: "ผู้ดูแลระบบ" },
+    { value: "2", label: "บัญชี" },
+    { value: "3", label: "การตลาด" },
+  ]);
+
   const [succeedData, setsucceedData] = useState([]);
 
   const [confirmsucceed, setconfirmsucceed] = useState(false);
@@ -32,14 +48,14 @@ const GetReward = () => {
       }
     });
     // console.log(code);
-    console.log({ memberId: Session.getLiff().memberId, redeemCode: code });
+    console.log({ memberId: tbMember.id, redeemCode: code });
 
     // setconfirmsucceed(true);
     if (code.length > 0) {
       setIsLoading(true);
       axios
         .post("/redeem", {
-          memberId: Session.getLiff().memberId,
+          memberId: tbMember.id,
           redeemCode: code,
         })
         .then((res) => {
@@ -63,16 +79,41 @@ const GetReward = () => {
           setrewardCode(_rewardCode);
           // setconfirmsucceed(true);
           setsucceedData(res.data.data);
-          // if (res.data.data === 200) {
-          //   // settbMember(res.data.tbMember);
-          //   // setconfirmsucceed(true);
-          // } else {
-          // }
+
+          let succeed = true;
+          _rewardCode.map((e, i) => {
+            if (!IsNullOrEmpty(e.code)) {
+              if (e.state == false) {
+                let succeed = false;
+              }
+            }
+          });
+          if (succeed) {
+            setconfirmsucceed(true);
+          }
+        })
+        .catch((error) => {
+          addToast(error.message, { appearance: "warning", autoDismiss: true });
+        })
+        .finally((e) => {
           setIsLoading(false);
         });
     }
   };
-
+  const getMembers = async () => {
+    axios
+      .post("/members/checkRegister", { uid: Session.getLiff().uid })
+      .then((res) => {
+        // console.log(res);
+        if (res.data.code === 200) {
+          settbMember(res.data.tbMember);
+        } else {
+        }
+      });
+  };
+  useEffect(() => {
+    getMembers();
+  }, []);
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
@@ -107,19 +148,54 @@ const GetReward = () => {
                 </div>
                 <div>
                   <Select
-                    className="select-line border-0  py-1  text-gray-mbk bg-white text-base  focus:outline-none w-full ease-linear transition-all duration-150"
+                    className="select-line border-0  py-1  text-gray-mbk bg-white text-base 
+                     w-full ease-linear transition-all duration-150"
                     style={{ borderBottom: "1px solid #d6d6d6" }}
                     id={"store"}
                     name={"store"}
                     placeholder={"store"}
-                    // onChange={onChange}
-                    // value={options.filter((e) => e.value === value)}
-                    // options={options}
+                    onChange={async (e) => {
+                      setvalueStore(e.value);
+                    }}
+                    value={optionsStore.filter((e) => e.value === valueStore)}
+                    options={optionsStore}
                   />
                 </div>
+
+                {isbranch ?? (
+                  <>
+                    <div>
+                      <label className="noselect block text-blueGray-600 text-sm font-bold mb-2">
+                        สาขา
+                      </label>
+                    </div>
+                    <div>
+                      <Select
+                        className="select-line border-0  py-1  text-gray-mbk bg-white text-base 
+                         w-full ease-linear transition-all duration-150"
+                        style={{ borderBottom: "1px solid #d6d6d6" }}
+                        id={"branch"}
+                        name={"branch"}
+                        placeholder={"branch"}
+                        onChange={async (e) => {
+                          setvalueBranch(e.value);
+                        }}
+                        value={optionsbranch.filter(
+                          (e) => e.value === valueBranch
+                        )}
+                        options={optionsbranch}
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div
                   className="line-scroll"
-                  style={{ overflow: "scroll", height: "calc(100% - 180px)" }}
+                  style={{
+                    overflow: "scroll",
+                    height: "calc(100% - 270px)",
+                    marginTop: "0.5rem",
+                  }}
                 >
                   {[...rewardCode].map((e, i) => {
                     let _succeedData = succeedData.find(
@@ -144,7 +220,7 @@ const GetReward = () => {
                           : _succeedData.isUse
                           ? (msg.msg = "Code ถูกใช้แล้ว")
                           : (msg = {
-                              msg: "กรอก Code สำเร็จ",
+                              msg: "สะสมพอยท์สำเร็จ",
                               icon: "fas fa-check-circle text-green-mbk",
                             });
                       }
@@ -247,13 +323,13 @@ const GetReward = () => {
             </>
           ) : (
             <>
-              <div className="text-lg text-white font-bold text-center ">
+              {/* <div className="text-lg text-white font-bold text-center ">
                 {"icon"}
-              </div>
+              </div> */}
               <div className="text-lg text-white font-bold text-center ">
-                {"โค้ด"}
+                {"สะสมพอยท์สำเร็จ"}
               </div>
-              {[...succeedData].map((e, i) => {
+              {/* {[...succeedData].map((e, i) => {
                 return (
                   <div key={i} className="mb-5">
                     <div className="text-lg text-white font-bold text-center ">
@@ -271,7 +347,7 @@ const GetReward = () => {
                     </div>
                   </div>
                 );
-              })}
+              })} */}
 
               <div
                 className="text-lg text-white font-bold text-center "
