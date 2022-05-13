@@ -5,14 +5,21 @@ import axios from "services/axios";
 import * as Address from "@services/GetAddress.js";
 import * as Session from "@services/Session.service";
 import { Radio } from "antd";
-import DatePicker from 'react-mobile-datepicker';
+import DatePicker from "react-mobile-datepicker";
 import moment from "moment";
 import { useToasts } from "react-toast-notifications";
 import { path } from "../../layouts/Liff";
-import { InputUC, SelectUC, validationSchema, DatePickerContainer, monthMap } from "./profile";
-
+import {
+  InputUC,
+  SelectUC,
+  validationSchema,
+  DatePickerContainer,
+  monthMap,
+} from "./profile";
+import Spinner from "components/Loadings/spinner/Spinner";
 
 const Updateprofile = () => {
+  const [isLoading, setIsLoading] = useState(false);
   let history = useHistory();
   const { addToast } = useToasts();
   const [dataProvice, setDataProvice] = useState([]);
@@ -29,7 +36,7 @@ const Updateprofile = () => {
   };
   const [Data, settbMember] = useState({});
 
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,68 +47,77 @@ const Updateprofile = () => {
     }));
   };
   const getMembers = async () => {
-    axios.post("/members/checkRegister", { uid: Session.getLiff().uid }).then((res) => {
-      console.log(res)
-      if (res.data.code === 200) {
-        settbMember(res.data.tbMember)
-      } else {
-
-      }
-    })
+    axios
+      .post("/members/checkRegister", { uid: Session.getLiff().uid })
+      .then((res) => {
+        console.log(res);
+        if (res.data.code === 200) {
+          settbMember(res.data.tbMember);
+        } else {
+        }
+      });
   };
   useEffect(() => {
     address();
-    getMembers()
+    getMembers();
   }, []);
 
   const validation = async () => {
-    console.log(Data);
-
     const isFormValid = await validationSchema.isValid(Data, {
-      abortEarly: false
-    })
-
-    console.log(validationSchema)
+      abortEarly: false,
+    });
     if (isFormValid) {
-      DoSave()
+      DoSave();
     } else {
-      validationSchema.validate(Data, {
-        abortEarly: false
-      }).catch((err) => {
-        const errors = err.inner.reduce((acc, error) => {
-          return {
-            ...acc,
-            [error.path]: true
-          }
-        }, {})
-        console.log(errors)
-        setErrors(errors);
-      })
+      validationSchema
+        .validate(Data, {
+          abortEarly: false,
+        })
+        .catch((err) => {
+          const errors = err.inner.reduce((acc, error) => {
+            return {
+              ...acc,
+              [error.path]: true,
+            };
+          }, {});
+          setErrors(errors);
+        });
     }
 
-    console.log(validationSchema.fields["firstName"].tests[0].OPTIONS.message)
+    console.log(validationSchema.fields["firstName"].tests[0].OPTIONS.message);
   };
   const DoSave = () => {
-    axios.put("members", Data).then((res) => {
-      let msg = { msg: "", appearance: "warning" }
+    setIsLoading(true);
+    axios
+      .put("members", Data)
+      .then((res) => {
+        let msg = { msg: "", appearance: "warning" };
 
-      res.data.status ?
-        msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" }
-        :
-        !res.data.isPhone ?
-          msg.msg = "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว"
-          : !res.data.isMemberCard ?
-            msg.msg = "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว"
-            : msg.msg = "บันทึกข้อมูลไม่สำเร็จ"
+        res.data.status
+          ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
+          : !res.data.isPhone
+          ? (msg.msg =
+              "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
+          : !res.data.isMemberCard
+          ? (msg.msg =
+              "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+          : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
+        addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
 
-      addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
-      // res.data.status ?
-      //   history.push(path.member) : console.log("warning")
-    });
+        // res.data.status ?
+        //   history.push(path.member) : console.log("warning")
+      })
+      .catch((e) => {
+        addToast(e.message, { appearance: "warning", autoDismiss: true });
+      })
+      .finally((e) => {
+        setIsLoading(false);
+      });
   };
   return (
     <>
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
         <div
           style={{
@@ -162,7 +178,9 @@ const Updateprofile = () => {
             {/* วันเกิด */}
 
             <div className="mb-5">
-              <div className="flex text-green-mbk font-bold text-lg ">{"วันเกิด"}</div>
+              <div className="flex text-green-mbk font-bold text-lg ">
+                {"วันเกิด"}
+              </div>
               <DatePickerContainer>
                 <DatePicker
                   isOpen={true}
@@ -176,22 +194,20 @@ const Updateprofile = () => {
                     year: {
                       format: "YYYY",
                       caption: "Year",
-                      step: 1
+                      step: 1,
                     },
                     month: {
-                      format: value => monthMap[value.getMonth() + 1],
+                      format: (value) => monthMap[value.getMonth() + 1],
                       caption: "Mon",
-                      step: 1
+                      step: 1,
                     },
                     date: {
                       format: "D",
                       caption: "Day",
-                      step: 1
+                      step: 1,
                     },
-
                   }}
                   onChange={(e) => {
-
                     // console.log(moment(new Date()).toDate())
                     settbMember((prevState) => ({
                       ...prevState,
@@ -258,7 +274,7 @@ const Updateprofile = () => {
                   ["postcode"]: postcode,
                 }));
               }}
-              value={Data.provice}
+              value={Data.province}
               options={dataProvice}
               error={errors.province}
             />
@@ -317,7 +333,7 @@ const Updateprofile = () => {
                 type="button"
                 style={{ width: "50%" }}
                 onClick={() => {
-                  history.push(path.member)
+                  history.push(path.member);
                 }}
               >
                 {"ยกเลิก"}

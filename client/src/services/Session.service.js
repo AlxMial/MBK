@@ -26,11 +26,14 @@ export const removephonnnumber = () => {
 };
 
 export const setcheckRegister = (register) => {
-  sessionStorage.setItem(name + "-Liff-checkRegister", register);
+  sessionStorage.setItem(
+    name + "-Liff-checkRegister",
+    JSON.stringify(register)
+  );
 };
 export const getcheckRegister = () => {
   let register = sessionStorage.getItem(name + "-Liff-checkRegister");
-  register = IsNullOrEmpty(register) ? "" : register;
+  register = IsNullOrEmpty(register) ? "" : JSON.parse(register);
   return register;
 };
 export const removecheckRegister = () => {

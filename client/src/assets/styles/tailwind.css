@@ -3724,7 +3724,7 @@ input[type=email]:disabled {
 .ant-tabs-ink-bar {
   background: transparent !important;
 }
-/*
+
 
 
 .Tabs-line .ant-tabs-tab {
@@ -3750,7 +3750,7 @@ input[type=email]:disabled {
 
 .Tabs-line .ant-tabs-tab-active {
   border-bottom: 5px solid #047738 !important;
-} */
+} 
 
 /*Radio Antd*/
 .ant-radio-checked .ant-radio-inner {
