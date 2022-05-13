@@ -111,12 +111,12 @@ const initLine = (callback) => {
   // );
 };
 const runApp = (callback) => {
-  Session.setLiff({
-    uid: "U4d81d62e7ae7795c18f3e2c770595110",
-    displayName: "test",
-    pictureUrl: "test",
-    email: "test",
-  });
+  // Session.setLiff({
+  //   uid: "U4d81d62e7ae7795c18f3e2c770595110",
+  //   displayName: "test",
+  //   pictureUrl: "test",
+  //   email: "test",
+  // });
   let checkRegister = Session.getcheckRegister();
   if (IsNullOrEmpty(checkRegister)) {
     axios

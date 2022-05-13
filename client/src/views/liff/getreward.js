@@ -13,11 +13,11 @@ const GetReward = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [rewardCode, setrewardCode] = useState([
-    { index: 0, code: "" },
-    { index: 1, code: "" },
-    { index: 2, code: "" },
-    { index: 3, code: "" },
-    { index: 4, code: "" },
+    { index: 0, code: "", state: null },
+    { index: 1, code: "", state: null },
+    { index: 2, code: "", state: null },
+    { index: 3, code: "", state: null },
+    { index: 4, code: "", state: null },
   ]);
   const [succeedData, setsucceedData] = useState([]);
 
@@ -27,7 +27,7 @@ const GetReward = () => {
     let code = [];
 
     rewardCode.map((e, i) => {
-      if (!IsNullOrEmpty(e.code)) {
+      if (!IsNullOrEmpty(e.code) && e.state !== true) {
         code.push(e.code.replaceAll(" ", ""));
       }
     });
@@ -35,24 +35,42 @@ const GetReward = () => {
     console.log({ memberId: Session.getLiff().memberId, redeemCode: code });
 
     // setconfirmsucceed(true);
-    setIsLoading(true);
-    axios
-      .post("/redeem", {
-        memberId: Session.getLiff().memberId,
-        redeemCode: code,
-      })
-      .then((res) => {
-        console.log(res.data.data);
+    if (code.length > 0) {
+      setIsLoading(true);
+      axios
+        .post("/redeem", {
+          memberId: Session.getLiff().memberId,
+          redeemCode: code,
+        })
+        .then((res) => {
+          let _rewardCode = rewardCode;
+          let data = res.data.data;
+          console.log(data);
 
-        // setconfirmsucceed(true);
-        setsucceedData(res.data.data);
-        // if (res.data.data === 200) {
-        //   // settbMember(res.data.tbMember);
-        //   // setconfirmsucceed(true);
-        // } else {
-        // }
-        setIsLoading(false);
-      });
+          data.map((e, i) => {
+            _rewardCode.map((ee, i) => {
+              if (e.coupon === ee.code.toUpperCase()) {
+                e.isInvalid
+                  ? (ee.state = false)
+                  : e.isExpire
+                  ? (ee.state = false)
+                  : e.isUse
+                  ? (ee.state = false)
+                  : (ee.state = true);
+              }
+            });
+          });
+          setrewardCode(_rewardCode);
+          // setconfirmsucceed(true);
+          setsucceedData(res.data.data);
+          // if (res.data.data === 200) {
+          //   // settbMember(res.data.tbMember);
+          //   // setconfirmsucceed(true);
+          // } else {
+          // }
+          setIsLoading(false);
+        });
+    }
   };
 
   return (
@@ -83,9 +101,7 @@ const GetReward = () => {
                 }}
               >
                 <div>
-                  <label
-                    className="noselect block text-blueGray-600 text-sm font-bold mb-2"
-                  >
+                  <label className="noselect block text-blueGray-600 text-sm font-bold mb-2">
                     ร้านค้า
                   </label>
                 </div>
@@ -114,17 +130,24 @@ const GetReward = () => {
                       msg: "",
                       icon: "fas fa-times-circle text-red-500",
                     };
-                    if (!IsNullOrEmpty(_succeedData)) {
-                      _succeedData.isInvalid
-                        ? (msg.msg = "Code ไม่ถูกต้อง")
-                        : _succeedData.isExpire
-                        ? (msg.msg = "Code หมดอายุแล้ว")
-                        : _succeedData.isUse
-                        ? (msg.msg = "Code ถูกใช้แล้ว")
-                        : (msg = {
-                            msg: "กรอก Code สำเร็จ",
-                            icon: "fas fa-check-circle text-green-mbk",
-                          });
+                    if (e.state === true) {
+                      msg = {
+                        msg: "กรอก Code สำเร็จ",
+                        icon: "fas fa-check-circle text-green-mbk",
+                      };
+                    } else {
+                      if (!IsNullOrEmpty(_succeedData)) {
+                        _succeedData.isInvalid
+                          ? (msg.msg = "Code ไม่ถูกต้อง")
+                          : _succeedData.isExpire
+                          ? (msg.msg = "Code หมดอายุแล้ว")
+                          : _succeedData.isUse
+                          ? (msg.msg = "Code ถูกใช้แล้ว")
+                          : (msg = {
+                              msg: "กรอก Code สำเร็จ",
+                              icon: "fas fa-check-circle text-green-mbk",
+                            });
+                      }
                     }
                     return (
                       <div className="flex mt-5" key={i}>
@@ -146,6 +169,9 @@ const GetReward = () => {
                         <div className="noselect px-5">
                           <InputMask
                             className={
+                              (e.state === true
+                                ? " pointer-events-none "
+                                : "") +
                               "border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-base  focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             }
                             style={{ borderBottom: "1px solid #d6d6d6" }}
@@ -165,8 +191,11 @@ const GetReward = () => {
                             placeholder={"XXX-XXXXXXXXXXXXXXXX"}
                             // mask={"***-****************"}
                             maskChar=" "
+                            disabled={e.state ? true : false}
+                            readOnly={e.state ? true : false}
                           />
-                          {!IsNullOrEmpty(_succeedData) ? (
+
+                          {!IsNullOrEmpty(_succeedData) || e.state ? (
                             <div className="absolute text-xs ">
                               <i class={msg.icon}>{msg.msg}</i>
                             </div>
@@ -178,7 +207,6 @@ const GetReward = () => {
                 </div>
                 <div className="noselect relative  px-4  flex-grow flex-1 mt-5">
                   <div
-                    // className="bg-green-mbk relative circle"
                     style={{
                       width: "40px",
                       height: "40px",
@@ -189,16 +217,10 @@ const GetReward = () => {
                     onClick={() => {
                       setrewardCode((oldArray) => [
                         ...oldArray,
-                        { index: oldArray.length, code: "" },
+                        { index: oldArray.length, code: "", state: null },
                       ]);
                     }}
                   >
-                    {/* <span
-                      className="text-white font-bold text-lg"
-                      style={{ padding: "10px" }}
-                    >
-                      {"+"}
-                    </span> */}
                     <i className="fas fa-plus-circle text-green-mbk"></i>
                   </div>
                   <div className="relative  px-4  flex-grow flex-1 flex mt-5">
