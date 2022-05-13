@@ -3902,7 +3902,10 @@ input[type=email]:disabled {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
-
+.line-input{
+border: 1px solid rgb(214, 214, 214);
+border-radius: 10px;
+}
 
 .datepicker .datepicker-viewport {
   height: 40px !important;

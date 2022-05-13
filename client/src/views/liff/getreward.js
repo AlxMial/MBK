@@ -172,9 +172,8 @@ const GetReward = () => {
                               (e.state === true
                                 ? " pointer-events-none "
                                 : "") +
-                              "border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-base  focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                              " line-input border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-base  focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             }
-                            style={{ borderBottom: "1px solid #d6d6d6" }}
                             value={e.code}
                             name={"code-" + (i + 1)}
                             type={"text"}
@@ -225,14 +224,14 @@ const GetReward = () => {
                   </div>
                   <div className="relative  px-4  flex-grow flex-1 flex mt-5">
                     <button
-                      className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                      className=" w-6\/12 text-gray-mbk  font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                       type="button"
                       style={{ width: "50%" }}
                       onClick={() => {
                         history.push(path.member);
                       }}
                     >
-                      {"Cancel"}
+                      {"ยกเลิก"}
                     </button>
                     <button
                       className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
@@ -240,7 +239,7 @@ const GetReward = () => {
                       style={{ width: "50%" }}
                       onClick={confirmreward}
                     >
-                      {"OK"}
+                      {"ตกลง"}
                     </button>
                   </div>
                 </div>
