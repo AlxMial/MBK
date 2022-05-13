@@ -38,10 +38,13 @@ export default function Login() {
       const data = { userName: values.userName, password: values.password };
       axios.post("/users/login", data).then((response) => {
         if (response.data.error) {
-          addToast("ไม่สามารถทำการเข้าสู่ระบบได้ เนื่องจากรหัสผ่านหรือชื่อผู้เข้าใช้งานไม่ถูกต้อง", {
-            appearance: "error",
-            autoDismiss: true,
-          });
+          addToast(
+            "ไม่สามารถทำการเข้าสู่ระบบได้ เนื่องจากรหัสผ่านหรือชื่อผู้เข้าใช้งานไม่ถูกต้อง",
+            {
+              appearance: "error",
+              autoDismiss: true,
+            }
+          );
         } else if (width < 1180 && response.data.role === "1") {
           /*ปรับการ Login Mobile ให้ตรวจสอบเฉพาะ Admin*/
           addToast(
@@ -102,13 +105,9 @@ export default function Login() {
           <div className="w-full lg:w-4/12 px-4">
             <div className="flex flex-wrap mt-6 relative justify-center">
               <div className="่">
-                <a
-                  href="#pablo"
-                  onClick={(e) => e.preventDefault()}
-                  className="text-green-mbk text-6xl"
-                >
+                <span className="text-green-mbk text-6xl">
                   <p className="mb-0">Login</p>
-                </a>
+                </span>
               </div>
             </div>
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-white border-0">
@@ -116,7 +115,7 @@ export default function Login() {
               <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                 <form onSubmit={formik.handleSubmit}>
                   <div className="flex flex-wrap mt-6 relative">
-                    <div className="lg:w-3/12  margin-auto ">
+                    <div className="lg:w-3/12">
                       <label
                         className="block text-blueGray-600 text-sm font-bold mb-2"
                         htmlFor="grid-password"
@@ -143,7 +142,7 @@ export default function Login() {
                     </div>
                   </div>
                   <div className="flex flex-wrap mt-6 relative">
-                    <div className="lg:w-3/12 margin-auto">
+                    <div className="lg:w-3/12 ">
                       <label
                         className="block text-blueGray-600 text-sm font-bold mb-2"
                         htmlFor="grid-password"
@@ -153,8 +152,15 @@ export default function Login() {
                     </div>
                     <div className="lg:w-9/12">
                       <div>
-                        <span onClick={togglePassword} className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2">
-                          <i className={(passwordShown) ? "fas fa-eye-slash" : "fas fa-eye"}></i>
+                        <span
+                          onClick={togglePassword}
+                          className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                        >
+                          <i
+                            className={
+                              passwordShown ? "fas fa-eye-slash" : "fas fa-eye"
+                            }
+                          ></i>
                         </span>
                         <input
                           type={passwordShown ? "text" : "password"}

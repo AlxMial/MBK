@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbPointCodeHD, tbPointCodeDT } = require("../../models");
+const { tbPointCodeHD, tbPointCodeDT,tbMemberPoint } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -41,6 +41,14 @@ router.get("/",validateToken, async (req, res) => {
           Sequelize.fn("COUNT", Sequelize.col("tbpointcodedts.id")),
           "codeCount",
         ],
+        [
+          Sequelize.literal(`(
+              SELECT COUNT(id)
+              FROM tbMemberPoints AS mebmerPoint
+              WHERE
+                mebmerPoint.tbPointCodeHDId = tbPointCodeHD.id
+          )`),'useCount'
+      ]
       ],
     },
     include: [

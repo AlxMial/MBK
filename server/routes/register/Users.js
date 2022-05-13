@@ -129,7 +129,9 @@ router.get("/byId/:id", async (req, res) => {
 router.get("/permission/:username", async (req, res) => {
   if (req.params.username !== "undefined") {
     const username = req.params.username;
-    const listUser = await tbUser.findOne({ where: { userName: Encrypt.EncodeKey(username) } });
+    const listUser = await tbUser.findOne({
+      where: { userName: Encrypt.EncodeKey(username) },
+    });
     const valueData = Encrypt.decryptAllData(listUser);
     Encrypt.encryptValueId(valueData);
     res.json({ status: true, message: "success", tbUser: valueData });
@@ -237,6 +239,34 @@ router.delete("/:userId", async (req, res) => {
   req.body.isDeleted = true;
   tbUser.update(req.body, { where: { id: userId } });
   res.json({ status: true, message: "success", tbUser: null });
+});
+
+router.get("/getemail/:email", async (req, res) => {
+  const email = Encrypt.EncodeKey(req.params.email);
+  const user = await tbUser.findOne({
+    where: { email: email, IsDeleted: false },
+  });
+
+  if (user) {
+    Encrypt.decryptAllData(user);
+    Encrypt.encryptValueId(user);
+    res.json(user);
+  } else {
+    res.json(null);
+  }
+
+});
+
+router.put("/updatePassword", (req, res) => {
+  bcrypt.hash(req.body.password, 10).then((hash) => {
+    req.body.password = hash;
+    req.body.id = Encrypt.DecodeKey(req.body.id);
+    tbUser.update(
+      { password: req.body.password },
+      { where: { id: req.body.id } }
+    );
+    res.json("SUCCESS");
+  });
 });
 
 module.exports = router;

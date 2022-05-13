@@ -1551,7 +1551,7 @@ export default function PointCode() {
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            0
+                            {value.useCount}
                           </span>
                         </td>
                         <td

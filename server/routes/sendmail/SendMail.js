@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 var nodemailer = require('nodemailer');
+const path = require("path");
+const fs = require("fs");
+const handlebars = require("handlebars");
 
 router.post("/",async (req,res)=>{
   const frommail=req.body.frommail
@@ -8,8 +11,18 @@ router.post("/",async (req,res)=>{
   const tomail=req.body.tomail
   const fullName = req.body.fullName
   const resetUrl = req.body.resetUrl
+
+  const filePath = path.join(__dirname, './index.html');
+  const source = fs.readFileSync(filePath, 'utf-8').toString();
+  const template = handlebars.compile(source);
+  const replacements = {
+    urlPath: resetUrl
+  };
+  const htmlToSend = template(replacements);
   var transporter = nodemailer.createTransport({
-    service: 'gmail',
+    // service: 'gmail',
+    host: "smtp.office365.com",
+    port: 587,
     auth: {
       user: frommail,
       pass: password
@@ -19,14 +32,9 @@ router.post("/",async (req,res)=>{
   var mailOptions = {
     from: frommail,
     to: tomail,
-    subject: 'Forgot password',
-    text: `sending mail using Node.js was running successfully. Hope it help you. For more code and project Please Refer my github page`,       
-    html: '<div style="width: 100%;margin-top:6px;"><div style="display: flex;"><div style="margin: auto; font-weight: bold; font-size: 18px;">Rice and Mangosteen Learning By MJU</div></div>' +
-    '<div style="display: flex; padding-top: 5px;"><div style="margin: auto; font-size: 18px;">Reset your password</div></div><div style="display: flex; padding-top: 25px;">' +
-    '<div style="margin: auto; font-size: 16px;">You can use the following button to reset your password.</div></div><div style="display: flex; padding-top: 15px;"><a href="' +
-    resetUrl +'" target="_blank" style="margin: auto; cursor: pointer; width: 300px; height: 50px; line-height: 50px; color: #fff; text-align: center; font-size: 16px; ' +
-    'background-color:#56941A ;">Reset your password</a></div><div style="display: flex; padding-top: 25px;"><div style="margin: auto; font-size: 16px;' +
-    ' width: 450px;">Thanks,</div></div><div style="display: flex;"><div style="margin: auto; font-size: 16px; width: 450px;">Maejo University</div></div></div>'
+    text: "เปลี่ยนแปลงรหัสเข้าสู่ระบบหลังบ้าน ระบบ Line Liff ข้าวมาบุญครอง",
+    subject: 'เปลี่ยนแปลงรหัสเข้าสู่ระบบหลังบ้าน ระบบ Line Liff ข้าวมาบุญครอง',
+    html : htmlToSend
   };
   
   transporter.sendMail(mailOptions, function(error, info){
