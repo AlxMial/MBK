@@ -386,7 +386,7 @@ export default function MemberInfo() {
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info ">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full margin-a">
                       <label
                         className=" text-blueGray-600 text-sm font-bold "
@@ -397,7 +397,7 @@ export default function MemberInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <input
                         type="text"
@@ -411,6 +411,13 @@ export default function MemberInfo() {
                         autoComplete="memberCard"
                         disabled={typePermission === "1" ? false : true}
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.memberCard && formik.errors.memberCard ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.memberCard}
@@ -418,7 +425,7 @@ export default function MemberInfo() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4  mb-2">
+                  <div className="w-full lg:w-2/12 px-4  margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className=" text-blueGray-600 text-sm font-bold"
@@ -429,7 +436,7 @@ export default function MemberInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4  mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <input
                         type="text"
@@ -443,6 +450,13 @@ export default function MemberInfo() {
                         autoComplete="firstName"
                         disabled={typePermission === "1" ? false : true}
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.firstName && formik.errors.firstName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.firstName}
@@ -450,7 +464,7 @@ export default function MemberInfo() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4  mb-2">
+                  <div className="w-full lg:w-2/12 px-4  margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className=" text-blueGray-600 text-sm font-bold"
@@ -461,7 +475,7 @@ export default function MemberInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4  mb-4">
+                  <div className="w-full lg:w-8/12 px-4  margin-auto-t-b">
                     <div className="relative w-full">
                       <input
                         type="text"
@@ -475,6 +489,13 @@ export default function MemberInfo() {
                         autoComplete="lastName"
                         disabled={typePermission === "1" ? false : true}
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.lastName && formik.errors.lastName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.lastName}
@@ -482,7 +503,7 @@ export default function MemberInfo() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full ">
                       <label
                         className=" text-blueGray-600 text-sm font-bold "
@@ -493,7 +514,7 @@ export default function MemberInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full ">
                       <input
                         type="text"
@@ -509,6 +530,13 @@ export default function MemberInfo() {
                         autoComplete="phoneaddress"
                         disabled={typePermission === "1" ? false : true}
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.phone && formik.errors.phone ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.phone}
@@ -516,7 +544,7 @@ export default function MemberInfo() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full ">
                       <label
                         className=" text-blueGray-600 text-sm font-bold"
@@ -524,9 +552,10 @@ export default function MemberInfo() {
                       >
                         Email
                       </label>
+                      <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <input
                         type="email"
@@ -540,6 +569,13 @@ export default function MemberInfo() {
                         autoComplete="emailaddress"
                         disabled={typePermission === "1" ? false : true}
                       />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
                       {formik.touched.email && formik.errors.email ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.email}
@@ -547,7 +583,7 @@ export default function MemberInfo() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className=" text-blueGray-600 text-sm font-bold mb-2"
@@ -557,7 +593,7 @@ export default function MemberInfo() {
                       </label>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <div className="relative">
                         <ConfigProvider locale={locale}>
@@ -602,7 +638,13 @@ export default function MemberInfo() {
                       </div>
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2"></div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -613,7 +655,7 @@ export default function MemberInfo() {
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <div className="relative">
                         <ConfigProvider locale={locale}>
@@ -655,16 +697,23 @@ export default function MemberInfo() {
                             }}
                           />
                         </ConfigProvider>
-                        {formik.touched.registerDate &&
-                        formik.errors.registerDate ? (
-                          <div className="text-sm py-2 px-2 text-red-500">
-                            {formik.errors.registerDate}
-                          </div>
-                        ) : null}
                       </div>
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
+                      {formik.touched.registerDate &&
+                      formik.errors.registerDate ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {formik.errors.registerDate}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -674,7 +723,7 @@ export default function MemberInfo() {
                       </label>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <textarea
                         type="text"
@@ -690,7 +739,13 @@ export default function MemberInfo() {
                       ></textarea>
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2"></div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -700,7 +755,7 @@ export default function MemberInfo() {
                       </label>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <Select
                         id="province"
@@ -741,7 +796,13 @@ export default function MemberInfo() {
                       />
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2"></div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -751,7 +812,7 @@ export default function MemberInfo() {
                       </label>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <Select
                         id="district"
@@ -786,7 +847,13 @@ export default function MemberInfo() {
                       />
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2"></div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -796,7 +863,7 @@ export default function MemberInfo() {
                       </label>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <Select
                         id="role"
@@ -825,7 +892,13 @@ export default function MemberInfo() {
                       />
                     </div>
                   </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2"></div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <label
                         className="text-blueGray-600 text-sm font-bold"
@@ -835,7 +908,7 @@ export default function MemberInfo() {
                       </label>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
                       <input
                         type="text"

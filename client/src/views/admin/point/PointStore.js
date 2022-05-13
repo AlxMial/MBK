@@ -220,7 +220,7 @@ export default function PointStore() {
         {
           type: "text",
           value: "",
-          id:"",
+          id: "",
         },
       ];
     });
@@ -304,7 +304,7 @@ export default function PointStore() {
                                 </div>
                               </div>
 
-                              <div className="flex flex-wrap px-24 mb-6">
+                              <div className="flex flex-wrap px-24 mb-4">
                                 <div
                                   className={
                                     "w-full lg:w-1/12 margin-auto-t-b" +
@@ -333,7 +333,19 @@ export default function PointStore() {
                                     value={formik.values.pointStoreName}
                                     autoComplete="pointStoreName"
                                   />
-                                  {formik.touched.pointStoreName &&
+                            
+                                </div>
+                                <div
+                                  className={
+                                    "w-full lg:w-1/12 margin-auto-t-b" +
+                                    (width < 1024 ? " px-4" : " ")
+                                  }
+                                >
+                                  
+                                </div>
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+                                  
+                                {formik.touched.pointStoreName &&
                                   formik.errors.pointStoreName ? (
                                     <div className="text-sm pt-2 px-2 text-red-500">
                                       {formik.errors.pointStoreName}
@@ -341,6 +353,7 @@ export default function PointStore() {
                                   ) : null}
                                 </div>
                               </div>
+                            
                               <div className="w-full px-24">
                                 <div
                                   className={

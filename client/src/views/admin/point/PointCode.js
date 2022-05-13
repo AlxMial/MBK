@@ -64,6 +64,13 @@ export default function PointCode() {
     useState(false);
   const [errorPointCodeQuantityCode, setErrorPointCodeQuantityCode] =
     useState(false);
+
+  const [errorStartDate, setErrorStartDate] = useState(false);
+  const [errorEndDate, setErrorEndDate] = useState(false);
+  const [errorStartDateImport, setErrorStartDateImport] = useState(false);
+  const [errorEndDateImport, setErrorEndDateImport] = useState(false);
+  const [errorImport, setErrorImport] = useState(false);
+
   const { menu } = useMenu();
   const { addToast } = useToasts();
 
@@ -74,12 +81,15 @@ export default function PointCode() {
   async function openModal(id) {
     setIsEnable(false);
     setErrorPointCodeLengthSymbol(false);
+    setErrorEndDate(false);
+    setErrorStartDate(false);
     if (id) {
       await fetchDataById(id);
       setIsNew(false);
       setEnableCode(true);
     } else {
       setEnableCode(false);
+
       setActive("1");
       setType("1");
       setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
@@ -101,6 +111,8 @@ export default function PointCode() {
 
   function openModalImport() {
     setOptionCampaign([]);
+    setErrorEndDateImport(false);
+    setErrorStartDateImport(false);
     setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
     setEndDateCode(moment(new Date(), "DD/MM/YYYY"));
     formikImport.resetForm();
@@ -166,6 +178,7 @@ export default function PointCode() {
   const selectFile = (e) => {
     setFile(e.target.files[0]);
     setFileName(e.target.files[0].name);
+    setErrorImport(false);
     formikImport.setFieldValue("fileName", e.target.files[0].name);
   };
 
@@ -393,59 +406,63 @@ export default function PointCode() {
       } else {
         let formData = new FormData();
         formData.append("file", file);
-        axios.post("pointCode", values).then(async (res) => {
-          if (res.data.status) {
-            formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
-            await axiosUpload
-              .post("api/excel/upload", formData)
-              .then(async (resExcel) => {
-                await axios.post("/uploadExcel").then((resUpload) => {
-                  if (resUpload.data.error) {
-                    axios
-                      .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
-                      .then((resDelete) => {
-                        fetchData();
-                        addToast(
-                          "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
-                          {
-                            appearance: "warning",
-                            autoDismiss: true,
-                          }
-                        );
-                      });
-                  } else {
-                    fetchData();
-                    addToast(
-                      Storage.GetLanguage() === "th"
-                        ? "บันทึกข้อมูลสำเร็จ"
-                        : "Save data successfully",
-                      { appearance: "success", autoDismiss: true }
-                    );
-                  }
+        if (file) {
+          setErrorImport(false);
+          axios.post("pointCode", values).then(async (res) => {
+            if (res.data.status) {
+              formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
+              await axiosUpload
+                .post("api/excel/upload", formData)
+                .then(async (resExcel) => {
+                  await axios.post("/uploadExcel").then((resUpload) => {
+                    if (resUpload.data.error) {
+                      axios
+                        .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
+                        .then((resDelete) => {
+                          fetchData();
+                          addToast(
+                            "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
+                            {
+                              appearance: "warning",
+                              autoDismiss: true,
+                            }
+                          );
+                        });
+                    } else {
+                      fetchData();
+                      addToast(
+                        Storage.GetLanguage() === "th"
+                          ? "บันทึกข้อมูลสำเร็จ"
+                          : "Save data successfully",
+                        { appearance: "success", autoDismiss: true }
+                      );
+                    }
+                  });
                 });
-              });
-          } else {
-            if (res.data.isPointCodeName) {
-              addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
-              );
-            } else if (res.data.isPointCodeSymbol) {
-              addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสแคมเปญซ้ำกับในระบบ",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
-              );
+            } else {
+              if (res.data.isPointCodeName) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              } else if (res.data.isPointCodeSymbol) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสแคมเปญซ้ำกับในระบบ",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
             }
-          }
-        });
+          });
+
+          closeModalImport();
+        } else setErrorImport(true);
         setIsLoading(false);
-        closeModalImport();
       }
     },
   });
@@ -575,7 +592,7 @@ export default function PointCode() {
               </div>
               <div
                 className={
-                  "lg:w-6/12 text-right" + (width < 1024 ? " block" : " hidden")
+                  "lg:w-6/12 text-right" + (width < 764 ? " block" : " hidden")
                 }
               >
                 <button
@@ -632,7 +649,7 @@ export default function PointCode() {
               </div>
               <div
                 className={
-                  "lg:w-6/12 text-right" + (width < 1024 ? " hidden" : " block")
+                  "lg:w-6/12 text-right" + (width < 764 ? " hidden" : " block")
                 }
               >
                 <button
@@ -667,7 +684,7 @@ export default function PointCode() {
                               </div>
 
                               <div className="flex flex-wrap px-24">
-                                <div className="w-full lg:w-1/12 px-4  ">
+                                <div className="w-full lg:w-1/12 px-4 margin-auto-t-b  ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -712,6 +729,17 @@ export default function PointCode() {
                                     value={formikImport.values.pointCodeName}
                                     autoComplete="pointCodeName"
                                   />
+                                </div>
+                                <div
+                                  className={
+                                    "w-full lg:w-1/12 px-4 mb-4 " +
+                                    (formikImport.errors.pointCodeName &&
+                                    width < 764
+                                      ? " hidden"
+                                      : " block")
+                                  }
+                                ></div>
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                                   {formikImport.touched.pointCodeName &&
                                   formikImport.errors.pointCodeName ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
@@ -719,8 +747,7 @@ export default function PointCode() {
                                     </div>
                                   ) : null}
                                 </div>
-                                <div className="w-full mb-4"></div>
-                                <div className="w-full lg:w-1/12 px-4  ">
+                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -731,7 +758,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-11/12 px-4 ">
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b ">
                                   <div className="buttonIn image-upload ">
                                     <label
                                       htmlFor="file-input"
@@ -765,8 +792,24 @@ export default function PointCode() {
                                     />
                                   </div>
                                 </div>
-                                <div className={"w-full mb-4"}></div>
-                                <div className="w-full lg:w-1/12 px-4  ">
+                                <div
+                                  className={
+                                    "w-full lg:w-1/12 px-4 mb-4 " +
+                                    (errorImport && width < 764
+                                      ? " hidden"
+                                      : " block")
+                                  }
+                                ></div>
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+                                  {errorImport ? (
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      * กรุณาเลือกไฟล์สำหรับการ Import
+                                    </div>
+                                  ) : null}
+                                </div>
+                                <div className="w-full lg:w-1/12 px-4"></div>
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b"></div>
+                                <div className="w-full lg:w-1/12 px-4 margin-auto-t-b  ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -777,7 +820,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 ">
+                                <div className="w-full lg:w-5/12 px-4  ">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -795,6 +838,23 @@ export default function PointCode() {
                                     autoComplete="pointCodePoint"
                                     value={formikImport.values.pointCodePoint}
                                   />
+                                </div>
+                                <div
+                                  className={
+                                    "w-full lg:w-6/12 px-4 mb-4 " +
+                                    (width < 764 ? " hidden " : "  block")
+                                  }
+                                ></div>
+                                <div
+                                  className={
+                                    "w-full lg:w-1/12 px-4 mb-4 " +
+                                    (formikImport.errors.pointCodePoint &&
+                                    width < 764
+                                      ? " hidden "
+                                      : "  block")
+                                  }
+                                ></div>
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                                   {formikImport.touched.pointCodePoint &&
                                   formikImport.errors.pointCodePoint ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
@@ -802,9 +862,8 @@ export default function PointCode() {
                                     </div>
                                   ) : null}
                                 </div>
-                                <div className={"w-full mb-4"}></div>
-
-                                <div className="w-full lg:w-1/12 px-4  ">
+                                {/* <div className={"w-full mb-4"}></div> */}
+                                <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -815,7 +874,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 ">
+                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <div className="relative">
                                     <ConfigProvider locale={locale}>
                                       <DatePicker
@@ -841,7 +900,9 @@ export default function PointCode() {
                                               new Date(),
                                               false
                                             );
+                                            setErrorStartDateImport(true);
                                           } else {
+                                            setErrorStartDateImport(false);
                                             formikImport.setFieldValue(
                                               "startDate",
                                               moment(e).toDate(),
@@ -858,7 +919,8 @@ export default function PointCode() {
                                       />
                                     </ConfigProvider>
                                     {formikImport.touched.startDate &&
-                                    formikImport.errors.startDate ? (
+                                    formikImport.errors.startDate &&
+                                    width < 764 ? (
                                       <div className="text-sm py-2 px-2 text-red-500">
                                         {formikImport.errors.startDate}
                                       </div>
@@ -868,10 +930,10 @@ export default function PointCode() {
                                 <div
                                   className={
                                     "w-full mb-4" +
-                                    (width < 1024 ? " block" : " hidden")
+                                    (width < 764 ? " block" : " hidden")
                                   }
                                 ></div>
-                                <div className="w-full lg:w-1/12 px-4  ">
+                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -883,7 +945,7 @@ export default function PointCode() {
                                   </span>
                                 </div>
 
-                                <div className="w-full lg:w-5/12 px-4 ">
+                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <ConfigProvider locale={locale}>
                                     <DatePicker
                                       format={"DD/MM/yyyy"}
@@ -903,12 +965,14 @@ export default function PointCode() {
                                       }}
                                       onChange={(e) => {
                                         if (e === null) {
+                                          setErrorEndDateImport(true);
                                           formikImport.setFieldValue(
                                             "endDate",
                                             new Date(),
                                             false
                                           );
                                         } else {
+                                          setErrorEndDateImport(false);
                                           formikImport.setFieldValue(
                                             "endDate",
                                             moment(e).toDate(),
@@ -923,22 +987,48 @@ export default function PointCode() {
                                     />
                                   </ConfigProvider>
                                   {formikImport.touched.endDate &&
-                                  formikImport.errors.endDate ? (
+                                  formikImport.errors.endDate &&
+                                  width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       {formikImport.errors.endDate}
                                     </div>
                                   ) : null}
                                 </div>
-                                <div className="w-full lg:w-1/12 px-4 mb-2 mt-4">
+                                <div
+                                  className={
+                                    width < 764 ? "hidden" : "w-full flex"
+                                  }
+                                >
+                                  <div className="w-full lg:w-1/12 px-4 margin-auto-t-b "></div>
+                                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                    {" "}
+                                    {errorStartDateImport ? (
+                                      <div className="text-sm py-2 px-2 text-red-500">
+                                        * กรุณากรอกวันที่เริ่มต้น
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                  <div className="w-full lg:w-1/12 px-4  margin-auto-t-b "></div>
+                                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                    {errorEndDateImport ? (
+                                      <div className="text-sm py-2 px-2 text-red-500">
+                                        * กรุณากรอกวันที่สิ้นสุด
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                </div>
+
+                                <div className="w-full lg:w-1/12 px-4 mb-2 mt-2">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold mb-2"
                                     htmlFor="grid-password"
                                   ></label>
                                 </div>
+
                                 <div
                                   className={
                                     "w-full lg:w-11/12 px-4 " +
-                                    (width < 1024 ? " " : "  mb-4 mt-4")
+                                    (width < 764 ? " " : "  mb-2 " + ((errorStartDateImport) ? "  mt-2" : " mt-4"))
                                   }
                                 >
                                   <Radio.Group
@@ -1059,7 +1149,7 @@ export default function PointCode() {
                                   />
                                 </div>
                                 <div className="w-full mb-4"></div> */}
-                                <div className="w-full lg:w-1/12 px-4">
+                                <div className="w-full lg:w-1/12 px-4 margin-auto-t-b">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -1071,7 +1161,7 @@ export default function PointCode() {
                                   </span>
                                 </div>
 
-                                <div className="w-full lg:w-11/12 px-4">
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -1083,6 +1173,17 @@ export default function PointCode() {
                                     value={formik.values.pointCodeName}
                                     autoComplete="pointCodeName"
                                   />
+                                </div>
+
+                                <div
+                                  className={
+                                    "w-full lg:w-1/12 px-4 mb-4 " +
+                                    (formik.errors.pointCodeName && width < 764
+                                      ? " hidden"
+                                      : " block")
+                                  }
+                                ></div>
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                                   {formik.touched.pointCodeName &&
                                   formik.errors.pointCodeName ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
@@ -1090,8 +1191,9 @@ export default function PointCode() {
                                     </div>
                                   ) : null}
                                 </div>
-                                <div className="w-full mb-4"></div>
-                                <div className="w-full lg:w-1/12 px-4  ">
+
+                                {/* <div className="w-full mb-4"></div> */}
+                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -1102,7 +1204,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 ">
+                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b ">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -1116,7 +1218,8 @@ export default function PointCode() {
                                     disabled={isEnable || enableCode}
                                   />
                                   {formik.touched.pointCodeSymbol &&
-                                  errorPointCodeSymbol ? (
+                                  formik.errors.pointCodeSymbol &&
+                                  width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       * กรุณากรอก รหัสแคมเปญ
                                     </div>
@@ -1125,10 +1228,10 @@ export default function PointCode() {
                                 <div
                                   className={
                                     "w-full mb-4" +
-                                    (width < 1024 ? " block" : " hidden")
+                                    (width < 764 ? " block" : " hidden")
                                   }
                                 ></div>
-                                <div className="w-full lg:w-1/12 px-4  ">
+                                <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -1139,7 +1242,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 ">
+                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b ">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -1159,20 +1262,70 @@ export default function PointCode() {
                                     disabled={isEnable || enableCode}
                                   />
                                   {formik.touched.pointCodeLengthSymbol &&
-                                  formik.errors.pointCodeLengthSymbol ? (
+                                  formik.errors.pointCodeLengthSymbol &&
+                                  width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       {formik.errors.pointCodeLengthSymbol}
                                     </div>
                                   ) : null}
-                                  {errorPointCodeLengthSymbol ? (
+                                  {errorPointCodeLengthSymbol && width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       * จำนวนตัวอักษรจะสามารถกำหนดได้ ตั้งแต่ 10
                                       - 16 ตัวอักษรเท่านั้น
                                     </div>
                                   ) : null}
                                 </div>
-                                <div className={"w-full mb-4"}></div>
-                                <div className="w-full lg:w-1/12 px-4  ">
+
+                                <div
+                                  className={
+                                    width < 764 ? "hidden" : "w-full flex"
+                                  }
+                                >
+                                  <div className="w-full lg:w-1/12 px-4 margin-auto-t-b "></div>
+                                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                    {" "}
+                                    {formik.touched.pointCodeSymbol &&
+                                    formik.errors.pointCodeSymbol ? (
+                                      <div className="text-sm py-2  px-2 text-red-500">
+                                        * กรุณากรอก รหัสแคมเปญ
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                  <div className="w-full lg:w-1/12 px-4  margin-auto-t-b "></div>
+                                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                    {formik.touched.pointCodeLengthSymbol &&
+                                    formik.errors.pointCodeLengthSymbol ? (
+                                      <div className="text-sm py-2  px-2 text-red-500">
+                                        {formik.errors.pointCodeLengthSymbol}
+                                      </div>
+                                    ) : null}
+                                    {errorPointCodeLengthSymbol ? (
+                                      <div className="text-sm pt-2  px-2 text-red-500">
+                                        * จำนวนตัวอักษรจะสามารถกำหนดได้ ตั้งแต่
+                                        10 - 16 ตัวอักษรเท่านั้น
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                </div>
+
+                                <div
+                                  className={
+                                    "w-full mb-4" +
+                                    (formik.errors.pointCodeSymbol &&
+                                    formik.touched.pointCodeSymbol
+                                      ? " hidden"
+                                      : " ")
+                                  }
+                                ></div>
+
+                                <div
+                                  className={
+                                    "w-full mb-4" +
+                                    (width < 764 ? " block" : " hidden")
+                                  }
+                                ></div>
+                                {/* <div className={"w-full mb-4"}></div> */}
+                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -1183,7 +1336,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 ">
+                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b ">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -1202,14 +1355,42 @@ export default function PointCode() {
                                     value={formik.values.pointCodePoint}
                                   />
                                   {formik.touched.pointCodePoint &&
-                                  formik.errors.pointCodePoint ? (
+                                  formik.errors.pointCodePoint &&
+                                  width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       {formik.errors.pointCodePoint}
                                     </div>
                                   ) : null}
                                 </div>
-                                <div className={"w-full mb-4"}></div>
-                                <div className="w-full lg:w-1/12 px-4  ">
+
+                                <div
+                                  className={
+                                    "w-full flex" +
+                                    (width < 764 ? " hidden" : " ")
+                                  }
+                                >
+                                  <div className="w-full lg:w-1/12 px-4  margin-auto-t-b "></div>
+                                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                    {formik.touched.pointCodePoint &&
+                                    formik.errors.pointCodePoint ? (
+                                      <div className="text-sm py-2 px-2  text-red-500">
+                                        {formik.errors.pointCodePoint}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                </div>
+
+                                <div
+                                  className={
+                                    "w-full mb-4" +
+                                    (formik.errors.pointCodePoint &&
+                                    formik.touched.pointCodePoint
+                                      ? " hidden"
+                                      : " ")
+                                  }
+                                ></div>
+
+                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -1220,7 +1401,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 ">
+                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -1240,14 +1421,42 @@ export default function PointCode() {
                                     disabled={isEnable || enableCode}
                                   />
                                   {formik.touched.pointCodeQuantityCode &&
-                                  formik.errors.pointCodeQuantityCode ? (
+                                  formik.errors.pointCodeQuantityCode &&
+                                  width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       {formik.errors.pointCodeQuantityCode}
                                     </div>
                                   ) : null}
                                 </div>
-                                <div className="w-full mb-4"></div>
-                                <div className="w-full lg:w-1/12 px-4  ">
+
+                                <div
+                                  className={
+                                    "w-full flex" +
+                                    (width < 764 ? " hidden" : " ")
+                                  }
+                                >
+                                  <div className="w-full lg:w-1/12 px-4  margin-auto-t-b "></div>
+                                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                    {formik.touched.pointCodeQuantityCode &&
+                                    formik.errors.pointCodeQuantityCode ? (
+                                      <div className="text-sm py-2 px-2 text-red-500">
+                                        {formik.errors.pointCodeQuantityCode}
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                </div>
+
+                                <div
+                                  className={
+                                    "w-full mb-4" +
+                                    (formik.errors.pointCodeQuantityCode &&
+                                    formik.touched.pointCodeQuantityCode
+                                      ? " hidden"
+                                      : " ")
+                                  }
+                                ></div>
+
+                                <div className="w-full lg:w-1/12 px-4  margin-auto-t-b">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -1258,7 +1467,7 @@ export default function PointCode() {
                                     *
                                   </span>
                                 </div>
-                                <div className="w-full lg:w-5/12 px-4 ">
+                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <div className="relative">
                                     <ConfigProvider locale={locale}>
                                       <DatePicker
@@ -1279,12 +1488,14 @@ export default function PointCode() {
                                         }}
                                         onChange={(e) => {
                                           if (e === null) {
+                                            setErrorStartDate(true);
                                             formik.setFieldValue(
                                               "startDate",
                                               new Date(),
                                               false
                                             );
                                           } else {
+                                            setErrorStartDate(false);
                                             formik.setFieldValue(
                                               "startDate",
                                               moment(e).toDate(),
@@ -1298,10 +1509,9 @@ export default function PointCode() {
                                         // )}
                                       />
                                     </ConfigProvider>
-                                    {formik.touched.startDate &&
-                                    formik.errors.startDate ? (
+                                    {errorStartDate && width < 764 ? (
                                       <div className="text-sm py-2 px-2 text-red-500">
-                                        {formik.errors.startDate}
+                                        * กรุณากรอกวันที่เริ่มต้น
                                       </div>
                                     ) : null}
                                   </div>
@@ -1309,10 +1519,10 @@ export default function PointCode() {
                                 <div
                                   className={
                                     "w-full mb-4" +
-                                    (width < 1024 ? " block" : " hidden")
+                                    (width < 764 && !errorStartDate? " block" : " hidden")
                                   }
                                 ></div>
-                                <div className="w-full lg:w-1/12 px-4  ">
+                                <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -1324,7 +1534,7 @@ export default function PointCode() {
                                   </span>
                                 </div>
 
-                                <div className="w-full lg:w-5/12 px-4 ">
+                                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <ConfigProvider locale={locale}>
                                     <DatePicker
                                       format={"DD/MM/yyyy"}
@@ -1344,12 +1554,14 @@ export default function PointCode() {
                                       }}
                                       onChange={(e) => {
                                         if (e === null) {
+                                          setErrorEndDate(true);
                                           formik.setFieldValue(
                                             "endDate",
                                             new Date(),
                                             false
                                           );
                                         } else {
+                                          setErrorEndDate(false);
                                           formik.setFieldValue(
                                             "endDate",
                                             moment(e).toDate(),
@@ -1363,14 +1575,37 @@ export default function PointCode() {
                                       // )}
                                     />
                                   </ConfigProvider>
-                                  {formik.touched.endDate &&
-                                  formik.errors.endDate ? (
+                                  {errorEndDate && width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
-                                      {formik.errors.endDate}
+                                       * กรุณากรอกวันที่สิ้นสุด
                                     </div>
                                   ) : null}
                                 </div>
-                                <div className="w-full lg:w-1/12 px-4 mb-2 mt-4">
+
+                                <div
+                                  className={
+                                    width < 764 ? "hidden" : "w-full flex"
+                                  }
+                                >
+                                  <div className="w-full lg:w-1/12 px-4 margin-auto-t-b "></div>
+                                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                    {" "}
+                                    {errorStartDate ? (
+                                      <div className="text-sm py-2 px-2 text-red-500">
+                                        * กรุณากรอกวันที่เริ่มต้น
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                  <div className="w-full lg:w-1/12 px-4  margin-auto-t-b "></div>
+                                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                                    {errorEndDate ? (
+                                      <div className="text-sm py-2 px-2 text-red-500">
+                                        * กรุณากรอกวันที่สิ้นสุด
+                                      </div>
+                                    ) : null}
+                                  </div>
+                                </div>
+                                <div className={"w-full lg:w-1/12 px-4 mb-2 mt-2" + ((errorEndDate) ? " hidden" : " ")}>
                                   <label
                                     className="text-blueGray-600 text-sm font-bold mb-2"
                                     htmlFor="grid-password"
@@ -1379,7 +1614,7 @@ export default function PointCode() {
                                 <div
                                   className={
                                     "w-full lg:w-11/12 px-4 " +
-                                    (width < 1024 ? " " : "  mb-4 mt-4")
+                                    (width < 764 ? " " : "  mb-2" + ((errorStartDate) ? "  mt-2" : " mt-4"))
                                   }
                                 >
                                   <Radio.Group
