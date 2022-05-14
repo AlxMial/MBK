@@ -8,6 +8,7 @@ import { useToasts } from "react-toast-notifications";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
+import BlindValue from "services/BlindValue";
 import styleSelect from "assets/styles/theme/ReactSelect.js";
 import * as Storage from "../../../services/Storage.service";
 import "antd/dist/antd.css";
@@ -18,6 +19,7 @@ import { DatePicker, Space, ConfigProvider } from "antd";
 import * as Address from "../../../services/GetAddress.js";
 import useMenu from "services/useMenu";
 import { getPermissionByUserName } from "services/Permission";
+import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 
 export default function MemberInfo() {
   /* Option Select */
@@ -31,6 +33,7 @@ export default function MemberInfo() {
   const { height, width } = useWindowDimensions();
   const { menu } = useMenu();
   let { id } = useParams();
+  const [isModefied, setIsModified] = useState(false);
 
   /* RegEx formatter */
   const phoneRegExp =
@@ -48,12 +51,45 @@ export default function MemberInfo() {
   const [dataDistrictEng, setDataDistrictEng] = useState([]);
   const [dataSubDistrictEng, setSubDistrictEng] = useState([]);
   const [typePermission, setTypePermission] = useState("");
+  const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
+  const [errorBirthDate, setErrorBirthDate] = useState(false);
+  const [errorRegisterDate, setErrorRegisterDate] = useState(false);
+  const [isClick, setIsClick] = useState(false);
+  const [isClickRegister, setIsClickRegister] = useState(false);
   let history = useHistory();
   const { addToast } = useToasts();
   /* Method Condition */
   const OnBack = () => {
+    if (isModefied) {
+      openModalSubject();
+    } else {
+      history.push("/admin/members");
+    }
+  };
+
+  function openModalSubject() {
+    setIsOpenEdit(true);
+  }
+
+  function closeModalSubject() {
+    setIsOpenEdit(false);
+  }
+
+  const onEditValue = async () => {
+    formik.handleSubmit();
+    const valueError = JSON.stringify(formik.errors);
+
+    if (valueError.length > 2) setIsOpenEdit(false);
+    //   history.push("/admin/members");
+    // setIsModified(false);
+    // history.push("/admin/members");
+  };
+
+  const onReturn = () => {
+    setIsModified(false);
     history.push("/admin/members");
   };
+
   /*พิมพ์เบอร์โทรศัพท์*/
   const onHandleTelephoneChange = (e) => {
     if (
@@ -63,6 +99,17 @@ export default function MemberInfo() {
       setPhoneNumber(e.target.value);
       formik.values.phone = e.target.value;
     }
+  };
+
+  const onHandleNumber = (e) => {
+    if (
+      ValidateService.onHandleNumberChange(e.target.value) !== "" ||
+      e.target.value === ""
+    ) {
+      setPhoneNumber(e.target.value);
+      return e.target.value;
+    }
+
   };
   /* Form insert value */
   const formik = useFormik({
@@ -128,64 +175,82 @@ export default function MemberInfo() {
           Storage.GetLanguage() === "th"
             ? "* รูปแบบอีเมลไม่ถูกต้อง"
             : "Invalid email format"
+        )
+        .required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก Email"
+            : "* Please enter your Email"
         ),
-      registerDate: Yup.string().required(
-        Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก วันที่สมัคร"
-          : "* Please enter your Register Date"
-      ),
+      // registerDate: Yup.string().required(
+      //   Storage.GetLanguage() === "th"
+      //     ? "* กรุณากรอก วันที่สมัคร"
+      //     : "* Please enter your Register Date"
+      // ),
     }),
     onSubmit: (values) => {
-      if (isNew) {
-        axios.post("members", values).then((res) => {
-          if (res.data.status) {
-            setIsNew(false);
-            formik.values.id = res.data.tbMember.id;
-            history.push(`/admin/membersinfo/${res.data.tbMember.id}`);
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            if (!res.data.isPhone) {
+      if (
+        new Date(formik.values.birthDate) > new Date(formik.values.registerDate)
+      )
+        formik.values.birthDate = formik.values.registerDate;
+
+      if (!errorRegisterDate && !errorBirthDate) {
+        if (isNew) {
+          axios.post("members", values).then((res) => {
+            if (res.data.status) {
+              setIsNew(false);
+              formik.values.id = res.data.tbMember.id;
+              setIsModified(false);
+              if (!modalIsOpenEdit)
+                history.push(`/admin/membersinfo/${res.data.tbMember.id}`);
+              else history.push("/admin/members");
               addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
               );
-            } else if (!res.data.isEmail) {
+            } else {
+              setIsOpenEdit(false);
+              if (!res.data.isPhone) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              } else if (!res.data.isEmail) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
+            }
+          });
+        } else {
+          axios.put("members", values).then((res) => {
+            if (res.data.status) {
+              setIsModified(false);
               addToast(
-                "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
+            } else {
+              setIsOpenEdit(false);
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? res.data.message
+                  : res.data.message,
+                { appearance: "warning", autoDismiss: true }
               );
             }
-          }
-        });
-      } else {
-        axios.put("members", values).then((res) => {
-          if (res.data.status) {
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? res.data.message
-                : res.data.message,
-              { appearance: "warning", autoDismiss: true }
-            );
-          }
-        });
+          });
+        }
       }
     },
   });
@@ -243,14 +308,6 @@ export default function MemberInfo() {
       formik.values.district === "" ? "1001" : formik.values.district;
     formik.values.subDistrict =
       formik.values.subDistrict === "" ? "100101" : formik.values.subDistrict;
-    formik.values.birthDate =
-      formik.values.birthDate === ""
-        ? new moment(new Date()).toDate()
-        : formik.values.birthDate;
-    formik.values.registerDate =
-      formik.values.registerDate === ""
-        ? new moment(new Date()).toDate()
-        : formik.values.registerDate;
   };
 
   const fatchAddress = async () => {
@@ -261,6 +318,9 @@ export default function MemberInfo() {
     setDataProvice(province);
     setDataDistrict(district);
     setSubDistrict(subDistrict);
+    formik.setFieldValue("province", "1");
+    formik.setFieldValue("district", "1001");
+    formik.setFieldValue("subDistrict", "100101");
     formik.setFieldValue("postcode", postcode);
   };
 
@@ -274,6 +334,7 @@ export default function MemberInfo() {
       formik.values.registerDate === ""
         ? new moment(new Date()).toDate()
         : formik.values.registerDate;
+
     fatchAddress();
     fetchPermission();
     // defaultValue();
@@ -282,11 +343,17 @@ export default function MemberInfo() {
 
   return (
     <>
-      <div className="flex flex-warp">
-        <span className="text-sm font-bold margin-auto-t-b">
-          <i className="fas fa-user-friends"></i>&nbsp;
+      <div className="flex flex-warp mb-4">
+        <span className="text-sm margin-auto-t-b font-bold ">
+          <i className="fas fa-cog"></i>&nbsp;&nbsp;
         </span>
-        <span className="text-base margin-auto font-bold">จัดการสมาชิก </span>
+        <span className="text-base margin-auto-t-b font-bold">
+          CRM&nbsp;&nbsp;/&nbsp;&nbsp;
+        </span>
+        <span className="text-sm margin-auto-t-b font-bold ">
+          <i className="fas fa-chess"></i>&nbsp;&nbsp;
+        </span>
+        <span className="text-base margin-auto font-bold">จัดการสมาชิก</span>
       </div>
       <div className="w-full">
         <form onSubmit={formik.handleSubmit}>
@@ -295,7 +362,7 @@ export default function MemberInfo() {
               <span className="text-lg  text-green-mbk margin-auto font-bold">
                 {typePermission === "1"
                   ? "เพิ่ม / แก้ไข ข้อมูลสมาชิก"
-                  : "รายละเอียดข้อมูลสมาชิก"}
+                  : "ข้อมูลสมาชิก"}
               </span>
               <div
                 className={
@@ -405,11 +472,14 @@ export default function MemberInfo() {
                         id="memberCard"
                         name="memberCard"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.memberCard}
                         autoComplete="memberCard"
-                        disabled={typePermission === "1" ? false : true}
+                        disabled={true}
                       />
                     </div>
                   </div>
@@ -444,7 +514,10 @@ export default function MemberInfo() {
                         id="firstName"
                         name="firstName"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.firstName}
                         autoComplete="firstName"
@@ -483,7 +556,10 @@ export default function MemberInfo() {
                         id="lastName"
                         name="lastName"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.lastName}
                         autoComplete="lastName"
@@ -524,6 +600,7 @@ export default function MemberInfo() {
                         maxLength={10}
                         onChange={(event) => {
                           onHandleTelephoneChange(event);
+                          setIsModified(true);
                         }}
                         onBlur={formik.handleBlur}
                         value={formik.values.phone}
@@ -563,7 +640,10 @@ export default function MemberInfo() {
                         id="email"
                         name="email"
                         maxLength={100}
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.email}
                         autoComplete="emailaddress"
@@ -591,67 +671,6 @@ export default function MemberInfo() {
                       >
                         วันเกิด
                       </label>
-                    </div>
-                  </div>
-                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
-                    <div className="relative w-full">
-                      <div className="relative">
-                        <ConfigProvider locale={locale}>
-                          <DatePicker
-                            format={"DD/MM/yyyy"}
-                            placeholder="เลือกวันที่"
-                            showToday={false}
-                            disabled={typePermission === "1" ? false : true}
-                            defaultValue={moment(new Date(), "DD/MM/YYYY")}
-                            style={{
-                              height: "100%",
-                              width: "100%",
-                              borderRadius: "0.25rem",
-                              cursor: "pointer",
-                              margin: "0px",
-                              paddingTop: "0.5rem",
-                              paddingBottom: "0.5rem",
-                              paddingLeft: "0.5rem",
-                              paddingRight: "0.5rem",
-                            }}
-                            onChange={(e) => {
-                              if (e === null) {
-                                formik.setFieldValue(
-                                  "birthDate",
-                                  new Date(),
-                                  false
-                                );
-                              } else {
-                                formik.setFieldValue(
-                                  "birthDate",
-                                  moment(e).toDate(),
-                                  false
-                                );
-                              }
-                            }}
-                            value={moment(
-                              new Date(formik.values.birthDate),
-                              "DD/MM/YYYY"
-                            )}
-                          />
-                        </ConfigProvider>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
-                    <div className="relative w-full"></div>
-                  </div>
-                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
-                    <div className="relative w-full mb-2"></div>
-                  </div>
-                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
-                    <div className="relative w-full">
-                      <label
-                        className="text-blueGray-600 text-sm font-bold"
-                        htmlFor="grid-password"
-                      >
-                        วันที่สมัคร
-                      </label>
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
                   </div>
@@ -676,18 +695,114 @@ export default function MemberInfo() {
                               paddingLeft: "0.5rem",
                               paddingRight: "0.5rem",
                             }}
-                            value={moment(
-                              new Date(formik.values.registerDate),
-                              "DD/MM/YYYY"
-                            )}
+                            onClick={(e) => {
+                              setIsClick(true);
+                            }}
+                            onBlur={(e) => {
+                              setIsClick(false);
+                            }}
                             onChange={(e) => {
+                              setIsClick(false);
+                              setIsModified(true);
                               if (e === null) {
+                                setErrorBirthDate(true);
+                                formik.setFieldValue(
+                                  "birthDate",
+                                  new Date(),
+                                  false
+                                );
+                              } else {
+                                setErrorBirthDate(false);
+                                formik.setFieldValue(
+                                  "birthDate",
+                                  moment(e).toDate(),
+                                  false
+                                );
+                              }
+                            }}
+                            value={
+                              !isClick
+                                ? moment(
+                                    new Date(formik.values.birthDate),
+                                    "DD/MM/YYYY"
+                                  )
+                                : null
+                            }
+                          />
+                        </ConfigProvider>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
+                      {errorBirthDate ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          * กรุณากรอกวันเกิด
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <label
+                        className="text-blueGray-600 text-sm font-bold"
+                        htmlFor="grid-password"
+                      >
+                        วันที่สมัคร
+                      </label>
+                      <span className="text-sm ml-2 text-red-500">*</span>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <div className="relative">
+                        <ConfigProvider locale={locale}>
+                          <DatePicker
+                            format={"DD/MM/yyyy"}
+                            placeholder="เลือกวันที่"
+                            showToday={false}
+                            disabled={typePermission === "1" ? false : true}
+                            defaultValue={moment(new Date(), "DD/MM/YYYY")}
+                            onBlur={(e)=>{
+                              setIsClickRegister(false);
+                            }}
+                            onClick={(e)=>{
+                              setIsClickRegister(true);
+                            }}
+                            style={{
+                              height: "100%",
+                              width: "100%",
+                              borderRadius: "0.25rem",
+                              cursor: "pointer",
+                              margin: "0px",
+                              paddingTop: "0.5rem",
+                              paddingBottom: "0.5rem",
+                              paddingLeft: "0.5rem",
+                              paddingRight: "0.5rem",
+                            }}
+                            value={
+                              !isClickRegister
+                                ? moment(
+                                    new Date(formik.values.registerDate),
+                                    "DD/MM/YYYY"
+                                  )
+                                : null
+                            }
+                            onChange={(e) => {
+                              setIsClickRegister(false);
+                              setIsModified(true);
+                              if (e === null) {
+                                setErrorRegisterDate(true);
                                 formik.setFieldValue(
                                   "registerDate",
                                   new Date(),
                                   false
                                 );
                               } else {
+                                setErrorRegisterDate(false);
                                 formik.setFieldValue(
                                   "registerDate",
                                   moment(e).toDate(),
@@ -705,10 +820,9 @@ export default function MemberInfo() {
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full mb-2">
-                      {formik.touched.registerDate &&
-                      formik.errors.registerDate ? (
+                      {errorRegisterDate ? (
                         <div className="text-sm py-2 px-2 text-red-500">
-                          {formik.errors.registerDate}
+                          * กรุณากรอกวันที่สมัคร
                         </div>
                       ) : null}
                     </div>
@@ -731,7 +845,10 @@ export default function MemberInfo() {
                         rows="5"
                         id="address"
                         name="address"
-                        onChange={formik.handleChange}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.address}
                         autoComplete="new-password"
@@ -762,6 +879,7 @@ export default function MemberInfo() {
                         name="province"
                         isDisabled={typePermission === "1" ? false : true}
                         onChange={async (value) => {
+                          setIsModified(true);
                           formik.setFieldValue("province", value.value);
                           const district = await Address.getAddress(
                             "district",
@@ -819,6 +937,7 @@ export default function MemberInfo() {
                         name="district"
                         isDisabled={typePermission === "1" ? false : true}
                         onChange={async (value) => {
+                          setIsModified(true);
                           formik.setFieldValue("district", value.value);
                           const subDistrict = await Address.getAddress(
                             "subDistrict",
@@ -870,6 +989,7 @@ export default function MemberInfo() {
                         name="role"
                         isDisabled={typePermission === "1" ? false : true}
                         onChange={async (value) => {
+                          setIsModified(true);
                           formik.setFieldValue("subDistrict", value.value);
                           const postcode = await Address.getAddress(
                             "postcode",
@@ -916,8 +1036,13 @@ export default function MemberInfo() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="postcode"
                         name="postcode"
-                        maxLength={100}
-                        onChange={formik.handleChange}
+                        maxLength={5}
+                        onChange={(e) => {
+                          // formik.handleChange(e);
+                          formik.values.postcode = onHandleNumber(e);
+                          // formik.handleChange(onHandleNumber(e));
+                          setIsModified(true);
+                        }}
                         onBlur={formik.handleBlur}
                         value={formik.values.postcode}
                         autoComplete="postcode"
@@ -951,6 +1076,19 @@ export default function MemberInfo() {
           </div>
         </form>
       </div>
+      <ConfirmEdit
+        showModal={modalIsOpenEdit}
+        message={"สมาชิก"}
+        hideModal={() => {
+          closeModalSubject();
+        }}
+        confirmModal={() => {
+          onEditValue();
+        }}
+        returnModal={() => {
+          onReturn();
+        }}
+      />
     </>
   );
 }

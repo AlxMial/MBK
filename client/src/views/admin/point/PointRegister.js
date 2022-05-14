@@ -125,7 +125,7 @@ export default function PointRegister() {
                       className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-10/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                       id="pointRegisterScore"
                       name="pointRegisterScore"
-                      maxLength={100}
+                      maxLength={5}
                       onChange={(event) => {
                         onHandlepointRegisterScore(event);
                       }}

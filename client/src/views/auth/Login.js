@@ -31,15 +31,15 @@ export default function Login() {
       isRemember: false,
     },
     validationSchema: Yup.object({
-      userName: Yup.string().required("* Please enter your Username"),
-      password: Yup.string().required("* Please enter your Password"),
+      userName: Yup.string().required("* กรุณากรอกข้อมูล Username"),
+      password: Yup.string().required("* กรุณากรอกข้อมูล Password"),
     }),
     onSubmit: (values) => {
       const data = { userName: values.userName, password: values.password };
       axios.post("/users/login", data).then((response) => {
         if (response.data.error) {
           addToast(
-            "ไม่สามารถทำการเข้าสู่ระบบได้ เนื่องจากรหัสผ่านหรือชื่อผู้เข้าใช้งานไม่ถูกต้อง",
+            "ไม่สามารถเข้าสู่ระบบได้ เนื่องจาก Username หรือ Passwod ที่คุณป้อนไม่ถูกต้อง",
             {
               appearance: "error",
               autoDismiss: true,

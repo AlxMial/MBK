@@ -64,10 +64,12 @@ export default function MemberList() {
       setListUser(
         listUser.filter(
           (x) =>
-            x.firstName.includes(e) ||
-            x.lastName.includes(e) ||
-            x.email.includes(e) ||
-            x.phone.includes(e)
+            x.firstName.toLowerCase().includes(e) ||
+            x.lastName.toLowerCase().includes(e) ||
+            x.email.toLowerCase().includes(e) ||
+            x.phone.includes(e) ||
+            x.birthDate.toString().includes(e) ||
+            x.registerDate.toString().includes(e)
         )
       );
     }
@@ -178,7 +180,7 @@ export default function MemberList() {
     fetchPermission();
     axios.get("members").then((response) => {
       if (response.data.error) {
-        console.log(response.data.error);
+        // console.log(response.data.error);
       } else {
         setListUser(response.data.tbMember);
         setListSerch(response.data.tbMember);
@@ -196,9 +198,22 @@ export default function MemberList() {
       ) : (
         <></>
       )}
-      <div className="flex flex-warp">
+      {/* <div className="flex flex-warp">
         <span className="text-sm font-bold margin-auto-t-b">
           <i className="fas fa-user-friends"></i>&nbsp;
+        </span>
+        <span className="text-base margin-auto font-bold">จัดการสมาชิก</span>
+      </div> */}
+
+      <div className="flex flex-warp mb-4">
+        <span className="text-sm margin-auto-t-b font-bold ">
+          <i className="fas fa-cog"></i>&nbsp;&nbsp;
+        </span>
+        <span className="text-base margin-auto-t-b font-bold">
+          CRM&nbsp;&nbsp;/&nbsp;&nbsp;
+        </span>
+        <span className="text-sm margin-auto-t-b font-bold ">
+          <i className="fas fa-chess"></i>&nbsp;&nbsp;
         </span>
         <span className="text-base margin-auto font-bold">จัดการสมาชิก</span>
       </div>
@@ -211,7 +226,7 @@ export default function MemberList() {
           </div>
           <div
             className={
-              "relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white"
+              "relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white Overflow-list "
             }
           >
             <div className="rounded-t mb-0 px-4 border-0">
@@ -252,7 +267,7 @@ export default function MemberList() {
                         className="imgExcel margin-auto-t-b cursor-pointer "
                       ></img>
                       {/* <span onClick={() => Excel("ข้อมูลสมาชิก")} className="text-gray-500 font-bold margin-auto-t-b ml-2 cursor-pointer ">Export Excel</span> */}
-                      <Link to="/admin/membersinfo" className={(typePermission === "1") ? " " : " hidden"}>
+                      {/* <Link to="/admin/membersinfo" className={(typePermission === "1") ? " " : " hidden"}>
                         <button
                           className="bg-gold-mbk text-black ml-2 active:bg-gold-mbk font-bold text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                           type="button"
@@ -262,7 +277,7 @@ export default function MemberList() {
                             เพิ่มข้อมูล
                           </span>
                         </button>
-                      </Link>
+                      </Link> */}
       
                   </div>
 

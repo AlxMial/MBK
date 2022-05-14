@@ -8,15 +8,26 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 router.post("/", validateToken, async (req, res) => {
-  const postCodeHD = await tbPointCodeHD.findOne({
-    where: {
-      [Op.or]: [
-        { pointCodeName: req.body.pointCodeName },
-        { pointCodeSymbol: req.body.pointCodeSymbol },
-      ],
-      isDeleted: false,
-    },
-  });
+  let postCodeHD;
+  if (req.body.pointCodeSymbol) {
+    postCodeHD = await tbPointCodeHD.findOne({
+      where: {
+        [Op.or]: [
+          { pointCodeName: req.body.pointCodeName },
+          { pointCodeSymbol: req.body.pointCodeSymbol },
+        ],
+        isDeleted: false,
+      },
+    });
+  } else {
+    postCodeHD = await tbPointCodeHD.findOne({
+      where: {
+        pointCodeName: req.body.pointCodeName,
+        isDeleted: false,
+      },
+    });
+  }
+
   if (!postCodeHD) {
     const postCode = await tbPointCodeHD.create(req.body);
     res.json({

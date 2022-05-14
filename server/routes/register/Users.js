@@ -12,7 +12,7 @@ const Encrypt = new ValidateEncrypt();
 router.post("/login", async (req, res) => {
   const { userName, password } = req.body;
   const user = await tbUser.findOne({
-    where: { userName: Encrypt.EncodeKey(userName) },
+    where: { userName: Encrypt.EncodeKey(userName.toLowerCase()) },
   });
 
   if (!user) {
@@ -54,8 +54,8 @@ router.post("/", async (req, res) => {
     const user = await tbUser.findOne({
       where: {
         [Op.or]: [
-          { email: Encrypt.EncodeKey(req.body.email) },
-          { userName: Encrypt.EncodeKey(req.body.userName) },
+          { email: Encrypt.EncodeKey(req.body.email.toLowerCase()) },
+          { userName: Encrypt.EncodeKey(req.body.userName.toLowerCase()) },
         ],
         isDeleted: false,
       },
@@ -74,6 +74,8 @@ router.post("/", async (req, res) => {
       ) {
         bcrypt.hash(req.body.password, 10).then(async (hash) => {
           req.body.password = hash;
+          req.body.email = req.body.email.toLowerCase();
+          req.body.userName = req.body.userName.toLowerCase();
           const ValuesReq = Encrypt.encryptAllData(req.body);
           const listUser = await tbUser.create(ValuesReq);
           const ValuesDecrypt = Encrypt.decryptAllData(listUser);
@@ -84,13 +86,13 @@ router.post("/", async (req, res) => {
         res.json({ status: false, error: "value is empty" });
       }
     } else {
-      if (user.email === Encrypt.EncodeKey(req.body.email))
+      if (user.email === Encrypt.EncodeKey(req.body.email.toLowerCase()))
         res.json({
           status: false,
           message: "Email ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
           tbUser: null,
         });
-      else if (user.userName === Encrypt.EncodeKey(req.body.userName))
+      else if (user.userName === Encrypt.EncodeKey(req.body.userName.toLowerCase()))
         res.json({
           status: false,
           message: "Username ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
@@ -109,9 +111,7 @@ router.get("/", async (req, res) => {
     Encrypt.encryptValueIdArray(valueData);
     res.json({ status: true, message: "success", tbUser: valueData });
   } else
-    res
-      .status(403)
-      .json({ status: false, message: "not found user", tbUser: null });
+    res.json({ status: false, message: "not found user", tbUser: null });
 });
 
 router.get("/byId/:id", async (req, res) => {
@@ -130,7 +130,7 @@ router.get("/permission/:username", async (req, res) => {
   if (req.params.username !== "undefined") {
     const username = req.params.username;
     const listUser = await tbUser.findOne({
-      where: { userName: Encrypt.EncodeKey(username) },
+      where: { userName: Encrypt.EncodeKey(username.toLocaleLowerCase()) },
     });
     const valueData = Encrypt.decryptAllData(listUser);
     Encrypt.encryptValueId(valueData);
@@ -147,8 +147,8 @@ router.put("/", async (req, res) => {
   const userCheck = await tbUser.findOne({
     where: {
       [Op.or]: [
-        { userName: Encrypt.EncodeKey(req.body.userName) },
-        { email: Encrypt.EncodeKey(req.body.email) },
+        { userName: Encrypt.EncodeKey(req.body.userName.toLowerCase()) },
+        { email: Encrypt.EncodeKey(req.body.email.toLowerCase()) },
       ],
       isDeleted: false,
       id: {
@@ -183,6 +183,8 @@ router.put("/", async (req, res) => {
               } else {
                 bcrypt.hash(req.body.password, 10).then(async (hash) => {
                   req.body.password = hash;
+                  req.body.email = req.body.email.toLowerCase();
+                  req.body.userName = req.body.userName.toLowerCase();
                   const ValuesReq = Encrypt.encryptAllData(req.body);
                   const listUser = await tbUser.update(ValuesReq, {
                     where: { id: req.body.id },
@@ -197,6 +199,8 @@ router.put("/", async (req, res) => {
             });
         } else {
           req.body.password = user.password;
+          req.body.email = req.body.email.toLowerCase();
+          req.body.userName = req.body.userName.toLowerCase();
           const ValuesReq = Encrypt.encryptAllData(req.body);
           const listUser = await tbUser.update(ValuesReq, {
             where: { id: req.body.id },
@@ -208,13 +212,13 @@ router.put("/", async (req, res) => {
       }
     }
   } else {
-    if (userCheck.email === Encrypt.EncodeKey(req.body.email))
+    if (userCheck.email === Encrypt.EncodeKey(req.body.email.toLowerCase()))
       res.json({
         status: false,
         message: "Email ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
         tbUser: null,
       });
-    else if (userCheck.userName === Encrypt.EncodeKey(req.body.userName))
+    else if (userCheck.userName === Encrypt.EncodeKey(req.body.userName.toLowerCase()))
       res.json({
         status: false,
         message: "Username ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
@@ -242,7 +246,7 @@ router.delete("/:userId", async (req, res) => {
 });
 
 router.get("/getemail/:email", async (req, res) => {
-  const email = Encrypt.EncodeKey(req.params.email);
+  const email = Encrypt.EncodeKey(req.params.email.toLocaleLowerCase());
   const user = await tbUser.findOne({
     where: { email: email, IsDeleted: false },
   });

@@ -29,7 +29,7 @@ export default function Auth() {
             <Route path="/auth/forgotreturn" exact component={ForgotReturn} />
             <Redirect from="/" to="/auth/login" />
           </Switch>
-          <FooterSmall absolute />
+          {/* <FooterSmall absolute /> */}
         </section>
       </main>
     </>

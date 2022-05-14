@@ -84,12 +84,16 @@ class ValidateEncrypt {
   }
 
   encryptPhone(list) {
-    list.dataValues.phone =
-      "xxxxxx" +
-      list.dataValues.phone.substring(
-        list.dataValues.phone.length - 4,
-        list.dataValues.phone.length
-      );
+    try {
+      list.dataValues.phone =
+        "xxxxxx" +
+        list.dataValues.phone.substring(
+          list.dataValues.phone.length - 4,
+          list.dataValues.phone.length
+        );
+    } catch {
+      list = "xxxxxx" + list.substring(list.length - 4, list.length);
+    }
     return list;
   }
 
@@ -98,18 +102,30 @@ class ValidateEncrypt {
       const splitEmail = list[i].dataValues.email.split("@");
       if (splitEmail.length > 1) {
         1;
-        list[i].dataValues.email = splitEmail[1].substring(0,3) + "xxxx.xxx@" + splitEmail[1];
+        list[i].dataValues.email =
+          splitEmail[0].substring(0, 3) + "xxxx.xxx@" + splitEmail[1];
       }
     }
     return list;
   }
 
   encryptEmail(list) {
-    const splitEmail = list.dataValues.email.split("@");
-    if (splitEmail.length > 1) {
-      1;
-      list.dataValues.email = splitEmail[1].substring(0,3)+"xxxx.xxx@" + splitEmail[1];
+    try{
+      const splitEmail = list.dataValues.email.split("@");
+      if (splitEmail.length > 1) {
+        1;
+        list.dataValues.email =
+          splitEmail[0].substring(0, 3) + "xxxx.xxx@" + splitEmail[1];
+      }
+    }catch{
+      const splitEmail = list.split("@");
+      if (splitEmail.length > 1) {
+        1;
+        list =
+          splitEmail[0].substring(0, 3) + "xxxx.xxx@" + splitEmail[1];
+      }
     }
+ 
     return list;
   }
 

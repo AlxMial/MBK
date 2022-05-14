@@ -6,8 +6,8 @@ const token = Buffer.from(`${username}:${password}`, 'utf8').toString('base64')
 
 export default axios.create({
   // baseURL: `http://undefined.ddns.net:8084/`,
-  // baseURL: `http://undefined.ddns.net/mbkimport/`,
-  baseURL: `http://localhost:3002/mbkimport/`,
+  baseURL: `http://undefined.ddns.net/mbkimport/`,
+  // baseURL: `http://localhost:3002/mbkimport/`,
   headers: {
     'Authorization': `Basic ${token}`,
     accessToken : localStorage.getItem("accessToken")

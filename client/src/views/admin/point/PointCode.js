@@ -28,6 +28,7 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import styleSelect from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
 import { exportExcel } from "services/exportExcel";
+import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 Modal.setAppElement("#root");
 
 export default function PointCode() {
@@ -70,7 +71,9 @@ export default function PointCode() {
   const [errorStartDateImport, setErrorStartDateImport] = useState(false);
   const [errorEndDateImport, setErrorEndDateImport] = useState(false);
   const [errorImport, setErrorImport] = useState(false);
-
+  const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
+  const [isModefied, setIsModified] = useState(false);
+  const [errorPointQuantity , seterrorPointQuantity] = useState(false);
   const { menu } = useMenu();
   const { addToast } = useToasts();
 
@@ -135,6 +138,19 @@ export default function PointCode() {
     setIsOpenSubject(false);
   }
 
+  /* Modal Edit */
+  function openModalEdit() {
+    setIsOpenEdit(true);
+  }
+
+  function closeModalEdit() {
+    setIsOpenEdit(false);
+  }
+
+  const onReturn = () => {
+    setIsOpenEdit(false);
+  };
+
   /* Method Condition */
   const options = [
     { label: "Active", value: "1" },
@@ -154,10 +170,12 @@ export default function PointCode() {
       setListPointCode(
         listPointCode.filter(
           (x) =>
-            x.firstName.includes(e) ||
-            x.lastName.includes(e) ||
-            x.email.includes(e) ||
-            x.phone.includes(e)
+            x.pointCodeName.toLowerCase().includes(e) ||
+            x.pointCodeSymbol.toLowerCase().includes(e) ||
+            x.pointCodePoint.toString().includes(e) ||
+            x.pointCodeQuantityCode.toString().includes(e) ||
+            x.isActive.toLowerCase().toString().includes(e) ||
+            x.useCount.toString().includes(e)
         )
       );
     }
@@ -244,6 +262,8 @@ export default function PointCode() {
       ),
     }),
     onSubmit: (values) => {
+      if (new Date(formik.values.startDate) > new Date(formik.values.endDate))
+        formik.values.startDate = formik.values.endDate;
       if (values.pointCodeQuantityCode === "")
         values.pointCodeQuantityCode = null;
       if (values.pointCodeLengthSymbol === "")
@@ -259,7 +279,7 @@ export default function PointCode() {
       }
       if (
         values.pointCodeLengthSymbol >= 10 &&
-        values.pointCodeLengthSymbol <= 16
+        values.pointCodeLengthSymbol <= 16 && !errorPointQuantity
       ) {
         setIsLoading(true);
         if (values.id) {
@@ -324,21 +344,15 @@ export default function PointCode() {
                 });
             } else {
               if (res.data.isPointCodeName) {
-                addToast(
-                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                  {
-                    appearance: "warning",
-                    autoDismiss: true,
-                  }
-                );
+                addToast("ชื่อแคมเปญซ้ำกับในระบบ กรุณากรอกข้อมูลใหม่", {
+                  appearance: "warning",
+                  autoDismiss: true,
+                });
               } else if (res.data.isPointCodeSymbol) {
-                addToast(
-                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสแคมเปญซ้ำกับรหัสที่เคยมีการสร้างไว้ก่อนหน้า",
-                  {
-                    appearance: "warning",
-                    autoDismiss: true,
-                  }
-                );
+                addToast("รหัสแคมเปญซ้ำกับในระบบ กรุณากรอกข้อมูลใหม่", {
+                  appearance: "warning",
+                  autoDismiss: true,
+                });
               }
               setIsLoading(false);
             }
@@ -384,6 +398,11 @@ export default function PointCode() {
       ),
     }),
     onSubmit: async (values) => {
+      if (
+        new Date(formikImport.values.startDate) >
+        new Date(formikImport.values.endDate)
+      )
+        formikImport.values.startDate = formikImport.values.endDate;
       setIsLoading(true);
       if (values.id) {
         axios.put("pointCode", values).then((res) => {
@@ -406,6 +425,7 @@ export default function PointCode() {
       } else {
         let formData = new FormData();
         formData.append("file", file);
+        console.log(file);
         if (file) {
           setErrorImport(false);
           axios.post("pointCode", values).then(async (res) => {
@@ -458,11 +478,10 @@ export default function PointCode() {
                 );
               }
             }
+            setIsLoading(false);
+            closeModalImport();
           });
-
-          closeModalImport();
         } else setErrorImport(true);
-        setIsLoading(false);
       }
     },
   });
@@ -572,7 +591,7 @@ export default function PointCode() {
       <div className="w-full">
         <div
           className={
-            "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white "
+            "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white Overflow-list "
           }
         >
           <div className="rounded-t mb-0 px-4 py-3 border-0">
@@ -1028,7 +1047,12 @@ export default function PointCode() {
                                 <div
                                   className={
                                     "w-full lg:w-11/12 px-4 " +
-                                    (width < 764 ? " " : "  mb-2 " + ((errorStartDateImport) ? "  mt-2" : " mt-4"))
+                                    (width < 764
+                                      ? " "
+                                      : "  mb-2 " +
+                                        (errorStartDateImport
+                                          ? "  mt-2"
+                                          : " mt-4"))
                                   }
                                 >
                                   <Radio.Group
@@ -1342,7 +1366,7 @@ export default function PointCode() {
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodePoint"
                                     name="pointCodePoint"
-                                    maxLength={10}
+                                    maxLength={5}
                                     onChange={(event) => {
                                       setlangSymbo(
                                         ValidateService.onHandleScore(event)
@@ -1407,13 +1431,17 @@ export default function PointCode() {
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeQuantityCode"
                                     name="pointCodeQuantityCode"
-                                    maxLength={10}
+                                    maxLength={7}
                                     onChange={(event) => {
                                       setlangSymbo(
                                         ValidateService.onHandleScore(event)
                                       );
                                       formik.values.pointCodeQuantityCode =
                                         ValidateService.onHandleScore(event);
+                 
+                                      if(parseInt(event.target.value) > 1000000)
+                                      seterrorPointQuantity(true);
+                                      else seterrorPointQuantity(false);
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointCodeQuantityCode"
@@ -1427,6 +1455,11 @@ export default function PointCode() {
                                       {formik.errors.pointCodeQuantityCode}
                                     </div>
                                   ) : null}
+                                  {errorPointQuantity && width < 764 ? (
+                                      <div className="text-sm pt-2  px-2 text-red-500">
+                                        * จำนวน Code ต้องน้อยกว่าเท่ากับ 1 ล้าน
+                                      </div>
+                                    ) : null}
                                 </div>
 
                                 <div
@@ -1441,6 +1474,11 @@ export default function PointCode() {
                                     formik.errors.pointCodeQuantityCode ? (
                                       <div className="text-sm py-2 px-2 text-red-500">
                                         {formik.errors.pointCodeQuantityCode}
+                                      </div>
+                                    ) : null}
+                                    {errorPointQuantity ? (
+                                      <div className="text-sm pt-2  px-2 text-red-500">
+                                        * จำนวน Code ต้องน้อยกว่าเท่ากับ 1 ล้าน
                                       </div>
                                     ) : null}
                                   </div>
@@ -1519,7 +1557,9 @@ export default function PointCode() {
                                 <div
                                   className={
                                     "w-full mb-4" +
-                                    (width < 764 && !errorStartDate? " block" : " hidden")
+                                    (width < 764 && !errorStartDate
+                                      ? " block"
+                                      : " hidden")
                                   }
                                 ></div>
                                 <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
@@ -1577,7 +1617,7 @@ export default function PointCode() {
                                   </ConfigProvider>
                                   {errorEndDate && width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
-                                       * กรุณากรอกวันที่สิ้นสุด
+                                      * กรุณากรอกวันที่สิ้นสุด
                                     </div>
                                   ) : null}
                                 </div>
@@ -1605,7 +1645,12 @@ export default function PointCode() {
                                     ) : null}
                                   </div>
                                 </div>
-                                <div className={"w-full lg:w-1/12 px-4 mb-2 mt-2" + ((errorEndDate) ? " hidden" : " ")}>
+                                <div
+                                  className={
+                                    "w-full lg:w-1/12 px-4 mb-2 mt-2" +
+                                    (errorEndDate ? " hidden" : " ")
+                                  }
+                                >
                                   <label
                                     className="text-blueGray-600 text-sm font-bold mb-2"
                                     htmlFor="grid-password"
@@ -1614,7 +1659,10 @@ export default function PointCode() {
                                 <div
                                   className={
                                     "w-full lg:w-11/12 px-4 " +
-                                    (width < 764 ? " " : "  mb-2" + ((errorStartDate) ? "  mt-2" : " mt-4"))
+                                    (width < 764
+                                      ? " "
+                                      : "  mb-2" +
+                                        (errorStartDate ? "  mt-2" : " mt-4"))
                                   }
                                 >
                                   <Radio.Group
@@ -1638,6 +1686,7 @@ export default function PointCode() {
                                       className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                       type="button"
                                       onClick={() => {
+                                        // setIsOpenEdit(true)
                                         closeModal();
                                       }}
                                     >
@@ -1678,7 +1727,7 @@ export default function PointCode() {
                   </th>
                   <th
                     className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                     }
                   >
                     ชื่อแคมเปญ
@@ -1762,7 +1811,7 @@ export default function PointCode() {
                           onClick={() => {
                             openModal(value.id);
                           }}
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
                             {value.pointCodeName}
@@ -1845,7 +1894,7 @@ export default function PointCode() {
             </table>
             <ConfirmDialog
               showModal={modalIsOpenSubject}
-              message={"จัดการข้อมูล Code"}
+              message={" แคมเปญ"}
               hideModal={() => {
                 closeModalSubject();
               }}
@@ -1869,6 +1918,19 @@ export default function PointCode() {
           </div>
         </div>
       </div>
+      {/* <ConfirmEdit
+        showModal={modalIsOpenEdit}
+        message={"สมาชิก"}
+        // hideModal={() => {
+        //   closeModalEdit();
+        // }}
+        confirmModal={() => {
+          // onEditValue();
+        }}
+        returnModal={() => {
+          onReturn();
+        }}
+      /> */}
     </>
   );
 }

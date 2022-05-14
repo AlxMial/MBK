@@ -93,17 +93,22 @@ export default function UserInfo() {
     setIsOpenEdit(false);
   }
 
-  const onEditValue = () =>{
+  const onEditValue = () => {
     formik.handleSubmit();
+    const valueError = JSON.stringify(formik.errors);
+    if (valueError.length > 2) {
+      setIsOpenEdit(false);
+      if(formik.values.password === "")
+        setErrorPassword(true);
+    }
+    // setIsModified(false);
+    // history.push("/admin/users");
+  };
+
+  const onReturn = () => {
     setIsModified(false);
     history.push("/admin/users");
-  }
-
-  const onReturn = ()=>{
-    setIsModified(false);
-    history.push("/admin/users");
-  }
-
+  };
 
   /* Form insert value */
   const formik = useFormik({
@@ -178,6 +183,11 @@ export default function UserInfo() {
               setenablePassword(true);
               formik.setFieldValue("confirmPassword", "");
               formik.setFieldValue("password", "");
+              setIsModified(false);
+
+              if (modalIsOpenEdit) history.push("/admin/users");
+              else  history.push(`/admin/usersinfo/${res.data.tbUser.id}`);
+
               // formik.setFieldValue("currentPassword", "");
               // formik.resetForm();
               // fetchData();
@@ -189,6 +199,7 @@ export default function UserInfo() {
               );
               setConfirmPassword(false);
             } else {
+              setIsOpenEdit(false);
               addToast(
                 Storage.GetLanguage() === "th"
                   ? res.data.message
@@ -203,7 +214,7 @@ export default function UserInfo() {
           axios.put("users", values).then((res) => {
             if (res.data.status) {
               setenablePassword(true);
-
+              setIsModified(false);
               formik.resetForm();
               fetchData();
               setConfirmPassword(false);
@@ -223,6 +234,7 @@ export default function UserInfo() {
                 { appearance: "warning", autoDismiss: true }
               );
             } else {
+              setIsOpenEdit(false);
               addToast(
                 Storage.GetLanguage() === "th"
                   ? res.data.message
@@ -285,7 +297,7 @@ export default function UserInfo() {
           <div className="w-full">
             <div className="flex justify-between py-2 mt-4">
               <span className="text-lg  text-green-mbk margin-auto font-bold">
-                เพิ่ม / แก้ไขข้อมูลผู้ดูแลระบบ
+                เพิ่ม / แก้ไข ข้อมูลผู้ดูแลระบบ
               </span>
               <div
                 className={

@@ -26,8 +26,7 @@ export default function ForgotReturn() {
                   </div>
                   <div className="justify-center mb-6 w-full flex flex-wrap relative">
                     <span className=" text-sm text-center">
-                      ตรวจสอบอีเมลของคุณสำหรับลิงก์เพื่อรีเซ็ตรหัสผ่านของคุณ
-                      ถ้ามัน ไม่ปรากฏขึ้นภายในไม่กี่นาที ตรวจสอบสแปมของคุณ
+                    รบกวนตรวจสอบอีเมลของท่าน เพื่อรีเซ็ตรหัสผ่าน หากไม่พบอีเมลให้ตรวจสอบในอีเมลขยะ
                     </span>
                   </div>
                   <div className="justify-center  w-full flex flex-wrap relative">

@@ -87,10 +87,7 @@ export default function PointStore() {
       setlistStore(
         listStore.filter(
           (x) =>
-            x.firstName.includes(e) ||
-            x.lastName.includes(e) ||
-            x.email.includes(e) ||
-            x.phone.includes(e)
+            x.pointStoreName.toLowerCase().includes(e)
         )
       );
     }
@@ -116,6 +113,7 @@ export default function PointStore() {
         axios.post("pointStore", values).then((res) => {
           if (res.data.status) {
             formik.values.id = res.data.tbPointStoreHD.id;
+            setIsNew(false)
             fetchData();
             addToast(
               Storage.GetLanguage() === "th"
@@ -126,7 +124,7 @@ export default function PointStore() {
           } else {
             if (res.data.isPointStoreName) {
               addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อร้านค้าเคยมีการบันทึกไว้เรียบร้อยแล้ว",
                 {
                   appearance: "warning",
                   autoDismiss: true,
@@ -254,7 +252,7 @@ export default function PointStore() {
       <div className="w-full">
         <div
           className={
-            " py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white"
+            " py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white Overflow-list"
           }
         >
           <div className="rounded-t mb-0 px-4 py-3 border-0">
@@ -543,7 +541,7 @@ export default function PointStore() {
             </table>
             <ConfirmDialog
               showModal={modalIsOpenSubject}
-              message={"จัดการข้อมูล Code"}
+              message={"ร้านค้า"}
               hideModal={() => {
                 closeModalSubject();
               }}

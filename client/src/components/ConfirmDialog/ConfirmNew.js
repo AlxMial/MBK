@@ -19,7 +19,7 @@ const customStyles = {
   },overlay: {zIndex: 100, backgroundColor: 'rgba(70, 70, 70, 0.5)',}
 };
 
-function ConfirmEdit({ showModal, hideModal,afterOpenModal, confirmModal, id, type, message, returnModal })  {
+function ConfirmNew({ showModal, hideModal,afterOpenModal, confirmModal, id, type, message, returnModal })  {
     return (
         <Modal
             isOpen={showModal}
@@ -47,7 +47,7 @@ function ConfirmEdit({ showModal, hideModal,afterOpenModal, confirmModal, id, ty
                             <div className="relative w-full mb-3">
                                 <div className=" align-middle  mb-2">
                                     <div  className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                        {(Storage.GetLanguage() === "th") ? <label className="cursor-pointer">คุณต้องการบันทึกข้อมูล{message} ใช่หรือไม่</label> : <label className="cursor-pointer">Do you want to edit {message} data?</label> }
+                                        {(Storage.GetLanguage() === "th") ? <label className="cursor-pointer">คุณต้องการแก้ไขข้อมูล{message} ใช่หรือไม่</label> : <label className="cursor-pointer">Do you want to edit {message} data?</label> }
                                     </div>
                                 </div>
                             </div>
@@ -56,7 +56,7 @@ function ConfirmEdit({ showModal, hideModal,afterOpenModal, confirmModal, id, ty
                                     <div>
                                     </div>
                                     <div  className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                        <label className="text-gold-mbk cursor-pointer" onClick={() => {(confirmModal(id));}}> <i class="fas fa-save"></i> บันทึกข้อมูล</label>
+                                        <label className="text-gold-mbk cursor-pointer" onClick={() => {(confirmModal(id));}}> <i className="fas fa-edit"></i> แก้ไขข้อมูล</label>
                                         <label className="font-bold">&nbsp;|&nbsp;</label>
                                         <label className="cursor-pointer" onClick={()=>{returnModal();}}> <i className="fas fa-times"></i> ยกเลิก</label>
                                     </div>
@@ -71,4 +71,4 @@ function ConfirmEdit({ showModal, hideModal,afterOpenModal, confirmModal, id, ty
     )
 }
  
-export default ConfirmEdit;
+export default ConfirmNew;

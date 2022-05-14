@@ -16,8 +16,8 @@ router.get("/", async (req, res) => {
   Encrypt.encryptValueIdArray(ValuesDecrypt);
   Encrypt.encryptPhoneArray(ValuesDecrypt);
   Encrypt.encryptEmailArray(ValuesDecrypt);
-  res.json({ status: true, message: "success", tbMember: listMembers });
-  } else res.status(403).json({ status: false, message: "not found member", tbMember: null });
+  res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
+  } else res.json({ error: "not found member" });
 });
 
 router.get("/export", async (req, res) => {
@@ -26,13 +26,14 @@ router.get("/export", async (req, res) => {
   const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
   Encrypt.encryptValueIdArray(ValuesDecrypt);
   res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
-  } else res.status(403).json({ status: false, message: "not found member", tbMember: null });
+  } else res.json({ status: false, message: "not found member", tbMember: null });
 });
 
 router.get("/byId/:id", async (req, res) => {
   if(req.params.id !== "undefined"){
     const id = Encrypt.DecodeKey(req.params.id);
     const listMembers = await tbMember.findOne({ where: { id: id } });
+   
     Encrypt.decryptAllData(listMembers);
     Encrypt.encryptValueId(listMembers);
     Encrypt.encryptPhone(listMembers);
@@ -46,7 +47,7 @@ router.get("/byId/:id", async (req, res) => {
 router.post("/", async (req, res) => {
   const member = await tbMember.findOne({
     where: {
-      [Op.or]: [{ email:  Encrypt.EncodeKey(req.body.email) }, { phone: Encrypt.EncodeKey(req.body.phone) }],
+      [Op.or]: [{ email:  Encrypt.EncodeKey(req.body.email.toLowerCase()) }, { phone: Encrypt.EncodeKey(req.body.phone) }],
       isDeleted: false,
     },
   });
@@ -65,6 +66,7 @@ router.post("/", async (req, res) => {
     req.body.memberType !== "")
   ) {
     if (!member) {
+      req.body.email = req.body.email.toLowerCase();
       const ValuesEncrypt = Encrypt.encryptAllData(req.body);
       const members = await tbMember.create(ValuesEncrypt);
       const ValuesDecrypt =  Encrypt.decryptAllData(members);
@@ -79,7 +81,7 @@ router.post("/", async (req, res) => {
         tbMember: ValuesDecrypt,
       });
     } else {
-      if (member.email === req.body.email)
+      if (member.email === Encrypt.EncodeKey(req.body.email.toLowerCase()))
         res.json({
           status: false,
           isEmail: true,
@@ -87,7 +89,7 @@ router.post("/", async (req, res) => {
           message: "Unsuccess",
           tbMember: null,
         });
-      else if (member.phone === req.body.phone)
+      else if (member.phone === Encrypt.EncodeKey(req.body.phone))
         res.json({
           status: false,
           isEmail: false,
@@ -103,17 +105,19 @@ router.post("/", async (req, res) => {
 
 router.put("/", async (req, res) => {
   req.body.id = Encrypt.DecodeKey(req.body.id);
+
   const ConstMember = await tbMember.findOne({ where: {id : req.body.id} });
-  if(ConstMember){
-    req.body.phone = ConstMember.dataValues.phone;
-    req.body.email = ConstMember.dataValues.email;
-  }else{
+  if(ConstMember) {
+    if(req.body.phone === Encrypt.encryptPhone(Encrypt.DecodeKey(ConstMember.dataValues.phone)))
+      req.body.phone = Encrypt.DecodeKey(ConstMember.dataValues.phone);
+    if(req.body.email === Encrypt.encryptEmail(Encrypt.DecodeKey(ConstMember.dataValues.email)))
+      req.body.email = Encrypt.DecodeKey(ConstMember.dataValues.email);
+  } else {
     res.status(401).json({ status: false, message: "not found id", tbMember: null });
   }
-
   const member = await tbMember.findOne({
     where: {
-      [Op.or]: [{ email: req.body.email }, { phone: req.body.phone }],
+      [Op.or]: [{ email: Encrypt.EncodeKey(req.body.email.toLowerCase()) }, { phone: Encrypt.EncodeKey(req.body.phone) }],
       isDeleted: false,
       id: {
         [Op.ne]: req.body.id,
@@ -135,8 +139,8 @@ router.put("/", async (req, res) => {
     req.body.memberType !== "")
   ) {
     if (!member) {
-      req.body.phone = Encrypt.DecodeKey(req.body.phone);
-      req.body.email = Encrypt.DecodeKey(req.body.email);
+      req.body.phone = req.body.phone;
+      req.body.email = req.body.email.toLowerCase();
       Encrypt.encryptAllData(req.body);
       const members = await tbMember.update(req.body, {
         where: { id: req.body.id },
@@ -144,7 +148,7 @@ router.put("/", async (req, res) => {
       res.json({ status: true, message: "success", tbMember: members });
 
     } else {
-      if (member.email === req.body.email)
+      if (member.email === Encrypt.EncodeKey(req.body.email.toLowerCase()))
         res.json({
           status: false,
           isEmail: true,
@@ -152,7 +156,7 @@ router.put("/", async (req, res) => {
           message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Email ซ้ำภายในระบบ",
           tbMember: null,
         });
-      else if (member.phone === req.body.phone)
+      else if (member.phone === Encrypt.EncodeKey(req.body.phone))
         res.json({
           status: false,
           isEmail: false,

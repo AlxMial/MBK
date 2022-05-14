@@ -25,21 +25,21 @@ function App() {
     useGaTracker();
 
     useEffect(() => {
-          // axios
-          //   .get("/users/auth")
-          //   .then((response) => {
-          //     if (response.data.error) {
-          //       setAuthState({ ...authState, status: false });
-          //     } else {
+          axios
+            .get("/users/auth")
+            .then((response) => {
+              if (response.data.error) {
+                setAuthState({ ...authState, status: false });
+              } else {
 
-          //       setAuthState({
-          //         email: response.data.email,
-          //         id: response.data.id,
-          //         status: true,
-          //         role:response.data.role,
-          //       });
-          //     }
-          //   });
+                setAuthState({
+                  email: response.data.email,
+                  id: response.data.id,
+                  status: true,
+                  role:response.data.role,
+                });
+              }
+            });
       
     }, []);
 

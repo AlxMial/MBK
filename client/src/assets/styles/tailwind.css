@@ -3982,8 +3982,8 @@ border-radius: 10px;
 
   .minHeightInfo {
     min-height: 873px;
-
   }
+
   .Overflow-info{
     height: 75vh;
     overflow-y: auto;
@@ -4055,11 +4055,21 @@ border-radius: 10px;
     overflow-y: auto;
   }
 
+  .Overflow-list{
+    height: 65vh; 
+    /* overflow-y: auto; */
+  }
+
 }
 
 @media only screen and (max-width: 1280px) {
   .minHeight {
-    min-height: 363px;
+    min-height: 91.5vh;
+  }
+  
+  .Overflow-list{
+    height: 70vh; 
+    /* overflow-y: auto; */
   }
 }
 
@@ -4131,6 +4141,11 @@ border-radius: 10px;
   .Overflow-info{
     height: 80vh;
     overflow-y: auto;
+  }
+    
+  .Overflow-list{
+    height: 65vh; 
+    /* overflow-y: auto; */
   }
 }
 
