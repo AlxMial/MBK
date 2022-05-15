@@ -264,6 +264,9 @@ const Register = () => {
                 overflow: "scroll",
               }}
             >
+              <div className="flex text-green-mbk font-bold text-lg mb-2">
+                {"สมัครสมาชิก"}
+              </div>
               <InputUC
                 name="firstName"
                 lbl="ชื่อ"
@@ -339,10 +342,11 @@ const Register = () => {
                       },
                     }}
                     onChange={(e) => {
-                      // console.log(moment(new Date()).toDate())
+                      var date = new Date(e);
+                      // date.setDate(date.getDate() - 1);
                       setData((prevState) => ({
                         ...prevState,
-                        ["birthDate"]: moment(new Date(e)).toDate(),
+                        ["birthDate"]: date,
                       }));
                     }}
                   />
