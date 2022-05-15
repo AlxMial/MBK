@@ -209,8 +209,10 @@ const Register = () => {
   };
   const DoSave = () => {
     setIsLoading(true);
+    let _Data = Data;
+    _Data.uid = Session.getLiff().uid;
     axios
-      .post("members", Data)
+      .post("members", _Data)
       .then((res) => {
         let msg = { msg: "", appearance: "warning" };
 
