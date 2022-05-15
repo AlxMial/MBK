@@ -3949,6 +3949,19 @@ border-radius: 10px;
 .datepicker .datepicker-content{
   padding: 0.5em 0 !important;
 }
+.datepicker .datepicker-scroll>li {
+  height: 40px !important;
+  line-height: 30px !important;
+  font-size: 1em !important;
+  cursor: pointer !important;
+}
+.datepicker.default .datepicker-wheel{
+  border-top :transparent !important;
+  border-bottom: 1px solid #007a40 !important;
+}
+.datepicker .datepicker-wheel{
+  height: 30px !important;
+}
 .imgExcel {
   width: 25px;
   height: 25px;
