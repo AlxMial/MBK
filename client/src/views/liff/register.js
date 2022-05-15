@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import axios from "services/axios";
-import {senderOTP} from "services/axios";
+import { senderOTP } from "services/axios";
 import * as Address from "@services/GetAddress.js";
 import * as Session from "@services/Session.service";
 import { Radio } from "antd";
@@ -135,7 +135,7 @@ const Register = () => {
   const SenderOTP = (phone) => {
     console.log("senderOTP : " + phone);
     // axios.
-    senderOTP(phone,otp.generateOTP,otp.generateref)
+    senderOTP(phone, otp.generateOTP, otp.generateref);
   };
 
   const [errors, setErrors] = useState({});
@@ -146,6 +146,9 @@ const Register = () => {
       ...prevState,
       [name]: value,
     }));
+    let _errors = errors;
+    _errors[name] = false;
+    setErrors(_errors);
   };
   const policyChange = (e) => {
     const { name } = e.target;
@@ -187,10 +190,10 @@ const Register = () => {
 
       res.data.status
         ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
-        : !res.data.isPhone
+        : res.data.isPhone == false
         ? (msg.msg =
             "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-        : !res.data.email
+        : res.data.email == false
         ? (msg.msg =
             "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
         : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
@@ -275,7 +278,7 @@ const Register = () => {
                     showHeader={false}
                     // showCaption={true}
                     min={new Date(1970, 0, 1)}
-                    max={new Date(2050, 0, 1)}
+                    max={new Date()}
                     value={Data.birthDate}
                     dateConfig={{
                       year: {

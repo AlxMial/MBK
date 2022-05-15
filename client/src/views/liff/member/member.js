@@ -124,15 +124,14 @@ const Member = () => {
                   <img
                     src={require("assets/img/mbk/Coint1.png").default}
                     alt="..."
-                    className="w-15 h-15 rounded-full border-2 border-blueGray-50 shadow"
+                    className="w-5 h-5 rounded-full border-2 border-blueGray-50 shadow"
                   ></img>
+                  <span className="text-white font-bold text-lg px-2 ">
+                    {tbMember.memberPoint === null ? 0 : tbMember.memberPoint}
+                  </span>
                 </div>
               </div>
-              <div className="text-right mt-2 ">
-                <span className="text-white font-bold text-lg ">
-                  {tbMember.memberPoint === null ? 0 : tbMember.memberPoint}
-                </span>
-              </div>
+              <div className="text-right mt-2 "></div>
               <div className="text-right mt-2">
                 <span className=" text-2xs text-white ">
                   {"Expire : " +
