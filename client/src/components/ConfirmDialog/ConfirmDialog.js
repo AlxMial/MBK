@@ -44,7 +44,7 @@ function ConfirmDialog({
         <div className="w-full ">
           <>
             <div className="relative flex flex-col min-w-0 break-words w-full  rounded-lg  border-0">
-              <div className="rounded-t bg-white mb-0 px-4 py-4">
+              <div className="rounded-t bg-white mb-0 px-4 py-2">
                 <div className="text-center flex justify-between">
                   <div className="">
                     <h6 className="text-blueGray-700 text-base  font-bold mt-2">
@@ -57,7 +57,7 @@ function ConfirmDialog({
               </div>
             </div>
             <div className={"flex-auto "}>
-              <div className="w-full mt-2">
+              <div className="w-full">
                 <div className="relative w-full mb-3">
                   <div className=" align-middle  mb-2">
                     <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
@@ -77,7 +77,7 @@ function ConfirmDialog({
                   <div className=" flex justify-between align-middle ">
                     <div></div>
                     <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                      {/* <label
+                      <label
                         className="text-red-500 cursor-pointer"
                         onClick={() => {
                           confirmModal(id);
@@ -90,8 +90,8 @@ function ConfirmDialog({
                       <label className="cursor-pointer" onClick={hideModal}>
                         {" "}
                         <i className="fas fa-times"></i> ยกเลิก
-                      </label> */}
-                      <button
+                      </label>
+                      {/* <button
                         className="mr-2 bg-lemon-mbk text-white active:bg-lemon-mbk font-bold  text-xs px-4 py-2 rounded shadow  outline-none focus:outline-none  ease-linear transition-all duration-150"
                         type="button"
                         onClick={() => {
@@ -108,7 +108,7 @@ function ConfirmDialog({
                         onClick={hideModal}
                       >
                         <span className="text-sm px-2">ไม่</span>
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>

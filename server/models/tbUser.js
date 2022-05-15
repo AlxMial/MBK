@@ -40,6 +40,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      addBy: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      updateBy: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     });
     return tbUser;
   };

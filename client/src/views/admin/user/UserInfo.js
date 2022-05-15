@@ -126,6 +126,8 @@ export default function UserInfo() {
       position: "",
       currentPassword: "",
       confirmPassword: "",
+      addBy:"",
+      updateBy:"",
     },
     validationSchema: Yup.object({
       userName: Yup.string().required(
@@ -176,6 +178,7 @@ export default function UserInfo() {
         if (isNew) {
           formik.values.role =
             formik.values.role === "" ? "1" : formik.values.role;
+          formik.values.addBy = localStorage.getItem('user');
           axios.post("users", values).then((res) => {
             if (res.data.status) {
               setIsNew(false);
@@ -211,6 +214,7 @@ export default function UserInfo() {
         } else {
           formik.values.role =
             formik.values.role === "" ? "1" : formik.values.role;
+          formik.values.updateBy = localStorage.getItem('user');
           axios.put("users", values).then((res) => {
             if (res.data.status) {
               setenablePassword(true);

@@ -134,6 +134,8 @@ export default function MemberInfo() {
       memberPoint: 0,
       memberPointExpire: new Date(),
       memberType: "1",
+      addBy:"",
+      updateBy:"",
     },
     validationSchema: Yup.object({
       memberCard: Yup.string().required(
@@ -194,6 +196,7 @@ export default function MemberInfo() {
 
       if (!errorRegisterDate && !errorBirthDate) {
         if (isNew) {
+          formik.values.addBy = localStorage.getItem('user');
           axios.post("members", values).then((res) => {
             if (res.data.status) {
               setIsNew(false);
@@ -239,6 +242,7 @@ export default function MemberInfo() {
             }
           });
         } else {
+          formik.values.updateBy = localStorage.getItem('user');
           axios.put("members", values).then((res) => {
             if (res.data.status) {
               setIsModified(false);

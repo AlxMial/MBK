@@ -43,6 +43,8 @@ export default function PointRegister() {
       pointRegisterScore: "",
       isActive: "1",
       isDeleted: false,
+      addBy:"",
+      updateBy:""
     },
     validationSchema: Yup.object({
       pointRegisterScore: Yup.string().required(
@@ -53,6 +55,7 @@ export default function PointRegister() {
     }),
     onSubmit: (values) => {
       if (isNew) {
+        formik.values.addBy = localStorage.getItem('user');
         axios.post("pointRegister", values).then((res) => {
           if (res.data.status) {
             formik.values.id = res.data.tbPointRegister.id;
@@ -66,6 +69,7 @@ export default function PointRegister() {
           }
         });
       } else {
+        formik.values.updateBy = localStorage.getItem('user');
         axios.put("pointRegister", values).then((res) => {
           if (res.data.status) {
             formik.values.id = res.data.tbPointRegister.id;

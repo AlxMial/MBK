@@ -223,6 +223,8 @@ export default function PointCode() {
       isActive: "1",
       isType: "1",
       isDeleted: false,
+      addBy: "",
+      updateBy: ""
     },
     validationSchema: Yup.object({
       pointCodeName: Yup.string().required(
@@ -283,6 +285,7 @@ export default function PointCode() {
       ) {
         setIsLoading(true);
         if (values.id) {
+          formikImport.values.updateBy = localStorage.getItem('user');
           axios.put("pointCode", values).then((res) => {
             if (res.data.status) {
               setIsLoading(false);
@@ -301,6 +304,7 @@ export default function PointCode() {
             }
           });
         } else {
+          formikImport.values.addBy = localStorage.getItem('user');
           axios.post("pointCode", values).then(async (res) => {
             if (res.data.status) {
               values.tbPointCodeHDId = res.data.tbPointCodeHD.id;
@@ -374,6 +378,8 @@ export default function PointCode() {
       isExpire: false,
       isDeleted: false,
       fileName: "",
+      addBy: "",
+      updateBy: ""
     },
     validationSchema: Yup.object({
       pointCodeName: Yup.string().required(
@@ -405,6 +411,7 @@ export default function PointCode() {
         formikImport.values.startDate = formikImport.values.endDate;
       setIsLoading(true);
       if (values.id) {
+        formikImport.values.updateBy = localStorage.getItem('user');
         axios.put("pointCode", values).then((res) => {
           if (res.data.status) {
             setIsLoading(false);
@@ -425,9 +432,9 @@ export default function PointCode() {
       } else {
         let formData = new FormData();
         formData.append("file", file);
-        console.log(file);
         if (file) {
           setErrorImport(false);
+          formikImport.values.addBy = localStorage.getItem('user');
           axios.post("pointCode", values).then(async (res) => {
             if (res.data.status) {
               formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
