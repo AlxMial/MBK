@@ -142,6 +142,7 @@ const Updateprofile = () => {
               onChange={handleChange}
               value={Data.firstName}
               error={errors.firstName}
+              valid={true}
             />
             <InputUC
               name="lastName"
@@ -151,6 +152,7 @@ const Updateprofile = () => {
               onChange={handleChange}
               value={Data.lastName}
               error={errors.lastName}
+              valid={true}
             />
             <InputUC
               name="phone"
@@ -159,6 +161,7 @@ const Updateprofile = () => {
               onChange={handleChange}
               value={Data.phone}
               error={errors.phone}
+              valid={true}
             />
             <SelectUC
               name="sex"
@@ -221,6 +224,7 @@ const Updateprofile = () => {
               onChange={handleChange}
               value={Data.email}
               error={errors.email}
+              valid={true}
             />
             <div className="mb-5" style={{ display: "none" }}>
               <Radio.Group

@@ -17,9 +17,10 @@ import {
   DatePickerContainer,
   monthMap,
 } from "./profile";
-
+import Spinner from "components/Loadings/spinner/Spinner";
 const Register = () => {
   let history = useHistory();
+  const [isLoading, setIsLoading] = useState(false);
   const { addToast } = useToasts();
   const [dataProvice, setDataProvice] = useState([]);
   const [dataDistrict, setDataDistrict] = useState([]);
@@ -207,28 +208,38 @@ const Register = () => {
     }
   };
   const DoSave = () => {
-    axios.post("members", Data).then((res) => {
-      let msg = { msg: "", appearance: "warning" };
+    setIsLoading(true);
+    axios
+      .post("members", Data)
+      .then((res) => {
+        let msg = { msg: "", appearance: "warning" };
 
-      res.data.status
-        ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
-        : res.data.isPhone == false
-        ? (msg.msg =
-            "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-        : res.data.email == false
-        ? (msg.msg =
-            "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
-        : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
+        res.data.status
+          ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
+          : res.data.isPhone == false
+          ? (msg.msg =
+              "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
+          : res.data.email == false
+          ? (msg.msg =
+              "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+          : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
-      addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
-      if (res.data.status) {
-        Session.setcheckRegister({ isRegister: true });
-        history.push(path.member);
-      }
-    });
+        addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
+        if (res.data.status) {
+          Session.setcheckRegister({ isRegister: true });
+          history.push(path.member);
+        }
+      })
+      .catch((e) => {
+        addToast(e.message, { appearance: "warning", autoDismiss: true });
+      })
+      .finally((e) => {
+        setIsLoading(false);
+      });
   };
   return (
     <>
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
       {page === "register" ? (
         <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
           <div
@@ -256,6 +267,7 @@ const Register = () => {
                 onChange={handleChange}
                 value={Data.firstName}
                 error={errors.firstName}
+                valid={true}
               />
               <InputUC
                 name="lastName"
@@ -265,6 +277,7 @@ const Register = () => {
                 onChange={handleChange}
                 value={Data.lastName}
                 error={errors.lastName}
+                valid={true}
               />
               <InputUC
                 name="phone"
@@ -273,6 +286,7 @@ const Register = () => {
                 onChange={handleChange}
                 value={Data.phone}
                 error={errors.phone}
+                valid={true}
               />
               <SelectUC
                 name="sex"
@@ -337,6 +351,7 @@ const Register = () => {
                 onChange={handleChange}
                 value={Data.email}
                 error={errors.email}
+                valid={true}
               />
               <div className="mb-5" style={{ display: "none" }}>
                 <Radio.Group

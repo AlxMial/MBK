@@ -50,12 +50,14 @@ export const InputUC = ({
   onChange,
   value,
   error,
+  valid,
 }) => {
   return (
     <>
       <div className="mb-5">
         <div className="noselect flex text-green-mbk font-bold text-sm ">
-          {lbl}
+          {lbl}{" "}
+          {valid == true ? <span style={{ color: "red" }}>{" *"}</span> : null}
         </div>
         {type == "text" ? (
           <input
