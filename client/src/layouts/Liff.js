@@ -19,7 +19,7 @@ import reward from "views/liff/reward/reward";
 import rewardRedeem from "views/liff/reward/reward.redeem";
 import rewardSpin from "views/liff/reward/reward.spin";
 import rewardExchange from "views/liff/reward/reward.exchange";
-
+const dev = true;
 export const path = {
   privacypolicy: "/line/privacypolicy",
   register: "/line/register",
@@ -96,73 +96,90 @@ const getRoutes = () => {
 };
 
 const initLine = (callback) => {
-  runApp(callback);
-
-  // liff.init(
-  //   { liffId: "1657109260-L0jrqxlN" },
-  //   () => {
-  //     if (liff.isLoggedIn()) {
-  //       runApp(callback);
-  //     } else {
-  //       liff.login();
-  //     }
-  //   },
-  //   (err) => console.error(err)
-  // );
+  if (dev) {
+    runApp(callback);
+  } else {
+    liff.init(
+      { liffId: "1657109260-L0jrqxlN" },
+      () => {
+        if (liff.isLoggedIn()) {
+          runApp(callback);
+        } else {
+          liff.login();
+        }
+      },
+      (err) => console.error(err)
+    );
+  }
 };
 const runApp = (callback) => {
-  // Session.setLiff({
-  //   uid: "U4d81d62e7ae7795c18f3e2c770595110",
-  //   displayName: "test",
-  //   pictureUrl: "test",
-  //   email: "test",
-  // });
-  let checkRegister = Session.getcheckRegister();
-  if (IsNullOrEmpty(checkRegister)) {
-    axios
-      .post("/members/checkRegister", { uid: Session.getLiff().uid })
-      .then((res) => {
-        // console.log(res);
-        let lifdata = Session.getLiff();
-
-        if (res.data.code === 200) {
-          if (res.data.isRegister) {
-            lifdata.memberId = res.data.tbMember.id;
-            Session.setLiff(lifdata);
+  if (dev) {
+    Session.setLiff({
+      uid: "U111111111111111111111111112",
+    });
+    let checkRegister = Session.getcheckRegister();
+    if (IsNullOrEmpty(checkRegister)) {
+      axios
+        .post("/members/checkRegister", { uid: Session.getLiff().uid })
+        .then((res) => {
+          let lifdata = Session.getLiff();
+          if (res.data.code === 200) {
+            if (res.data.isRegister) {
+              lifdata.memberId = res.data.tbMember.id;
+              Session.setLiff(lifdata);
+            }
+          } else {
           }
-        } else {
-        }
-        Session.setcheckRegister({
-          isRegister: res.data.isRegister,
-          isConsent: res.data.isConsent,
+          Session.setcheckRegister({
+            isRegister: res.data.isRegister,
+            isConsent: res.data.isConsent,
+          });
+          callback(checkRegister);
         });
-        // res.data.tbMember.id;
-        callback(checkRegister);
-      });
+    } else {
+      callback(checkRegister);
+    }
   } else {
-    callback(checkRegister);
+    liff
+      .getProfile()
+      .then((profile) => {
+        const idTokenDecoded = liff.getDecodedIDToken();
+        const LineID = profile.userId;
+        Session.setLiff({
+          uid: LineID,
+        });
+        let checkRegister = Session.getcheckRegister();
+        if (IsNullOrEmpty(checkRegister)) {
+          axios
+            .post("/members/checkRegister", { uid: Session.getLiff().uid })
+            .then((res) => {
+              // console.log(res);
+              let lifdata = Session.getLiff();
+
+              if (res.data.code === 200) {
+                if (res.data.isRegister) {
+                  lifdata.memberId = res.data.tbMember.id;
+                  Session.setLiff(lifdata);
+                }
+              } else {
+              }
+              Session.setcheckRegister({
+                isRegister: res.data.isRegister,
+                isConsent: res.data.isConsent,
+              });
+              callback(checkRegister);
+            });
+        } else {
+          callback(checkRegister);
+        }
+      })
+      .catch((err) => console.log(err));
   }
-  // liff
-  //   .getProfile()
-  //   .then((profile) => {
-  //     const idTokenDecoded = liff.getDecodedIDToken();
-  //     const LineID = profile.userId;
-  //     const displayName = profile.displayName;
-  //     const pictureUrl = profile.pictureUrl;
-  //     Session.setLiff({
-  //       uid: LineID,
-  //       displayName: displayName,
-  //       pictureUrl: pictureUrl,
-  //       email: idTokenDecoded.email,
-  //     });
-  //   })
-  //   .catch((err) => console.log(err));
 };
 // views
 const Liff = () => {
   let history = useHistory();
   let pathname = window.location.pathname;
-  // console.log("pathname : " + pathname);
   let bg = "100px";
   let ismemberpage = false;
   if (
@@ -186,7 +203,7 @@ const Liff = () => {
     let checkRegister = Session.getcheckRegister();
     if (checkRegister.isRegister === true) {
       if (
-        pathname.includes("privacypolicy") ||
+        // pathname.includes("privacypolicy") ||
         // pathname.includes("otp") ||
         pathname.includes("register")
       ) {
@@ -194,8 +211,8 @@ const Liff = () => {
       }
     } else {
       if (
-        !pathname.includes("privacypolicy") &&
-        !pathname.includes("otp") &&
+        // !pathname.includes("privacypolicy") &&
+        // !pathname.includes("otp") &&
         !pathname.includes("register")
       ) {
         history.push(path.register);
