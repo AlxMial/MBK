@@ -115,7 +115,7 @@ const initLine = (callback) => {
 const runApp = (callback) => {
   if (dev) {
     Session.setLiff({
-      uid: "U111111111111111111111111111",
+      uid: "U111111111111111111111111112",
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {

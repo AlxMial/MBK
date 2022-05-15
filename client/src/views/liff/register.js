@@ -223,7 +223,8 @@ const Register = () => {
           ? (msg.msg =
               "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
           : res.data.isMemberCard === false
-          ? "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว"
+          ? (msg.msg =
+              "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
           : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
         addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
