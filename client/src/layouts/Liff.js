@@ -19,7 +19,7 @@ import reward from "views/liff/reward/reward";
 import rewardRedeem from "views/liff/reward/reward.redeem";
 import rewardSpin from "views/liff/reward/reward.spin";
 import rewardExchange from "views/liff/reward/reward.exchange";
-const dev = true;
+const dev = false;
 export const path = {
   privacypolicy: "/line/privacypolicy",
   register: "/line/register",

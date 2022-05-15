@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import axios from "services/axios";
-import { senderOTP } from "services/axios";
+import { senderOTP, senderValidate } from "services/axios";
 import * as Address from "@services/GetAddress.js";
 import * as Session from "@services/Session.service";
 import { Radio } from "antd";
@@ -24,7 +24,7 @@ const Register = () => {
   const [dataProvice, setDataProvice] = useState([]);
   const [dataDistrict, setDataDistrict] = useState([]);
   const [dataSubDistrict, setSubDistrict] = useState([]);
-
+  const [dataOTP, setdataOTP] = useState({});
   const [page, setpage] = useState("register");
 
   const address = async () => {
@@ -120,22 +120,42 @@ const Register = () => {
       ["otp"]: e,
     }));
   };
-  const confirmotp = () => {
-    if (otp.otp == otp.generateOTP) {
-      // history.push(path.register);
-      DoSave();
-      // history.push(path.member);
-    } else {
-      setotp((prevState) => ({
-        ...prevState,
-        ["incorrect"]: true,
-      }));
-    }
+  const confirmotp = async () => {
+    let data = await senderValidate(
+      dataOTP.result.token,
+      otp.otp,
+      dataOTP.result.ref_code,
+      (e) => {
+        // console.log(e)
+        if (e.code === "000") {
+          DoSave();
+        } else {
+          setotp((prevState) => ({
+            ...prevState,
+            ["incorrect"]: true,
+          }));
+        }
+      }
+    );
+    // if (otp.otp == otp.generateOTP) {
+    //   // history.push(path.register);
+    //   DoSave();
+    //   // history.push(path.member);
+    // } else {
+    //   setotp((prevState) => ({
+    //     ...prevState,
+    //     ["incorrect"]: true,
+    //   }));
+    // }
   };
-  const SenderOTP = (phone) => {
-    console.log("senderOTP : " + phone);
+  const SenderOTP = async (phone) => {
+    // console.log("senderOTP : " + phone);
     // axios.
-    senderOTP(phone, otp.generateOTP, otp.generateref);
+    let data = await senderOTP(phone, otp.generateOTP, otp.generateref, (e) => {
+      setdataOTP(e);
+      // console.log("dataOTP : ");
+      // console.log(dataOTP);
+    });
   };
 
   const [errors, setErrors] = useState({});
@@ -159,6 +179,8 @@ const Register = () => {
   };
   useEffect(() => {
     address();
+    SenderOTP();
+    // confirmotp();
   }, []);
 
   const validation = async () => {

@@ -72,7 +72,7 @@ export const InputUC = ({
         ) : (
           <InputMask
             className={
-              "border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  focus:outline-none  w-full ease-linear transition-all duration-150"
+              "border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  focus:line-outline-none  w-full ease-linear transition-all duration-150"
             }
             style={{ borderBottom: "1px solid #d6d6d6" }}
             value={value}
@@ -102,7 +102,7 @@ export const SelectUC = ({ name, lbl, onChange, options, value }) => {
         </div>
         <Select
           isSearchable={false}
-          className="select-line border-0  py-1  text-gray-mbk bg-white text-sm  focus:outline-none w-full ease-linear transition-all duration-150"
+          className="select-line border-0  py-1  text-gray-mbk bg-white text-sm  focus:line-outline-none w-full ease-linear transition-all duration-150"
           style={{ borderBottom: "1px solid #d6d6d6" }}
           id={name}
           name={name}
