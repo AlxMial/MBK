@@ -390,7 +390,7 @@ export default function MemberInfo() {
           CRM&nbsp;&nbsp;/&nbsp;&nbsp;
         </span>
         <span className="text-sm margin-auto-t-b font-bold ">
-          <i className="fas fa-chess"></i>&nbsp;&nbsp;
+          <i className="fas fa-user-friends"></i>&nbsp;&nbsp;
         </span>
         <span className="text-base margin-auto font-bold">จัดการสมาชิก</span>
       </div>

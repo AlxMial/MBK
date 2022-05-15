@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbMember } = require("../../models");
+const { tbMember, tbPointRegister } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -34,7 +34,6 @@ router.get("/byId/:id", async (req, res) => {
   if (req.params.id !== "undefined") {
     const id = Encrypt.DecodeKey(req.params.id);
     const listMembers = await tbMember.findOne({ where: { id: id } });
-
     Encrypt.decryptAllData(listMembers);
     Encrypt.encryptValueId(listMembers);
     Encrypt.encryptPhone(listMembers);
@@ -46,6 +45,10 @@ router.get("/byId/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  const point = await tbPointRegister.findOne({
+    where: { isDeleted: false },
+    order: [["createdAt", "DESC"]],
+  });
   const member = await tbMember.findOne({
     where: {
       [Op.or]: [
@@ -74,6 +77,7 @@ router.post("/", async (req, res) => {
     if (!member) {
       req.body.email = req.body.email.toLowerCase();
       req.body.memberCard = req.body.memberCard.toLowerCase();
+      req.body.memberPoint = point.dataValues.pointRegisterScore;
       const ValuesEncrypt = Encrypt.encryptAllData(req.body);
       const members = await tbMember.create(ValuesEncrypt);
       const ValuesDecrypt = Encrypt.decryptAllData(members);
@@ -170,7 +174,6 @@ router.put("/", async (req, res) => {
     req.body.MemberType !== "" &&
     req.body.memberCard !== ""
   ) {
-    
     if (!member) {
       req.body.phone = req.body.phone;
       req.body.email = req.body.email.toLowerCase();
@@ -199,7 +202,10 @@ router.put("/", async (req, res) => {
           message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์ซ้ำ",
           tbMember: null,
         });
-      else if (member.memberCard === Encrypt.EncodeKey(req.body.memberCard.toLowerCase()))
+      else if (
+        member.memberCard ===
+        Encrypt.EncodeKey(req.body.memberCard.toLowerCase())
+      )
         res.json({
           status: false,
           isEmail: false,

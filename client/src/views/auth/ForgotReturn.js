@@ -6,10 +6,10 @@ export default function ForgotReturn() {
     <>
       <div className="container mx-auto px-4 h-full">
         <div className="flex content-center items-center justify-center h-full">
-          <div className="w-full lg:w-4/12 px-4">
+          <div className="w-full lg:w-5/12 px-4 text-center">
             <div className="flex flex-wrap mt-6 relative justify-center">
               <div className="่">
-                <span className="text-green-mbk text-6xl">
+                <span className="text-green-mbk text-3xl">
                   <p className="mb-0">Reset your password</p>
                 </span>
               </div>
@@ -26,7 +26,7 @@ export default function ForgotReturn() {
                   </div>
                   <div className="justify-center mb-6 w-full flex flex-wrap relative">
                     <span className=" text-sm text-center">
-                    รบกวนตรวจสอบอีเมลของท่าน เพื่อรีเซ็ตรหัสผ่าน หากไม่พบอีเมลให้ตรวจสอบในอีเมลขยะ
+                    รบกวนตรวจสอบอีเมลของท่าน เพื่อรีเซ็ตรหัสผ่าน <br/>หากไม่พบอีเมลให้ตรวจสอบในอีเมลขยะ
                     </span>
                   </div>
                   <div className="justify-center  w-full flex flex-wrap relative">

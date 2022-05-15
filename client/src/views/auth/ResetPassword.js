@@ -61,10 +61,10 @@ export default function ResetPassword() {
     <>
       <div className="container mx-auto px-4 h-full">
         <div className="flex content-center items-center justify-center h-full">
-          <div className="w-full lg:w-4/12 px-4">
+          <div className="w-full lg:w-5/12 px-4 text-center">
             <div className="flex flex-wrap mt-6 relative justify-center">
               <div className="่">
-                <span className="text-green-mbk text-6xl">
+                <span className="text-green-mbk text-3xl">
                   <p className="mb-0">Reset Password</p>
                 </span>
               </div>
@@ -76,7 +76,7 @@ export default function ResetPassword() {
                   <div className="flex flex-wrap mt-6 relative">
                     <div className="lg:w-3/12 margin-auto-t-r  ">
                       <label
-                        className="block text-blueGray-600 text-sm font-bold mb-2"
+                        className="block text-blueGray-600 text-sm font-bold mb-2 text-left" 
                         htmlFor="grid-password"
                       >
                         Password
@@ -129,7 +129,7 @@ export default function ResetPassword() {
                   <div className="flex flex-wrap mt-6 relative">
                     <div className="lg:w-3/12 margin-auto-t-r ">
                       <label
-                        className="block text-blueGray-600 text-sm font-bold mb-2"
+                        className="block text-blueGray-600 text-sm font-bold mb-2 text-left"
                         htmlFor="grid-password"
                       >
                         Confirm Password
@@ -174,9 +174,9 @@ export default function ResetPassword() {
                     </div>
                   </div>
                   <div className="flex flex-wrap mt-6 relative">
-                    <div className="w-1/2 margin-auto">
+                    <div className="w-1/2 margin-auto text-left">
                       <Link
-                        className="cursor-pointer link-focus text-sm font-bold"
+                        className="cursor-pointer link-focus text-sm font-bold text-blue-mbk "
                         to="/auth/login"
                       >
                         {" "}

@@ -516,7 +516,7 @@ export default function PointStore() {
                     return (
                       <tr key={key}>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8">
-                          <span className="px-4 margin-a">{key + 1}</span>
+                          <span className="px-4 margin-a">{pagesVisited+key + 1}</span>
                         </td>
                         <td
                           onClick={() => {
