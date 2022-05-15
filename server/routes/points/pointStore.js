@@ -7,6 +7,7 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const ValidateEncrypt = require("../../services/crypto");
+const e = require("express");
 const Encrypt = new ValidateEncrypt();
 
 router.post("/", validateToken, async (req, res) => {
@@ -70,11 +71,13 @@ router.get("/", validateToken, async (req, res) => {
 
 router.get("/byId/:id", validateToken, async (req, res) => {
   const id = Encrypt.DecodeKey(req.params.id);
-  const listPointStore = await tbPointStoreHD.findOne({ where: { id: id,isDeleted:false } });
+  const listPointStore = await tbPointStoreHD.findOne({
+    where: { id: id, isDeleted: false },
+  });
 
   Encrypt.encryptValueId(listPointStore);
   const listPointStoreDT = await tbPointStoreDT.findAll({
-    where: { tbPointStoreHDId: id,isDeleted:false },
+    where: { tbPointStoreHDId: id, isDeleted: false },
   });
   res.json({
     status: true,
@@ -125,13 +128,15 @@ router.put("/", validateToken, async (req, res) => {
         });
       }
     }
-    
-    const listPointStoreDelete = await tbPointStoreDT.update({ isDeleted:true }, {
-      where: { id: {[Op.notIn]: ValueNot} ,tbPointStoreHDId: req.body.id },
-    });
+
+    const listPointStoreDelete = await tbPointStoreDT.update(
+      { isDeleted: true },
+      {
+        where: { id: { [Op.notIn]: ValueNot }, tbPointStoreHDId: req.body.id },
+      }
+    );
 
     const listPointStoreNew = await tbPointStoreDT.bulkCreate(StoreDT);
-
 
     res.json({
       status: true,
@@ -152,8 +157,43 @@ router.delete("/:pointStoreId", validateToken, async (req, res) => {
   const pointStoreId = Encrypt.DecodeKey(req.params.pointStoreId);
   req.body.isDeleted = true;
   tbPointStoreHD.update(req.body, { where: { id: pointStoreId } });
-  tbPointStoreDT.update({ isDeleted : true }, { where: { tbPointStoreHDId: pointStoreId } });
+  tbPointStoreDT.update(
+    { isDeleted: true },
+    { where: { tbPointStoreHDId: pointStoreId } }
+  );
   res.json({ status: true, message: "success", tbPointStoreHD: null });
 });
 
+router.get("/listPointStore", async (req, res) => {
+  let listPointStore = await tbPointStoreHD.findAll({
+    where: { isDeleted: false },
+  });
+  const listPointStoreDT = await tbPointStoreDT.findAll({
+    where: { isDeleted: false },
+  });
+  let list = [];
+  listPointStore.filter((e) => {
+    let dt = [];
+    let even;
+    listPointStoreDT.filter((_dt) => {
+      if (_dt.tbPointStoreHDId == e.id) {
+        dt.push({
+          value: Encrypt.EncodeKey(_dt.id),
+          label: _dt.pointBranchName,
+        });
+      }
+    });
+    even = {
+      value: Encrypt.EncodeKey(e.id),
+      label: e.pointStoreName,
+      DT: dt,
+    };
+    list.push(even);
+  });
+  res.json({
+    status: true,
+    message: "success",
+    list: list,
+  });
+});
 module.exports = router;

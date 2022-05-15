@@ -13,27 +13,47 @@ export default axios.create({
     accessToken: localStorage.getItem("accessToken"),
   },
 });
-export const senderOTP = (phone,otp,ref) => {
+export const senderOTP = (phone, otp, ref, callblack) => {
   var config = {
     method: "post",
-    url: "https://portal-otp.smsmkt.com/api/send-message",
+    url: "https://portal-otp.smsmkt.com/api/otp-send",
     headers: {
       "Content-Type": "application/json",
       api_key: "915ce264de8250902d3a898a042cf2cc",
       secret_key: "2Zy0peafw7RGLkBn",
     },
     data: JSON.stringify({
-      message:
-        "Your OTP is " + otp + " (REF:"+ref+")",
+      project_key: "9919fe9150",
       phone: phone,
-      sender: "Demo-SMS",
+      ref_code: ref,
     }),
   };
   axios(config)
-    .then(function (response) {
-      console.log(JSON.stringify(response.data));
-      return this.DataResultSucceed("");
+    .then(function (res) {
+      // console.log(JSON.stringify(res.data));
+      callblack(res.data);
     })
-    .catch(function (e) {
-    });
+    .catch(function (e) {});
+};
+export const senderValidate = (token, otp_code, ref_code,callblack) => {
+  var config = {
+    method: "post",
+    url: "https://portal-otp.smsmkt.com/api/otp-validate",
+    headers: {
+      "Content-Type": "application/json",
+      api_key: "915ce264de8250902d3a898a042cf2cc",
+      secret_key: "2Zy0peafw7RGLkBn",
+    },
+    data: JSON.stringify({
+      token: token,
+      otp_code: otp_code,
+      ref_code: ref_code,
+    }),
+  };
+  axios(config)
+    .then(function (res) {
+      // console.log(JSON.stringify(res.data));
+      callblack(res.data);
+    })
+    .catch(function (e) {});
 };

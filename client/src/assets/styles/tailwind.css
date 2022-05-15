@@ -3930,6 +3930,16 @@ border: 1px solid rgb(214, 214, 214);
 border-radius: 10px;
 }
 
+.focus\:line-outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-shadow: transparent;
+}
+
+.select-line .css-1pahdxg-control{
+  box-shadow: none;
+}
+
 .datepicker .datepicker-viewport {
   height: 40px !important;
 }

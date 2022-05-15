@@ -20,20 +20,12 @@ const GetReward = () => {
     { index: 2, code: "", state: null },
   ]);
   const [tbMember, settbMember] = useState({});
-  const [valueStore, setvalueStore] = useState("1");
-  const [valueBranch, setvalueBranch] = useState("1");
-  const [isbranch, setisbranch] = useState(true);
+  const [valueStore, setvalueStore] = useState(null);
+  const [valueBranch, setvalueBranch] = useState(null);
+  const [isbranch, setisbranch] = useState(false);
 
-  const [optionsStore, setoptionsStore] = useState([
-    { value: "1", label: "ผู้ดูแลระบบ" },
-    { value: "2", label: "บัญชี" },
-    { value: "3", label: "การตลาด" },
-  ]);
-  const [optionsbranch, setoptionsbranch] = useState([
-    { value: "1", label: "ผู้ดูแลระบบ" },
-    { value: "2", label: "บัญชี" },
-    { value: "3", label: "การตลาด" },
-  ]);
+  const [optionsStore, setoptionsStore] = useState([]);
+  const [optionsbranch, setoptionsbranch] = useState([]);
 
   const [succeedData, setsucceedData] = useState([]);
 
@@ -41,15 +33,11 @@ const GetReward = () => {
   const confirmreward = () => {
     /// check api
     let code = [];
-
     rewardCode.map((e, i) => {
       if (!IsNullOrEmpty(e.code) && e.state !== true) {
         code.push(e.code.replaceAll(" ", ""));
       }
     });
-    // console.log(code);
-    console.log({ memberId: tbMember.id, redeemCode: code });
-
     // setconfirmsucceed(true);
     if (code.length > 0) {
       setIsLoading(true);
@@ -57,12 +45,12 @@ const GetReward = () => {
         .post("/redeem", {
           memberId: tbMember.id,
           redeemCode: code,
+          storeId: valueStore,
+          branchId: valueBranch,
         })
         .then((res) => {
           let _rewardCode = rewardCode;
           let data = res.data.data;
-          console.log(data);
-
           data.map((e, i) => {
             _rewardCode.map((ee, i) => {
               if (e.coupon === ee.code.toUpperCase()) {
@@ -77,14 +65,12 @@ const GetReward = () => {
             });
           });
           setrewardCode(_rewardCode);
-          // setconfirmsucceed(true);
           setsucceedData(res.data.data);
-
           let succeed = true;
           _rewardCode.map((e, i) => {
             if (!IsNullOrEmpty(e.code)) {
               if (e.state == false) {
-                let succeed = false;
+                succeed = false;
               }
             }
           });
@@ -112,18 +98,31 @@ const GetReward = () => {
       });
   };
 
-  const fetchData = async () => {
-    axios.get("pointStore").then((response) => {
-      if (response.data.error) {
-      } else {
-        // setlistStore(response.data.tbPointStoreHD);
-        // setListSerch(response.data.tbPointStoreHD);
-      }
-    });
+  const getpointStore = async () => {
+    axios
+      .get("pointStore/listPointStore")
+      .then((res) => {
+        if (res.status) {
+          let list = res.data.list;
+          setoptionsStore(list);
+          if (!IsNullOrEmpty(list)) {
+            setvalueStore(list[0].value);
+            if (list[0].DT.length > 0) {
+              setoptionsbranch(list[0].DT);
+              setvalueBranch(list[0].DT[0].value);
+              setisbranch(true);
+            }
+          }
+        } else {
+        }
+      })
+      .catch((error) => {
+        addToast(error.message, { appearance: "warning", autoDismiss: true });
+      });
   };
   useEffect(() => {
     getMembers();
-    fetchData()
+    getpointStore();
   }, []);
   return (
     <>
@@ -162,18 +161,29 @@ const GetReward = () => {
                     className="select-line border-0  py-1  text-gray-mbk bg-white text-base 
                      w-full ease-linear transition-all duration-150"
                     style={{ borderBottom: "1px solid #d6d6d6" }}
+                    isSearchable={false}
                     id={"store"}
                     name={"store"}
                     placeholder={"store"}
                     onChange={async (e) => {
                       setvalueStore(e.value);
+                      const Store = optionsStore.find(
+                        (ev) => ev.value == e.value
+                      );
+                      setoptionsbranch(Store.DT);
+                      if (Store.DT.length > 0) {
+                        setvalueBranch(Store.DT[0].value);
+                        setisbranch(true);
+                      } else {
+                        setisbranch(false);
+                      }
                     }}
                     value={optionsStore.filter((e) => e.value === valueStore)}
                     options={optionsStore}
                   />
                 </div>
 
-                {isbranch ?? (
+                {isbranch ? (
                   <>
                     <div>
                       <label className="noselect block text-blueGray-600 text-sm font-bold mb-2">
@@ -185,6 +195,7 @@ const GetReward = () => {
                         className="select-line border-0  py-1  text-gray-mbk bg-white text-base 
                          w-full ease-linear transition-all duration-150"
                         style={{ borderBottom: "1px solid #d6d6d6" }}
+                        isSearchable={false}
                         id={"branch"}
                         name={"branch"}
                         placeholder={"branch"}
@@ -198,13 +209,14 @@ const GetReward = () => {
                       />
                     </div>
                   </>
-                )}
+                ) : null}
 
                 <div
                   className="line-scroll"
                   style={{
                     overflow: "scroll",
-                    height: "calc(100% - 270px)",
+                    height:
+                      "calc(100% - " + (!isbranch ? "200px" : "270px") + ")",
                     marginTop: "0.5rem",
                   }}
                 >

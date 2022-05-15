@@ -45,6 +45,9 @@ const Updateprofile = () => {
       ...prevState,
       [name]: value,
     }));
+    let _errors = errors;
+    _errors[name] = false;
+    setErrors(_errors);
   };
   const getMembers = async () => {
     axios
@@ -83,8 +86,6 @@ const Updateprofile = () => {
           setErrors(errors);
         });
     }
-
-    console.log(validationSchema.fields["firstName"].tests[0].OPTIONS.message);
   };
   const DoSave = () => {
     setIsLoading(true);
@@ -104,9 +105,6 @@ const Updateprofile = () => {
           : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
         addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
-
-        // res.data.status ?
-        //   history.push(path.member) : console.log("warning")
       })
       .catch((e) => {
         addToast(e.message, { appearance: "warning", autoDismiss: true });
@@ -178,7 +176,7 @@ const Updateprofile = () => {
             {/* วันเกิด */}
 
             <div className="mb-5">
-              <div className="flex text-green-mbk font-bold text-lg ">
+              <div className="flex text-green-mbk font-bold text-sm ">
                 {"วันเกิด"}
               </div>
               <DatePickerContainer>
@@ -186,9 +184,8 @@ const Updateprofile = () => {
                   isOpen={true}
                   isPopup={false}
                   showHeader={false}
-                  // showCaption={true}
                   min={new Date(1970, 0, 1)}
-                  max={new Date(2050, 0, 1)}
+                  max={new Date()}
                   value={moment(new Date(Data.birthDate)).toDate()}
                   dateConfig={{
                     year: {
@@ -208,7 +205,6 @@ const Updateprofile = () => {
                     },
                   }}
                   onChange={(e) => {
-                    // console.log(moment(new Date()).toDate())
                     settbMember((prevState) => ({
                       ...prevState,
                       ["birthDate"]: moment(new Date(e)).toDate(),
@@ -226,7 +222,7 @@ const Updateprofile = () => {
               value={Data.email}
               error={errors.email}
             />
-            <div className="mb-5">
+            <div className="mb-5" style={{ display: "none" }}>
               <Radio.Group
                 options={[
                   { label: "ค้าปลีก/Retail", value: "1" },
@@ -282,7 +278,6 @@ const Updateprofile = () => {
               name="district"
               lbl="อำเภอ"
               onChange={async (e) => {
-                // handleChange({ target: { name: "district", value: e.value } });
                 const subDistrict = await Address.getAddress(
                   "subDistrict",
                   e.value
