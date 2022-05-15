@@ -12,7 +12,7 @@ const genMember = new generateMember();
 const Encrypt = new ValidateEncrypt();
 
 router.get("/", async (req, res) => {
-
+  const MemberCards = await genMember.generateMemberCard();
   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
