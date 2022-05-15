@@ -54,13 +54,13 @@ export const InputUC = ({
   return (
     <>
       <div className="mb-5">
-        <div className="noselect flex text-green-mbk font-bold text-lg ">
+        <div className="noselect flex text-green-mbk font-bold text-sm ">
           {lbl}
         </div>
         {type == "text" ? (
           <input
             type={type}
-            className="border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white text-base  focus:outline-none w-full ease-linear transition-all duration-150"
+            className="border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white text-sm  focus:outline-none w-full ease-linear transition-all duration-150"
             style={{ borderBottom: "1px solid #d6d6d6" }}
             id={name}
             name={name}
@@ -72,7 +72,7 @@ export const InputUC = ({
         ) : (
           <InputMask
             className={
-              "border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-base  focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+              "border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  focus:outline-none  w-full ease-linear transition-all duration-150"
             }
             style={{ borderBottom: "1px solid #d6d6d6" }}
             value={value}
@@ -97,12 +97,12 @@ export const SelectUC = ({ name, lbl, onChange, options, value }) => {
   return (
     <>
       <div className="mb-5">
-        <div className="noselect flex text-green-mbk font-bold text-lg ">
+        <div className="noselect flex text-green-mbk font-bold text-sm ">
           {lbl}
         </div>
         <Select
           isSearchable={false}
-          className="select-line border-0  py-1  text-gray-mbk bg-white text-base  focus:outline-none w-full ease-linear transition-all duration-150"
+          className="select-line border-0  py-1  text-gray-mbk bg-white text-sm  focus:outline-none w-full ease-linear transition-all duration-150"
           style={{ borderBottom: "1px solid #d6d6d6" }}
           id={name}
           name={name}

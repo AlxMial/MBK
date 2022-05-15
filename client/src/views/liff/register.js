@@ -268,7 +268,7 @@ const Register = () => {
               {/* วันเกิด */}
 
               <div className="mb-5">
-                <div className="flex text-green-mbk font-bold text-lg ">
+                <div className="flex text-green-mbk font-bold text-sm ">
                   {"วันเกิด"}
                 </div>
                 <DatePickerContainer>
