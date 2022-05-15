@@ -9,6 +9,7 @@ const ValidateEncrypt = require("../../services/crypto");
 const Op = Sequelize.Op;
 const Encrypt = new ValidateEncrypt();
 
+
 router.post("/login", async (req, res) => {
   const { userName, password } = req.body;
   const user = await tbUser.findOne({

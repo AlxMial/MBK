@@ -7,9 +7,12 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const ValidateEncrypt = require("../../services/crypto");
+const generateMember = require("../../services/generateMember");
+const genMember = new generateMember();
 const Encrypt = new ValidateEncrypt();
 
 router.get("/", async (req, res) => {
+
   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
@@ -45,6 +48,7 @@ router.get("/byId/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  const MemberCards = await genMember.generateMemberCard();
   const point = await tbPointRegister.findOne({
     where: { isDeleted: false },
     order: [["createdAt", "DESC"]],
@@ -54,7 +58,7 @@ router.post("/", async (req, res) => {
       [Op.or]: [
         { email: Encrypt.EncodeKey(req.body.email.toLowerCase()) },
         { phone: Encrypt.EncodeKey(req.body.phone) },
-        { memberCard: Encrypt.EncodeKey(req.body.memberCard.toLowerCase()) },
+        // { memberCard: Encrypt.EncodeKey(req.body.memberCard.toLowerCase()) },
       ],
       isDeleted: false,
     },
@@ -71,12 +75,11 @@ router.post("/", async (req, res) => {
     // req.body.uid !== "" &&
     req.body.sex !== "" &&
     req.body.sMemberType !== "" &&
-    req.body.memberType !== "" &&
-    req.body.memberCard !== ""
+    req.body.memberType !== ""
   ) {
     if (!member) {
       req.body.email = req.body.email.toLowerCase();
-      req.body.memberCard = req.body.memberCard.toLowerCase();
+      req.body.memberCard = MemberCards;
       req.body.memberPoint = point.dataValues.pointRegisterScore;
       const ValuesEncrypt = Encrypt.encryptAllData(req.body);
       const members = await tbMember.create(ValuesEncrypt);
@@ -110,18 +113,18 @@ router.post("/", async (req, res) => {
           message: "Unsuccess",
           tbMember: null,
         });
-      else if (
-        member.memberCard ===
-        Encrypt.EncodeKey(req.body.memberCard.toLowerCase())
-      )
-        res.json({
-          status: false,
-          isEmail: false,
-          isPhone: false,
-          isMemberCard: true,
-          message: "Unsuccess",
-          tbMember: null,
-        });
+      // else if (
+      //   member.memberCard ===
+      //   Encrypt.EncodeKey(req.body.memberCard.toLowerCase())
+      // )
+      //   res.json({
+      //     status: false,
+      //     isEmail: false,
+      //     isPhone: false,
+      //     isMemberCard: true,
+      //     message: "Unsuccess",
+      //     tbMember: null,
+      //   });
     }
   } else {
     res.json({ status: false, error: "value is empty" });
@@ -153,7 +156,7 @@ router.put("/", async (req, res) => {
       [Op.or]: [
         { email: Encrypt.EncodeKey(req.body.email.toLowerCase()) },
         { phone: Encrypt.EncodeKey(req.body.phone) },
-        { memberCard: Encrypt.EncodeKey(req.body.memberCard.toLowerCase()) },
+        // { memberCard: Encrypt.EncodeKey(req.body.memberCard.toLowerCase()) },
       ],
       isDeleted: false,
       id: {
@@ -171,13 +174,11 @@ router.put("/", async (req, res) => {
     // req.body.address !== "" &&
     // // req.body.uid !== "" &&
     req.body.sex !== "" &&
-    req.body.MemberType !== "" &&
-    req.body.memberCard !== ""
+    req.body.MemberType !== ""
   ) {
     if (!member) {
       req.body.phone = req.body.phone;
       req.body.email = req.body.email.toLowerCase();
-      req.body.memberCard = req.body.memberCard.toLowerCase();
       Encrypt.encryptAllData(req.body);
       const members = await tbMember.update(req.body, {
         where: { id: req.body.id },
@@ -202,18 +203,18 @@ router.put("/", async (req, res) => {
           message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์ซ้ำ",
           tbMember: null,
         });
-      else if (
-        member.memberCard ===
-        Encrypt.EncodeKey(req.body.memberCard.toLowerCase())
-      )
-        res.json({
-          status: false,
-          isEmail: false,
-          isPhone: false,
-          isMemberCard: true,
-          message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์ซ้ำ",
-          tbMember: null,
-        });
+      // else if (
+      //   member.memberCard ===
+      //   Encrypt.EncodeKey(req.body.memberCard.toLowerCase())
+      // )
+      //   res.json({
+      //     status: false,
+      //     isEmail: false,
+      //     isPhone: false,
+      //     isMemberCard: true,
+      //     message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์ซ้ำ",
+      //     tbMember: null,
+      //   });
     }
   } else {
     res.json({ status: false, error: "value is empty" });
