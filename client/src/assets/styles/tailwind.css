@@ -2757,6 +2757,12 @@ select {
   color: #334155;
 }
 
+.hover\:bg-lemon-mbk:hover {
+  --tw-text-opacity: 1;
+  background-color: #D2B12B;
+  color:white;
+}
+
 .uppercase {
   text-transform: uppercase;
 }

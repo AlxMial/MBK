@@ -8,7 +8,6 @@ import { useToasts } from "react-toast-notifications";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
-import BlindValue from "services/BlindValue";
 import styleSelect from "assets/styles/theme/ReactSelect.js";
 import * as Storage from "../../../services/Storage.service";
 import "antd/dist/antd.css";
@@ -43,6 +42,7 @@ export default function MemberInfo() {
   /* Set useState */
   const [enableControl, setIsEnableControl] = useState(true);
   const [phoneNumber, setPhoneNumber] = useState(0);
+  const [number, setNumber] = useState(0);
   const [isNew, setIsNew] = useState(false);
   const [dataProvice, setDataProvice] = useState([]);
   const [dataDistrict, setDataDistrict] = useState([]);
@@ -93,24 +93,23 @@ export default function MemberInfo() {
   /*พิมพ์เบอร์โทรศัพท์*/
   const onHandleTelephoneChange = (e) => {
     if (
-      ValidateService.onHandlePhoneChange(e.target.value) !== "" ||
-      e.target.value === ""
-    ) {
-      setPhoneNumber(e.target.value);
-      formik.values.phone = e.target.value;
-    }
-  };
-
-  const onHandleNumber = (e) => {
-    if (
       ValidateService.onHandleNumberChange(e.target.value) !== "" ||
       e.target.value === ""
     ) {
       setPhoneNumber(e.target.value);
-      return e.target.value;
+      return e;
     }
-
   };
+
+  // const onHandleNumber = (e) => {
+  //   if (
+  //     ValidateService.onHandleNumberChange(e.target.value) !== "" ||
+  //     e.target.value === ""
+  //   ) {
+  //     setPhoneNumber(e.target.value);
+  //     return e.target.value;
+  //   }
+  // };
   /* Form insert value */
   const formik = useFormik({
     initialValues: {
@@ -210,8 +209,9 @@ export default function MemberInfo() {
                 { appearance: "success", autoDismiss: true }
               );
             } else {
-              setIsOpenEdit(false);
-              if (!res.data.isPhone) {
+              // setIsOpenEdit(false);
+              console.log(res.data)
+              if (res.data.isPhone) {
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
                   {
@@ -219,9 +219,17 @@ export default function MemberInfo() {
                     autoDismiss: true,
                   }
                 );
-              } else if (!res.data.isEmail) {
+              } else if (res.data.isEmail) {
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              } else if (res.data.isMemberCard) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
                   {
                     appearance: "warning",
                     autoDismiss: true,
@@ -241,13 +249,40 @@ export default function MemberInfo() {
                 { appearance: "success", autoDismiss: true }
               );
             } else {
-              setIsOpenEdit(false);
-              addToast(
-                Storage.GetLanguage() === "th"
-                  ? res.data.message
-                  : res.data.message,
-                { appearance: "warning", autoDismiss: true }
-              );
+              // setIsOpenEdit(false);
+
+              // addToast(
+              //   Storage.GetLanguage() === "th"
+              //     ? res.data.message
+              //     : res.data.message,
+              //   { appearance: "warning", autoDismiss: true }
+              // );
+              console.log(res.data)
+              if (res.data.isPhone) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              } else if (res.data.isEmail) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              } else if (res.data.isMemberCard) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
             }
           });
         }
@@ -599,10 +634,13 @@ export default function MemberInfo() {
                         name="phone"
                         maxLength={10}
                         onChange={(event) => {
-                          onHandleTelephoneChange(event);
+                          const value = onHandleTelephoneChange(event);
+                          // console.log(value)
+                          if (value !== undefined) formik.handleChange(value);
+
                           setIsModified(true);
                         }}
-                        onBlur={formik.handleBlur}
+                        // onBlur={formik.handleBlur}
                         value={formik.values.phone}
                         autoComplete="phoneaddress"
                         disabled={typePermission === "1" ? false : true}
@@ -766,10 +804,10 @@ export default function MemberInfo() {
                             showToday={false}
                             disabled={typePermission === "1" ? false : true}
                             defaultValue={moment(new Date(), "DD/MM/YYYY")}
-                            onBlur={(e)=>{
+                            onBlur={(e) => {
                               setIsClickRegister(false);
                             }}
-                            onClick={(e)=>{
+                            onClick={(e) => {
                               setIsClickRegister(true);
                             }}
                             style={{
@@ -1038,9 +1076,9 @@ export default function MemberInfo() {
                         name="postcode"
                         maxLength={5}
                         onChange={(e) => {
-                          // formik.handleChange(e);
-                          formik.values.postcode = onHandleNumber(e);
-                          // formik.handleChange(onHandleNumber(e));
+                          // const value = e.target.value.replace(/\D/g, "");
+                          const value = onHandleTelephoneChange(e);
+                          if (value !== undefined) formik.handleChange(e);
                           setIsModified(true);
                         }}
                         onBlur={formik.handleBlur}
