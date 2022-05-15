@@ -216,12 +216,14 @@ const Register = () => {
 
         res.data.status
           ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
-          : res.data.isPhone == false
+          : res.data.isPhone === false
           ? (msg.msg =
               "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-          : res.data.email == false
+          : res.data.isEmail === false
           ? (msg.msg =
               "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+          : res.data.isMemberCard === false
+          ? "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว"
           : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
         addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
