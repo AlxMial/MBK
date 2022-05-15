@@ -153,8 +153,8 @@ export default function PointCode() {
 
   /* Method Condition */
   const options = [
-    { label: "Active", value: "1" },
-    { label: "Inactive", value: "2" },
+    { label: "เปิดการใช้งาน", value: "1" },
+    { label: "ปิดการใช้งาน", value: "2" },
   ];
 
   /* Method Condition */
@@ -1812,7 +1812,7 @@ export default function PointCode() {
                     return (
                       <tr key={key}>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
-                          <span className="px-4 margin-a">{key + 1}</span>
+                          <span className="px-4 margin-a">{pagesVisited+key + 1}</span>
                         </td>
                         <td
                           onClick={() => {

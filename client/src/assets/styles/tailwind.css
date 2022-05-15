@@ -2621,6 +2621,9 @@ select {
 }
 
 
+.text-blue-mbk {
+  color: #40a9ff;
+}
 
 .text-gold-mbk {
   color: #D0B027;
@@ -3738,6 +3741,9 @@ input[type=email]:disabled {
   background: transparent !important;
 }
 
+.ant-tabs{
+  margin: 2.5rem 0 0 0 !important;
+}
 
 
 .Tabs-line .ant-tabs-tab {

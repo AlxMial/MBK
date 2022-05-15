@@ -228,6 +228,7 @@ export default function StockInfo() {
                         isLoading={isLoadingSelect}
                         options={options}
                         onChange={handleChange}
+                        placeholder="เลือกข้อมูล / เพิ่มข้อมูล"
                         onCreateOption={handleCreate}
                       />
                     </div>

@@ -205,7 +205,7 @@ export default function MemberList() {
         <span className="text-base margin-auto font-bold">จัดการสมาชิก</span>
       </div> */}
 
-      <div className="flex flex-warp mb-4">
+      <div className="flex flex-warp">
         <span className="text-sm margin-auto-t-b font-bold ">
           <i className="fas fa-cog"></i>&nbsp;&nbsp;
         </span>
@@ -213,7 +213,7 @@ export default function MemberList() {
           CRM&nbsp;&nbsp;/&nbsp;&nbsp;
         </span>
         <span className="text-sm margin-auto-t-b font-bold ">
-          <i className="fas fa-chess"></i>&nbsp;&nbsp;
+          <i className="fas fa-user-friends"></i>&nbsp;&nbsp;
         </span>
         <span className="text-base margin-auto font-bold">จัดการสมาชิก</span>
       </div>
@@ -373,7 +373,7 @@ export default function MemberList() {
                       return (
                         <tr key={key}>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
-                            <span className="px-4 margin-a">{key + 1}</span>
+                            <span className="px-4 margin-a">{pagesVisited+key + 1}</span>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link

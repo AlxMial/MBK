@@ -60,7 +60,8 @@ export default function UserList() {
             x.lastName.toLowerCase().includes(e) ||
             x.email.includes(e) ||
             x.role.includes(e) ||
-            x.position.toLowerCase().includes(e)
+            x.position.toLowerCase().includes(e) ||
+            x.empCode.toLowerCase().includes(e)
         )
       );
     }
@@ -365,7 +366,7 @@ export default function UserList() {
                               onChange={handleChange}
                               className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
                             /> */}
-                            <span className="px-4 margin-a">{key + 1}</span>
+                            <span className="px-4 margin-a">{pagesVisited+key + 1}</span>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link

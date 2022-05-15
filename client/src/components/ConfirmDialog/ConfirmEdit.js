@@ -48,7 +48,7 @@ function ConfirmEdit({
               <div className="rounded-t bg-white mb-0 px-4 py-2">
                 <div className="text-center flex justify-between">
                   <div className="">
-                    <h6 className="text-blueGray-700 text-base  font-bold mt-2">
+                    <h6 className="text-green-mbk text-base  font-bold mt-2">
                       <i className="fas fa-exclamation-triangle"></i>&nbsp;
                       แจ้งเตือน
                     </h6>
