@@ -273,7 +273,7 @@ const GetReward = () => {
                             {i + 1}
                           </span>
                         </div>
-                        <div className="noselect px-5">
+                        <div className="noselect px-5 w-full">
                           <InputMask
                             className={
                               (e.state === true
