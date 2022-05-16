@@ -1,92 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import axios from "services/axios";
+import Spinner from "components/Loadings/spinner/Spinner";
+// import axios from "services/axios";
 import * as Session from "../services/Session.service";
 import { useHistory } from "react-router-dom";
 import liff from "@line/liff";
 import { IsNullOrEmpty } from "@services/default.service";
-import Spinner from "components/Loadings/spinner/Spinner";
+
+import {
+  path,
+  routes,
+  checkRegister as apiCheckRegister,
+} from "@services/liff.services";
+
 // components
-import privacypolicy from "views/liff/privacypolicy";
-import register from "views/liff/register";
-import member from "views/liff/member/member";
-import otp from "views/liff/otp";
-import getreward from "views/liff/getreward";
-import updateprofile from "views/liff/updateprofile";
-import point from "views/liff/point";
-import coupon from "views/liff/coupon/coupon";
-import reward from "views/liff/reward/reward";
-
-import rewardRedeem from "views/liff/reward/reward.redeem";
-import rewardSpin from "views/liff/reward/reward.spin";
-import rewardExchange from "views/liff/reward/reward.exchange";
 const dev = false;
-export const path = {
-  privacypolicy: "/line/privacypolicy",
-  register: "/line/register",
-  member: "/line/member",
-  otp: "/line/otp",
-  getreward: "/line/getreward",
-  updateprofile: "/line/updateprofile",
-  point: "/line/point",
-  coupon: "/line/coupon",
-  reward: "/line/reward",
-
-  rewardredeem: "/line/rewardredeem/:id",
-  rewardspin: "/line/rewardspin/:id",
-  rewardexchange: "/line/rewardexchange/:id",
-};
-const routes = [
-  {
-    path: path.privacypolicy,
-    component: privacypolicy,
-  },
-  {
-    path: path.register,
-    component: register,
-  },
-  {
-    path: path.member,
-    component: member,
-  },
-  {
-    path: path.otp,
-    component: otp,
-  },
-  {
-    path: path.getreward,
-    component: getreward,
-  },
-  {
-    path: path.updateprofile,
-    component: updateprofile,
-  },
-  {
-    path: path.point,
-    component: point,
-  },
-  {
-    path: path.coupon,
-    component: coupon,
-  },
-  {
-    path: path.reward,
-    component: reward,
-  },
-
-  {
-    path: path.rewardredeem,
-    component: rewardRedeem,
-  },
-  {
-    path: path.rewardspin,
-    component: rewardSpin,
-  },
-  {
-    path: path.rewardexchange,
-    component: rewardExchange,
-  },
-];
 
 const getRoutes = () => {
   return routes.map((prop, key) => {
@@ -121,24 +49,40 @@ const runApp = (callback, setView) => {
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {
-      axios
-        .post("/members/checkRegister", { uid: Session.getLiff().uid })
-        .then((res) => {
-          let lifdata = Session.getLiff();
-          if (res.data.code === 200) {
-            if (res.data.isRegister) {
-              lifdata.memberId = res.data.tbMember.id;
-              Session.setLiff(lifdata);
-            }
-          } else {
+      apiCheckRegister((res) => {
+        let lifdata = Session.getLiff();
+        if (res.data.code === 200) {
+          if (res.data.isRegister) {
+            lifdata.memberId = res.data.tbMember.id;
+            Session.setLiff(lifdata);
           }
-          Session.setcheckRegister({
-            isRegister: res.data.isRegister,
-            isConsent: res.data.isConsent,
-          });
-          callback(checkRegister);
-          setView();
+        } else {
+        }
+        Session.setcheckRegister({
+          isRegister: res.data.isRegister,
+          isConsent: res.data.isConsent,
         });
+        callback(checkRegister);
+        setView();
+      });
+      // axios
+      //   .post("/members/checkRegister", { uid: Session.getLiff().uid })
+      //   .then((res) => {
+      //     let lifdata = Session.getLiff();
+      //     if (res.data.code === 200) {
+      //       if (res.data.isRegister) {
+      //         lifdata.memberId = res.data.tbMember.id;
+      //         Session.setLiff(lifdata);
+      //       }
+      //     } else {
+      //     }
+      //     Session.setcheckRegister({
+      //       isRegister: res.data.isRegister,
+      //       isConsent: res.data.isConsent,
+      //     });
+      //     callback(checkRegister);
+      //     setView();
+      //   });
     } else {
       callback(checkRegister);
       setView();
@@ -153,34 +97,52 @@ const runApp = (callback, setView) => {
         });
         let checkRegister = Session.getcheckRegister();
         if (IsNullOrEmpty(checkRegister)) {
-          axios
-            .post("/members/checkRegister", { uid: Session.getLiff().uid })
-            .then((res) => {
-              // console.log(res);
-              let lifdata = Session.getLiff();
-
-              if (res.data.code === 200) {
-                if (res.data.isRegister) {
-                  lifdata.memberId = res.data.tbMember.id;
-                  Session.setLiff(lifdata);
-                }
-              } else {
+          apiCheckRegister((res) => {
+            let lifdata = Session.getLiff();
+            if (res.data.code === 200) {
+              if (res.data.isRegister) {
+                lifdata.memberId = res.data.tbMember.id;
+                Session.setLiff(lifdata);
               }
-              Session.setcheckRegister({
-                isRegister: res.data.isRegister,
-                isConsent: res.data.isConsent,
-              });
-              callback(checkRegister);
+            } else {
+            }
+            Session.setcheckRegister({
+              isRegister: res.data.isRegister,
+              isConsent: res.data.isConsent,
             });
+            callback(checkRegister);
+            setView();
+          });
+          // axios
+          //   .post("/members/checkRegister", { uid: Session.getLiff().uid })
+          //   .then((res) => {
+          //     // console.log(res);
+          //     let lifdata = Session.getLiff();
+
+          //     if (res.data.code === 200) {
+          //       if (res.data.isRegister) {
+          //         lifdata.memberId = res.data.tbMember.id;
+          //         Session.setLiff(lifdata);
+          //       }
+          //     } else {
+          //     }
+          //     Session.setcheckRegister({
+          //       isRegister: res.data.isRegister,
+          //       isConsent: res.data.isConsent,
+          //     });
+          //     callback(checkRegister);
+          //     setView();
+          //   });
         } else {
           callback(checkRegister);
+          setView();
         }
       })
       .catch((err) => console.log(err));
   }
 };
 // views
-const Liff = () => {
+const LiffAPP = () => {
   let history = useHistory();
   const [view, setview] = useState(false);
   let pathname = window.location.pathname;
@@ -273,4 +235,4 @@ const Liff = () => {
   );
 };
 
-export default Liff;
+export default LiffAPP;
