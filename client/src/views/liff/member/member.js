@@ -10,6 +10,7 @@ import {
 import { IsNullOrEmpty } from "@services/default.service";
 import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
+import * as Session from "@services/Session.service";
 // components
 
 const Member = () => {
@@ -63,7 +64,7 @@ const Member = () => {
             <div className="flex">
               <div style={{ width: "30%" }}>
                 <img
-                  src={require("assets/img/team-1-800x800.jpg").default}
+                  src={Session.getLiff().pictureUrl}
                   alt="..."
                   className="w-15 h-15 rounded-full border-2 border-blueGray-50 shadow"
                 ></img>

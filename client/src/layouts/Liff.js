@@ -46,6 +46,7 @@ const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
       uid: "U6b3d60554e5e109f99258abfd9293689",
+      pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {
@@ -76,6 +77,7 @@ const runApp = (callback, setView) => {
         const LineID = profile.userId;
         Session.setLiff({
           uid: LineID,
+          pictureUrl: profile.pictureUrl,
         });
         let checkRegister = Session.getcheckRegister();
         if (IsNullOrEmpty(checkRegister)) {
