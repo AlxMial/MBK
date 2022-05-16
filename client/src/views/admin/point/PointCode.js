@@ -25,7 +25,7 @@ import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
 import * as Storage from "../../../services/Storage.service";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
-import styleSelect from "assets/styles/theme/ReactSelect.js";
+import  { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
 import { exportExcel } from "services/exportExcel";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";

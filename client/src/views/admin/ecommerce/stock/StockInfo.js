@@ -8,7 +8,7 @@ import { useToasts } from "react-toast-notifications";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
-import styleSelect from "assets/styles/theme/ReactSelect.js";
+import  { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import * as Storage from "../../../../services/Storage.service";
 import "antd/dist/antd.css";
 import moment from "moment";

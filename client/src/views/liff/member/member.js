@@ -101,13 +101,13 @@ const Member = () => {
                 </div>
                 <div className="flex">
                   <div>
-                    <i
+                    {/* <i
                       className="fas fa-solid fa-user"
                       style={{ color: "#faae3e" }}
-                    ></i>
+                    ></i> */}
                   </div>
                   <div className="px-2 text-white font-bold text-xs ">
-                    {tbMember.isMemberType === "1" ? "Retail" : "Wholesale"}
+                    {/* {tbMember.isMemberType === "1" ? "Retail" : "Wholesale"} */}
                   </div>
                 </div>
               </div>

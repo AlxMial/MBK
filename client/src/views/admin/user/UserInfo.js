@@ -10,7 +10,7 @@ import { useToasts } from "react-toast-notifications";
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
 import * as Storage from "../../../services/Storage.service";
-import styleSelect from "assets/styles/theme/ReactSelect.js";
+import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 
