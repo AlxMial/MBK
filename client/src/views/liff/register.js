@@ -241,14 +241,14 @@ const Register = () => {
               "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
           : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
-        addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
+        // addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
         if (res.data.status) {
           Session.setcheckRegister({ isRegister: true });
           history.push(path.member);
         }
       })
       .catch((e) => {
-        addToast(e.message, { appearance: "warning", autoDismiss: true });
+        // addToast(e.message, { appearance: "warning", autoDismiss: true });
       })
       .finally((e) => {
         setIsLoading(false);
