@@ -11,6 +11,7 @@ import {
   checkRegister as apiCheckRegister,
   membersDpd,
 } from "@services/liff.services";
+import * as Session from "@services/Session.service";
 import {
   InputUC,
   SelectUC,
@@ -18,7 +19,6 @@ import {
   DatePickerContainer,
   monthMap,
 } from "./profile";
-
 
 const Updateprofile = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,7 +36,28 @@ const Updateprofile = () => {
     setDataDistrict(district);
     setSubDistrict(subDistrict);
   };
-  const [Data, settbMember] = useState({});
+  const [Data, settbMember] = useState({
+    id: "",
+    memberCard: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    birthDate: null,
+    registerDate: null,
+    address: "",
+    subDistrict: "",
+    district: "",
+    province: "",
+    country: "",
+    postcode: "",
+    isDeleted: false,
+    sex: "",
+    isMemberType: "",
+    memberType: "",
+    memberPoint: 0,
+    memberPointExpire: null,
+  });
 
   const [errors, setErrors] = useState({});
 
@@ -94,8 +115,10 @@ const Updateprofile = () => {
   };
   const DoSave = () => {
     setIsLoading(true);
+    let _Data = Data;
+    _Data.uid = Session.getLiff().uid;
     membersDpd(
-      Data,
+      _Data,
       (res) => {
         let msg = { msg: "", appearance: "warning" };
         res.data.status
