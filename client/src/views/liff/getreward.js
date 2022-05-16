@@ -9,7 +9,6 @@ import {
   listPointStore,
 } from "@services/liff.services";
 import { IsNullOrEmpty } from "@services/default.service";
-// import * as Session from "@services/Session.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 // components
@@ -252,7 +251,7 @@ const GetReward = () => {
                           : _succeedData.isUse
                           ? (msg.msg = "Code ถูกใช้แล้ว")
                           : (msg = {
-                              msg: "สะสมพอยท์สำเร็จ",
+                              msg: "สะสมคะแนนสำเร็จ",
                               icon: "fas fa-check-circle text-green-mbk",
                             });
                       }
@@ -355,34 +354,15 @@ const GetReward = () => {
             </>
           ) : (
             <>
-              {/* <div className="text-lg text-white font-bold text-center ">
-                {"icon"}
-              </div> */}
-              <div className="text-lg text-white font-bold text-center ">
-                {"สะสมพอยท์สำเร็จ"}
+              <div className="noselect text-lg text-white font-bold text-center ">
+                <i class="fas fa-check-circle" style={{ fontSize: "3rem" }}></i>
               </div>
-              {/* {[...succeedData].map((e, i) => {
-                return (
-                  <div key={i} className="mb-5">
-                    <div className="text-lg text-white font-bold text-center ">
-                      {e.coupon}
-                    </div>
-                    <div className="text-lg text-white font-bold text-center ">
-                      {"สถานะ : " +
-                        (e.isInvalid
-                          ? "Invalid"
-                          : e.isExpire
-                          ? "Expire"
-                          : e.isUse
-                          ? "is Use"
-                          : "รอยืนยัน")}
-                    </div>
-                  </div>
-                );
-              })} */}
 
+              <div className="noselect text-lg text-white font-bold text-center mt-2">
+                {"สะสมคะแนนสำเร็จ"}
+              </div>
               <div
-                className="text-lg text-white font-bold text-center "
+                className="noselect text-lg text-white font-bold text-center "
                 style={{
                   position: "absolute",
                   bottom: "50px",

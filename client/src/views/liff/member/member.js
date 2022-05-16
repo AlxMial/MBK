@@ -140,8 +140,11 @@ const Member = () => {
               </div>
               <div className="text-right mt-2 "></div>
               <div className="text-right mt-2">
+                <span className=" text-2xs text-white ">{"0 คะแนน  "}</span>
+              </div>
+              <div className="text-right ">
                 <span className=" text-2xs text-white ">
-                  {"Expire : " +
+                  {"จะหมดอายุ : " +
                     (IsNullOrEmpty(tbMember.memberPointExpire)
                       ? "-"
                       : moment(tbMember.memberPointExpire.split("T")[0])
