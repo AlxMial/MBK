@@ -14,7 +14,7 @@ import {
 } from "@services/liff.services";
 
 // components
-const dev = true;
+const dev = false;
 
 const getRoutes = () => {
   return routes.map((prop, key) => {
@@ -45,7 +45,7 @@ const initLine = (callback, setView) => {
 const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "",
+      uid: "U6b3d60554e5e109f99258abfd9293689",
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();
@@ -173,7 +173,7 @@ const LiffAPP = () => {
               ></img>
             ) : (
               <img
-                src={require("assets/img/mbk/logo_mbk.png").default}
+                src="https://www.prg.co.th/images/logo.png"
                 alt="logo_mbk"
                 className=" w-48 mt-6 "
                 style={{
