@@ -42,7 +42,7 @@ const Privacypolicy = () => {
         <div style={{ width: "90%", margin: "auto" }}>
           <div className="mt-5">
             <label
-              className="inline-flex items-center cursor-pointer"
+              className=" items-center cursor-pointer"
               //   onClick={handleChange}
             >
               <input

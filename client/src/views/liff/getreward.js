@@ -159,6 +159,7 @@ const GetReward = () => {
                   borderRadius: "10px",
                   marginTop: "2vh",
                   padding: "20px",
+                  minHeight:'500px',
                 }}
               >
                 <div>
@@ -223,6 +224,7 @@ const GetReward = () => {
                   className="overflow-y-auto"
                   style={{
                     // overflow: "scroll",
+                    minHeight:'500px',
                     height: "calc(100% - " + (!isbranch ? "200px" : "270px") + ")",
                     marginTop: "0.5rem",
                   }}
