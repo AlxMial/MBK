@@ -3,39 +3,59 @@ import { Tabs } from "antd";
 import MyAward from "./member.myAward";
 import MyOrder from "./member.myOrder";
 import { useHistory } from "react-router-dom";
-import {
-  path,
-  checkRegister as apiCheckRegister,
-} from "@services/liff.services";
-import { IsNullOrEmpty } from "@services/default.service";
-import moment from "moment";
-import Spinner from "components/Loadings/spinner/Spinner";
-import * as Session from "@services/Session.service";
-// components
-
-const Member = () => {
-  const history = useHistory();
-  const [isLoading, setIsLoading] = useState(false);
-  const { TabPane } = Tabs;
-  const tabsChange = () => {};
-  const [tbMember, settbMember] = useState({});
-  const getMembers = async () => {
-    setIsLoading(true);
-    apiCheckRegister(
-      (res) => {
-        if (res.data.code === 200) {
-          settbMember(res.data.tbMember);
+  import {
+    path,
+    checkRegister as apiCheckRegister,
+    GetMemberpoints,
+  } from "@services/liff.services";
+  import { IsNullOrEmpty } from "@services/default.service";
+  import moment from "moment";
+  import Spinner from "components/Loadings/spinner/Spinner";
+  import * as Session from "@services/Session.service";
+  // components
+  
+  const Member = () => {
+    const history = useHistory();
+    const [isLoading, setIsLoading] = useState(false);
+    const { TabPane } = Tabs;
+    const tabsChange = () => {};
+    const [tbMember, settbMember] = useState({});
+    const [Memberpoints, setMemberpoints] = useState({});
+  
+    const getMembers = async () => {
+      setIsLoading(true);
+      apiCheckRegister(
+        (res) => {
+          if (res.data.code === 200) {
+            settbMember(res.data.tbMember);
+            getMemberpoints({ id: res.data.tbMember.id });
+          }
+        },
+        () => {},
+        () => {
+          setIsLoading(false);
         }
-      },
-      () => {},
-      () => {
-        setIsLoading(false);
-      }
-    );
-  };
-  useEffect(() => {
-    getMembers();
-  }, []);
+      );
+    };
+    const getMemberpoints = async (data) => {
+      setIsLoading(true);
+      GetMemberpoints(
+        data,
+        (res) => {
+          if (res.data.code === 200) {
+            setMemberpoints(res.data);
+          }
+        },
+        () => {},
+        () => {
+          setIsLoading(false);
+        }
+      );
+    };
+    useEffect(() => {
+      getMembers();
+      getMemberpoints();
+    }, []);
   return (
     <>
       {/* card */}
@@ -141,14 +161,14 @@ const Member = () => {
               </div>
               <div className="text-right mt-2 "></div>
               <div className="text-right mt-2">
-                <span className=" text-2xs text-white ">{"0 คะแนน  "}</span>
+                <span className=" text-2xs text-white ">{Memberpoints.memberpoints+" คะแนน  "}</span>
               </div>
               <div className="text-right ">
                 <span className=" text-2xs text-white ">
                   {"จะหมดอายุ : " +
-                    (IsNullOrEmpty(tbMember.memberPointExpire)
+                    (IsNullOrEmpty(Memberpoints.enddate)
                       ? "-"
-                      : moment(tbMember.memberPointExpire.split("T")[0])
+                      : moment(Memberpoints.enddate.split("T")[0])
                           .locale("th")
                           .add(543, "year")
                           .format("DD/MM/yyyy"))}

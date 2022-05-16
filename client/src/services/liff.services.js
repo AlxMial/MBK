@@ -96,6 +96,20 @@ export const checkRegister = (s, e = () => {}, f = () => {}) => {
     });
 };
 
+export const GetMemberpoints = (data, s, e = () => {}, f = () => {}) => {
+  axios
+    .post("/members/GetMemberpoints", data)
+    .then((res) => {
+      s(res);
+    })
+    .catch((error) => {
+      e(error);
+    })
+    .finally((final) => {
+      f();
+    });
+};
+
 export const membersDpd = (data, s, e = () => {}, f = () => {}) => {
   axios
     .put("members", data)
