@@ -1,11 +1,13 @@
 import react from "react";
 import "../spinner/spinner.css";
+import useWindowDimensions from "services/useWindowDimensions";
 
 export default function Spinner(props) {
+    const { height, width } = useWindowDimensions();
     return (
     <div className="spinner-full"> 
         <div className="spinner-container">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="177px" height="177px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width={(width < 764) ? "100" : "177"} height={(width < 764) ? "100" : "177"} viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
                 <circle cx={84} cy={50} r={10} fill="#d4ecc9">
                 <animate attributeName="r" repeatCount="indefinite" dur="0.43859649122807015s" calcMode="spline" keyTimes="0;1" values="10;0" keySplines="0 0.5 0.5 1" begin="0s" />
                 <animate attributeName="fill" repeatCount="indefinite" dur="1.7543859649122806s" calcMode="discrete" keyTimes="0;0.25;0.5;0.75;1" values="#d4ecc9;#c3d582;#75b34c;#a2d895;#d4ecc9" begin="0s" />

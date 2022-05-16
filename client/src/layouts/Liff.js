@@ -14,7 +14,7 @@ import {
 } from "@services/liff.services";
 
 // components
-const dev = false;
+const dev = true;
 
 const getRoutes = () => {
   return routes.map((prop, key) => {

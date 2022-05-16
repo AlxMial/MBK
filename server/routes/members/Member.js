@@ -10,6 +10,8 @@ const ValidateEncrypt = require("../../services/crypto");
 const generateMember = require("../../services/generateMember");
 const genMember = new generateMember();
 const Encrypt = new ValidateEncrypt();
+const line = require("@line/bot-sdk");
+const config = require('../../services/config.line');
 
 router.get("/", async (req, res) => {
   const MemberCards = await genMember.generateMemberCard();
@@ -87,6 +89,18 @@ router.post("/", async (req, res) => {
       Encrypt.encryptValueId(ValuesDecrypt);
       Encrypt.encryptPhone(ValuesDecrypt);
       Encrypt.encryptEmail(ValuesDecrypt);
+
+      const client = new line.Client({
+        channelAccessToken: config.lineConfig.bearerToken,
+        channelSecret: config.lineConfig.channelSecret,
+      });
+
+      client
+        .linkRichMenuToUser(req.body.uid, config.lineConfig.menuMember)
+        .then((e) => {
+          console.log(e);
+        });
+
       res.json({
         status: true,
         isEmail: true,
