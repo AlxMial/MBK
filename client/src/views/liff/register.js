@@ -204,22 +204,18 @@ const Register = () => {
         })
         .catch((err) => {
           const errors = err.inner.reduce((acc, error) => {
-            console.log(error.path)
-            if (error.path === "firstName") {
-              inputFirstNameRef.current.focus();
-            } else if (error.path === "lastName") {
-              inputLastNameRef.current.focus();
-            } else if (error.path === "phone") {
-              console.log(inputPhoneRef);
-            } else if (error.path === "email") {
-              inputEmailRef.current.focus();
-            }
-             
             return {
               ...acc,
               [error.path]: true,
             };
           }, {});
+
+          if(Object.keys(errors).length>0){
+            const field = document.querySelector(
+              "input[name="+Object.keys(errors)[0]+"]"
+            );
+            field.focus()
+          }
           setErrors(errors);
         });
     }
