@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from "react";
 import axios from "services/axios";
 import { useHistory } from "react-router-dom";
-import { path } from "@services/liff.services";
+import {
+  path,
+  checkRegister as apiCheckRegister,
+  GetMemberpoints,
+} from "@services/liff.services";
 import { IsNullOrEmpty } from "@services/default.service";
 import * as Session from "@services/Session.service";
 import moment from "moment";
+
 // components
 
 const Point = () => {
   const history = useHistory();
   const [tbMember, settbMember] = useState({});
+  const [Memberpoints, setMemberpoints] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const getMembers = async () => {
     axios
       .post("/members/checkRegister", { uid: Session.getLiff().uid })
@@ -21,18 +28,35 @@ const Point = () => {
         }
       });
   };
+
+  const getMemberpoints = async (data) => {
+    setIsLoading(true);
+    GetMemberpoints(
+      data,
+      (res) => {
+        if (res.data.code === 200) {
+          setMemberpoints(res.data);
+        }
+      },
+      () => {},
+      () => {
+        setIsLoading(false);
+      }
+    );
+  };
   useEffect(() => {
     getMembers();
+    getMemberpoints();
   }, []);
   return (
     <>
       {/* card */}
-      <div style={{ marginTop: "-150px", position: "absolute", width: "100%" }}>
+      <div style={{ marginTop: "-120px", position: "absolute", width: "100%" }}>
         <div className="line-text-brown">
-          <div className=" text-xl text-center mt-4">คะแนนของฉัน</div>
+          <div className=" text-lg text-center font-bold mt-4">คะแนนของฉัน</div>
           <div className="text-center mt-6">
             <div
-              className="text-4xl"
+              className="text-3xl font-bold"
               style={{
                 backgroundColor: "#d0b027",
                 height: "40px",
@@ -45,8 +69,14 @@ const Point = () => {
               {tbMember.memberPoint === null ? 0 : tbMember.memberPoint}
             </div>
           </div>
-          <div className=" text-base text-center mt-4 ">
-            250 คะแนน จะหมดอายุ 12/12/2565
+          <div className=" text-sm font-bold text-center mt-4 ">
+            {Memberpoints.memberpoints} คะแนน จะหมดอายุ{" "}
+            {IsNullOrEmpty(Memberpoints.enddate)
+              ? "-"
+              : moment(Memberpoints.enddate.split("T")[0])
+                  .locale("th")
+                  .add(543, "year")
+                  .format("DD/MM/yyyy")}
           </div>
         </div>
 
@@ -80,7 +110,7 @@ const Point = () => {
               <div className="bg-green-mbk" style={{ width: "10px" }}></div>
               <div style={{ padding: "10px" }}>ประวัติคะแนน</div>
             </div>
-            <div>detail</div>
+
           </div>
         </div>
       </div>

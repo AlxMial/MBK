@@ -137,7 +137,7 @@ const GetReward = () => {
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
+      <div className="bg-green-mbk " style={{ height: "calc(100vh - 100px)" }}>
         <div
           style={{
             width: "90%",
@@ -156,76 +156,78 @@ const GetReward = () => {
                   width: "100%",
                   backgroundColor: "#FFF",
                   height: "calc(100vh - 270px)",
-                  minHeight:'500px',
+                  minHeight: "500px",
                   borderRadius: "10px",
                   marginTop: "2vh",
                   padding: "20px",
                 }}
               >
-                <div>
-                  <label className="noselect block text-blueGray-600 text-sm font-bold mb-2 mt-2">
-                    ร้านค้า
-                  </label>
-                </div>
-                <div>
-                  <Select
-                    className="text-gray-mbk text-sm w-full border-none"
-                    isSearchable={false}
-                    id={"store"}
-                    name={"store"}
-                    placeholder={"store"}
-                    onChange={async (e) => {
-                      setvalueStore(e.value);
-                      const Store = optionsStore.find(
-                        (ev) => ev.value == e.value
-                      );
-                      setoptionsbranch(Store.DT);
-                      if (Store.DT.length > 0) {
-                        setvalueBranch(Store.DT[0].value);
-                        setisbranch(true);
-                      } else {
-                        setisbranch(false);
-                      }
-                    }}
-                    value={optionsStore.filter((e) => e.value === valueStore)}
-                    options={optionsStore}
-                    styles={useStyle}
-                  />
-                </div>
+                <div className="overflow-y-auto liff-Reward-height" >
+                  <div>
+                    <label className="noselect block text-blueGray-600 text-sm font-bold mb-2 mt-2">
+                      ร้านค้า
+                    </label>
+                  </div>
+                  <div>
+                    <Select
+                      className="text-gray-mbk text-sm w-full border-none"
+                      isSearchable={false}
+                      id={"store"}
+                      name={"store"}
+                      placeholder={"store"}
+                      onChange={async (e) => {
+                        setvalueStore(e.value);
+                        const Store = optionsStore.find(
+                          (ev) => ev.value == e.value
+                        );
+                        setoptionsbranch(Store.DT);
+                        if (Store.DT.length > 0) {
+                          setvalueBranch(Store.DT[0].value);
+                          setisbranch(true);
+                        } else {
+                          setisbranch(false);
+                        }
+                      }}
+                      value={optionsStore.filter((e) => e.value === valueStore)}
+                      options={optionsStore}
+                      styles={useStyle}
+                    />
+                  </div>
 
-                {isbranch ? (
-                  <>
-                    <div>
-                      <label className="noselect block text-blueGray-600 text-sm font-bold mb-2 mt-2">
-                        {"สาขา"}
-                      </label>
-                    </div>
-                    <div>
-                      <Select
-                        className="text-gray-mbk text-sm w-full border-none"
-                        isSearchable={false}
-                        id={"branch"}
-                        name={"branch"}
-                        placeholder={"branch"}
-                        onChange={async (e) => {
-                          setvalueBranch(e.value);
-                        }}
-                        value={optionsbranch.filter(
-                          (e) => e.value === valueBranch
-                        )}
-                        options={optionsbranch}
-                        styles={useStyle}
-                      />
-                    </div>
-                  </>
-                ) : null}
+                  {isbranch ? (
+                    <>
+                      <div>
+                        <label className="noselect block text-blueGray-600 text-sm font-bold mb-2 mt-2">
+                          {"สาขา"}
+                        </label>
+                      </div>
+                      <div>
+                        <Select
+                          className="text-gray-mbk text-sm w-full border-none"
+                          isSearchable={false}
+                          id={"branch"}
+                          name={"branch"}
+                          placeholder={"branch"}
+                          onChange={async (e) => {
+                            setvalueBranch(e.value);
+                          }}
+                          value={optionsbranch.filter(
+                            (e) => e.value === valueBranch
+                          )}
+                          options={optionsbranch}
+                          styles={useStyle}
+                        />
+                      </div>
+                    </>
+                  ) : null}
 
                 <div
-                  className="overflow-y-auto"
+                  className=""
                   style={{
                     // overflow: "scroll",
                     // minHeight:'500px',
-                    height: "calc(100% - " + (!isbranch ? "200px" : "270px") + ")",
+                    height:
+                      "calc(100% - " + (!isbranch ? "200px" : "270px") + ")",
                     marginTop: "0.5rem",
                   }}
                 >
@@ -296,7 +298,7 @@ const GetReward = () => {
 
                               setrewardCode(item);
                             }}
-                            placeholder={"รหัสที่ "+ (i+1)}
+                            placeholder={"รหัสที่ " + (i + 1)}
                             // mask={"***-****************"}
                             maskChar=" "
                             disabled={e.state ? true : false}
@@ -312,6 +314,7 @@ const GetReward = () => {
                       </div>
                     );
                   })}
+                </div>
                 </div>
                 <div className="noselect relative  px-4  flex-grow flex-1 mt-5">
                   <div

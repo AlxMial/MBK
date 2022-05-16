@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Tabs } from "antd";
 import MyAward from "./member.myAward";
 import MyOrder from "./member.myOrder";
+import useWindowDimensions from "services/useWindowDimensions";
 import { useHistory } from "react-router-dom";
   import {
     path,
@@ -21,6 +22,7 @@ import { useHistory } from "react-router-dom";
     const tabsChange = () => {};
     const [tbMember, settbMember] = useState({});
     const [Memberpoints, setMemberpoints] = useState({});
+    const { width , height } = useWindowDimensions();
   
     const getMembers = async () => {
       setIsLoading(true);
@@ -133,10 +135,10 @@ import { useHistory } from "react-router-dom";
               </div>
             </div>
             <div className="absolute bottom-0 text-white font-bold text-xs ">
-              {"Member Card : " + tbMember.memberCard}
+              {"รหัสสมาชิก : " + tbMember.memberCard}
             </div>
           </div>
-          <div className="relative" style={{ width: "40%", height: "100%" }}>
+          <div className="relative" style={{ width: "50%", height: "100%" }}>
             <div
               className="absolute right-0"
               onClick={() => {

@@ -4257,6 +4257,9 @@ border-radius: 10px;
     height: 75vh;
     overflow-y: auto;
   }
+  .liff-Reward-height{
+    height: 450px;
+  }
 }
 
 
@@ -4268,17 +4271,26 @@ border-radius: 10px;
     height: 73vh;
     overflow-y: auto;
   }
+  .liff-Reward-height{
+    height: 480px;
+  }
 }
 
 @media only screen and (max-width: 394px) {
   .minHeight {
     min-height: 90vh;
   }
+  .liff-Reward-height{
+    height: 420px;
+  }
 }
 
 @media only screen and (max-width: 391px) {
   .minHeight {
     min-height: 90vh;
+  }
+  .liff-Reward-height{
+    height: 400px;
   }
 }
 
@@ -4289,6 +4301,9 @@ border-radius: 10px;
   .Overflow-info{
     height: 67vh;
     overflow-y: auto;
+  }
+  .liff-Reward-height{
+    height: 350px;
   }
 }
 
@@ -4304,6 +4319,9 @@ border-radius: 10px;
     width:80%;
     height:100%;
   }
+  .liff-Reward-height{
+    height: 350px;
+  }
 }
 
 @media only screen and (max-width: 320px) {
@@ -4311,5 +4329,9 @@ border-radius: 10px;
   .liff-member{
     width:90%;
     height:100%;
+  }
+
+  .liff-Reward-height{
+    height: 300;
   }
 }
