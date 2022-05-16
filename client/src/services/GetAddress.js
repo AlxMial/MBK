@@ -2,11 +2,19 @@ import api_province from "../assets/data/api_province.json";
 import api_amphure from "../assets/data/api_amphure.json";
 import api_tombon from "../assets/data/api_tombon.json";
 
+const SortValue = (Json) => {
+  Json.sort(function (a, b) {
+    return a.label.localeCompare(b.label);
+  });
+  return Json;
+};
+
 export const getSubDistrict = () => {
   var JsonSubDistrict = [];
   api_tombon.forEach((field) => {
     JsonSubDistrict.push({ value: field.value.toString(), label: field.label });
   });
+  SortValue(JsonSubDistrict);
   return JsonSubDistrict;
 };
 
@@ -15,6 +23,7 @@ export const getProvince = async () => {
   await api_province.forEach((field) => {
     JsonProvince.push({ value: field.value.toString(), label: field.label });
   });
+  SortValue(JsonProvince);
   return JsonProvince;
 };
 
@@ -23,6 +32,7 @@ export const getDistrict = async () => {
   await api_amphure.forEach((field) => {
     JsonDistrict.push({ value: field.value.toString(), label: field.label });
   });
+  SortValue(JsonDistrict);
   return JsonDistrict;
 };
 
@@ -37,6 +47,7 @@ export const getAddress = async (type, id) => {
           label: field.label,
         });
       });
+    SortValue(Json);
     return Json;
   } else if (type === "subDistrict") {
     await api_tombon
@@ -47,6 +58,7 @@ export const getAddress = async (type, id) => {
           label: field.label,
         });
       });
+    SortValue(Json);
     return Json;
   } else if (type === "postcode") {
     await api_tombon
@@ -57,6 +69,7 @@ export const getAddress = async (type, id) => {
           label: field.zip_code,
         });
       });
+    SortValue(Json);
     return Json.length > 0 ? Json[0].label : "";
   }
 };

@@ -34,7 +34,7 @@ const Register = () => {
   const [dataDistrict, setDataDistrict] = useState([]);
   const [dataSubDistrict, setSubDistrict] = useState([]);
   const [dataOTP, setdataOTP] = useState({});
-  const [page, setpage] = useState("privacypolicy");
+  const [page, setpage] = useState("register");
 
   const address = async () => {
     const province = await Address.getProvince();
