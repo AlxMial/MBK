@@ -116,7 +116,7 @@ const Member = () => {
               {"Member Card : " + tbMember.memberCard}
             </div>
           </div>
-          <div className="relative" style={{ width: "30%", height: "100%" }}>
+          <div className="relative" style={{ width: "40%", height: "100%" }}>
             <div
               className="absolute right-0"
               onClick={() => {
