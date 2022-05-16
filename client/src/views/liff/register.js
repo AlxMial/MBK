@@ -626,7 +626,7 @@ const Register = () => {
               </div>
               <div className="mt-10">
                 <OtpInput
-                  className={"OtpInput"}
+                  className={"OtpInput unsetInputMark"}
                   value={otp.otp}
                   onChange={onOTPChange}
                   inputStyle={{}}

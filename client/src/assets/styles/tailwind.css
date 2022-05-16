@@ -3666,6 +3666,15 @@ select {
   /* border-color:unset !important; */
 }
 
+.unsetInputMark input{
+  --tw-ring-color:unset !important;
+  --tw-ring-shadow:unset !important;
+}
+
+.unsetInputMark input:focus{
+  border-color: #D0B027;
+}
+
 input[type=text]:disabled,
 input[type=password]:disabled,
 textarea:disabled,

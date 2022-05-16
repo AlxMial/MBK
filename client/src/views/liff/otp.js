@@ -143,7 +143,7 @@ const Otp = () => {
               <div className="flex text-green-mbk text-xxs font-bold justify-center mt-5">
                 {"กรุณากรองรหัส OTP"}
               </div>
-              <div className="mt-10">
+              <div className="mt-10 unsetInputMark">
                 <OtpInput
                   className={"OtpInput"}
                   value={Data.otp}
