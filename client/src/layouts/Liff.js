@@ -45,7 +45,7 @@ const initLine = (callback, setView) => {
 const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "U6b3d60554e5e109f99258abfd9293688",
+      uid: "U6b3d60554e5e109f99258abfd9293689",
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {
@@ -65,24 +65,6 @@ const runApp = (callback, setView) => {
         callback(checkRegister);
         setView();
       });
-      // axios
-      //   .post("/members/checkRegister", { uid: Session.getLiff().uid })
-      //   .then((res) => {
-      //     let lifdata = Session.getLiff();
-      //     if (res.data.code === 200) {
-      //       if (res.data.isRegister) {
-      //         lifdata.memberId = res.data.tbMember.id;
-      //         Session.setLiff(lifdata);
-      //       }
-      //     } else {
-      //     }
-      //     Session.setcheckRegister({
-      //       isRegister: res.data.isRegister,
-      //       isConsent: res.data.isConsent,
-      //     });
-      //     callback(checkRegister);
-      //     setView();
-      //   });
     } else {
       callback(checkRegister);
       setView();
@@ -113,26 +95,6 @@ const runApp = (callback, setView) => {
             callback(checkRegister);
             setView();
           });
-          // axios
-          //   .post("/members/checkRegister", { uid: Session.getLiff().uid })
-          //   .then((res) => {
-          //     // console.log(res);
-          //     let lifdata = Session.getLiff();
-
-          //     if (res.data.code === 200) {
-          //       if (res.data.isRegister) {
-          //         lifdata.memberId = res.data.tbMember.id;
-          //         Session.setLiff(lifdata);
-          //       }
-          //     } else {
-          //     }
-          //     Session.setcheckRegister({
-          //       isRegister: res.data.isRegister,
-          //       isConsent: res.data.isConsent,
-          //     });
-          //     callback(checkRegister);
-          //     setView();
-          //   });
         } else {
           callback(checkRegister);
           setView();
@@ -181,11 +143,6 @@ const LiffAPP = () => {
             history.push(path.member);
           }
         }
-        // else {
-        //   if (!pathname.includes("register")) {
-        //     history.push(path.register);
-        //   }
-        // }
       },
       () => {
         setview(true);

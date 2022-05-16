@@ -61,14 +61,13 @@ const Point = () => {
               borderRadius: "10px",
             }}
             onClick={() => {
-              console.log("GetReward");
               history.push(path.getreward);
             }}
           >
             <div className="px-2">
               <i className="fas fa-solid fa-pen "></i>
             </div>
-            <div className="">กรอกโค้ดเพื่อสะสมคะแนน</div>
+            <div className="">{"กรอกโค้ดเพื่อสะสมคะแนน"}</div>
             <div className="px-2 absolute right-0">
               <i className="fas fa-solid fa-angle-right "></i>
             </div>
