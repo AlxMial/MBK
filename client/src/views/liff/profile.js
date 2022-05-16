@@ -57,7 +57,7 @@ export const InputUC = ({
 }) => {
   return (
     <>
-      <div className="mb-5">
+      <div className="mb-4">
         <div className="noselect flex text-green-mbk font-bold text-sm ">
           {lbl}{" "}
           {valid == true ? <span className="ml-1" style={{ color: "red" }}>{" *"}</span> : null}
@@ -77,7 +77,7 @@ export const InputUC = ({
         ) : (
           <InputMask
             className={
-              "border-0 px-2 py-1 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  focus:line-outline-none  w-full ease-linear transition-all duration-150"
+              "border-0 px-2 pt-2 placeholder-blueGray-300 text-gray-mbk bg-white text-sm w-full unsetInputMark "
             }
             style={{ borderBottom: "1px solid #d6d6d6" }}
             value={value}
@@ -87,6 +87,7 @@ export const InputUC = ({
             placeholder={name == "phone" ? "0X-XXXX-XXXX" : lbl}
             mask={name == "phone" ? "099-999-9999" : "99999"}
             maskChar=" "
+            autoComplete="InputMark"
           />
         )}
         {error == true ? (
@@ -101,14 +102,14 @@ export const InputUC = ({
 export const SelectUC = ({ name, lbl, onChange, options, value }) => {
   return (
     <>
-      <div className="mb-5">
+      <div className="mb-4">
         <div className="noselect flex text-green-mbk font-bold text-sm ">
           {lbl}
         </div>
       
 
         <Select
-          className="text-gray-mbk text-sm w-full border-none"
+          className="text-gray-mbk mt-1 text-sm w-full border-none"
           isSearchable={false}
           id={name}
           name={name}

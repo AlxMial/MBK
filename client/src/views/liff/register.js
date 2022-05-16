@@ -306,13 +306,12 @@ const Register = () => {
                 value={Data.sex}
                 options={[
                   { value: "1", label: "ชาย" },
-                  { value: "2", label: "หณิง" },
+                  { value: "2", label: "หญิง" },
                 ]}
                 error={errors.sex}
               />
               {/* วันเกิด */}
-
-              <div className="mb-5">
+              <div className="">
                 <div className="flex text-green-mbk font-bold text-sm ">
                   {"วันเกิด"}
                 </div>

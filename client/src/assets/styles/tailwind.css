@@ -3660,6 +3660,12 @@ select {
 
 /* input Style */
 
+.unsetInputMark {
+  --tw-ring-color:unset !important;
+  --tw-ring-shadow:unset !important;
+  /* border-color:unset !important; */
+}
+
 input[type=text]:disabled,
 input[type=password]:disabled,
 textarea:disabled,
@@ -3957,7 +3963,7 @@ border-radius: 10px;
   background-color: transparent !important;
 }
 .datepicker .datepicker-content{
-  padding: 0.5em 0 !important;
+  padding: 0 !important;
 }
 .datepicker .datepicker-scroll>li {
   height: 40px !important;

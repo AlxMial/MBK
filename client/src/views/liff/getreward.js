@@ -155,7 +155,7 @@ const GetReward = () => {
                 style={{
                   width: "100%",
                   backgroundColor: "#FFF",
-                  height: "calc(100vh - 300px)",
+                  height: "calc(100vh - 200px)",
                   borderRadius: "10px",
                   marginTop: "2vh",
                   padding: "20px",
@@ -281,6 +281,7 @@ const GetReward = () => {
                                 : "") +
                               " line-input border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             }
+                            maxLength={22}
                             value={e.code}
                             name={"code-" + (i + 1)}
                             type={"text"}
