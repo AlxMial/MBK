@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import axios from "services/axios";
 import * as Session from "../services/Session.service";
 import { useHistory } from "react-router-dom";
 import liff from "@line/liff";
 import { IsNullOrEmpty } from "@services/default.service";
+import Spinner from "components/Loadings/spinner/Spinner";
 // components
 import privacypolicy from "views/liff/privacypolicy";
 import register from "views/liff/register";
@@ -95,16 +96,17 @@ const getRoutes = () => {
   });
 };
 
-const initLine = (callback) => {
+const initLine = (callback, setView) => {
   if (dev) {
-    runApp(callback);
+    runApp(callback, setView);
   } else {
     liff.init(
       { liffId: "1657109260-L0jrqxlN" },
       () => {
         if (liff.isLoggedIn()) {
-          runApp(callback);
+          runApp(callback, setView);
         } else {
+          setView();
           liff.login();
         }
       },
@@ -112,10 +114,10 @@ const initLine = (callback) => {
     );
   }
 };
-const runApp = (callback) => {
+const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "U111111111111111111111111112",
+      uid: "U6b3d60554e5e109f99258abfd9293688",
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {
@@ -135,15 +137,16 @@ const runApp = (callback) => {
             isConsent: res.data.isConsent,
           });
           callback(checkRegister);
+          setView();
         });
     } else {
       callback(checkRegister);
+      setView();
     }
   } else {
     liff
       .getProfile()
       .then((profile) => {
-        const idTokenDecoded = liff.getDecodedIDToken();
         const LineID = profile.userId;
         Session.setLiff({
           uid: LineID,
@@ -179,9 +182,14 @@ const runApp = (callback) => {
 // views
 const Liff = () => {
   let history = useHistory();
+  const [view, setview] = useState(false);
   let pathname = window.location.pathname;
   let bg = "100px";
   let ismemberpage = false;
+  if (pathname.includes("register")) {
+    Session.removecheckRegister();
+  }
+
   if (
     pathname.toLowerCase().includes("member") ||
     pathname.toLowerCase().includes("point") ||
@@ -198,62 +206,69 @@ const Liff = () => {
     }
     ismemberpage = true;
   }
+  if (!view) {
+    initLine(
+      (e) => {
+        let checkRegister = Session.getcheckRegister();
+        if (checkRegister.isRegister !== true) {
+          if (!pathname.includes("register")) {
+            history.push(path.register);
+          }
+        } else {
+          if (pathname.includes("register")) {
+            history.push(path.member);
+          }
+        }
+        // else {
+        //   if (!pathname.includes("register")) {
+        //     history.push(path.register);
+        //   }
+        // }
+      },
+      () => {
+        setview(true);
+      }
+    );
+  }
 
-  initLine((e) => {
-    let checkRegister = Session.getcheckRegister();
-    if (checkRegister.isRegister === true) {
-      if (
-        // pathname.includes("privacypolicy") ||
-        // pathname.includes("otp") ||
-        pathname.includes("register")
-      ) {
-        history.push(path.member);
-      }
-    } else {
-      if (
-        // !pathname.includes("privacypolicy") &&
-        // !pathname.includes("otp") &&
-        !pathname.includes("register")
-      ) {
-        history.push(path.register);
-      }
-    }
-  });
   return (
     <>
-      <div
-        className={"noselect " + (!ismemberpage ? "bg-green-mbk flex" : "")}
-        style={{ height: bg }}
-      >
-        <div className="w-full">
-          {ismemberpage ? (
-            <img
-              className="w-full"
-              src={require("assets/img/mbk/line_head_img.jpg").default}
-              alt="line_head_img"
-              style={{
-                objectFit: "fill",
-                height: bg,
-              }}
-            ></img>
-          ) : (
-            <img
-              src={require("assets/img/mbk/logo_mbk.png").default}
-              alt="logo_mbk"
-              className=" w-48 mt-6 "
-              style={{
-                display: "block",
-                marginLeft: "auto",
-                marginRight: "auto",
-              }}
-            ></img>
-          )}
+      {!view ? <Spinner customText={"Loading"} /> : null}
+      <div style={{ display: !view ? "none" : "", minHeight: "100vh" }}>
+        <div
+          className={"noselect " + (!ismemberpage ? "bg-green-mbk flex" : "")}
+          style={{ height: bg }}
+        >
+          <div className="w-full">
+            {ismemberpage ? (
+              <img
+                className="w-full"
+                src={require("assets/img/mbk/line_head_img.jpg").default}
+                alt="line_head_img"
+                style={{
+                  objectFit: "fill",
+                  height: bg,
+                }}
+              ></img>
+            ) : (
+              <img
+                src={require("assets/img/mbk/logo_mbk.png").default}
+                alt="logo_mbk"
+                className=" w-48 mt-6 "
+                style={{
+                  display: "block",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+              ></img>
+            )}
+          </div>
         </div>
+        <Switch>
+          {getRoutes()}
+          <Redirect from="/line/" to="/line/register" />
+        </Switch>
       </div>
-      <Switch>
-        {getRoutes()}
-        <Redirect from="/" to="/line/privacypolicy" />
-      </Switch>
     </>
   );
 };

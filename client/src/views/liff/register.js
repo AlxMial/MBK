@@ -255,10 +255,12 @@ const Register = () => {
             }}
           >
             <div
+              className="fullheight"
               style={{
                 width: "100%",
                 backgroundColor: "#FFF",
                 height: "calc(100vh - 200px)",
+                minHeight: "450px",
                 borderRadius: "10px",
                 padding: "20px",
                 overflow: "scroll",

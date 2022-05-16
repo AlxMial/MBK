@@ -8,22 +8,27 @@ import { path } from "../../../layouts/Liff";
 import { IsNullOrEmpty } from "@services/default.service";
 import * as Session from "@services/Session.service";
 import moment from "moment";
+import Spinner from "components/Loadings/spinner/Spinner";
 // components
 
 const Member = () => {
   const history = useHistory();
+  const [isLoading, setIsLoading] = useState(false);
   const { TabPane } = Tabs;
   const tabsChange = () => {};
   const [tbMember, settbMember] = useState({});
   const getMembers = async () => {
+    setIsLoading(true);
     axios
       .post("/members/checkRegister", { uid: Session.getLiff().uid })
       .then((res) => {
-        console.log(res);
         if (res.data.code === 200) {
           settbMember(res.data.tbMember);
         } else {
         }
+      })
+      .finally((e) => {
+        setIsLoading(false);
       });
   };
   useEffect(() => {
@@ -32,6 +37,7 @@ const Member = () => {
   return (
     <>
       {/* card */}
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="noselect absolute w-full" style={{ marginTop: "-50px" }}>
         <div
           className=" flex margin-a"

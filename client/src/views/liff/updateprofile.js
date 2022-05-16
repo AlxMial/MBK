@@ -50,6 +50,7 @@ const Updateprofile = () => {
     setErrors(_errors);
   };
   const getMembers = async () => {
+    setIsLoading(true);
     axios
       .post("/members/checkRegister", { uid: Session.getLiff().uid })
       .then((res) => {
@@ -58,6 +59,9 @@ const Updateprofile = () => {
           settbMember(res.data.tbMember);
         } else {
         }
+      })
+      .finally((e) => {
+        setIsLoading(false);
       });
   };
   useEffect(() => {
