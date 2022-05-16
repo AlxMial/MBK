@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbMember, tbPointRegister } = require("../../models");
+const { tbMember, tbPointRegister ,tbMemberPoint} = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -288,6 +288,38 @@ router.post("/checkRegister", async (req, res) => {
     code: code,
     isRegister: isRegister,
     tbMember: members,
+  });
+});
+router.post("/GetMemberpoints", async (req, res) => {
+  let code = 500;
+  let memberpoints = 0;
+  let enddate = new Date(
+    new Date().getFullYear() + 2 + "-" + "12" + "-" + "31"
+  );
+  try {
+    let data = await tbMemberPoint.findAll({
+      where: { tbMemberId: Encrypt.DecodeKey(req.body.id), isDeleted: false },
+      order: [["redeemDate", "ASC"]],
+    });
+
+    if (data) {
+      const startdate = new Date(data[0].redeemDate);
+      enddate = new Date(
+        new Date(data[0].redeemDate.getFullYear() + 2 + "-" + "12" + "-" + "31")
+      );
+      data.filter((e) => {
+        if (e.redeemDate >= startdate && e.redeemDate <= enddate) {
+          memberpoints = memberpoints + e.point;
+        }
+      });
+    }
+    code = 200;
+  } catch {}
+
+  res.json({
+    code: code,
+    enddate: enddate,
+    memberpoints: memberpoints,
   });
 });
 
