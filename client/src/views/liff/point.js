@@ -24,6 +24,7 @@ const Point = () => {
         console.log(res);
         if (res.data.code === 200) {
           settbMember(res.data.tbMember);
+          getMemberpoints({ id: res.data.tbMember.id });
         } else {
         }
       });

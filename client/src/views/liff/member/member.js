@@ -135,7 +135,8 @@ import { useHistory } from "react-router-dom";
               </div>
             </div>
             <div className="absolute bottom-0 text-white font-bold text-xs ">
-              {"รหัสสมาชิก : " + tbMember.memberCard}
+              {/* {"รหัสสมาชิก : " + tbMember.memberCard + " "+ width  + " "+ height } */}
+              {"รหัสสมาชิก : " + tbMember.memberCard }
             </div>
           </div>
           <div className="relative" style={{ width: "50%", height: "100%" }}>

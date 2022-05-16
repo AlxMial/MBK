@@ -96,7 +96,7 @@ const generateCode = (req, res) => {
     }
     codeCoupon = req.body.pointCodeSymbol + "-" + codeCoupon;
     let ArrayCoupon = {
-      code: Encrypt.EncodeKey(codeCoupon),
+      code: Encrypt.EncodeKey(codeCoupon.toLocaleLowerCase()),
       tbPointCodeHDId: req.body.tbPointCodeHDId,
       memberId: null,
       isUse: 0,
