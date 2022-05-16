@@ -81,7 +81,7 @@ const Register = () => {
     otp: null,
   });
   const policyAllow = () => {
-    if (policy.policy1 && policy.policy2 && policy.policy3) {
+    if (policy.policy1 && policy.policy2) {
       setpage("otp");
       generate();
     }
@@ -942,8 +942,9 @@ const Register = () => {
               {"ยกเลิก"}
             </button>
             <button
-              className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+              className=" disableInput w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
               type="button"
+              disabled={(policy.policy1 && policy.policy2) ? false : true}
               style={{ width: "50%" }}
               onClick={policyAllow}
             >
