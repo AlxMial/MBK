@@ -32,18 +32,18 @@ export const DatePickerContainer = styled.div`
   }
 `;
 export const monthMap = {
-  1: "Jan",
-  2: "Feb",
-  3: "Mar",
-  4: "Apr",
-  5: "May",
-  6: "Jun",
-  7: "Jul",
-  8: "Aug",
-  9: "Sep",
-  10: "Oct",
-  11: "Nov",
-  12: "Dec",
+  1: "มกราคม",
+  2: "กุมภาพันธ์",
+  3: "มีนาคม",
+  4: "เมษายน",
+  5: "พฤษภาคม",
+  6: "มิถุนายน",
+  7: "กรกฎาคม",
+  8: "สิงหาคม",
+  9: "กันยายน",
+  10: "ตุลาคม",
+  11: "พฤศจิกายน",
+  12: "ธันวาคม",
 };
 export const InputUC = ({
   name,

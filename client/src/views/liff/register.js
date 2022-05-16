@@ -339,7 +339,7 @@ const Register = () => {
                     showHeader={false}
                     // showCaption={true}
                     min={new Date(1970, 0, 1)}
-                    max={new Date(new Date().setFullYear(new Date().getFullYear() - 12))}
+                    max={new Date(new Date().setFullYear(new Date().getFullYear() - 13))}
                     value={Data.birthDate}
                     dateConfig={{
                       year: {
