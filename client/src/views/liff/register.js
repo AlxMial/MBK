@@ -9,7 +9,7 @@ import { Radio } from "antd";
 import DatePicker from "react-mobile-datepicker";
 import moment from "moment";
 import { useToasts } from "react-toast-notifications";
-import { path } from "../../layouts/Liff";
+import { path } from "@services/liff.services";
 import {
   InputUC,
   SelectUC,
@@ -89,6 +89,7 @@ const Register = () => {
     generateref: null,
     otp: null,
     incorrect: false,
+    confirmotp: false,
   });
 
   const generate = () => {
@@ -122,40 +123,37 @@ const Register = () => {
     }));
   };
   const confirmotp = async () => {
-    let data = await senderValidate(
-      dataOTP.result.token,
-      otp.otp,
-      dataOTP.result.ref_code,
-      (e) => {
-        // console.log(e)
-        if (e.code === "000") {
-          DoSave();
-        } else {
-          setotp((prevState) => ({
-            ...prevState,
-            ["incorrect"]: true,
-          }));
+    if (!dataOTP.confirmotp) {
+      let data = await senderValidate(
+        dataOTP.result.token,
+        otp.otp,
+        dataOTP.result.ref_code,
+        (e) => {
+          if (e.code === "000") {
+            setdataOtp((prevState) => ({
+              ...prevState,
+              ["confirmotp"]: true,
+            }));
+            DoSave();
+          } else {
+            setotp((prevState) => ({
+              ...prevState,
+              ["incorrect"]: true,
+            }));
+          }
         }
-      }
-    );
-    // if (otp.otp == otp.generateOTP) {
-    //   // history.push(path.register);
-    //   DoSave();
-    //   // history.push(path.member);
-    // } else {
-    //   setotp((prevState) => ({
-    //     ...prevState,
-    //     ["incorrect"]: true,
-    //   }));
-    // }
+      );
+    } else {
+      DoSave();
+    }
   };
   const SenderOTP = async (phone) => {
-    // console.log("senderOTP : " + phone);
-    // axios.
     let data = await senderOTP(phone, otp.generateOTP, otp.generateref, (e) => {
       setdataOTP(e);
-      // console.log("dataOTP : ");
-      // console.log(dataOTP);
+      setdataOtp((prevState) => ({
+        ...prevState,
+        ["confirmotp"]: false,
+      }));
     });
   };
 
@@ -202,7 +200,6 @@ const Register = () => {
               [error.path]: true,
             };
           }, {});
-          console.log(errors);
           setErrors(errors);
         });
     }

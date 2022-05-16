@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { path } from "../../layouts/Liff";
+import { path } from "@services/liff.services";
 // components
 const Privacypolicy = () => {
   let history = useHistory();

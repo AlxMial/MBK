@@ -3,9 +3,13 @@ import Select from "react-select";
 import axios from "services/axios";
 import InputMask from "react-input-mask";
 import { useHistory } from "react-router-dom";
-import { path } from "../../layouts/Liff";
+import {
+  path,
+  checkRegister as apiCheckRegister,
+  listPointStore,
+} from "@services/liff.services";
 import { IsNullOrEmpty } from "@services/default.service";
-import * as Session from "@services/Session.service";
+// import * as Session from "@services/Session.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 // components
@@ -38,7 +42,6 @@ const GetReward = () => {
         code.push(e.code.replaceAll(" ", ""));
       }
     });
-    // setconfirmsucceed(true);
     if (code.length > 0) {
       setIsLoading(true);
       axios
@@ -87,21 +90,23 @@ const GetReward = () => {
     }
   };
   const getMembers = async () => {
-    axios
-      .post("/members/checkRegister", { uid: Session.getLiff().uid })
-      .then((res) => {
-        // console.log(res);
+    apiCheckRegister(
+      (res) => {
         if (res.data.code === 200) {
           settbMember(res.data.tbMember);
-        } else {
         }
-      });
+      },
+      () => {},
+      () => {
+        setIsLoading(false);
+      }
+    );
   };
 
   const getpointStore = async () => {
-    axios
-      .get("pointStore/listPointStore")
-      .then((res) => {
+    setIsLoading(true);
+    listPointStore(
+      (res) => {
         if (res.status) {
           let list = res.data.list;
           setoptionsStore(list);
@@ -115,10 +120,14 @@ const GetReward = () => {
           }
         } else {
         }
-      })
-      .catch((error) => {
-        addToast(error.message, { appearance: "warning", autoDismiss: true });
-      });
+      },
+      (e) => {
+        addToast(e.message, { appearance: "warning", autoDismiss: true });
+      },
+      () => {
+        setIsLoading(false);
+      }
+    );
   };
   useEffect(() => {
     getMembers();
@@ -187,7 +196,7 @@ const GetReward = () => {
                   <>
                     <div>
                       <label className="noselect block text-blueGray-600 text-sm font-bold mb-2">
-                        สาขา
+                        {"สาขา"}
                       </label>
                     </div>
                     <div>

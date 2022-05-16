@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import OtpInput from "react-otp-input";
 import { useHistory } from "react-router-dom";
 import InputMask from "react-input-mask";
-import { path } from "../../layouts/Liff";
+import { path } from "@services/liff.services";
 import * as Session from "@services/Session.service";
 // components
 

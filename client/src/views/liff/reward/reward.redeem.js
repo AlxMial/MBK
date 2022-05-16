@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "services/axios";
 import { useHistory } from "react-router-dom";
-import { path } from "../../../layouts/Liff";
+import { path } from "@services/liff.services";
 import { IsNullOrEmpty } from "@services/default.service";
 import * as Session from "@services/Session.service";
 import moment from "moment";

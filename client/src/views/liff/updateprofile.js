@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import axios from "services/axios";
-
-import * as Address from "@services/GetAddress.js";
-import * as Session from "@services/Session.service";
+import moment from "moment";
+import Spinner from "components/Loadings/spinner/Spinner";
+import { useToasts } from "react-toast-notifications";
 import { Radio } from "antd";
 import DatePicker from "react-mobile-datepicker";
-import moment from "moment";
-import { useToasts } from "react-toast-notifications";
-import { path } from "../../layouts/Liff";
+import * as Address from "@services/GetAddress.js";
+import {
+  path,
+  checkRegister as apiCheckRegister,
+  membersDpd,
+} from "@services/liff.services";
 import {
   InputUC,
   SelectUC,
@@ -16,7 +18,7 @@ import {
   DatePickerContainer,
   monthMap,
 } from "./profile";
-import Spinner from "components/Loadings/spinner/Spinner";
+
 
 const Updateprofile = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -51,18 +53,17 @@ const Updateprofile = () => {
   };
   const getMembers = async () => {
     setIsLoading(true);
-    axios
-      .post("/members/checkRegister", { uid: Session.getLiff().uid })
-      .then((res) => {
-        console.log(res);
+    apiCheckRegister(
+      (res) => {
         if (res.data.code === 200) {
           settbMember(res.data.tbMember);
-        } else {
         }
-      })
-      .finally((e) => {
+      },
+      () => {},
+      () => {
         setIsLoading(false);
-      });
+      }
+    );
   };
   useEffect(() => {
     address();
@@ -93,11 +94,10 @@ const Updateprofile = () => {
   };
   const DoSave = () => {
     setIsLoading(true);
-    axios
-      .put("members", Data)
-      .then((res) => {
+    membersDpd(
+      Data,
+      (res) => {
         let msg = { msg: "", appearance: "warning" };
-
         res.data.status
           ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
           : !res.data.isPhone
@@ -109,13 +109,14 @@ const Updateprofile = () => {
           : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
         addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
-      })
-      .catch((e) => {
+      },
+      (e) => {
         addToast(e.message, { appearance: "warning", autoDismiss: true });
-      })
-      .finally((e) => {
+      },
+      () => {
         setIsLoading(false);
-      });
+      }
+    );
   };
   return (
     <>
@@ -133,6 +134,7 @@ const Updateprofile = () => {
               width: "100%",
               backgroundColor: "#FFF",
               height: "calc(100vh - 200px)",
+              minHeight: "450px",
               borderRadius: "10px",
               padding: "20px",
               overflow: "scroll",
