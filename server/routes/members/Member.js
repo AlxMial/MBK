@@ -267,6 +267,19 @@ router.post("/checkRegister", async (req, res) => {
       members = member;
       isRegister = true;
       code = 200;
+
+      const client = new line.Client({
+        channelAccessToken: config.lineConfig.bearerToken,
+        channelSecret: config.lineConfig.channelSecret,
+      });
+
+      client
+        .linkRichMenuToUser(req.body.uid, config.lineConfig.menuMember)
+        .then((e) => {
+          console.log(e);
+        });
+
+        
     } else {
       isRegister = false;
       code = 200;
