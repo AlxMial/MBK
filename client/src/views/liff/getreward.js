@@ -137,7 +137,10 @@ const GetReward = () => {
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
+      <div
+        className="bg-green-mbk"
+        style={{ height: "calc(100vh - 100px)", minHeight: "500px" }}
+      >
         <div
           style={{
             width: "90%",
