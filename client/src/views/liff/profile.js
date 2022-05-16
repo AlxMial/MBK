@@ -54,6 +54,7 @@ export const InputUC = ({
   value,
   error,
   valid,
+  refs,
 }) => {
   return (
     <>
@@ -73,6 +74,7 @@ export const InputUC = ({
             maxLength={length}
             onChange={onChange}
             value={value}
+            ref={refs}
           />
         ) : (
           <InputMask
@@ -88,6 +90,7 @@ export const InputUC = ({
             mask={name == "phone" ? "099-999-9999" : "99999"}
             maskChar=" "
             autoComplete="InputMark"
+            ref={refs}
           />
         )}
         {error == true ? (

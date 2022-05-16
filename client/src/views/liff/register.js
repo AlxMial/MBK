@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { useHistory } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import axios from "services/axios";
@@ -19,7 +19,14 @@ import {
 } from "./profile";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
+
 const Register = () => {
+  //ref element
+  const inputFirstNameRef =  React.useRef();
+  const inputLastNameRef =  React.useRef();
+  const inputEmailRef =  React.useRef();
+  const inputPhoneRef =  React.useRef();
+
   let history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const { addToast } = useToasts();
@@ -183,6 +190,7 @@ const Register = () => {
     // confirmotp();
   }, []);
 
+
   const validation = async () => {
     const isFormValid = await validationSchema.isValid(Data, {
       abortEarly: false,
@@ -196,6 +204,17 @@ const Register = () => {
         })
         .catch((err) => {
           const errors = err.inner.reduce((acc, error) => {
+            console.log(error.path)
+            if (error.path === "firstName") {
+              inputFirstNameRef.current.focus();
+            } else if (error.path === "lastName") {
+              inputLastNameRef.current.focus();
+            } else if (error.path === "phone") {
+              console.log(inputPhoneRef);
+            } else if (error.path === "email") {
+              inputEmailRef.current.focus();
+            }
+             
             return {
               ...acc,
               [error.path]: true,
@@ -276,6 +295,7 @@ const Register = () => {
                 value={Data.firstName}
                 error={errors.firstName}
                 valid={true}
+                refs={inputFirstNameRef}
               />
               <InputUC
                 name="lastName"
@@ -286,6 +306,7 @@ const Register = () => {
                 value={Data.lastName}
                 error={errors.lastName}
                 valid={true}
+                refs={inputLastNameRef}
               />
               <InputUC
                 name="phone"
@@ -296,6 +317,7 @@ const Register = () => {
                 value={Data.phone}
                 error={errors.phone}
                 valid={true}
+                refs={inputPhoneRef}
               />
               <SelectUC
                 name="sex"
@@ -361,6 +383,7 @@ const Register = () => {
                 value={Data.email}
                 error={errors.email}
                 valid={true}
+                refs={inputEmailRef}
               />
               <div className="mb-5" style={{ display: "none" }}>
                 <Radio.Group
