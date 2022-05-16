@@ -3887,7 +3887,7 @@ input[type=email]:disabled {
 
 
 .OtpInput input {
-  width: 30px !important;
+  width: 60% !important;
   height: 30px;
   margin: 0 10px;
   border-top: transparent;
