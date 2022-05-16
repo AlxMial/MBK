@@ -155,14 +155,14 @@ const GetReward = () => {
                 style={{
                   width: "100%",
                   backgroundColor: "#FFF",
-                  height: "calc(100vh - 200px)",
+                  height: "calc(100vh - 270px)",
                   borderRadius: "10px",
                   marginTop: "2vh",
                   padding: "20px",
                 }}
               >
                 <div>
-                  <label className="noselect block text-blueGray-600 text-sm font-bold mb-2">
+                  <label className="noselect block text-blueGray-600 text-sm font-bold mb-2 mt-2">
                     ร้านค้า
                   </label>
                 </div>
@@ -223,8 +223,7 @@ const GetReward = () => {
                   className="overflow-y-auto"
                   style={{
                     // overflow: "scroll",
-                    height:
-                      "calc(100% - " + (!isbranch ? "200px" : "270px") + ")",
+                    height: "calc(100% - " + (!isbranch ? "200px" : "270px") + ")",
                     marginTop: "0.5rem",
                   }}
                 >

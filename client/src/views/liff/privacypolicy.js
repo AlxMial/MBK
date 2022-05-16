@@ -22,7 +22,6 @@ const Privacypolicy = () => {
   };
   const allow = () => {
     ///
-    console.log(Data);
     history.push(path.otp);
   };
   return (
