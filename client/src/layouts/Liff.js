@@ -45,7 +45,7 @@ const initLine = (callback, setView) => {
 const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "U6b3d60554e5e109f99258abfd9293689",
+      uid: "",
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();

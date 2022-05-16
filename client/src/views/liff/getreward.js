@@ -11,6 +11,7 @@ import {
 import { IsNullOrEmpty } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
+import { styleSelectLine } from "assets/styles/theme/ReactSelect";
 // components
 
 const GetReward = () => {
@@ -33,6 +34,7 @@ const GetReward = () => {
   const [succeedData, setsucceedData] = useState([]);
 
   const [confirmsucceed, setconfirmsucceed] = useState(false);
+  const useStyle = styleSelectLine();
   const confirmreward = () => {
     /// check api
     let code = [];
@@ -166,9 +168,7 @@ const GetReward = () => {
                 </div>
                 <div>
                   <Select
-                    className="select-line border-0  py-1  text-gray-mbk bg-white text-base 
-                     w-full ease-linear transition-all duration-150"
-                    style={{ borderBottom: "1px solid #d6d6d6" }}
+                    className="text-gray-mbk text-sm w-full border-none"
                     isSearchable={false}
                     id={"store"}
                     name={"store"}
@@ -188,21 +188,20 @@ const GetReward = () => {
                     }}
                     value={optionsStore.filter((e) => e.value === valueStore)}
                     options={optionsStore}
+                    styles={useStyle}
                   />
                 </div>
 
                 {isbranch ? (
                   <>
                     <div>
-                      <label className="noselect block text-blueGray-600 text-sm font-bold mb-2">
+                      <label className="noselect block text-blueGray-600 text-sm font-bold mb-2 mt-2">
                         {"สาขา"}
                       </label>
                     </div>
                     <div>
                       <Select
-                        className="select-line border-0  py-1  text-gray-mbk bg-white text-base 
-                         w-full ease-linear transition-all duration-150"
-                        style={{ borderBottom: "1px solid #d6d6d6" }}
+                        className="text-gray-mbk text-sm w-full border-none"
                         isSearchable={false}
                         id={"branch"}
                         name={"branch"}
@@ -214,15 +213,16 @@ const GetReward = () => {
                           (e) => e.value === valueBranch
                         )}
                         options={optionsbranch}
+                        styles={useStyle}
                       />
                     </div>
                   </>
                 ) : null}
 
                 <div
-                  className="line-scroll"
+                  className="overflow-y-auto"
                   style={{
-                    overflow: "scroll",
+                    // overflow: "scroll",
                     height:
                       "calc(100% - " + (!isbranch ? "200px" : "270px") + ")",
                     marginTop: "0.5rem",
@@ -257,13 +257,13 @@ const GetReward = () => {
                       }
                     }
                     return (
-                      <div className="flex mt-5" key={i}>
+                      <div className="flex mt-4 mb-4  " key={i}>
                         <div
-                          className="noselect bg-green-mbk relative circle"
+                          className="noselect bg-green-mbk relative circle margin-auto-t-b"
                           style={{
-                            width: "40px",
-                            height: "40px",
-                            lineHeight: "40px",
+                            width: "35px",
+                            height: "30px",
+                            lineHeight: "29px",
                           }}
                         >
                           <span
@@ -273,13 +273,13 @@ const GetReward = () => {
                             {i + 1}
                           </span>
                         </div>
-                        <div className="noselect px-5 w-full">
+                        <div className="noselect pl-2 w-full margin-auto-t-b">
                           <InputMask
                             className={
                               (e.state === true
                                 ? " pointer-events-none "
                                 : "") +
-                              " line-input border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-base  focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                              " line-input border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                             }
                             value={e.code}
                             name={"code-" + (i + 1)}
@@ -321,10 +321,12 @@ const GetReward = () => {
                       fontSize: "2.5rem",
                     }}
                     onClick={() => {
-                      setrewardCode((oldArray) => [
-                        ...oldArray,
-                        { index: oldArray.length, code: "", state: null },
-                      ]);
+                      if (rewardCode.length <= 9) {
+                        setrewardCode((oldArray) => [
+                          ...oldArray,
+                          { index: oldArray.length, code: "", state: null },
+                        ]);
+                      }
                     }}
                   >
                     <i className="fas fa-plus-circle text-green-mbk"></i>

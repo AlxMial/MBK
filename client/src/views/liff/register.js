@@ -18,6 +18,7 @@ import {
   monthMap,
 } from "./profile";
 import Spinner from "components/Loadings/spinner/Spinner";
+import { styleSelectLine } from "assets/styles/theme/ReactSelect";
 const Register = () => {
   let history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
@@ -263,13 +264,13 @@ const Register = () => {
                 overflow: "scroll",
               }}
             >
-              <div className="flex text-green-mbk font-bold text-lg mb-2">
+              <div className="flex text-green-mbk font-bold text-lg mb-4">
                 {"สมัครสมาชิก"}
               </div>
               <InputUC
                 name="firstName"
                 lbl="ชื่อ"
-                length={255}
+                length={100}
                 type="text"
                 onChange={handleChange}
                 value={Data.firstName}
@@ -279,7 +280,7 @@ const Register = () => {
               <InputUC
                 name="lastName"
                 lbl="นามสกุล"
-                length={255}
+                length={100}
                 type="text"
                 onChange={handleChange}
                 value={Data.lastName}
@@ -290,6 +291,7 @@ const Register = () => {
                 name="phone"
                 lbl="เบอร์โทร"
                 type="tel"
+                length={10}
                 onChange={handleChange}
                 value={Data.phone}
                 error={errors.phone}

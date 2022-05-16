@@ -3,9 +3,12 @@ import InputMask from "react-input-mask";
 import Select from "react-select";
 import * as Yup from "yup";
 import styled from "styled-components";
+import { styleSelectLine } from "assets/styles/theme/ReactSelect";
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const EmailRegExp = /^[A-Za-z0-9_.@]+$/;
+const useStyle = styleSelectLine();
+
 export const validationSchema = Yup.object({
   firstName: Yup.string().required("* กรุณากรอก ชื่อ"),
   lastName: Yup.string().required("* กรุณากรอก นามสกุล"),
@@ -57,12 +60,12 @@ export const InputUC = ({
       <div className="mb-5">
         <div className="noselect flex text-green-mbk font-bold text-sm ">
           {lbl}{" "}
-          {valid == true ? <span style={{ color: "red" }}>{" *"}</span> : null}
+          {valid == true ? <span className="ml-1" style={{ color: "red" }}>{" *"}</span> : null}
         </div>
         {type == "text" ? (
           <input
             type={type}
-            className="border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white text-sm  focus:outline-none w-full ease-linear transition-all duration-150"
+            className="border-0 px-2 pt-2 placeholder-blueGray-300 text-gray-mbk bg-white text-sm w-full "
             style={{ borderBottom: "1px solid #d6d6d6" }}
             id={name}
             name={name}
@@ -74,7 +77,7 @@ export const InputUC = ({
         ) : (
           <InputMask
             className={
-              "border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  focus:line-outline-none  w-full ease-linear transition-all duration-150"
+              "border-0 px-2 py-1 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  focus:line-outline-none  w-full ease-linear transition-all duration-150"
             }
             style={{ borderBottom: "1px solid #d6d6d6" }}
             value={value}
@@ -102,16 +105,18 @@ export const SelectUC = ({ name, lbl, onChange, options, value }) => {
         <div className="noselect flex text-green-mbk font-bold text-sm ">
           {lbl}
         </div>
+      
+
         <Select
+          className="text-gray-mbk text-sm w-full border-none"
           isSearchable={false}
-          className="select-line border-0  py-1  text-gray-mbk bg-white text-sm  focus:line-outline-none w-full ease-linear transition-all duration-150"
-          style={{ borderBottom: "1px solid #d6d6d6" }}
           id={name}
           name={name}
           placeholder={lbl}
           onChange={onChange}
           value={options.filter((e) => e.value === value)}
           options={options}
+          styles={useStyle}
         />
       </div>
     </>
