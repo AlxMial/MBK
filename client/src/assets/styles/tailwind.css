@@ -4110,7 +4110,9 @@ border-radius: 10px;
 }
 
 
-@media only screen and (max-width: 1024px) {}
+@media only screen and (max-width: 1024px) {
+
+}
 
 @media only screen and (max-width: 912px) {
   .mobile {
@@ -4182,6 +4184,10 @@ border-radius: 10px;
   .Overflow-list{
     height: 65vh; 
     /* overflow-y: auto; */
+  }
+  .liff-member{
+    width:70%;
+    height:100%;
   }
 }
 
@@ -4262,5 +4268,9 @@ border-radius: 10px;
   .Overflow-info{
     height: 70vh;
     overflow-y: auto;
+  }
+  .liff-member{
+    width:80%;
+    height:100%;
   }
 }

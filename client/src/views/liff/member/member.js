@@ -60,11 +60,11 @@ const Member = () => {
             backgroundSize: "cover",
           }}
         >
-          <div className="relative" style={{ width: "70%", height: "100%" }}>
+          <div className="relative liff-member" >
             <div className="flex">
               <div style={{ width: "30%" }}>
                 <img
-                  src={Session.getLiff().pictureUrl}
+                  src={(Session.getLiff().pictureUrl) ? Session.getLiff().pictureUrl : require("assets/img/mbk/user-no-profile.png").default}
                   alt="..."
                   className="w-15 h-15 rounded-full border-2 border-blueGray-50 shadow"
                 ></img>

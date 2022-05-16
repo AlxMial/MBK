@@ -168,7 +168,7 @@ const LiffAPP = () => {
                 alt="line_head_img"
                 style={{
                   objectFit: "fill",
-                  height: bg,
+                  // height: bg,
                 }}
               ></img>
             ) : (
