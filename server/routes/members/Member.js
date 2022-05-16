@@ -278,8 +278,6 @@ router.post("/checkRegister", async (req, res) => {
         .then((e) => {
           console.log(e);
         });
-
-        
     } else {
       isRegister = false;
       code = 200;
