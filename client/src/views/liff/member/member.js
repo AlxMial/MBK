@@ -93,6 +93,7 @@ import { useHistory } from "react-router-dom";
                 <div
                   className="mt-2 font-bold text-green-mbk"
                   style={{
+                    fontSize:'0.7rem',
                     backgroundColor:
                       tbMember.memberType === "1"
                         ? "#cbe8ba"
@@ -106,8 +107,7 @@ import { useHistory } from "react-router-dom";
                         ? "#929292"
                         : "#d0af2c",
                     borderRadius: "20px",
-                    paddingLeft: "10px",
-                    paddingRight: "10px",
+                    padding:'2px 10px'
                   }}
                 >
                   {tbMember.memberType === "1"
@@ -154,7 +154,7 @@ import { useHistory } from "react-router-dom";
                     alt="..."
                     className="w-5 h-5 rounded-full border-2 border-blueGray-50 shadow"
                   ></img>
-                  <span className="text-white font-bold text-lg px-2 ">
+                  <span className="text-white font-bold text-lg pl-2 ">
                     {tbMember.memberPoint === null ? 0 : tbMember.memberPoint}
                   </span>
                 </div>

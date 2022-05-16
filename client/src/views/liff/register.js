@@ -981,8 +981,9 @@ const Register = () => {
                 {"รหัส OTP จะถูกส่งเป็น SMS ไปที่"}
               </div>
               <div className="flex text-gray-mbk text-2xs font-bold justify-center">
-                {"หมายเลข  " + Data.phone + "(" + otp.generateOTP + ")"}
+                {"หมายเลข  " + Data.phone } 
               </div>
+                {/* + "(" + otp.generateOTP + ")" */}
               <div className="flex text-gray-mbk text-2xs font-bold justify-center">
                 {"Referance No. " + otp.generateref}
               </div>

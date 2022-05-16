@@ -4305,3 +4305,11 @@ border-radius: 10px;
     height:100%;
   }
 }
+
+@media only screen and (max-width: 320px) {
+
+  .liff-member{
+    width:90%;
+    height:100%;
+  }
+}

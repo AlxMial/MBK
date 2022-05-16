@@ -259,7 +259,7 @@ const GetReward = () => {
                     }
                     return (
                       <div className="flex mt-4 mb-4  " key={i}>
-                        <div
+                        {/* <div
                           className="noselect bg-green-mbk relative circle margin-auto-t-b"
                           style={{
                             width: "35px",
@@ -273,8 +273,8 @@ const GetReward = () => {
                           >
                             {i + 1}
                           </span>
-                        </div>
-                        <div className="noselect pl-2 w-full margin-auto-t-b">
+                        </div> */}
+                        <div className="noselect  w-full margin-auto-t-b">
                           <InputMask
                             className={
                               (e.state === true
@@ -296,7 +296,7 @@ const GetReward = () => {
 
                               setrewardCode(item);
                             }}
-                            placeholder={"XXX-XXXXXXXXXXXXXXXX"}
+                            placeholder={"รหัสที่ "+ (i+1)}
                             // mask={"***-****************"}
                             maskChar=" "
                             disabled={e.state ? true : false}
@@ -320,7 +320,7 @@ const GetReward = () => {
                       height: "40px",
                       lineHeight: "40px",
                       margin: "auto",
-                      fontSize: "2.5rem",
+                      fontSize: "2rem",
                     }}
                     onClick={() => {
                       if (rewardCode.length <= 9) {
