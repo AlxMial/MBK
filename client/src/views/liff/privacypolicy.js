@@ -41,10 +41,7 @@ const Privacypolicy = () => {
         </div>
         <div style={{ width: "90%", margin: "auto" }}>
           <div className="mt-5">
-            <label
-              className=" items-center cursor-pointer"
-              //   onClick={handleChange}
-            >
+            <label className="inline-flex items-center cursor-pointer">
               <input
                 id="remember"
                 type="checkbox"
@@ -52,15 +49,22 @@ const Privacypolicy = () => {
                 className="form-checkbox border-2 rounded text-gold-mbk ml-1 w-5 h-5 ease-linear transition-all duration-150"
                 onChange={handleChange}
                 checked={Data.policy1}
+                style={{alignSelf: 'stretch'}}
               />
               <span
                 className="ml-2 text-sm font-normal text-white"
                 style={{ whiteSpace: "pre-wrap" }}
               >
                 {
-                  "ข้าพเจ้าได้อ่านและยอมรับ ข้อกำหนดและเงื่อนไข\nI have read and agree with the Terms and Conditions"
+                  "ข้าพเจ้าได้อ่านและยอมรับ ข้อกำหนดและเงื่อนไข"
                 }
+                <span style={{fontSize:'0.745rem'}}>{"\nI have read and agree with the Terms and Conditions"} </span>
               </span>
+            </label>
+  
+            <label className="inline-flex items-center cursor-pointer">
+                
+            
             </label>
           </div>
           <div className="mt-5">
@@ -72,14 +76,16 @@ const Privacypolicy = () => {
                 className="form-checkbox border-2 rounded text-gold-mbk ml-1 w-5 h-5 ease-linear transition-all duration-150"
                 onChange={handleChange}
                 checked={Data.policy2}
+                style={{alignSelf: 'stretch'}}
               />
               <span
                 className="ml-2 text-sm font-normal text-white"
                 style={{ whiteSpace: "pre-wrap" }}
               >
                 {
-                  " ข้าพเจ้าได้อ่านและยอมรับ นโยบายความเป็นส่วนตัว\nI have read and agree with the Privacy Policy."
+                  "ข้าพเจ้าได้อ่านและยอมรับ นโยบายความเป็นส่วนตัว"
                 }
+                <span style={{fontSize:'0.745rem'}}>{"\nI have read and agree with the Privacy Policy."} </span>
               </span>
             </label>
           </div>
@@ -92,14 +98,16 @@ const Privacypolicy = () => {
                 className="form-checkbox border-2 rounded text-gold-mbk ml-1 w-5 h-5 ease-linear transition-all duration-150"
                 onChange={handleChange}
                 checked={Data.policy3}
+                style={{alignSelf: 'stretch'}}
               />
               <span
                 className="ml-2 text-sm font-normal text-white"
                 style={{ whiteSpace: "pre-wrap" }}
               >
                 {
-                  "เพื่อรับข่าวสารล่าสุด และข้อมูลโปรโมชั่นต่าง ๆ \nTo receive special promotion and update news. "
+                  "เพื่อรับข่าวสารล่าสุด และข้อมูลโปรโมชั่นต่าง ๆ"
                 }
+                <span style={{fontSize:'0.745rem'}}>{"\nTo receive special promotion and update news."} </span>
               </span>
             </label>
           </div>

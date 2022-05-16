@@ -137,10 +137,7 @@ const GetReward = () => {
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div
-        className="bg-green-mbk"
-        style={{ height: "calc(100vh - 100px)", minHeight: "500px" }}
-      >
+      <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
         <div
           style={{
             width: "90%",
@@ -159,10 +156,10 @@ const GetReward = () => {
                   width: "100%",
                   backgroundColor: "#FFF",
                   height: "calc(100vh - 270px)",
+                  minHeight:'500px',
                   borderRadius: "10px",
                   marginTop: "2vh",
                   padding: "20px",
-                  minHeight:'500px',
                 }}
               >
                 <div>
@@ -227,7 +224,7 @@ const GetReward = () => {
                   className="overflow-y-auto"
                   style={{
                     // overflow: "scroll",
-                    minHeight:'500px',
+                    // minHeight:'500px',
                     height: "calc(100% - " + (!isbranch ? "200px" : "270px") + ")",
                     marginTop: "0.5rem",
                   }}
