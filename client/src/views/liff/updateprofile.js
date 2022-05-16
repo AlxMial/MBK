@@ -163,6 +163,9 @@ const Updateprofile = () => {
               overflow: "scroll",
             }}
           >
+             <div className="flex text-green-mbk font-bold text-lg mb-4">
+                {"ข้อมูลสมาชิก"}
+              </div>
             <InputUC
               name="firstName"
               lbl="ชื่อ"
