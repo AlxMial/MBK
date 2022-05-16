@@ -296,7 +296,9 @@ router.post("/GetMemberpoints", async (req, res) => {
   let enddate = new Date(
     new Date().getFullYear() + 2 + "-" + "12" + "-" + "31"
   );
+
   try {
+    code = 200;
     let data = await tbMemberPoint.findAll({
       where: { tbMemberId: Encrypt.DecodeKey(req.body.id), isDeleted: false },
       order: [["redeemDate", "ASC"]],
@@ -313,8 +315,10 @@ router.post("/GetMemberpoints", async (req, res) => {
         }
       });
     }
-    code = 200;
-  } catch {}
+    
+  } catch {
+
+  }
 
   res.json({
     code: code,
