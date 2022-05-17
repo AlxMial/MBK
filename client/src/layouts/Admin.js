@@ -24,11 +24,13 @@ import StockInfo from "views/admin/ecommerce/stock/StockInfo";
 import StockList from "views/admin/ecommerce/stock/Stocklist";
 import empty from "views/empty";
 import SettingShop from "views/admin/ecommerce/settingShop";
+import ContentLoader from "components/Loadings/contentLoader";
 
 export default function Admin() {
   const { height, width } = useWindowDimensions();
   return (
     <>
+      <ContentLoader />
       <Sidebar />
       <div className="relative md:ml-72 bg-blueGray-100 ">
         <AdminNavbar />

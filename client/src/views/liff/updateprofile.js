@@ -248,7 +248,7 @@ const Updateprofile = () => {
                       step: 1,
                     },
                   }}
-                 
+
                   // onChange={(e) => {
                   //   settbMember((prevState) => ({
                   //     ...prevState,
@@ -367,6 +367,13 @@ const Updateprofile = () => {
               value={Data.postcode}
               error={errors.postcode}
             />
+            <div
+              className="relative  px-4  flex-grow flex-1 flex mt-5 text-2xs"
+              style={{ color: "red" }}
+            >
+              หมายเหตุ หากลูกค้าต้องการแก้ข้อมูลเพิ่มเติม สามาติดต่อได้ที่
+              02-xxx-xxxx
+            </div>
 
             <div className="relative  px-4  flex-grow flex-1 flex mt-5">
               <button
