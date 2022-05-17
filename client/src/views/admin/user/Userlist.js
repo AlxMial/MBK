@@ -174,7 +174,11 @@ export default function UserList() {
               ข้อมูลผู้ดูแลระบบ
             </span>
           </div>
-          <div className={"relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white Overflow-list"}>
+          <div
+            className={
+              "relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white Overflow-list"
+            }
+          >
             <div className="rounded-t mb-0 px-4 py-3 border-0">
               <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
                 <div className="lg:w-6/12">
@@ -367,7 +371,9 @@ export default function UserList() {
                               onChange={handleChange}
                               className="form-checkbox rounded text-green-200-mju w-5 h-5 ease-linear transition-all duration-150"
                             /> */}
-                            <span className="px-4 margin-a">{pagesVisited+key + 1}</span>
+                            <span className="px-4 margin-a">
+                              {pagesVisited + key + 1}
+                            </span>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link
@@ -431,7 +437,7 @@ export default function UserList() {
                               onClick={(e) => {
                                 localStorage.getItem("user") === value.userName
                                   ? e.preventDefault()
-                                  : openModalSubject(value.id,value.userName);
+                                  : openModalSubject(value.id, value.userName);
                               }}
                             ></i>
                           </td>
@@ -455,18 +461,25 @@ export default function UserList() {
                 }}
               />
             </div>
-            <div className="py-4 px-4">
-              <ReactPaginate
-                previousLabel={" < "}
-                nextLabel={" > "}
-                pageCount={pageCount}
-                onPageChange={changePage}
-                containerClassName={"paginationBttns"}
-                previousLinkClassName={"previousBttn"}
-                nextLinkClassName={"nextBttn"}
-                disabledClassName={"paginationDisabled"}
-                activeClassName={"paginationActive"}
-              />
+            <div className="px-4">
+              <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
+                <div className="lg:w-6/12 font-bold"        style={{ alignSelf: "stretch" }}>
+                {((pagesVisited+10) > listUser.length ? listUser.length : (pagesVisited+10))} {"/"}{listUser.length} {" "}รายการ
+                </div>
+                <div className="lg:w-6/12">
+                  <ReactPaginate
+                    previousLabel={" < "}
+                    nextLabel={" > "}
+                    pageCount={pageCount}
+                    onPageChange={changePage}
+                    containerClassName={"paginationBttns"}
+                    previousLinkClassName={"previousBttn"}
+                    nextLinkClassName={"nextBttn"}
+                    disabledClassName={"paginationDisabled"}
+                    activeClassName={"paginationActive"}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

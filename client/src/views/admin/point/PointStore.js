@@ -85,10 +85,7 @@ export default function PointStore() {
       setlistStore(listSearch);
     } else {
       setlistStore(
-        listStore.filter(
-          (x) =>
-            x.pointStoreName.toLowerCase().includes(e)
-        )
+        listStore.filter((x) => x.pointStoreName.toLowerCase().includes(e))
       );
     }
   };
@@ -113,7 +110,7 @@ export default function PointStore() {
         axios.post("pointStore", values).then((res) => {
           if (res.data.status) {
             formik.values.id = res.data.tbPointStoreHD.id;
-            setIsNew(false)
+            setIsNew(false);
             fetchData();
             addToast(
               Storage.GetLanguage() === "th"
@@ -331,19 +328,15 @@ export default function PointStore() {
                                     value={formik.values.pointStoreName}
                                     autoComplete="pointStoreName"
                                   />
-                            
                                 </div>
                                 <div
                                   className={
                                     "w-full lg:w-1/12 margin-auto-t-b" +
                                     (width < 1024 ? " px-4" : " ")
                                   }
-                                >
-                                  
-                                </div>
+                                ></div>
                                 <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
-                                  
-                                {formik.touched.pointStoreName &&
+                                  {formik.touched.pointStoreName &&
                                   formik.errors.pointStoreName ? (
                                     <div className="text-sm pt-2 px-2 text-red-500">
                                       {formik.errors.pointStoreName}
@@ -351,7 +344,7 @@ export default function PointStore() {
                                   ) : null}
                                 </div>
                               </div>
-                            
+
                               <div className="w-full px-24">
                                 <div
                                   className={
@@ -516,7 +509,9 @@ export default function PointStore() {
                     return (
                       <tr key={key}>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8">
-                          <span className="px-4 margin-a">{pagesVisited+key + 1}</span>
+                          <span className="px-4 margin-a">
+                            {pagesVisited + key + 1}
+                          </span>
                         </td>
                         <td
                           onClick={() => {
@@ -550,18 +545,28 @@ export default function PointStore() {
               }}
             />
           </div>
-          <div className="py-4 px-4">
-            <ReactPaginate
-              previousLabel={" < "}
-              nextLabel={" > "}
-              pageCount={pageCount}
-              onPageChange={changePage}
-              containerClassName={"paginationBttns"}
-              previousLinkClassName={"previousBttn"}
-              nextLinkClassName={"nextBttn"}
-              disabledClassName={"paginationDisabled"}
-              activeClassName={"paginationActive"}
-            />
+          <div className="px-4">
+            <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
+              <div
+                className="lg:w-6/12 font-bold"
+                style={{ alignSelf: "stretch" }}
+              >
+                {((pagesVisited+10) > listStore.length ? listStore.length : (pagesVisited+10))} {"/"}{listStore.length} รายการ
+              </div>
+              <div className="lg:w-6/12">
+                <ReactPaginate
+                  previousLabel={" < "}
+                  nextLabel={" > "}
+                  pageCount={pageCount}
+                  onPageChange={changePage}
+                  containerClassName={"paginationBttns"}
+                  previousLinkClassName={"previousBttn"}
+                  nextLinkClassName={"nextBttn"}
+                  disabledClassName={"paginationDisabled"}
+                  activeClassName={"paginationActive"}
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

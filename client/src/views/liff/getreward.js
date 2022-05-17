@@ -221,9 +221,9 @@ const GetReward = () => {
                           styles={useStyle}
                         />
                       </div>
+                      <div className="mb-4"></div>
                     </>
                   ) : null}
-
                   <div
                     className=""
                     style={{
@@ -264,7 +264,7 @@ const GetReward = () => {
                         }
                       }
                       return (
-                        <div className="flex mt-4 mb-4  " key={i}>
+                        <div className="flex mt-2" key={i}>
                           {/* <div
                           className="noselect bg-green-mbk relative circle margin-auto-t-b"
                           style={{
@@ -309,8 +309,12 @@ const GetReward = () => {
                             />
 
                             {!IsNullOrEmpty(_succeedData) || e.state ? (
-                              <div className="absolute text-xs ">
-                                <i class={msg.icon}>{msg.msg}</i>
+                              <div className="text-xs pt-2 px-2 Noto Sans">
+                                <i class={msg.icon}></i>
+                                <span className="font-bold text-red-500">
+                                  {" "}
+                                  {msg.msg}
+                                </span>
                               </div>
                             ) : null}
                           </div>
@@ -318,50 +322,49 @@ const GetReward = () => {
                       );
                     })}
                     <div className="noselect relative  px-4  flex-grow flex-1 mt-2">
-                  <div
-                    style={{
-                      width: "40px",
-                      height: "40px",
-                      lineHeight: "40px",
-                      margin: "auto",
-                      fontSize: "2rem",
-                    }}
-                    onClick={() => {
-                      if (rewardCode.length <= 9) {
-                        setrewardCode((oldArray) => [
-                          ...oldArray,
-                          { index: oldArray.length, code: "", state: null },
-                        ]);
-                      }
-                    }}
-                  >
-                    <i className="fas fa-plus-circle text-green-mbk"></i>
-                  </div>
-                  <div className="relative  px-4  flex-grow flex-1 flex mt-1">
-                    <button
-                      className=" w-6\/12 text-gray-mbk  font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                      type="button"
-                      style={{ width: "50%" }}
-                      onClick={() => {
-                        // history.push(path.member);
-                        history.goBack();
-                      }}
-                    >
-                      {"ยกเลิก"}
-                    </button>
-                    <button
-                      className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                      type="button"
-                      style={{ width: "50%" }}
-                      onClick={confirmreward}
-                    >
-                      {"ตกลง"}
-                    </button>
+                      <div
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          lineHeight: "40px",
+                          margin: "auto",
+                          fontSize: "2rem",
+                        }}
+                        onClick={() => {
+                          if (rewardCode.length <= 9) {
+                            setrewardCode((oldArray) => [
+                              ...oldArray,
+                              { index: oldArray.length, code: "", state: null },
+                            ]);
+                          }
+                        }}
+                      >
+                        <i className="fas fa-plus-circle text-green-mbk"></i>
+                      </div>
+                      <div className="relative  px-4  flex-grow flex-1 flex mt-1">
+                        <button
+                          className=" w-6\/12 text-gray-mbk  font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                          type="button"
+                          style={{ width: "50%" }}
+                          onClick={() => {
+                            // history.push(path.member);
+                            history.goBack();
+                          }}
+                        >
+                          {"ยกเลิก"}
+                        </button>
+                        <button
+                          className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                          type="button"
+                          style={{ width: "50%" }}
+                          onClick={confirmreward}
+                        >
+                          {"ตกลง"}
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                  </div>
-                </div>
-                
               </div>
             </>
           ) : (

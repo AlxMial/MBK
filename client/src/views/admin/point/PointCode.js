@@ -1911,19 +1911,26 @@ export default function PointCode() {
               }}
             />
           </div>
-          <div className="py-4 px-4">
-            <ReactPaginate
-              previousLabel={" < "}
-              nextLabel={" > "}
-              pageCount={pageCount}
-              onPageChange={changePage}
-              containerClassName={"paginationBttns"}
-              previousLinkClassName={"previousBttn"}
-              nextLinkClassName={"nextBttn"}
-              disabledClassName={"paginationDisabled"}
-              activeClassName={"paginationActive"}
-            />
-          </div>
+          <div className="px-4">
+              <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
+                <div className="lg:w-6/12 font-bold" style={{ alignSelf: "stretch" }}>
+                {((pagesVisited+10) > listPointCode.length ? listPointCode.length : (pagesVisited+10))} {"/"}{listPointCode.length} {" "}รายการ
+                </div>
+                <div className="lg:w-6/12">
+                  <ReactPaginate
+                    previousLabel={" < "}
+                    nextLabel={" > "}
+                    pageCount={pageCount}
+                    onPageChange={changePage}
+                    containerClassName={"paginationBttns"}
+                    previousLinkClassName={"previousBttn"}
+                    nextLinkClassName={"nextBttn"}
+                    disabledClassName={"paginationDisabled"}
+                    activeClassName={"paginationActive"}
+                  />
+                </div>
+              </div>
+            </div>
         </div>
       </div>
       {/* <ConfirmEdit
