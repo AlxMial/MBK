@@ -164,6 +164,7 @@ export default function PointCode() {
   ];
 
   const InputSearch = (e) => {
+    e = e.toLowerCase();
     if (e === "") {
       setListPointCode(listSearch);
     } else {
@@ -171,9 +172,9 @@ export default function PointCode() {
         listPointCode.filter(
           (x) =>
             x.pointCodeName.toLowerCase().includes(e) ||
-            x.pointCodeSymbol.toLowerCase().includes(e) ||
+            (x.pointCodeSymbol === null ? "" : x.pointCodeSymbol).toLowerCase().includes(e) || 
             x.pointCodePoint.toString().includes(e) ||
-            x.pointCodeQuantityCode.toString().includes(e) ||
+            (x.pointCodeQuantityCode=== null ? "" : x.pointCodeQuantityCode).toString().includes(e) ||
             x.isActive.toLowerCase().toString().includes(e) ||
             x.useCount.toString().includes(e)
         )

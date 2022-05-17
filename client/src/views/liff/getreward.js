@@ -152,17 +152,20 @@ const GetReward = () => {
                 {"กรองโค้ดเพื่อสะสมคะแนน"}
               </div>
               <div
+                className="overflow-y-auto liff-minHeight"
                 style={{
                   width: "100%",
                   backgroundColor: "#FFF",
-                  height: "calc(100vh - 270px)",
-                  minHeight: "400px",
+                  //height: "calc(100vh - 270px)",
+                  // height:"450px",
+                  // minHeight:"450px",
+                  // maxHeight: "100%",
                   borderRadius: "10px",
                   marginTop: "2vh",
                   padding: "20px",
                 }}
               >
-                <div className="overflow-y-auto liff-Reward-height" >
+                <div className=" liff-Reward-height">
                   <div>
                     <label className="noselect block text-blueGray-600 text-sm font-bold mb-2 mt-2">
                       ร้านค้า
@@ -221,47 +224,48 @@ const GetReward = () => {
                     </>
                   ) : null}
 
-                <div
-                  className=""
-                  style={{
-                    // overflow: "scroll",
-                    // minHeight:'500px',
-                    height:
-                      "calc(100% - " + (!isbranch ? "200px" : "270px") + ")",
-                    marginTop: "0.5rem",
-                  }}
-                >
-                  {[...rewardCode].map((e, i) => {
-                    let _succeedData = succeedData.find(
-                      (item) =>
-                        item.coupon == e.code.replaceAll(" ", "").toUpperCase()
-                    );
-                    let msg = {
-                      msg: "",
-                      icon: "fas fa-times-circle text-red-500",
-                    };
-                    if (e.state === true) {
-                      msg = {
-                        msg: "กรอก Code สำเร็จ",
-                        icon: "fas fa-check-circle text-green-mbk",
+                  <div
+                    className=""
+                    style={{
+                      // overflow: "scroll",
+                      // minHeight:'500px',
+                      height:
+                        "calc(100% - " + (!isbranch ? "200px" : "270px") + ")",
+                      marginTop: "0.5rem",
+                    }}
+                  >
+                    {[...rewardCode].map((e, i) => {
+                      let _succeedData = succeedData.find(
+                        (item) =>
+                          item.coupon ==
+                          e.code.replaceAll(" ", "").toUpperCase()
+                      );
+                      let msg = {
+                        msg: "",
+                        icon: "fas fa-times-circle text-red-500",
                       };
-                    } else {
-                      if (!IsNullOrEmpty(_succeedData)) {
-                        _succeedData.isInvalid
-                          ? (msg.msg = "Code ไม่ถูกต้อง")
-                          : _succeedData.isExpire
-                          ? (msg.msg = "Code หมดอายุแล้ว")
-                          : _succeedData.isUse
-                          ? (msg.msg = "Code ถูกใช้แล้ว")
-                          : (msg = {
-                              msg: "สะสมคะแนนสำเร็จ",
-                              icon: "fas fa-check-circle text-green-mbk",
-                            });
+                      if (e.state === true) {
+                        msg = {
+                          msg: "กรอก Code สำเร็จ",
+                          icon: "fas fa-check-circle text-green-mbk",
+                        };
+                      } else {
+                        if (!IsNullOrEmpty(_succeedData)) {
+                          _succeedData.isInvalid
+                            ? (msg.msg = "Code ไม่ถูกต้อง")
+                            : _succeedData.isExpire
+                            ? (msg.msg = "Code หมดอายุแล้ว")
+                            : _succeedData.isUse
+                            ? (msg.msg = "Code ถูกใช้แล้ว")
+                            : (msg = {
+                                msg: "สะสมคะแนนสำเร็จ",
+                                icon: "fas fa-check-circle text-green-mbk",
+                              });
+                        }
                       }
-                    }
-                    return (
-                      <div className="flex mt-4 mb-4  " key={i}>
-                        {/* <div
+                      return (
+                        <div className="flex mt-4 mb-4  " key={i}>
+                          {/* <div
                           className="noselect bg-green-mbk relative circle margin-auto-t-b"
                           style={{
                             width: "35px",
@@ -276,46 +280,44 @@ const GetReward = () => {
                             {i + 1}
                           </span>
                         </div> */}
-                        <div className="noselect  w-full margin-auto-t-b">
-                          <InputMask
-                            className={
-                              (e.state === true
-                                ? " pointer-events-none "
-                                : "") +
-                              " line-input border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                            }
-                            maxLength={22}
-                            value={e.code}
-                            name={"code-" + (i + 1)}
-                            type={"text"}
-                            onChange={(e) => {
-                              let item = rewardCode.map((item) => {
-                                if (item.index == i) {
-                                  return { ...item, code: e.target.value };
-                                }
-                                return item;
-                              });
-                              setrewardCode(item);
-                            }}
-                            placeholder={"รหัสที่ " + (i + 1)}
-                            // mask={"***-****************"}
-                            maskChar=" "
-                            disabled={e.state ? true : false}
-                            readOnly={e.state ? true : false}
-                          />
+                          <div className="noselect  w-full margin-auto-t-b">
+                            <InputMask
+                              className={
+                                (e.state === true
+                                  ? " pointer-events-none "
+                                  : "") +
+                                " line-input border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  w-full "
+                              }
+                              maxLength={22}
+                              value={e.code}
+                              name={"code-" + (i + 1)}
+                              type={"text"}
+                              onChange={(e) => {
+                                let item = rewardCode.map((item) => {
+                                  if (item.index == i) {
+                                    return { ...item, code: e.target.value };
+                                  }
+                                  return item;
+                                });
+                                setrewardCode(item);
+                              }}
+                              placeholder={"รหัสที่ " + (i + 1)}
+                              // mask={"***-****************"}
+                              maskChar=" "
+                              disabled={e.state ? true : false}
+                              readOnly={e.state ? true : false}
+                            />
 
-                          {!IsNullOrEmpty(_succeedData) || e.state ? (
-                            <div className="absolute text-xs ">
-                              <i class={msg.icon}>{msg.msg}</i>
-                            </div>
-                          ) : null}
+                            {!IsNullOrEmpty(_succeedData) || e.state ? (
+                              <div className="absolute text-xs ">
+                                <i class={msg.icon}>{msg.msg}</i>
+                              </div>
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                </div>
-                <div className="noselect relative  px-4  flex-grow flex-1 mt-5">
+                      );
+                    })}
+                    <div className="noselect relative  px-4  flex-grow flex-1 mt-2">
                   <div
                     style={{
                       width: "40px",
@@ -335,13 +337,14 @@ const GetReward = () => {
                   >
                     <i className="fas fa-plus-circle text-green-mbk"></i>
                   </div>
-                  <div className="relative  px-4  flex-grow flex-1 flex mt-5">
+                  <div className="relative  px-4  flex-grow flex-1 flex mt-1">
                     <button
                       className=" w-6\/12 text-gray-mbk  font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                       type="button"
                       style={{ width: "50%" }}
                       onClick={() => {
-                        history.push(path.member);
+                        // history.push(path.member);
+                        history.goBack();
                       }}
                     >
                       {"ยกเลิก"}
@@ -356,6 +359,9 @@ const GetReward = () => {
                     </button>
                   </div>
                 </div>
+                  </div>
+                </div>
+                
               </div>
             </>
           ) : (

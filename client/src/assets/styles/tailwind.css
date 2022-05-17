@@ -3670,6 +3670,10 @@ select {
   --tw-ring-shadow:unset !important;
   /* border-color:unset !important; */
 }
+.unsetInputMark:disabled {
+  background: #F2F2F2;
+}
+
 
 .unsetInputMark input{
   --tw-ring-color:unset !important;
@@ -4352,3 +4356,40 @@ border-radius: 10px;
     height: 70%;
   }
 }
+@media only screen and (max-height: 860px) {
+  .liff-minHeight{
+    min-height: 550px;
+    height:550px !important;
+  }
+}
+
+@media only screen and (max-height: 760px) {
+  .liff-minHeight{
+    min-height: 550px;
+    height:550px !important;
+  }
+}
+
+
+@media only screen and (max-height: 670px) {
+  .liff-minHeight{
+    min-height: 450px;
+    height:450px !important;
+  }
+}
+
+@media only screen and (max-height: 520px) {
+  .liff-minHeight{
+    min-height: 350px;
+    height:350px !important;
+  }
+}
+
+@media only screen and (max-height: 390px) {
+  .liff-minHeight{
+    min-height: 250px;
+    height:250px !important;
+  }
+}
+
+
