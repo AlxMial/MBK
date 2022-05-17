@@ -1854,6 +1854,11 @@ select {
   list-style-type: none;
 }
 
+.m-0 {
+  margin: 0rem !important;
+}
+
+
 .m-2 {
   margin: 0.5rem;
 }
@@ -3772,7 +3777,7 @@ input[type=email]:disabled {
 }
 
 .ant-tabs{
-  margin: 2.5rem 0 0 0 !important;
+  margin: 2.5rem 0 0 0 ;
 }
 
 
@@ -4258,7 +4263,7 @@ border-radius: 10px;
     overflow-y: auto;
   }
   .liff-Reward-height{
-    height: 75%;
+    height: 70%;
   }
 }
 @media only screen and (max-width: 414px) {
@@ -4270,7 +4275,7 @@ border-radius: 10px;
     overflow-y: auto;
   }
   .liff-Reward-height{
-    height: 75%;
+    height: 70%;
   }
 }
 
@@ -4284,7 +4289,7 @@ border-radius: 10px;
     overflow-y: auto;
   }
   .liff-Reward-height{
-    height: 75%;
+    height: 70%;
   }
 }
 
@@ -4293,7 +4298,7 @@ border-radius: 10px;
     min-height: 90vh;
   }
   .liff-Reward-height{
-    height: 75%;
+    height: 70%;
   }
 }
 
@@ -4302,7 +4307,7 @@ border-radius: 10px;
     min-height: 90vh;
   }
   .liff-Reward-height{
-    height: 75%;
+    height: 70%;
   }
 }
 
@@ -4315,7 +4320,7 @@ border-radius: 10px;
     overflow-y: auto;
   }
   .liff-Reward-height{
-    height: 75%;
+    height: 70%;
   }
 }
 
@@ -4332,7 +4337,7 @@ border-radius: 10px;
     height:100%;
   }
   .liff-Reward-height{
-    height: 75%;
+    height: 70%;
   }
 }
 
@@ -4344,6 +4349,6 @@ border-radius: 10px;
   }
 
   .liff-Reward-height{
-    height: 75%;
+    height: 70%;
   }
 }

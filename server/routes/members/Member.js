@@ -277,8 +277,6 @@ router.post("/checkRegister", async (req, res) => {
     });
 
     if (member) {
-            
-    console.log(member)
       member = Encrypt.decryptAllData(member);
       Encrypt.encryptValueId(member);
       members = member;
@@ -286,16 +284,16 @@ router.post("/checkRegister", async (req, res) => {
       isRegister = true;
       code = 200;
 
-      const client = new line.Client({
-        channelAccessToken: config.lineConfig.bearerToken,
-        channelSecret: config.lineConfig.channelSecret,
-      });
+      // const client = new line.Client({
+      //   channelAccessToken: config.lineConfig.bearerToken,
+      //   channelSecret: config.lineConfig.channelSecret,
+      // });
 
-      client
-        .linkRichMenuToUser(req.body.uid, config.lineConfig.menuMember)
-        .then((e) => {
-          console.log(e);
-        });
+      // client
+      //   .linkRichMenuToUser(req.body.uid, config.lineConfig.menuMember)
+      //   .then((e) => {
+      //     console.log(e);
+      //   });
     } else {
       isRegister = false;
       code = 200;
@@ -308,13 +306,13 @@ router.post("/checkRegister", async (req, res) => {
     tbMember: members,
   });
 });
+
 router.post("/GetMemberpoints", async (req, res) => {
   let code = 500;
   let memberpoints = 0;
   let enddate = new Date(
-    new Date().getFullYear() + 2 + "-" + "12" + "-" + "31"
+    new Date().getFullYear() + "-" + "12" + "-" + "31"
   );
-
   try {
     code = 200;
     let data = await tbMemberPoint.findAll({
@@ -322,16 +320,15 @@ router.post("/GetMemberpoints", async (req, res) => {
         tbMemberId: Encrypt.DecodeKey(req.body.id), 
         isDeleted: false,
         $and: [
-          Sequelize.where(sequelize.fn('YEAR', sequelize.col('dateField')), 2016),
+          Sequelize.where(Sequelize.fn('YEAR', Sequelize.col('dateField')), new Date().getFullYear()),
           { foo: 'bar' }
         ]
        },
     });
-
     if (data) {
       const startdate = new Date(data[0].redeemDate);
       enddate = new Date(
-        new Date(data[0].redeemDate.getFullYear() + 2 + "-" + "12" + "-" + "31")
+        new Date(new Date().getFullYear() + "-" + "12" + "-" + "31")
       );
       data.filter((e) => {
         if (e.redeemDate >= startdate && e.redeemDate <= enddate) {
@@ -339,11 +336,9 @@ router.post("/GetMemberpoints", async (req, res) => {
         }
       });
     }
-    
   } catch {
 
   }
-
   res.json({
     code: code,
     enddate: enddate,

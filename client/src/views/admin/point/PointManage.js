@@ -34,7 +34,7 @@ export default function PointManage() {
 
   return (
     <>
-      <div className="flex flex-warp mb-4">
+      <div className="flex flex-warp mb-6">
         <span className="text-sm margin-auto-t-b font-bold ">
           <i className="fas fa-cog"></i>&nbsp;&nbsp;
         </span>

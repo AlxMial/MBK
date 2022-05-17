@@ -156,7 +156,7 @@ const GetReward = () => {
                   width: "100%",
                   backgroundColor: "#FFF",
                   height: "calc(100vh - 270px)",
-                  minHeight: "500px",
+                  minHeight: "400px",
                   borderRadius: "10px",
                   marginTop: "2vh",
                   padding: "20px",

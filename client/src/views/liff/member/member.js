@@ -208,7 +208,7 @@ import { useHistory } from "react-router-dom";
         ></div>
 
         <Tabs
-          className="Tabs-line noselect"
+          className="Tabs-line noselect m-0"
           defaultActiveKey="1"
           onChange={tabsChange}
         >
