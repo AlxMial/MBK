@@ -11,6 +11,7 @@ import { getPermissionByUserName } from "services/Permission";
 import * as fs from "file-saver";
 import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
+import * as Address from "../../../services/GetAddress.js";
 // components
 Modal.setAppElement("#root");
 const customStyles = {
@@ -58,15 +59,16 @@ export default function MemberList() {
   }
 
   const InputSearch = (e) => {
+    e = e.toLowerCase();
     if (e === "") {
       setListUser(listSearch);
     } else {
       setListUser(
         listUser.filter(
           (x) =>
-            x.firstName.toLowerCase().includes(e) ||
-            x.lastName.toLowerCase().includes(e) ||
-            x.email.toLowerCase().includes(e) ||
+            x.firstName.includes(e) ||
+            x.lastName.includes(e) ||
+            x.email.includes(e) ||
             x.phone.includes(e) ||
             x.birthDate.toString().includes(e) ||
             x.registerDate.toString().includes(e)
@@ -150,6 +152,11 @@ export default function MemberList() {
       "ที่อยู่",
       "วันเกิด",
       "วันที่สมัคร",
+      "จังหวัด",
+      "อำเภอ",
+      "ตำบล",
+      "รหัสไปรษณีย์",
+      "คะแนนสมาชิก",
     ];
     const columns = [
       "memberCard",
@@ -160,7 +167,27 @@ export default function MemberList() {
       "address",
       "birthDate",
       "registerDate",
+      "province",
+      "district",
+      "subDistrict",
+      "postcode",
+      "memberPoint",
     ];
+    for (var i = 0; i < member.data.tbMember.length; i++) {
+
+      member.data.tbMember[i]["province"]= await Address.getAddressName(
+        "province",
+        member.data.tbMember[i]["province"]
+      );
+      member.data.tbMember[i]["district"]= await Address.getAddressName(
+        "district",
+        member.data.tbMember[i]["district"]
+      );
+      member.data.tbMember[i]["subDistrict"]= await Address.getAddressName(
+        "subDistrict",
+        member.data.tbMember[i]["subDistrict"]
+      );
+    }
     exportExcel(
       member.data.tbMember,
       "ข้อมูลสมาชิก",
@@ -171,12 +198,12 @@ export default function MemberList() {
     setIsLoading(false);
   };
 
-  const fetchPermission = async  () => {
+  const fetchPermission = async () => {
     const role = await getPermissionByUserName();
     setTypePermission(role);
-  }
+  };
 
-  useEffect( () => {
+  useEffect(() => {
     fetchPermission();
     axios.get("members").then((response) => {
       if (response.data.error) {
@@ -229,7 +256,7 @@ export default function MemberList() {
               "relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white Overflow-list "
             }
           >
-            <div className="rounded-t mb-0 px-4 border-0">
+            <div className="rounded-t mb-4 px-4 border-0">
               <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
                 <div className="lg:w-6/12 mt-4">
                   <span className="z-3 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-2">
@@ -259,15 +286,14 @@ export default function MemberList() {
                   </button> */}
 
                   <div className="flex mt-2 float-right">
-             
-                      <img
-                        src={require("assets/img/mbk/excel.png").default}
-                        alt="..."
-                        onClick={() => Excel("ข้อมูลสมาชิก")}
-                        className="imgExcel margin-auto-t-b cursor-pointer "
-                      ></img>
-                      {/* <span onClick={() => Excel("ข้อมูลสมาชิก")} className="text-gray-500 font-bold margin-auto-t-b ml-2 cursor-pointer ">Export Excel</span> */}
-                      {/* <Link to="/admin/membersinfo" className={(typePermission === "1") ? " " : " hidden"}>
+                    <img
+                      src={require("assets/img/mbk/excel.png").default}
+                      alt="..."
+                      onClick={() => Excel("ข้อมูลสมาชิก")}
+                      className="imgExcel margin-auto-t-b cursor-pointer "
+                    ></img>
+                    {/* <span onClick={() => Excel("ข้อมูลสมาชิก")} className="text-gray-500 font-bold margin-auto-t-b ml-2 cursor-pointer ">Export Excel</span> */}
+                    {/* <Link to="/admin/membersinfo" className={(typePermission === "1") ? " " : " hidden"}>
                         <button
                           className="bg-gold-mbk text-black ml-2 active:bg-gold-mbk font-bold text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                           type="button"
@@ -278,7 +304,6 @@ export default function MemberList() {
                           </span>
                         </button>
                       </Link> */}
-      
                   </div>
 
                   {/* <button
@@ -359,7 +384,8 @@ export default function MemberList() {
                     </th>
                     <th
                       className={
-                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 " + ((typePermission === "1" ? " " : " hidden"))
+                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 " +
+                        (typePermission === "1" ? " " : " hidden")
                       }
                     >
                       จัดการ
@@ -373,7 +399,9 @@ export default function MemberList() {
                       return (
                         <tr key={key}>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
-                            <span className="px-4 margin-a">{pagesVisited+key + 1}</span>
+                            <span className="px-4 margin-a">
+                              {pagesVisited + key + 1}
+                            </span>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link
@@ -432,7 +460,12 @@ export default function MemberList() {
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                             {value.memberPoint}
                           </td>
-                          <td className={"border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center" + ((typePermission === "1" ? " " : " hidden"))}>
+                          <td
+                            className={
+                              "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center" +
+                              (typePermission === "1" ? " " : " hidden")
+                            }
+                          >
                             <i
                               className="fas fa-trash text-red-500 cursor-pointer"
                               onClick={() => {

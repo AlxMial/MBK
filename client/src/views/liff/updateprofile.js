@@ -163,9 +163,9 @@ const Updateprofile = () => {
               overflow: "scroll",
             }}
           >
-             <div className="flex text-green-mbk font-bold text-lg mb-4">
-                {"ข้อมูลสมาชิก"}
-              </div>
+            <div className="flex text-green-mbk font-bold text-lg mb-4">
+              {"ข้อมูลสมาชิก"}
+            </div>
             <InputUC
               name="firstName"
               lbl="ชื่อ"
@@ -175,6 +175,7 @@ const Updateprofile = () => {
               value={Data.firstName}
               error={errors.firstName}
               valid={true}
+              disabled={true}
             />
             <InputUC
               name="lastName"
@@ -185,6 +186,7 @@ const Updateprofile = () => {
               value={Data.lastName}
               error={errors.lastName}
               valid={true}
+              disabled={true}
             />
             <InputUC
               name="phone"
@@ -194,6 +196,7 @@ const Updateprofile = () => {
               value={Data.phone}
               error={errors.phone}
               valid={true}
+              disabled={true}
             />
             <SelectUC
               name="sex"
@@ -204,24 +207,30 @@ const Updateprofile = () => {
               value={Data.sex}
               options={[
                 { value: "1", label: "ชาย" },
-                { value: "2", label: "หณิง" },
+                { value: "2", label: "หญิง" },
               ]}
               error={errors.sex}
             />
             {/* วันเกิด */}
 
-            <div className="mb-5">
+            <div
+              className="mb-5 DatePicker-disabled"
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+            >
               <div className="flex text-green-mbk font-bold text-sm ">
                 {"วันเกิด"}
               </div>
               <DatePickerContainer>
                 <DatePicker
+                  class="pointer-events-none "
                   isOpen={true}
                   isPopup={false}
                   showHeader={false}
-                  min={new Date(1970, 0, 1)}
-                  max={new Date()}
-                  value={moment(new Date(Data.birthDate)).toDate()}
+                  min={moment(new Date(Data.birthDate)).toDate()}
+                  max={moment(new Date(Data.birthDate)).toDate()}
+                  // value={moment(new Date(Data.birthDate)).toDate()}
                   dateConfig={{
                     year: {
                       format: "YYYY",
@@ -239,12 +248,13 @@ const Updateprofile = () => {
                       step: 1,
                     },
                   }}
-                  onChange={(e) => {
-                    settbMember((prevState) => ({
-                      ...prevState,
-                      ["birthDate"]: moment(new Date(e)).toDate(),
-                    }));
-                  }}
+                 
+                  // onChange={(e) => {
+                  //   settbMember((prevState) => ({
+                  //     ...prevState,
+                  //     ["birthDate"]: moment(new Date(e)).toDate(),
+                  //   }));
+                  // }}
                 />
               </DatePickerContainer>
             </div>

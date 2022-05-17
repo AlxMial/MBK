@@ -50,18 +50,19 @@ export default function UserList() {
   }
 
   const InputSearch = (e) => {
+    e = e.toLowerCase();
     if (e === "") {
       setListUser(listSearch);
     } else {
       setListUser(
         listUser.filter(
           (x) =>
-            x.firstName.toLowerCase().includes(e) ||
-            x.lastName.toLowerCase().includes(e) ||
+            x.firstName.includes(e) ||
+            x.lastName.includes(e) ||
             x.email.includes(e) ||
             x.role.includes(e) ||
-            x.position.toLowerCase().includes(e) ||
-            x.empCode.toLowerCase().includes(e)
+            x.position.includes(e) ||
+            x.empCode.includes(e)
         )
       );
     }
