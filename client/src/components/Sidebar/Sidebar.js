@@ -44,9 +44,10 @@ export default function Sidebar() {
   }, []);
 
   const linkClassName = (href) => {
-    return "text-sm uppercase py-3 pl-11 font-bold block " +
+    const isAdmin = href.includes('users') ? 'px-2' : 'pl-11';
+    return "text-sm uppercase py-3 font-bold block " + isAdmin +
       (window.location.href.indexOf(href) !== -1
-        ? "text-gold-mbk hover:text-gold-mbk"
+        ? " text-gold-mbk hover:text-gold-mbk"
         : width < 765
           ? " text-blueGray-700 hover:text-gold-mbk"
           : " text-white hover:text-gold-mbk")
