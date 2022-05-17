@@ -207,7 +207,7 @@ const Updateprofile = () => {
               value={Data.sex}
               options={[
                 { value: "1", label: "ชาย" },
-                { value: "2", label: "หณิง" },
+                { value: "2", label: "หญิง" },
               ]}
               error={errors.sex}
             />
