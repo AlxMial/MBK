@@ -3687,10 +3687,15 @@ select {
 input[type=text]:disabled,
 input[type=password]:disabled,
 textarea:disabled,
-input[type=email]:disabled {
+input[type=email]:disabled,
+input[type=tel]:disabled  {
   background: #F2F2F2;
 }
-
+.DatePicker-disabled .datepicker-scroll,
+.DatePicker-disabled .datepicker-scroll li{
+  pointer-events: none;
+  color: rgb(191, 191, 191) !important;
+}
 
 
 .disableInput:disabled{
