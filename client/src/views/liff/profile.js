@@ -55,16 +55,22 @@ export const InputUC = ({
   error,
   valid,
   refs,
+  disabled,
 }) => {
   return (
     <>
       <div className="mb-4">
         <div className="noselect flex text-green-mbk font-bold text-sm ">
           {lbl}{" "}
-          {valid == true ? <span className="ml-1" style={{ color: "red" }}>{" *"}</span> : null}
+          {valid == true ? (
+            <span className="ml-1" style={{ color: "red" }}>
+              {" *"}
+            </span>
+          ) : null}
         </div>
         {type == "text" ? (
           <input
+            disabled={disabled ? true : false}
             type={type}
             className="border-0 px-2 pt-2 placeholder-blueGray-300 text-gray-mbk bg-white text-sm w-full "
             style={{ borderBottom: "1px solid #d6d6d6" }}
@@ -81,6 +87,7 @@ export const InputUC = ({
             className={
               "border-0 px-2 pt-2 placeholder-blueGray-300 text-gray-mbk bg-white text-sm w-full unsetInputMark "
             }
+            disabled={disabled ? true : false}
             style={{ borderBottom: "1px solid #d6d6d6" }}
             value={value}
             name={name}
@@ -109,7 +116,6 @@ export const SelectUC = ({ name, lbl, onChange, options, value }) => {
         <div className="noselect flex text-green-mbk font-bold text-sm ">
           {lbl}
         </div>
-      
 
         <Select
           className="text-gray-mbk mt-1 text-sm w-full border-none"
