@@ -374,7 +374,7 @@ const GetReward = () => {
                   bottom: "50px",
                 }}
                 onClick={() => {
-                  history.push(path.member);
+                  history.goBack();
                 }}
               >
                 <div
