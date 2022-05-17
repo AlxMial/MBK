@@ -295,7 +295,6 @@ const GetReward = () => {
                                 }
                                 return item;
                               });
-
                               setrewardCode(item);
                             }}
                             placeholder={"รหัสที่ " + (i + 1)}

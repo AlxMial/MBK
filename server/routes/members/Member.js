@@ -85,6 +85,20 @@ router.post("/", async (req, res) => {
       req.body.memberPoint = point.dataValues.pointRegisterScore;
       const ValuesEncrypt = Encrypt.encryptAllData(req.body);
       const members = await tbMember.create(ValuesEncrypt);
+
+      let MemberPoint ={
+
+        campaignType: 3,
+        code: null,
+        point: point.dataValues.pointRegisterScore,
+        redeemDate: new Date(),
+        expireDate: new Date(new Date().getFullYear() + 2, 11, 32),
+        isDeleted: false,
+        tbMemberId: members.id,
+        tbPointCodeHDId: null,
+      }
+      const memberPoint = await tbMemberPoint.create(MemberPoint);
+
       const ValuesDecrypt = Encrypt.decryptAllData(members);
       Encrypt.encryptValueId(ValuesDecrypt);
       Encrypt.encryptPhone(ValuesDecrypt);
@@ -261,10 +275,14 @@ router.post("/checkRegister", async (req, res) => {
     let member = await tbMember.findOne({
       where: { uid: req.body.uid, isDeleted: false },
     });
+
     if (member) {
+            
+    console.log(member)
       member = Encrypt.decryptAllData(member);
       Encrypt.encryptValueId(member);
       members = member;
+
       isRegister = true;
       code = 200;
 
@@ -300,8 +318,14 @@ router.post("/GetMemberpoints", async (req, res) => {
   try {
     code = 200;
     let data = await tbMemberPoint.findAll({
-      where: { tbMemberId: Encrypt.DecodeKey(req.body.id), isDeleted: false },
-      order: [["redeemDate", "ASC"]],
+      where: { 
+        tbMemberId: Encrypt.DecodeKey(req.body.id), 
+        isDeleted: false,
+        $and: [
+          Sequelize.where(sequelize.fn('YEAR', sequelize.col('dateField')), 2016),
+          { foo: 'bar' }
+        ]
+       },
     });
 
     if (data) {

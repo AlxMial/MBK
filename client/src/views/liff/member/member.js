@@ -173,7 +173,6 @@ import { useHistory } from "react-router-dom";
                       ? "-"
                       : moment(Memberpoints.enddate.split("T")[0])
                           .locale("th")
-                          .add(543, "year")
                           .format("DD/MM/yyyy"))}
                 </span>
               </div>
