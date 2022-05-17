@@ -23,6 +23,7 @@ import PointManage from "views/admin/point/PointManage";
 import StockInfo from "views/admin/ecommerce/stock/StockInfo";
 import StockList from "views/admin/ecommerce/stock/Stocklist";
 import empty from "views/empty";
+import SettingShop from "views/admin/ecommerce/settingShop";
 
 export default function Admin() {
   const { height, width } = useWindowDimensions();
@@ -60,6 +61,7 @@ export default function Admin() {
                 exact
                 component={MemberInfo}
               />
+              <Route path="/admin/settingShop" exact component={SettingShop} />
               <Route path="/admin/stocks" exact component={StockList} />
               <Route path="/admin/stocksinfo" exact component={StockInfo} />
               <Route path="/admin/stocksinfo/:id" exact component={StockInfo} />

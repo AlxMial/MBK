@@ -1,16 +1,17 @@
 /*eslint-disable*/
-import React, { useState,useEffect } from "react";
-import { Link,useHistory } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 import useWindowDimensions from "services/useWindowDimensions";
 import { getPermissionByUserName } from "services/Permission";
+import ModuleButton from "./moduleButton";
 
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
   const { height, width } = useWindowDimensions();
-  const [ isCRM , setIsCRM ] = useState(false);
-  const [ isEcommerce , setIsEcommerce ] = useState(false);
-  const [ isReport , setIsReport ] = useState(false);
+  const [isCRM, setIsCRM] = useState(false);
+  const [isEcommerce, setIsEcommerce] = useState(false);
+  const [isReport, setIsReport] = useState(false);
   const [typePermission, setTypePermission] = useState("");
   let history = useHistory();
   const ClickCRM = () => {
@@ -25,25 +26,52 @@ export default function Sidebar() {
     setIsReport(!isReport);
   }
 
-  const fetchPermission = async  () => {
+  const fetchPermission = async () => {
     const role = await getPermissionByUserName();
     setTypePermission(role);
-    if(role === "3")
-    {
+    if (role === "3") {
       history.push("/admin/members");
       setIsCRM(true);
-    } 
-    else if (role === "2")
-    {
+    }
+    else if (role === "2") {
       history.push("/admin/empty");
       setIsCRM(true);
     }
   }
 
-  useEffect( () => {
+  useEffect(() => {
     fetchPermission();
   }, []);
 
+  const linkClassName = (href) => {
+    return "text-sm uppercase py-3 pl-11 font-bold block " +
+      (window.location.href.indexOf(href) !== -1
+        ? "text-gold-mbk hover:text-gold-mbk"
+        : width < 765
+          ? " text-blueGray-700 hover:text-gold-mbk"
+          : " text-white hover:text-gold-mbk")
+  }
+
+  const iClassName = (href, icon) => {
+    return icon + " mr-2 text-sm " +
+      (window.location.href.indexOf(href) !== -1
+        ? "opacity-75"
+        : width < 765
+          ? " text-blueGray-700"
+          : " text-white")
+  }
+
+  const menuList = [
+    { id: 1, module: 'crm', link: '/admin/members', label: 'จัดการสมาชิก', icon: 'fas fa-users-cog' },
+    { id: 2, module: 'crm', link: '/admin/points', label: 'เงื่อนไขคะแนน', icon: 'fas fa-coins' },
+    { id: 3, module: 'crm', link: '/admin/setting', label: 'เงื่อนไขแลกของรางวัล', icon: 'fas fa-gift' },
+    { id: 4, module: 'ecommerce', link: '/admin/settingShop', label: 'ตั้งค่าร้านค้า', icon: 'fas fa-store' },
+    { id: 5, module: 'ecommerce', link: '/admin/stocks', label: 'คลังสินค้า', icon: 'fas fa-warehouse' },
+    { id: 6, module: 'ecommerce', link: '/admin/orders', label: 'รายการสั่งซื้อ', icon: 'fas fa-shopping-cart' },
+    { id: 7, module: 'ecommerce', link: '/admin/settings', label: 'ยกเลิกและคืนสินต้า', icon: 'fas fa-undo-alt' },
+    { id: 8, module: 'report', link: '/admin/reportHistoryPoint', label: 'ประวัติการรับคะแนน', icon: 'fas fa-history' },
+    { id: 9, module: 'report', link: '/admin/reportHistoryReward', label: 'ประวัติการแลกรางวัล', icon: 'fas fa-gift' },
+  ]
 
   return (
     <>
@@ -125,344 +153,51 @@ export default function Sidebar() {
             </h6>
             {/* Navigation */}
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-              <li className= {"items-center" + ((typePermission !== "1") ? " hidden" : " ")}>
-                <Link
-                  className={
-                    "text-sm uppercase py-4 px-2 font-bold block " +
-                    (window.location.href.indexOf("/admin/users") !== -1
-                      ? "text-gold-mbk hover:text-gold-mbk"
-                      : width < 765
-                      ? " text-blueGray-700 hover:text-gold-mbk"
-                      : " text-white hover:text-gold-mbk")
-                  }
-                  to="/admin/users"
-                >
-                  <i
-                    className={
-                      "fas fa-user-circle mr-2 text-sm " +
-                      (window.location.href.indexOf("/admin/users") !== -1
-                        ? "opacity-75"
-                        : width < 765
-                        ? " text-blueGray-700"
-                        : " text-white")
-                    }
-                  ></i>{" "}
+              <li className={"items-center" + ((typePermission !== "1") ? " hidden" : " ")}>
+                <Link to="/admin/users" className={linkClassName("/admin/users")}>
+                  <i className={iClassName("/admin/users", 'fas fa-user-friends')}></i>
                   จัดการผู้ดูแลระบบ
                 </Link>
               </li>
-
-              <button
-                type="button"
-                className={
-                  "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
-                  (width < 765 ? " text-blueGray-700" : " text-white") + ((typePermission === "2") ? " hidden" : " ")
-                }
-
-                onClick={()=> ClickCRM() }
-              >
-                <i className="fas fa-cog text-xs"></i>
-                <span className="text-sm px-4 pt-1 font-bold block">CRM</span>
-                <svg
-                  className="w-6 h-6"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-              <ul
-  
-                className={"py-2 space-y-2" + ((isCRM) ? " block" : " hidden") +  ((typePermission === "2") ? " hidden" : " ")}
-              >
-                <li className="items-center">
-                  <Link
-                    className={
-                      "text-sm uppercase py-3 pl-11 font-bold block " +
-                      (window.location.href.indexOf("/admin/members") !== -1
-                        ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 765
-                        ? " text-blueGray-700 hover:text-gold-mbk"
-                        : " text-white hover:text-gold-mbk")
-                    }
-                    to="/admin/members"
-                  >
-                    <i
-                      className={
-                        "fas fa-user-friends mr-2 text-sm " +
-                        (window.location.href.indexOf("/admin/members") !== -1
-                          ? "opacity-75"
-                          : width < 765
-                          ? " text-blueGray-700"
-                          : " text-white")
-                      }
-                    ></i>{" "}
-                    จัดการสมาชิก
-                  </Link>
-                </li>
-                <li className="items-center">
-                  <Link
-                    className={
-                      "text-sm uppercase py-3 pl-11 font-bold block " +
-                      (window.location.href.indexOf("/admin/points") !== -1
-                        ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 765
-                        ? " text-blueGray-700 hover:text-gold-mbk"
-                        : " text-white hover:text-gold-mbk")
-                    }
-                    to="/admin/points"
-                  >
-                    <i
-                      className={
-                        "fas fa-chess mr-2 text-sm " +
-                        (window.location.href.indexOf("/admin/points") !== -1
-                          ? "opacity-75"
-                          : width < 765
-                          ? " text-blueGray-700"
-                          : " text-white")
-                      }
-                    ></i>{" "}
-                    เงื่อนไขคะแนน
-                  </Link>
-                </li>
-                {/* <li className="items-center">
-                  <Link
-                    className={
-                      "text-sm uppercase py-3 pl-11 font-bold block " +
-                      (window.location.href.indexOf("/admin/settings") !== -1
-                        ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 765
-                        ? " text-blueGray-700 hover:text-gold-mbk"
-                        : " text-white hover:text-gold-mbk")
-                    }
-                    to="/admin/settings"
-                  >
-                    <i
-                      className={
-                        "fas fa-gift mr-2 text-sm " +
-                        (window.location.href.indexOf("/admin/settings") !== -1
-                          ? "opacity-75"
-                          : width < 765
-                          ? " text-blueGray-700"
-                          : " text-white")
-                      }
-                    ></i>{" "}
-                    เงื่อนไขแลกของรางวัล
-                  </Link>
-                </li> */}
+              <ModuleButton onClick={() => ClickCRM()} label='CRM' icon='fas fa-cog' typePermission={typePermission} />
+              <ul className={"py-2 space-y-2" + ((isCRM) ? " block" : " hidden") + ((typePermission === "2") ? " hidden" : " ")}>
+                {menuList.filter(m => m.module === "crm").map(item => {
+                  return (
+                    <li className="items-center" key={item.id}>
+                      <Link to={item.link} className={linkClassName(item.link)}>
+                        <i className={iClassName(item.link, item.icon)}></i>
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
-
-              {/* <button
-                type="button"
-                className={
-                  "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
-                  (width < 765 ? " text-blueGray-700" : " text-white")
-                }
-                onClick={()=> ClickEcommerce() }
-              >
-                <i className="fas fa-shopping-cart text-xs"></i>
-                <span className="text-sm px-4 pt-1 font-bold block">
-                  E-Commerce
-                </span>
-                <svg
-                  className="w-6 h-6"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-              <ul className={"py-2 space-y-2 " + ((isEcommerce) ? " block" : " hidden") }>
-                <li className="items-center">
-                  <Link
-                    className={
-                      "text-sm uppercase py-3 pl-11 font-bold block " +
-                      (window.location.href.indexOf("/admin/dashboard") !== -1
-                        ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 765
-                        ? " text-blueGray-700 hover:text-gold-mbk"
-                        : " text-white hover:text-gold-mbk")
-                    }
-                    to="/admin/dashboard"
-                  >
-                    <i
-                      className={
-                        "fas fa-dolly mr-2 text-sm " +
-                        (window.location.href.indexOf("/admin/dashboard") !== -1
-                          ? "opacity-75"
-                          : width < 765
-                          ? " text-blueGray-700"
-                          : " text-white")
-                      }
-                    ></i>{" "}
-                    ตั้งค่าร้านค้า
-                  </Link>
-                </li>
-                <li className="items-center">
-                  <Link
-                    className={
-                      "text-sm uppercase py-3 pl-11 font-bold block " +
-                      (window.location.href.indexOf("/admin/stocks") !== -1
-                        ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 765
-                        ? " text-blueGray-700 hover:text-gold-mbk"
-                        : " text-white hover:text-gold-mbk")
-                    }
-                    to="/admin/stocks"
-                  >
-                    <i
-                      className={
-                        "fas fa-store mr-2 text-sm " +
-                        (window.location.href.indexOf("/admin/stocks") !== -1
-                          ? "opacity-75"
-                          : width < 765
-                          ? " text-blueGray-700"
-                          : " text-white")
-                      }
-                    ></i>{" "}
-                    คลังสินค้า
-                  </Link>
-                </li>
-                <li className="items-center">
-                  <Link
-                    className={
-                      "text-sm uppercase py-3 pl-11 font-bold block " +
-                      (window.location.href.indexOf("/admin/settings") !== -1
-                        ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 765
-                        ? " text-blueGray-700 hover:text-gold-mbk"
-                        : " text-white hover:text-gold-mbk")
-                    }
-                    to="/admin/settings"
-                  >
-                    <i
-                      className={
-                        "fas fa-receipt mr-2 text-sm " +
-                        (window.location.href.indexOf("/admin/settings") !== -1
-                          ? "opacity-75"
-                          : width < 765
-                          ? " text-blueGray-700"
-                          : " text-white")
-                      }
-                    ></i>{" "}
-                    รายการสั่งซื้อ
-                  </Link>
-                </li>
-                <li className="items-center">
-                  <Link
-                    className={
-                      "text-sm uppercase py-3 pl-11 font-bold block " +
-                      (window.location.href.indexOf("/admin/settings") !== -1
-                        ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 765
-                        ? " text-blueGray-700 hover:text-gold-mbk"
-                        : " text-white hover:text-gold-mbk")
-                    }
-                    to="/admin/settings"
-                  >
-                    <i
-                      className={
-                        "fas fa-window-close mr-2 text-sm " +
-                        (window.location.href.indexOf("/admin/settings") !== -1
-                          ? "opacity-75"
-                          : width < 765
-                          ? " text-blueGray-700"
-                          : " text-white")
-                      }
-                    ></i>{" "}
-                    ยกเลิกและคืนสินค้า
-                  </Link>
-                </li>
-              </ul> */}
-              {/* <button
-                type="button"
-                className={
-                  "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
-                  (width < 765 ? " text-blueGray-700" : " text-white")
-                }
-                onClick={()=> ClickReport() }
-              >
-                <i className="fas fa-scroll text-xs"></i>
-                <span className="text-sm px-4 uppercase pt-1 font-bold block">
-                  รายงาน
-                </span>
-                <svg
-                  className="w-6 h-6"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  ></path>
-                </svg>
-              </button>
-              <ul
-                id="dropdown-example-report"
-                className={" py-2 space-y-2 " + ((isReport) ? " block" : " hidden") }
-              >
-                <li className="items-center">
-                  <Link
-                    className={
-                      "text-sm uppercase py-3 pl-11 font-bold block " +
-                      (window.location.href.indexOf("/admin/dashboard") !== -1
-                        ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 765
-                        ? " text-blueGray-700 hover:text-gold-mbk"
-                        : " text-white hover:text-gold-mbk")
-                    }
-                    to="/admin/dashboard"
-                  >
-                    <i
-                      className={
-                        "fas fa-dice mr-2 text-sm " +
-                        (window.location.href.indexOf("/admin/dashboard") !== -1
-                          ? "opacity-75"
-                          : width < 765
-                          ? " text-blueGray-700"
-                          : " text-white")
-                      }
-                    ></i>{" "}
-                    คะแนน
-                  </Link>
-                </li>
-                <li className="items-center">
-                  <Link
-                    className={
-                      "text-sm uppercase py-3 pl-11 font-bold block " +
-                      (window.location.href.indexOf("/admin/settings") !== -1
-                        ? "text-gold-mbk hover:text-gold-mbk"
-                        : width < 765
-                        ? " text-blueGray-700 hover:text-gold-mbk"
-                        : " text-white hover:text-gold-mbk")
-                    }
-                    to="/admin/settings"
-                  >
-                    <i
-                      className={
-                        "fas fa-gift mr-2 text-sm " +
-                        (window.location.href.indexOf("/admin/settings") !== -1
-                          ? "opacity-75"
-                          : width < 765
-                          ? " text-blueGray-700"
-                          : " text-white")
-                      }
-                    ></i>{" "}
-                    แลกของรางวัล
-                  </Link>
-                </li>
-              </ul> */}
+              <ModuleButton onClick={() => ClickEcommerce()} label='E-Commerce' icon='fas fa-shopping-cart' typePermission={typePermission} />
+              <ul className={"py-2 space-y-2 " + ((isEcommerce) ? " block" : " hidden")}>
+                {menuList.filter(m => m.module === "ecommerce").map(item => {
+                  return (
+                    <li className="items-center" key={item.id}>
+                      <Link to={item.link} className={linkClassName(item.link)}>
+                        <i className={iClassName(item.link, item.icon)}></i>
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              <ModuleButton onClick={() => ClickReport()} label='Report' icon='fas fa-file' typePermission={typePermission} />
+              <ul className={"py-2 space-y-2 " + ((isReport) ? " block" : " hidden")}>
+                {menuList.filter(m => m.module === "report").map(item => {
+                  return (
+                    <li className="items-center" key={item.id}>
+                      <Link to={item.link} className={linkClassName(item.link)}>
+                        <i className={iClassName(item.link, item.icon)}></i>
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
             </ul>
           </div>
         </div>
