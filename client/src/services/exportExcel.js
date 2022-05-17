@@ -22,7 +22,6 @@ export const exportExcel = async (dataExport, Title, TitleColumns, columns,sheet
         else GenerateData += "," + ( (val[valueColumns] === '') ? " ": val[valueColumns]);
       }
     }
-    console.log(GenerateData)
     data.push(GenerateData.split(','));
   }
 

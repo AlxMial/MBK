@@ -73,3 +73,15 @@ export const getAddress = async (type, id) => {
     return Json.length > 0 ? Json[0].label : "";
   }
 };
+
+export const getAddressName = async (type, id) => {
+  let valueAddress = "";
+  if (type === "province") {
+    valueAddress = await api_province.filter((e) => e.value.toString() === id)[0].label;
+  } else if (type === "district") {
+    valueAddress = await api_amphure.filter((e) => e.value.toString() === id)[0].label;
+  } else if (type === "subDistrict") {
+    valueAddress = await api_tombon.filter((e) => e.value.toString() === id)[0].label;
+  }
+  return valueAddress;
+};
