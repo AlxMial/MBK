@@ -45,7 +45,7 @@ const initLine = (callback, setView) => {
 const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "",
+      uid: "Ubfcc855b6a6dae691da898801d1ec206",
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();
@@ -164,7 +164,7 @@ const LiffAPP = () => {
             {ismemberpage ? (
               <img
                 className="w-full"
-                src={require("assets/img/mbk/line_head_img.jpg").default}
+                src={(window.location.href.indexOf("/line/point") !== -1) ? require("assets/img/mbk/Background.jpg").default  : require("assets/img/mbk/line_head_img.jpg").default }
                 alt="line_head_img"
                 style={{
                   objectFit: "fill",
