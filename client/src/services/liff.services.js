@@ -86,7 +86,7 @@ export const routes = [
 export const checkRegister = (s, e = () => {}, f = () => {}) => {
   let _uid = Session.getLiff().uid;
   axios
-    .post("/members/checkRegister", { _uid })
+    .post("/members/checkRegister", { uid: _uid })
     .then((res) => {
       s(res);
     })
