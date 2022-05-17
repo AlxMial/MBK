@@ -1,4 +1,5 @@
 import axios from "services/axios";
+import React from "react";
 import * as Session from "../services/Session.service";
 
 import privacypolicy from "views/liff/privacypolicy";
@@ -83,8 +84,9 @@ export const routes = [
 ];
 
 export const checkRegister = (s, e = () => {}, f = () => {}) => {
+  let _uid = Session.getLiff().uid;
   axios
-    .post("/members/checkRegister", { uid: Session.getLiff().uid })
+    .post("/members/checkRegister", { _uid })
     .then((res) => {
       s(res);
     })
@@ -149,4 +151,12 @@ export const listPointStore = (s, e = () => {}, f = () => {}) => {
     .finally((final) => {
       f();
     });
+};
+
+export const withUniqueId = (Target) => {
+  return class WithUniqueId extends React.Component {
+    render() {
+      return <Target {...this.props} uid={Session.getLiff().uid} />;
+    }
+  };
 };
