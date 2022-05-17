@@ -65,13 +65,13 @@ export default function Sidebar() {
   const menuList = [
     { id: 1, module: 'crm', link: '/admin/members', label: 'จัดการสมาชิก', icon: 'fas fa-users-cog' },
     { id: 2, module: 'crm', link: '/admin/points', label: 'เงื่อนไขคะแนน', icon: 'fas fa-coins' },
-    { id: 3, module: 'crm', link: '/admin/setting', label: 'เงื่อนไขแลกของรางวัล', icon: 'fas fa-gift' },
+    { id: 3, module: 'crm', link: '/admin/redemtions', label: 'เงื่อนไขแลกของรางวัล', icon: 'fas fa-gift' },
     { id: 4, module: 'ecommerce', link: '/admin/settingShop', label: 'ตั้งค่าร้านค้า', icon: 'fas fa-store' },
     { id: 5, module: 'ecommerce', link: '/admin/stocks', label: 'คลังสินค้า', icon: 'fas fa-warehouse' },
     { id: 6, module: 'ecommerce', link: '/admin/orders', label: 'รายการสั่งซื้อ', icon: 'fas fa-shopping-cart' },
     { id: 7, module: 'ecommerce', link: '/admin/settings', label: 'ยกเลิกและคืนสินต้า', icon: 'fas fa-undo-alt' },
-    { id: 8, module: 'report', link: '/admin/reportHistoryPoint', label: 'ประวัติการรับคะแนน', icon: 'fas fa-history' },
-    { id: 9, module: 'report', link: '/admin/reportHistoryReward', label: 'ประวัติการแลกรางวัล', icon: 'fas fa-gift' },
+    { id: 8, module: 'report', link: '/admin/pointHistoryReport', label: 'ประวัติการรับคะแนน', icon: 'fas fa-history' },
+    { id: 9, module: 'report', link: '/admin/redemtionHistoryReport', label: 'ประวัติการแลกรางวัล', icon: 'fas fa-gift' },
   ]
 
   return (
