@@ -154,42 +154,49 @@ const LiffAPP = () => {
 
   return (
     <>
-      {!view ? <Spinner customText={"Loading"} /> : null}
-      <div style={{ display: !view ? "none" : "", minHeight: "100vh" }}>
-        <div
-          className={"noselect " + (!ismemberpage ? "bg-green-mbk flex" : "")}
-          style={{ height: bg }}
-        >
-          <div className="w-full">
-            {ismemberpage ? (
-              <img
-                className="w-full"
-                src={(window.location.href.indexOf("/line/point") !== -1) ? require("assets/img/mbk/Background.jpg").default  : require("assets/img/mbk/line_head_img.jpg").default }
-                alt="line_head_img"
-                style={{
-                  objectFit: "fill",
-                  // height: bg,
-                }}
-              ></img>
-            ) : (
-              <img
-                src="https://www.prg.co.th/images/logo.png"
-                alt="logo_mbk"
-                className=" mt-6 "
-                style={{
-                  display: "block",
-                  marginLeft: "auto",
-                  marginRight: "auto",
-                }}
-              ></img>
-            )}
+      {!view ? (
+        <Spinner customText={"Loading"} />
+      ) : (
+        <div style={{ display: !view ? "none" : "", minHeight: "100vh" }}>
+          <div
+            className={"noselect " + (!ismemberpage ? "bg-green-mbk flex" : "")}
+            style={{ height: bg }}
+          >
+            <div className="w-full">
+              {ismemberpage ? (
+                <img
+                  className="w-full"
+                  src={
+                    window.location.href.indexOf("/line/point") !== -1
+                      ? require("assets/img/mbk/Background.jpg").default
+                      : require("assets/img/mbk/line_head_img.jpg").default
+                  }
+                  alt="line_head_img"
+                  style={{
+                    objectFit: "fill",
+                    // height: bg,
+                  }}
+                ></img>
+              ) : (
+                <img
+                  src="https://www.prg.co.th/images/logo.png"
+                  alt="logo_mbk"
+                  className=" mt-6 "
+                  style={{
+                    display: "block",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                  }}
+                ></img>
+              )}
+            </div>
           </div>
+          <Switch>
+            {getRoutes()}
+            <Redirect from="/line/" to="/line/register" />
+          </Switch>
         </div>
-        <Switch>
-          {getRoutes()}
-          <Redirect from="/line/" to="/line/register" />
-        </Switch>
-      </div>
+      )}
     </>
   );
 };
