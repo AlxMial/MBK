@@ -4,33 +4,43 @@ import { Tabs } from "antd";
 import Canbeused from "./coupon.canbeused";
 import Expire from "./coupon.expire";
 import { useHistory } from "react-router-dom";
-import { path } from "@services/liff.services";
+import {
+  path,
+  checkRegister as apiCheckRegister,
+  GetMemberpoints,
+} from "@services/liff.services";
 import { IsNullOrEmpty } from "@services/default.service";
 import * as Session from "@services/Session.service";
 import moment from "moment";
+import Spinner from "components/Loadings/spinner/Spinner";
 // components
 
 const Member = () => {
   const history = useHistory();
+  const [isLoading, setIsLoading] = useState(false);
   const { TabPane } = Tabs;
   const tabsChange = () => {};
   const [tbMember, settbMember] = useState({});
   const getMembers = async () => {
-    axios
-      .post("/members/checkRegister", { uid: Session.getLiff().uid })
-      .then((res) => {
-        console.log(res);
+    setIsLoading(true);
+    apiCheckRegister(
+      (res) => {
         if (res.data.code === 200) {
           settbMember(res.data.tbMember);
-        } else {
         }
-      });
+      },
+      () => {},
+      () => {
+        setIsLoading(false);
+      }
+    );
   };
   useEffect(() => {
     getMembers();
   }, []);
   return (
     <>
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
       <div style={{ marginTop: "-100px", position: "absolute", width: "100%" }}>
         <div className="line-text-brown noselect">
