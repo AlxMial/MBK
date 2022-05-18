@@ -29,9 +29,9 @@ router.post("/login", async (req, res) => {
             id: user.id,
             role: Encrypt.DecodeKey(user.role),
             firstName: Encrypt.DecodeKey(user.firstName),
-            lastName: Encrypt.DecodeKey(user.lastName),
+            lastName: Encrypt.DecodeKey(user.lastName)
           },
-          "MBKPROJECT"
+          "MBKPROJECT", { expiresIn: '1440m' }
         );
         res.json({
           token: accessToken,
