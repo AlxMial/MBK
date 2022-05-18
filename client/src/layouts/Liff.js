@@ -120,13 +120,13 @@ const LiffAPP = () => {
     pathname.toLowerCase().includes("member") ||
     pathname.toLowerCase().includes("point") ||
     pathname.toLowerCase().includes("coupon") ||
-    pathname.toLowerCase() === "reward"
+    pathname.toLowerCase().includes("/reward")
   ) {
     bg = "180px";
 
     if (
       pathname.includes("point") ||
-      pathname.toLowerCase().includes("reward")
+      pathname.toLowerCase().includes("/reward")
     ) {
       bg = "280px";
     }
@@ -167,7 +167,8 @@ const LiffAPP = () => {
                 <img
                   className="w-full"
                   src={
-                    window.location.href.indexOf("/line/point") !== -1
+                    pathname.includes("point") ||
+                    pathname.toLowerCase().includes("/reward")
                       ? require("assets/img/mbk/Background.jpg").default
                       : require("assets/img/mbk/line_head_img.jpg").default
                   }

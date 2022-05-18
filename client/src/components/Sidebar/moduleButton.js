@@ -13,7 +13,7 @@ const ModuleButton = ({ onClick, label, icon, typePermission }) => {
 
             onClick={onClick}
         >
-            <i className={icon + " text-xs"}></i>
+            <i className={icon + " text-sm"}></i>
             <span className="text-sm px-4 pt-1 font-bold block">{label}</span>
             <svg
                 className="w-6 h-6"

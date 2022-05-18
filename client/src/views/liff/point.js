@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import axios from "services/axios";
 import { useHistory } from "react-router-dom";
 import {
   path,
@@ -7,8 +6,8 @@ import {
   GetMemberpoints,
 } from "@services/liff.services";
 import { IsNullOrEmpty } from "@services/default.service";
-import * as Session from "@services/Session.service";
 import moment from "moment";
+import Spinner from "components/Loadings/spinner/Spinner";
 
 // components
 
@@ -17,17 +16,20 @@ const Point = () => {
   const [tbMember, settbMember] = useState({});
   const [Memberpoints, setMemberpoints] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const getMembers = async () => {
-    axios
-      .post("/members/checkRegister", { uid: Session.getLiff().uid })
-      .then((res) => {
-        console.log(res);
+  const getMembers = () => {
+    setIsLoading(true);
+    apiCheckRegister(
+      (res) => {
         if (res.data.code === 200) {
           settbMember(res.data.tbMember);
           getMemberpoints({ id: res.data.tbMember.id });
-        } else {
         }
-      });
+      },
+      () => {},
+      () => {
+        setIsLoading(false);
+      }
+    );
   };
 
   const getMemberpoints = async (data) => {
@@ -51,6 +53,7 @@ const Point = () => {
   }, []);
   return (
     <>
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
       <div style={{ marginTop: "-120px", position: "absolute", width: "100%" }}>
         <div className="line-text-brown">
@@ -111,7 +114,6 @@ const Point = () => {
               <div className="bg-green-mbk" style={{ width: "10px" }}></div>
               <div style={{ padding: "10px" }}>ประวัติคะแนน</div>
             </div>
-
           </div>
         </div>
       </div>

@@ -4,60 +4,60 @@ import MyAward from "./member.myAward";
 import MyOrder from "./member.myOrder";
 import useWindowDimensions from "services/useWindowDimensions";
 import { useHistory } from "react-router-dom";
-  import {
-    path,
-    checkRegister as apiCheckRegister,
-    GetMemberpoints,
-  } from "@services/liff.services";
-  import { IsNullOrEmpty } from "@services/default.service";
-  import moment from "moment";
-  import Spinner from "components/Loadings/spinner/Spinner";
-  import * as Session from "@services/Session.service";
-  // components
-  
-  const Member = () => {
-    const history = useHistory();
-    const [isLoading, setIsLoading] = useState(false);
-    const { TabPane } = Tabs;
-    const tabsChange = () => {};
-    const [tbMember, settbMember] = useState({});
-    const [Memberpoints, setMemberpoints] = useState({});
-    const { width , height } = useWindowDimensions();
-  
-    const getMembers = async () => {
-      setIsLoading(true);
-      apiCheckRegister(
-        (res) => {
-          if (res.data.code === 200) {
-            settbMember(res.data.tbMember);
-            getMemberpoints({ id: res.data.tbMember.id });
-          }
-        },
-        () => {},
-        () => {
-          setIsLoading(false);
+import {
+  path,
+  checkRegister as apiCheckRegister,
+  GetMemberpoints,
+} from "@services/liff.services";
+import { IsNullOrEmpty } from "@services/default.service";
+import moment from "moment";
+import Spinner from "components/Loadings/spinner/Spinner";
+import * as Session from "@services/Session.service";
+// components
+
+const Member = () => {
+  const history = useHistory();
+  const [isLoading, setIsLoading] = useState(false);
+  const { TabPane } = Tabs;
+  const tabsChange = () => {};
+  const [tbMember, settbMember] = useState({});
+  const [Memberpoints, setMemberpoints] = useState({});
+  const { width, height } = useWindowDimensions();
+
+  const getMembers = async () => {
+    setIsLoading(true);
+    apiCheckRegister(
+      (res) => {
+        if (res.data.code === 200) {
+          settbMember(res.data.tbMember);
+          getMemberpoints({ id: res.data.tbMember.id });
         }
-      );
-    };
-    const getMemberpoints = async (data) => {
-      setIsLoading(true);
-      GetMemberpoints(
-        data,
-        (res) => {
-          if (res.data.code === 200) {
-            setMemberpoints(res.data);
-          }
-        },
-        () => {},
-        () => {
-          setIsLoading(false);
+      },
+      () => {},
+      () => {
+        setIsLoading(false);
+      }
+    );
+  };
+  const getMemberpoints = async (data) => {
+    setIsLoading(true);
+    GetMemberpoints(
+      data,
+      (res) => {
+        if (res.data.code === 200) {
+          setMemberpoints(res.data);
         }
-      );
-    };
-    useEffect(() => {
-      getMembers();
-      getMemberpoints();
-    }, []);
+      },
+      () => {},
+      () => {
+        setIsLoading(false);
+      }
+    );
+  };
+  useEffect(() => {
+    getMembers();
+    getMemberpoints();
+  }, []);
   return (
     <>
       {/* card */}
@@ -82,11 +82,15 @@ import { useHistory } from "react-router-dom";
             backgroundSize: "cover",
           }}
         >
-          <div className="relative liff-member" >
+          <div className="relative liff-member">
             <div className="flex">
               <div style={{ width: "30%" }}>
                 <img
-                  src={(Session.getLiff().pictureUrl) ? Session.getLiff().pictureUrl : require("assets/img/mbk/user-no-profile.png").default}
+                  src={
+                    Session.getLiff().pictureUrl
+                      ? Session.getLiff().pictureUrl
+                      : require("assets/img/mbk/user-no-profile.png").default
+                  }
                   alt="..."
                   className="w-15 h-15 rounded-full border-2 border-blueGray-50 shadow"
                 ></img>
@@ -95,7 +99,7 @@ import { useHistory } from "react-router-dom";
                 <div
                   className="mt-2 font-bold text-green-mbk"
                   style={{
-                    fontSize:'0.7rem',
+                    fontSize: "0.7rem",
                     backgroundColor:
                       tbMember.memberType === "1"
                         ? "#cbe8ba"
@@ -109,7 +113,7 @@ import { useHistory } from "react-router-dom";
                         ? "#929292"
                         : "#d0af2c",
                     borderRadius: "20px",
-                    padding:'2px 10px'
+                    padding: "2px 10px",
                   }}
                 >
                   {tbMember.memberType === "1"
@@ -136,7 +140,7 @@ import { useHistory } from "react-router-dom";
             </div>
             <div className="absolute bottom-0 text-white font-bold text-xs ">
               {/* {"รหัสสมาชิก : " + tbMember.memberCard + " "+ width  + " "+ height } */}
-              {"รหัสสมาชิก : " + tbMember.memberCard }
+              {"รหัสสมาชิก : " + tbMember.memberCard}
             </div>
           </div>
           <div className="relative" style={{ width: "50%", height: "100%" }}>
@@ -164,7 +168,9 @@ import { useHistory } from "react-router-dom";
               </div>
               <div className="text-right mt-2 "></div>
               <div className="text-right mt-2">
-                <span className=" text-2xs text-white ">{Memberpoints.memberpoints+" คะแนน  "}</span>
+                <span className=" text-2xs text-white ">
+                  {Memberpoints.memberpoints + " คะแนน  "}
+                </span>
               </div>
               <div className="text-right ">
                 <span className=" text-2xs text-white ">
