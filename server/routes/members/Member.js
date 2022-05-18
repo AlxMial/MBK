@@ -13,7 +13,7 @@ const line = require("@line/bot-sdk");
 const config = require("../../services/config.line");
 const { sign } = require("jsonwebtoken");
 
-router.get("/",validateToken, async (req, res) => {
+router.get("/", validateToken, async (req, res) => {
   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
@@ -24,7 +24,7 @@ router.get("/",validateToken, async (req, res) => {
   } else res.json({ error: "not found member" });
 });
 
-router.get("/export",validateToken, async (req, res) => {
+router.get("/export", validateToken, async (req, res) => {
   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
@@ -355,7 +355,8 @@ router.get("/getMember", validateLineToken, async (req, res) => {
 router.get("/getMemberPoints", validateLineToken, async (req, res) => {
   let code = 500;
   let memberpoints = 0;
-  const id = Encrypt.DecodeKey(req.body.user.id);
+  let msg;
+  const id = Encrypt.DecodeKey(req.user.id);
   let enddate = new Date(new Date().getFullYear() + "-" + "12" + "-" + "31");
   try {
     code = 200;
@@ -377,12 +378,14 @@ router.get("/getMemberPoints", validateLineToken, async (req, res) => {
       });
     }
   } catch (e) {
-    console.log(e);
+    code = 300;
+    // console.log(e);
   }
   res.json({
     code: code,
     enddate: enddate,
     memberpoints: memberpoints,
+    msg: msg,
   });
 });
 
