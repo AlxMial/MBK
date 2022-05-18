@@ -351,7 +351,8 @@ router.get("/getMember", validateLineToken, async (req, res) => {
     tbMember: members,
   });
 });
-router.get("/getMemberPoints", async (req, res) => {
+
+router.get("/getMemberPoints", validateLineToken, async (req, res) => {
   let code = 500;
   let memberpoints = 0;
   const id = Encrypt.DecodeKey(req.body.user.id);
