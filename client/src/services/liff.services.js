@@ -16,6 +16,9 @@ import rewardRedeem from "views/liff/reward/reward.redeem";
 import rewardSpin from "views/liff/reward/reward.spin";
 import rewardExchange from "views/liff/reward/reward.exchange";
 
+import cancelPage from "views/liff/CancelAndReturn/cancel";
+import returnPage from "views/liff/CancelAndReturn/return";
+
 export const path = {
   privacypolicy: "/line/privacypolicy",
   register: "/line/register",
@@ -30,6 +33,9 @@ export const path = {
   rewardredeem: "/line/rewardredeem/:id",
   rewardspin: "/line/rewardspin/:id",
   rewardexchange: "/line/rewardexchange/:id",
+
+  cancelPage: "/line/cancelPage",
+  returnPage: "/line/returnPage",
 };
 export const routes = [
   {
@@ -81,7 +87,17 @@ export const routes = [
     path: path.rewardexchange,
     component: rewardExchange,
   },
+
+  {
+    path: path.cancelPage,
+    component: cancelPage,
+  },
+  {
+    path: path.returnPage,
+    component: returnPage,
+  },
 ];
+
 const httpGet = (path, s, e, f) => {
   axios
     .get(path)
