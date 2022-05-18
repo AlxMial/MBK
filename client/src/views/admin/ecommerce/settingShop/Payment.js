@@ -4,12 +4,16 @@ import axios from "services/axios";
 import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 import * as yup from "yup";
 import { useToasts } from "react-toast-notifications";
+import useWindowDimensions from "services/useWindowDimensions";
+import PaymentModal from './PaymentModal';
 
 const Payment = () => {
+    const { width } = useWindowDimensions();
     const { addToast } = useToasts();
     const [listPayment, setListPayment] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     const fetchData = async () => {
         await axios.get("pointCode").then((response) => {
@@ -18,6 +22,23 @@ const Payment = () => {
                 setListSearch(response.data.tbPayment);
             }
         });
+    };
+
+    const InputSearch = (e) => {
+        e = e.toLowerCase();
+        if (e === "") {
+            setListPayment(listSearch);
+        } else {
+            setListPayment(
+                listPayment.filter(
+                    (x) =>
+                        x.accountName.toLowerCase().includes(e) ||
+                        x.accountNumber.toLowerCase().includes(e) ||
+                        x.bankName.toLowerCase().toString().includes(e) ||
+                        x.bankBranchName.toLowerCase().includes(e)
+                )
+            );
+        }
     };
 
     const formik = useFormik({
@@ -72,7 +93,50 @@ const Payment = () => {
     });
 
     return (
-        <div>Payment</div>
+        <>
+            <div className="w-full">
+                <div
+                    className={
+                        "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white Overflow-list "
+                    }
+                >
+                    <div className="rounded-t mb-0 px-4 py-3 border-0">
+                        <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
+                            <div className="lg:w-6/12">
+                                <span className="z-3 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-2">
+                                    <i className="fas fa-search"></i>
+                                </span>
+                                <input
+                                    type="text"
+                                    placeholder="Search here..."
+                                    className="border-0 pl-12 w-64 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded-xl text-sm shadow outline-none focus:outline-none focus:ring"
+                                    onChange={(e) => {
+                                        InputSearch(e.target.value);
+                                    }}
+                                />
+                            </div>
+                            <div className={"lg:w-6/12 text-right block"} >
+                                <button
+                                    className="bg-lemon-mbk text-white active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                                    type="button"
+                                    onClick={() => {
+                                        setOpen(true);
+                                    }}
+                                >
+                                    <span className=" text-sm px-2">เพิ่มช่องทางการชำระเงิน</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {open && <PaymentModal
+                open={open}
+                formik={formik}
+                setSelectedImage={setSelectedImage}
+                handleSubmitModal={() => formik.handleSubmit}
+                handleModal={() => setOpen(false)} />}
+        </>
     )
 }
 
