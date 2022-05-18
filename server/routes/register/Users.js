@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
             firstName: Encrypt.DecodeKey(user.firstName),
             lastName: Encrypt.DecodeKey(user.lastName)
           },
-          "MBKPROJECT", { expiresIn: '1440m' }
+          "MBKPROJECT", { expiresIn: '1m' }
         );
         res.json({
           token: accessToken,
@@ -50,7 +50,7 @@ router.get("/auth", validateToken, (req, res) => {
   res.json(req.user);
 });
 
-router.post("/", async (req, res) => {
+router.post("/", validateToken, async (req, res) => {
   try {
     const user = await tbUser.findOne({
       where: {
@@ -105,7 +105,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/",validateToken, async (req, res) => {
   const listUser = await tbUser.findAll({ where: { isDeleted: false } });
   if (listUser.length > 0) {
     const valueData = Encrypt.decryptAllDataArray(listUser);
@@ -115,7 +115,7 @@ router.get("/", async (req, res) => {
     res.json({ status: false, message: "not found user", tbUser: null });
 });
 
-router.get("/byId/:id", async (req, res) => {
+router.get("/byId/:id",validateToken, async (req, res) => {
   if (req.params.id !== "undefined") {
     const id = Encrypt.DecodeKey(req.params.id);
     const listUser = await tbUser.findOne({ where: { id: id } });
@@ -127,7 +127,7 @@ router.get("/byId/:id", async (req, res) => {
   }
 });
 
-router.get("/permission/:username", async (req, res) => {
+router.get("/permission/:username", validateToken,async (req, res) => {
   if (req.params.username !== "undefined") {
     const username = req.params.username;
     const listUser = await tbUser.findOne({
@@ -141,7 +141,7 @@ router.get("/permission/:username", async (req, res) => {
   }
 });
 
-router.put("/", async (req, res) => {
+router.put("/", validateToken ,async (req, res) => {
   req.body.id = Encrypt.DecodeKey(req.body.id);
   const user = await tbUser.findOne({ where: { id: req.body.id } });
 
@@ -228,7 +228,7 @@ router.put("/", async (req, res) => {
   }
 });
 
-router.delete("/multidelete/:userId", (req, res) => {
+router.delete("/multidelete/:userId", validateToken,(req, res) => {
   const userId = Encrypt.DecodeKey(req.params.userId);
   const words = Encrypt.encryptValueIdArray(userId.split(","));
   for (const type of words) {
@@ -239,14 +239,14 @@ router.delete("/multidelete/:userId", (req, res) => {
   res.json({ status: true, message: "success", tbUser: null });
 });
 
-router.delete("/:userId", async (req, res) => {
+router.delete("/:userId", validateToken, async (req, res) => {
   const userId = Encrypt.DecodeKey(req.params.userId);
   req.body.isDeleted = true;
   tbUser.update(req.body, { where: { id: userId } });
   res.json({ status: true, message: "success", tbUser: null });
 });
 
-router.get("/getemail/:email", async (req, res) => {
+router.get("/getemail/:email",validateToken , async (req, res) => {
   const email = Encrypt.EncodeKey(req.params.email.toLocaleLowerCase());
   const user = await tbUser.findOne({
     where: { email: email, IsDeleted: false },
@@ -262,7 +262,7 @@ router.get("/getemail/:email", async (req, res) => {
 
 });
 
-router.put("/updatePassword", (req, res) => {
+router.put("/updatePassword", validateToken,(req, res) => {
   bcrypt.hash(req.body.password, 10).then((hash) => {
     req.body.password = hash;
     req.body.id = Encrypt.DecodeKey(req.body.id);

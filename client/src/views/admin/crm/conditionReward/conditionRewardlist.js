@@ -249,7 +249,7 @@ export default function ConditionRewardList() {
               "relative flex flex-col min-w-0 break-words w-full mb-6 border rounded bg-white Overflow-list "
             }
           >
-            <div className="rounded-t mb-4 px-4 border-0">
+            <div className="rounded-t mb-2 px-4 border-0">
               <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
                 <div className="lg:w-6/12 mt-4">
                   <span className="z-3 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-2">
