@@ -3696,7 +3696,9 @@ input[type=tel]:disabled  {
   pointer-events: none;
   color: rgb(191, 191, 191) !important;
 }
-
+.DatePicker-disabled .datepicker-wheel{
+  background-color: #F2F2F2;
+}
 
 .disableInput:disabled{
   background-color: #F2F2F2 !important;

@@ -5,9 +5,7 @@ import Canbeused from "./coupon.canbeused";
 import Expire from "./coupon.expire";
 import { useHistory } from "react-router-dom";
 import {
-  path,
-  checkRegister as apiCheckRegister,
-  GetMemberpoints,
+  getMember,
 } from "@services/liff.services";
 import { IsNullOrEmpty } from "@services/default.service";
 import * as Session from "@services/Session.service";
@@ -23,7 +21,7 @@ const Member = () => {
   const [tbMember, settbMember] = useState({});
   const getMembers = async () => {
     setIsLoading(true);
-    apiCheckRegister(
+    getMember(
       (res) => {
         if (res.data.code === 200) {
           settbMember(res.data.tbMember);

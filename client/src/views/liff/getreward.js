@@ -4,8 +4,7 @@ import axios from "services/axios";
 import InputMask from "react-input-mask";
 import { useHistory } from "react-router-dom";
 import {
-  path,
-  checkRegister as apiCheckRegister,
+  getMember,
   listPointStore,
 } from "@services/liff.services";
 import { IsNullOrEmpty } from "@services/default.service";
@@ -91,7 +90,7 @@ const GetReward = () => {
     }
   };
   const getMembers = async () => {
-    apiCheckRegister(
+    getMember(
       (res) => {
         if (res.data.code === 200) {
           settbMember(res.data.tbMember);

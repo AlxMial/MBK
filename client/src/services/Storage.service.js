@@ -43,3 +43,16 @@ export const GetEnum = (_name) => {
 export const RemoveEnum = (_name) => {
   localStorage.removeItem(name + "-Enum-"+_name)
 };
+
+
+export const setaccessToken = (phon) => {
+  localStorage.setItem("accessToken", phon);
+};
+export const getaccessToken = () => {
+  let phon = localStorage.getItem("accessToken");
+  phon = IsNullOrEmpty(phon) ? "" : phon;
+  return phon;
+};
+export const removeaccessToken = () => {
+  localStorage.removeItem("accessToken");
+};

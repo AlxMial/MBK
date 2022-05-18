@@ -4,6 +4,7 @@ const { tbPointStoreHD, tbPointStoreDT } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
+const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const ValidateEncrypt = require("../../services/crypto");
@@ -164,7 +165,7 @@ router.delete("/:pointStoreId", validateToken, async (req, res) => {
   res.json({ status: true, message: "success", tbPointStoreHD: null });
 });
 
-router.get("/listPointStore", async (req, res) => {
+router.get("/listPointStore",validateLineToken, async (req, res) => {
   let listPointStore = await tbPointStoreHD.findAll({
     where: { isDeleted: false },
   });

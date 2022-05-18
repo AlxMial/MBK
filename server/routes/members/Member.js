@@ -11,6 +11,7 @@ const genMember = new generateMember();
 const Encrypt = new ValidateEncrypt();
 const line = require("@line/bot-sdk");
 const config = require("../../services/config.line");
+const { sign } = require("jsonwebtoken");
 
 router.get("/", async (req, res) => {
   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
@@ -278,6 +279,7 @@ router.delete("/:memberId", validateToken, async (req, res) => {
   res.json({ status: true, message: "success", tbMember: null });
 });
 
+/* line  */
 router.post("/checkRegister", async (req, res) => {
   let isRegister = false;
   let code = 500;
@@ -291,7 +293,8 @@ router.post("/checkRegister", async (req, res) => {
     if (member) {
       accessToken = sign(
         {
-          id: req.body.uid,
+          id: Encrypt.EncodeKey(member.id),
+          uid: Encrypt.EncodeKey(member.uid),
         },
         "LINEMBKPROJECT",
         { expiresIn: "1440m" }
@@ -314,7 +317,9 @@ router.post("/checkRegister", async (req, res) => {
       isRegister = false;
       accessToken = null;
     }
-  } catch {}
+  } catch (e) {
+    console.log(e);
+  }
 
   res.json({
     code: code,
@@ -323,15 +328,39 @@ router.post("/checkRegister", async (req, res) => {
   });
 });
 
-router.post("/GetMemberpoints", async (req, res) => {
+router.get("/getMember", validateLineToken, async (req, res) => {
+  let code = 500;
+  const id = Encrypt.DecodeKey(req.user.id);
+  let members;
+  try {
+    let member = await tbMember.findOne({
+      where: { id: id, isDeleted: false },
+    });
+    code = 200;
+    if (member) {
+      member = Encrypt.decryptAllData(member);
+      Encrypt.encryptValueId(member);
+      members = member;
+    }
+  } catch (e) {
+    code = 300;
+  }
+
+  res.json({
+    code: code,
+    tbMember: members,
+  });
+});
+router.get("/getMemberPoints", validateLineToken, async (req, res) => {
   let code = 500;
   let memberpoints = 0;
+  const id = Encrypt.DecodeKey(req.user.id);
   let enddate = new Date(new Date().getFullYear() + "-" + "12" + "-" + "31");
   try {
     code = 200;
     let data = await tbMemberPoint.findAll({
       where: {
-        tbMemberId: Encrypt.DecodeKey(req.body.id),
+        tbMemberId: id,
         isDeleted: false,
         $and: [
           Sequelize.where(
@@ -353,11 +382,35 @@ router.post("/GetMemberpoints", async (req, res) => {
         }
       });
     }
-  } catch {}
+  } catch (e) {
+    console.log(e);
+  }
   res.json({
     code: code,
     enddate: enddate,
     memberpoints: memberpoints,
+  });
+});
+
+router.get("/getMemberPointsList", validateLineToken, async (req, res) => {
+  let code = 500;
+  let tbMemberPointList;
+  const id = Encrypt.DecodeKey(req.user.id);
+  try {
+    code = 200;
+    let data = await tbMemberPoint.findAll({
+      where: {
+        tbMemberId: id,
+        isDeleted: false,
+      },
+    });
+    if (data) {
+      tbMemberPointList = data;
+    }
+  } catch {}
+  res.json({
+    code: code,
+    tbMemberPoint: tbMemberPointList,
   });
 });
 
