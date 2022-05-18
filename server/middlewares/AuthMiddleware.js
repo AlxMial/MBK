@@ -6,6 +6,7 @@ const validateToken = ( req, res , next) => {
     else { 
         try{
             const validToken = verify(accessToken,"MBKPROJECT");
+       
             req.user = validToken
             if(validToken){
                 return next();

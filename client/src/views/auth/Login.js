@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { useDispatch } from 'react-redux'
+import { useDispatch } from "react-redux";
 import axios from "services/axios";
 import { useHistory, Link } from "react-router-dom";
 import { AuthContext } from "../../services/AuthContext";
@@ -65,7 +65,7 @@ export default function Login() {
             autoDismiss: true,
           });
 
-          localStorage.setItem("accessToken", response.data.token);
+          sessionStorage.setItem("accessToken", response.data.token);
           localStorage.setItem("roleUser", response.data.role);
           localStorage.setItem("user", response.data.userName);
           localStorage.setItem(
@@ -78,13 +78,13 @@ export default function Login() {
             status: true,
             role: response.data.role,
           });
-          window.location.replace('/admin/users');
+          // window.location.replace('/admin/users');
+          history.push("/admin/users");
           //set loading
           setTimeout(() => {
-              //finish loading
+            //finish loading
           }, 2000);
         }
-
       });
     },
   });

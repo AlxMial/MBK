@@ -3,16 +3,24 @@ const username = "VUh4MmZDekFzeDlHd1BHVzJranpHUT09";
 const password = "NFgrWHk2bTE1UURGZ0M0WXVwOVpxQT09";
 const token = Buffer.from(`${username}:${password}`, "utf8").toString("base64");
 
-export default axios.create({
-  // baseURL: `http://undefined.ddns.net:8083/`,
-  // baseURL: `https://undefined.ddns.net/mbkserver/`,
+const axiosInstance = axios.create({
   baseURL: `http://localhost:3001/mbkserver/`,
-  headers: {
-    Authorization: `Basic ${token}`,
-    "Content-type": "application/json",
-    accessToken: localStorage.getItem("accessToken"),
-  },
 });
+
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const tokens = token;
+    const auth = tokens ? `Bearer ${tokens}` : '';
+    config.headers.common['Authorization'] = auth;
+    config.headers.common['accessToken'] = sessionStorage.getItem("accessToken");;
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
+
+export default axiosInstance;
+
+
 
 /* otp */
 const api_key = "915ce264de8250902d3a898a042cf2cc";
