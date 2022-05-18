@@ -11,7 +11,7 @@ import "antd/dist/antd.css";
 import Modal from "react-modal";
 import { Radio, DatePicker, Space, ConfigProvider } from "antd";
 import locale from "antd/lib/locale/th_TH";
-import * as Storage from "../../../services/Storage.service";
+import * as Storage from "../../../../services/Storage.service";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import {
   customEcomStyles,

@@ -23,7 +23,7 @@ import {
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
-import * as Storage from "../../../services/Storage.service";
+import * as Storage from "../../../../services/Storage.service";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import  { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";

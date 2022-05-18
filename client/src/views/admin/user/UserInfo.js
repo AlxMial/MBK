@@ -290,7 +290,7 @@ export default function UserInfo() {
     <>
       <div className="flex flex-warp">
         <span className="text-base font-bold margin-auto-t-b">
-          <i className="fas fa-user-circle"></i>&nbsp;
+          <i className="fas fa-user-friends"></i>&nbsp;
         </span>
         <span className="text-base margin-auto font-bold">
           จัดการผู้ดูแลระบบ

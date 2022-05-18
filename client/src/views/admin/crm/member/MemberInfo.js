@@ -9,13 +9,13 @@ import { useToasts } from "react-toast-notifications";
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
 import  { styleSelect } from "assets/styles/theme/ReactSelect.js";
-import * as Storage from "../../../services/Storage.service";
+import * as Storage from "../../../../services/Storage.service";
 import "antd/dist/antd.css";
 import moment from "moment";
 import "moment/locale/th";
 import locale from "antd/lib/locale/th_TH";
 import { DatePicker, Space, ConfigProvider } from "antd";
-import * as Address from "../../../services/GetAddress.js";
+import * as Address from "../../../../services/GetAddress.js";
 import useMenu from "services/useMenu";
 import { getPermissionByUserName } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
@@ -390,7 +390,7 @@ export default function MemberInfo() {
           CRM&nbsp;&nbsp;/&nbsp;&nbsp;
         </span>
         <span className="text-sm margin-auto-t-b font-bold ">
-          <i className="fas fa-user-friends"></i>&nbsp;&nbsp;
+          <i className="fas fa-users-cog"></i>&nbsp;&nbsp;
         </span>
         <span className="text-base margin-auto font-bold">จัดการสมาชิก</span>
       </div>

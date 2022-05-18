@@ -9,17 +9,12 @@ import HeaderStats from "components/Headers/HeaderStats.js";
 import FooterAdmin from "components/Footers/FooterAdmin.js";
 
 // views
-
-import Dashboard from "views/admin/Dashboard.js";
-import Maps from "views/admin/Maps.js";
-import Settings from "views/admin/Settings.js";
-import Tables from "views/admin/Tables.js";
 import UserList from "views/admin/user/Userlist";
 import useWindowDimensions from "services/useWindowDimensions";
 import UserInfo from "views/admin/user/UserInfo";
-import MemberList from "views/admin/member/Memberlist";
-import MemberInfo from "views/admin/member/MemberInfo";
-import PointManage from "views/admin/point/PointManage";
+import MemberList from "views/admin/crm/member/Memberlist";
+import MemberInfo from "views/admin/crm/member/MemberInfo";
+import PointManage from "views/admin/crm/point/PointManage";
 import StockInfo from "views/admin/ecommerce/stock/StockInfo";
 import StockList from "views/admin/ecommerce/stock/Stocklist";
 import empty from "views/empty";

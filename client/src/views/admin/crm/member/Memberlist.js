@@ -4,14 +4,13 @@ import axios from "services/axios";
 import ReactPaginate from "react-paginate";
 import Modal from "react-modal";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
-import * as Storage from "../../../services/Storage.service";
 import { Workbook } from "exceljs";
 import { exportExcel } from "services/exportExcel";
 import { getPermissionByUserName } from "services/Permission";
 import * as fs from "file-saver";
 import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
-import * as Address from "../../../services/GetAddress.js";
+import * as Address from "../../../../services/GetAddress.js";
 // components
 Modal.setAppElement("#root");
 const customStyles = {
@@ -240,7 +239,7 @@ export default function MemberList() {
           CRM&nbsp;&nbsp;/&nbsp;&nbsp;
         </span>
         <span className="text-sm margin-auto-t-b font-bold ">
-          <i className="fas fa-user-friends"></i>&nbsp;&nbsp;
+          <i className="fas fa-users-cog"></i>&nbsp;&nbsp;
         </span>
         <span className="text-base margin-auto font-bold">จัดการสมาชิก</span>
       </div>

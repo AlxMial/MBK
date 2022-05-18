@@ -6,7 +6,7 @@ import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 import "antd/dist/antd.css";
 import { Radio } from "antd";
-import * as Storage from "../../../services/Storage.service";
+import * as Storage from "../../../../services/Storage.service";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";

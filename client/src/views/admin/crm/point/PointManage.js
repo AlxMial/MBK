@@ -42,7 +42,7 @@ export default function PointManage() {
           CRM&nbsp;&nbsp;/&nbsp;&nbsp;
         </span>
         <span className="text-sm margin-auto-t-b font-bold ">
-          <i className="fas fa-chess"></i>&nbsp;&nbsp;
+          <i className="fas fa-coins"></i>&nbsp;&nbsp;
         </span>
         <span className="text-base margin-auto font-bold">เงื่อนไขคะแนน</span>
       </div>
