@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
             firstName: Encrypt.DecodeKey(user.firstName),
             lastName: Encrypt.DecodeKey(user.lastName)
           },
-          "MBKPROJECT", { expiresIn: '1440m' }
+          "MBKPROJECT", { expiresIn: "1440m" }
         );
         res.json({
           token: accessToken,
@@ -235,7 +235,6 @@ router.delete("/multidelete/:userId", validateToken,(req, res) => {
     req.body.isDeleted = true;
     tbUser.update(req.body, { where: { id: type } });
   }
-  //res.json("DELETED SUCCESSFULLY");
   res.json({ status: true, message: "success", tbUser: null });
 });
 
@@ -259,7 +258,6 @@ router.get("/getemail/:email",validateToken , async (req, res) => {
   } else {
     res.json(null);
   }
-
 });
 
 router.put("/updatePassword", validateToken,(req, res) => {

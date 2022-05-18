@@ -2,7 +2,6 @@ import React from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 
 // components
-
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
 import HeaderStats from "components/Headers/HeaderStats.js";
@@ -23,7 +22,10 @@ import ContentLoader from "components/Loadings/ContentLoader";
 import ConditionRewardList from "views/admin/crm/conditionReward/conditionRewardlist";
 
 export default function Admin() {
+
   const { height, width } = useWindowDimensions();
+
+
   return (
     <>
       <ContentLoader />
@@ -73,6 +75,7 @@ export default function Admin() {
             </Switch>
             {/* <FooterAdmin /> */}
           </div>
+
         </div>
       </div>
     </>

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 import useWindowDimensions from "services/useWindowDimensions";
-import { getPermissionByUserName } from "services/Permission";
+import { GetPermissionByUserName } from "services/Permission";
 import ModuleButton from "./moduleButton";
 
 export default function Sidebar() {
@@ -27,7 +27,7 @@ export default function Sidebar() {
   }
 
   const fetchPermission = async () => {
-    const role = await getPermissionByUserName();
+    const role = await GetPermissionByUserName();
     setTypePermission(role);
     if (role === "3") {
       history.push("/admin/members");

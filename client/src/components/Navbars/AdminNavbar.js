@@ -1,16 +1,17 @@
 import React from "react";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import UserDropdown from "components/Dropdowns/UserDropdown.js";
 
 export default function Navbar() {
   let history = useHistory();
+
   const OnLogOut = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("roleUser");
-    localStorage.removeItem("username");
+    localStorage.removeItem("user");
     localStorage.removeItem("fullName");
     history.push("/auth/login");
-  }
+  };
 
   return (
     <>
@@ -26,7 +27,11 @@ export default function Navbar() {
           </a> */}
           {/* User */}
           <ul className="flex-col md:flex-row list-none items-center hidden md:flex text-white">
-            <span className="mr-1">{localStorage.getItem('fullName')}</span> {" : "} <span onClick={(e) => OnLogOut()} className="ml-1 cursor-pointer">ออกจากระบบ</span>
+            <span className="mr-1">{localStorage.getItem("fullName")}</span>{" "}
+            {" : "}{" "}
+            <span onClick={(e) => OnLogOut()} className="ml-1 cursor-pointer">
+              ออกจากระบบ
+            </span>
           </ul>
         </div>
       </nav>

@@ -25,7 +25,7 @@ import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
 import * as Storage from "../../../../services/Storage.service";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
-import  { styleSelect } from "assets/styles/theme/ReactSelect.js";
+import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
 import { exportExcel } from "services/exportExcel";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
@@ -73,7 +73,7 @@ export default function PointCode() {
   const [errorImport, setErrorImport] = useState(false);
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
   const [isModefied, setIsModified] = useState(false);
-  const [errorPointQuantity , seterrorPointQuantity] = useState(false);
+  const [errorPointQuantity, seterrorPointQuantity] = useState(false);
   const { menu } = useMenu();
   const { addToast } = useToasts();
 
@@ -172,9 +172,13 @@ export default function PointCode() {
         listPointCode.filter(
           (x) =>
             x.pointCodeName.toLowerCase().includes(e) ||
-            (x.pointCodeSymbol === null ? "" : x.pointCodeSymbol).toLowerCase().includes(e) || 
+            (x.pointCodeSymbol === null ? "" : x.pointCodeSymbol)
+              .toLowerCase()
+              .includes(e) ||
             x.pointCodePoint.toString().includes(e) ||
-            (x.pointCodeQuantityCode=== null ? "" : x.pointCodeQuantityCode).toString().includes(e) ||
+            (x.pointCodeQuantityCode === null ? "" : x.pointCodeQuantityCode)
+              .toString()
+              .includes(e) ||
             x.isActive.toLowerCase().toString().includes(e) ||
             x.useCount.toString().includes(e)
         )
@@ -225,7 +229,7 @@ export default function PointCode() {
       isType: "1",
       isDeleted: false,
       addBy: "",
-      updateBy: ""
+      updateBy: "",
     },
     validationSchema: Yup.object({
       pointCodeName: Yup.string().required(
@@ -282,11 +286,12 @@ export default function PointCode() {
       }
       if (
         values.pointCodeLengthSymbol >= 10 &&
-        values.pointCodeLengthSymbol <= 16 && !errorPointQuantity
+        values.pointCodeLengthSymbol <= 16 &&
+        !errorPointQuantity
       ) {
         setIsLoading(true);
         if (values.id) {
-          formikImport.values.updateBy = localStorage.getItem('user');
+          formikImport.values.updateBy = localStorage.getItem("user");
           axios.put("pointCode", values).then((res) => {
             if (res.data.status) {
               setIsLoading(false);
@@ -305,7 +310,7 @@ export default function PointCode() {
             }
           });
         } else {
-          formikImport.values.addBy = localStorage.getItem('user');
+          formikImport.values.addBy = localStorage.getItem("user");
           axios.post("pointCode", values).then(async (res) => {
             if (res.data.status) {
               values.tbPointCodeHDId = res.data.tbPointCodeHD.id;
@@ -380,7 +385,7 @@ export default function PointCode() {
       isDeleted: false,
       fileName: "",
       addBy: "",
-      updateBy: ""
+      updateBy: "",
     },
     validationSchema: Yup.object({
       pointCodeName: Yup.string().required(
@@ -412,7 +417,7 @@ export default function PointCode() {
         formikImport.values.startDate = formikImport.values.endDate;
       setIsLoading(true);
       if (values.id) {
-        formikImport.values.updateBy = localStorage.getItem('user');
+        formikImport.values.updateBy = localStorage.getItem("user");
         axios.put("pointCode", values).then((res) => {
           if (res.data.status) {
             setIsLoading(false);
@@ -435,7 +440,7 @@ export default function PointCode() {
         formData.append("file", file);
         if (file) {
           setErrorImport(false);
-          formikImport.values.addBy = localStorage.getItem('user');
+          formikImport.values.addBy = localStorage.getItem("user");
           axios.post("pointCode", values).then(async (res) => {
             if (res.data.status) {
               formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
@@ -702,10 +707,21 @@ export default function PointCode() {
                         <div className={"flex-auto "}>
                           <div className="w-full mt-2">
                             <form>
-                              <div className="relative w-full mb-3">
+                              <div className=" flex justify-between align-middle ">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
                                     <label>Import</label>
+                                  </div>
+                                </div>
+
+                                <div className="  text-right align-middle  mb-3">
+                                  <div
+                                    
+                                    className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4"
+                                  >
+                                    <label className="cursor-pointer" onClick={() => {
+                                      closeModalImport();
+                                    }}>X</label>
                                   </div>
                                 </div>
                               </div>
@@ -1080,7 +1096,7 @@ export default function PointCode() {
                                 <div className=" flex justify-between align-middle ">
                                   <div></div>
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                    <button
+                                    {/* <button
                                       className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                       type="button"
                                       onClick={() => {
@@ -1088,7 +1104,7 @@ export default function PointCode() {
                                       }}
                                     >
                                       ย้อนกลับ
-                                    </button>
+                                    </button> */}
                                     <button
                                       className={
                                         "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
@@ -1446,9 +1462,11 @@ export default function PointCode() {
                                       );
                                       formik.values.pointCodeQuantityCode =
                                         ValidateService.onHandleScore(event);
-                 
-                                      if(parseInt(event.target.value) > 1000000)
-                                      seterrorPointQuantity(true);
+
+                                      if (
+                                        parseInt(event.target.value) > 1000000
+                                      )
+                                        seterrorPointQuantity(true);
                                       else seterrorPointQuantity(false);
                                     }}
                                     onBlur={formik.handleBlur}
@@ -1464,10 +1482,10 @@ export default function PointCode() {
                                     </div>
                                   ) : null}
                                   {errorPointQuantity && width < 764 ? (
-                                      <div className="text-sm pt-2  px-2 text-red-500">
-                                        * จำนวน Code ต้องน้อยกว่าเท่ากับ 1 ล้าน
-                                      </div>
-                                    ) : null}
+                                    <div className="text-sm pt-2  px-2 text-red-500">
+                                      * จำนวน Code ต้องน้อยกว่าเท่ากับ 1 ล้าน
+                                    </div>
+                                  ) : null}
                                 </div>
 
                                 <div
@@ -1813,7 +1831,9 @@ export default function PointCode() {
                     return (
                       <tr key={key}>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
-                          <span className="px-4 margin-a">{pagesVisited+key + 1}</span>
+                          <span className="px-4 margin-a">
+                            {pagesVisited + key + 1}
+                          </span>
                         </td>
                         <td
                           onClick={() => {
@@ -1912,25 +1932,32 @@ export default function PointCode() {
             />
           </div>
           <div className="px-4">
-              <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
-                <div className="lg:w-6/12 font-bold" style={{ alignSelf: "stretch" }}>
-                {((pagesVisited+10) > listPointCode.length ? listPointCode.length : (pagesVisited+10))} {"/"}{listPointCode.length} {" "}รายการ
-                </div>
-                <div className="lg:w-6/12">
-                  <ReactPaginate
-                    previousLabel={" < "}
-                    nextLabel={" > "}
-                    pageCount={pageCount}
-                    onPageChange={changePage}
-                    containerClassName={"paginationBttns"}
-                    previousLinkClassName={"previousBttn"}
-                    nextLinkClassName={"nextBttn"}
-                    disabledClassName={"paginationDisabled"}
-                    activeClassName={"paginationActive"}
-                  />
-                </div>
+            <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
+              <div
+                className="lg:w-6/12 font-bold"
+                style={{ alignSelf: "stretch" }}
+              >
+                {pagesVisited + 10 > listPointCode.length
+                  ? listPointCode.length
+                  : pagesVisited + 10}{" "}
+                {"/"}
+                {listPointCode.length} รายการ
+              </div>
+              <div className="lg:w-6/12">
+                <ReactPaginate
+                  previousLabel={" < "}
+                  nextLabel={" > "}
+                  pageCount={pageCount}
+                  onPageChange={changePage}
+                  containerClassName={"paginationBttns"}
+                  previousLinkClassName={"previousBttn"}
+                  nextLinkClassName={"nextBttn"}
+                  disabledClassName={"paginationDisabled"}
+                  activeClassName={"paginationActive"}
+                />
               </div>
             </div>
+          </div>
         </div>
       </div>
       {/* <ConfirmEdit

@@ -17,7 +17,7 @@ import locale from "antd/lib/locale/th_TH";
 import { DatePicker, Space, ConfigProvider } from "antd";
 import * as Address from "../../../../services/GetAddress.js";
 import useMenu from "services/useMenu";
-import { getPermissionByUserName } from "services/Permission";
+import { GetPermissionByUserName } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 
 export default function ConditioRewardInfo() {
@@ -329,7 +329,7 @@ export default function ConditioRewardInfo() {
   }
 
   const fetchPermission = async () => {
-    const role = await getPermissionByUserName();
+    const role = await GetPermissionByUserName();
     setTypePermission(role);
   };
 

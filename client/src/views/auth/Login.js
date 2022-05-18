@@ -1,4 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
+import { useDispatch } from 'react-redux'
 import axios from "services/axios";
 import { useHistory, Link } from "react-router-dom";
 import { AuthContext } from "../../services/AuthContext";
@@ -6,7 +7,6 @@ import { useToasts } from "react-toast-notifications";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useWindowDimensions from "services/useWindowDimensions";
-import * as Storage from "services/Storage.service";
 
 export default function Login() {
   /* Variable Set UseState */
@@ -15,10 +15,7 @@ export default function Login() {
   const { height, width } = useWindowDimensions();
   const [passwordShown, setPasswordShown] = useState(false);
   let history = useHistory();
-
-  const OnHomePage = () => {
-    history.push("/admin/dashboard");
-  };
+  const dispatch = useDispatch();
 
   const togglePassword = () => {
     setPasswordShown(!passwordShown);
@@ -52,6 +49,7 @@ export default function Login() {
             { appearance: "error", autoDismiss: true }
           );
         } else {
+          localStorage.removeItem("accessToken");
           if (formik.values.isRemember)
             localStorage.setItem(
               "login",
@@ -74,16 +72,19 @@ export default function Login() {
             "fullName",
             response.data.firstName + " " + response.data.lastName
           );
-
           setAuthState({
             userName: response.data.userName,
             id: response.data.id,
             status: true,
             role: response.data.role,
           });
-          
-          history.push("/admin/users");
+          window.location.replace('/admin/users');
+          //set loading
+          setTimeout(() => {
+              //finish loading
+          }, 2000);
         }
+
       });
     },
   });

@@ -6,7 +6,7 @@ import PointRegister from "./PointRegister";
 import PointEcommerce from "./PointEcommerce";
 import PointCode from "./PointCode";
 import PointStore from "./PointStore";
-import { getPermissionByUserName } from "services/Permission";
+import { GetPermissionByUserName } from "services/Permission";
 
 export default function PointManage() {
   const { TabPane } = Tabs;
@@ -23,7 +23,7 @@ export default function PointManage() {
   async function fetchData() {}
 
   const fetchPermission = async  () => {
-    const role = await getPermissionByUserName();
+    const role = await GetPermissionByUserName();
     setTypePermission(role);
   }
 

@@ -12,7 +12,7 @@ import Logistic from './Logistic';
 import Promotion from './Promotion';
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { getPermissionByUserName } from "services/Permission";
+import { GetPermissionByUserName } from "services/Permission";
 
 const SettingShop = () => {
     const dispatch = useDispatch();
@@ -42,7 +42,7 @@ const SettingShop = () => {
     }, [currentShopSetting]);
 
     const fetchPermission = async () => {
-        const role = await getPermissionByUserName();
+        const role = await GetPermissionByUserName();
         setTypePermission(role);
     };
 

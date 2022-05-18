@@ -6,7 +6,7 @@ import Modal from "react-modal";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import { Workbook } from "exceljs";
 import { exportExcel } from "services/exportExcel";
-import { getPermissionByUserName } from "services/Permission";
+import { GetPermissionByUserName } from "services/Permission";
 import * as fs from "file-saver";
 import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
@@ -198,7 +198,7 @@ export default function ConditionRewardList() {
   };
 
   const fetchPermission = async () => {
-    const role = await getPermissionByUserName();
+    const role = await GetPermissionByUserName();
     console.log('role')
     setTypePermission(role);
   };
