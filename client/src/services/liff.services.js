@@ -16,8 +16,9 @@ import rewardRedeem from "views/liff/reward/reward.redeem";
 import rewardSpin from "views/liff/reward/reward.spin";
 import rewardExchange from "views/liff/reward/reward.exchange";
 
-import cancelPage from "views/liff/CancelAndReturn/cancel";
-import returnPage from "views/liff/CancelAndReturn/return";
+import shopList from "views/liff/shop/shopList";
+import cancelPage from "views/liff/shop/cancel";
+import returnPage from "views/liff/shop/return";
 
 export const path = {
   privacypolicy: "/line/privacypolicy",
@@ -34,8 +35,9 @@ export const path = {
   rewardspin: "/line/rewardspin/:id",
   rewardexchange: "/line/rewardexchange/:id",
 
-  cancelPage: "/line/cancelPage",
-  returnPage: "/line/returnPage",
+  cancelPage: "/line/cancelPage/:id",
+  returnPage: "/line/returnPage/:id",
+  shopList: "/line/shopList",
 };
 export const routes = [
   {
@@ -88,6 +90,10 @@ export const routes = [
     component: rewardExchange,
   },
 
+  {
+    path: path.shopList,
+    component: shopList,
+  },
   {
     path: path.cancelPage,
     component: cancelPage,

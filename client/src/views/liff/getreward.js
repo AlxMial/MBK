@@ -309,7 +309,7 @@ const GetReward = () => {
 
                             {!IsNullOrEmpty(_succeedData) || e.state ? (
                               <div className="text-xs pt-2 px-2 Noto Sans">
-                                <i class={msg.icon}></i>
+                                <i className={msg.icon}></i>
                                 <span className="font-bold text-red-500">
                                   {" "}
                                   {msg.msg}
@@ -369,7 +369,7 @@ const GetReward = () => {
           ) : (
             <>
               <div className="noselect text-lg text-white font-bold text-center ">
-                <i class="fas fa-check-circle" style={{ fontSize: "3rem" }}></i>
+                <i className="fas fa-check-circle" style={{ fontSize: "3rem" }}></i>
               </div>
 
               <div className="noselect text-lg text-white font-bold text-center mt-2">

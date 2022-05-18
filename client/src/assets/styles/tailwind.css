@@ -4048,6 +4048,37 @@ border-radius: 10px;
   justify-content: right;
 }
 
+.react-slideshow-wrapper.slide{
+  height: 120px;
+}
+.nav.default-nav{
+  display: none !important;
+}
+.react-slideshow-container+ul.indicators{
+  margin-top: -20px !important;
+}
+.react-slideshow-container+ul.indicators .each-slideshow-indicator:before{
+  background-color: #fff !important;
+}
+.line-row {margin: 0 -5px;}
+
+/* Clear floats after the columns */
+.line-row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.line-column {
+  float: left;
+  width: 50%;
+  padding: 0 10px;
+}
+.line-card {
+  padding: 16px;
+  border-bottom: 1px solid rgb(238, 238, 238);
+}
+
+
 /* Overflow Info */
 @media only screen and (max-width: 2500px) {
   .mobile {

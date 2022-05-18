@@ -220,7 +220,7 @@ const Updateprofile = () => {
               </div>
               <DatePickerContainer>
                 <DatePicker
-                  class="pointer-events-none "
+                  className="pointer-events-none "
                   isOpen={true}
                   isPopup={false}
                   showHeader={false}

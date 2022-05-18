@@ -131,6 +131,8 @@ const LiffAPP = () => {
       bg = "280px";
     }
     ismemberpage = true;
+  } else if (pathname.toLowerCase().includes("shoplist")) {
+    bg = "0px";
   }
   if (!view) {
     initLine(
@@ -163,7 +165,9 @@ const LiffAPP = () => {
             style={{ height: bg }}
           >
             <div className="w-full">
-              {ismemberpage ? (
+              {pathname
+                .toLowerCase()
+                .includes("shoplist") ? null : ismemberpage ? (
                 <img
                   className="w-full"
                   src={
