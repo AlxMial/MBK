@@ -45,6 +45,7 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-react-i18n": "^2.0.1",
     "redux-thunk": "^2.4.1",
+    "sass": "^1.51.0",
     "suneditor": "^2.42.0",
     "suneditor-react": "^3.4.0",
     "tailwindcss": "2.0.4",
