@@ -6,11 +6,7 @@ import { useToasts } from "react-toast-notifications";
 import { Radio } from "antd";
 import DatePicker from "react-mobile-datepicker";
 import * as Address from "@services/GetAddress.js";
-import {
-  path,
-  checkRegister as apiCheckRegister,
-  membersDpd,
-} from "@services/liff.services";
+import { path, getMember, membersDpd } from "@services/liff.services";
 import * as Session from "@services/Session.service";
 import {
   InputUC,
@@ -74,7 +70,7 @@ const Updateprofile = () => {
   };
   const getMembers = async () => {
     setIsLoading(true);
-    apiCheckRegister(
+    getMember(
       (res) => {
         if (res.data.code === 200) {
           settbMember(res.data.tbMember);
@@ -230,7 +226,6 @@ const Updateprofile = () => {
                   showHeader={false}
                   min={moment(new Date(Data.birthDate)).toDate()}
                   max={moment(new Date(Data.birthDate)).toDate()}
-                  // value={moment(new Date(Data.birthDate)).toDate()}
                   dateConfig={{
                     year: {
                       format: "YYYY",
@@ -248,13 +243,6 @@ const Updateprofile = () => {
                       step: 1,
                     },
                   }}
-
-                  // onChange={(e) => {
-                  //   settbMember((prevState) => ({
-                  //     ...prevState,
-                  //     ["birthDate"]: moment(new Date(e)).toDate(),
-                  //   }));
-                  // }}
                 />
               </DatePickerContainer>
             </div>

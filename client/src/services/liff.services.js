@@ -82,7 +82,19 @@ export const routes = [
     component: rewardExchange,
   },
 ];
-
+const httpGet = (path, s, e, f) => {
+  axios
+    .get(path)
+    .then((res) => {
+      s(res);
+    })
+    .catch((error) => {
+      e(error);
+    })
+    .finally((final) => {
+      f();
+    });
+};
 export const checkRegister = (s, e = () => {}, f = () => {}) => {
   let _uid = Session.getLiff().uid;
   axios
@@ -98,18 +110,26 @@ export const checkRegister = (s, e = () => {}, f = () => {}) => {
     });
 };
 
-export const GetMemberpoints = (data, s, e = () => {}, f = () => {}) => {
-  axios
-    .post("/members/GetMemberpoints", data)
-    .then((res) => {
-      s(res);
-    })
-    .catch((error) => {
-      e(error);
-    })
-    .finally((final) => {
-      f();
-    });
+export const getMember = (s, e = () => {}, f = () => {}) => {
+  httpGet("/members/getMember", s, e, f);
+};
+
+export const getMemberpoints = (s, e = () => {}, f = () => {}) => {
+  httpGet("/members/getMemberPoints", s, e, f);
+};
+export const getMemberPointsList = (s, e = () => {}, f = () => {}) => {
+  httpGet("/members/getMemberPointsList", s, e, f);
+  // axios
+  //   .get("/members/getMemberPointsList")
+  //   .then((res) => {
+  //     s(res);
+  //   })
+  //   .catch((error) => {
+  //     e(error);
+  //   })
+  //   .finally((final) => {
+  //     f();
+  //   });
 };
 
 export const membersDpd = (data, s, e = () => {}, f = () => {}) => {

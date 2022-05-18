@@ -6,11 +6,10 @@ import useWindowDimensions from "services/useWindowDimensions";
 import { useHistory } from "react-router-dom";
 import {
   path,
-  checkRegister as apiCheckRegister,
-  GetMemberpoints,
+  getMember,
+  getMemberpoints as getPoint,
 } from "@services/liff.services";
-import { IsNullOrEmpty } from "@services/default.service";
-import moment from "moment";
+import { IsNullOrEmpty, liff_dateToString } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import * as Session from "@services/Session.service";
 // components
@@ -26,7 +25,7 @@ const Member = () => {
 
   const getMembers = async () => {
     setIsLoading(true);
-    apiCheckRegister(
+    getMember(
       (res) => {
         if (res.data.code === 200) {
           settbMember(res.data.tbMember);
@@ -41,8 +40,7 @@ const Member = () => {
   };
   const getMemberpoints = async (data) => {
     setIsLoading(true);
-    GetMemberpoints(
-      data,
+    getPoint(
       (res) => {
         if (res.data.code === 200) {
           setMemberpoints(res.data);
@@ -174,12 +172,15 @@ const Member = () => {
               </div>
               <div className="text-right ">
                 <span className=" text-2xs text-white ">
-                  {"จะหมดอายุ : " +
-                    (IsNullOrEmpty(Memberpoints.enddate)
-                      ? "-"
-                      : moment(Memberpoints.enddate.split("T")[0])
-                          .locale("th")
-                          .format("DD/MM/yyyy"))}
+                  {
+                    "จะหมดอายุ : " +
+                      liff_dateToString(Memberpoints.enddate, "DD/MM/yyyy")
+                    // (IsNullOrEmpty(Memberpoints.enddate)
+                    //   ? "-"
+                    //   : moment(Memberpoints.enddate.split("T")[0])
+                    //       .locale("th")
+                    //       .format("DD/MM/yyyy"))
+                  }
                 </span>
               </div>
             </div>

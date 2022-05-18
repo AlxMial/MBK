@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
-// import axios from "services/axios";
-import * as Session from "../services/Session.service";
+import * as Session from "@services/Session.service";
+import * as Storage from "@services/Storage.service";
 import { useHistory } from "react-router-dom";
 import liff from "@line/liff";
 import { IsNullOrEmpty } from "@services/default.service";
@@ -45,7 +45,7 @@ const initLine = (callback, setView) => {
 const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "Ubfcc855b6a6dae691da898801d1ec206",
+      uid: "U66c3a95352d2269cc83129a2268f1893",
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();
@@ -54,7 +54,7 @@ const runApp = (callback, setView) => {
         let lifdata = Session.getLiff();
         if (res.data.code === 200) {
           if (res.data.isRegister) {
-            lifdata.memberId = res.data.tbMember.id;
+            Storage.setaccessToken(res.data.accessToken);
             Session.setLiff(lifdata);
           }
         } else {

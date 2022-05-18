@@ -1,44 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import {
-  path,
-  checkRegister as apiCheckRegister,
-  GetMemberpoints,
-} from "@services/liff.services";
-import { IsNullOrEmpty } from "@services/default.service";
-import moment from "moment";
+import { path, getMemberPointsList } from "@services/liff.services";
+import { liff_dateToString } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
-
+import MyPoint from "./myPointUC";
 // components
 
 const Point = () => {
   const history = useHistory();
-  const [tbMember, settbMember] = useState({});
-  const [Memberpoints, setMemberpoints] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const getMembers = () => {
+  const [dataPoints, setDataPoints] = useState([]);
+  const GetMemberPointsList = () => {
     setIsLoading(true);
-    apiCheckRegister(
+    getMemberPointsList(
       (res) => {
         if (res.data.code === 200) {
-          settbMember(res.data.tbMember);
-          getMemberpoints({ id: res.data.tbMember.id });
-        }
-      },
-      () => {},
-      () => {
-        setIsLoading(false);
-      }
-    );
-  };
-
-  const getMemberpoints = async (data) => {
-    setIsLoading(true);
-    GetMemberpoints(
-      data,
-      (res) => {
-        if (res.data.code === 200) {
-          setMemberpoints(res.data);
+          setDataPoints(res.data.tbMemberPoint);
         }
       },
       () => {},
@@ -48,45 +25,17 @@ const Point = () => {
     );
   };
   useEffect(() => {
-    getMembers();
-    getMemberpoints();
+    GetMemberPointsList();
   }, []);
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ marginTop: "-120px", position: "absolute", width: "100%" }}>
-        <div className="line-text-brown">
-          <div className=" text-lg text-center font-bold mt-4">คะแนนของฉัน</div>
-          <div className="text-center mt-6">
-            <div
-              className="text-3xl font-bold"
-              style={{
-                backgroundColor: "#d0b027",
-                height: "40px",
-                width: "50%",
-                margin: "auto",
-                borderRadius: "20px",
-                padding: "5px",
-              }}
-            >
-              {tbMember.memberPoint === null ? 0 : tbMember.memberPoint}
-            </div>
-          </div>
-          <div className=" text-sm font-bold text-center mt-4 ">
-            {Memberpoints.memberpoints} คะแนน จะหมดอายุ{" "}
-            {IsNullOrEmpty(Memberpoints.enddate)
-              ? "-"
-              : moment(Memberpoints.enddate.split("T")[0])
-                  .locale("th")
-                  .add(543, "year")
-                  .format("DD/MM/yyyy")}
-          </div>
-        </div>
-
+      <div className="absolute" style={{ marginTop: "-120px", width: "100%" }}>
+        <MyPoint />
         <div className="mt-6">
           <div
-            className="bg-green-mbk flex text-white font-bold text-xs relative"
+            className="bg-green-mbk flex text-white font-bold text-xs relative "
             style={{
               width: "90%",
               padding: "10px",
@@ -114,6 +63,68 @@ const Point = () => {
               <div className="bg-green-mbk" style={{ width: "10px" }}></div>
               <div style={{ padding: "10px" }}>ประวัติคะแนน</div>
             </div>
+          </div>
+        </div>
+
+        <div className="mt-4 ">
+          <div
+            style={{
+              width: "90%",
+              padding: "10px",
+              margin: "auto",
+              borderRadius: "10px",
+              maxHeight: "330px",
+              overflow: "scroll",
+            }}
+          >
+            {[...dataPoints].map((e, i) => {
+              let _coler = "123".includes(e.campaignType.toLowerCase())
+                ? "#008000"
+                : "red";
+
+              return (
+                <div key={i} className="mb-2">
+                  <div className="flex relative">
+                    <div style={{ width: "2.5rem" }}>
+                      <img
+                        src={require("assets/img/mbk/logo_bg_mkb.png").default}
+                        alt="..."
+                        className="w-10 h-10 rounded-full border-2 border-blueGray-50 shadow"
+                      ></img>
+                    </div>
+                    <div
+                      className=""
+                      style={{ paddingLeft: "2rem", paddingTop: "10px" }}
+                    >
+                      {e.campaignType == "1"
+                        ? "Code"
+                        : e.campaignType == "2"
+                        ? "Ecommerce"
+                        : "Register"}
+                    </div>
+                    <div className="absolute" style={{ right: "0" }}>
+                      <div
+                        className="text-right font-bold"
+                        style={{
+                          color: _coler,
+                        }}
+                      >
+                        {("123".includes(e.campaignType.toLowerCase())
+                          ? "+"
+                          : "-") + e.point}
+                      </div>
+                      <div className="text-2xs" style={{ color: "#aaa" }}>
+                        {liff_dateToString(e.redeemDate, "DD MMM yyyy HH:mm")}
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className="mt-2"
+                    style={{ width: "100%", borderBottom: "1px solid #eee" }}
+                  ></div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
