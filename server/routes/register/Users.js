@@ -46,7 +46,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/auth", validateToken, (req, res) => {
+router.get("/auth", (req, res) => {
   res.json(req.user);
 });
 
@@ -127,7 +127,7 @@ router.get("/byId/:id",validateToken, async (req, res) => {
   }
 });
 
-router.get("/permission/:username",async (req, res) => {
+router.get("/permission/:username",validateToken,async (req, res) => {
   if (req.params.username !== "undefined") {
     const username = req.params.username;
     const listUser = await tbUser.findOne({

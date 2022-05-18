@@ -81,7 +81,7 @@ export default function Login() {
             status: true,
             role: response.data.role,
           });
-          const getToken = localStorage.getItem("accessToken");
+          
           history.push("/admin/users");
         }
       });
