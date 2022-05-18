@@ -9,6 +9,7 @@ import useWindowDimensions from "services/useWindowDimensions";
 import { Radio } from "antd";
 import { useToasts } from "react-toast-notifications";
 import Select from "react-select";
+import ValidateService from "services/validateValue";
 
 const BannerModal = ({ open, handleModal, name, modalData, onSubmitModal }) => {
     Modal.setAppElement("#root");
@@ -53,6 +54,8 @@ const BannerModal = ({ open, handleModal, name, modalData, onSubmitModal }) => {
             onSubmitModal(data);
         }
     }
+
+    console.log(category);
 
     return (
         <Modal
@@ -141,7 +144,10 @@ const BannerModal = ({ open, handleModal, name, modalData, onSubmitModal }) => {
                                                 }}
                                                 className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                                 options={categoryList}
-                                                value={category}
+                                                value={ValidateService.defaultValue(
+                                                    categoryList,
+                                                    category
+                                                )}
                                                 styles={useStyle}
                                             />
                                         </div>
