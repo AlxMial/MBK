@@ -251,11 +251,11 @@ const GetReward = () => {
                       } else {
                         if (!IsNullOrEmpty(_succeedData)) {
                           _succeedData.isInvalid
-                            ? (msg.msg = "Code ไม่ถูกต้อง")
+                            ? (msg.msg = "ไม่ถูกต้อง")
                             : _succeedData.isExpire
-                            ? (msg.msg = "Code หมดอายุแล้ว")
+                            ? (msg.msg = "หมดอายุแล้ว")
                             : _succeedData.isUse
-                            ? (msg.msg = "Code ถูกใช้แล้ว")
+                            ? (msg.msg = "ถูกใช้แล้ว")
                             : (msg = {
                                 msg: "สะสมคะแนนสำเร็จ",
                                 icon: "fas fa-check-circle text-green-mbk",

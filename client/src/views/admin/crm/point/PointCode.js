@@ -715,13 +715,15 @@ export default function PointCode() {
                                 </div>
 
                                 <div className="  text-right align-middle  mb-3">
-                                  <div
-                                    
-                                    className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4"
-                                  >
-                                    <label className="cursor-pointer" onClick={() => {
-                                      closeModalImport();
-                                    }}>X</label>
+                                  <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
+                                    <label
+                                      className="cursor-pointer"
+                                      onClick={() => {
+                                        closeModalImport();
+                                      }}
+                                    >
+                                      X
+                                    </label>
                                   </div>
                                 </div>
                               </div>
@@ -1150,13 +1152,27 @@ export default function PointCode() {
                         <div className={"flex-auto "}>
                           <div className="w-full mt-2">
                             <form onSubmit={formik.handleSubmit}>
-                              <div className="relative w-full mb-3">
+                              <div className=" flex justify-between align-middle ">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
                                     <label>เพิ่มแคมเปญ</label>
                                   </div>
                                 </div>
+
+                                <div className="  text-right align-middle  mb-3">
+                                  <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
+                                    <label
+                                      className="cursor-pointer"
+                                      onClick={() => {
+                                        closeModal();
+                                      }}
+                                    >
+                                      X
+                                    </label>
+                                  </div>
+                                </div>
                               </div>
+
                               <div className="flex flex-wrap px-24">
                                 {/* <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
                                   <label
@@ -1708,7 +1724,7 @@ export default function PointCode() {
                                 <div className=" flex justify-between align-middle ">
                                   <div></div>
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                    <button
+                                    {/* <button
                                       className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                       type="button"
                                       onClick={() => {
@@ -1717,7 +1733,7 @@ export default function PointCode() {
                                       }}
                                     >
                                       ย้อนกลับ
-                                    </button>
+                                    </button> */}
                                     <button
                                       className={
                                         "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
