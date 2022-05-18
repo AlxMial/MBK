@@ -12,10 +12,10 @@ class ValidateService {
   onHandlePhoneChange = (e) => {
     const re = /^[0-9\b]+$/;
     // if value is not blank, then test the regex
-    if(e === "" ||  re.test(e) || e.includes('x') )
-      return  e;
+    if (e === "" || re.test(e) || e.includes('x'))
+      return e;
     else return "";
-        
+
     // if ((e === "" || re.test(e)) && e.indexOf('x') === -1 ) {
     //   return e;
     // } else {
@@ -53,7 +53,7 @@ class ValidateService {
   };
 
   defaultValue = (options, value) => {
-    if (value.toString() === "" && options[0] !== undefined) {
+    if ((!value || value.toString() === "") && options[0] !== undefined) {
       value = options[0].value;
     }
     return options
