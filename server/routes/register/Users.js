@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
             firstName: Encrypt.DecodeKey(user.firstName),
             lastName: Encrypt.DecodeKey(user.lastName)
           },
-          "MBKPROJECT", { expiresIn: '1m' }
+          "MBKPROJECT", { expiresIn: '1440m' }
         );
         res.json({
           token: accessToken,
@@ -127,7 +127,7 @@ router.get("/byId/:id",validateToken, async (req, res) => {
   }
 });
 
-router.get("/permission/:username", validateToken,async (req, res) => {
+router.get("/permission/:username",async (req, res) => {
   if (req.params.username !== "undefined") {
     const username = req.params.username;
     const listUser = await tbUser.findOne({

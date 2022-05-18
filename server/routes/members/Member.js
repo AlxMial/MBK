@@ -13,7 +13,7 @@ const line = require("@line/bot-sdk");
 const config = require("../../services/config.line");
 const { sign } = require("jsonwebtoken");
 
-router.get("/", async (req, res) => {
+router.get("/",validateToken, async (req, res) => {
   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
   } else res.json({ error: "not found member" });
 });
 
-router.get("/export", async (req, res) => {
+router.get("/export",validateToken, async (req, res) => {
   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
@@ -351,10 +351,10 @@ router.get("/getMember", validateLineToken, async (req, res) => {
     tbMember: members,
   });
 });
-router.get("/getMemberPoints", validateLineToken, async (req, res) => {
+router.get("/getMemberPoints", async (req, res) => {
   let code = 500;
   let memberpoints = 0;
-  const id = Encrypt.DecodeKey(req.user.id);
+  const id = Encrypt.DecodeKey(req.body.user.id);
   let enddate = new Date(new Date().getFullYear() + "-" + "12" + "-" + "31");
   try {
     code = 200;
@@ -362,22 +362,15 @@ router.get("/getMemberPoints", validateLineToken, async (req, res) => {
       where: {
         tbMemberId: id,
         isDeleted: false,
-        $and: [
-          Sequelize.where(
-            Sequelize.fn("YEAR", Sequelize.col("dateField")),
-            new Date().getFullYear()
-          ),
-          { foo: "bar" },
-        ],
       },
     });
     if (data) {
-      const startdate = new Date(data[0].redeemDate);
+      // const startdate = new Date(data[0].redeemDate);
       enddate = new Date(
         new Date(new Date().getFullYear() + "-" + "12" + "-" + "31")
       );
       data.filter((e) => {
-        if (e.redeemDate >= startdate && e.redeemDate <= enddate) {
+        if (e.redeemDate.getFullYear() === new Date().getFullYear()) {
           memberpoints = memberpoints + e.point;
         }
       });
