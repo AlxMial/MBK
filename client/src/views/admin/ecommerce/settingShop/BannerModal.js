@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Modal from "react-modal";
 import {
     customStyles,
@@ -39,9 +39,19 @@ const BannerModal = ({ open, handleModal, name, modalData, onSubmitModal }) => {
         setFileName(e.target.files[0].name);
     }
 
-    const onValidate = () => {
+    useEffect(() => {
         if (!category) {
-            addToast("กรุณาเลือกหมวดหมู่สินค้า/สินค้า");
+            setCategory(categoryList[0].value);
+        }
+    }, []);
+
+    const onValidate = () => {
+        console.log(category)
+        if (!category) {
+            addToast("กรุณาเลือกหมวดหมู่สินค้า/สินค้า", {
+                appearance: "warning",
+                autoDismiss: true,
+            });
             return false;
         } else {
             const data = {

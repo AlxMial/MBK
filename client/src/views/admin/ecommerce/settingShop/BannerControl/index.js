@@ -1,6 +1,6 @@
 import React from 'react'
 
-const BannerControl = ({ formik, typePermission, setIsModified, name, onClick }) => {
+const BannerControl = ({ formik, typePermission, name, onClick }) => {
 
     return (
         <div className="relative w-full">
@@ -17,7 +17,6 @@ const BannerControl = ({ formik, typePermission, setIsModified, name, onClick })
                 name={name}
                 onChange={(e) => {
                     formik.handleChange(e);
-                    setIsModified(true);
                 }}
                 onBlur={formik.handleBlur}
                 value={formik.values[name]}
