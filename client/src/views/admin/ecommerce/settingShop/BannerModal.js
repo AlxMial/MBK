@@ -55,8 +55,6 @@ const BannerModal = ({ open, handleModal, name, modalData, onSubmitModal }) => {
         }
     }
 
-    console.log(category);
-
     return (
         <Modal
             isOpen={open}
@@ -66,121 +64,117 @@ const BannerModal = ({ open, handleModal, name, modalData, onSubmitModal }) => {
             shouldCloseOnOverlayClick={false}
         >
             <div className="flex flex-wrap">
-                <div className="w-full ">
-                    <div className={"flex-auto "}>
-                        <div className="w-full mt-2">
-                            <form>
-                                <div className="relative w-full mb-3">
-                                    <div className=" align-middle  mb-3">
-                                        <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                            <label>กำหนด Banner</label>
-                                        </div>
-                                    </div>
+                <div className="w-full flex-auto mt-2">
+                    <form>
+                        <div className="relative w-full mb-3">
+                            <div className=" align-middle  mb-3">
+                                <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
+                                    <label>กำหนด Banner</label>
                                 </div>
-
-                                <div className="flex flex-wrap px-24 py-10 justify-center">
-                                    <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                                        <LabelUC label="รูป Banner" />
-                                    </div>
-                                    <div className="w-full lg:w-8/12 px-4 margin-auto-t-b ">
-                                        <div className="buttonIn image-upload ">
-                                            <label htmlFor="file-input" className="cursor-pointer" >
-                                                <input
-                                                    type="text"
-                                                    className={
-                                                        "border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
-                                                    }
-                                                    id="fileName"
-                                                    name="fileName"
-                                                    value={fileName}
-                                                    readOnly
-                                                />
-                                                <span className={"spanUpload px-1 py-1 text-xs font-bold"}>
-                                                    <i className="fas fa-upload text-blueGray-600"></i>
-                                                </span>
-                                            </label>
-                                            <input
-                                                id="file-input"
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={(e) => {
-                                                    handleSeletectImage(e);
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="w-full lg:w-2/12 px-4 mb-2 mt-2">
-                                        <label
-                                            className="text-blueGray-600 text-sm font-bold mb-2"
-                                            htmlFor="grid-password"
-                                        ></label>
-                                    </div>
-
-                                    <div
-                                        className={
-                                            "w-full lg:w-8/12 px-4 mb-4 mt-4"
-                                        }
-                                    >
-                                        <Radio.Group
-                                            options={options}
-                                            onChange={(e) => {
-                                                setOption(e.target.value);
-                                            }}
-                                            value={option}
-                                        />
-                                    </div>
-
-                                    <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
-                                        <LabelUC label="หมวดหมู่สินค้า/สินค้า" isRequired={true} />
-                                    </div>
-                                    <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
-                                        <div className="relative w-full">
-                                            <Select
-                                                id="category"
-                                                name="category"
-                                                onChange={(e) => {
-                                                    setCategory(e.value);
-                                                }}
-                                                className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                                                options={categoryList}
-                                                value={ValidateService.defaultValue(
-                                                    categoryList,
-                                                    category
-                                                )}
-                                                styles={useStyle}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="relative w-full mb-3">
-                                    <div className=" flex justify-between align-middle ">
-                                        <div></div>
-                                        <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                            <button
-                                                className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                                                type="button"
-                                                onClick={() => handleModal()}
-                                            >
-                                                ย้อนกลับ
-                                            </button>
-                                            <button
-                                                className={
-                                                    "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                                                }
-                                                type="button"
-                                                onClick={() => {
-                                                    onValidate();
-                                                }}
-                                            >
-                                                บันทึกข้อมูล
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                            </div>
                         </div>
-                    </div>
+
+                        <div className="flex flex-wrap px-24 py-10 justify-center">
+                            <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
+                                <LabelUC label="รูป Banner" />
+                            </div>
+                            <div className="w-full lg:w-8/12 px-4 margin-auto-t-b ">
+                                <div className="buttonIn image-upload ">
+                                    <label htmlFor="file-input" className="cursor-pointer" >
+                                        <input
+                                            type="text"
+                                            className={
+                                                "border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                            }
+                                            id="fileName"
+                                            name="fileName"
+                                            value={fileName}
+                                            readOnly
+                                        />
+                                        <span className={"spanUpload px-1 py-1 text-xs font-bold"}>
+                                            <i className="fas fa-upload text-blueGray-600"></i>
+                                        </span>
+                                    </label>
+                                    <input
+                                        id="file-input"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            handleSeletectImage(e);
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="w-full lg:w-2/12 px-4 mb-2 mt-2">
+                                <label
+                                    className="text-blueGray-600 text-sm font-bold mb-2"
+                                    htmlFor="grid-password"
+                                ></label>
+                            </div>
+
+                            <div
+                                className={
+                                    "w-full lg:w-8/12 px-4 mb-4 mt-4"
+                                }
+                            >
+                                <Radio.Group
+                                    options={options}
+                                    onChange={(e) => {
+                                        setOption(e.target.value);
+                                    }}
+                                    value={option}
+                                />
+                            </div>
+
+                            <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
+                                <LabelUC label="หมวดหมู่สินค้า/สินค้า" isRequired={true} />
+                            </div>
+                            <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                                <div className="relative w-full">
+                                    <Select
+                                        id="category"
+                                        name="category"
+                                        onChange={(e) => {
+                                            setCategory(e.value);
+                                        }}
+                                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                        options={categoryList}
+                                        value={ValidateService.defaultValue(
+                                            categoryList,
+                                            category
+                                        )}
+                                        styles={useStyle}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="relative w-full mb-3">
+                            <div className=" flex justify-between align-middle ">
+                                <div></div>
+                                <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
+                                    <button
+                                        className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                        type="button"
+                                        onClick={() => handleModal()}
+                                    >
+                                        ย้อนกลับ
+                                    </button>
+                                    <button
+                                        className={
+                                            "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                        }
+                                        type="button"
+                                        onClick={() => {
+                                            onValidate();
+                                        }}
+                                    >
+                                        บันทึกข้อมูล
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </Modal>

@@ -1,10 +1,11 @@
 import InputUC from 'components/InputUC';
 import TextAreaUC from 'components/InputUC/TextAreaUC';
 import LabelUC from 'components/LabelUC';
+import ProfilePictureUC from 'components/ProfilePictureUC';
 import React, { useState } from 'react'
 import BannerControl from './BannerControl';
 import BannerModal from './BannerModal';
-import './settingShop.scss'
+import './index.scss'
 
 const Setting = ({ props }) => {
     const { typePermission, formik, setIsModified, onSubmitModal } = props;
@@ -49,13 +50,10 @@ const Setting = ({ props }) => {
                 <form onSubmit={formik.handleSubmit}>
                     <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info py-10 lg:px-10">
                         <div className="banner flex flex-col flex-wrap justify-between">
-                            <div className="profile-pic px-4">
-                                <label className="-label" htmlFor='file'>
-                                    <span className="glyphicon glyphicon-camera"></span>
-                                    <span>Change Image</span>
-                                </label>
-                                <input id="file" type="file" onChange={handleChangeImg} accept="image/*" />
-                                <img src="https://themesfinity.com/wp-content/uploads/2018/02/default-placeholder-300x300.png" id="output" width="200" />
+                            <div className="px-4 lg:w-2/12">
+                                <ProfilePictureUC
+                                    hoverText='เลือกรูปร้านค้า'
+                                    handleChangeImg={handleChangeImg} />
                             </div>
                             <div className="w-full lg:w-2/12 px-4 h-full">
                                 <div className="relative w-full px-4">
