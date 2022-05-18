@@ -10,6 +10,49 @@ const Cancel = () => {
   const history = useHistory();
   const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
+  const [tbshop, settbshop] = useState([
+    {
+      img: require("assets/img/mbk/no-image.png").default,
+      detail:
+        "test 1",
+      endtime: "2022-05-19 13:00",
+      time: "",
+      price: 100,
+      discount: null,
+    },
+    {
+      img: require("assets/img/mbk/no-image.png").default,
+      detail: "test 2",
+      endtime: "2022-05-19 14:00",
+      time: "",
+      price: 200,
+      discount: 100,
+    },
+    {
+      img: require("assets/img/mbk/no-image.png").default,
+      detail: "test 3",
+      endtime: "2022-05-19 14:00",
+      time: "",
+      price: 300,
+      discount: null,
+    },
+    {
+      img: require("assets/img/mbk/no-image.png").default,
+      detail: "test 4",
+      endtime: "2022-05-19 14:00",
+      time: "",
+      price: 400,
+      discount: 100,
+    },
+    {
+      img: require("assets/img/mbk/no-image.png").default,
+      detail: "test 5",
+      endtime: "2022-05-19 14:00",
+      time: "",
+      price: 500,
+      discount: 100,
+    },
+  ]);
   const img = [
     {
       url: "https://www.w3schools.com/howto/img_nature_wide.jpg",
@@ -28,12 +71,16 @@ const Cancel = () => {
         "flashsale 1flashsale 1flashsale 1flashsale 1flashsale 1flashsale 1",
       endtime: "2022-05-19 13:00",
       time: "",
+      price: 100,
+      discount: null,
     },
     {
       img: require("assets/img/mbk/no-image.png").default,
       detail: "flashsale 2",
       endtime: "2022-05-19 14:00",
       time: "",
+      price: 200,
+      discount: 100,
     },
   ]);
 
@@ -121,7 +168,7 @@ const Cancel = () => {
                       <div
                         key={i}
                         className="relative"
-                        style={{ width: "50%",  paddingBottom: "25px"}}
+                        style={{ width: "50%", paddingBottom: "25px" }}
                       >
                         <div className="relative" style={{}}>
                           <div
@@ -148,10 +195,31 @@ const Cancel = () => {
                         </div>
 
                         <div className="px-2 py-2">{e.detail}</div>
-
+                        <div
+                          className="flex absolute"
+                          style={{ bottom: "0", left: "10px" }}
+                        >
+                          <div
+                            style={{
+                              color:
+                                e.discount !== null
+                                  ? "rgba(0,0,0,.54)"
+                                  : "#000",
+                              textDecoration:
+                                e.discount !== null ? "line-through" : "none",
+                            }}
+                          >
+                            {"฿" + e.price}
+                          </div>
+                          {e.discount !== null ? (
+                            <div style={{ color: "red", paddingLeft: "10px" }}>
+                              {"฿" + e.discount}
+                            </div>
+                          ) : null}
+                        </div>
                         <div
                           className="absolute"
-                          style={{ bottom: "0", right: "0" }}
+                          style={{ bottom: "0", right: "10px" }}
                         >
                           <i className="fas fa-cart-plus"></i>
                         </div>
@@ -164,38 +232,70 @@ const Cancel = () => {
           </div>
 
           <div className="mt-2">
-            <div className="line-row ">
-              <div className="line-column mt-2">
-                <div className="line-card">
-                  <h3>Card 1</h3>
-                  <p>Some text</p>
-                  <p>Some text</p>
-                </div>
-              </div>
-
-              <div className="line-column mt-2">
-                <div className="line-card">
-                  <h3>Card 2</h3>
-                  <p>Some text</p>
-                  <p>Some text</p>
-                </div>
-              </div>
-
-              <div className="line-column mt-2">
-                <div className="line-card">
-                  <h3>Card 3</h3>
-                  <p>Some text</p>
-                  <p>Some text</p>
-                </div>
-              </div>
-
-              <div className="line-column mt-2">
-                <div className="line-card">
-                  <h3>Card 4</h3>
-                  <p>Some text</p>
-                  <p>Some text</p>
-                </div>
-              </div>
+            <div
+              className="line-row "
+              style={{
+                maxHeight: "400px",
+                overflow: "scroll",
+              }}
+            >
+              {[
+                ...tbshop.map((e, i) => {
+                  return (
+                    <div key={i} className="line-column mt-2">
+                      <div className="line-card relative">
+                        <div className="relative" style={{}}>
+                          <img
+                            style={{ margin: "auto" }}
+                            src={e.img}
+                            alt="flash_sale"
+                            className="w-32 border-2 border-blueGray-50"
+                          ></img>
+                        </div>
+                        <div
+                          className="px-2 py-2"
+                          style={{
+                            height: "40px",
+                            lineHeight: "15px",
+                            overflow: "auto",
+                            marginBottom: "10px",
+                          }}
+                        >
+                          {e.detail}
+                        </div>
+                        <div
+                          className="flex absolute"
+                          style={{ bottom: "0", left: "10px" }}
+                        >
+                          <div
+                            style={{
+                              color:
+                                e.discount !== null
+                                  ? "rgba(0,0,0,.54)"
+                                  : "#000",
+                              textDecoration:
+                                e.discount !== null ? "line-through" : "none",
+                            }}
+                          >
+                            {"฿" + e.price}
+                          </div>
+                          {e.discount !== null ? (
+                            <div style={{ color: "red", paddingLeft: "10px" }}>
+                              {"฿" + e.discount}
+                            </div>
+                          ) : null}
+                        </div>
+                        <div
+                          className="absolute"
+                          style={{ bottom: "0", right: "10px" }}
+                        >
+                          <i className="fas fa-cart-plus"></i>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }),
+              ]}
             </div>
           </div>
         </div>
