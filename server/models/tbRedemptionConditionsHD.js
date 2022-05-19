@@ -45,6 +45,20 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
     });
+
+    tbRedemtionConditionsHD.associate = (models) => {
+
+
+      tbRedemtionConditionsHD.hasMany(models.tbRedemptionCoupon, {
+        foreignKey: 'redemtionConditionsHDId',
+        onDelete: "cascade",
+      });
+
+      tbRedemtionConditionsHD.hasMany(models.tbRedemptionProduct, {
+        foreignKey: 'redemtionConditionsHDId',
+        onDelete: "cascade",
+      });
+    };
     return tbRedemtionConditionsHD;
   };
   

@@ -81,17 +81,15 @@ router.post("/", async (req, res) => {
   });
 
   if (
-    req.body.firstName !== "" &&
-    req.body.lastName !== "" &&
-    req.body.phone !== "" &&
-    req.body.email !== "" &&
-    req.body.birthDate !== "" &&
-    req.body.registerDate !== "" &&
-    // req.body.address !== "" &&
-    // req.body.uid !== "" &&
-    req.body.sex !== "" &&
-    req.body.sMemberType !== "" &&
-    req.body.memberType !== ""
+    !Encrypt.IsNullOrEmpty(req.body.firstName) &&
+    !Encrypt.IsNullOrEmpty(req.body.lastName) &&
+    !Encrypt.IsNullOrEmpty(req.body.phone) &&
+    !Encrypt.IsNullOrEmpty(req.body.email) &&
+    !Encrypt.IsNullOrEmpty(req.body.birthDate) &&
+    !Encrypt.IsNullOrEmpty(req.body.registerDate) &&
+    !Encrypt.IsNullOrEmpty(req.body.sex) &&
+    !Encrypt.IsNullOrEmpty(req.body.sMemberType) &&
+    !Encrypt.IsNullOrEmpty(req.body.memberType)
   ) {
     if (!member) {
       req.body.email = req.body.email.toLowerCase();
@@ -206,16 +204,14 @@ router.put("/", async (req, res) => {
     },
   });
   if (
-    req.body.firstName !== "" &&
-    req.body.lastName !== "" &&
-    req.body.phone !== "" &&
-    req.body.email !== "" &&
-    req.body.birthDate !== "" &&
-    req.body.registerDate !== "" &&
-    // req.body.address !== "" &&
-    // // req.body.uid !== "" &&
-    req.body.sex !== "" &&
-    req.body.MemberType !== ""
+    !Encrypt.IsNullOrEmpty(req.body.firstName) &&
+    !Encrypt.IsNullOrEmpty(req.body.lastName) &&
+    !Encrypt.IsNullOrEmpty(req.body.phone) &&
+    !Encrypt.IsNullOrEmpty(req.body.email) &&
+    !Encrypt.IsNullOrEmpty(req.body.birthDate) &&
+    !Encrypt.IsNullOrEmpty(req.body.registerDate) &&
+    !Encrypt.IsNullOrEmpty(req.body.sex) &&
+    !Encrypt.IsNullOrEmpty(req.body.memberType)
   ) {
     if (!member) {
       req.body.phone = req.body.phone;

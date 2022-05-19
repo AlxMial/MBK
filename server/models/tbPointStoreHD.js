@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       tbPointStoreHD.hasMany(models.tbPointStoreDT, {
         onDelete: "cascade",
       });
-
     };
     return tbPointStoreHD;
   };

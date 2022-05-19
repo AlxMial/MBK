@@ -55,6 +55,7 @@ class ValidateEncrypt {
       return false;
     }
   };
+
   IsNull(obj, val) {
     return this.IsNullOrEmpty(obj) ? (this.IsNullOrEmpty(val) ? "" : val) : obj;
   }

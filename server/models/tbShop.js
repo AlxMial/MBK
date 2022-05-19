@@ -37,6 +37,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
     });
+    tbShop.associate = (models) => {
+      tbShop.hasMany(models.tbBanner, {
+        foreignKey: 'shopId',
+        onDelete: "cascade",
+      });
+    };
     return tbShop;
   };
   

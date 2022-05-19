@@ -64,14 +64,14 @@ router.post("/", validateToken, async (req, res) => {
 
     if (!user) {
       if (
-        req.body.role !== "" &&
-        req.body.firstName !== "" &&
-        req.body.lastName !== "" &&
-        req.body.email !== "" &&
-        req.body.empCode !== "" &&
-        req.body.position !== "" &&
-        req.body.userName !== "" &&
-        req.body.password !== ""
+        !Encrypt.IsNullOrEmpty(req.body.role) &&
+        !Encrypt.IsNullOrEmpty(req.body.firstName)  &&
+        !Encrypt.IsNullOrEmpty(req.body.lastName) &&
+        !Encrypt.IsNullOrEmpty(req.body.email) &&
+        !Encrypt.IsNullOrEmpty(req.body.empCode) &&
+        !Encrypt.IsNullOrEmpty(req.body.position) &&
+        !Encrypt.IsNullOrEmpty(req.body.userName) &&
+        !Encrypt.IsNullOrEmpty(req.body.password)
       ) {
         bcrypt.hash(req.body.password, 10).then(async (hash) => {
           req.body.password = hash;
@@ -163,13 +163,13 @@ router.put("/", validateToken ,async (req, res) => {
       res.json({ status: false, error: "user not found" });
     } else {
       if (
-        req.body.role !== "" &&
-        req.body.firstName !== "" &&
-        req.body.lastName !== "" &&
-        req.body.email !== "" &&
-        req.body.empCode !== "" &&
-        req.body.position !== "" &&
-        req.body.userName !== ""
+        !Encrypt.IsNullOrEmpty(req.body.role) &&
+        !Encrypt.IsNullOrEmpty(req.body.firstName)  &&
+        !Encrypt.IsNullOrEmpty(req.body.lastName) &&
+        !Encrypt.IsNullOrEmpty(req.body.email) &&
+        !Encrypt.IsNullOrEmpty(req.body.empCode) &&
+        !Encrypt.IsNullOrEmpty(req.body.position) &&
+        !Encrypt.IsNullOrEmpty(req.body.userName)
       ) {
         if (req.body.currentPassword !== "" && req.body.password !== "") {
           bcrypt

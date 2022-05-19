@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Select from "react-select";
+// import Select from "react-select";
 import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 
@@ -13,6 +13,7 @@ import * as Storage from "../../../services/Storage.service";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
+import SelectUC from "components/SelectUC";
 
 export default function UserInfo() {
   /* Option Select */
@@ -28,8 +29,6 @@ export default function UserInfo() {
   let { id } = useParams();
 
   /* RegEx formatter */
-  const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
   const EmailRegExp = /^[A-Za-z0-9_.@]+$/;
 
   /* Set useState */
@@ -79,12 +78,6 @@ export default function UserInfo() {
     }
   };
 
-  const onHandleIdentityCardChange = (e) => {
-    var identity = ValidateService.onHandleIdentityCard(e.target.value);
-    setinputIdentityCard(identity);
-    formik.values.identityCard = identity;
-  };
-
   function openModalSubject() {
     setIsOpenEdit(true);
   }
@@ -98,8 +91,7 @@ export default function UserInfo() {
     const valueError = JSON.stringify(formik.errors);
     if (valueError.length > 2) {
       setIsOpenEdit(false);
-      if(formik.values.password === "")
-        setErrorPassword(true);
+      if (formik.values.password === "") setErrorPassword(true);
     }
     // setIsModified(false);
     // history.push("/admin/users");
@@ -126,8 +118,8 @@ export default function UserInfo() {
       position: "",
       currentPassword: "",
       confirmPassword: "",
-      addBy:"",
-      updateBy:"",
+      addBy: "",
+      updateBy: "",
     },
     validationSchema: Yup.object({
       userName: Yup.string().required(
@@ -178,7 +170,7 @@ export default function UserInfo() {
         if (isNew) {
           formik.values.role =
             formik.values.role === "" ? "1" : formik.values.role;
-          formik.values.addBy = localStorage.getItem('user');
+          formik.values.addBy = localStorage.getItem("user");
           axios.post("users", values).then((res) => {
             if (res.data.status) {
               setIsNew(false);
@@ -189,7 +181,7 @@ export default function UserInfo() {
               setIsModified(false);
 
               if (modalIsOpenEdit) history.push("/admin/users");
-              else  history.push(`/admin/usersinfo/${res.data.tbUser.id}`);
+              else history.push(`/admin/usersinfo/${res.data.tbUser.id}`);
 
               // formik.setFieldValue("currentPassword", "");
               // formik.resetForm();
@@ -214,7 +206,7 @@ export default function UserInfo() {
         } else {
           formik.values.role =
             formik.values.role === "" ? "1" : formik.values.role;
-          formik.values.updateBy = localStorage.getItem('user');
+          formik.values.updateBy = localStorage.getItem("user");
           axios.put("users", values).then((res) => {
             if (res.data.status) {
               setenablePassword(true);
@@ -721,7 +713,7 @@ export default function UserInfo() {
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
-                      <Select
+                      {/* <Select
                         id="role"
                         name="role"
                         onChange={(value) => {
@@ -735,6 +727,18 @@ export default function UserInfo() {
                           formik.values.role
                         )}
                         styles={useStyle}
+                      /> */}
+                      <SelectUC
+                        name="role"
+                        onChange={(value) => {
+                          formik.setFieldValue("role", value.value);
+                          setIsModified(true);
+                        }}
+                        options={options}
+                        value={ValidateService.defaultValue(
+                          options,
+                          formik.values.role
+                        )}
                       />
                     </div>
                   </div>

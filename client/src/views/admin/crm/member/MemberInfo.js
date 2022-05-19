@@ -19,6 +19,7 @@ import * as Address from "../../../../services/GetAddress.js";
 import useMenu from "services/useMenu";
 import { GetPermissionByUserName } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
+import SelectUC from "components/SelectUC";
 
 export default function MemberInfo() {
   /* Option Select */
@@ -916,8 +917,7 @@ export default function MemberInfo() {
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
-                      <Select
-                        id="province"
+                      <SelectUC 
                         name="province"
                         isDisabled={typePermission === "1" ? false : true}
                         onChange={async (value) => {
@@ -944,15 +944,11 @@ export default function MemberInfo() {
                           );
                           formik.setFieldValue("postcode", postcode);
                         }}
-                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         options={dataProvice}
-                        menuPlacement="top"
                         value={ValidateService.defaultValue(
                           dataProvice,
                           formik.values.province
                         )}
-                        // value={defaultValue(options, formik.values.role)}
-                        styles={useStyle}
                       />
                     </div>
                   </div>

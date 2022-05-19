@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams, Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "services/axios";
@@ -8,14 +7,10 @@ import { useToasts } from "react-toast-notifications";
 import "antd/dist/antd.css";
 import ReactPaginate from "react-paginate";
 import moment from "moment";
-import { Radio, DatePicker, Space, ConfigProvider } from "antd";
+import { Radio, DatePicker, ConfigProvider } from "antd";
 import locale from "antd/lib/locale/th_TH";
 import Modal from "react-modal";
-import Select from "react-select";
 import Spinner from "components/Loadings/spinner/Spinner";
-import fs from "fs";
-import { saveAs } from "file-saver";
-import * as XLSX from "xlsx";
 import {
   customStyles,
   customStylesMobile,
@@ -28,7 +23,6 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
 import { exportExcel } from "services/exportExcel";
-import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 Modal.setAppElement("#root");
 
 export default function PointCode() {

@@ -41,12 +41,6 @@ export default function MemberList() {
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
 
-  const options = [
-    { value: "1", label: "ผู้ดูแลระบบ" },
-    { value: "2", label: "บัญชี" },
-    { value: "3", label: "การตลาด" },
-  ];
-
   /* Modal */
   function openModalSubject(id) {
     setDeleteValue(id);
@@ -76,27 +70,27 @@ export default function MemberList() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, checked } = e.target;
-    if (name === "allSelect") {
-      let tempUser = listUser.map((user) => {
-        return { ...user, isDeleted: checked };
-      });
-      setListUser(tempUser);
-      setDeleteNumber(tempUser.filter((x) => x.isDeleted === true).length);
-    } else {
-      let tempUser = listUser.map((user) =>
-        user.id.toString() === name
-          ? {
-              ...user,
-              isDeleted: checked,
-            }
-          : user
-      );
-      setListUser(tempUser);
-      setDeleteNumber(tempUser.filter((x) => x.isDeleted === true).length);
-    }
-  };
+  // const handleChange = (e) => {
+  //   const { name, checked } = e.target;
+  //   if (name === "allSelect") {
+  //     let tempUser = listUser.map((user) => {
+  //       return { ...user, isDeleted: checked };
+  //     });
+  //     setListUser(tempUser);
+  //     setDeleteNumber(tempUser.filter((x) => x.isDeleted === true).length);
+  //   } else {
+  //     let tempUser = listUser.map((user) =>
+  //       user.id.toString() === name
+  //         ? {
+  //             ...user,
+  //             isDeleted: checked,
+  //           }
+  //         : user
+  //     );
+  //     setListUser(tempUser);
+  //     setDeleteNumber(tempUser.filter((x) => x.isDeleted === true).length);
+  //   }
+  // };
 
   const pageCount = Math.ceil(listUser.length / usersPerPage);
 
@@ -105,28 +99,28 @@ export default function MemberList() {
   };
 
   /* API Deleted */
-  const deleteByList = async () => {
-    if (deleteNumber > 0) {
-      var ArrayDeleted = [];
-      listUser.forEach((field) => {
-        if (field.isDeleted === true) {
-          ArrayDeleted.push(field.id);
-        } else field.isDeleted = false;
-      });
-      if (ArrayDeleted.length > 0) {
-        console.log(ArrayDeleted);
-        axios.delete(`/members/multidelete/${ArrayDeleted}`).then(() => {
-          setDeleteNumber(0);
-          setListUser(
-            listUser.filter((val) => {
-              return val.isDeleted !== true;
-            })
-          );
-        });
-      }
-      closeModalSubject();
-    }
-  };
+  // const deleteByList = async () => {
+  //   if (deleteNumber > 0) {
+  //     var ArrayDeleted = [];
+  //     listUser.forEach((field) => {
+  //       if (field.isDeleted === true) {
+  //         ArrayDeleted.push(field.id);
+  //       } else field.isDeleted = false;
+  //     });
+  //     if (ArrayDeleted.length > 0) {
+  //       console.log(ArrayDeleted);
+  //       axios.delete(`/members/multidelete/${ArrayDeleted}`).then(() => {
+  //         setDeleteNumber(0);
+  //         setListUser(
+  //           listUser.filter((val) => {
+  //             return val.isDeleted !== true;
+  //           })
+  //         );
+  //       });
+  //     }
+  //     closeModalSubject();
+  //   }
+  // };
 
   const deleteUser = (e) => {
     axios.delete(`/members/${e}`).then(() => {
