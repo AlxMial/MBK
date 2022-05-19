@@ -61,7 +61,6 @@ const runApp = (callback, setView) => {
         }
         Session.setcheckRegister({
           isRegister: res.data.isRegister,
-          isConsent: res.data.isConsent,
         });
         callback(checkRegister);
         setView();
@@ -85,14 +84,13 @@ const runApp = (callback, setView) => {
             let lifdata = Session.getLiff();
             if (res.data.code === 200) {
               if (res.data.isRegister) {
-                lifdata.memberId = res.data.tbMember.id;
+                Storage.setaccessToken(res.data.accessToken);
                 Session.setLiff(lifdata);
               }
             } else {
             }
             Session.setcheckRegister({
               isRegister: res.data.isRegister,
-              isConsent: res.data.isConsent,
             });
             callback(checkRegister);
             setView();
