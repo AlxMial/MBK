@@ -1,9 +1,11 @@
 import React from 'react'
 import './index.scss'
+import useWindowDimensions from "services/useWindowDimensions";
 
 const ProfilePictureUC = ({ onChange, hoverText, id }) => {
+    const { width } = useWindowDimensions();
     return (
-        <div className="profile-pic">
+        <div className={"profile-pic " + (width < 768 ? ' justify-center' : '')}>
             <label className="-label" htmlFor={"file" + id}>
                 <span className="glyphicon glyphicon-camera"></span>
                 <span>{hoverText}</span>

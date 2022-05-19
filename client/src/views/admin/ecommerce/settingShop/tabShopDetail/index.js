@@ -12,10 +12,10 @@ import { GetPermissionByUserName } from "services/Permission";
 import axios from "services/axios";
 import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 import { useToasts } from "react-toast-notifications";
+import useWindowDimensions from "services/useWindowDimensions";
 
 const ShopDetail = () => {
-    // const { formik, onSubmitModal,
-    //     banner1, banner2, banner3, banner4, banner5, banner6 } = props;
+    const { width } = useWindowDimensions();
     const { addToast } = useToasts();
     const [open, setOpen] = useState(false);
     const [modalName, setModalName] = useState('');
@@ -27,6 +27,7 @@ const ShopDetail = () => {
     const [banner4, setBanner4] = useState(null);
     const [banner5, setBanner5] = useState(null);
     const [banner6, setBanner6] = useState(null);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         fetchPermission();
@@ -66,9 +67,9 @@ const ShopDetail = () => {
     };
 
     const handleChangeImg = (e) => {
-        console.log('ทำไมมาที่นี่')
         var image = document.getElementById("shopImage");
         image.src = URL.createObjectURL(e.target.files[0]);
+        setSelectedImage(e.target.files[0]);
     };
 
     const handleOpenModal = (name) => {
@@ -129,12 +130,6 @@ const ShopDetail = () => {
     const formik = useFormik({
         initialValues: {
             shopId: '',
-            // banner1Id: '',
-            // banner2Id: '',
-            // banner3Id: '',
-            // banner4Id: '',
-            // banner5Id: '',
-            // banner6Id: '',
             banner1Name: '',
             banner2Name: '',
             banner3Name: '',
@@ -165,10 +160,20 @@ const ShopDetail = () => {
             if (values.id) {
                 axios.put("shop", values).then((res) => {
                     if (res.data.status) {
-                        fetchData();
-                        addToast("บันทึกข้อมูลสำเร็จ",
-                            { appearance: "success", autoDismiss: true }
-                        );
+                        // Save Image ต่อ
+                        if (selectedImage) {
+                            fetchSuccess();
+                            fetchData();
+                            addToast("บันทึกข้อมูลสำเร็จ",
+                                { appearance: "success", autoDismiss: true }
+                            );
+                        } else {
+                            fetchSuccess();
+                            fetchData();
+                            addToast("บันทึกข้อมูลสำเร็จ",
+                                { appearance: "success", autoDismiss: true }
+                            );
+                        }
                     } else {
                         addToast("บันทึกข้อมูลไม่สำเร็จ", {
                             appearance: "warning",
@@ -181,11 +186,20 @@ const ShopDetail = () => {
                 values.addBy = localStorage.getItem('user');
                 axios.post("shop", values).then(async (res) => {
                     if (res.data.status) {
-                        fetchData();
-                        fetchSuccess();
-                        addToast("บันทึกข้อมูลสำเร็จ",
-                            { appearance: "success", autoDismiss: true }
-                        );
+                        // Save Image ต่อ
+                        if (selectedImage) {
+                            fetchSuccess();
+                            fetchData();
+                            addToast("บันทึกข้อมูลสำเร็จ",
+                                { appearance: "success", autoDismiss: true }
+                            );
+                        } else {
+                            fetchSuccess();
+                            fetchData();
+                            addToast("บันทึกข้อมูลสำเร็จ",
+                                { appearance: "success", autoDismiss: true }
+                            );
+                        }
                     }
                 });
             }
@@ -211,14 +225,14 @@ const ShopDetail = () => {
             <div className="w-full">
                 <form onSubmit={formik.handleSubmit}>
                     <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-b Overflow-info py-10 lg:px-10">
-                        <div className="banner flex flex-col flex-wrap justify-between">
-                            <div className="px-4 lg:w-2/12">
+                        <div className={"flex flex-wrap justify-between " + (width > 768 ? ' banner flex-col' : '')}>
+                            <div className="w-full px-4 lg:w-2/12 ">
                                 <ProfilePictureUC
                                     id='shopImage'
                                     hoverText='เลือกรูปร้านค้า'
                                     onChange={handleChangeImg} />
                             </div>
-                            <div className="w-full lg:w-2/12 px-4 h-full">
+                            <div className={"w-full lg:w-2/12 px-4 " + (width > 768 ? ' banner-label' : ' text-center mt-4')}>
                                 <div className="relative w-full px-4">
                                     <label
                                         className=" text-blueGray-600 text-sm font-bold "

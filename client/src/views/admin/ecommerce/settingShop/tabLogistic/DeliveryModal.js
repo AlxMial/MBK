@@ -7,6 +7,7 @@ import {
 import LabelUC from 'components/LabelUC';
 import useWindowDimensions from "services/useWindowDimensions";
 import InputUC from 'components/InputUC';
+import { Radio } from "antd";
 
 const DeliveryModal = ({ open, formik, handleModal }) => {
     Modal.setAppElement("#root");
@@ -14,9 +15,10 @@ const DeliveryModal = ({ open, formik, handleModal }) => {
     const useStyleMobile = customStylesMobile();
     const { width } = useWindowDimensions();
 
-    const handleSeletectImage = (e) => {
-        setSelectedImage(e.target.files[0]);
-    }
+    const options = [
+        { label: "เปิดการใช้งาน", value: true },
+        { label: "ปิดการใช้งาน", value: false },
+    ];
 
     return (
         <Modal
@@ -32,7 +34,7 @@ const DeliveryModal = ({ open, formik, handleModal }) => {
                         <div className=" flex justify-between align-middle ">
                             <div className=" align-middle  mb-3">
                                 <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>เพิ่มช่องทางการชำระเงิน</label>
+                                    <label>เพิ่มเงื่อนไขโปรโมชั่นการส่ง</label>
                                 </div>
                             </div>
 
@@ -50,101 +52,89 @@ const DeliveryModal = ({ open, formik, handleModal }) => {
                             </div>
                         </div>
                         <div className="flex flex-wrap px-24 py-10 justify-center">
-                            <div className="w-full lg:w-10/12 px-4 margin-auto-t-b ">
-                                <div className="flex flex-wrap">
+                            <div className="w-full lg:w-12/12 px-4 margin-auto-t-b ">
+                                <div className="flex flex-wrap justify-center">
                                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                                        <LabelUC label="ชื่อธนาคาร" isRequired={true} />
+                                        <LabelUC label="โปรโมชั่น" />
                                     </div>
-                                    <div className="w-full lg:w-10/12 margin-auto-t-b">
+                                    <div className="w-full lg:w-6/12 margin-auto-t-b">
                                         <div className="relative w-full px-4">
                                             <InputUC
-                                                name='bankName'
+                                                name='promotionName'
                                                 maxLength={100}
                                                 onBlur={formik.handleBlur}
-                                                value={formik.values.bankName}
+                                                value={formik.values.promotionName}
                                                 // disabled={typePermission !== "1"}
                                                 onChange={(e) => {
                                                     formik.handleChange(e);
                                                 }} />
                                         </div>
-                                        <div className="relative w-full px-4">
-                                            {formik.touched.bankName &&
-                                                formik.errors.bankName ? (
-                                                <div className="text-sm py-2 px-2  text-red-500">
-                                                    {formik.errors.bankName}
-                                                </div>
-                                            ) : null}
-                                        </div>
+                                    </div>
+                                    <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                                        <LabelUC label="" />
                                     </div>
                                 </div>
-                                <div className="flex flex-wrap mt-4">
+                                <div className="flex flex-wrap mt-4 justify-center">
                                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                                        <LabelUC label="เลขบัญชี" isRequired={true} />
+                                        <LabelUC label="ซื้อครบ" />
                                     </div>
-                                    <div className="w-full lg:w-10/12 margin-auto-t-b">
+                                    <div className="w-full lg:w-6/12 margin-auto-t-b">
                                         <div className="relative w-full px-4">
                                             <InputUC
-                                                name='accountNumber'
+                                                type="number"
+                                                name='buy'
                                                 maxLength={100}
                                                 onBlur={formik.handleBlur}
-                                                value={formik.values.accountNumber}
+                                                value={formik.values.buy}
                                                 // disabled={typePermission !== "1"}
                                                 onChange={(e) => {
                                                     formik.handleChange(e);
                                                 }} />
                                         </div>
-                                        <div className="relative w-full px-4">
-                                            {formik.touched.accountNumber &&
-                                                formik.errors.accountNumber ? (
-                                                <div className="text-sm py-2 px-2  text-red-500">
-                                                    {formik.errors.accountNumber}
-                                                </div>
-                                            ) : null}
-                                        </div>
+                                    </div>
+                                    <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                                        <LabelUC label="บาท" />
                                     </div>
                                 </div>
-                                <div className="flex flex-wrap mt-4">
+                                <div className="flex flex-wrap mt-4 justify-center">
                                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                                        <LabelUC label="ชื่อบัญชี" isRequired={true} />
+                                        <LabelUC label="ค่าจัดส่ง" />
                                     </div>
-                                    <div className="w-full lg:w-10/12 margin-auto-t-b">
+                                    <div className="w-full lg:w-6/12 margin-auto-t-b">
                                         <div className="relative w-full px-4">
                                             <InputUC
-                                                name='accountName'
+                                                type="number"
+                                                name='deliveryCost'
                                                 maxLength={100}
                                                 onBlur={formik.handleBlur}
-                                                value={formik.values.accountName}
+                                                value={formik.values.deliveryCost}
                                                 // disabled={typePermission !== "1"}
                                                 onChange={(e) => {
                                                     formik.handleChange(e);
                                                 }} />
                                         </div>
-                                        <div className="relative w-full px-4">
-                                            {formik.touched.accountName &&
-                                                formik.errors.accountName ? (
-                                                <div className="text-sm py-2 px-2  text-red-500">
-                                                    {formik.errors.accountName}
-                                                </div>
-                                            ) : null}
-                                        </div>
+                                    </div>
+                                    <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                                        <LabelUC label="บาท" />
                                     </div>
                                 </div>
-                                <div className="flex flex-wrap mt-4">
+                                <div className="flex flex-wrap mt-4 justify-center">
                                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                                        <LabelUC label="สาขาธนาคาร" />
+                                        <LabelUC label="" />
                                     </div>
-                                    <div className="w-full lg:w-10/12 margin-auto-t-b">
+                                    <div className="w-full lg:w-6/12 margin-auto-t-b">
                                         <div className="relative w-full px-4">
-                                            <InputUC
-                                                name='bankBranchName'
-                                                maxLength={100}
-                                                onBlur={formik.handleBlur}
-                                                value={formik.values.bankBranchName}
-                                                // disabled={typePermission !== "1"}
+                                            <Radio.Group
+                                                options={options}
                                                 onChange={(e) => {
                                                     formik.handleChange(e);
-                                                }} />
+                                                }}
+                                                value={formik.values.isInactive}
+                                            />
                                         </div>
+                                    </div>
+                                    <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                                        <LabelUC label="" />
                                     </div>
                                 </div>
                             </div>

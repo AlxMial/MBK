@@ -6,6 +6,8 @@ import * as yup from "yup";
 import { useToasts } from "react-toast-notifications";
 import PaymentModal from './PaymentModal';
 import PaymentTable from './PaymentTable';
+import InputSearchUC from 'components/InputSearchUC';
+import ButtonModalUC from 'components/ButtonModalUC';
 
 const Payment = () => {
     const { addToast } = useToasts();
@@ -137,29 +139,12 @@ const Payment = () => {
                 >
                     <div className="rounded-t mb-0 px-4 py-3 border-0">
                         <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
-                            <div className="lg:w-6/12">
-                                <span className="z-3 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-2">
-                                    <i className="fas fa-search"></i>
-                                </span>
-                                <input
-                                    type="text"
-                                    placeholder="Search here..."
-                                    className="border-0 pl-12 w-64 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded-xl text-sm shadow outline-none focus:outline-none focus:ring"
-                                    onChange={(e) => {
-                                        InputSearch(e.target.value);
-                                    }}
-                                />
+                            <div className="w-full lg:w-6/12">
+                                <InputSearchUC onChange={(e) => InputSearch(e.target.value)} />
                             </div>
-                            <div className={"lg:w-6/12 text-right block"} >
-                                <button
-                                    className="bg-lemon-mbk text-white active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
-                                    type="button"
-                                    onClick={() => {
-                                        openModal();
-                                    }}
-                                >
-                                    <span className=" text-sm px-2">เพิ่มช่องทางการชำระเงิน</span>
-                                </button>
+                            <div className={"w-full lg:w-6/12 text-right block"} >
+                                <ButtonModalUC onClick={() => openModal()}
+                                    label='เพิ่มช่องทางการชำระเงิน' />
                             </div>
                         </div>
                     </div>
