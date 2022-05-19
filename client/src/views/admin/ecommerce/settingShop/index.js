@@ -2,8 +2,8 @@ import React from 'react'
 import PageTitle from 'views/admin/PageTitle';
 import "antd/dist/antd.css";
 import { Tabs } from "antd";
-import Setting from './Setting';
-import Payment from './Payment';
+import Setting from './tabShopDetail';
+import Payment from './tabPayment';
 import Logistic from './Logistic';
 import Promotion from './Promotion';
 

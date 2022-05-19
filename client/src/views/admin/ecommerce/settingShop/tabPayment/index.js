@@ -6,9 +6,9 @@ import * as yup from "yup";
 import { useToasts } from "react-toast-notifications";
 import useWindowDimensions from "services/useWindowDimensions";
 import PaymentModal from './PaymentModal';
+import PaymentTable from './PaymentTable';
 
 const Payment = () => {
-    const { width } = useWindowDimensions();
     const { addToast } = useToasts();
     const [listPayment, setListPayment] = useState([]);
     const [listSearch, setListSearch] = useState([]);
@@ -16,7 +16,7 @@ const Payment = () => {
     const [selectedImage, setSelectedImage] = useState(null);
 
     const fetchData = async () => {
-        await axios.get("pointCode").then((response) => {
+        await axios.get("payment").then((response) => {
             if (!response.data.error) {
                 setListPayment(response.data.tbPayment);
                 setListSearch(response.data.tbPayment);
@@ -40,6 +40,17 @@ const Payment = () => {
             );
         }
     };
+
+    const openModal = (id) => {
+        formik.resetForm();
+        const data = listPayment.filter((x) => x.id === id);
+        if (data) {
+            for (const field in data) {
+                formik.setFieldValue(field, data[field], false);
+            }
+        }
+        setOpen(true);
+    }
 
     const formik = useFormik({
         initialValues: {
@@ -120,7 +131,7 @@ const Payment = () => {
                                     className="bg-lemon-mbk text-white active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                                     type="button"
                                     onClick={() => {
-                                        setOpen(true);
+                                        openModal();
                                     }}
                                 >
                                     <span className=" text-sm px-2">เพิ่มช่องทางการชำระเงิน</span>
@@ -128,13 +139,13 @@ const Payment = () => {
                             </div>
                         </div>
                     </div>
+                    <PaymentTable listPayment={listPayment} openModal={openModal} />
                 </div>
             </div>
             {open && <PaymentModal
                 open={open}
                 formik={formik}
                 setSelectedImage={setSelectedImage}
-                handleSubmitModal={() => formik.handleSubmit}
                 handleModal={() => setOpen(false)} />}
         </>
     )

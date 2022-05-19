@@ -5,7 +5,7 @@ import ProfilePictureUC from 'components/ProfilePictureUC';
 import React, { useState, useEffect } from 'react'
 import BannerControl from './BannerControl';
 import BannerModal from './BannerModal';
-import './index.scss'
+import '../index.scss'
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { GetPermissionByUserName } from "services/Permission";
@@ -13,7 +13,7 @@ import axios from "services/axios";
 import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 import { useToasts } from "react-toast-notifications";
 
-const Setting = () => {
+const ShopDetail = () => {
     // const { formik, onSubmitModal,
     //     banner1, banner2, banner3, banner4, banner5, banner6 } = props;
     const { addToast } = useToasts();
@@ -209,7 +209,7 @@ const Setting = () => {
         <>
             <div className="w-full">
                 <form onSubmit={formik.handleSubmit}>
-                    <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info py-10 lg:px-10">
+                    <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-b Overflow-info py-10 lg:px-10">
                         <div className="banner flex flex-col flex-wrap justify-between">
                             <div className="px-4 lg:w-2/12">
                                 <ProfilePictureUC
@@ -324,10 +324,10 @@ const Setting = () => {
                 name={modalName}
                 open={open}
                 modalData={modalData}
-                onSubmitModal={handleSubmitModal}
+                handleSubmitModal={handleSubmitModal}
                 handleModal={() => setOpen(false)} />}
         </>
     )
 }
 
-export default Setting
+export default ShopDetail

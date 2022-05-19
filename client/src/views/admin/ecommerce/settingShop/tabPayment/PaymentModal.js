@@ -9,7 +9,7 @@ import useWindowDimensions from "services/useWindowDimensions";
 import InputUC from 'components/InputUC';
 import ProfilePictureUC from 'components/ProfilePictureUC';
 
-const PaymentModal = ({ open, formik, handleModal, setSelectedImage, handleSubmitModal }) => {
+const PaymentModal = ({ open, formik, handleModal, setSelectedImage }) => {
     Modal.setAppElement("#root");
     const useStyle = customStyles();
     const useStyleMobile = customStylesMobile();
@@ -17,14 +17,6 @@ const PaymentModal = ({ open, formik, handleModal, setSelectedImage, handleSubmi
 
     const handleSeletectImage = (e) => {
         setSelectedImage(e.target.files[0]);
-    }
-
-    const onValidate = () => {
-        console.log(formik)
-        if (formik.values.bankName && formik.values.accountNumber && formik.values.accountName) {
-            console.log(formik)
-            // handleSubmitModal();
-        }
     }
 
     return (
@@ -38,14 +30,26 @@ const PaymentModal = ({ open, formik, handleModal, setSelectedImage, handleSubmi
             <form onSubmit={formik.handleSubmit}>
                 <div className="flex flex-wrap">
                     <div className="w-full flex-auto mt-2">
-                        <div className="relative w-full mb-3">
+                        <div className=" flex justify-between align-middle ">
                             <div className=" align-middle  mb-3">
                                 <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
                                     <label>เพิ่มช่องทางการชำระเงิน</label>
                                 </div>
                             </div>
-                        </div>
 
+                            <div className="  text-right align-middle  mb-3">
+                                <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
+                                    <label
+                                        className="cursor-pointer"
+                                        onClick={() => {
+                                            handleModal();
+                                        }}
+                                    >
+                                        X
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                         <div className="flex flex-wrap px-24 py-10 justify-center">
                             <div className="w-full lg:w-10/12 px-4 margin-auto-t-b ">
                                 <div className="flex flex-wrap">
@@ -155,13 +159,6 @@ const PaymentModal = ({ open, formik, handleModal, setSelectedImage, handleSubmi
                             <div className=" flex justify-between align-middle ">
                                 <div></div>
                                 <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                    <button
-                                        className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                                        type="button"
-                                        onClick={() => handleModal()}
-                                    >
-                                        ย้อนกลับ
-                                    </button>
                                     <button
                                         className={
                                             "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
