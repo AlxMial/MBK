@@ -51,3 +51,16 @@ export const getphon = () => {
 export const removephon = () => {
   sessionStorage.removeItem(name + "-phon");
 };
+
+
+export const setaccessToken = (phon) => {
+  sessionStorage.setItem("accessToken", phon);
+};
+export const getaccessToken = () => {
+  let phon = sessionStorage.getItem("accessToken");
+  phon = IsNullOrEmpty(phon) ? "" : phon;
+  return phon;
+};
+export const removeaccessToken = () => {
+  sessionStorage.removeItem("accessToken");
+};
