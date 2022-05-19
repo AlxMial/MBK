@@ -1,10 +1,14 @@
 import React from 'react'
 
 const InputUC = ({ name, onChange, onBlur, disabled, value, type = 'text', ...res }) => {
+    const className = "border-0 px-2 py-2 placeholder-blueGray-300 " +
+        " text-blueGray-600 bg-white rounded text-sm shadow " +
+        "focus:outline-none focus:ring w-full ease-linear " +
+        "transition-all duration-150 " + (type === 'number' ? 'text-right' : '');
     return (
         <input
             type={type}
-            className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+            className={className}
             id={name}
             name={name}
             onBlur={onBlur}
