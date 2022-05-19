@@ -7,13 +7,16 @@ import {
 import LabelUC from 'components/LabelUC';
 import useWindowDimensions from "services/useWindowDimensions";
 import InputUC from 'components/InputUC';
-import ProfilePictureUC from 'components/ProfilePictureUC';
 
-const PaymentModal = ({ open, formik, handleModal, handleChangeImage }) => {
+const DeliveryModal = ({ open, formik, handleModal }) => {
     Modal.setAppElement("#root");
     const useStyle = customStyles();
     const useStyleMobile = customStylesMobile();
     const { width } = useWindowDimensions();
+
+    const handleSeletectImage = (e) => {
+        setSelectedImage(e.target.files[0]);
+    }
 
     return (
         <Modal
@@ -145,12 +148,6 @@ const PaymentModal = ({ open, formik, handleModal, handleChangeImage }) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="w-full lg:w-2/12 px-4">
-                                <ProfilePictureUC
-                                    id='bankImage'
-                                    hoverText='เลือกรูปธนาคาร'
-                                    onChange={handleChangeImage} />
-                            </div>
                         </div>
                         <div className="relative w-full mb-3">
                             <div className=" flex justify-between align-middle ">
@@ -161,8 +158,6 @@ const PaymentModal = ({ open, formik, handleModal, handleChangeImage }) => {
                                             "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                         }
                                         type="submit"
-                                    // type="button"
-                                    // onClick={() => { onValidate() }}
                                     >
                                         บันทึกข้อมูล
                                     </button>
@@ -176,4 +171,4 @@ const PaymentModal = ({ open, formik, handleModal, handleChangeImage }) => {
     )
 }
 
-export default PaymentModal
+export default DeliveryModal

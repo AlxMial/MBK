@@ -4,7 +4,6 @@ import axios from "services/axios";
 import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 import * as yup from "yup";
 import { useToasts } from "react-toast-notifications";
-import useWindowDimensions from "services/useWindowDimensions";
 import PaymentModal from './PaymentModal';
 import PaymentTable from './PaymentTable';
 
@@ -22,6 +21,12 @@ const Payment = () => {
                 setListSearch(response.data.tbPayment);
             }
         });
+    };
+
+    const handleChangeImage = (e) => {
+        const image = document.getElementById("bankImage");
+        image.src = URL.createObjectURL(e.target.files[0]);
+        setSelectedImage(e.target.files[0]);
     };
 
     const InputSearch = (e) => {
@@ -74,11 +79,20 @@ const Payment = () => {
             if (values.id) {
                 axios.put("payment", values).then((res) => {
                     if (res.data.status) {
-                        fetchSuccess();
-                        fetchData();
-                        addToast("บันทึกข้อมูลสำเร็จ",
-                            { appearance: "success", autoDismiss: true }
-                        );
+                        // Save Image ต่อ
+                        if (selectedImage) {
+                            fetchSuccess();
+                            fetchData();
+                            addToast("บันทึกข้อมูลสำเร็จ",
+                                { appearance: "success", autoDismiss: true }
+                            );
+                        } else {
+                            fetchSuccess();
+                            fetchData();
+                            addToast("บันทึกข้อมูลสำเร็จ",
+                                { appearance: "success", autoDismiss: true }
+                            );
+                        }
                     } else {
                         addToast("บันทึกข้อมูลไม่สำเร็จ", {
                             appearance: "warning",
@@ -90,12 +104,22 @@ const Payment = () => {
                 values.addBy = localStorage.getItem('user');
                 axios.post("payment", values).then(async (res) => {
                     if (res.data.status) {
-                        fetchData();
-                        setOpen(false);
-                        fetchSuccess();
-                        addToast("บันทึกข้อมูลสำเร็จ",
-                            { appearance: "success", autoDismiss: true }
-                        );
+                        // Save Image ต่อ
+                        if (selectedImage) {
+                            fetchSuccess();
+                            setOpen(false);
+                            fetchData();
+                            addToast("บันทึกข้อมูลสำเร็จ",
+                                { appearance: "success", autoDismiss: true }
+                            );
+                        } else {
+                            fetchData();
+                            setOpen(false);
+                            fetchSuccess();
+                            addToast("บันทึกข้อมูลสำเร็จ",
+                                { appearance: "success", autoDismiss: true }
+                            );
+                        }
                     }
                 });
             }
@@ -145,7 +169,7 @@ const Payment = () => {
             {open && <PaymentModal
                 open={open}
                 formik={formik}
-                setSelectedImage={setSelectedImage}
+                handleChangeImage={handleChangeImage}
                 handleModal={() => setOpen(false)} />}
         </>
     )

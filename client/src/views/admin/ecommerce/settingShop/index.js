@@ -4,7 +4,7 @@ import "antd/dist/antd.css";
 import { Tabs } from "antd";
 import Setting from './tabShopDetail';
 import Payment from './tabPayment';
-import Logistic from './Logistic';
+import Logistic from './tabLogistic';
 import Promotion from './Promotion';
 
 const SettingShop = () => {

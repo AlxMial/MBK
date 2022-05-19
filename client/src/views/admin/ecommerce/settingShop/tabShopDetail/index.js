@@ -66,7 +66,8 @@ const ShopDetail = () => {
     };
 
     const handleChangeImg = (e) => {
-        var image = document.getElementById("output");
+        console.log('ทำไมมาที่นี่')
+        var image = document.getElementById("shopImage");
         image.src = URL.createObjectURL(e.target.files[0]);
     };
 
@@ -128,12 +129,12 @@ const ShopDetail = () => {
     const formik = useFormik({
         initialValues: {
             shopId: '',
-            banner1Id: '',
-            banner2Id: '',
-            banner3Id: '',
-            banner4Id: '',
-            banner5Id: '',
-            banner6Id: '',
+            // banner1Id: '',
+            // banner2Id: '',
+            // banner3Id: '',
+            // banner4Id: '',
+            // banner5Id: '',
+            // banner6Id: '',
             banner1Name: '',
             banner2Name: '',
             banner3Name: '',
@@ -213,8 +214,9 @@ const ShopDetail = () => {
                         <div className="banner flex flex-col flex-wrap justify-between">
                             <div className="px-4 lg:w-2/12">
                                 <ProfilePictureUC
+                                    id='shopImage'
                                     hoverText='เลือกรูปร้านค้า'
-                                    handleChangeImg={handleChangeImg} />
+                                    onChange={handleChangeImg} />
                             </div>
                             <div className="w-full lg:w-2/12 px-4 h-full">
                                 <div className="relative w-full px-4">

@@ -7,7 +7,7 @@ import {
 import LabelUC from 'components/LabelUC';
 import useWindowDimensions from "services/useWindowDimensions";
 import { Radio } from "antd";
-import { useToasts } from "react-toast-notifications";
+// import { useToasts } from "react-toast-notifications";
 import Select from "react-select";
 import ValidateService from "services/validateValue";
 
@@ -16,50 +16,94 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
     const useStyle = customStyles();
     const useStyleMobile = customStylesMobile();
     const { width } = useWindowDimensions();
-    const { addToast } = useToasts();
+    // const { addToast } = useToasts();
 
     const [fileName, setFileName] = useState(modalData ? modalData.fileName : "");
     const [imgSeleted, setImgSeleted] = useState(modalData ? modalData.img : null); //รูป
-    const [option, setOption] = useState(modalData ? modalData.option : false);//Radio button
-    const [category, setCategory] = useState(modalData ? modalData.category : '');// หมวดหมู่
+    const [typeLink, setTypeLink] = useState(modalData ? modalData.typeLink : false);//Radio button
+    const [productCategoryId, setProductCategoryId] = useState(modalData ? modalData.productCategoryId : '');// หมวดหมู่
+    const [stockId, setStockId] = useState(modalData ? modalData.stockId : '');// สินค้า
+    const [dropdown, setDropdown] = useState([]);
+    const [dropdownId, setDropdownId] = useState(null);
+    const [showErr, setShowErr] = useState(false);
 
-    /* Method Condition */
-    const options = [
+    const typeLinkList = [
         { label: "หมวดหมู่สินค้า", value: false },
         { label: "สินค้า", value: true },
     ];
 
-    const categoryList = [
-        { label: "หมวดหมู่สินค้า", value: 'category' },
-        { label: "สินค้า", value: 'product' },
+    const productCategoryList = [
+        { label: "ของใช้", value: 1 },
+        { label: "ของกิน", value: 2 },
     ];
+
+    const stockList = [
+        { label: "กาแฟ", value: 1 },
+        { label: "น้ำเปล่า", value: 2 },
+    ];
+
+    const onOptionChange = (value) => {
+        if (value) {
+            setDropdown(stockList);
+            setDropdownId(stockList[0].value);
+            setStockId(stockList[0].value);
+            setProductCategoryId(null);
+        } else {
+            setDropdown(productCategoryList);
+            setDropdownId(productCategoryList[0].value);
+            setProductCategoryId(productCategoryList[0].value);
+            setStockId(null);
+        }
+    }
+    useEffect(() => {
+        if (typeLink) {
+            setDropdown(stockList);
+            setDropdownId(stockId ? stockId : stockList[0].value);
+            setStockId(stockId ? stockId : stockList[0].value);
+            setProductCategoryId(null);
+        } else {
+            setDropdown(productCategoryList);
+            setDropdownId(productCategoryId ? productCategoryId : productCategoryList[0].value);
+            setProductCategoryId(productCategoryId ? productCategoryId : productCategoryList[0].value);
+            setStockId(null);
+        }
+    }, []);
 
     const handleSeletectImage = (e) => {
         setImgSeleted(e.target.files[0]);
         setFileName(e.target.files[0].name);
     }
 
-    useEffect(() => {
-        if (!category) {
-            setCategory(categoryList[0].value);
+    const setOption = (value) => {
+        setTypeLink(value);
+        onOptionChange(value);
+    }
+
+    const handleChangeDropdown = (value) => {
+        setDropdownId(value);
+        if (typeLink) {
+            setStockId(value);
+            setProductCategoryId(null);
+        } else {
+            setProductCategoryId(value);
+            setStockId(null);
         }
-    }, []);
+        setShowErr(false);
+    }
 
     const onValidate = () => {
-        console.log(category)
-        if (!category) {
-            addToast("กรุณาเลือกหมวดหมู่สินค้า/สินค้า", {
-                appearance: "warning",
-                autoDismiss: true,
-            });
+        if ((typeLink && !stockId) || (!typeLink && !productCategoryId)) {
+            setShowErr(true);
             return false;
         } else {
+            setShowErr(false);
             const data = {
-                fileName: imgSeleted.name,
+                fileName: imgSeleted ? imgSeleted.name : "",
                 name,
                 img: imgSeleted,
-                option,
-                category
+                typeLink,
+                productCategoryId,
+                stockId,
             }
             handleSubmitModal(data);
         }
@@ -141,11 +185,11 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
                                 }
                             >
                                 <Radio.Group
-                                    options={options}
+                                    options={typeLinkList}
                                     onChange={(e) => {
                                         setOption(e.target.value);
                                     }}
-                                    value={option}
+                                    value={typeLink}
                                 />
                             </div>
 
@@ -155,19 +199,26 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
                             <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                                 <div className="relative w-full">
                                     <Select
-                                        id="category"
-                                        name="category"
+                                        id="dropdown"
+                                        name="dropdown"
                                         onChange={(e) => {
-                                            setCategory(e.value);
+                                            handleChangeDropdown(e.value);
                                         }}
                                         className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                                        options={categoryList}
+                                        options={dropdown}
                                         value={ValidateService.defaultValue(
-                                            categoryList,
-                                            category
+                                            dropdown,
+                                            dropdownId
                                         )}
                                         styles={useStyle}
                                     />
+                                </div>
+                                <div className="relative w-full px-4">
+                                    {!dropdownId && showErr && (
+                                        <div className="text-sm py-2 px-2  text-red-500">
+                                            * กรุณาเลือกหมวดหมู่สินค้า/สินค้า
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
