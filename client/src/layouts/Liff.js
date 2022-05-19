@@ -14,7 +14,7 @@ import {
 } from "@services/liff.services";
 
 // components
-const dev = true;
+const dev = false;
 
 const getRoutes = () => {
   return routes.map((prop, key) => {
@@ -54,7 +54,7 @@ const runApp = (callback, setView) => {
         let lifdata = Session.getLiff();
         if (res.data.code === 200) {
           if (res.data.isRegister) {
-            Storage.setaccessToken(res.data.accessToken);
+            Session.setaccessToken(res.data.accessToken);
             Session.setLiff(lifdata);
           }
         } else {
@@ -84,7 +84,7 @@ const runApp = (callback, setView) => {
             let lifdata = Session.getLiff();
             if (res.data.code === 200) {
               if (res.data.isRegister) {
-                Storage.setaccessToken(res.data.accessToken);
+                Session.setaccessToken(res.data.accessToken);
                 Session.setLiff(lifdata);
               }
             } else {
