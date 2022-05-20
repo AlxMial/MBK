@@ -5,7 +5,7 @@ import { Tabs } from "antd";
 import Setting from './tabShopDetail';
 import Payment from './tabPayment';
 import Logistic from './tabLogistic';
-import Promotion from './Promotion';
+import Promotion from './tabPromotion';
 
 const SettingShop = () => {
     const { TabPane } = Tabs;

@@ -64,7 +64,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                             <div className="w-full lg:w-12/12 px-4 margin-auto-t-b ">
                                 <div className="flex flex-wrap">
                                     <div className="w-full lg:w-4/12 px-4 margin-auto-t-b ">
-                                        <LabelUC label="บริษัทขรส่ง" isRequired={true} />
+                                        <LabelUC label="บริษัทขนส่ง" isRequired={true} />
                                     </div>
                                     <div className="w-full lg:w-6/12 margin-auto-t-b">
                                         <div className="relative w-full px-4">
@@ -159,7 +159,10 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                                             <Radio.Group
                                                 options={optionsDelivery}
                                                 onChange={(e) => {
-                                                    formik.handleChange(e);
+                                                    formik.setFieldValue(
+                                                        "deliveryType",
+                                                        e.target.value
+                                                    );
                                                 }}
                                                 value={formik.values.deliveryType}
                                             />
