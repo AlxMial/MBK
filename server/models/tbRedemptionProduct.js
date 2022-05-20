@@ -29,6 +29,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
     });
+    
+    tbRedemptionProduct.associate = (models) => {
+      tbRedemptionProduct.hasMany(models.tbProductCode, {
+        foreignKey: 'redemptionProductId',
+        onDelete: "cascade",
+      });
+    };
     return tbRedemptionProduct;
   };
   

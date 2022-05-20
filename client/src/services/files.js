@@ -10,7 +10,6 @@ class FilesService {
         return base64ToText;
     }
 
-
     convertToBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();

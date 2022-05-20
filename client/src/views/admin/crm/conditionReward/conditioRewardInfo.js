@@ -22,6 +22,7 @@ import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 import InputUC from "components/InputUC";
 import LabelUC from "components/LabelUC";
 import SelectUC from "components/SelectUC";
+import DatePickerUC from "components/DatePickerUC";
 
 export default function ConditioRewardInfo() {
   /* Option Select */
@@ -53,10 +54,11 @@ export default function ConditioRewardInfo() {
   const [dataSubDistrictEng, setSubDistrictEng] = useState([]);
   const [typePermission, setTypePermission] = useState("");
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
-  const [errorBirthDate, setErrorBirthDate] = useState(false);
-  const [errorRegisterDate, setErrorRegisterDate] = useState(false);
+  const [errorStartDate, setErrorStartDate] = useState(false);
+  const [errorEndDate, setErrorEndDate] = useState(false);
   const [isClick, setIsClick] = useState(false);
-  const [isClickRegister, setIsClickRegister] = useState(false);
+  const [isClickEndDate, setIsClickEndDate] = useState(false);
+  const [stateDelay, setStateDelay] = useState("");
   let history = useHistory();
 
   const { addToast } = useToasts();
@@ -120,12 +122,15 @@ export default function ConditioRewardInfo() {
     setTypePermission(role);
   };
 
-  const defaultValue = () => {};
+  const defaultValue = () => {
+    formik.setFieldValue("rewardType", "1");
+    formik.setFieldValue("redemptionType", "1");
+  };
 
   useEffect(() => {
     /* Default Value for Testing */
     fetchPermission();
-    // defaultValue();
+    defaultValue();
     fetchData();
   }, []);
 
@@ -240,7 +245,7 @@ export default function ConditioRewardInfo() {
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info ">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
-                  <div className="w-full lg:w-2/12 margin-auto-t-b">
+                  <div className="w-full lg:w-1/12 margin-auto-t-b">
                     <div className="relative w-full px-4">
                       <LabelUC
                         label="ชื่อเงื่อนไขการแลกรางวัล"
@@ -256,7 +261,7 @@ export default function ConditioRewardInfo() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 margin-auto-t-b">
+                  <div className="w-full lg:w-11/12 margin-auto-t-b">
                     <div className="relative w-full px-4">
                       <InputUC
                         name="redemptionName"
@@ -278,7 +283,7 @@ export default function ConditioRewardInfo() {
                     </div>
                   </div>
                   <div className="w-full">&nbsp;</div>
-                  <div className="w-full lg:w-2/12 margin-auto-t-b">
+                  <div className="w-full lg:w-1/12 margin-auto-t-b">
                     <div className="relative w-full px-4">
                       <LabelUC
                         label="ประเภทเงื่อนไขการแลกรางวัล"
@@ -286,7 +291,7 @@ export default function ConditioRewardInfo() {
                       />
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 margin-auto-t-b">
+                  <div className="w-full lg:w-11/12 margin-auto-t-b">
                     <div className="relative w-full px-4">
                       <SelectUC
                         name="redemptionType"
@@ -302,12 +307,12 @@ export default function ConditioRewardInfo() {
                     </div>
                   </div>
                   <div className="w-full">&nbsp;</div>
-                  <div className="w-full lg:w-2/12 margin-auto-t-b">
+                  <div className="w-full lg:w-1/12 margin-auto-t-b">
                     <div className="relative w-full px-4">
                       <LabelUC label="ประเภทรางวัล" isRequired={true} />
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 margin-auto-t-b">
+                  <div className="w-full lg:w-11/12 margin-auto-t-b">
                     <div className="relative w-full px-4">
                       <SelectUC
                         name="rewardType"
@@ -323,23 +328,35 @@ export default function ConditioRewardInfo() {
                     </div>
                   </div>
                   <div className="w-full">&nbsp;</div>
-                  <div className="w-full lg:w-2/12 margin-auto-t-b">
+                  <div className="w-full lg:w-1/12 margin-auto-t-b">
                     <div className="relative w-full px-4">
                       <LabelUC label="จำนวนคะแนน" isRequired={true} />
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 margin-auto-t-b">
+                  <div
+                    className="w-full lg:w-5/12 margin-auto-t-b"
+                    style={{ width: width < 764 ? "100%" : "39.7%" }}
+                  >
                     <div className="relative flex px-4">
                       <InputUC
                         name="points"
-                        maxLength={100}
+                        type="number"
+                        maxLength={7}
                         onBlur={formik.handleBlur}
                         value={formik.values.points}
                         onChange={(e) => {
-                          formik.handleChange(e);
+                          setStateDelay(
+                            ValidateService.onHandleScore(e)
+                          );
+                          formik.values.points =
+                            ValidateService.onHandleScore(e);
                         }}
+                        min="0"
                       />
-                      <span className="ml-2 margin-auto-t-b font-bold">
+                      <span
+                        className="margin-auto-t-b font-bold"
+                        style={{ marginLeft: width < 764 ? "1rem" : "2rem" }}
+                      >
                         คะแนน
                       </span>
                     </div>
@@ -350,7 +367,141 @@ export default function ConditioRewardInfo() {
                   </div>
                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                     <div className="relative">
-                      
+                      <DatePickerUC
+                        disabled={typePermission === "1" ? false : true}
+                        onClick={(e) => {
+                          setIsClick(true);
+                        }}
+                        onBlur={(e) => {
+                          setIsClick(false);
+                        }}
+                        onChange={(e) => {
+                          setIsClick(false);
+                          if (e === null) {
+                            setErrorStartDate(true);
+                            formik.setFieldValue(
+                              "startDate",
+                              new Date(),
+                              false
+                            );
+                          } else {
+                            setErrorStartDate(false);
+                            formik.setFieldValue(
+                              "startDate",
+                              moment(e).toDate(),
+                              false
+                            );
+                          }
+                        }}
+                        value={
+                          !isClick
+                            ? moment(
+                                new Date(formik.values.startDate),
+                                "DD/MM/YYYY"
+                              )
+                            : null
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className={"w-full" + (width < 764 ? " block" : " hidden")}
+                  >
+                    &nbsp;
+                  </div>
+                  <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                    <LabelUC label="วันที่สิ้นสุด" isRequired={true} />
+                  </div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                    <div className="relative">
+                      <DatePickerUC
+                        disabled={typePermission === "1" ? false : true}
+                        onClick={(e) => {
+                          setIsClick(true);
+                        }}
+                        onBlur={(e) => {
+                          setIsClick(false);
+                        }}
+                        onChange={(e) => {
+                          setIsClick(false);
+                          if (e === null) {
+                            setErrorStartDate(true);
+                            formik.setFieldValue(
+                              "startDate",
+                              new Date(),
+                              false
+                            );
+                          } else {
+                            setErrorStartDate(false);
+                            formik.setFieldValue(
+                              "startDate",
+                              moment(e).toDate(),
+                              false
+                            );
+                          }
+                        }}
+                        value={
+                          !isClick
+                            ? moment(
+                                new Date(formik.values.startDate),
+                                "DD/MM/YYYY"
+                              )
+                            : null
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full">&nbsp;</div>
+                  <span className="text-lg  text-green-mbk margin-auto font-bold">
+                    <div className="w-full mb-2">
+                      {formik.values.rewardType === "1"
+                        ? "กำหนดคูปอง"
+                        : "กำหนดสินค้าสัมนาคุณ"}
+                    </div>
+                  </span>
+
+                  <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg ">
+                    <div className="flex-auto lg:px-10 py-10">
+                      <div className="flex flex-wrap">
+                        <div className="w-full lg:w-1/12 margin-auto-t-b">
+                          <div className="relative w-full px-4">
+                            <LabelUC
+                              label="ชื่อเงื่อนไขการแลกรางวัล"
+                              isRequired={true}
+                            />
+                          </div>
+                          <div className="relative w-full px-4">
+                            {formik.touched.redemptionName &&
+                            formik.errors.redemptionName ? (
+                              <div className="text-sm py-2 px-2 text-red-500">
+                                &nbsp;
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+                        <div className="w-full lg:w-11/12 margin-auto-t-b">
+                          <div className="relative w-full px-4">
+                            <InputUC
+                              name="redemptionName"
+                              maxLength={100}
+                              onBlur={formik.handleBlur}
+                              value={formik.values.redemptionName}
+                              onChange={(e) => {
+                                formik.handleChange(e);
+                              }}
+                            />
+                          </div>
+                          <div className="relative w-full px-4">
+                            {formik.touched.redemptionName &&
+                            formik.errors.redemptionName ? (
+                              <div className="text-sm py-2 px-2  text-red-500">
+                                {formik.errors.redemptionName}
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>

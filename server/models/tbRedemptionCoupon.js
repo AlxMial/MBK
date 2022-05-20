@@ -57,6 +57,13 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
     });
+
+    tbRedemptionCoupon.associate = (models) => {
+      tbRedemptionCoupon.hasMany(models.tbCouponCode, {
+        foreignKey: 'redemptionCouponId',
+        onDelete: "cascade",
+      });
+    };
     return tbRedemptionCoupon;
   };
   

@@ -90,6 +90,9 @@ module.exports = (sequelize, DataTypes) => {
       tbMember.hasMany(models.tbMemberPoint, {
         onDelete: "cascade",
       });
+      tbMember.hasMany(models.tbOrderHD, {
+        onDelete: "cascade",
+      });
     };
     return tbMember;
   };
