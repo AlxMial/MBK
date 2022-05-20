@@ -13,6 +13,8 @@ import axios from "services/axios";
 import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 import { useToasts } from "react-toast-notifications";
 import useWindowDimensions from "services/useWindowDimensions";
+import FilesService from "services/files";
+import { onSaveImage } from 'services/ImageService';
 
 const ShopDetail = () => {
     const { width } = useWindowDimensions();
@@ -27,16 +29,29 @@ const ShopDetail = () => {
     const [banner4, setBanner4] = useState(null);
     const [banner5, setBanner5] = useState(null);
     const [banner6, setBanner6] = useState(null);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [shopImage, setShopImage] = useState({
+        id: null,
+        image: null,
+        relatedId: null,
+        relatedTable: 'shop',
+        isDeleted: false,
+        addBy: null,
+        updateBy: null,
+    });
 
     async function fetchData() {
         const response = await axios.get('shop');
         const shop = await response.data.tbShop;
-        console.log('fetchData', shop);
-        // formik.resetForm();
+
         if (shop) {
             for (const columns in shop) {
                 formik.setFieldValue(columns, shop[columns], false);
+            }
+
+            const _shopImage = await axios.get(`image/byRelated/${shop.id}/shop`);
+            if (_shopImage && _shopImage.data.tbImage) {
+                const image = await FilesService.buffer64UTF8(_shopImage.data.tbImage.image)
+                setShopImage({ ..._shopImage.data.tbImage, image: image });
             }
         }
     }
@@ -79,10 +94,12 @@ const ShopDetail = () => {
         }
     };
 
-    const handleChangeImg = (e) => {
-        var image = document.getElementById("shopImage");
-        image.src = URL.createObjectURL(e.target.files[0]);
-        setSelectedImage(e.target.files[0]);
+    const handleChangeImg = async (e) => {
+        // var image = document.getElementById("shopImage");
+        // image.src = URL.createObjectURL(e.target.files[0]);
+        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        setShopImage({ ...shopImage, image: base64 });
+        // setSelectedImage(e.target.files[0]);
     };
 
     const handleOpenModal = (name) => {
@@ -169,22 +186,9 @@ const ShopDetail = () => {
             fetchLoading();
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
-                axios.put("shop", values).then((res) => {
+                axios.put("shop", values).then(async (res) => {
                     if (res.data.status) {
-                        // Save Image ต่อ
-                        if (selectedImage) {
-                            fetchSuccess();
-                            fetchData();
-                            addToast("บันทึกข้อมูลสำเร็จ",
-                                { appearance: "success", autoDismiss: true }
-                            );
-                        } else {
-                            fetchSuccess();
-                            fetchData();
-                            addToast("บันทึกข้อมูลสำเร็จ",
-                                { appearance: "success", autoDismiss: true }
-                            );
-                        }
+                        await saveAfterShop(values.id);
                     } else {
                         addToast("บันทึกข้อมูลไม่สำเร็จ", {
                             appearance: "warning",
@@ -197,26 +201,95 @@ const ShopDetail = () => {
                 values.addBy = localStorage.getItem('user');
                 axios.post("shop", values).then(async (res) => {
                     if (res.data.status) {
-                        // Save Image ต่อ
-                        if (selectedImage) {
-                            fetchSuccess();
-                            fetchData();
-                            addToast("บันทึกข้อมูลสำเร็จ",
-                                { appearance: "success", autoDismiss: true }
-                            );
-                        } else {
-                            fetchSuccess();
-                            fetchData();
-                            addToast("บันทึกข้อมูลสำเร็จ",
-                                { appearance: "success", autoDismiss: true }
-                            );
-                        }
+                        await saveAfterShop(res.data.tbShop.id);
+                    } else {
+                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                            appearance: "warning",
+                            autoDismiss: true,
+                        });
                     }
+                    fetchSuccess();
                 });
             }
-
         },
     });
+
+    const saveAfterShop = async (id) => {
+        // save shop image
+        await onSaveImage({ ...shopImage, relatedId: id });
+        // save banner
+        if (saveBanner()) {
+            afterSaveSuccess();
+        } else {
+            addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                appearance: "warning",
+                autoDismiss: true,
+            });
+        }
+    }
+
+    const afterSaveSuccess = () => {
+        fetchSuccess();
+        // fetchData();
+        addToast("บันทึกข้อมูลสำเร็จ",
+            { appearance: "success", autoDismiss: true }
+        );
+    }
+
+    const saveBanner = () => {
+        let success = true;
+        if (banner1) {
+            success = saveBanners(banner1);
+        }
+        if (success && banner2) {
+            success = saveBanners(banner2);
+        }
+        if (success && banner3) {
+            success = saveBanners(banner3);
+        }
+        if (success && banner4) {
+            success = saveBanners(banner4);
+        }
+        if (success && banner5) {
+            success = saveBanners(banner5);
+        }
+        if (success && banner6) {
+            success = saveBanners(banner6);
+        }
+        return success;
+    }
+
+
+    const saveBanners = (data) => {
+        data.updateBy = localStorage.getItem('user');
+        if (data.id) {
+            axios.put("banner", data).then((res) => {
+                if (res.data.status) {
+                    return saveBannerImage(data);
+                } else {
+                    return false;
+                }
+            });
+        } else {
+            data.addBy = localStorage.getItem('user');
+            axios.post("banner", data).then((res) => {
+                if (res.data.status) {
+                    return saveBannerImage(data);
+                } else {
+                    return false;
+                }
+            });
+        }
+    }
+
+    const saveBannerImage = (data) => {
+        // Save Image Banner
+        if (data.img) {
+            return true;
+        } else {
+            return true;
+        }
+    }
 
     const bannerList = ['banner1Name', 'banner2Name', 'banner3Name', 'banner4Name', 'banner5Name', 'banner6Name'];
     const emailList = ['email1', 'email2', 'email3', 'email4'];
@@ -228,16 +301,14 @@ const ShopDetail = () => {
                         <div className={"flex flex-wrap justify-between " + (width > 768 ? ' banner flex-col' : '')}>
                             <div className="w-full px-4 lg:w-2/12 ">
                                 <ProfilePictureUC
+                                    src={shopImage.image}
                                     id='shopImage'
                                     hoverText='เลือกรูปร้านค้า'
                                     onChange={handleChangeImg} />
                             </div>
                             <div className={"w-full lg:w-2/12 px-4 " + (width > 768 ? ' banner-label' : ' text-center mt-4')}>
                                 <div className="relative w-full px-4">
-                                    <label
-                                        className=" text-blueGray-600 text-sm font-bold "
-                                    // htmlFor="grid-password"
-                                    >
+                                    <label className=" text-blueGray-600 text-sm font-bold ">
                                         กำหนด Banner
                                     </label>
                                 </div>

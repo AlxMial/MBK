@@ -59,6 +59,10 @@ const shop = require('./routes/settingShop/shop');
 app.use("/mbkserver/shop", shop);
 const banner = require('./routes/settingShop/banner');
 app.use("/mbkserver/banner", banner);
+const stock = require('./routes/stock/stock');
+app.use("/mbkserver/stock", stock);
+const image = require('./routes/image/image');
+app.use("/mbkserver/image", image);
 initRoutes(app);
 
 const port = process.env.PORT || 3001;
