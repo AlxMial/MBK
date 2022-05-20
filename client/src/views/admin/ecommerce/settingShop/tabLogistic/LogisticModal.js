@@ -159,7 +159,10 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                                             <Radio.Group
                                                 options={optionsDelivery}
                                                 onChange={(e) => {
-                                                    formik.handleChange(e);
+                                                    formik.setFieldValue(
+                                                        "deliveryType",
+                                                        e.target.value
+                                                    );
                                                 }}
                                                 value={formik.values.deliveryType}
                                             />

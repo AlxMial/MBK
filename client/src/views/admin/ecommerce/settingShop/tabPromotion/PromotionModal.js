@@ -12,7 +12,7 @@ import SelectUC from 'components/SelectUC';
 import ValidateService from "services/validateValue";
 import TextAreaUC from 'components/InputUC/TextAreaUC';
 
-const PromotionModal = ({ open, formik, handleModal, handleChangeImage }) => {
+const PromotionModal = ({ open, formik, handleModal }) => {
     Modal.setAppElement("#root");
     const useStyle = customStyles();
     const useStyleMobile = customStylesMobile();
@@ -125,7 +125,10 @@ const PromotionModal = ({ open, formik, handleModal, handleChangeImage }) => {
                                             <Radio.Group
                                                 options={discountType}
                                                 onChange={(e) => {
-                                                    formik.handleChange(e);
+                                                    formik.setFieldValue(
+                                                        "condition",
+                                                        e.target.value
+                                                    );
                                                 }}
                                                 value={formik.values.condition}
                                             />
@@ -197,7 +200,8 @@ const PromotionModal = ({ open, formik, handleModal, handleChangeImage }) => {
                                             ) : null}
                                         </div>
                                     </div>
-                                    <div className="w-full lg:w-1/12 px-4 margin-auto-t-b flex justify-between">
+                                    <div className={"w-full lg:w-1/12 px-4 margin-auto-t-b flex justify-between "
+                                        + (width < 768 ? 'flex-wrap' : '')}>
                                         <LabelUC label="%" />
                                         <LabelUC label="สูงสุด" isRequired={true} />
                                     </div>
@@ -286,7 +290,10 @@ const PromotionModal = ({ open, formik, handleModal, handleChangeImage }) => {
                                             <Radio.Group
                                                 options={options}
                                                 onChange={(e) => {
-                                                    formik.handleChange(e);
+                                                    formik.setFieldValue(
+                                                        "isInactive",
+                                                        e.target.value
+                                                    );
                                                 }}
                                                 value={formik.values.isInactive}
                                             />

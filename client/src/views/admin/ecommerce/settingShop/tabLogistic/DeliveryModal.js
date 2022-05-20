@@ -127,7 +127,10 @@ const DeliveryModal = ({ open, formik, handleModal }) => {
                                             <Radio.Group
                                                 options={options}
                                                 onChange={(e) => {
-                                                    formik.handleChange(e);
+                                                    formik.setFieldValue(
+                                                        "isInactive",
+                                                        e.target.value
+                                                    );
                                                 }}
                                                 value={formik.values.isInactive}
                                             />

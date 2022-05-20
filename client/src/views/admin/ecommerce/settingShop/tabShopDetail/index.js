@@ -29,8 +29,21 @@ const ShopDetail = () => {
     const [banner6, setBanner6] = useState(null);
     const [selectedImage, setSelectedImage] = useState(null);
 
+    async function fetchData() {
+        const response = await axios.get('shop');
+        const shop = await response.data.tbShop;
+        console.log('fetchData', shop);
+        // formik.resetForm();
+        if (shop) {
+            for (const columns in shop) {
+                formik.setFieldValue(columns, shop[columns], false);
+            }
+        }
+    }
+
     useEffect(() => {
         fetchPermission();
+        fetchData();
     }, []);
 
     const fetchPermission = async () => {
@@ -129,7 +142,7 @@ const ShopDetail = () => {
 
     const formik = useFormik({
         initialValues: {
-            shopId: '',
+            id: '',
             banner1Name: '',
             banner2Name: '',
             banner3Name: '',
@@ -144,9 +157,7 @@ const ShopDetail = () => {
             email4: '',
             isDeleted: false,
             addBy: '',
-            addDate: '',
-            editBy: '',
-            editDate: ''
+            updateBy: '',
         },
         validationSchema: yup.object({
             email1: yup.string().isValidateEmail(),
@@ -206,17 +217,6 @@ const ShopDetail = () => {
 
         },
     });
-
-    async function fetchData() {
-        const response = await axios.get('shop');
-        const shop = await response.data.tbShop;
-        formik.resetForm();
-        if (shop !== null) {
-            for (const columns in shop) {
-                formik.setFieldValue(columns, response.data.tbUser[columns], false);
-            }
-        }
-    }
 
     const bannerList = ['banner1Name', 'banner2Name', 'banner3Name', 'banner4Name', 'banner5Name', 'banner6Name'];
     const emailList = ['email1', 'email2', 'email3', 'email4'];
