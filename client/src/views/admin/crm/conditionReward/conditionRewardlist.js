@@ -104,30 +104,6 @@ export default function ConditionRewardList() {
     setPageNumber(selected);
   };
 
-  /* API Deleted */
-  const deleteByList = async () => {
-    if (deleteNumber > 0) {
-      var ArrayDeleted = [];
-      listUser.forEach((field) => {
-        if (field.isDeleted === true) {
-          ArrayDeleted.push(field.id);
-        } else field.isDeleted = false;
-      });
-      if (ArrayDeleted.length > 0) {
-        console.log(ArrayDeleted);
-        axios.delete(`/members/multidelete/${ArrayDeleted}`).then(() => {
-          setDeleteNumber(0);
-          setListUser(
-            listUser.filter((val) => {
-              return val.isDeleted !== true;
-            })
-          );
-        });
-      }
-      closeModalSubject();
-    }
-  };
-
   const deleteUser = (e) => {
     axios.delete(`/members/${e}`).then(() => {
       setListUser(
@@ -139,67 +115,8 @@ export default function ConditionRewardList() {
     });
   };
 
-  const Excel = async (sheetname) => {
-    setIsLoading(true);
-    let member = await axios.get("members/export");
-    const TitleColumns = [
-      "รหัสสมาชิก",
-      "ชื่อ",
-      "นามสกุล",
-      "เบอร์โทร",
-      "อีเมล",
-      "ที่อยู่",
-      "วันเกิด",
-      "วันที่สมัคร",
-      "จังหวัด",
-      "อำเภอ",
-      "ตำบล",
-      "รหัสไปรษณีย์",
-      "คะแนนสมาชิก",
-    ];
-    const columns = [
-      "memberCard",
-      "firstName",
-      "lastName",
-      "phone",
-      "email",
-      "address",
-      "birthDate",
-      "registerDate",
-      "province",
-      "district",
-      "subDistrict",
-      "postcode",
-      "memberPoint",
-    ];
-    for (var i = 0; i < member.data.tbMember.length; i++) {
-
-      member.data.tbMember[i]["province"]= await Address.getAddressName(
-        "province",
-        member.data.tbMember[i]["province"]
-      );
-      member.data.tbMember[i]["district"]= await Address.getAddressName(
-        "district",
-        member.data.tbMember[i]["district"]
-      );
-      member.data.tbMember[i]["subDistrict"]= await Address.getAddressName(
-        "subDistrict",
-        member.data.tbMember[i]["subDistrict"]
-      );
-    }
-    exportExcel(
-      member.data.tbMember,
-      "ข้อมูลสมาชิก",
-      TitleColumns,
-      columns,
-      sheetname
-    );
-    setIsLoading(false);
-  };
-
   const fetchPermission = async () => {
     const role = await GetPermissionByUserName();
-    console.log('role')
     setTypePermission(role);
   };
 
@@ -218,13 +135,6 @@ export default function ConditionRewardList() {
       ) : (
         <></>
       )}
-      {/* <div className="flex flex-warp">
-        <span className="text-sm font-bold margin-auto-t-b">
-          <i className="fas fa-user-friends"></i>&nbsp;
-        </span>
-        <span className="text-base margin-auto font-bold">จัดการสมาชิก</span>
-      </div> */}
-
       <div className="flex flex-warp">
         <span className="text-sm margin-auto-t-b font-bold ">
           <i className="fas fa-cog"></i>&nbsp;&nbsp;

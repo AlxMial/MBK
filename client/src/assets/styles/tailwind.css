@@ -613,7 +613,7 @@ select {
   padding-right: 0.75rem;
   padding-bottom: 0.5rem;
   padding-left: 0.75rem;
-  font-size: 1rem;
+  font-size: 0.875rem;
   line-height: 1.5rem;
 }
 
@@ -3732,7 +3732,7 @@ input[type=tel]:disabled  {
 }
 
 .ant-picker-date-panel {
-  font-size: 1rem !important;
+  font-size: 0.875rem !important;
 }
 
 .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {

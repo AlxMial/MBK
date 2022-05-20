@@ -19,25 +19,26 @@ import * as Address from "../../../../services/GetAddress.js";
 import useMenu from "services/useMenu";
 import { GetPermissionByUserName } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
+import InputUC from "components/InputUC";
+import LabelUC from "components/LabelUC";
+import SelectUC from "components/SelectUC";
 
 export default function ConditioRewardInfo() {
   /* Option Select */
-  const options = [
-    { value: "1", label: "ผู้ดูแลระบบ" },
-    { value: "2", label: "บัญชี" },
-    { value: "3", label: "การตลาด" },
+  const redemptionType = [
+    { value: "1", label: "Standard" },
+    { value: "2", label: "Game" },
   ];
-  const useStyle = styleSelect();
+
+  const rewardType = [
+    { value: "1", label: "E-Coupon" },
+    { value: "2", label: "สินค้า" },
+  ];
+
   /* Service Function */
   const { height, width } = useWindowDimensions();
   const { menu } = useMenu();
   let { id } = useParams();
-  const [isModefied, setIsModified] = useState(false);
-
-  /* RegEx formatter */
-  const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
-  const EmailRegExp = /^[A-Za-z0-9_.@]+$/;
 
   /* Set useState */
   const [enableControl, setIsEnableControl] = useState(true);
@@ -57,10 +58,11 @@ export default function ConditioRewardInfo() {
   const [isClick, setIsClick] = useState(false);
   const [isClickRegister, setIsClickRegister] = useState(false);
   let history = useHistory();
+
   const { addToast } = useToasts();
   /* Method Condition */
   const OnBack = () => {
-    if (isModefied) {
+    if (formik.dirty > 0) {
       openModalSubject();
     } else {
       history.push("/admin/members");
@@ -83,109 +85,45 @@ export default function ConditioRewardInfo() {
   };
 
   const onReturn = () => {
-    setIsModified(false);
     history.push("/admin/members");
-  };
-
-  /*พิมพ์เบอร์โทรศัพท์*/
-  const onHandleTelephoneChange = (e) => {
-    if (
-      ValidateService.onHandleNumberChange(e.target.value) !== "" ||
-      e.target.value === ""
-    ) {
-      setPhoneNumber(e.target.value);
-      return e;
-    }
   };
 
   /* Form insert value */
   const formik = useFormik({
-    initialValues: {},
-    validationSchema: Yup.object({}),
+    initialValues: {
+      id: "",
+      redemptionName: "",
+      redemptionType: "",
+      rewardType: "",
+      points: 0,
+      startDate: new Date(),
+      endDate: new Date(),
+      rewardGameCount: 0,
+      isNotLimitRewardGame: false,
+      description: "",
+      isDeleted: false,
+    },
+    validationSchema: Yup.object({
+      redemptionName: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก ชื่อเงื่อนไขการแลกรางวัล"
+          : "* Please enter your Member Card"
+      ),
+    }),
     onSubmit: (values) => {},
   });
 
-  async function fetchData() {
-    let response = await axios.get(`/members/byId/${id}`);
-    let member = await response.data.tbMember;
-    if (member !== null) {
-      var provinceId = response.data.tbMember["province"];
-      var districtId = response.data.tbMember["district"];
-      var subDistrictId = response.data.tbMember["subDistrict"];
-      for (var columns in response.data.tbMember) {
-        if (columns === "subDistrict") {
-          const subDistrict = await Address.getAddress(
-            "subDistrict",
-            districtId
-          );
-          setSubDistrict(subDistrict);
-          formik.setFieldValue(
-            "subDistrict",
-            subDistrict.filter((e) => e.value === subDistrictId)[0].value
-          );
-        } else if (columns === "district") {
-          const district = await Address.getAddress("district", provinceId);
-          setDataDistrict(district);
-          formik.setFieldValue(
-            "district",
-            district.filter((e) => e.value === districtId)[0].value
-          );
-        } else
-          formik.setFieldValue(columns, response.data.tbMember[columns], false);
-      }
-      setIsNew(false);
-    } else {
-      setIsNew(true);
-    }
-  }
+  async function fetchData() {}
 
   const fetchPermission = async () => {
     const role = await GetPermissionByUserName();
     setTypePermission(role);
   };
 
-  const defaultValue = () => {
-    formik.values.memberCard = "MEM00001";
-    formik.values.firstName = "ชาคริต";
-    formik.values.lastName = "กันพรมกาศ";
-    formik.values.email = "weatherzilla@gmail.com";
-    formik.values.phone = "0804988589";
-    formik.values.address =
-      "บริษัทอันดีไฟนด์ จำกัด สำนักงานใหญ 333/64 หมู่ 6 ตำบล หนองจ๊อม อำเภอ สันทราย จังหวัด เชียงใหม่ 50210";
-    formik.values.province =
-      formik.values.province === "" ? "1" : formik.values.province;
-    formik.values.district =
-      formik.values.district === "" ? "1001" : formik.values.district;
-    formik.values.subDistrict =
-      formik.values.subDistrict === "" ? "100101" : formik.values.subDistrict;
-  };
-
-  const fatchAddress = async () => {
-    const province = await Address.getProvince();
-    const district = await Address.getAddress("district", "1");
-    const subDistrict = await Address.getAddress("subDistrict", "1001");
-    const postcode = await Address.getAddress("postcode", subDistrict[0].value);
-    setDataProvice(province);
-    setDataDistrict(district);
-    setSubDistrict(subDistrict);
-    formik.setFieldValue("province", "1");
-    formik.setFieldValue("district", "1001");
-    formik.setFieldValue("subDistrict", "100101");
-    formik.setFieldValue("postcode", postcode);
-  };
+  const defaultValue = () => {};
 
   useEffect(() => {
     /* Default Value for Testing */
-    formik.values.birthDate =
-      formik.values.birthDate === ""
-        ? new moment(new Date()).toDate()
-        : formik.values.birthDate;
-    formik.values.registerDate =
-      formik.values.registerDate === ""
-        ? new moment(new Date()).toDate()
-        : formik.values.registerDate;
-
-    fatchAddress();
     fetchPermission();
     // defaultValue();
     fetchData();
@@ -248,7 +186,6 @@ export default function ConditioRewardInfo() {
                 }
               >
                 <button
-                  // data-dropdown-toggle="dropdownmenu"
                   className="flex items-center py-4 px-2 w-full text-base font-normal bg-transparent outline-none button-focus"
                   type="button"
                 >
@@ -303,7 +240,119 @@ export default function ConditioRewardInfo() {
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info ">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
-                  
+                  <div className="w-full lg:w-2/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <LabelUC
+                        label="ชื่อเงื่อนไขการแลกรางวัล"
+                        isRequired={true}
+                      />
+                    </div>
+                    <div className="relative w-full px-4">
+                      {formik.touched.redemptionName &&
+                      formik.errors.redemptionName ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          &nbsp;
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <InputUC
+                        name="redemptionName"
+                        maxLength={100}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.redemptionName}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                        }}
+                      />
+                    </div>
+                    <div className="relative w-full px-4">
+                      {formik.touched.redemptionName &&
+                      formik.errors.redemptionName ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formik.errors.redemptionName}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-2/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <LabelUC
+                        label="ประเภทเงื่อนไขการแลกรางวัล"
+                        isRequired={true}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <SelectUC
+                        name="redemptionType"
+                        onChange={(value) => {
+                          formik.setFieldValue("redemptionType", value.value);
+                        }}
+                        options={redemptionType}
+                        value={ValidateService.defaultValue(
+                          redemptionType,
+                          formik.values.redemptionType
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-2/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <LabelUC label="ประเภทรางวัล" isRequired={true} />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <SelectUC
+                        name="rewardType"
+                        onChange={(value) => {
+                          formik.setFieldValue("rewardType", value.value);
+                        }}
+                        options={rewardType}
+                        value={ValidateService.defaultValue(
+                          rewardType,
+                          formik.values.rewardType
+                        )}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-2/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <LabelUC label="จำนวนคะแนน" isRequired={true} />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12 margin-auto-t-b">
+                    <div className="relative flex px-4">
+                      <InputUC
+                        name="points"
+                        maxLength={100}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.points}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                        }}
+                      />
+                      <span className="ml-2 margin-auto-t-b font-bold">
+                        คะแนน
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                    <LabelUC label="วันที่เริ่มต้น" isRequired={true} />
+                  </div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                    <div className="relative">
+                      
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -312,7 +361,7 @@ export default function ConditioRewardInfo() {
       </div>
       <ConfirmEdit
         showModal={modalIsOpenEdit}
-        message={"สมาชิก"}
+        message={"เงื่อนไขแลกของรางวัล"}
         hideModal={() => {
           closeModalSubject();
         }}

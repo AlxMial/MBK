@@ -1,10 +1,14 @@
 module.exports = (sequelize, DataTypes) => {
     const tbRedemtionConditionsHD = sequelize.define("tbRedemtionConditionsHD", {
-      campaignName: {
+      redemptionName: {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      campaignType: {
+      redemptionType: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      rewardType: {
         type: DataTypes.STRING,
         allowNull: true,
       },

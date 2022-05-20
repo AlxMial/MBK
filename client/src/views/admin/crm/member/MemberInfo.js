@@ -8,18 +8,19 @@ import { useToasts } from "react-toast-notifications";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
-import  { styleSelect } from "assets/styles/theme/ReactSelect.js";
+import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import * as Storage from "../../../../services/Storage.service";
 import "antd/dist/antd.css";
 import moment from "moment";
 import "moment/locale/th";
 import locale from "antd/lib/locale/th_TH";
-import { DatePicker, Space, ConfigProvider } from "antd";
+import { DatePicker, ConfigProvider } from "antd";
 import * as Address from "../../../../services/GetAddress.js";
 import useMenu from "services/useMenu";
 import { GetPermissionByUserName } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 import SelectUC from "components/SelectUC";
+import DatePickerUC from "components/DatePickerUC";
 
 export default function MemberInfo() {
   /* Option Select */
@@ -102,15 +103,6 @@ export default function MemberInfo() {
     }
   };
 
-  // const onHandleNumber = (e) => {
-  //   if (
-  //     ValidateService.onHandleNumberChange(e.target.value) !== "" ||
-  //     e.target.value === ""
-  //   ) {
-  //     setPhoneNumber(e.target.value);
-  //     return e.target.value;
-  //   }
-  // };
   /* Form insert value */
   const formik = useFormik({
     initialValues: {
@@ -135,8 +127,8 @@ export default function MemberInfo() {
       memberPoint: 0,
       memberPointExpire: new Date(),
       memberType: "1",
-      addBy:"",
-      updateBy:"",
+      addBy: "",
+      updateBy: "",
     },
     validationSchema: Yup.object({
       memberCard: Yup.string().required(
@@ -154,18 +146,11 @@ export default function MemberInfo() {
           ? "* กรุณากรอก นามสกุล"
           : "* Please enter your Last Name"
       ),
-      phone: Yup.string()
-        // .matches(
-        //   phoneRegExp,
-        //   Storage.GetLanguage() === "th"
-        //     ? "* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง"
-        //     : "* The Phone Number format is invalid"
-        // )
-        .required(
-          Storage.GetLanguage() === "th"
-            ? "* กรุณากรอก เบอร์โทรศัพท์"
-            : "* Please enter your Phone Number"
-        ),
+      phone: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก เบอร์โทรศัพท์"
+          : "* Please enter your Phone Number"
+      ),
       email: Yup.string()
         .matches(
           EmailRegExp,
@@ -197,7 +182,7 @@ export default function MemberInfo() {
 
       if (!errorRegisterDate && !errorBirthDate) {
         if (isNew) {
-          formik.values.addBy = localStorage.getItem('user');
+          formik.values.addBy = localStorage.getItem("user");
           axios.post("members", values).then((res) => {
             if (res.data.status) {
               setIsNew(false);
@@ -214,7 +199,7 @@ export default function MemberInfo() {
               );
             } else {
               // setIsOpenEdit(false);
-              console.log(res.data)
+              console.log(res.data);
               if (res.data.isPhone) {
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
@@ -243,7 +228,7 @@ export default function MemberInfo() {
             }
           });
         } else {
-          formik.values.updateBy = localStorage.getItem('user');
+          formik.values.updateBy = localStorage.getItem("user");
           axios.put("members", values).then((res) => {
             if (res.data.status) {
               setIsModified(false);
@@ -262,7 +247,7 @@ export default function MemberInfo() {
               //     : res.data.message,
               //   { appearance: "warning", autoDismiss: true }
               // );
-              console.log(res.data)
+              console.log(res.data);
               if (res.data.isPhone) {
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
@@ -719,61 +704,42 @@ export default function MemberInfo() {
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
-                      <div className="relative">
-                        <ConfigProvider locale={locale}>
-                          <DatePicker
-                            format={"DD/MM/yyyy"}
-                            placeholder="เลือกวันที่"
-                            showToday={false}
-                            disabled={typePermission === "1" ? false : true}
-                            defaultValue={moment(new Date(), "DD/MM/YYYY")}
-                            style={{
-                              height: "100%",
-                              width: "100%",
-                              borderRadius: "0.25rem",
-                              cursor: "pointer",
-                              margin: "0px",
-                              paddingTop: "0.5rem",
-                              paddingBottom: "0.5rem",
-                              paddingLeft: "0.5rem",
-                              paddingRight: "0.5rem",
-                            }}
-                            onClick={(e) => {
-                              setIsClick(true);
-                            }}
-                            onBlur={(e) => {
-                              setIsClick(false);
-                            }}
-                            onChange={(e) => {
-                              setIsClick(false);
-                              setIsModified(true);
-                              if (e === null) {
-                                setErrorBirthDate(true);
-                                formik.setFieldValue(
-                                  "birthDate",
-                                  new Date(),
-                                  false
-                                );
-                              } else {
-                                setErrorBirthDate(false);
-                                formik.setFieldValue(
-                                  "birthDate",
-                                  moment(e).toDate(),
-                                  false
-                                );
-                              }
-                            }}
-                            value={
-                              !isClick
-                                ? moment(
-                                    new Date(formik.values.birthDate),
-                                    "DD/MM/YYYY"
-                                  )
-                                : null
-                            }
-                          />
-                        </ConfigProvider>
-                      </div>
+                      <DatePickerUC
+                        disabled={typePermission === "1" ? false : true}
+                        onClick={(e) => {
+                          setIsClick(true);
+                        }}
+                        onBlur={(e) => {
+                          setIsClick(false);
+                        }}
+                        onChange={(e) => {
+                          setIsClick(false);
+                          setIsModified(true);
+                          if (e === null) {
+                            setErrorBirthDate(true);
+                            formik.setFieldValue(
+                              "birthDate",
+                              new Date(),
+                              false
+                            );
+                          } else {
+                            setErrorBirthDate(false);
+                            formik.setFieldValue(
+                              "birthDate",
+                              moment(e).toDate(),
+                              false
+                            );
+                          }
+                        }}
+                        value={
+                          !isClick
+                            ? moment(
+                                new Date(formik.values.birthDate),
+                                "DD/MM/YYYY"
+                              )
+                            : null
+                        }
+                      />
                     </div>
                   </div>
                   <div className="w-full lg:w-2/12 px-4 mb-4 ">
@@ -801,61 +767,42 @@ export default function MemberInfo() {
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
-                      <div className="relative">
-                        <ConfigProvider locale={locale}>
-                          <DatePicker
-                            format={"DD/MM/yyyy"}
-                            placeholder="เลือกวันที่"
-                            showToday={false}
-                            disabled={typePermission === "1" ? false : true}
-                            defaultValue={moment(new Date(), "DD/MM/YYYY")}
-                            onBlur={(e) => {
-                              setIsClickRegister(false);
-                            }}
-                            onClick={(e) => {
-                              setIsClickRegister(true);
-                            }}
-                            style={{
-                              height: "100%",
-                              width: "100%",
-                              borderRadius: "0.25rem",
-                              cursor: "pointer",
-                              margin: "0px",
-                              paddingTop: "0.5rem",
-                              paddingBottom: "0.5rem",
-                              paddingLeft: "0.5rem",
-                              paddingRight: "0.5rem",
-                            }}
-                            value={
-                              !isClickRegister
-                                ? moment(
-                                    new Date(formik.values.registerDate),
-                                    "DD/MM/YYYY"
-                                  )
-                                : null
-                            }
-                            onChange={(e) => {
-                              setIsClickRegister(false);
-                              setIsModified(true);
-                              if (e === null) {
-                                setErrorRegisterDate(true);
-                                formik.setFieldValue(
-                                  "registerDate",
-                                  new Date(),
-                                  false
-                                );
-                              } else {
-                                setErrorRegisterDate(false);
-                                formik.setFieldValue(
-                                  "registerDate",
-                                  moment(e).toDate(),
-                                  false
-                                );
-                              }
-                            }}
-                          />
-                        </ConfigProvider>
-                      </div>
+                      <DatePickerUC
+                        disabled={typePermission === "1" ? false : true}
+                        onBlur={(e) => {
+                          setIsClickRegister(false);
+                        }}
+                        onClick={(e) => {
+                          setIsClickRegister(true);
+                        }}
+                        value={
+                          !isClickRegister
+                            ? moment(
+                                new Date(formik.values.registerDate),
+                                "DD/MM/YYYY"
+                              )
+                            : null
+                        }
+                        onChange={(e) => {
+                          setIsClickRegister(false);
+                          setIsModified(true);
+                          if (e === null) {
+                            setErrorRegisterDate(true);
+                            formik.setFieldValue(
+                              "registerDate",
+                              new Date(),
+                              false
+                            );
+                          } else {
+                            setErrorRegisterDate(false);
+                            formik.setFieldValue(
+                              "registerDate",
+                              moment(e).toDate(),
+                              false
+                            );
+                          }
+                        }}
+                      />
                     </div>
                   </div>
                   <div className="w-full lg:w-2/12 px-4 mb-4 ">
@@ -917,7 +864,7 @@ export default function MemberInfo() {
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
-                      <SelectUC 
+                      <SelectUC
                         name="province"
                         isDisabled={typePermission === "1" ? false : true}
                         onChange={async (value) => {
@@ -970,8 +917,7 @@ export default function MemberInfo() {
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
-                      <Select
-                        id="district"
+                      <SelectUC
                         name="district"
                         isDisabled={typePermission === "1" ? false : true}
                         onChange={async (value) => {
@@ -992,15 +938,11 @@ export default function MemberInfo() {
                           );
                           formik.setFieldValue("postcode", postcode);
                         }}
-                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         options={dataDistrict}
-                        menuPlacement="top"
                         value={ValidateService.defaultValue(
                           dataDistrict,
                           formik.values.district
                         )}
-                        // value={defaultValue(options, formik.values.role)}
-                        styles={useStyle}
                       />
                     </div>
                   </div>
@@ -1022,8 +964,7 @@ export default function MemberInfo() {
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                     <div className="relative w-full">
-                      <Select
-                        id="role"
+                      <SelectUC
                         name="role"
                         isDisabled={typePermission === "1" ? false : true}
                         onChange={async (value) => {
@@ -1035,18 +976,15 @@ export default function MemberInfo() {
                           );
                           formik.setFieldValue("postcode", postcode);
                         }}
-                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         options={
                           Storage.GetLanguage() === "th"
                             ? dataSubDistrict
                             : dataSubDistrict
                         }
-                        menuPlacement="top"
                         value={ValidateService.defaultValue(
                           dataSubDistrict,
                           formik.values.subDistrict
                         )}
-                        styles={useStyle}
                       />
                     </div>
                   </div>
