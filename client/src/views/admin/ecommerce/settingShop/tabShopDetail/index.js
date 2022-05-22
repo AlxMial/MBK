@@ -17,6 +17,15 @@ import FilesService from "services/files";
 import { onSaveImage } from 'services/ImageService';
 
 const ShopDetail = () => {
+    const _defaultImage = {
+        id: null,
+        image: null,
+        relatedId: null,
+        relatedTable: 'shop',
+        isDeleted: false,
+        addBy: null,
+        updateBy: null,
+    }
     const { width } = useWindowDimensions();
     const { addToast } = useToasts();
     const [open, setOpen] = useState(false);
@@ -29,15 +38,7 @@ const ShopDetail = () => {
     const [banner4, setBanner4] = useState(null);
     const [banner5, setBanner5] = useState(null);
     const [banner6, setBanner6] = useState(null);
-    const [shopImage, setShopImage] = useState({
-        id: null,
-        image: null,
-        relatedId: null,
-        relatedTable: 'shop',
-        isDeleted: false,
-        addBy: null,
-        updateBy: null,
-    });
+    const [shopImage, setShopImage] = useState(_defaultImage);
 
     async function fetchData() {
         const response = await axios.get('shop');
@@ -52,6 +53,34 @@ const ShopDetail = () => {
             if (_shopImage && _shopImage.data.tbImage) {
                 const image = await FilesService.buffer64UTF8(_shopImage.data.tbImage.image)
                 setShopImage({ ..._shopImage.data.tbImage, image: image });
+            }
+
+            const resBanner = await axios.get(`banner/byShopId/${shop.id}`);
+            if (resBanner.data.tbBanner && resBanner.data.tbBanner.length > 0) {
+                resBanner.data.tbBanner.forEach(async (e) => {
+                    const resImg = await axios.get(`image/byRelated/${shop.id}/${e.level}`);
+                    let image = null;
+                    if (resImg.data.tbImage) {
+                        image = await FilesService.buffer64UTF8(resImg.data.tbImage.image);
+                    }
+                    e.name = e.level;
+                    if (image) {
+                        formik.setFieldValue(`${e.level}Name`, `Image Banner ${e.level.replace('banner', '')}`, false);
+                    }
+                    if (e.level === 'banner1') {
+                        setBanner1(image ? { ...e, image: image } : e);
+                    } else if (e.level === 'banner2') {
+                        setBanner2(image ? { ...e, image: image } : e);
+                    } else if (e.level === 'banner3') {
+                        setBanner3(image ? { ...e, image: image } : e);
+                    } else if (e.level === 'banner4') {
+                        setBanner4(image ? { ...e, image: image } : e);
+                    } else if (e.level === 'banner5') {
+                        setBanner5(image ? { ...e, image: image } : e);
+                    } else if (e.level === 'banner6') {
+                        setBanner6(image ? { ...e, image: image } : e);
+                    }
+                });
             }
         }
     }
@@ -218,7 +247,7 @@ const ShopDetail = () => {
         // save shop image
         await onSaveImage({ ...shopImage, relatedId: id });
         // save banner
-        if (saveBanner()) {
+        if (saveBanner(id)) {
             afterSaveSuccess();
         } else {
             addToast("บันทึกข้อมูลไม่สำเร็จ", {
@@ -236,36 +265,38 @@ const ShopDetail = () => {
         );
     }
 
-    const saveBanner = () => {
+    const saveBanner = (id) => {
         let success = true;
         if (banner1) {
-            success = saveBanners(banner1);
+            success = saveBanners(banner1, id);
         }
         if (success && banner2) {
-            success = saveBanners(banner2);
+            success = saveBanners(banner2, id);
         }
         if (success && banner3) {
-            success = saveBanners(banner3);
+            success = saveBanners(banner3, id);
         }
         if (success && banner4) {
-            success = saveBanners(banner4);
+            success = saveBanners(banner4, id);
         }
         if (success && banner5) {
-            success = saveBanners(banner5);
+            success = saveBanners(banner5, id);
         }
         if (success && banner6) {
-            success = saveBanners(banner6);
+            success = saveBanners(banner6, id);
         }
         return success;
     }
 
 
-    const saveBanners = (data) => {
+    const saveBanners = (data, id) => {
         data.updateBy = localStorage.getItem('user');
+        data.shopId = id;
+        data.isDeleted = false;
         if (data.id) {
             axios.put("banner", data).then((res) => {
                 if (res.data.status) {
-                    return saveBannerImage(data);
+                    return saveBannerImage(data, data.id);
                 } else {
                     return false;
                 }
@@ -274,7 +305,7 @@ const ShopDetail = () => {
             data.addBy = localStorage.getItem('user');
             axios.post("banner", data).then((res) => {
                 if (res.data.status) {
-                    return saveBannerImage(data);
+                    return saveBannerImage(data, res.data.tbBanner.id);
                 } else {
                     return false;
                 }
@@ -282,10 +313,13 @@ const ShopDetail = () => {
         }
     }
 
-    const saveBannerImage = (data) => {
+    const saveBannerImage = async (data, id) => {
         // Save Image Banner
-        if (data.img) {
-            return true;
+        if (data.image) {
+            data.image.relatedId = id;
+            data.image.isDeleted = false;
+            const res = await onSaveImage(data.image);
+            return res.data.status;
         } else {
             return true;
         }
@@ -293,6 +327,7 @@ const ShopDetail = () => {
 
     const bannerList = ['banner1Name', 'banner2Name', 'banner3Name', 'banner4Name', 'banner5Name', 'banner6Name'];
     const emailList = ['email1', 'email2', 'email3', 'email4'];
+
     return (
         <>
             <div className="w-full">

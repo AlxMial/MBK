@@ -4,6 +4,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
+    level: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
