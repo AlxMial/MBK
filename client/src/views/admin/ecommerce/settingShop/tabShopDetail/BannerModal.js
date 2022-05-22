@@ -30,7 +30,6 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
     const [stockList, setStockList] = useState([]);
     const [productCategoryList, setProductCategoryList] = useState([]);
 
-    console.log('modalData', modalData);
     const typeLinkList = [
         { label: "หมวดหมู่สินค้า", value: false },
         { label: "สินค้า", value: true },
