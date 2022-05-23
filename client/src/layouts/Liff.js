@@ -107,6 +107,8 @@ const runApp = (callback, setView) => {
 const LiffAPP = () => {
   let history = useHistory();
   const [view, setview] = useState(false);
+  const isInClient = dev ? true : liff.isInClient();
+
   let pathname = window.location.pathname;
   let bg = "100px";
   let ismemberpage = false;
@@ -154,7 +156,33 @@ const LiffAPP = () => {
 
   return (
     <>
-      {!view ? (
+      {!isInClient ? (
+        <div style={{ minHeight: "100vh" }}>
+          <div
+            className={"noselect bg-green-mbk flex"}
+            style={{ height: "100px" }}
+          >
+            <div className="w-full">
+              <img
+                src="https://www.prg.co.th/images/logo.png"
+                alt="logo_mbk"
+                className=" mt-6 "
+                style={{
+                  display: "block",
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+              ></img>
+            </div>
+          </div>
+          <div
+            className="mt-2 text-xl"
+            style={{ width: "90%", marginLeft: "auto", marginRight: "auto" }}
+          >
+            {"สามารถเข้าร่วมกิจกรรมได้ผ่าน Line Application บนมือถือเท่านั่น"}
+          </div>
+        </div>
+      ) : !view ? (
         <Spinner customText={"Loading"} />
       ) : (
         <div style={{ display: !view ? "none" : "", minHeight: "100vh" }}>
@@ -177,7 +205,6 @@ const LiffAPP = () => {
                   alt="line_head_img"
                   style={{
                     objectFit: "fill",
-                    // height: bg,
                   }}
                 ></img>
               ) : (
