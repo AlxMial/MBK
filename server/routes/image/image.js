@@ -54,6 +54,7 @@ router.get("/byRelated/:relatedId/:relatedTable", validateToken, async (req, res
 });
 
 router.put("/", validateToken, async (req, res) => {
+    // console.log('req.body', req.body)
     const data = await tbImage.findOne({
         where: {
             isDeleted: false,
@@ -63,22 +64,30 @@ router.put("/", validateToken, async (req, res) => {
         },
     });
 
-    if (!data) {
-        const dataUpdate = await tbImage.update(req.body, {
-            where: { id: req.body.id },
-        });
-        res.json({
-            status: true,
-            message: "success",
-            tbImage: dataUpdate,
-        });
-    } else {
-        res.json({
-            status: false,
-            message: "success",
-            tbImage: null,
-        });
-    }
+    const dataUpdate = await tbImage.update(req.body, {
+        where: { id: req.body.id },
+    });
+    res.json({
+        status: true,
+        message: "success",
+        tbImage: req.body,
+    });
+    // if (!data) {
+    //     const dataUpdate = await tbImage.update(req.body, {
+    //         where: { id: req.body.id },
+    //     });
+    //     res.json({
+    //         status: true,
+    //         message: "success",
+    //         tbImage: dataUpdate,
+    //     });
+    // } else {
+    //     res.json({
+    //         status: false,
+    //         message: "success",
+    //         tbImage: null,
+    //     });
+    // }
 });
 
 router.delete("/:id", validateToken, async (req, res) => {

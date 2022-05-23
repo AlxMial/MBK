@@ -18,17 +18,18 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
     const useStyleMobile = customStylesMobile();
     const { width } = useWindowDimensions();
 
-    const [fileName, setFileName] = useState(modalData && modalData.image ?
-        ('Image Banner ' + (name.replace('banner', '').replace('Name', ''))) : "");
+    // const [fileName, setFileName] = useState(modalData && modalData.image ?
+    //     ('Image Banner ' + (name.replace('banner', ''))) : "");
+    const [fileName, setFileName] = useState(modalData && modalData.image ? modalData.imageName : "");
     const [imgSeleted, setImgSeleted] = useState(modalData ? modalData.image : null); //รูป
     const [typeLink, setTypeLink] = useState(modalData ? modalData.typeLink : false);//Radio button
+    const [stockList, setStockList] = useState([]);
+    const [productCategoryList, setProductCategoryList] = useState([]);
     const [productCategoryId, setProductCategoryId] = useState(modalData ? modalData.productCategoryId : '');// หมวดหมู่
     const [stockId, setStockId] = useState(modalData ? modalData.stockId : '');// สินค้า
     const [dropdown, setDropdown] = useState([]);
     const [dropdownId, setDropdownId] = useState(null);
     const [showErr, setShowErr] = useState(false);
-    const [stockList, setStockList] = useState([]);
-    const [productCategoryList, setProductCategoryList] = useState([]);
 
     const typeLinkList = [
         { label: "หมวดหมู่สินค้า", value: false },
@@ -62,6 +63,7 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
         const _productCategoryResponse = await axios.get('productCategory');
         const productCategory = await _productCategoryResponse.data.tbProductCategory;
         if (productCategory) {
+            console.log('setProductCategoryList', productCategory);
             setProductCategoryList(productCategory.map(item => ({
                 label: item.categoryName,
                 value: item.id,
@@ -88,14 +90,17 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
     }
 
     const setDefaultValue = () => {
+        console.log('setDefaultValue');
         if (typeLink) {
-            const _stockDefault = stockList && stockList.length > 0 ? stockList[0].value : '';
-            setDropdown(stockList);
-            setDropdownId(stockId ? stockId : _stockDefault);
-            setStockId(stockId ? stockId : _stockDefault);
-            setProductCategoryId(null);
-        } else {
-            const _cateDefault = productCategoryList && productCategoryList.length > 0 ? productCategoryList[0].value : '';
+            if (stockList && stockList.length > 0) {
+                const _stockDefault = stockList[0].value;
+                setDropdown(stockList);
+                setDropdownId(stockId ? stockId : _stockDefault);
+                setStockId(stockId ? stockId : _stockDefault);
+                setProductCategoryId(null);
+            }
+        } else if (productCategoryList && productCategoryList.length > 0) {
+            const _cateDefault = productCategoryList[0].value;
             setDropdown(productCategoryList);
             setDropdownId(productCategoryId ? productCategoryId : _cateDefault);
             setProductCategoryId(productCategoryId ? productCategoryId : _cateDefault);
@@ -104,11 +109,11 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
     }
     useEffect(() => {
         setDefaultValue();
-    }, [typeLink, productCategoryList, stockList]);
+    }, [productCategoryList, stockList]);
 
     const handleSeletectImage = async (e) => {
         const base64 = await FilesService.convertToBase64(e.target.files[0]);
-        setImgSeleted({ ...imgSeleted, image: base64, relatedTable: name.replace('Name', '') });
+        setImgSeleted({ ...imgSeleted, image: base64, relatedTable: name });
         setFileName(e.target.files[0].name);
     }
 
@@ -136,8 +141,9 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
         } else {
             setShowErr(false);
             const data = {
-                fileName: imgSeleted ? 'Image Banner ' + (name.replace('banner', '').replace('Name', '')) : "",
-                level: name.replace('Name', ''),
+                // fileName: imgSeleted ? 'Image Banner ' + (name.replace('banner', '')) : "",
+                imageName: imgSeleted ? fileName : "",
+                level: name,
                 name,
                 image: imgSeleted,
                 typeLink,

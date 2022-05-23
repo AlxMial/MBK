@@ -1,15 +1,15 @@
 import axios from "services/axios";
 
-export const onSaveImage = async (data) => {
+export const onSaveImage = async (data, callBackFun = null) => {
     data.updateBy = localStorage.getItem('user');
     if (data.id) {
-        axios.put("image", data).then((res) => {
-            return res;
+        await axios.put("image", data).then((res) => {
+            if (callBackFun) callBackFun(res);
         });
     } else {
         data.addBy = localStorage.getItem('user');
-        axios.post("image", data).then((res) => {
-            return res;
+        await axios.post("image", data).then((res) => {
+            if (callBackFun) callBackFun(res);
         });
     }
 }

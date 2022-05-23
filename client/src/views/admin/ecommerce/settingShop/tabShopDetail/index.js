@@ -58,27 +58,28 @@ const ShopDetail = () => {
             const resBanner = await axios.get(`banner/byShopId/${shop.id}`);
             if (resBanner.data.tbBanner && resBanner.data.tbBanner.length > 0) {
                 resBanner.data.tbBanner.forEach(async (e) => {
-                    const resImg = await axios.get(`image/byRelated/${shop.id}/${e.level}`);
+                    const resImg = await axios.get(`image/byRelated/${e.id}/${e.level}`);
                     let image = null;
                     if (resImg.data.tbImage) {
                         image = await FilesService.buffer64UTF8(resImg.data.tbImage.image);
                     }
                     e.name = e.level;
                     if (image) {
-                        formik.setFieldValue(`${e.level}Name`, `Image Banner ${e.level.replace('banner', '')}`, false);
+                        // formik.setFieldValue(`${e.level}`, `Image Banner ${e.level.replace('banner', '')}`, false);
+                        formik.setFieldValue(`${e.level}`, resImg.data.tbImage.imageName, false);
                     }
                     if (e.level === 'banner1') {
-                        setBanner1(image ? { ...e, image: image } : e);
+                        setBanner1(image ? { ...e, image: resImg.data.tbImage } : e);
                     } else if (e.level === 'banner2') {
-                        setBanner2(image ? { ...e, image: image } : e);
+                        setBanner2(image ? { ...e, image: resImg.data.tbImage } : e);
                     } else if (e.level === 'banner3') {
-                        setBanner3(image ? { ...e, image: image } : e);
+                        setBanner3(image ? { ...e, image: resImg.data.tbImage } : e);
                     } else if (e.level === 'banner4') {
-                        setBanner4(image ? { ...e, image: image } : e);
+                        setBanner4(image ? { ...e, image: resImg.data.tbImage } : e);
                     } else if (e.level === 'banner5') {
-                        setBanner5(image ? { ...e, image: image } : e);
+                        setBanner5(image ? { ...e, image: resImg.data.tbImage } : e);
                     } else if (e.level === 'banner6') {
-                        setBanner6(image ? { ...e, image: image } : e);
+                        setBanner6(image ? { ...e, image: resImg.data.tbImage } : e);
                     }
                 });
             }
@@ -96,26 +97,26 @@ const ShopDetail = () => {
     };
 
     const onSubmitModal = (data) => {
-        console.log(data)
-        formik.setFieldValue(data.name, data.fileName);
+        formik.setFieldValue(data.name, data.imageName);
+        data.image.imageName = data.imageName;
         // prepare for save
         switch (data.name) {
-            case 'banner1Name':
+            case 'banner1':
                 setBanner1(data);
                 break;
-            case 'banner2Name':
+            case 'banner2':
                 setBanner2(data);
                 break;
-            case 'banner3Name':
+            case 'banner3':
                 setBanner3(data);
                 break;
-            case 'banner4Name':
+            case 'banner4':
                 setBanner4(data);
                 break;
-            case 'banner5Name':
+            case 'banner5':
                 setBanner5(data);
                 break;
-            case 'banner6Name':
+            case 'banner6':
                 setBanner6(data);
                 break;
             default:
@@ -124,31 +125,28 @@ const ShopDetail = () => {
     };
 
     const handleChangeImg = async (e) => {
-        // var image = document.getElementById("shopImage");
-        // image.src = URL.createObjectURL(e.target.files[0]);
         const base64 = await FilesService.convertToBase64(e.target.files[0]);
         setShopImage({ ...shopImage, image: base64 });
-        // setSelectedImage(e.target.files[0]);
     };
 
     const handleOpenModal = (name) => {
         switch (name) {
-            case 'banner1Name':
+            case 'banner1':
                 setModalData(banner1);
                 break;
-            case 'banner2Name':
+            case 'banner2':
                 setModalData(banner2);
                 break;
-            case 'banner3Name':
+            case 'banner3':
                 setModalData(banner3);
                 break;
-            case 'banner4Name':
+            case 'banner4':
                 setModalData(banner4);
                 break;
-            case 'banner5Name':
+            case 'banner5':
                 setModalData(banner5);
                 break;
-            case 'banner6Name':
+            case 'banner6':
                 setModalData(banner6);
                 break;
             default:
@@ -189,12 +187,12 @@ const ShopDetail = () => {
     const formik = useFormik({
         initialValues: {
             id: '',
-            banner1Name: '',
-            banner2Name: '',
-            banner3Name: '',
-            banner4Name: '',
-            banner5Name: '',
-            banner6Name: '',
+            banner1: '',
+            banner2: '',
+            banner3: '',
+            banner4: '',
+            banner5: '',
+            banner6: '',
             shopName: '',
             description: '',
             email1: '',
@@ -245,15 +243,42 @@ const ShopDetail = () => {
 
     const saveAfterShop = async (id) => {
         // save shop image
-        await onSaveImage({ ...shopImage, relatedId: id });
-        // save banner
-        if (saveBanner(id)) {
-            afterSaveSuccess();
-        } else {
-            addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                appearance: "warning",
-                autoDismiss: true,
+        let success = true;
+        fetchLoading();
+        if (shopImage) {
+            const imageData = { ...shopImage, relatedId: id };
+            await onSaveImage(imageData, async (res) => {
+                success = res.data.status;
+                if (success) {
+                    // save banner
+                    if (await saveBanner(id)) {
+                        afterSaveSuccess();
+                    } else {
+                        fetchSuccess();
+                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                            appearance: "warning",
+                            autoDismiss: true,
+                        });
+                    }
+                } else {
+                    fetchSuccess();
+                    addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                        appearance: "warning",
+                        autoDismiss: true,
+                    });
+                }
             });
+        } else {
+            // save banner
+            if (await saveBanner(id)) {
+                afterSaveSuccess();
+            } else {
+                fetchSuccess();
+                addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                    appearance: "warning",
+                    autoDismiss: true,
+                });
+            }
         }
     }
 
@@ -265,67 +290,81 @@ const ShopDetail = () => {
         );
     }
 
-    const saveBanner = (id) => {
+    const saveBanner = async (id) => {
         let success = true;
         if (banner1) {
-            success = saveBanners(banner1, id);
+            success = await saveBanners(banner1, id);
         }
         if (success && banner2) {
-            success = saveBanners(banner2, id);
+            success = await saveBanners(banner2, id);
         }
         if (success && banner3) {
-            success = saveBanners(banner3, id);
+            success = await saveBanners(banner3, id);
         }
         if (success && banner4) {
-            success = saveBanners(banner4, id);
+            success = await saveBanners(banner4, id);
         }
         if (success && banner5) {
-            success = saveBanners(banner5, id);
+            success = await saveBanners(banner5, id);
         }
         if (success && banner6) {
-            success = saveBanners(banner6, id);
+            success = await saveBanners(banner6, id);
         }
         return success;
     }
 
 
-    const saveBanners = (data, id) => {
+    const saveBanners = async (data, id) => {
         data.updateBy = localStorage.getItem('user');
         data.shopId = id;
         data.isDeleted = false;
+        fetchLoading();
         if (data.id) {
-            axios.put("banner", data).then((res) => {
+            axios.put("banner", data).then(async (res) => {
                 if (res.data.status) {
-                    return saveBannerImage(data, data.id);
+                    const success = await saveBannerImage(data, data.id);
+                    return success
                 } else {
+                    fetchSuccess();
                     return false;
                 }
             });
         } else {
             data.addBy = localStorage.getItem('user');
-            axios.post("banner", data).then((res) => {
+            axios.post("banner", data).then(async (res) => {
                 if (res.data.status) {
-                    return saveBannerImage(data, res.data.tbBanner.id);
+                    const success = await saveBannerImage(data, res.data.tbBanner.id);
+                    return success
                 } else {
+                    fetchSuccess();
                     return false;
                 }
             });
         }
+        return true;
     }
 
     const saveBannerImage = async (data, id) => {
         // Save Image Banner
+        fetchLoading();
         if (data.image) {
             data.image.relatedId = id;
             data.image.isDeleted = false;
-            const res = await onSaveImage(data.image);
-            return res.data.status;
+            await onSaveImage(data.image, (res) => {
+                fetchSuccess();
+                return true;
+            })
+
         } else {
+            fetchSuccess();
+            addToast("บันทึกข้อมูลสำเร็จ",
+                { appearance: "success", autoDismiss: true }
+            );
             return true;
         }
     }
 
-    const bannerList = ['banner1Name', 'banner2Name', 'banner3Name', 'banner4Name', 'banner5Name', 'banner6Name'];
+    const bannerList = ['banner1', 'banner2', 'banner3', 'banner4', 'banner5', 'banner6'];
     const emailList = ['email1', 'email2', 'email3', 'email4'];
 
     return (
