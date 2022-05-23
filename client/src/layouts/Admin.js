@@ -19,6 +19,7 @@ import SettingShop from "views/admin/ecommerce/settingShop";
 import ContentLoader from "components/Loadings/ContentLoader";
 import ConditionRewardList from "views/admin/crm/conditionReward/conditionRewardlist";
 import ConditioRewardInfo from "views/admin/crm/conditionReward/conditioRewardInfo";
+import Stock from "views/admin/ecommerce/stock";
 
 export default function Admin() {
 
@@ -63,7 +64,8 @@ export default function Admin() {
               <Route path="/admin/redemtionsinfo/:id" exact component={ConditioRewardInfo} />
               <Route path="/admin/redemtions" exact component={SettingShop} />
               <Route path="/admin/settingShop" exact component={SettingShop} />
-              <Route path="/admin/stocks" exact component={StockList} />
+              {/* <Route path="/admin/stocks" exact component={StockList} /> */}
+              <Route path="/admin/stocks" exact component={Stock} />
               <Route path="/admin/stocksinfo" exact component={StockInfo} />
               <Route path="/admin/stocksinfo/:id" exact component={StockInfo} />
               <Route path="/admin/points" exact component={PointManage} />
