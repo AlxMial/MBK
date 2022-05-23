@@ -8,12 +8,28 @@ import LabelUC from 'components/LabelUC';
 import useWindowDimensions from "services/useWindowDimensions";
 import InputUC from 'components/InputUC';
 import ProfilePictureUC from 'components/ProfilePictureUC';
+import FilesService from "services/files";
+import ValidateService from "services/validateValue";
 
-const PaymentModal = ({ open, formik, handleModal, handleChangeImage }) => {
+const PaymentModal = ({ open, formik, handleModal, paymentImage, setPaymentImage }) => {
     Modal.setAppElement("#root");
     const useStyle = customStyles();
     const useStyleMobile = customStylesMobile();
     const { width } = useWindowDimensions();
+
+    const handleChangeImage = async (e) => {
+        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        setPaymentImage({ ...paymentImage, image: base64, relatedTable: 'payment' });
+    }
+
+    const handleChangeAccountNumber = (e) => {
+        if (
+            ValidateService.onHandleNumberChange(e.target.value) !== "" ||
+            e.target.value === ""
+        ) {
+            formik.setFieldValue('accountNumber', e.target.value, false);
+        }
+    };
 
     return (
         <Modal
@@ -82,12 +98,12 @@ const PaymentModal = ({ open, formik, handleModal, handleChangeImage }) => {
                                         <div className="relative w-full px-4">
                                             <InputUC
                                                 name='accountNumber'
-                                                maxLength={100}
+                                                maxLength={15}
                                                 onBlur={formik.handleBlur}
                                                 value={formik.values.accountNumber}
                                                 // disabled={typePermission !== "1"}
                                                 onChange={(e) => {
-                                                    formik.handleChange(e);
+                                                    handleChangeAccountNumber(e);
                                                 }} />
                                         </div>
                                         <div className="relative w-full px-4">
@@ -149,6 +165,7 @@ const PaymentModal = ({ open, formik, handleModal, handleChangeImage }) => {
                                 <ProfilePictureUC
                                     id='bankImage'
                                     hoverText='เลือกรูปธนาคาร'
+                                    src={paymentImage.image}
                                     onChange={handleChangeImage} />
                             </div>
                         </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useFormik } from "formik";
 import axios from "services/axios";
 import { fetchLoading, fetchSuccess } from 'redux/actions/common';
@@ -8,13 +8,24 @@ import PaymentModal from './PaymentModal';
 import PaymentTable from './PaymentTable';
 import InputSearchUC from 'components/InputSearchUC';
 import ButtonModalUC from 'components/ButtonModalUC';
+import FilesService from "services/files";
+import { onSaveImage } from 'services/ImageService';
 
 const Payment = () => {
     const { addToast } = useToasts();
     const [listPayment, setListPayment] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
+    const _defaultImage = {
+        id: null,
+        image: null,
+        relatedId: null,
+        relatedTable: 'payment',
+        isDeleted: false,
+        addBy: null,
+        updateBy: null,
+    }
+    const [paymentImage, setPaymentImage] = useState(_defaultImage);
 
     const fetchData = async () => {
         await axios.get("payment").then((response) => {
@@ -25,11 +36,10 @@ const Payment = () => {
         });
     };
 
-    const handleChangeImage = (e) => {
-        const image = document.getElementById("bankImage");
-        image.src = URL.createObjectURL(e.target.files[0]);
-        setSelectedImage(e.target.files[0]);
-    };
+    useEffect(() => {
+        // fetchPermission();
+        fetchData();
+    }, []);
 
     const InputSearch = (e) => {
         e = e.toLowerCase();
@@ -48,12 +58,18 @@ const Payment = () => {
         }
     };
 
-    const openModal = (id) => {
-        formik.resetForm();
+    const openModal = async (id) => {
+        // formik.resetForm();
         const data = listPayment.filter((x) => x.id === id);
-        if (data) {
-            for (const field in data) {
-                formik.setFieldValue(field, data[field], false);
+        if (data && data.length > 0) {
+            const _paymentImage = await axios.get(`image/byRelated/${id}/payment`);
+            if (_paymentImage && _paymentImage.data.tbImage) {
+                const image = await FilesService.buffer64UTF8(_paymentImage.data.tbImage.image)
+                setPaymentImage({ ..._paymentImage.data.tbImage, image: image });
+            }
+            console.log(data[0])
+            for (const field in data[0]) {
+                formik.setFieldValue(field, data[0][field], false);
             }
         }
         setOpen(true);
@@ -79,27 +95,23 @@ const Payment = () => {
             fetchLoading();
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
-                axios.put("payment", values).then((res) => {
+                axios.put("payment", values).then(async (res) => {
                     if (res.data.status) {
                         // Save Image ต่อ
-                        if (selectedImage) {
-                            fetchSuccess();
-                            fetchData();
-                            addToast("บันทึกข้อมูลสำเร็จ",
-                                { appearance: "success", autoDismiss: true }
-                            );
+                        if (paymentImage) {
+                            const imageData = { ...paymentImage, relatedId: values.id };
+                            await onSaveImage(imageData, (res) => {
+                                if (res.data.status) {
+                                    afterSave(true);
+                                } else {
+                                    afterSave(false);
+                                }
+                            });
                         } else {
-                            fetchSuccess();
-                            fetchData();
-                            addToast("บันทึกข้อมูลสำเร็จ",
-                                { appearance: "success", autoDismiss: true }
-                            );
+                            afterSave(true);
                         }
                     } else {
-                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                            appearance: "warning",
-                            autoDismiss: true,
-                        });
+                        afterSave(false);
                     }
                 });
             } else {
@@ -107,20 +119,17 @@ const Payment = () => {
                 axios.post("payment", values).then(async (res) => {
                     if (res.data.status) {
                         // Save Image ต่อ
-                        if (selectedImage) {
-                            fetchSuccess();
-                            setOpen(false);
-                            fetchData();
-                            addToast("บันทึกข้อมูลสำเร็จ",
-                                { appearance: "success", autoDismiss: true }
-                            );
+                        if (paymentImage) {
+                            const imageData = { ...paymentImage, relatedId: res.data.tbPayment.id };
+                            await onSaveImage(imageData, (res) => {
+                                if (res.data.status) {
+                                    afterSave(true);
+                                } else {
+                                    afterSave(false);
+                                }
+                            });
                         } else {
-                            fetchData();
-                            setOpen(false);
-                            fetchSuccess();
-                            addToast("บันทึกข้อมูลสำเร็จ",
-                                { appearance: "success", autoDismiss: true }
-                            );
+                            afterSave(true);
                         }
                     }
                 });
@@ -129,6 +138,21 @@ const Payment = () => {
         },
     });
 
+    const afterSave = (success) => {
+        fetchSuccess();
+        if (success) {
+            setOpen(false);
+            fetchData();
+            addToast("บันทึกข้อมูลสำเร็จ",
+                { appearance: "success", autoDismiss: true }
+            );
+        } else {
+            addToast("บันทึกข้อมูลสำเร็จ",
+                { appearance: "success", autoDismiss: true }
+            );
+        }
+
+    }
     return (
         <>
             <div className="w-full">
@@ -154,7 +178,8 @@ const Payment = () => {
             {open && <PaymentModal
                 open={open}
                 formik={formik}
-                handleChangeImage={handleChangeImage}
+                paymentImage={paymentImage}
+                setPaymentImage={setPaymentImage}
                 handleModal={() => setOpen(false)} />}
         </>
     )
