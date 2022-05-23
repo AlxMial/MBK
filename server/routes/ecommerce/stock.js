@@ -4,6 +4,7 @@ const { tbStock } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
+const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
@@ -72,4 +73,15 @@ router.delete("/:id", validateToken, async (req, res) => {
     res.json({ status: true, message: "success", tbStock: null });
 });
 
+// line liff
+router.get("/getStock", validateLineToken, async (req, res) => {
+    const data = await tbStock.findAll({
+        where: { isDeleted: false },
+    });
+    res.json({
+        status: true,
+        message: "success",
+        tbStock: data,
+    });
+});
 module.exports = router;

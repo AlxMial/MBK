@@ -1,4 +1,5 @@
 import moment from "moment";
+import * as Storage from "@services/Storage.service";
 export const IsNullOrEmpty = (obj) => {
   if ("undefined" === typeof obj || obj == null) {
     return true;
@@ -70,4 +71,10 @@ export const liff_dateToString = (date, format) => {
   return IsNullOrEmpty(date)
     ? "-"
     : moment(date).locale("th").add(543, "year").format(format);
+};
+
+
+export const getCartNumberBadge = (date, format) => {
+  let cart = Storage.get_cart()
+  return IsNullOrEmpty(cart) ? null :  cart.shop_orders.length
 };
