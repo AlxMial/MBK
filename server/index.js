@@ -55,12 +55,25 @@ const uploadExcelRouter = require('./routes/uploadExcel/uploadExcel');
 app.use("/mbkserver/uploadExcel", uploadExcelRouter);
 const redeemRouter = require('./routes/redeem/redeem');
 app.use("/mbkserver/redeem", redeemRouter);
-const shop = require('./routes/settingShop/shop');
+// e-commerce
+const shop = require('./routes/ecommerce/shop');
 app.use("/mbkserver/shop", shop);
-const banner = require('./routes/settingShop/banner');
+const banner = require('./routes/ecommerce/banner');
 app.use("/mbkserver/banner", banner);
-const stock = require('./routes/stock/stock');
+const stock = require('./routes/ecommerce/stock');
 app.use("/mbkserver/stock", stock);
+const productCategory = require('./routes/ecommerce/productCategory');
+app.use("/mbkserver/productCategory", productCategory);
+const payment = require('./routes/ecommerce/payment');
+app.use("/mbkserver/payment", payment);
+// tab Logistic
+const logistic = require('./routes/ecommerce/logistic');
+app.use("/mbkserver/logistic", logistic);
+const promotionDelivery = require('./routes/ecommerce/promotionDelivery');
+app.use("/mbkserver/promotionDelivery", promotionDelivery);
+// tab promotion หน้าร้าน
+const promotionStore = require('./routes/ecommerce/promotionStore');
+app.use("/mbkserver/promotionStore", promotionStore);
 const image = require('./routes/image/image');
 app.use("/mbkserver/image", image);
 initRoutes(app);

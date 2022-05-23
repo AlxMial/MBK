@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbBanner } = require("../../models");
+const { tbLogistic } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -8,37 +8,37 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 router.post("/", validateToken, async (req, res) => {
-    const data = await tbBanner.create(req.body);
+    const data = await tbLogistic.create(req.body);
     res.json({
         status: true,
         message: "success",
-        tbBanner: data,
+        tbLogistic: data,
     });
 });
 
 router.get("/", validateToken, async (req, res) => {
-    const data = await tbBanner.findAll({
+    const data = await tbLogistic.findAll({
         where: { isDeleted: false },
     });
     res.json({
         status: true,
         message: "success",
-        tbBanner: data,
+        tbLogistic: data,
     });
 });
 
 router.get("/byId/:id", validateToken, async (req, res) => {
     const id = req.params.id;
-    const data = await tbBanner.findOne({ where: { id: id } });
+    const data = await tbLogistic.findOne({ where: { id: id } });
     res.json({
         status: true,
         message: "success",
-        tbBanner: data,
+        tbLogistic: data,
     });
 });
 
 router.put("/", validateToken, async (req, res) => {
-    const data = await tbBanner.findOne({
+    const data = await tbLogistic.findOne({
         where: {
             isDeleted: false,
             id: {
@@ -47,29 +47,21 @@ router.put("/", validateToken, async (req, res) => {
         },
     });
 
-    if (!data) {
-        const dataUpdate = await tbBanner.update(req.body, {
-            where: { id: req.body.id },
-        });
-        res.json({
-            status: true,
-            message: "success",
-            tbBanner: dataUpdate,
-        });
-    } else {
-        res.json({
-            status: false,
-            message: "success",
-            tbBanner: null,
-        });
-    }
+    const dataUpdate = await tbLogistic.update(req.body, {
+        where: { id: req.body.id },
+    });
+    res.json({
+        status: true,
+        message: "success",
+        tbLogistic: dataUpdate,
+    });
 });
 
 router.delete("/:id", validateToken, async (req, res) => {
     const id = req.params.id;
     req.body.isDeleted = true;
-    tbBanner.update(req.body, { where: { id: id } });
-    res.json({ status: true, message: "success", tbBanner: null });
+    tbLogistic.update(req.body, { where: { id: id } });
+    res.json({ status: true, message: "success", tbLogistic: null });
 });
 
 module.exports = router;

@@ -3,7 +3,7 @@ import ReactPaginate from "react-paginate";
 
 const PromotionTable = ({ listPromotion, openModal }) => {
     const thClass = "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
-    const tdClass = "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center";
+    const tdClass = "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
     const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
 
     const [pageNumber, setPageNumber] = useState(0);
@@ -15,6 +15,12 @@ const PromotionTable = ({ listPromotion, openModal }) => {
         setPageNumber(selected);
     };
 
+    const conditionType = [
+        { label: "ส่วนลด", value: 'discount' },
+        { label: "%ส่วนลด", value: 'percentDiscount' },
+        { label: "สินค้าสมนาคุณ", value: 'product' },
+    ];
+
     return (
         <>
             <div className="block w-full overflow-x-auto  px-4 py-2">
@@ -22,6 +28,9 @@ const PromotionTable = ({ listPromotion, openModal }) => {
                 <table className="items-center w-full border ">
                     <thead>
                         <tr>
+                            <th className={thClass + ' text-center'} >
+                                ลำดับที่
+                            </th>
                             <th className={thClass} >
                                 ชื่อแคมเปญ
                             </th>
@@ -45,49 +54,29 @@ const PromotionTable = ({ listPromotion, openModal }) => {
                                         onClick={() => {
                                             openModal(value.id);
                                         }}>
-                                        <td className={tdClass}>
+                                        <td className={tdClass + ' text-center'}>
                                             <span className="px-4 margin-a">
                                                 {pagesVisited + key + 1}
                                             </span>
                                         </td>
-                                        <td
-                                            // onClick={() => {
-                                            //     openModal(value.id);
-                                            // }}
-                                            className={tdClass + " cursor-pointer"}
-                                        >
+                                        <td className={tdClass + " cursor-pointer"} >
                                             <span className={tdSpan}>
-                                                {value.bankName}
+                                                {value.campaignName}
                                             </span>
                                         </td>
-                                        <td
-                                            // onClick={() => {
-                                            //     openModal(value.id);
-                                            // }}
-                                            className={tdClass + " cursor-pointer"}
-                                        >
+                                        <td className={tdClass + " cursor-pointer"} >
                                             <span className={tdSpan}>
-                                                {value.accountNumber}
+                                                {value.buy}
                                             </span>
                                         </td>
-                                        <td
-                                            // onClick={() => {
-                                            //     openModal(value.id);
-                                            // }}
-                                            className={tdClass + " cursor-pointer"}
-                                        >
+                                        <td className={tdClass + " cursor-pointer"} >
                                             <span className={tdSpan}>
-                                                {value.accountName}
+                                                {conditionType.filter(d => d.value === value.condition)[0].label}
                                             </span>
                                         </td>
-                                        <td
-                                            // onClick={() => {
-                                            //     openModal(value.id);
-                                            // }}
-                                            className={tdClass + " cursor-pointer"}
-                                        >
+                                        <td className={tdClass + " cursor-pointer"} >
                                             <span className={tdSpan}>
-                                                {value.bankBranchName}
+                                                {value.description}
                                             </span>
                                         </td>
                                     </tr>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Modal from "react-modal";
 import {
     customStyles,
@@ -11,28 +11,44 @@ import { Radio } from "antd";
 import SelectUC from 'components/SelectUC';
 import ValidateService from "services/validateValue";
 import TextAreaUC from 'components/InputUC/TextAreaUC';
+import axios from "services/axios";
 
 const PromotionModal = ({ open, formik, handleModal }) => {
     Modal.setAppElement("#root");
     const useStyle = customStyles();
     const useStyleMobile = customStylesMobile();
     const { width } = useWindowDimensions();
+    const [stockList, setStockList] = React.useState([]);
 
-    const discountType = [
+    const conditionType = [
         { label: "ส่วนลด", value: 'discount' },
         { label: "%ส่วนลด", value: 'percentDiscount' },
         { label: "สินค้าสมนาคุณ", value: 'product' },
     ];
 
-    const stockList = [
-        { label: "กาแฟ", value: 1 },
-        { label: "น้ำเปล่า", value: 2 },
-    ];
+    // const stockList = [
+    //     { label: "กาแฟ", value: 1 },
+    //     { label: "น้ำเปล่า", value: 2 },
+    // ];
 
     const options = [
         { label: "เปิดการใช้งาน", value: true },
         { label: "ปิดการใช้งาน", value: false },
     ];
+
+    useEffect(async () => {
+        const _stockResponse = await axios.get('stock');
+        const stock = await _stockResponse.data.tbStock;
+        if (stock) {
+            setStockList(stock.map(item => ({
+                label: item.productName,
+                value: item.id,
+            })));
+            if (!formik.values.stockId && stockList && stockList.length > 0) {
+                formik.setFieldValue('stockId', stockList[0].value);
+            }
+        }
+    }, []);
 
     return (
         <Modal
@@ -123,7 +139,7 @@ const PromotionModal = ({ open, formik, handleModal }) => {
                                     <div className="w-full lg:w-6/12 margin-auto-t-b">
                                         <div className="relative w-full px-4">
                                             <Radio.Group
-                                                options={discountType}
+                                                options={conditionType}
                                                 onChange={(e) => {
                                                     formik.setFieldValue(
                                                         "condition",

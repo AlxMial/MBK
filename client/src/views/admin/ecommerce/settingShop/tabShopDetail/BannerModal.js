@@ -7,20 +7,24 @@ import {
 import LabelUC from 'components/LabelUC';
 import useWindowDimensions from "services/useWindowDimensions";
 import { Radio } from "antd";
-// import { useToasts } from "react-toast-notifications";
 import Select from "react-select";
 import ValidateService from "services/validateValue";
+import FilesService from "services/files";
+import axios from "services/axios";
 
 const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) => {
     Modal.setAppElement("#root");
     const useStyle = customStyles();
     const useStyleMobile = customStylesMobile();
     const { width } = useWindowDimensions();
-    // const { addToast } = useToasts();
 
-    const [fileName, setFileName] = useState(modalData ? modalData.fileName : "");
-    const [imgSeleted, setImgSeleted] = useState(modalData ? modalData.img : null); //รูป
+    // const [fileName, setFileName] = useState(modalData && modalData.image ?
+    //     ('Image Banner ' + (name.replace('banner', ''))) : "");
+    const [fileName, setFileName] = useState(modalData && modalData.image ? modalData.imageName : "");
+    const [imgSeleted, setImgSeleted] = useState(modalData ? modalData.image : null); //รูป
     const [typeLink, setTypeLink] = useState(modalData ? modalData.typeLink : false);//Radio button
+    const [stockList, setStockList] = useState([]);
+    const [productCategoryList, setProductCategoryList] = useState([]);
     const [productCategoryId, setProductCategoryId] = useState(modalData ? modalData.productCategoryId : '');// หมวดหมู่
     const [stockId, setStockId] = useState(modalData ? modalData.stockId : '');// สินค้า
     const [dropdown, setDropdown] = useState([]);
@@ -32,45 +36,84 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
         { label: "สินค้า", value: true },
     ];
 
-    const productCategoryList = [
-        { label: "ของใช้", value: 1 },
-        { label: "ของกิน", value: 2 },
-    ];
+    // const productCategoryList = [
+    //     { label: "ของใช้", value: 1 },
+    //     { label: "ของกิน", value: 2 },
+    // ];
 
-    const stockList = [
-        { label: "กาแฟ", value: 1 },
-        { label: "น้ำเปล่า", value: 2 },
-    ];
+    // const stockList = [
+    //     { label: "กาแฟ", value: 1 },
+    //     { label: "น้ำเปล่า", value: 2 },
+    // ];
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+
+    const fetchData = async () => {
+        const _stockResponse = await axios.get('stock');
+        const stock = await _stockResponse.data.tbStock;
+        if (stock) {
+            setStockList(stock.map(item => ({
+                label: item.productName,
+                value: item.id,
+            })));
+        }
+
+        const _productCategoryResponse = await axios.get('productCategory');
+        const productCategory = await _productCategoryResponse.data.tbProductCategory;
+        if (productCategory) {
+            console.log('setProductCategoryList', productCategory);
+            setProductCategoryList(productCategory.map(item => ({
+                label: item.categoryName,
+                value: item.id,
+            })));
+        }
+
+        setDefaultValue();
+    }
 
     const onOptionChange = (value) => {
         if (value) {
+            const _stockDefault = stockList && stockList.length > 0 ? stockList[0].value : '';
             setDropdown(stockList);
-            setDropdownId(stockList[0].value);
-            setStockId(stockList[0].value);
+            setDropdownId(_stockDefault);
+            setStockId(_stockDefault);
             setProductCategoryId(null);
         } else {
+            const _cateDefault = productCategoryList && productCategoryList.length > 0 ? productCategoryList[0].value : '';
             setDropdown(productCategoryList);
-            setDropdownId(productCategoryList[0].value);
-            setProductCategoryId(productCategoryList[0].value);
+            setDropdownId(_cateDefault);
+            setProductCategoryId(_cateDefault);
+            setStockId(null);
+        }
+    }
+
+    const setDefaultValue = () => {
+        console.log('setDefaultValue');
+        if (typeLink) {
+            if (stockList && stockList.length > 0) {
+                const _stockDefault = stockList[0].value;
+                setDropdown(stockList);
+                setDropdownId(stockId ? stockId : _stockDefault);
+                setStockId(stockId ? stockId : _stockDefault);
+                setProductCategoryId(null);
+            }
+        } else if (productCategoryList && productCategoryList.length > 0) {
+            const _cateDefault = productCategoryList[0].value;
+            setDropdown(productCategoryList);
+            setDropdownId(productCategoryId ? productCategoryId : _cateDefault);
+            setProductCategoryId(productCategoryId ? productCategoryId : _cateDefault);
             setStockId(null);
         }
     }
     useEffect(() => {
-        if (typeLink) {
-            setDropdown(stockList);
-            setDropdownId(stockId ? stockId : stockList[0].value);
-            setStockId(stockId ? stockId : stockList[0].value);
-            setProductCategoryId(null);
-        } else {
-            setDropdown(productCategoryList);
-            setDropdownId(productCategoryId ? productCategoryId : productCategoryList[0].value);
-            setProductCategoryId(productCategoryId ? productCategoryId : productCategoryList[0].value);
-            setStockId(null);
-        }
-    }, []);
+        setDefaultValue();
+    }, [productCategoryList, stockList]);
 
-    const handleSeletectImage = (e) => {
-        setImgSeleted(e.target.files[0]);
+    const handleSeletectImage = async (e) => {
+        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        setImgSeleted({ ...imgSeleted, image: base64, relatedTable: name });
         setFileName(e.target.files[0].name);
     }
 
@@ -98,9 +141,11 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
         } else {
             setShowErr(false);
             const data = {
-                fileName: imgSeleted ? imgSeleted.name : "",
+                // fileName: imgSeleted ? 'Image Banner ' + (name.replace('banner', '')) : "",
+                imageName: imgSeleted ? fileName : "",
+                level: name,
                 name,
-                img: imgSeleted,
+                image: imgSeleted,
                 typeLink,
                 productCategoryId,
                 stockId,

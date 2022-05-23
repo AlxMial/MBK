@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useFormik } from "formik";
 import axios from "services/axios";
 import { fetchLoading, fetchSuccess } from 'redux/actions/common';
@@ -24,7 +24,20 @@ const Logistic = () => {
                 setListSearch(response.data.tbLogistic);
             }
         });
+
+        const response = await axios.get('promotionDelivery');
+        const promotionDelivery = await response.data.tbPromotionDelivery;
+        if (promotionDelivery) {
+            for (const columns in promotionDelivery) {
+                formikDelivery.setFieldValue(columns, promotionDelivery[columns], false);
+            }
+        }
     };
+
+    useEffect(() => {
+        // fetchPermission();
+        fetchData();
+    }, []);
 
     const InputSearch = (e) => {
         e = e.toLowerCase();
@@ -46,23 +59,15 @@ const Logistic = () => {
     const openModalLogistic = (id) => {
         formikLogistic.resetForm();
         const data = listLogistic.filter((x) => x.id === id);
-        if (data) {
-            for (const field in data) {
-                formikLogistic.setFieldValue(field, data[field], false);
+        if (data && data.length > 0) {
+            for (const field in data[0]) {
+                formikLogistic.setFieldValue(field, data[0][field], false);
             }
         }
         setOpenLogistic(true);
     }
 
     const openModalDelivery = async () => {
-        formikDelivery.resetForm();
-        // await axios.get("promotionDelivery").then((response) => {
-        //     if (!response.data.error && response.data.tbPromotionDelivery) {
-        //         for (const field in response.data.tbPromotionDelivery) {
-        //             formikDelivery.setFieldValue(field, response.data.tbPromotionDelivery[field], false);
-        //         }
-        //     }
-        // });
         setOpenDelivery(true);
     }
 
@@ -125,13 +130,14 @@ const Logistic = () => {
             addBy: "",
             updateBy: ""
         },
-        onSubmit: (values) => {
+        onSubmit: async (values) => {
             fetchLoading();
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
-                axios.put("promotionDelivery", values).then((res) => {
+                await axios.put("promotionDelivery", values).then((res) => {
                     if (res.data.status) {
                         fetchSuccess();
+                        setOpenDelivery(false);
                         addToast("บันทึกข้อมูลสำเร็จ",
                             { appearance: "success", autoDismiss: true }
                         );
@@ -141,9 +147,10 @@ const Logistic = () => {
                 });
             } else {
                 values.addBy = localStorage.getItem('user');
-                axios.post("promotionDelivery", values).then(async (res) => {
+                await axios.post("promotionDelivery", values).then(async (res) => {
                     if (res.data.status) {
                         fetchSuccess();
+                        setOpenDelivery(false);
                         addToast("บันทึกข้อมูลสำเร็จ",
                             { appearance: "success", autoDismiss: true }
                         );
@@ -193,7 +200,11 @@ const Logistic = () => {
                             </div>
                         </div>
                     </div>
-                    <LogisticTable listLogistic={listLogistic} openModal={openModalLogistic} />
+                    <LogisticTable
+                        listLogistic={listLogistic}
+                        openModal={openModalLogistic}
+                        saveLogisticSuccess={saveLogisticSuccess}
+                        saveLogisticNotSuccess={saveLogisticNotSuccess} />
                 </div>
             </div>
             {openDelivery && <DeliveryModal

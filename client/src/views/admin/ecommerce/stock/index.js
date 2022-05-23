@@ -4,22 +4,24 @@ import axios from "services/axios";
 import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 import * as yup from "yup";
 import { useToasts } from "react-toast-notifications";
-import PromotionModal from './PromotionModal';
-import PromotionTable from './PromotionTable';
 import InputSearchUC from 'components/InputSearchUC';
 import ButtonModalUC from 'components/ButtonModalUC';
+import StockInfo from './StockInfo';
+import StockList from './Stocklist';
+import PageTitle from 'views/admin/PageTitle';
 
-const Promotion = () => {
+const Stock = () => {
     const { addToast } = useToasts();
-    const [listPromotion, setListPromotion] = useState([]);
+    const [listStock, setListStock] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
 
     const fetchData = async () => {
-        await axios.get("promotionStore").then((response) => {
-            if (!response.data.error) {
-                setListPromotion(response.data.tbPromotionStore);
-                setListSearch(response.data.tbPromotionStore);
+        await axios.get("stock").then((response) => {
+            if (!response.data.error && response.data.tbStock) {
+                console.log('fetchData', response.data.tbStock);
+                setListStock(response.data.tbStock);
+                setListSearch(response.data.tbStock);
             }
         });
     };
@@ -32,10 +34,10 @@ const Promotion = () => {
     const InputSearch = (e) => {
         e = e.toLowerCase();
         if (e === "") {
-            setListPromotion(listSearch);
+            setListStock(listSearch);
         } else {
-            setListPromotion(
-                listPromotion.filter(
+            setListStock(
+                listStock.filter(
                     (x) =>
                         x.accountName.toLowerCase().includes(e) ||
                         x.accountNumber.toLowerCase().includes(e) ||
@@ -48,7 +50,7 @@ const Promotion = () => {
 
     const openModal = (id) => {
         formik.resetForm();
-        const data = listPromotion.filter((x) => x.id === id);
+        const data = listStock.filter((x) => x.id === id);
         if (data && data.length > 0) {
             for (const field in data[0]) {
                 formik.setFieldValue(field, data[0][field], false);
@@ -86,7 +88,7 @@ const Promotion = () => {
             fetchLoading();
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
-                axios.put("promotionStore", values).then((res) => {
+                axios.put("stock", values).then((res) => {
                     if (res.data.status) {
                         fetchData();
                         setOpen(false);
@@ -103,7 +105,7 @@ const Promotion = () => {
                 });
             } else {
                 values.addBy = localStorage.getItem('user');
-                axios.post("promotionStore", values).then(async (res) => {
+                axios.post("stock", values).then(async (res) => {
                     if (res.data.status) {
                         fetchData();
                         setOpen(false);
@@ -118,8 +120,13 @@ const Promotion = () => {
         },
     });
 
+    const handleDeleteList = (id) => {
+        setListStock(listStock.filter((x) => x.id !== id));
+    }
+
     return (
         <>
+            <PageTitle page='stock' />
             <div className="w-full">
                 <div
                     className={
@@ -133,14 +140,14 @@ const Promotion = () => {
                             </div>
                             <div className={"w-full lg:w-6/12 text-right block"} >
                                 <ButtonModalUC onClick={() => openModal()}
-                                    label='เพิ่มโปรโมชั่น' />
+                                    label='เพิ่มสินค้า' />
                             </div>
                         </div>
                     </div>
-                    <PromotionTable listPromotion={listPromotion} openModal={openModal} />
+                    <StockList listStock={listStock} openModal={openModal} setListStock={handleDeleteList} />
                 </div>
             </div>
-            {open && <PromotionModal
+            {open && <StockInfo
                 open={open}
                 formik={formik}
                 handleModal={() => setOpen(false)} />}
@@ -148,4 +155,4 @@ const Promotion = () => {
     )
 }
 
-export default Promotion
+export default Stock
