@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useFormik } from "formik";
 import axios from "services/axios";
 import { fetchLoading, fetchSuccess } from 'redux/actions/common';
@@ -16,13 +16,18 @@ const Promotion = () => {
     const [open, setOpen] = useState(false);
 
     const fetchData = async () => {
-        await axios.get("promotion").then((response) => {
+        await axios.get("promotionStore").then((response) => {
             if (!response.data.error) {
                 setListPromotion(response.data.tbPromotionStore);
                 setListSearch(response.data.tbPromotionStore);
             }
         });
     };
+
+    useEffect(() => {
+        // fetchPermission();
+        fetchData();
+    }, []);
 
     const InputSearch = (e) => {
         e = e.toLowerCase();
@@ -44,9 +49,9 @@ const Promotion = () => {
     const openModal = (id) => {
         formik.resetForm();
         const data = listPromotion.filter((x) => x.id === id);
-        if (data) {
-            for (const field in data) {
-                formik.setFieldValue(field, data[field], false);
+        if (data && data.length > 0) {
+            for (const field in data[0]) {
+                formik.setFieldValue(field, data[0][field], false);
             }
         }
         setOpen(true);
@@ -81,7 +86,7 @@ const Promotion = () => {
             fetchLoading();
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
-                axios.put("promotion", values).then((res) => {
+                axios.put("promotionStore", values).then((res) => {
                     if (res.data.status) {
                         fetchData();
                         setOpen(false);
@@ -98,7 +103,7 @@ const Promotion = () => {
                 });
             } else {
                 values.addBy = localStorage.getItem('user');
-                axios.post("promotion", values).then(async (res) => {
+                axios.post("promotionStore", values).then(async (res) => {
                     if (res.data.status) {
                         fetchData();
                         setOpen(false);
