@@ -9,12 +9,31 @@ import ButtonModalUC from 'components/ButtonModalUC';
 import StockInfo from './StockInfo';
 import StockList from './Stocklist';
 import PageTitle from 'views/admin/PageTitle';
+import FilesService from "../../../../services/files";
 
 const Stock = () => {
     const { addToast } = useToasts();
     const [listStock, setListStock] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
+
+    const _defaultImage = {
+        id: null,
+        image: null,
+        relatedId: null,
+        relatedTable: 'stock1',
+        isDeleted: false,
+        addBy: null,
+        updateBy: null,
+    }
+
+    const [stockImage, setStockImage] = useState([
+        _defaultImage,
+        { ..._defaultImage, relatedTable: 'stock2' },
+        { ..._defaultImage, relatedTable: 'stock3' },
+        { ..._defaultImage, relatedTable: 'stock4' },
+        { ..._defaultImage, relatedTable: 'stock5' },
+    ]);
 
     const fetchData = async () => {
         await axios.get("stock").then((response) => {
@@ -59,30 +78,39 @@ const Stock = () => {
         setOpen(true);
     }
 
+    const handleChangeImage = async (e) => {
+        e.preventDefault();
+        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        const index = parseInt(e.target.id.replace('file', ''));
+        setStockImage({ ...stockImage[index], image: base64 });
+    };
+
     const formik = useFormik({
         initialValues: {
             id: "",
-            campaignName: "",
-            buy: '',
-            condition: 'discount',
+            productName: '',
+            productCategoryId: '',
+            price: '',
             discount: '',
-            discountName: '',
-            percentDiscount: '',
-            percentDiscountAmount: '',
-            stockId: '',
+            discountType: '',
+            productCount: '',
+            weight: '',
             description: '',
+            descriptionPromotion: '',
+            isFlashSale: false,
+            startDateCampaign: '',
+            endDateCampaign: '',
+            startTimeCampaign: '',
+            endTimeCampaign: '',
             isInactive: true,
             isDeleted: false,
-            addBy: "",
-            updateBy: ""
+            addBy: '',
+            updateBy: '',
         },
         validationSchema: yup.object({
-            campaignName: yup.string().required("* กรุณากรอก ชื่อแคมเปญ"),
-            condition: yup.string().required("* กรุณากรอก เงื่อนไข"),
-            discount: yup.string().required("* กรุณากรอก ส่วนลด"),
-            percentDiscount: yup.string().required("* กรุณากรอก %ส่วนลด"),
-            percentDiscountAmount: yup.string().required("* กรุณากรอก ส่วนลดสูงสุด"),
-            stockId: yup.string().required("* กรุณากรอก สินค้าจากคลัง"),
+            productName: yup.string().required("* กรุณากรอก ชื่อสินค้า"),
+            productCategoryId: yup.string().required("* กรุณากรอก หมวดหมู่สินค้า"),
+            price: yup.string().required("* กรุณากรอก ราคา"),
         }),
         onSubmit: (values) => {
             fetchLoading();
@@ -150,6 +178,8 @@ const Stock = () => {
             {open && <StockInfo
                 open={open}
                 formik={formik}
+                handleChangeImage={handleChangeImage}
+                stockImage={stockImage}
                 handleModal={() => setOpen(false)} />}
         </>
     )

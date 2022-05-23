@@ -1,26 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import Select from "react-select";
-import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
-import ValidateService from "services/validateValue";
-import  { styleSelect } from "assets/styles/theme/ReactSelect.js";
-import * as Storage from "../../../../services/Storage.service";
+// import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import "antd/dist/antd.css";
-import moment from "moment";
 import "moment/locale/th";
-import locale from "antd/lib/locale/th_TH";
-import { DatePicker, Space, ConfigProvider } from "antd";
-import * as Address from "../../../../services/GetAddress";
-import FilesService from "../../../../services/files";
 import CreatableSelect from "react-select/creatable";
-import { ActionMeta, OnChangeValue } from "react-select";
+import Modal from "react-modal";
+import LabelUC from "components/LabelUC";
+import {
+  customStyles,
+  customStylesMobile,
+} from "assets/styles/theme/ReactModal";
+import ProfilePictureUC from 'components/ProfilePictureUC';
+import InputUC from "components/InputUC";
 
-export default function StockInfo() {
+const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage }) => {
+  Modal.setAppElement("#root");
   /* Option Select */
   const options = [
     { value: "1", label: "ผู้ดูแลระบบ" },
@@ -28,13 +25,13 @@ export default function StockInfo() {
     { value: "3", label: "การตลาด" },
   ];
 
-  const useStyle = styleSelect();
+  const useStyle = customStyles();
+  const useStyleMobile = customStylesMobile();
   /* Service Function */
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   let { id } = useParams();
 
   /* Set useState */
-  const [postImage, setPostImage] = useState("");
   const [isLoadingSelect, setIsLoadingSelect] = useState(false);
 
 
@@ -80,165 +77,142 @@ export default function StockInfo() {
     }, 1000);
   };
 
-  const inputArr = [
-    {
-      id: 0,
-      postImage: ""
-    },
-    {
-      id: 1,
-      postImage: "",
-    },
-    {
-      id: 2,
-      postImage: "",
-    },
-    {
-      id: 3,
-      postImage: "",
-    },
-    {
-      id: 4,
-      postImage: "",
-    },
-  ];
+  // const handleRemove = (index) => {
+  //   const rows = [...arr];
+  //   rows.splice(index, 1);
+  //   setArr(rows);
+  // };
 
-  const [arr, setArr] = useState(inputArr);
+  // const handleChangeImage = async (e) => {
+  //   e.preventDefault();
 
-  const addInput = () => {
-    setArr((s) => {
-      return [
-        ...s,
-        {
-          postImage: "",
-          id: "",
-        },
-      ];
-    });
-  };
-
-  const handleRemove = (index) => {
-    const rows = [...arr];
-    rows.splice(index, 1);
-    setArr(rows);
-  };
-
-  const handleChangeImage = async  (e) => {
-    e.preventDefault();
-
-    const index = e.target.id.split(',');
-    const base64 =  await FilesService.convertToBase64(e.target.files[0]);
-    setArr( (s) => {
-      const newArr = s.slice();
-      newArr[index[1]].postImage =base64;
-      console.log(newArr)
-      return newArr;
-    });
-  };
-
-  useEffect(() => {}, []);
+  //   // const index = e.target.id.split(',');
+  //   const base64 = await FilesService.convertToBase64(e.target.files[0]);
+  //   setArr((s) => {
+  //     const newArr = s.slice();
+  //     newArr[e.target.id.replace('file', '')].image = base64;
+  //     console.log(newArr)
+  //     return newArr;
+  //   });
+  // };
 
   return (
     <>
-      <div className="flex flex-warp">
-        <span className="text-sm font-bold margin-auto-t-b">
-          <i className="fas fa-user-circle"></i>&nbsp;
-        </span>
-        <span className="text-base margin-auto font-bold">
-          ข้อมูลคลังสินค้า
-        </span>
-      </div>
-      <div className="w-full">
-        <form>
-          <div className="w-full">
-            <div className="flex justify-between py-2 mt-4">
-              <span className="text-lg  text-green-mbk margin-auto font-bold">
-                จัดการคลังสินค้า
-              </span>
-            </div>
-            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg">
-              <div className="flex-auto lg:px-10 py-10">
-                <div className="flex flex-wrap">
-                  <div className="w-full lg:w-2/12 px-4 mb-2">
-                    <div className="relative w-full margin-a">
-                      <label
-                        className=" text-blueGray-600 text-sm font-bold "
-                        htmlFor="grid-password"
-                      >
-                        รูปภาพสินค้า
-                      </label>
-                      <span className="text-sm ml-2 text-red-500">*</span>
-                    </div>
+      <Modal
+        isOpen={open}
+        onRequestClose={handleModal}
+        style={width <= 1180 ? useStyleMobile : useStyle}
+        contentLabel="Example Modal"
+        shouldCloseOnOverlayClick={false}
+      >
+        <div className="flex flex-wrap">
+          <div className="w-full flex-auto mt-2">
+            <form>
+              <div className=" flex justify-between align-middle ">
+                <div className=" align-middle  mb-3">
+                  <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
+                    <label>เพิ่มสินค้า</label>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4 mb-4">
-                    <div className="relative flex">
-                      {arr.map((item, i) => {
-                        return (
-                          <div className="image-upload mr-4" key={i}>
-                            <label
-                              htmlFor={"file-input," + i}
-                              className="cursor-pointer"
-                            >
-                              <div className="img-stock-container">
-                                <img
-                                  alt="..."
-                                  className={
-                                    "img-stock  rounded align-middle border-none shadow-lg"
-                                  }
-                                  src={
-                                    item.postImage
-                                      ? item.postImage
-                                      : require("assets/img/noimg.png").default
-                                  }
-                                />
-                                <div className={"centered text-white font-bold rounded-b-l-r w-full bg-gray-mbk " + ((item.postImage) ? " " : " ")}>
-                                  เลือกรูปภาพ
-                                </div>
-                              </div>
-                            </label>
-                            <input
-                              id={"file-input," + i}
-                              type="file"
-                              accept="image/jpg, image/jpeg, image/png"
-                              onChange={(e) => handleChangeImage(e)}
-                            />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                </div>
 
-                  <div className="w-full lg:w-2/12 px-4  mb-2">
-                    <div className="relative w-full">
-                      <label
-                        className=" text-blueGray-600 text-sm font-bold"
-                        htmlFor="grid-password"
-                      >
-                        หมวดหมู่สินค้า
-                      </label>
-                      <span className="text-sm ml-2 text-red-500">*</span>
+                <div className="  text-right align-middle  mb-3">
+                  <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
+                    <label
+                      className="cursor-pointer"
+                      onClick={() => {
+                        handleModal();
+                      }}
+                    >
+                      X
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-wrap px-24 py-10 justify-center">
+                <div className="w-full lg:w-12/12 px-4 margin-auto-t-b ">
+                  <div className="flex flex-wrap">
+                    {/* รูปสินค้า */}
+                    <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
+                      <LabelUC label="รูปสินค้า" isRequired={true} />
+                    </div>
+                    <div className="w-full lg:w-10/12 margin-auto-t-b">
+                      <div className="relative w-full px-4 flex">
+                        {stockImage.map((item, i) => {
+                          return (
+                            <ProfilePictureUC
+                              className='pr-4'
+                              key={i}
+                              id={i}
+                              hoverText='เลือกรูปสินค้า'
+                              src={item.image}
+                              onChange={handleChangeImage} />
+                          )
+                        })}
+                      </div>
                     </div>
                   </div>
-                  <div className="w-full lg:w-8/12 px-4  mb-4">
-                    <div className="relative w-full">
-                      <CreatableSelect
-                        isClearable
-                        className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                        styles={useStyle}
-                        isLoading={isLoadingSelect}
-                        options={options}
-                        onChange={handleChange}
-                        placeholder="เลือกข้อมูล / เพิ่มข้อมูล"
-                        onCreateOption={handleCreate}
-                      />
+                  <div className="flex flex-wrap mt-4">
+                    <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
+                      <LabelUC label="ชื่อสินค้า" isRequired={true} />
+                    </div>
+                    <div className="w-full lg:w-6/12 margin-auto-t-b">
+                      <div className="relative w-full px-4">
+                        <InputUC
+                          name='productName'
+                          maxLength={100}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.productName}
+                          onChange={(e) => {
+                            formik.handleChange(e);
+                          }} />
+                      </div>
+                      <div className="relative w-full px-4">
+                        {formik.touched.productName &&
+                          formik.errors.productName ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            {formik.errors.productName}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                  {/* หมวดหมู่สินค้า */}
+                  <div className="flex flex-wrap  mt-4">
+                    <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
+                      <LabelUC label="หมวดหมู่สินค้า" isRequired={true} />
+                    </div>
+                    <div className="w-full lg:w-6/12 margin-auto-t-b">
+                      <div className="relative w-full px-4">
+                        <CreatableSelect
+                          isClearable
+                          className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                          styles={useStyle}
+                          isLoading={isLoadingSelect}
+                          options={options}
+                          onChange={handleChange}
+                          placeholder="เลือกข้อมูล / เพิ่มข้อมูล"
+                          onCreateOption={handleCreate}
+                          value={formik.values.productCategory}
+                        />
+                      </div>
+                      <div className="relative w-full px-4">
+                        {formik.touched.productCategory &&
+                          formik.errors.productCategory ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            {formik.errors.productCategory}
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
-        </form>
-      </div>
+        </div>
+      </Modal>
     </>
   );
 }
+
+export default StockInfo;
