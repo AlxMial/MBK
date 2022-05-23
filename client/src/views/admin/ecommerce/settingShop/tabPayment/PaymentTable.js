@@ -22,7 +22,7 @@ const PaymentTable = ({ listPayment, openModal }) => {
                 <table className="items-center w-full border ">
                     <thead>
                         <tr>
-                            <th className={thClass} >
+                            <th className={thClass + ' text-center'} >
                                 ลำดับที่
                             </th>
                             <th className={thClass} >

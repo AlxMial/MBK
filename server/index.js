@@ -66,8 +66,14 @@ const productCategory = require('./routes/ecommerce/productCategory');
 app.use("/mbkserver/productCategory", productCategory);
 const payment = require('./routes/ecommerce/payment');
 app.use("/mbkserver/payment", payment);
+// tab Logistic
 const logistic = require('./routes/ecommerce/logistic');
 app.use("/mbkserver/logistic", logistic);
+const promotionDelivery = require('./routes/ecommerce/promotionDelivery');
+app.use("/mbkserver/promotionDelivery", promotionDelivery);
+// tab promotion หน้าร้าน
+const promotionStore = require('./routes/ecommerce/promotionStore');
+app.use("/mbkserver/promotionStore", promotionStore);
 const image = require('./routes/image/image');
 app.use("/mbkserver/image", image);
 initRoutes(app);

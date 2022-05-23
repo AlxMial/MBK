@@ -53,7 +53,7 @@ class ValidateService {
   };
 
   defaultValue = (options, value) => {
-    if ((!value || value.toString() === "") && options[0] !== undefined) {
+    if ((value === undefined || value === null || value.toString() === "") && options[0] !== undefined) {
       value = options[0].value;
     }
     return options

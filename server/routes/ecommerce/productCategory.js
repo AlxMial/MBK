@@ -47,22 +47,14 @@ router.put("/", validateToken, async (req, res) => {
         },
     });
 
-    if (!data) {
-        const dataUpdate = await tbProductCategory.update(req.body, {
-            where: { id: req.body.id },
-        });
-        res.json({
-            status: true,
-            message: "success",
-            tbProductCategory: dataUpdate,
-        });
-    } else {
-        res.json({
-            status: false,
-            message: "success",
-            tbProductCategory: null,
-        });
-    }
+    const dataUpdate = await tbProductCategory.update(req.body, {
+        where: { id: req.body.id },
+    });
+    res.json({
+        status: true,
+        message: "success",
+        tbProductCategory: dataUpdate,
+    });
 });
 
 router.delete("/:id", validateToken, async (req, res) => {

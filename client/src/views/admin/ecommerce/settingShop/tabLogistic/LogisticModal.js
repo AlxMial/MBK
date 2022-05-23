@@ -19,7 +19,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
     const useStyleMobile = customStylesMobile();
     const { width } = useWindowDimensions();
 
-    const logisticTyleList = [
+    const logisticTypeList = [
         { label: "Kerry Express", value: 'kerry' },
         { label: "Flash Express", value: 'flash' },
         { label: "ไปรษณีย์ไทย", value: 'post' },
@@ -74,9 +74,9 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                                                 onChange={(e) => {
                                                     formik.setFieldValue("logisticType", e.value);
                                                 }}
-                                                options={logisticTyleList}
+                                                options={logisticTypeList}
                                                 value={ValidateService.defaultValue(
-                                                    logisticTyleList,
+                                                    logisticTypeList,
                                                     formik.values.logisticType
                                                 )}
                                             />
@@ -124,7 +124,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap mt-4">
-                                    <div className="w-full lg:w-4/12 px-4 margin-auto-t-b ">
+                                    <div className="w-full lg:w-4/12 px-4">
                                         <LabelUC label="รายละเอียด" />
                                     </div>
                                     <div className="w-full lg:w-6/12 margin-auto-t-b">

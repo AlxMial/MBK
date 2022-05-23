@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbLogistic } = require("../../models");
+const { tbPromotionStore } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -8,37 +8,37 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 router.post("/", validateToken, async (req, res) => {
-    const data = await tbLogistic.create(req.body);
+    const data = await tbPromotionStore.create(req.body);
     res.json({
         status: true,
         message: "success",
-        tbLogistic: data,
+        tbPromotionStore: data,
     });
 });
 
 router.get("/", validateToken, async (req, res) => {
-    const data = await tbLogistic.findAll({
+    const data = await tbPromotionStore.findAll({
         where: { isDeleted: false },
     });
     res.json({
         status: true,
         message: "success",
-        tbLogistic: data,
+        tbPromotionStore: data,
     });
 });
 
 router.get("/byId/:id", validateToken, async (req, res) => {
     const id = req.params.id;
-    const data = await tbLogistic.findOne({ where: { id: id } });
+    const data = await tbPromotionStore.findOne({ where: { id: id } });
     res.json({
         status: true,
         message: "success",
-        tbLogistic: data,
+        tbPromotionStore: data,
     });
 });
 
 router.put("/", validateToken, async (req, res) => {
-    const data = await tbLogistic.findOne({
+    const data = await tbPromotionStore.findOne({
         where: {
             isDeleted: false,
             id: {
@@ -47,21 +47,21 @@ router.put("/", validateToken, async (req, res) => {
         },
     });
 
-    const dataUpdate = await tbLogistic.update(req.body, {
+    const dataUpdate = await tbPromotionStore.update(req.body, {
         where: { id: req.body.id },
     });
     res.json({
         status: true,
         message: "success",
-        tbLogistic: dataUpdate,
+        tbPromotionStore: dataUpdate,
     });
 });
 
 router.delete("/:id", validateToken, async (req, res) => {
     const id = req.params.id;
     req.body.isDeleted = true;
-    tbLogistic.update(req.body, { where: { id: id } });
-    res.json({ status: true, message: "success", tbLogistic: null });
+    tbPromotionStore.update(req.body, { where: { id: id } });
+    res.json({ status: true, message: "success", tbPromotionStore: null });
 });
 
 module.exports = router;
