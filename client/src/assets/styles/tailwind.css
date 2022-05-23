@@ -3664,6 +3664,9 @@ select {
 }
 
 /* input Style */
+.disabled{
+  background: #F2F2F2;
+}
 
 .unsetInputMark {
   --tw-ring-color:unset !important;
@@ -4173,7 +4176,7 @@ input[type=number] {
   }
 
   .Overflow-info{
-    height: 71vh;
+    height: 68vh;
     overflow-y: auto;
   }
 

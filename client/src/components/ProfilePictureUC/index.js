@@ -9,7 +9,7 @@ const ProfilePictureUC = ({ onChange, hoverText, id, src }) => {
         <div className={"profile-pic " + (width < 768 ? ' justify-center' : '')}>
             <label className="-label" htmlFor={"file" + id}>
                 <span className="glyphicon glyphicon-camera"></span>
-                <span>{hoverText}</span>
+                <span className='text-center'>{hoverText}</span>
             </label>
             <input id={"file" + id} type="file" onChange={onChange} accept="image/*" />
             <img src={_imgSrc} id={id} width="200" />

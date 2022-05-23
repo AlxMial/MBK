@@ -2,7 +2,7 @@ class ValidateService {
   onHandleNumberChange = (e) => {
     const re = /^[0-9\b]+$/;
     // if value is not blank, then test the regex
-    if (e === "" || re.test(e)) {
+    if ((e === "" || re.test(e)) ) {
       return e;
     } else {
       return "";
@@ -23,8 +23,6 @@ class ValidateService {
     // }
   };
 
-
-  /*พิมพ์เบอร์โทรศัพท์*/
   onHandleScore = (e) => {
     var value = this.onHandleNumberChange(e.target.value);
     return value.toString();
