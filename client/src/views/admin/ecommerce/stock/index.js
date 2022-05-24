@@ -92,7 +92,7 @@ const Stock = () => {
             productCategoryId: '',
             price: '',
             discount: '',
-            discountType: '',
+            discountType: 'baht',
             productCount: '',
             weight: '',
             description: '',
