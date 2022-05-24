@@ -68,7 +68,7 @@ const ShopDetail = () => {
                     e.name = e.level;
                     if (image) {
                         // formik.setFieldValue(`${e.level}`, `Image Banner ${e.level.replace('banner', '')}`, false);
-                        formik.setFieldValue(`${e.level}`, resImg.data.tbImage.imageName, false);
+                        formik.setFieldValue(`${e.level}`, resImg.data.tbImage.imageName ?? 'Image selected', false);
                     }
                     if (e.level === 'banner1') {
                         setBanner1(image ? { ...e, image: resImg.data.tbImage } : e);
