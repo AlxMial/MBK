@@ -21,8 +21,6 @@ axiosInstance.interceptors.request.use(
 
 export default axiosInstance;
 
-
-
 /* otp */
 const api_key = "915ce264de8250902d3a898a042cf2cc";
 const secret_key = "2Zy0peafw7RGLkBn";
