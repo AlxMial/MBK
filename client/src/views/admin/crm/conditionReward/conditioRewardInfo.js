@@ -16,6 +16,7 @@ import "moment/locale/th";
 import locale from "antd/lib/locale/th_TH";
 import { DatePicker, Space, ConfigProvider, Radio } from "antd";
 import * as Address from "../../../../services/GetAddress.js";
+import FilesService from "../../../../services/files";
 import useMenu from "services/useMenu";
 import { GetPermissionByUserName } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
@@ -116,10 +117,11 @@ export default function ConditioRewardInfo() {
     history.push("/admin/members");
   };
 
-  const handleChangeImage = (e) => {
+  const handleChangeImage = async (e) => {
     const image = document.getElementById("eCouponImage");
     image.src = URL.createObjectURL(e.target.files[0]);
-    formikCoupon.setFieldValue("pictureCoupon", e.target.files[0]);
+    const base64 = await FilesService.convertToBase64(e.target.files[0]);
+    formikCoupon.setFieldValue("pictureCoupon", base64);
     // setCoupon((prevState) => {
     //   return {
     //     ...prevState,
@@ -166,7 +168,38 @@ export default function ConditioRewardInfo() {
     }),
     onSubmit: (values) => {
       if (formikCoupon.isValid) {
-        console.log(values)
+        if (formik.values.rewardType === "1")
+          values["coupon"] = formikCoupon.values;
+      } else {
+        values["product"] = formikProduct.values;
+      }
+      if (isNew) {
+        formik.values.addBy = localStorage.getItem("user");
+        axios.post("redemption", values).then((res) => {
+          if (res.data.status) {
+            setIsNew(false);
+            formik.values.id = res.data.tbRedemptionConditionsHD.id;
+            addToast(
+              Storage.GetLanguage() === "th"
+                ? "บันทึกข้อมูลสำเร็จ"
+                : "Save data successfully",
+              { appearance: "success", autoDismiss: true }
+            );
+          } else {
+            if (res.data.isRedemptionName) {
+              addToast(
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
+                {
+                  appearance: "warning",
+                  autoDismiss: true,
+                }
+              );
+            }
+          }
+        });
+      } else {
+        formik.values.updateBy = localStorage.getItem("user");
+        axios.post("redemption", values).then((res) => {});
       }
     },
   });
@@ -192,11 +225,45 @@ export default function ConditioRewardInfo() {
     },
     validationSchema: Yup.object({
       couponName: Yup.string().required("* กรุณากรอก ชื่อคูปอง"),
-      couponCount: Yup.number().required("* กรุณากรอก จำนวนคูปอง").test(
-        "Is positive?",
-        "* จำนวนคูปองต้องมากกว่า 0",
-        (value) => value > 0
-      ),
+      couponCount: Yup.number()
+        .required("* กรุณากรอก จำนวนคูปอง")
+        .test(
+          "Is positive?",
+          "* จำนวนคูปองต้องมากกว่า 0",
+          (value) => value > 0
+        ),
+      pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
+    }),
+  });
+
+  const formikProduct = useFormik({
+    initialValues: {
+      id: "",
+      pictureCoupon: "",
+      couponName: "",
+      startDate: new Date(),
+      endDate: new Date(),
+      expiredDate: new Date(),
+      couponCount: 0,
+      usedPerDayCount: 0,
+      description: "",
+      isCancelReclaim: "",
+      isCancel: "",
+      isReclaim: "",
+      isDeleted: false,
+      isNotExpired: false,
+      addBy: "",
+      updateBy: "",
+    },
+    validationSchema: Yup.object({
+      couponName: Yup.string().required("* กรุณากรอก ชื่อคูปอง"),
+      couponCount: Yup.number()
+        .required("* กรุณากรอก จำนวนคูปอง")
+        .test(
+          "Is positive?",
+          "* จำนวนคูปองต้องมากกว่า 0",
+          (value) => value > 0
+        ),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
     }),
   });
@@ -211,11 +278,18 @@ export default function ConditioRewardInfo() {
   const defaultValue = () => {
     formik.setFieldValue("rewardType", "1");
     formik.setFieldValue("redemptionType", "1");
+    formik.setFieldValue("redemptionName", "ส่วนลดที่หาไม่ได้");
+    formik.setFieldValue("points", 10);
+    formik.setFieldValue("isDeleted", false);
+
+    formikCoupon.setFieldValue("couponName", "รหัสในตำนาน");
+    formikCoupon.setFieldValue("couponCount", 10);
     formikCoupon.setFieldValue("isDeleted", false);
   };
 
   useEffect(() => {
     /* Default Value for Testing */
+    setIsNew(true);
     fetchPermission();
     defaultValue();
     fetchData();

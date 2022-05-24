@@ -1,5 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
-    const tbRedemtionConditionsHD = sequelize.define("tbRedemtionConditionsHD", {
+  const tbRedemptionConditionsHD = sequelize.define(
+    "tbRedemptionConditionsHD",
+    {
       redemptionName: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -24,45 +26,43 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATE,
         allowNull: true,
       },
-      rewardGameCount:{
+      rewardGameCount: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      isNotLimitRewardGame:{
+      isNotLimitRewardGame: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
-      description:{
+      description: {
         type: DataTypes.TEXT,
         allowNull: true,
       },
-      isDeleted:{
+      isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
-      addBy:{
+      addBy: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      updateBy:{
+      updateBy: {
         type: DataTypes.STRING,
         allowNull: true,
       },
+    }
+  );
+
+  tbRedemptionConditionsHD.associate = (models) => {
+    tbRedemptionConditionsHD.hasMany(models.tbRedemptionCoupon, {
+      foreignKey: "redemtionConditionsHDId",
+      onDelete: "cascade",
     });
 
-    tbRedemtionConditionsHD.associate = (models) => {
-
-
-      tbRedemtionConditionsHD.hasMany(models.tbRedemptionCoupon, {
-        foreignKey: 'redemtionConditionsHDId',
-        onDelete: "cascade",
-      });
-
-      tbRedemtionConditionsHD.hasMany(models.tbRedemptionProduct, {
-        foreignKey: 'redemtionConditionsHDId',
-        onDelete: "cascade",
-      });
-    };
-    return tbRedemtionConditionsHD;
+    tbRedemptionConditionsHD.hasMany(models.tbRedemptionProduct, {
+      foreignKey: "redemtionConditionsHDId",
+      onDelete: "cascade",
+    });
   };
-  
+  return tbRedemptionConditionsHD;
+};

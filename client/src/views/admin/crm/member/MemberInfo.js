@@ -199,7 +199,6 @@ export default function MemberInfo() {
               );
             } else {
               // setIsOpenEdit(false);
-              console.log(res.data);
               if (res.data.isPhone) {
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
