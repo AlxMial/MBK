@@ -65,22 +65,14 @@ router.put("/", validateToken, async (req, res) => {
         },
     });
 
-    if (!data) {
-        const dataUpdate = await tbStock.update(req.body, {
-            where: { id: req.body.id },
-        });
-        res.json({
-            status: true,
-            message: "success",
-            tbStock: dataUpdate,
-        });
-    } else {
-        res.json({
-            status: false,
-            message: "success",
-            tbStock: null,
-        });
-    }
+    const dataUpdate = await tbStock.update(req.body, {
+        where: { id: req.body.id },
+    });
+    res.json({
+        status: true,
+        message: "success",
+        tbStock: dataUpdate,
+    });
 });
 
 router.delete("/:id", validateToken, async (req, res) => {

@@ -9,9 +9,11 @@ import LogisticModal from './LogisticModal';
 import DeliveryModal from './DeliveryModal';
 import ButtonModalUC from 'components/ButtonModalUC';
 import InputSearchUC from 'components/InputSearchUC';
+import { useDispatch } from 'react-redux';
 
 const Logistic = () => {
     const { addToast } = useToasts();
+    const dispatch = useDispatch();
     const [listLogistic, setListLogistic] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [openDelivery, setOpenDelivery] = useState(false);
@@ -93,7 +95,7 @@ const Logistic = () => {
             deliveryCost: yup.string().required("* กรุณากรอก ค่าจัดส่ง"),
         }),
         onSubmit: (values) => {
-            fetchLoading();
+            dispatch(fetchLoading());
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
                 axios.put("logistic", values).then((res) => {
@@ -131,12 +133,12 @@ const Logistic = () => {
             updateBy: ""
         },
         onSubmit: async (values) => {
-            fetchLoading();
+            dispatch(fetchLoading());
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
                 await axios.put("promotionDelivery", values).then((res) => {
                     if (res.data.status) {
-                        fetchSuccess();
+                        dispatch(fetchSuccess());
                         setOpenDelivery(false);
                         addToast("บันทึกข้อมูลสำเร็จ",
                             { appearance: "success", autoDismiss: true }
@@ -149,7 +151,7 @@ const Logistic = () => {
                 values.addBy = localStorage.getItem('user');
                 await axios.post("promotionDelivery", values).then(async (res) => {
                     if (res.data.status) {
-                        fetchSuccess();
+                        dispatch(fetchSuccess());
                         setOpenDelivery(false);
                         addToast("บันทึกข้อมูลสำเร็จ",
                             { appearance: "success", autoDismiss: true }
@@ -164,7 +166,7 @@ const Logistic = () => {
     });
 
     const saveLogisticSuccess = () => {
-        fetchSuccess();
+        dispatch(fetchSuccess());
         setOpenLogistic(false);
         fetchData();
         addToast("บันทึกข้อมูลสำเร็จ",

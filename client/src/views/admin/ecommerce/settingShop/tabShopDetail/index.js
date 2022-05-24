@@ -15,6 +15,7 @@ import { useToasts } from "react-toast-notifications";
 import useWindowDimensions from "services/useWindowDimensions";
 import FilesService from "services/files";
 import { onSaveImage } from 'services/ImageService';
+import { useDispatch } from 'react-redux';
 
 const ShopDetail = () => {
     const _defaultImage = {
@@ -26,6 +27,7 @@ const ShopDetail = () => {
         addBy: null,
         updateBy: null,
     }
+    const dispatch = useDispatch();
     const { width } = useWindowDimensions();
     const { addToast } = useToasts();
     const [open, setOpen] = useState(false);
@@ -210,7 +212,7 @@ const ShopDetail = () => {
             email4: yup.string().isValidateEmail(),
         }),
         onSubmit: (values) => {
-            fetchLoading();
+            dispatch(fetchLoading());
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
                 axios.put("shop", values).then(async (res) => {
@@ -222,7 +224,7 @@ const ShopDetail = () => {
                             autoDismiss: true,
                         });
                     }
-                    fetchSuccess();
+                    dispatch(fetchSuccess());
                 });
             } else {
                 values.addBy = localStorage.getItem('user');
@@ -235,7 +237,7 @@ const ShopDetail = () => {
                             autoDismiss: true,
                         });
                     }
-                    fetchSuccess();
+                    dispatch(fetchSuccess());
                 });
             }
         },
@@ -244,7 +246,7 @@ const ShopDetail = () => {
     const saveAfterShop = async (id) => {
         // save shop image
         let success = true;
-        fetchLoading();
+        dispatch(fetchLoading());
         if (shopImage) {
             const imageData = { ...shopImage, relatedId: id };
             await onSaveImage(imageData, async (res) => {
@@ -254,14 +256,14 @@ const ShopDetail = () => {
                     if (await saveBanner(id)) {
                         afterSaveSuccess();
                     } else {
-                        fetchSuccess();
+                        dispatch(fetchSuccess());
                         addToast("บันทึกข้อมูลไม่สำเร็จ", {
                             appearance: "warning",
                             autoDismiss: true,
                         });
                     }
                 } else {
-                    fetchSuccess();
+                    dispatch(fetchSuccess());
                     addToast("บันทึกข้อมูลไม่สำเร็จ", {
                         appearance: "warning",
                         autoDismiss: true,
@@ -273,7 +275,7 @@ const ShopDetail = () => {
             if (await saveBanner(id)) {
                 afterSaveSuccess();
             } else {
-                fetchSuccess();
+                dispatch(fetchSuccess());
                 addToast("บันทึกข้อมูลไม่สำเร็จ", {
                     appearance: "warning",
                     autoDismiss: true,
@@ -283,7 +285,7 @@ const ShopDetail = () => {
     }
 
     const afterSaveSuccess = () => {
-        fetchSuccess();
+        dispatch(fetchSuccess());
         // fetchData();
         addToast("บันทึกข้อมูลสำเร็จ",
             { appearance: "success", autoDismiss: true }
@@ -318,14 +320,14 @@ const ShopDetail = () => {
         data.updateBy = localStorage.getItem('user');
         data.shopId = id;
         data.isDeleted = false;
-        fetchLoading();
+        dispatch(fetchLoading());
         if (data.id) {
             axios.put("banner", data).then(async (res) => {
                 if (res.data.status) {
                     const success = await saveBannerImage(data, data.id);
                     return success
                 } else {
-                    fetchSuccess();
+                    dispatch(fetchSuccess());
                     return false;
                 }
             });
@@ -336,7 +338,7 @@ const ShopDetail = () => {
                     const success = await saveBannerImage(data, res.data.tbBanner.id);
                     return success
                 } else {
-                    fetchSuccess();
+                    dispatch(fetchSuccess());
                     return false;
                 }
             });
@@ -346,17 +348,17 @@ const ShopDetail = () => {
 
     const saveBannerImage = async (data, id) => {
         // Save Image Banner
-        fetchLoading();
+        dispatch(fetchLoading());
         if (data.image) {
             data.image.relatedId = id;
             data.image.isDeleted = false;
             await onSaveImage(data.image, (res) => {
-                fetchSuccess();
+                dispatch(fetchSuccess());
                 return true;
             })
 
         } else {
-            fetchSuccess();
+            dispatch(fetchSuccess());
             addToast("บันทึกข้อมูลสำเร็จ",
                 { appearance: "success", autoDismiss: true }
             );

@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import { useToasts } from "react-toast-notifications";
+import React, { useState, useEffect } from "react";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import { Radio } from "antd";
@@ -22,15 +20,11 @@ import TextAreaUC from "components/InputUC/TextAreaUC";
 import Switch from "react-switch";
 import DatePickerUC from "components/DatePickerUC";
 import ButtonUCSaveModal from "components/ButtonUCSaveModal";
+import axios from "services/axios";
+import { useToasts } from "react-toast-notifications";
 
 const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage }) => {
   Modal.setAppElement("#root");
-  /* Option Select */
-  const options = [
-    { value: "1", label: "ผู้ดูแลระบบ" },
-    { value: "2", label: "บัญชี" },
-    { value: "3", label: "การตลาด" },
-  ];
 
   const discountList = [
     { value: 'baht', label: 'บาท' },
@@ -42,23 +36,44 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
     { label: "ปิดการใช้งาน", value: false },
   ];
 
-
+  const { addToast } = useToasts();
   const useStyle = customStyles();
   const useStyleMobile = customStylesMobile();
   /* Service Function */
   const { width } = useWindowDimensions();
-  let { id } = useParams();
-
-  /* Set useState */
   const [isLoadingSelect, setIsLoadingSelect] = useState(false);
+  const [productCategoryList, setProductCategoryList] = useState([]);
+  const [categoryValue, setCategoryValue] = useState(null);
 
+  useEffect(async () => {
+    await fetchData();
+  }, []);
 
-  let history = useHistory();
-  const { addToast } = useToasts();
-  /* Method Condition */
-  const OnBack = () => {
-    history.push("/admin/members");
-  };
+  const fetchData = async () => {
+    const res = await axios.get('productCategory');
+    const productCategory = await res.data.tbProductCategory;
+    if (productCategory) {
+      // console.log('setProductCategoryList', productCategory);
+      setProductCategoryList(productCategory.map(item => ({
+        label: item.categoryName,
+        value: item.id,
+      })));
+    }
+  }
+
+  useEffect(() => {
+    // default
+    if (productCategoryList && productCategoryList.length > 0) {
+      if (!formik.values.productCategoryId) {
+        setCategoryValue(productCategoryList[0]);
+        console.log('setDefault', productCategoryList[0]);
+        formik.setFieldValue('productCategoryId', productCategoryList[0].value);
+      } else {
+        setCategoryValue(productCategoryList.find(item => item.value === formik.values.productCategoryId));
+      }
+    }
+
+  }, [productCategoryList]);
 
   const createOption = (label) => ({
     label,
@@ -69,50 +84,49 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
     newValue,
     actionMeta
   ) => {
-    console.group('Value Changed');
-    console.log(newValue);
-    console.log(`action: ${actionMeta.action}`);
-    console.groupEnd();
 
-
-    this.setState({ value: newValue });
+    // console.group('Value Changed');
+    // console.log(newValue);
+    // console.log(`action: ${actionMeta.action}`);
+    // console.groupEnd();
+    const _categoryValue = productCategoryList && productCategoryList.filter(item => item.value === newValue);
+    if (_categoryValue) {
+      setCategoryValue(_categoryValue[0]);
+    }
+    formik.setFieldValue('productCategoryId', newValue, false);
   };
 
   const handleCreate = (inputValue) => {
-    // this.setState({ isLoading: true });
     setIsLoadingSelect(true);
     console.group("Option created");
     console.log("Wait a moment...");
     setTimeout(() => {
-      const { options } = this.state;
       const newOption = createOption(inputValue);
-      console.groupEnd();
-      this.setState({
-        isLoading: false,
-        options: [...options, newOption],
-        value: newOption,
+      const newItem = {
+        id: '',
+        categoryName: inputValue,
+        isDeleted: false,
+        addBy: localStorage.getItem('user'),
+        updateBy: localStorage.getItem('user'),
+      }
+      axios.post('productCategory', newItem).then(res => {
+        if (res.data.status) {
+          console.groupEnd();
+          setProductCategoryList([...productCategoryList, newOption]);
+          setIsLoadingSelect(false);
+          console.log('newOption', newOption);
+          setCategoryValue(newOption);
+          formik.setFieldValue('productCategoryId', newOption.value, false);
+        } else {
+          setIsLoadingSelect(false);
+          addToast("บันทึกข้อมูลหมวดหมู่สินค้าไม่สำเร็จ", {
+            appearance: "warning",
+            autoDismiss: true,
+          });
+        }
       });
     }, 1000);
   };
-
-  // const handleRemove = (index) => {
-  //   const rows = [...arr];
-  //   rows.splice(index, 1);
-  //   setArr(rows);
-  // };
-
-  // const handleChangeImage = async (e) => {
-  //   e.preventDefault();
-
-  //   // const index = e.target.id.split(',');
-  //   const base64 = await FilesService.convertToBase64(e.target.files[0]);
-  //   setArr((s) => {
-  //     const newArr = s.slice();
-  //     newArr[e.target.id.replace('file', '')].image = base64;
-  //     console.log(newArr)
-  //     return newArr;
-  //   });
-  // };
 
   return (
     <>
@@ -159,8 +173,8 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
                           return (
                             <ProfilePictureUC
                               className='pr-4'
-                              key={i}
-                              id={i}
+                              key={i + 1}
+                              id={i + 1}
                               hoverText='เลือกรูปสินค้า'
                               src={item.image}
                               onChange={handleChangeImage} />
@@ -206,18 +220,23 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
                           className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                           styles={useStyle}
                           isLoading={isLoadingSelect}
-                          options={options}
+                          options={productCategoryList}
                           onChange={handleChange}
                           placeholder="เลือกข้อมูล / เพิ่มข้อมูล"
                           onCreateOption={handleCreate}
-                          value={formik.values.productCategory}
+                          value={categoryValue}
+                        // value={formik.values.productCategoryId}
+                        // value={ValidateService.defaultValue(
+                        //   productCategoryList,
+                        //   formik.values.productCategoryId
+                        // )}
                         />
                       </div>
                       <div className="relative w-full px-4">
-                        {formik.touched.productCategory &&
-                          formik.errors.productCategory ? (
+                        {formik.touched.productCategoryId &&
+                          formik.errors.productCategoryId ? (
                           <div className="text-sm py-2 px-2  text-red-500">
-                            {formik.errors.productCategory}
+                            {formik.errors.productCategoryId}
                           </div>
                         ) : null}
                       </div>
@@ -231,20 +250,20 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
                       <div className="relative w-full px-4">
                         <InputUC
                           type="number"
-                          name='buy'
+                          name='price'
                           maxLength={10}
                           onBlur={formik.handleBlur}
-                          value={formik.values.buy}
+                          value={formik.values.price}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
                             formik.handleChange(e);
                           }} />
                       </div>
                       <div className="relative w-full px-4">
-                        {formik.touched.buy &&
-                          formik.errors.buy ? (
+                        {formik.touched.price &&
+                          formik.errors.price ? (
                           <div className="text-sm py-2 px-2  text-red-500">
-                            {formik.errors.buy}
+                            {formik.errors.price}
                           </div>
                         ) : null}
                       </div>
@@ -258,10 +277,10 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
                       <div className="relative w-full px-4">
                         <InputUC
                           type="number"
-                          name='buy'
+                          name='discount'
                           maxLength={10}
                           onBlur={formik.handleBlur}
-                          value={formik.values.buy}
+                          value={formik.values.discount}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
                             formik.handleChange(e);
@@ -292,7 +311,7 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
                       <div className="relative w-full px-4">
                         <InputUC
                           type="number"
-                          name='buy'
+                          name='productCount'
                           maxLength={10}
                           onBlur={formik.handleBlur}
                           value={formik.values.productCount}
@@ -324,6 +343,9 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
                             formik.handleChange(e);
                           }} />
                       </div>
+                    </div>
+                    <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                      <LabelUC label="กิโลกรัม" />
                     </div>
                   </div>
                   {/* รายละเอียด */}
@@ -369,9 +391,12 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
                     </div>
                     <div className="w-full lg:w-6/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
-                        <Switch onChange={(value) => {
-                          formik.setFieldValue("isFlashSale", value);
-                        }}
+                        <Switch
+                          uncheckedIcon={false}
+                          checkedIcon={false}
+                          onChange={(value) => {
+                            formik.setFieldValue("isFlashSale", value);
+                          }}
                           checked={formik.values.isFlashSale} />
                       </div>
                     </div>

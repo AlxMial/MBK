@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import ReactPaginate from "react-paginate";
 import axios from "services/axios";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
+import { fetchLoading } from 'redux/actions/common';
+import { useDispatch } from 'react-redux';
+import { fetchSuccess } from 'redux/actions/common';
 
 const StockTable = ({ listStock, openModal, setListStock }) => {
     const thClass = "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
@@ -15,6 +18,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
     const pagesVisited = pageNumber * usersPerPage;
     const pageCount = Math.ceil(listStock.length / usersPerPage);
     const [deleteValue, setDeleteValue] = useState("");
+    const dispatch = useDispatch();
 
     const changePage = ({ selected }) => {
         setPageNumber(selected);
@@ -40,9 +44,12 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
     }, []);
 
     const deleteStock = (id) => {
+        dispatch(fetchLoading());
         axios.delete(`/stock/${id}`).then(() => {
             setListStock(id);
         });
+        setOpen(false);
+        dispatch(fetchSuccess());
     };
 
     const handleDeleteList = (id) => {
@@ -150,7 +157,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                         }}>
                                             <span className={(
                                                 value.productCount - value.buy > 10 ? "text-green-500" :
-                                                    value.productCount - value.buy <= 0 ? "text-red-700" : "text-orange-400")}>
+                                                    value.productCount - value.buy <= 0 ? "text-red-700" : "text-orange-500")}>
                                                 {value.productCount - value.buy > 10 ?
                                                     'พร้อมขาย' :
                                                     value.productCount - value.buy <= 0 ?

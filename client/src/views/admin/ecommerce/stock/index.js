@@ -10,8 +10,11 @@ import StockInfo from './StockInfo';
 import StockList from './Stocklist';
 import PageTitle from 'views/admin/PageTitle';
 import FilesService from "../../../../services/files";
+import { onSaveImage } from 'services/ImageService';
+import { useDispatch } from 'react-redux';
 
 const Stock = () => {
+    const dispatch = useDispatch();
     const { addToast } = useToasts();
     const [listStock, setListStock] = useState([]);
     const [listSearch, setListSearch] = useState([]);
@@ -38,7 +41,7 @@ const Stock = () => {
     const fetchData = async () => {
         await axios.get("stock").then((response) => {
             if (!response.data.error && response.data.tbStock) {
-                console.log('fetchData', response.data.tbStock);
+                // console.log('fetchData', response.data.tbStock);
                 setListStock(response.data.tbStock);
                 setListSearch(response.data.tbStock);
             }
@@ -67,22 +70,46 @@ const Stock = () => {
         }
     };
 
-    const openModal = (id) => {
+    const openModal = async (id) => {
         formik.resetForm();
         const data = listStock.filter((x) => x.id === id);
         if (data && data.length > 0) {
             for (const field in data[0]) {
                 formik.setFieldValue(field, data[0][field], false);
             }
+
+            await getStockImage(id);
         }
         setOpen(true);
+    }
+
+    const getStockImage = async (id) => {
+        const res = await axios.get(`image/getAllByRelated/${id}/stock`);
+        if (res && res.data.tbImage && res.data.tbImage.length > 0) {
+            let _stockImage = stockImage;
+            res.data.tbImage.map((item) => {
+                const base64 = FilesService.buffer64UTF8(item.image)
+                _stockImage = _stockImage.map((x) => {
+                    if (x.relatedTable === item.relatedTable) {
+                        return { ...item, image: base64, };
+                    }
+                    return x;
+                })
+            });
+            setStockImage(_stockImage);
+        }
     }
 
     const handleChangeImage = async (e) => {
         e.preventDefault();
         const base64 = await FilesService.convertToBase64(e.target.files[0]);
         const index = parseInt(e.target.id.replace('file', ''));
-        setStockImage({ ...stockImage[index], image: base64 });
+        setStockImage(stockImage.map((x, i) => {
+            if ((i + 1) === index) {
+                return { ...x, image: base64 };
+            }
+            return x;
+        }));
     };
 
     const formik = useFormik({
@@ -113,18 +140,17 @@ const Stock = () => {
             price: yup.string().required("* กรุณากรอก ราคา"),
         }),
         onSubmit: (values) => {
-            fetchLoading();
+            console.log('onSubmit', values);
+            dispatch(fetchLoading());
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
-                axios.put("stock", values).then((res) => {
+                axios.put("stock", values).then(async (res) => {
+                    console.log('res', res);
                     if (res.data.status) {
-                        fetchData();
-                        setOpen(false);
-                        fetchSuccess();
-                        addToast("บันทึกข้อมูลสำเร็จ",
-                            { appearance: "success", autoDismiss: true }
-                        );
+                        await saveImage(values.id);
+                        afterSaveSuccess();
                     } else {
+                        dispatch(fetchSuccess());
                         addToast("บันทึกข้อมูลไม่สำเร็จ", {
                             appearance: "warning",
                             autoDismiss: true,
@@ -135,18 +161,38 @@ const Stock = () => {
                 values.addBy = localStorage.getItem('user');
                 axios.post("stock", values).then(async (res) => {
                     if (res.data.status) {
-                        fetchData();
-                        setOpen(false);
-                        fetchSuccess();
-                        addToast("บันทึกข้อมูลสำเร็จ",
-                            { appearance: "success", autoDismiss: true }
-                        );
+                        await saveImage(res.data.tbStock.id);
+                        afterSaveSuccess();
+                    } else {
+                        dispatch(fetchSuccess());
+                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                            appearance: "warning",
+                            autoDismiss: true,
+                        });
                     }
                 });
             }
 
         },
     });
+
+    const afterSaveSuccess = () => {
+        fetchData();
+        setOpen(false);
+        dispatch(fetchSuccess());
+        addToast("บันทึกข้อมูลสำเร็จ",
+            { appearance: "success", autoDismiss: true }
+        );
+    }
+
+    const saveImage = async (id) => {
+        stockImage.forEach(async (item, index) => {
+            if (item.image) {
+                item.relatedId = id;
+                await onSaveImage(item);
+            }
+        });
+    }
 
     const handleDeleteList = (id) => {
         setListStock(listStock.filter((x) => x.id !== id));

@@ -8,9 +8,11 @@ import PromotionModal from './PromotionModal';
 import PromotionTable from './PromotionTable';
 import InputSearchUC from 'components/InputSearchUC';
 import ButtonModalUC from 'components/ButtonModalUC';
+import { useDispatch } from 'react-redux';
 
 const Promotion = () => {
     const { addToast } = useToasts();
+    const dispatch = useDispatch();
     const [listPromotion, setListPromotion] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
@@ -83,14 +85,14 @@ const Promotion = () => {
             stockId: yup.string().required("* กรุณากรอก สินค้าจากคลัง"),
         }),
         onSubmit: (values) => {
-            fetchLoading();
+            dispatch(fetchLoading());
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
                 axios.put("promotionStore", values).then((res) => {
                     if (res.data.status) {
                         fetchData();
                         setOpen(false);
-                        fetchSuccess();
+                        dispatch(fetchSuccess());
                         addToast("บันทึกข้อมูลสำเร็จ",
                             { appearance: "success", autoDismiss: true }
                         );
@@ -107,7 +109,7 @@ const Promotion = () => {
                     if (res.data.status) {
                         fetchData();
                         setOpen(false);
-                        fetchSuccess();
+                        dispatch(fetchSuccess());
                         addToast("บันทึกข้อมูลสำเร็จ",
                             { appearance: "success", autoDismiss: true }
                         );

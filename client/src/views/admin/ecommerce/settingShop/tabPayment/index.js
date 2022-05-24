@@ -10,9 +10,11 @@ import InputSearchUC from 'components/InputSearchUC';
 import ButtonModalUC from 'components/ButtonModalUC';
 import FilesService from "services/files";
 import { onSaveImage } from 'services/ImageService';
+import { useDispatch } from 'react-redux';
 
 const Payment = () => {
     const { addToast } = useToasts();
+    const dispatch = useDispatch();
     const [listPayment, setListPayment] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
@@ -139,7 +141,7 @@ const Payment = () => {
     });
 
     const afterSave = (success) => {
-        fetchSuccess();
+        dispatch(fetchSuccess());
         if (success) {
             setOpen(false);
             fetchData();
