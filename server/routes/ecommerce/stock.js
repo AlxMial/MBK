@@ -4,6 +4,7 @@ const { tbStock } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
+const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
@@ -19,6 +20,23 @@ router.post("/", validateToken, async (req, res) => {
 router.get("/", validateToken, async (req, res) => {
     const data = await tbStock.findAll({
         where: { isDeleted: false },
+        attributes: {
+            include: [
+                [
+                    Sequelize.literal(`(
+                        select count(dt.id) buy from tborderdts dt
+                        where isDeleted = 0 
+                        and orderId 
+                            in (select hd.id from tborderhds hd 
+                            where hd.isDeleted = 0 
+                            and hd.paymentStatus = 'Done'
+                            and not exists(select 1 from tbcancelorders where isDeleted = 0
+                                            and cancelStatus = 'wait'))
+                )`),
+                    "buy",
+                ],
+            ],
+        },
     });
     res.json({
         status: true,
@@ -72,4 +90,15 @@ router.delete("/:id", validateToken, async (req, res) => {
     res.json({ status: true, message: "success", tbStock: null });
 });
 
+// line liff
+router.get("/getStock", validateLineToken, async (req, res) => {
+    const data = await tbStock.findAll({
+        where: { isDeleted: false },
+    });
+    res.json({
+        status: true,
+        message: "success",
+        tbStock: data,
+    });
+});
 module.exports = router;

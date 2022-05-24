@@ -4,8 +4,8 @@ const password = "NFgrWHk2bTE1UURGZ0M0WXVwOVpxQT09";
 const token = Buffer.from(`${username}:${password}`, "utf8").toString("base64");
 
 const axiosInstance = axios.create({
-  baseURL: `https://undefined.ddns.net/mbkserver/`,
-  // baseURL: `http://localhost:3001/mbkserver/`,
+  // baseURL: `https://undefined.ddns.net/mbkserver/`,
+  baseURL: `http://localhost:3001/mbkserver/`,
 });
 
 axiosInstance.interceptors.request.use(
@@ -47,7 +47,7 @@ const Otp = (isSender, data, callblack) => {
       // console.log(JSON.stringify(res.data));
       callblack(res.data);
     })
-    .catch(function (e) {});
+    .catch(function (e) { });
 };
 export const senderOTP = (phone, otp, ref, callblack) => {
   Otp(

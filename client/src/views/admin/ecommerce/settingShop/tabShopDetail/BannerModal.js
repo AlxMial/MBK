@@ -20,7 +20,7 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
 
     // const [fileName, setFileName] = useState(modalData && modalData.image ?
     //     ('Image Banner ' + (name.replace('banner', ''))) : "");
-    const [fileName, setFileName] = useState(modalData && modalData.image ? modalData.imageName : "");
+    const [fileName, setFileName] = useState(modalData && modalData.image ? modalData.image.imageName : "");
     const [imgSeleted, setImgSeleted] = useState(modalData ? modalData.image : null); //รูป
     const [typeLink, setTypeLink] = useState(modalData ? modalData.typeLink : false);//Radio button
     const [stockList, setStockList] = useState([]);

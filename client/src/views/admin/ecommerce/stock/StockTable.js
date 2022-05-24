@@ -94,48 +94,63 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                             .slice(pagesVisited, pagesVisited + usersPerPage)
                             .map(function (value, key) {
                                 return (
-                                    <tr key={key} className="cursor-pointer"
-                                        onClick={() => {
+                                    <tr key={key} className="cursor-pointer">
+                                        <td className={tdClass + ' text-center'} onClick={() => {
                                             openModal(value.id);
                                         }}>
-                                        <td className={tdClass + ' text-center'}>
                                             <span className="px-4 margin-a">
                                                 {pagesVisited + key + 1}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
                                             <span className={tdSpan}>
                                                 {value.productName}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
                                             <span className={tdSpan}>
                                                 {productCategoryList && productCategoryList.length &&
                                                     productCategoryList.filter(item => item.id === value.productCategoryId)[0].categoryName}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
                                             <span className={tdSpan}>
                                                 {value.price} ฿
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
                                             <span className={tdSpan}>
                                                 {value.productCount}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
                                             <span className={tdSpan}>
                                                 {value.buy}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
                                             <span className={tdSpan}>
                                                 {value.productCount - value.buy}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
-                                            <span className={tdSpan}>
+                                        <td className={tdClass + " cursor-pointer "} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
+                                            <span className={(
+                                                value.productCount - value.buy > 10 ? "text-green-500" :
+                                                    value.productCount - value.buy <= 0 ? "text-red-700" : "text-orange-400")}>
                                                 {value.productCount - value.buy > 10 ?
                                                     'พร้อมขาย' :
                                                     value.productCount - value.buy <= 0 ?
@@ -143,7 +158,9 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                                         'เหลือน้อย'}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
                                             <span className={tdSpan}>
                                                 {showList.filter(item => item.value === value.isInactive)[0].label}
                                             </span>

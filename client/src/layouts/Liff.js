@@ -14,7 +14,7 @@ import {
 } from "@services/liff.services";
 
 // components
-const dev = false;
+const dev = true;
 
 const getRoutes = () => {
   return routes.map((prop, key) => {
@@ -45,7 +45,7 @@ const initLine = (callback, setView) => {
 const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "U66c3a95352d2269cc83129a2268f1893",
+      uid: "U6b3d60554e5e109f99258abfd9293689",
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();

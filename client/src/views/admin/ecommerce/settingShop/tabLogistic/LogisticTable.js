@@ -110,7 +110,7 @@ const LogisticTable = ({ listLogistic, openModal, saveLogisticSuccess, saveLogis
                                             openModal(value.id);
                                         }}>
                                             <span className={tdSpan}>
-                                                {value.deliveryCost === 0 ? 'ฟรี' : value.deliveryCost}
+                                                {value.deliveryCost === 0 ? 'ฟรี' : (value.deliveryCost) + ' ฿'}
                                             </span>
                                         </td>
                                         <td className={tdClass + " cursor-pointer"} >

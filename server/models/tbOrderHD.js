@@ -46,6 +46,10 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
   tbOrderHD.associate = (models) => {
+    tbOrderHD.hasMany(models.tbOrderDT, {
+      foreignKey: "orderId",
+      onDelete: "cascade",
+    });
     tbOrderHD.hasMany(models.tbCancelOrder, {
       foreignKey: "orderId",
       onDelete: "cascade",
