@@ -55,8 +55,8 @@ const uploadExcelRouter = require('./routes/uploadExcel/uploadExcel');
 app.use("/mbkserver/uploadExcel", uploadExcelRouter);
 const redeemRouter = require('./routes/redeem/redeem');
 app.use("/mbkserver/redeem", redeemRouter);
-const redemtionRouter = require('./routes/redemption/redemption');
-app.use("/mbkserver/redemption", redemtionRouter);
+const redemptionRouter = require('./routes/redemption/redemption');
+app.use("/mbkserver/redemption", redemptionRouter);
 // e-commerce
 const shop = require('./routes/ecommerce/shop');
 app.use("/mbkserver/shop", shop);

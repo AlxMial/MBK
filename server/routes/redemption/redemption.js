@@ -31,41 +31,42 @@ router.post("/", validateToken, async (req, res) => {
     },
   });
 
-  // if (!RedemptionConditionsHD) {
-  //   const redemption = await tbRedemptionConditionsHD.create(req.body);
-  //   if (redemption) {
-  //     if (redemption.rewardType === "1") {
-  //       const coupon = await tbRedemptionCoupon.create(req.body.coupon);
-  //     } else if (redemption.rewardType === "2") {
-  //       const product = await tbRedemptionProduct.create(req.body.product);
-  //     }
-  //     res.json({
-  //       status: true,
-  //       isError: false,
-  //       isRedemptionName: false,
-  //       message: "success",
-  //       tbRedemptionConditionsHD: redemption,
-  //     });
-  //   } else {
-  //     res.json({
-  //       status: false,
-  //       isError: true,
-  //       isRedemptionName: false,
-  //       message: "unsuccess",
-  //       tbRedemptionConditionsHD: null,
-  //     });
-  //   }
-  // } else {
-  //   if (RedemptionConditionsHD.redemptionName === req.body.redemptionName) {
-  //     res.json({
-  //       status: false,
-  //       isError: false,
-  //       isRedemptionName: true,
-  //       message: "unsuccess",
-  //       tbRedemptionConditionsHD: null,
-  //     });
-  //   }
-  // }
+  if (!RedemptionConditionsHD) {
+    const redemption = await tbRedemptionConditionsHD.create(req.body);
+    console.log(redemption)
+    if (redemption) {
+      if (redemption.rewardType === "1") {
+        const coupon = await tbRedemptionCoupon.create(req.body.coupon);
+      } else if (redemption.rewardType === "2") {
+        const product = await tbRedemptionProduct.create(req.body.product);
+      }
+      res.json({
+        status: true,
+        isError: false,
+        isRedemptionName: false,
+        message: "success",
+        tbRedemptionConditionsHD: redemption,
+      });
+    } else {
+      res.json({
+        status: false,
+        isError: true,
+        isRedemptionName: false,
+        message: "unsuccess",
+        tbRedemptionConditionsHD: null,
+      });
+    }
+  } else {
+    if (RedemptionConditionsHD.redemptionName === req.body.redemptionName) {
+      res.json({
+        status: false,
+        isError: false,
+        isRedemptionName: true,
+        message: "unsuccess",
+        tbRedemptionConditionsHD: null,
+      });
+    }
+  }
 });
 
 module.exports = router;

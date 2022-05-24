@@ -55,12 +55,12 @@ module.exports = (sequelize, DataTypes) => {
 
   tbRedemptionConditionsHD.associate = (models) => {
     tbRedemptionConditionsHD.hasMany(models.tbRedemptionCoupon, {
-      foreignKey: "redemtionConditionsHDId",
+      foreignKey: "redemptionConditionsHDId",
       onDelete: "cascade",
     });
 
     tbRedemptionConditionsHD.hasMany(models.tbRedemptionProduct, {
-      foreignKey: "redemtionConditionsHDId",
+      foreignKey: "redemptionConditionsHDId",
       onDelete: "cascade",
     });
   };
