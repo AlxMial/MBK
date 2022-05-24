@@ -82,6 +82,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'stockId',
       onDelete: "cascade",
     });
+    tbStock.hasMany(models.tbOrderDT, {
+      foreignKey: 'stockId',
+      onDelete: "cascade",
+    });
   };
   return tbStock;
 };

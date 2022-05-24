@@ -35,6 +35,13 @@ router.get("/", validateToken, async (req, res) => {
                 )`),
                     "buy",
                 ],
+                [
+                    Sequelize.literal(`(
+                        select categoryName from tbproductcategories t
+                        where isDeleted = 0 and id = tbStock.productCategoryId
+                )`),
+                    "categoryName",
+                ],
             ],
         },
     });

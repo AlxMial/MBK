@@ -18,6 +18,12 @@ function PageTitle({ page }) {
             moduleIcon = 'fas fa-shopping-cart';
             pageIcon = 'fas fa-warehouse';
             break;
+        case 'order':
+            module = 'E-commerce';
+            pageName = 'รายการสั่งซื้อ';
+            moduleIcon = 'fas fa-shopping-cart';
+            pageIcon = 'fas fa-shopping-basket';
+            break;
         default:
             break;
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import ReactPaginate from "react-paginate";
 import axios from "services/axios";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
@@ -13,7 +13,6 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
 
     const [open, setOpen] = useState(false);
     const [pageNumber, setPageNumber] = useState(0);
-    const [productCategoryList, setProductCategoryList] = useState([]);
     const usersPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
     const pageCount = Math.ceil(listStock.length / usersPerPage);
@@ -24,24 +23,10 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
         setPageNumber(selected);
     };
 
-    // const statusList = [
-    //     { label: "พร้อมขาย", value: 'ready' },
-    //     { label: "ใกล้หมด", value: 'remain' },
-    //     { label: "หมด", value: 'outOfStock' },
-    // ];
-
     const showList = [
         { label: "แสดง", value: true },
         { label: "ไม่แสดง", value: false },
     ];
-
-    useEffect(async () => {
-        const res = await axios.get('productCategory');
-        const _productCategory = await res.data.tbProductCategory;
-        if (_productCategory) {
-            setProductCategoryList(_productCategory);
-        }
-    }, []);
 
     const deleteStock = (id) => {
         dispatch(fetchLoading());
@@ -120,8 +105,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                             openModal(value.id);
                                         }}>
                                             <span className={tdSpan}>
-                                                {productCategoryList && productCategoryList.length &&
-                                                    productCategoryList.filter(item => item.id === value.productCategoryId)[0].categoryName}
+                                                {value.categoryName}
                                             </span>
                                         </td>
                                         <td className={tdClass + " cursor-pointer"} onClick={() => {
@@ -158,11 +142,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                             <span className={(
                                                 value.productCount - value.buy > 10 ? "text-green-500" :
                                                     value.productCount - value.buy <= 0 ? "text-red-700" : "text-orange-500")}>
-                                                {value.productCount - value.buy > 10 ?
-                                                    'พร้อมขาย' :
-                                                    value.productCount - value.buy <= 0 ?
-                                                        'หมด' :
-                                                        'เหลือน้อย'}
+                                                {value.status}
                                             </span>
                                         </td>
                                         <td className={tdClass + " cursor-pointer"} onClick={() => {
@@ -216,7 +196,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
             {open && (
                 <ConfirmDialog
                     showModal={open}
-                    message={"จัดการข้อมูลสมาชิก"}
+                    message={"จัดการข้อมูลสินค้า"}
                     hideModal={() => {
                         setOpen(false);
                     }}
