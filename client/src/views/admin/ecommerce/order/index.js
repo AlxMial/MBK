@@ -6,17 +6,16 @@ import * as yup from "yup";
 import { useToasts } from "react-toast-notifications";
 import InputSearchUC from 'components/InputSearchUC';
 import ButtonModalUC from 'components/ButtonModalUC';
-import StockInfo from './StockInfo';
-import StockList from './Stocklist';
 import PageTitle from 'views/admin/PageTitle';
 import FilesService from "../../../../services/files";
 import { onSaveImage } from 'services/ImageService';
 import { useDispatch } from 'react-redux';
+import OrderList from './OrderList';
 
-const Stock = () => {
+const Order = () => {
     const dispatch = useDispatch();
     const { addToast } = useToasts();
-    const [listStock, setListStock] = useState([]);
+    const [orderList, setOrderList] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
 
@@ -24,37 +23,28 @@ const Stock = () => {
         id: null,
         image: null,
         relatedId: null,
-        relatedTable: 'stock1',
+        relatedTable: 'order',
         isDeleted: false,
         addBy: null,
         updateBy: null,
     }
 
-    const [stockImage, setStockImage] = useState([
-        _defaultImage,
-        { ..._defaultImage, relatedTable: 'stock2' },
-        { ..._defaultImage, relatedTable: 'stock3' },
-        { ..._defaultImage, relatedTable: 'stock4' },
-        { ..._defaultImage, relatedTable: 'stock5' },
-    ]);
+    const [orderImage, setOrderImage] = useState(_defaultImage);
 
     const fetchData = async () => {
-        await axios.get("stock").then((response) => {
-            if (!response.data.error && response.data.tbStock) {
-                let _stockData = response.data.tbStock;
-                _stockData = _stockData.map(stock => {
-                    if (stock.productCount - stock.buy > 10) {
-                        stock.status = 'พร้อมขาย';
-                    } else if (stock.productCount - stock.buy <= 0) {
-                        stock.status = 'หมด';
-                    } else {
-                        stock.status = 'เหลือน้อย';
-                    }
-                    return stock;
+        await axios.get("order/orderHD").then(async (response) => {
+            if (!response.data.error && response.data.tbOrderHD) {
+                let _orderData = response.data.tbOrderHD;
+                await axios.get("members").then(res => {
+                    _orderData = _orderData.map(order => {
+                        const member = res.data.tbMember.find(
+                            member => member.id === order.memberId
+                        );
+                        order.memberName = member[0].firstName + ' ' + member[0].lastName;
+                    })
                 });
-
-                setListStock(_stockData)
-                setListSearch(_stockData);
+                setOrderList(_orderData);
+                setListSearch(_orderData);
             }
         });
     };
@@ -67,17 +57,16 @@ const Stock = () => {
     const InputSearch = (e) => {
         e = e.toLowerCase();
         if (e === "") {
-            setListStock(listSearch);
+            setOrderList(listSearch);
         } else {
-            setListStock(
-                listStock.filter(
+            setOrderList(
+                orderList.filter(
                     (x) =>
-                        x.productName.toLowerCase().includes(e) ||
-                        x.categoryName.toLowerCase().includes(e) ||
-                        x.status.toLowerCase().includes(e) ||
-                        x.price.toString().toLowerCase().includes(e) ||
-                        x.buy.toString().toLowerCase().includes(e) ||
-                        x.productCount.toLowerCase().includes(e)
+                        x.orderNumber.toLowerCase().includes(e) ||
+                        x.orderDate.toLowerCase().includes(e) ||
+                        x.memberName.toLowerCase().includes(e) ||
+                        x.sumPrice.toLowerCase().toString().includes(e) ||
+                        x.imageName.toLowerCase().includes(e)
                 )
             );
         }
@@ -85,39 +74,20 @@ const Stock = () => {
 
     const openModal = async (id) => {
         formik.resetForm();
-        const data = listStock.filter((x) => x.id === id);
+        const data = orderList.filter((x) => x.id === id);
         if (data && data.length > 0) {
             for (const field in data[0]) {
                 formik.setFieldValue(field, data[0][field], false);
             }
-
-            await getStockImage(id);
         }
         setOpen(true);
-    }
-
-    const getStockImage = async (id) => {
-        const res = await axios.get(`image/getAllByRelated/${id}/stock`);
-        if (res && res.data.tbImage && res.data.tbImage.length > 0) {
-            let _stockImage = stockImage;
-            res.data.tbImage.map((item) => {
-                const base64 = FilesService.buffer64UTF8(item.image)
-                _stockImage = _stockImage.map((x) => {
-                    if (x.relatedTable === item.relatedTable) {
-                        return { ...item, image: base64, };
-                    }
-                    return x;
-                })
-            });
-            setStockImage(_stockImage);
-        }
     }
 
     const handleChangeImage = async (e) => {
         e.preventDefault();
         const base64 = await FilesService.convertToBase64(e.target.files[0]);
         const index = parseInt(e.target.id.replace('file', ''));
-        setStockImage(stockImage.map((x, i) => {
+        setOrderImage(orderImage.map((x, i) => {
             if ((i + 1) === index) {
                 return { ...x, image: base64 };
             }
@@ -199,7 +169,7 @@ const Stock = () => {
     }
 
     const saveImage = async (id) => {
-        stockImage.forEach(async (item, index) => {
+        orderImage.forEach(async (item, index) => {
             if (item.image) {
                 item.relatedId = id;
                 await onSaveImage(item);
@@ -207,13 +177,9 @@ const Stock = () => {
         });
     }
 
-    const handleDeleteList = (id) => {
-        setListStock(listStock.filter((x) => x.id !== id));
-    }
-
     return (
         <>
-            <PageTitle page='stock' />
+            <PageTitle page='order' />
             <div className="w-full">
                 <div
                     className={
@@ -227,21 +193,21 @@ const Stock = () => {
                             </div>
                             <div className={"w-full lg:w-6/12 text-right block"} >
                                 <ButtonModalUC onClick={() => openModal()}
-                                    label='เพิ่มสินค้า' />
+                                    label='เพิ่มรายการสั่งซื้อ' />
                             </div>
                         </div>
                     </div>
-                    <StockList listStock={listStock} openModal={openModal} setListStock={handleDeleteList} />
+                    <OrderList orderList={orderList} openModal={openModal} />
                 </div>
             </div>
-            {open && <StockInfo
+            {/* {open && <StockInfo
                 open={open}
                 formik={formik}
                 handleChangeImage={handleChangeImage}
                 stockImage={stockImage}
-                handleModal={() => setOpen(false)} />}
+                handleModal={() => setOpen(false)} />} */}
         </>
     )
 }
 
-export default Stock
+export default Order
