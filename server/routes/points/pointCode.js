@@ -71,7 +71,8 @@ router.get("/", validateToken, async (req, res) => {
               SELECT COUNT(id)
               FROM tbMemberPoints AS mebmerPoint
               WHERE
-                mebmerPoint.tbPointCodeHDId = tbPointCodeHD.id
+                mebmerPoint.tbPointCodeHDId = tbPointCodeHD.id AND
+                memberPoint.isDeleted = 0
           )`),
           "useCount",
         ],

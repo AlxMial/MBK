@@ -29,6 +29,7 @@
     "react-dom": "17.0.1",
     "react-export-excel": "^0.5.3",
     "react-ga": "^3.3.0",
+    "react-hook-form": "^7.31.2",
     "react-imask": "^6.4.2",
     "react-input-mask": "^2.0.4",
     "react-mobile-datepicker": "^4.0.2",

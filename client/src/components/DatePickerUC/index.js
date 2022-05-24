@@ -4,12 +4,12 @@ import locale from "antd/lib/locale/th_TH";
 import { DatePicker, ConfigProvider } from "antd";
 import "antd/dist/antd.css";
 
-const DatePickerUC = ({  value, onChange,onClick,onBlur,disabled }) => {
+const DatePickerUC = ({  value, onChange,onClick,onBlur,disabled,placeholder,disabledValue }) => {
   return (
     <ConfigProvider locale={locale}>
       <DatePicker
         format={"DD/MM/yyyy"}
-        placeholder="เลือกวันที่"
+        placeholder={placeholder}
         showToday={false}
         disabled={disabled}
         defaultValue={moment(new Date(), "DD/MM/YYYY")}
@@ -26,7 +26,7 @@ const DatePickerUC = ({  value, onChange,onClick,onBlur,disabled }) => {
           paddingLeft: "0.5rem",
           paddingRight: "0.5rem",
         }}
-        value={value}
+        value={(disabledValue) ? null : value}
         onChange={onChange}
       />
     </ConfigProvider>

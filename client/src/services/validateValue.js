@@ -58,6 +58,16 @@ class ValidateService {
       ? options.find((option) => option.value.toString() === value.toString())
       : "";
   };
+
+  defaultValueText = (options, value) => {
+    if ((value === undefined || value === null || value.toString() === "") && options[0] !== undefined) {
+      value = options[0].value;
+    }
+    return options
+      ? (value = options.filter((x) => x.value === value.toString())[0]
+      .label)
+      : "";
+  };
 }
 
 export default new ValidateService();

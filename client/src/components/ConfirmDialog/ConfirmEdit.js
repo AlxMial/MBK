@@ -78,7 +78,7 @@ function ConfirmEdit({
                   <div className=" flex justify-between align-middle ">
                     <div></div>
                     <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                      <label className="text-gold-mbk cursor-pointer" onClick={() => {(confirmModal(id));}}> <i class="fas fa-save"></i> บันทึกข้อมูล</label>
+                      <label className="text-gold-mbk cursor-pointer" onClick={() => {(confirmModal(id));}}> <i className="fas fa-save"></i> บันทึกข้อมูล</label>
                                         <label className="font-bold">&nbsp;|&nbsp;</label>
                                         <label className="cursor-pointer" onClick={()=>{returnModal();}}> <i className="fas fa-times"></i> ยกเลิก</label>
                       {/* <button

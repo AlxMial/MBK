@@ -1,22 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useFormik } from "formik";
+import { useDispatch } from "react-redux";
 import * as Yup from "yup";
-import Select from "react-select";
 import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
-import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import * as Storage from "../../../../services/Storage.service";
 import "antd/dist/antd.css";
 import moment from "moment";
 import "moment/locale/th";
-import locale from "antd/lib/locale/th_TH";
-import { DatePicker, Space, ConfigProvider, Radio } from "antd";
-import * as Address from "../../../../services/GetAddress.js";
-import FilesService from "../../../../services/files";
 import useMenu from "services/useMenu";
 import { GetPermissionByUserName } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
@@ -24,9 +19,11 @@ import InputUC from "components/InputUC";
 import LabelUC from "components/LabelUC";
 import SelectUC from "components/SelectUC";
 import DatePickerUC from "components/DatePickerUC";
-import ProfilePictureUC from "components/ProfilePictureUC";
-import CheckBoxUC from "components/CheckBoxUC";
-import TextAreaUC from "components/InputUC/TextAreaUC";
+import { fetchLoading, fetchSuccess } from "redux/actions/common";
+import StandardCoupon from "./StandardCoupon";
+import StandardProduct from "./StandardProduct";
+import { onSaveImage } from "services/ImageService";
+import FilesService from "../../../../services/files";
 
 export default function ConditioRewardInfo() {
   /* Option Select */
@@ -41,14 +38,11 @@ export default function ConditioRewardInfo() {
   ];
 
   /* Service Function */
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const { menu } = useMenu();
   let { id } = useParams();
 
   /* Set useState */
-  const [enableControl, setIsEnableControl] = useState(true);
-  const [phoneNumber, setPhoneNumber] = useState(0);
-  const [number, setNumber] = useState(0);
   const [isNew, setIsNew] = useState(false);
   const [typePermission, setTypePermission] = useState("");
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
@@ -59,42 +53,30 @@ export default function ConditioRewardInfo() {
     couponEnd: false,
     expireDate: false,
   });
-  const [isClickEndDate, setIsClickEndDate] = useState(false);
   const [stateDelay, setStateDelay] = useState("");
-  const [selectedImage, setSelectedImage] = useState();
   const [isCancel, setIsCancel] = useState(false);
-  // const [coupon, setCoupon] = useState({
-  //   pictureCoupon: "",
-  //   couponName: "",
-  //   startDate: new Date(),
-  //   endDate: new Date(),
-  //   expiredDate: new Date(),
-  //   couponCount: 0,
-  //   usedPerDayCount: 0,
-  //   description: "",
-  //   isCancelReclaim: "",
-  //   isCancel: "",
-  //   isReclaim: "",
-  //   isDeleted: false,
-  //   isNotExpired: false,
-  //   addBy: "",
-  //   updateBy: "",
-  // });
+  const imageData = {
+    id: null,
+    image: null,
+    relatedId: null,
+    relatedTable: "",
+    isDeleted: false,
+    addBy: null,
+    updateBy: null,
+  };
+  const [imageCoupon, setImageCoupon] = useState(imageData);
+  const [imageProduct, setImageProduct] = useState(imageData);
 
+  const dispatch = useDispatch();
   let history = useHistory();
-
-  const options = [
-    { label: "เปิดการใช้งาน", value: "1" },
-    { label: "ปิดการใช้งาน", value: "2" },
-  ];
 
   const { addToast } = useToasts();
   /* Method Condition */
   const OnBack = () => {
-    if (formik.dirty > 0) {
+    if (JSON.stringify(formik.touched).length > 2) {
       openModalSubject();
     } else {
-      history.push("/admin/members");
+      history.push("/admin/redemptions");
     }
   };
 
@@ -114,21 +96,7 @@ export default function ConditioRewardInfo() {
   };
 
   const onReturn = () => {
-    history.push("/admin/members");
-  };
-
-  const handleChangeImage = async (e) => {
-    const image = document.getElementById("eCouponImage");
-    image.src = URL.createObjectURL(e.target.files[0]);
-    const base64 = await FilesService.convertToBase64(e.target.files[0]);
-    formikCoupon.setFieldValue("pictureCoupon", base64);
-    // setCoupon((prevState) => {
-    //   return {
-    //     ...prevState,
-    //     pictureCoupon: e.target.files[0],
-    //   };
-    // });
-    // //setSelectedImage(e.target.files[0]);
+    history.push("/admin/redemptions");
   };
 
   /* Form insert value */
@@ -167,26 +135,48 @@ export default function ConditioRewardInfo() {
         ),
     }),
     onSubmit: (values) => {
-      if (formikCoupon.isValid) {
-        if (formik.values.rewardType === "1")
-          values["coupon"] = formikCoupon.values;
+      let ImageSave = {};
+      if (formik.values.rewardType === "1") {
+        values["coupon"] = formikCoupon.values;
+        ImageSave = {
+          ...imageCoupon,
+          image: formikCoupon.values.pictureCoupon,
+          relatedTable: "tbRedemptionCoupon",
+        };
       } else {
         values["product"] = formikProduct.values;
+        ImageSave = {
+          ...imageProduct,
+          image: formikProduct.values.pictureProduct,
+          relatedTable: "tbRedemptionProduct",
+        };
       }
-      if (isNew) {
-        formik.values.addBy = localStorage.getItem("user");
-        axios.post("redemption", values).then((res) => {
-          if (res.data.status) {
-            setIsNew(false);
-            formik.values.id = res.data.tbRedemptionConditionsHD.id;
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            if (res.data.isRedemptionName) {
+      if (formikCoupon.isValid || formikProduct.isValid) {
+        if (isNew) {
+          dispatch(fetchLoading());
+          formik.values.addBy = localStorage.getItem("user");
+          axios.post("redemptions", values).then(async (res) => {
+            if (res.data.status) {
+              setIsNew(false);
+              formik.values.id = res.data.tbRedemptionConditionsHD.id;
+              ImageSave = {
+                ...ImageSave,
+                relatedId:
+                  formik.values.rewardType === "1"
+                    ? res.data.tbRedemptionCoupon.id
+                    : res.data.tbRedemptionProduct.id,
+              };
+              await onSaveImage(ImageSave, async (res) => {});
+              history.push(
+                `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
+              );
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
+            } else {
               addToast(
                 "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
                 {
@@ -195,11 +185,35 @@ export default function ConditioRewardInfo() {
                 }
               );
             }
-          }
-        });
-      } else {
-        formik.values.updateBy = localStorage.getItem("user");
-        axios.post("redemption", values).then((res) => {});
+            formik.setTouched({});
+            dispatch(fetchSuccess());
+          });
+        } else {
+          formik.values.updateBy = localStorage.getItem("user");
+          dispatch(fetchLoading());
+          formik.setFieldValue("expireDate", null);
+          axios.put("redemptions", values).then(async (res) => {
+            if (res.data.status) {
+              await onSaveImage(ImageSave, async (res) => {});
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
+            } else {
+              addToast(
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
+                {
+                  appearance: "warning",
+                  autoDismiss: true,
+                }
+              );
+            }
+            formik.setTouched({});
+            dispatch(fetchSuccess());
+          });
+        }
       }
     },
   });
@@ -215,9 +229,9 @@ export default function ConditioRewardInfo() {
       couponCount: 0,
       usedPerDayCount: 0,
       description: "",
-      isCancelReclaim: "",
-      isCancel: "",
-      isReclaim: "",
+      isCancelReclaim: false,
+      isCancel: false,
+      isReclaim: false,
       isDeleted: false,
       isNotExpired: false,
       addBy: "",
@@ -239,41 +253,80 @@ export default function ConditioRewardInfo() {
   const formikProduct = useFormik({
     initialValues: {
       id: "",
-      pictureCoupon: "",
-      couponName: "",
-      startDate: new Date(),
-      endDate: new Date(),
-      expiredDate: new Date(),
-      couponCount: 0,
-      usedPerDayCount: 0,
+      pictureProduct: "",
+      productName: "",
+      rewardCount: 0,
+      isNoLimitReward:false,
       description: "",
-      isCancelReclaim: "",
-      isCancel: "",
-      isReclaim: "",
       isDeleted: false,
-      isNotExpired: false,
       addBy: "",
       updateBy: "",
     },
     validationSchema: Yup.object({
-      couponName: Yup.string().required("* กรุณากรอก ชื่อคูปอง"),
-      couponCount: Yup.number()
-        .required("* กรุณากรอก จำนวนคูปอง")
+      productName: Yup.string().required("* กรุณากรอก ชื่อสินค้าสัมนาคุณ"),
+      rewardCount: Yup.number()
+        .required("* กรุณากรอก จำนวนสูงสุด")
         .test(
           "Is positive?",
-          "* จำนวนคูปองต้องมากกว่า 0",
+          "* จำนวนสูงสุดต้องมากกว่า 0",
           (value) => value > 0
         ),
-      pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
+      pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสัมนาคุณ"),
     }),
   });
 
-  async function fetchData() {}
-
-  const fetchPermission = async () => {
-    const role = await GetPermissionByUserName();
-    setTypePermission(role);
-  };
+  async function fetchData() {
+    dispatch(fetchLoading());
+    let response = await axios
+      .get(`/redemptions/byId/${id}`)
+      .then((response) => {
+        if (response.data.error) {
+        } else {
+          if (response.data.tbRedemptionConditionsHD) {
+            setIsNew(false);
+            for (var columns in response.data.tbRedemptionConditionsHD) {
+              formik.setFieldValue(
+                columns,
+                response.data.tbRedemptionConditionsHD[columns],
+                false
+              );
+            }
+            for (var columnsCoupon in response.data.tbRedemptionCoupon) {
+              formikCoupon.setFieldValue(
+                columnsCoupon,
+                response.data.tbRedemptionCoupon[columnsCoupon],
+                false
+              );
+            }
+            for (var columnsProduct in response.data.tbRedemptionProduct) {
+              formikProduct.setFieldValue(
+                columnsProduct,
+                response.data.tbRedemptionProduct[columnsProduct],
+                false
+              );
+            }
+            if (response.data.tbImage !== null) {
+              if (
+                response.data.tbRedemptionConditionsHD["rewardType"] === "1"
+              ) {
+                formikCoupon.setFieldValue(
+                  "pictureCoupon",
+                  FilesService.buffer64UTF8(response.data.tbImage["image"])
+                );
+                setImageCoupon({ ...imageCoupon, ...response.data.tbImage });
+              } else {
+                formikProduct.setFieldValue(
+                  "pictureProduct",
+                  FilesService.buffer64UTF8(response.data.tbImage["image"])
+                );
+                setImageProduct({ ...imageProduct, ...response.data.tbImage });
+              }
+            }
+          }
+          dispatch(fetchSuccess());
+        }
+      });
+  }
 
   const defaultValue = () => {
     formik.setFieldValue("rewardType", "1");
@@ -285,13 +338,16 @@ export default function ConditioRewardInfo() {
     formikCoupon.setFieldValue("couponName", "รหัสในตำนาน");
     formikCoupon.setFieldValue("couponCount", 10);
     formikCoupon.setFieldValue("isDeleted", false);
+
+    formikProduct.setFieldValue("couponName", "รหัสในตำนาน");
+    formikProduct.setFieldValue("couponCount", 10);
+    formikProduct.setFieldValue("isDeleted", false);
   };
 
   useEffect(() => {
     /* Default Value for Testing */
     setIsNew(true);
-    fetchPermission();
-    defaultValue();
+    //defaultValue();
     fetchData();
   }, []);
 
@@ -341,6 +397,7 @@ export default function ConditioRewardInfo() {
                       type="button"
                       onClick={() => {
                         formikCoupon.handleSubmit();
+                        formikProduct.handleSubmit();
                         formik.handleSubmit();
                       }}
                     >
@@ -380,6 +437,7 @@ export default function ConditioRewardInfo() {
                           id="save"
                           onClick={() => {
                             formikCoupon.handleSubmit();
+                            formikProduct.handleSubmit();
                             formik.handleSubmit();
                           }}
                           className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
@@ -625,410 +683,8 @@ export default function ConditioRewardInfo() {
                     </div>
                   </span>
 
-                  <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg ">
-                    <div className="flex-auto lg:px-8 py-10">
-                      <div className="flex flex-wrap">
-                        <div className="w-full lg:w-1/12 margin-auto-t-b">
-                          <div className="relative w-full">
-                            <LabelUC label="รูปคูปอง" isRequired={true} />
-                            {formikCoupon.touched.pictureCoupon &&
-                            formikCoupon.errors.pictureCoupon ? (
-                              <div className="text-sm py-2 px-2 text-red-500">
-                                &nbsp;
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-                        <div className="w-full lg:w-11/12 margin-auto-t-b">
-                          <div className="relative w-full px-4">
-                            <ProfilePictureUC
-                              id="eCouponImage"
-                              hoverText="เลือกรูปภาพคูปอง"
-                              onChange={handleChangeImage}
-                            />
-
-                            {formikCoupon.touched.pictureCoupon &&
-                            formikCoupon.errors.pictureCoupon ? (
-                              <div className="text-sm py-2 px-2  text-red-500">
-                                {formikCoupon.errors.pictureCoupon}
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-                        <div className="w-full">&nbsp;</div>
-                        <div className="w-full lg:w-1/12 margin-auto-t-b">
-                          <div className="relative w-full">
-                            <LabelUC label="ชื่อคูปอง" isRequired={true} />
-                            {formikCoupon.touched.couponName &&
-                            formikCoupon.errors.couponName ? (
-                              <div className="text-sm py-2 px-2  text-red-500">
-                                &nbsp;
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-                        <div className="w-full lg:w-11/12 margin-auto-t-b">
-                          <div className="relative w-full px-4">
-                            <InputUC
-                              name="couponName"
-                              type="text"
-                              maxLength={255}
-                              onBlur={formikCoupon.handleBlur}
-                              value={formikCoupon.values.couponName}
-                              onChange={(e) => {
-                                formikCoupon.handleChange(e);
-                              }}
-                            />
-                            {formikCoupon.touched.couponName &&
-                            formikCoupon.errors.couponName ? (
-                              <div className="text-sm py-2 px-2  text-red-500">
-                                {formikCoupon.errors.couponName}
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-                        <div className="w-full">&nbsp;</div>
-                        <div className="w-full lg:w-1/12 margin-auto-t-b ">
-                          <LabelUC label="วันที่เริ่มต้น" isRequired={true} />
-                        </div>
-                        <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                          <div className="relative">
-                            <DatePickerUC
-                              onClick={(e) => {
-                                setIsClick({ ...isClick, couponStart: true });
-                              }}
-                              onBlur={(e) => {
-                                setIsClick({ ...isClick, couponStart: false });
-                              }}
-                              onChange={(e) => {
-                                setIsClick({ ...isClick, couponStart: false });
-                                if (e === null) {
-                                  formikCoupon.setFieldValue(
-                                    "startDate",
-                                    new Date(),
-                                    false
-                                  );
-                                } else {
-                                  formikCoupon.setFieldValue(
-                                    "startDate",
-                                    moment(e).toDate(),
-                                    false
-                                  );
-                                }
-                              }}
-                              value={
-                                !isClick.couponStart
-                                  ? moment(
-                                      new Date(formikCoupon.values.startDate),
-                                      "DD/MM/YYYY"
-                                    )
-                                  : null
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div
-                          className={
-                            "w-full" + (width < 764 ? " block" : " hidden")
-                          }
-                        >
-                          &nbsp;
-                        </div>
-                        <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
-                          <LabelUC label="วันที่สิ้นสุด" isRequired={true} />
-                        </div>
-                        <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                          <div className="relative">
-                            <DatePickerUC
-                              onClick={(e) => {
-                                setIsClick({ ...isClick, couponEnd: true });
-                              }}
-                              onBlur={(e) => {
-                                setIsClick({ ...isClick, couponEnd: false });
-                              }}
-                              onChange={(e) => {
-                                setIsClick({ ...isClick, couponEnd: false });
-                                if (e === null) {
-                                  formikCoupon.setFieldValue(
-                                    "endDate",
-                                    new Date(),
-                                    false
-                                  );
-                                } else {
-                                  formikCoupon.setFieldValue(
-                                    "endDate",
-                                    moment(e).toDate(),
-                                    false
-                                  );
-                                }
-                              }}
-                              value={
-                                !isClick.couponEnd
-                                  ? moment(
-                                      new Date(formikCoupon.values.endDate),
-                                      "DD/MM/YYYY"
-                                    )
-                                  : null
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className="w-full">&nbsp;</div>
-                        <div className="w-full lg:w-1/12 margin-auto-t-b ">
-                          <LabelUC label="วันที่หมดอายุ" isRequired={true} />
-                          <div className="text-sm py-2 px-2  text-red-500">
-                            &nbsp;
-                          </div>
-                        </div>
-                        <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                          <div className="relative">
-                            <DatePickerUC
-                              onClick={(e) => {
-                                setIsClick({ ...isClick, expireDate: true });
-                              }}
-                              onBlur={(e) => {
-                                setIsClick({ ...isClick, expireDate: false });
-                              }}
-                              onChange={(e) => {
-                                setIsClick({ ...isClick, expireDate: false });
-                                if (e === null) {
-                                  formikCoupon.setFieldValue(
-                                    "expiredDate",
-                                    new Date(),
-                                    false
-                                  );
-                                } else {
-                                  formikCoupon.setFieldValue(
-                                    "expiredDate",
-                                    moment(e).toDate(),
-                                    false
-                                  );
-                                }
-                              }}
-                              value={
-                                !isClick.expireDate
-                                  ? moment(
-                                      new Date(formikCoupon.values.expiredDate),
-                                      "DD/MM/YYYY"
-                                    )
-                                  : null
-                              }
-                            />
-                            <CheckBoxUC
-                              text="ไม่มีวันหมดอายุ"
-                              name="isNotExpired"
-                              onChange={formikCoupon.handleChange}
-                              onBlur={formikCoupon.handleBlur}
-                              checked={formikCoupon.values.isNotExpired}
-                              classLabel="mt-2"
-                            />
-                          </div>
-                        </div>
-                        <div
-                          className={
-                            "w-full" + (width < 764 ? " block" : " hidden")
-                          }
-                        >
-                          &nbsp;
-                        </div>
-                        <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
-                        <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                          <div className="relative"></div>
-                        </div>
-                        <div className="w-full">&nbsp;</div>
-                        <div className="w-full lg:w-1/12 margin-auto-t-b ">
-                          <LabelUC label="จำนวนคูปอง" isRequired={true} />
-                          {formikCoupon.touched.couponCount &&
-                          formikCoupon.errors.couponCount ? (
-                            <div className="text-sm py-2 px-2  text-red-500">
-                              &nbsp;
-                            </div>
-                          ) : null}
-                        </div>
-                        <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                          <div className="relative">
-                            <InputUC
-                              name="couponCount"
-                              type="text"
-                              maxLength={7}
-                              // value={coupon.couponCount}
-                              // onChange={(e) => {
-                              //   setCoupon((prevState) => {
-                              //     return {
-                              //       ...prevState,
-                              //       couponCount: e.target.value,
-                              //     };
-                              //   });
-                              // }}
-                              onBlur={formikCoupon.handleBlur}
-                              value={formikCoupon.values.couponCount}
-                              onChange={(e) => {
-                                formikCoupon.handleChange(e);
-                              }}
-                              min="0"
-                            />
-                            {formikCoupon.touched.couponCount &&
-                            formikCoupon.errors.couponCount ? (
-                              <div className="text-sm py-2 px-2  text-red-500">
-                                {formikCoupon.errors.couponCount}
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-                        <div
-                          className={
-                            "w-full" + (width < 764 ? " block" : " hidden")
-                          }
-                        >
-                          &nbsp;
-                        </div>
-                        <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
-                        <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                          <div className="relative"></div>
-                        </div>
-                        <div className="w-full">&nbsp;</div>
-                        <div className="w-full lg:w-1/12 margin-auto-t-b ">
-                          <LabelUC
-                            label="จำนวนที่ใช้แลกต่อวัน"
-                            isRequired={false}
-                          />
-                        </div>
-                        <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                          <div className="relative">
-                            <InputUC
-                              name="usedPerDayCount"
-                              type="text"
-                              maxLength={7}
-                              // value={coupon.usedPerDayCount}
-                              // onChange={(e) => {
-                              //   setCoupon((prevState) => {
-                              //     return {
-                              //       ...prevState,
-                              //       usedPerDayCount: e.target.value,
-                              //     };
-                              //   });
-                              // }}
-                              onBlur={formikCoupon.handleBlur}
-                              value={formikCoupon.values.usedPerDayCount}
-                              onChange={(e) => {
-                                formikCoupon.handleChange(e);
-                              }}
-                              min="0"
-                            />
-                          </div>
-                        </div>
-                        <div
-                          className={
-                            "w-full" + (width < 764 ? " block" : " hidden")
-                          }
-                        >
-                          &nbsp;
-                        </div>
-                        <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
-                        <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                          <div className="relative"></div>
-                        </div>
-                        <div className="w-full">&nbsp;</div>
-                        <div className="w-full lg:w-1/12 margin-auto-t-b ">
-                          <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
-                        </div>
-                        <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
-                          <div className="relative">
-                            <TextAreaUC
-                              name="description"
-                              onBlur={formikCoupon.handleBlur}
-                              value={formikCoupon.values.description}
-                              onChange={(e) => {
-                                formikCoupon.handleChange(e);
-                              }}
-                              // value={coupon.description}
-                              // onChange={(e) => {
-                              //   setCoupon((prevState) => {
-                              //     return {
-                              //       ...prevState,
-                              //       description: e.target.value,
-                              //     };
-                              //   });
-                              // }}
-                            />
-                          </div>
-                        </div>
-                        <div className="w-full">&nbsp;</div>
-                        <div className="w-full lg:w-1/12 margin-auto-t-b ">
-                          <CheckBoxUC
-                            text="ยกเลิก / เรียกคืน"
-                            name="isCancelReclaim"
-                            // onChange={(e) => {
-                            //   setIsCancel(e.target.checked);
-                            //   setCoupon((prevState) => {
-                            //     return {
-                            //       ...prevState,
-                            //       isCancelReclaim: e.target.checked,
-                            //     };
-                            //   });
-                            // }}
-                            // checked={coupon.isCancelReclaim}
-                            onChange={(e) => {
-                              setIsCancel(e.target.checked);
-                              formikCoupon.setFieldValue(
-                                "isCancelReclaim",
-                                e.target.checked
-                              );
-                            }}
-                            onBlur={formikCoupon.handleBlur}
-                            checked={formikCoupon.values.isCancelReclaim}
-                          />
-                        </div>
-                        <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
-                          <div
-                            className={
-                              "relative border rounded px-2 py-2 " +
-                              (!isCancel ? " disabled" : " ")
-                            }
-                          >
-                            <Radio.Group
-                              disabled={!isCancel}
-                              onChange={(e) => {
-                                formikCoupon.setFieldValue(
-                                  "isCancel",
-                                  e.target.value === 1 ? true : false
-                                );
-                                formikCoupon.setFieldValue(
-                                  "isReclaim",
-                                  e.target.value === 2 ? true : false
-                                );
-                                // setCoupon((prevState) => {
-                                //   return {
-                                //     ...prevState,
-                                //     isCancel:
-                                //       e.target.value === 1 ? true : false,
-                                //     isReclaim:
-                                //       e.target.value === 2 ? true : false,
-                                //   };
-                                // });
-                              }}
-                              onBlur={formikCoupon.handleBlur}
-                              value={
-                                !formikCoupon.values.isCancelReclaim
-                                  ? 3
-                                  : formikCoupon.values.isReclaim
-                                  ? 2
-                                  : 1
-                              }
-                            >
-                              <Space direction="vertical">
-                                <Radio value={1}>ยกเลิกคูปอง</Radio>
-                                <Radio value={2}>
-                                  เรียกคืนคูปอง
-                                  (เฉพาะที่ถูกนำไปใช้งานแล้วเท่านั้น)
-                                </Radio>
-                              </Space>
-                            </Radio.Group>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <StandardCoupon formik={formikCoupon} />
+                  {/* <StandardProduct formik={formikProduct} /> */}
                 </div>
               </div>
             </div>
