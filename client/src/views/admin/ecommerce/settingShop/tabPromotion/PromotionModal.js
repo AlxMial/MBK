@@ -13,6 +13,7 @@ import ValidateService from "services/validateValue";
 import TextAreaUC from 'components/InputUC/TextAreaUC';
 import axios from "services/axios";
 import ButtonUCSaveModal from 'components/ButtonUCSaveModal';
+import ModalHeader from 'views/admin/ModalHeader';
 
 const PromotionModal = ({ open, formik, handleModal }) => {
     Modal.setAppElement("#root");
@@ -62,26 +63,7 @@ const PromotionModal = ({ open, formik, handleModal }) => {
             <form onSubmit={formik.handleSubmit}>
                 <div className="flex flex-wrap">
                     <div className="w-full flex-auto mt-2">
-                        <div className=" flex justify-between align-middle ">
-                            <div className=" align-middle  mb-3">
-                                <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>เพิ่มช่องทางการชำระเงิน</label>
-                                </div>
-                            </div>
-
-                            <div className="  text-right align-middle  mb-3">
-                                <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
-                                    <label
-                                        className="cursor-pointer"
-                                        onClick={() => {
-                                            handleModal();
-                                        }}
-                                    >
-                                        X
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+                        <ModalHeader title={"เพิ่มโปรโมชั่นหน้าร้าน"} handleModal={handleModal} />
                         <div className="flex flex-wrap px-24 py-10 justify-center">
                             <div className="w-full lg:w-12/12 px-4 margin-auto-t-b ">
                                 <div className="flex flex-wrap justify-center">

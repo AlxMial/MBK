@@ -1,4 +1,4 @@
-export const customStyles = ({ width = '' }) => ({
+export const customStyles = (width = '') => ({
   content: {
     top: '50%',
     left: '50%',

@@ -7,6 +7,7 @@ import {
 import LabelUC from 'components/LabelUC';
 import useWindowDimensions from "services/useWindowDimensions";
 import TextAreaUC from 'components/InputUC/TextAreaUC';
+import ModalHeader from 'views/admin/ModalHeader';
 
 const ConfirmDialog = ({ open, formik, handleModal, status, type }) => {
     Modal.setAppElement("#root");
@@ -36,26 +37,7 @@ const ConfirmDialog = ({ open, formik, handleModal, status, type }) => {
             <form onSubmit={formik.handleSubmit}>
                 <div className="flex flex-wrap">
                     <div className="w-full flex-auto mt-2">
-                        <div className=" flex justify-between align-middle ">
-                            <div className=" align-middle  mb-3">
-                                <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>แจ้งเตือน</label>
-                                </div>
-                            </div>
-
-                            <div className="  text-right align-middle  mb-3">
-                                <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
-                                    <label
-                                        className="cursor-pointer"
-                                        onClick={() => {
-                                            handleModal();
-                                        }}
-                                    >
-                                        X
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+                        <ModalHeader title={`ยืนยันการ ${type === 'cancel' ? 'ยกเลิก' : 'คืนสินค้า'}`} handleModal={handleModal} />
                         <div className="flex flex-wrap px-24 py-10 justify-center">
                             <div className="w-full lg:w-10/12 px-4 margin-auto-t-b ">
                                 <LabelUC label={`ต้องการเปลี่ยนสถานะเป็น ${(type === 'cancel' ? cancelList : returnList)
