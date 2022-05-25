@@ -17,15 +17,15 @@ const OrderTable = ({ orderList, openModal }) => {
 
     const getStatus = (value) => {
         if (value.transportStatus === 'done')
-            return 'ส่งแล้ว';
+            return { text: 'ส่งแล้ว', color: ' text-green-500' };
         else if (value.transportStatus === 'inTransit')
-            return 'กำลังส่ง';
+            return { text: 'กำลังส่ง', color: ' text-orange-500' };
         else if (value.transportStatus === 'prepare')
-            return 'เตรียมส่ง';
+            return { text: 'เตรียมส่ง', color: ' text-yellow-500' };
         else if (value.paymentStatus === 'done')
-            return 'ชำระเงินแล้ว';
+            return { text: 'ชำระเงินแล้ว', color: ' text-green-500' };
         else if (value.paymentStatus === 'waiting')
-            return 'รอการชำระเงิน';
+            return { text: 'รอการชำระเงิน', color: ' text-blue-500' };
     }
 
     const onClickAttachment = (image) => {
@@ -34,6 +34,8 @@ const OrderTable = ({ orderList, openModal }) => {
         }
     }
 
+    const _thList = ['ลำดับที่', 'เลขที่ใบสั่งซื้อ', 'วันที่สั่งซื้อ', 'ผู้สั่งซื้อ', 'ยอดสุทธิ', 'สถานะ', 'ไฟล์แนบ'];
+
     return (
         <>
             <div className="block w-full overflow-x-auto  px-4 py-2">
@@ -41,27 +43,13 @@ const OrderTable = ({ orderList, openModal }) => {
                 <table className="items-center w-full border ">
                     <thead>
                         <tr>
-                            <th className={thClass + ' text-center'} >
-                                ลำดับที่
-                            </th>
-                            <th className={thClass} >
-                                เลขที่ใบสั่งซื้อ
-                            </th>
-                            <th className={thClass} >
-                                วันที่สั่งซื้อ
-                            </th>
-                            <th className={thClass} >
-                                ผู้สั่งซื้อ
-                            </th>
-                            <th className={thClass} >
-                                ยอดสุทธิ
-                            </th>
-                            <th className={thClass} >
-                                สถานะ
-                            </th>
-                            <th className={thClass} >
-                                ไฟล์แนบ
-                            </th>
+                            {_thList.map((item, index) => {
+                                return (
+                                    <th key={index}
+                                        className={thClass + (item === 'ลำดับที่' ? ' text-center' : '')}>
+                                        {item}
+                                    </th>)
+                            })}
                         </tr>
                     </thead>
                     <tbody>
@@ -98,8 +86,8 @@ const OrderTable = ({ orderList, openModal }) => {
                                             </span>
                                         </td>
                                         <td className={tdClass + " cursor-pointer"} >
-                                            <span className={tdSpan}>
-                                                {getStatus(value)}
+                                            <span className={tdSpan + getStatus(value).color}>
+                                                {getStatus(value).text}
                                             </span>
                                         </td>
                                         <td className={tdClass + " cursor-pointer"} onClick={() => {

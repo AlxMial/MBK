@@ -77,7 +77,7 @@ const Stock = () => {
                         x.status.toLowerCase().includes(e) ||
                         x.price.toString().toLowerCase().includes(e) ||
                         x.buy.toString().toLowerCase().includes(e) ||
-                        x.productCount.toLowerCase().includes(e)
+                        x.productCount.toString().toLowerCase().includes(e)
                 )
             );
         }
