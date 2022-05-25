@@ -1,5 +1,9 @@
 import moment from "moment";
 import * as Storage from "@services/Storage.service";
+const crypto = require("crypto");
+const ENC_KEY = "bf3c199c2470cb477d907b1e0917c17b";
+const IV = "5183666c72eec9e4";
+
 export const IsNullOrEmpty = (obj) => {
   if ("undefined" === typeof obj || obj == null) {
     return true;
@@ -76,5 +80,23 @@ export const liff_dateToString = (date, format) => {
 
 export const getCartNumberBadge = (date, format) => {
   let cart = Storage.get_cart()
-  return IsNullOrEmpty(cart) ? null :  cart.shop_orders.length
+  return IsNullOrEmpty(cart) ? null : cart.shop_orders.length
+};
+
+
+export const EncodeKey = (id) => {
+  if (IsNullOrEmpty(id)) {
+    return "";
+  }
+  id = encrypt(id.toString());
+  let buf = new Buffer.from(id, "ascii");
+  id = buf.toString("base64");
+  return id;
+}
+
+const encrypt = (val) => {
+  let cipher = crypto.createCipheriv("aes-256-cbc", ENC_KEY, IV);
+  let encrypted = cipher.update(val, "utf8", "base64");
+  encrypted += cipher.final("base64");
+  return encrypted;
 };

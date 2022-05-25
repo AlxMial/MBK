@@ -1,11 +1,19 @@
+import moment from 'moment';
 import React, { useState } from 'react'
 import ReactPaginate from "react-paginate";
+import ModalImage from "react-modal-image";
+import FilesService from "services/files";
+import Modal from "react-modal";
+import SlipModal from './SlipModal';
 
 const OrderTable = ({ orderList, openModal }) => {
+    Modal.setAppElement("#root");
     const thClass = "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
     const tdClass = "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
-    const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
+    const tdSpan = "text-gray-mbk ";
 
+    const [open, setOpen] = useState(false);
+    const [image, setImage] = useState('');
     const [pageNumber, setPageNumber] = useState(0);
     const usersPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
@@ -16,21 +24,25 @@ const OrderTable = ({ orderList, openModal }) => {
     };
 
     const getStatus = (value) => {
-        if (value.transportStatus === 'done')
-            return { text: 'ส่งแล้ว', color: ' text-green-500' };
-        else if (value.transportStatus === 'inTransit')
-            return { text: 'กำลังส่ง', color: ' text-orange-500' };
-        else if (value.transportStatus === 'prepare')
-            return { text: 'เตรียมส่ง', color: ' text-yellow-500' };
-        else if (value.paymentStatus === 'done')
-            return { text: 'ชำระเงินแล้ว', color: ' text-green-500' };
-        else if (value.paymentStatus === 'waiting')
-            return { text: 'รอการชำระเงิน', color: ' text-blue-500' };
+        if (value.transportStatus && value.transportStatus === 'done')
+            return { text: 'ส่งแล้ว', color: ' text-green-500 ' };
+        else if (value.transportStatus && value.transportStatus === 'inTransit')
+            return { text: 'กำลังส่ง', color: ' text-orange-500 ' };
+        else if (value.transportStatus && value.transportStatus === 'prepare')
+            return { text: 'เตรียมส่ง', color: ' text-lightBlue-600 ' };
+        else if (value.paymentStatus && value.paymentStatus === 'done')
+            return { text: 'ชำระเงินแล้ว', color: ' text-lightBlue-500 ' };
+        else if (value.paymentStatus && value.paymentStatus === 'wait')
+            return { text: 'รอการชำระเงิน', color: ' text-yellow-500 ' };
+        else
+            return { text: '', color: ' text-gray-mbk ' };
     }
 
-    const onClickAttachment = (image) => {
+    const onClickAttachment = async (image) => {
         if (image) {
-            console.log(image);
+            const _image = await FilesService.buffer64UTF8(image)
+            setImage(_image);
+            setOpen(true);
         }
     }
 
@@ -57,43 +69,43 @@ const OrderTable = ({ orderList, openModal }) => {
                             .slice(pagesVisited, pagesVisited + usersPerPage)
                             .map(function (value, key) {
                                 return (
-                                    <tr key={key} className="cursor-pointer">
+                                    <tr key={key}>
                                         <td className={tdClass + ' text-center'} >
                                             <span className="px-4 margin-a">
                                                 {pagesVisited + key + 1}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer text-blue-500"} onClick={() => {
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
                                             openModal(value.id);
                                         }}>
-                                            <span className={tdSpan}>
+                                            <span className='text-blue-700'>
                                                 {value.orderNumber}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass} >
                                             <span className={tdSpan}>
-                                                {value.orderDate}
+                                                {moment(value.orderDate).format("DD/MM/YYYY HH:mm:ss") + ' น.'}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass} >
                                             <span className={tdSpan}>
                                                 {value.memberName}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass} >
                                             <span className={tdSpan}>
                                                 {value.sumPrice ?? 0} ฿
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
-                                            <span className={tdSpan + getStatus(value).color}>
+                                        <td className={tdClass} >
+                                            <span className={getStatus(value).color}>
                                                 {getStatus(value).text}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                        <td className={tdClass + (value.imageName ? ' cursor-pointer ' : '')} onClick={() => {
                                             onClickAttachment(value.image);
                                         }} >
-                                            <span className={tdSpan}>
+                                            <span className={(value.imageName ? ' text-blue-700' : tdSpan)}>
                                                 {value.imageName ?? 'ไม่มีไฟล์แนบ'}
                                             </span>
                                         </td>
@@ -131,6 +143,9 @@ const OrderTable = ({ orderList, openModal }) => {
                     </div>
                 </div>
             </div>
+            {open && (
+                <SlipModal open={open} image={image} handleModal={() => setOpen(false)} />
+            )}
         </>
     )
 }

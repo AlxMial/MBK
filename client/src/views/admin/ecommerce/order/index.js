@@ -11,6 +11,7 @@ import FilesService from "../../../../services/files";
 import { onSaveImage } from 'services/ImageService';
 import { useDispatch } from 'react-redux';
 import OrderList from './OrderList';
+import { EncodeKey } from 'services/default.service';
 
 const Order = () => {
     const dispatch = useDispatch();
@@ -37,10 +38,13 @@ const Order = () => {
                 let _orderData = response.data.tbOrderHD;
                 await axios.get("members").then(res => {
                     _orderData = _orderData.map(order => {
-                        const member = res.data.tbMember.find(
-                            member => member.id === order.memberId
+                        const member = res.data.tbMember.filter(
+                            member => member.id === EncodeKey(order.memberId)
                         );
-                        order.memberName = member[0].firstName + ' ' + member[0].lastName;
+                        if (member && member.length > 0) {
+                            order.memberName = member[0].firstName + ' ' + member[0].lastName;
+                        }
+                        return order;
                     })
                 });
                 setOrderList(_orderData);
