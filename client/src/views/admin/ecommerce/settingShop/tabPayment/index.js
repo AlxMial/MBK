@@ -30,11 +30,13 @@ const Payment = () => {
     const [paymentImage, setPaymentImage] = useState(_defaultImage);
 
     const fetchData = async () => {
+        dispatch(fetchLoading());
         await axios.get("payment").then((response) => {
             if (!response.data.error) {
                 setListPayment(response.data.tbPayment);
                 setListSearch(response.data.tbPayment);
             }
+            dispatch(fetchSuccess());
         });
     };
 

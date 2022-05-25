@@ -39,6 +39,7 @@ const Stock = () => {
     ]);
 
     const fetchData = async () => {
+        dispatch(fetchLoading());
         await axios.get("stock").then((response) => {
             if (!response.data.error && response.data.tbStock) {
                 let _stockData = response.data.tbStock;
@@ -56,6 +57,7 @@ const Stock = () => {
                 setListStock(_stockData)
                 setListSearch(_stockData);
             }
+            dispatch(fetchSuccess());
         });
     };
 

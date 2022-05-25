@@ -12,6 +12,7 @@ import { onSaveImage } from 'services/ImageService';
 import { useDispatch } from 'react-redux';
 import OrderList from './OrderList';
 import { EncodeKey } from 'services/default.service';
+import OrderDetail from './OrderDetail';
 
 const Order = () => {
     const dispatch = useDispatch();
@@ -19,6 +20,8 @@ const Order = () => {
     const [orderList, setOrderList] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
+    const [orderHD, setOrderHD] = useState({});
+    const [orderDT, setOrderDT] = useState([]);
 
     const _defaultImage = {
         id: null,
@@ -33,6 +36,7 @@ const Order = () => {
     const [orderImage, setOrderImage] = useState(_defaultImage);
 
     const fetchData = async () => {
+        dispatch(fetchLoading());
         await axios.get("order/orderHD").then(async (response) => {
             if (!response.data.error && response.data.tbOrderHD) {
                 let _orderData = response.data.tbOrderHD;
@@ -46,6 +50,7 @@ const Order = () => {
                         }
                         return order;
                     })
+                    dispatch(fetchSuccess());
                 });
                 setOrderList(_orderData);
                 setListSearch(_orderData);
@@ -77,12 +82,9 @@ const Order = () => {
     };
 
     const openModal = async (id) => {
-        formik.resetForm();
         const data = orderList.filter((x) => x.id === id);
         if (data && data.length > 0) {
-            for (const field in data[0]) {
-                formik.setFieldValue(field, data[0][field], false);
-            }
+
         }
         setOpen(true);
     }
@@ -99,86 +101,21 @@ const Order = () => {
         }));
     };
 
-    const formik = useFormik({
-        initialValues: {
-            id: "",
-            productName: '',
-            productCategoryId: '',
-            price: '',
-            discount: '',
-            discountType: 'baht',
-            productCount: '',
-            weight: '',
-            description: '',
-            descriptionPromotion: '',
-            isFlashSale: false,
-            startDateCampaign: '',
-            endDateCampaign: '',
-            startTimeCampaign: '',
-            endTimeCampaign: '',
-            isInactive: true,
-            isDeleted: false,
-            addBy: '',
-            updateBy: '',
-        },
-        validationSchema: yup.object({
-            productName: yup.string().required("* กรุณากรอก ชื่อสินค้า"),
-            productCategoryId: yup.string().required("* กรุณากรอก หมวดหมู่สินค้า"),
-            price: yup.string().required("* กรุณากรอก ราคา"),
-        }),
-        onSubmit: (values) => {
-            console.log('onSubmit', values);
-            dispatch(fetchLoading());
-            values.updateBy = localStorage.getItem('user');
-            if (values.id) {
-                axios.put("stock", values).then(async (res) => {
-                    console.log('res', res);
-                    if (res.data.status) {
-                        await saveImage(values.id);
-                        afterSaveSuccess();
-                    } else {
-                        dispatch(fetchSuccess());
-                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                            appearance: "warning",
-                            autoDismiss: true,
-                        });
-                    }
-                });
-            } else {
-                values.addBy = localStorage.getItem('user');
-                axios.post("stock", values).then(async (res) => {
-                    if (res.data.status) {
-                        await saveImage(res.data.tbStock.id);
-                        afterSaveSuccess();
-                    } else {
-                        dispatch(fetchSuccess());
-                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                            appearance: "warning",
-                            autoDismiss: true,
-                        });
-                    }
-                });
-            }
-
-        },
-    });
-
-    const afterSaveSuccess = () => {
-        fetchData();
-        setOpen(false);
-        dispatch(fetchSuccess());
-        addToast("บันทึกข้อมูลสำเร็จ",
-            { appearance: "success", autoDismiss: true }
-        );
+    const saveImage = async (id) => {
+        if (orderImage.image) {
+            orderImage.relatedId = id;
+            await onSaveImage(orderImage);
+        }
     }
 
-    const saveImage = async (id) => {
-        orderImage.forEach(async (item, index) => {
-            if (item.image) {
-                item.relatedId = id;
-                await onSaveImage(item);
-            }
-        });
+    const handleModal = async (value) => {
+        if (value === 'save') {
+            await saveImage(orderHD.id);
+        }
+    }
+
+    const handleExport = async () => {
+
     }
 
     return (
@@ -195,21 +132,17 @@ const Order = () => {
                             <div className="w-full lg:w-6/12">
                                 <InputSearchUC onChange={(e) => InputSearch(e.target.value)} />
                             </div>
-                            <div className={"w-full lg:w-6/12 text-right block"} >
-                                <ButtonModalUC onClick={() => openModal()}
-                                    label='เพิ่มรายการสั่งซื้อ' />
-                            </div>
                         </div>
                     </div>
                     <OrderList orderList={orderList} openModal={openModal} />
                 </div>
             </div>
-            {/* {open && <StockInfo
+            {open && <OrderDetail
                 open={open}
-                formik={formik}
                 handleChangeImage={handleChangeImage}
-                stockImage={stockImage}
-                handleModal={() => setOpen(false)} />} */}
+                orderImage={orderImage}
+                handleExport={handleExport}
+                handleModal={handleModal} />}
         </>
     )
 }

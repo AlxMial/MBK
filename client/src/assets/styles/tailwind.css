@@ -2157,6 +2157,10 @@ select {
   outline-offset: 2px;
 }
 
+.outline-gold-mbk {
+  outline: 1px solid #D0B027;
+}
+
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;

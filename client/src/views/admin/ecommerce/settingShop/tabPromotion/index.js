@@ -18,11 +18,13 @@ const Promotion = () => {
     const [open, setOpen] = useState(false);
 
     const fetchData = async () => {
+        dispatch(fetchLoading());
         await axios.get("promotionStore").then((response) => {
             if (!response.data.error) {
                 setListPromotion(response.data.tbPromotionStore);
                 setListSearch(response.data.tbPromotionStore);
             }
+            dispatch(fetchSuccess());
         });
     };
 
