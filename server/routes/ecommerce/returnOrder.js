@@ -2,24 +2,23 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
-const { validateToken } = require("../../../middlewares/AuthMiddleware");
-const { validateLineToken } = require("../../../middlewares/LineMiddleware");
+const { validateToken } = require("../../middlewares/AuthMiddleware");
+const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
-const { tbOrderHD } = require("../../../models");
-
 const Op = Sequelize.Op;
+const { tbReturnOrder } = require("../../models");
 
 router.post("/", validateToken, async (req, res) => {
-    const data = await tbOrderHD.create(req.body);
+    const data = await tbReturnOrder.create(req.body);
     res.json({
         status: true,
         message: "success",
-        tbOrderHD: data,
+        tbReturnOrder: data,
     });
 });
 
 router.get("/", validateToken, async (req, res) => {
-    const data = await tbOrderHD.findAll({
+    const data = await tbReturnOrder.findAll({
         where: { isDeleted: false },
         attributes: {
             include: [
@@ -28,50 +27,32 @@ router.get("/", validateToken, async (req, res) => {
                         select sum(price) from tbstocks t 
                             where id in (select stockId from tborderdts t2 
 				                            where isDeleted=0
-				                            and orderId = tbOrderHD.id)
+				                            and orderId = tbReturnOrder.orderId)
                     )`),
                     "sumPrice",
-                ],
-                [
-                    Sequelize.literal(`(
-                        select image from tbimages t
-                            where relatedId = tbOrderHD.id
-                            and relatedTable = 'order'
-                            and isDeleted = 0
-                    )`),
-                    "image",
-                ],
-                [
-                    Sequelize.literal(`(
-                        select imageName from tbimages t
-                            where relatedId = tbOrderHD.id
-                            and relatedTable = 'order'
-                            and isDeleted = 0
-                    )`),
-                    "imageName",
-                ],
+                ]
             ],
         },
     });
     res.json({
         status: true,
         message: "success",
-        tbOrderHD: data,
+        tbReturnOrder: data,
     });
 });
 
 router.get("/byId/:id", validateToken, async (req, res) => {
     const id = req.params.id;
-    const data = await tbOrderHD.findOne({ where: { id: id } });
+    const data = await tbReturnOrder.findOne({ where: { id: id } });
     res.json({
         status: true,
         message: "success",
-        tbOrderHD: data,
+        tbReturnOrder: data,
     });
 });
 
 router.put("/", validateToken, async (req, res) => {
-    const data = await tbOrderHD.findOne({
+    const data = await tbReturnOrder.findOne({
         where: {
             isDeleted: false,
             id: {
@@ -80,21 +61,21 @@ router.put("/", validateToken, async (req, res) => {
         },
     });
 
-    const dataUpdate = await tbOrderHD.update(req.body, {
+    const dataUpdate = await tbReturnOrder.update(req.body, {
         where: { id: req.body.id },
     });
     res.json({
         status: true,
         message: "success",
-        tbOrderHD: dataUpdate,
+        tbReturnOrder: dataUpdate,
     });
 });
 
 router.delete("/:id", validateToken, async (req, res) => {
     const id = req.params.id;
     req.body.isDeleted = true;
-    tbOrderHD.update(req.body, { where: { id: id } });
-    res.json({ status: true, message: "success", tbOrderHD: null });
+    tbReturnOrder.update(req.body, { where: { id: id } });
+    res.json({ status: true, message: "success", tbReturnOrder: null });
 });
 
 module.exports = router;

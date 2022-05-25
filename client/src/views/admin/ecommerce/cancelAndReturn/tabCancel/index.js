@@ -5,46 +5,32 @@ import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 import * as yup from "yup";
 import { useToasts } from "react-toast-notifications";
 import InputSearchUC from 'components/InputSearchUC';
-import ButtonModalUC from 'components/ButtonModalUC';
-import PageTitle from 'views/admin/PageTitle';
-import FilesService from "../../../../services/files";
-import { onSaveImage } from 'services/ImageService';
 import { useDispatch } from 'react-redux';
-import OrderList from './OrderList';
+import CancelList from './CancelList';
+import ConfirmDialog from '../ConfirmDialog';
 
-const Order = () => {
+const TabCancel = () => {
     const dispatch = useDispatch();
     const { addToast } = useToasts();
-    const [orderList, setOrderList] = useState([]);
+    const [listData, setListData] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
-
-    const _defaultImage = {
-        id: null,
-        image: null,
-        relatedId: null,
-        relatedTable: 'order',
-        isDeleted: false,
-        addBy: null,
-        updateBy: null,
-    }
-
-    const [orderImage, setOrderImage] = useState(_defaultImage);
+    const [cancelStatus, setCancelStatus] = useState(false);
 
     const fetchData = async () => {
-        await axios.get("order/orderHD").then(async (response) => {
-            if (!response.data.error && response.data.tbOrderHD) {
-                let _orderData = response.data.tbOrderHD;
+        await axios.get("cancelOrder").then(async (response) => {
+            if (!response.data.error && response.data.tbCancelOrder) {
+                let _cancelData = response.data.tbCancelOrder;
                 await axios.get("members").then(res => {
-                    _orderData = _orderData.map(order => {
+                    _cancelData = _cancelData.map(order => {
                         const member = res.data.tbMember.find(
                             member => member.id === order.memberId
                         );
                         order.memberName = member[0].firstName + ' ' + member[0].lastName;
                     })
                 });
-                setOrderList(_orderData);
-                setListSearch(_orderData);
+                setListData(_cancelData);
+                setListSearch(_cancelData);
             }
         });
     };
@@ -57,80 +43,45 @@ const Order = () => {
     const InputSearch = (e) => {
         e = e.toLowerCase();
         if (e === "") {
-            setOrderList(listSearch);
+            setListData(listSearch);
         } else {
-            setOrderList(
-                orderList.filter(
+            setListData(
+                listData.filter(
                     (x) =>
                         x.orderNumber.toLowerCase().includes(e) ||
                         x.orderDate.toLowerCase().includes(e) ||
                         x.memberName.toLowerCase().includes(e) ||
                         x.sumPrice.toString().toLowerCase().includes(e) ||
-                        x.imageName.toLowerCase().includes(e)
+                        x.status.toLowerCase().includes(e) ||
+                        x.cancelDetail.toLowerCase().includes(e) ||
+                        x.description.toLowerCase().includes(e)
                 )
             );
         }
     };
 
-    const openModal = async (id) => {
-        formik.resetForm();
-        const data = orderList.filter((x) => x.id === id);
-        if (data && data.length > 0) {
-            for (const field in data[0]) {
-                formik.setFieldValue(field, data[0][field], false);
-            }
-        }
-        setOpen(true);
-    }
-
-    const handleChangeImage = async (e) => {
-        e.preventDefault();
-        const base64 = await FilesService.convertToBase64(e.target.files[0]);
-        const index = parseInt(e.target.id.replace('file', ''));
-        setOrderImage(orderImage.map((x, i) => {
-            if ((i + 1) === index) {
-                return { ...x, image: base64 };
-            }
-            return x;
-        }));
-    };
-
     const formik = useFormik({
         initialValues: {
             id: "",
-            productName: '',
-            productCategoryId: '',
-            price: '',
-            discount: '',
-            discountType: 'baht',
-            productCount: '',
-            weight: '',
+            orderId: '',
+            cancelStatus: '',
+            cancelDetail: '',
             description: '',
-            descriptionPromotion: '',
-            isFlashSale: false,
-            startDateCampaign: '',
-            endDateCampaign: '',
-            startTimeCampaign: '',
-            endTimeCampaign: '',
-            isInactive: true,
             isDeleted: false,
             addBy: '',
             updateBy: '',
         },
-        validationSchema: yup.object({
-            productName: yup.string().required("* กรุณากรอก ชื่อสินค้า"),
-            productCategoryId: yup.string().required("* กรุณากรอก หมวดหมู่สินค้า"),
-            price: yup.string().required("* กรุณากรอก ราคา"),
-        }),
+        // validationSchema: yup.object({
+        //     description: yup.string().required("* กรุณากรอก รายละเอียด"),  
+        // }),
         onSubmit: (values) => {
             console.log('onSubmit', values);
             dispatch(fetchLoading());
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
-                axios.put("stock", values).then(async (res) => {
+                axios.put("cancelOrder", values).then(async (res) => {
                     console.log('res', res);
                     if (res.data.status) {
-                        await saveImage(values.id);
                         afterSaveSuccess();
                     } else {
                         dispatch(fetchSuccess());
@@ -142,9 +93,8 @@ const Order = () => {
                 });
             } else {
                 values.addBy = localStorage.getItem('user');
-                axios.post("stock", values).then(async (res) => {
+                axios.post("cancelOrder", values).then(async (res) => {
                     if (res.data.status) {
-                        await saveImage(res.data.tbStock.id);
                         afterSaveSuccess();
                     } else {
                         dispatch(fetchSuccess());
@@ -159,6 +109,21 @@ const Order = () => {
         },
     });
 
+    const handleChangeStatus = (row, status) => {
+        console.log('row', row);
+        setCancelStatus(status);
+        setOpen(true);
+    }
+
+    const handleModal = (data) => {
+        if (data === 'save') {
+            formik.setFieldValue('cancelStatus', cancelStatus);
+            formik.handleSubmit();
+        } else {
+            fetchData();
+        }
+    }
+
     const afterSaveSuccess = () => {
         fetchData();
         setOpen(false);
@@ -168,18 +133,9 @@ const Order = () => {
         );
     }
 
-    const saveImage = async (id) => {
-        orderImage.forEach(async (item, index) => {
-            if (item.image) {
-                item.relatedId = id;
-                await onSaveImage(item);
-            }
-        });
-    }
-
     return (
         <>
-            <PageTitle page='order' />
+            {/* <PageTitle page='order' /> */}
             <div className="w-full">
                 <div
                     className={
@@ -191,23 +147,22 @@ const Order = () => {
                             <div className="w-full lg:w-6/12">
                                 <InputSearchUC onChange={(e) => InputSearch(e.target.value)} />
                             </div>
-                            <div className={"w-full lg:w-6/12 text-right block"} >
-                                <ButtonModalUC onClick={() => openModal()}
-                                    label='เพิ่มรายการสั่งซื้อ' />
-                            </div>
                         </div>
                     </div>
-                    <OrderList orderList={orderList} openModal={openModal} />
+                    <CancelList listData={listData} handleChangeStatus={handleChangeStatus} />
                 </div>
             </div>
-            {/* {open && <StockInfo
-                open={open}
-                formik={formik}
-                handleChangeImage={handleChangeImage}
-                stockImage={stockImage}
-                handleModal={() => setOpen(false)} />} */}
+            {open && (
+                <ConfirmDialog
+                    open={open}
+                    formik={formik}
+                    status={cancelStatus}
+                    handleModal={() => handleModal}
+                    type="cancel"
+                />
+            )}
         </>
     )
 }
 
-export default Order
+export default TabCancel
