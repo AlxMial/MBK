@@ -30,13 +30,16 @@ const Stock = () => {
         updateBy: null,
     }
 
-    const [stockImage, setStockImage] = useState([
+    const _arrDefaultImage = [
         _defaultImage,
         { ..._defaultImage, relatedTable: 'stock2' },
         { ..._defaultImage, relatedTable: 'stock3' },
         { ..._defaultImage, relatedTable: 'stock4' },
         { ..._defaultImage, relatedTable: 'stock5' },
-    ]);
+    ];
+
+    const [stockImage, setStockImage] = useState(_arrDefaultImage);
+    const [isImageCoverNull, setIsImageCoverNull] = useState(false);
 
     const fetchData = async () => {
         dispatch(fetchLoading());
@@ -87,6 +90,7 @@ const Stock = () => {
 
     const openModal = async (id) => {
         formik.resetForm();
+        setStockImage(_arrDefaultImage);
         const data = listStock.filter((x) => x.id === id);
         if (data && data.length > 0) {
             for (const field in data[0]) {
@@ -99,9 +103,10 @@ const Stock = () => {
     }
 
     const getStockImage = async (id) => {
+        dispatch(fetchLoading());
         const res = await axios.get(`image/getAllByRelated/${id}/stock`);
+        let _stockImage = [..._arrDefaultImage];
         if (res && res.data.tbImage && res.data.tbImage.length > 0) {
-            let _stockImage = stockImage;
             res.data.tbImage.map((item) => {
                 const base64 = FilesService.buffer64UTF8(item.image)
                 _stockImage = _stockImage.map((x) => {
@@ -111,12 +116,16 @@ const Stock = () => {
                     return x;
                 })
             });
-            setStockImage(_stockImage);
         }
+        setStockImage(_stockImage);
+        dispatch(fetchSuccess());
     }
+
+    console.log(stockImage);
 
     const handleChangeImage = async (e) => {
         e.preventDefault();
+        dispatch(fetchLoading());
         const base64 = await FilesService.convertToBase64(e.target.files[0]);
         const index = parseInt(e.target.id.replace('file', ''));
         setStockImage(stockImage.map((x, i) => {
@@ -125,6 +134,10 @@ const Stock = () => {
             }
             return x;
         }));
+        if (index === 1) {
+            setIsImageCoverNull(false);
+        }
+        dispatch(fetchSuccess());
     };
 
     const formik = useFormik({
@@ -157,37 +170,42 @@ const Stock = () => {
         onSubmit: (values) => {
             console.log('onSubmit', values);
             dispatch(fetchLoading());
-            values.updateBy = localStorage.getItem('user');
-            if (values.id) {
-                axios.put("stock", values).then(async (res) => {
-                    console.log('res', res);
-                    if (res.data.status) {
-                        await saveImage(values.id);
-                        afterSaveSuccess();
-                    } else {
-                        dispatch(fetchSuccess());
-                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                            appearance: "warning",
-                            autoDismiss: true,
-                        });
-                    }
-                });
+            const cover = stockImage.filter((x) => x.relatedTable === 'stock1')[0].image;
+            if (!cover) {
+                setIsImageCoverNull(true);
+                dispatch(fetchSuccess());
             } else {
-                values.addBy = localStorage.getItem('user');
-                axios.post("stock", values).then(async (res) => {
-                    if (res.data.status) {
-                        await saveImage(res.data.tbStock.id);
-                        afterSaveSuccess();
-                    } else {
-                        dispatch(fetchSuccess());
-                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                            appearance: "warning",
-                            autoDismiss: true,
-                        });
-                    }
-                });
+                values.updateBy = localStorage.getItem('user');
+                if (values.id) {
+                    axios.put("stock", values).then(async (res) => {
+                        console.log('res', res);
+                        if (res.data.status) {
+                            await saveImage(values.id);
+                            afterSaveSuccess();
+                        } else {
+                            dispatch(fetchSuccess());
+                            addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                                appearance: "warning",
+                                autoDismiss: true,
+                            });
+                        }
+                    });
+                } else {
+                    values.addBy = localStorage.getItem('user');
+                    axios.post("stock", values).then(async (res) => {
+                        if (res.data.status) {
+                            await saveImage(res.data.tbStock.id);
+                            afterSaveSuccess();
+                        } else {
+                            dispatch(fetchSuccess());
+                            addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                                appearance: "warning",
+                                autoDismiss: true,
+                            });
+                        }
+                    });
+                }
             }
-
         },
     });
 
@@ -240,6 +258,7 @@ const Stock = () => {
                 open={open}
                 formik={formik}
                 handleChangeImage={handleChangeImage}
+                isImageCoverNull={isImageCoverNull}
                 stockImage={stockImage}
                 handleModal={() => setOpen(false)} />}
         </>

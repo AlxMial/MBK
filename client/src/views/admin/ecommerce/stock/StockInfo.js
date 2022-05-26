@@ -24,7 +24,7 @@ import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 import ModalHeader from "views/admin/ModalHeader";
 
-const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage }) => {
+const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, isImageCoverNull = false }) => {
   Modal.setAppElement("#root");
 
   const discountList = [
@@ -153,16 +153,28 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
                       <div className="relative w-full px-4 flex">
                         {stockImage.map((item, i) => {
                           return (
-                            <ProfilePictureUC
-                              className='pr-4'
-                              key={i + 1}
-                              id={i + 1}
-                              hoverText='เลือกรูปสินค้า'
-                              src={item.image}
-                              onChange={handleChangeImage} />
+                            <div key={i + 1} className='flex justify-center flex-col'>
+                              <ProfilePictureUC
+                                className='pr-4'
+                                id={i + 1}
+                                hoverText='เลือกรูปสินค้า'
+                                src={item.image}
+                                onChange={handleChangeImage} />
+                              <LabelUC
+                                moreClassName='text-center mt-2 pr-4'
+                                label={i == 0 ? 'รูปปกสินค้า' : ('รูปสินค้า ' + (i + 1))}
+                                isRequired={i === 0} />
+                            </div>
                           )
                         })}
                       </div>
+                      {isImageCoverNull && (
+                        <div className="relative w-full px-4">
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            กรุณาเลือก รูปปกสินค้า
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex flex-wrap mt-4">

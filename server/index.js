@@ -70,6 +70,8 @@ const payment = require('./routes/ecommerce/payment');
 app.use("/mbkserver/payment", payment);
 const orderHD = require('./routes/ecommerce/order/orderHD');
 app.use("/mbkserver/order/orderHD", orderHD);
+const orderDT = require('./routes/ecommerce/order/orderDT');
+app.use("/mbkserver/order/orderDT", orderDT);
 const cancelOrder = require('./routes/ecommerce/cancelOrder');
 app.use("/mbkserver/cancelOrder", cancelOrder);
 const returnOrder = require('./routes/ecommerce/returnOrder');

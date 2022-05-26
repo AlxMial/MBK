@@ -22,21 +22,12 @@ const Order = () => {
     const [open, setOpen] = useState(false);
     const [orderHD, setOrderHD] = useState({});
     const [orderDT, setOrderDT] = useState([]);
-
-    const _defaultImage = {
-        id: null,
-        image: null,
-        relatedId: null,
-        relatedTable: 'order',
-        isDeleted: false,
-        addBy: null,
-        updateBy: null,
-    }
-
-    const [orderImage, setOrderImage] = useState(_defaultImage);
+    const [orderImage, setOrderImage] = useState(null);
+    const [memberData, setMemberData] = useState(null);
 
     const fetchData = async () => {
         dispatch(fetchLoading());
+        setOrderImage(null);
         await axios.get("order/orderHD").then(async (response) => {
             if (!response.data.error && response.data.tbOrderHD) {
                 let _orderData = response.data.tbOrderHD;
@@ -47,6 +38,8 @@ const Order = () => {
                         );
                         if (member && member.length > 0) {
                             order.memberName = member[0].firstName + ' ' + member[0].lastName;
+                            order.phone = member[0].phone;
+                            setMemberData(member[0]);
                         }
                         return order;
                     })
@@ -82,35 +75,42 @@ const Order = () => {
     };
 
     const openModal = async (id) => {
+        dispatch(fetchLoading());
         const data = orderList.filter((x) => x.id === id);
         if (data && data.length > 0) {
-
-        }
-        setOpen(true);
-    }
-
-    const handleChangeImage = async (e) => {
-        e.preventDefault();
-        const base64 = await FilesService.convertToBase64(e.target.files[0]);
-        const index = parseInt(e.target.id.replace('file', ''));
-        setOrderImage(orderImage.map((x, i) => {
-            if ((i + 1) === index) {
-                return { ...x, image: base64 };
+            setOrderHD(data[0]);
+            const res = await axios.get("order/orderDT/byOrderId/" + id);
+            if (!res.data.error && res.data.tbOrderDT) {
+                const _orderDT = res.data.tbOrderDT;
+                setOrderDT(_orderDT.map((x) => {
+                    if (x.image) {
+                        const base64 = FilesService.buffer64UTF8(x.image);
+                        return { ...x, image: base64 };
+                    }
+                    return x;
+                }));
             }
-            return x;
-        }));
-    };
 
-    const saveImage = async (id) => {
-        if (orderImage.image) {
-            orderImage.relatedId = id;
-            await onSaveImage(orderImage);
+            const _orderImage = await axios.get(`image/byRelated/${id}/order`);
+            if (_orderImage && _orderImage.data.tbImage) {
+                const image = FilesService.buffer64UTF8(_orderImage.data.tbImage.image)
+                setOrderImage(image);
+            }
+
+            dispatch(fetchSuccess());
+            setOpen(true);
+        } else {
+            dispatch(fetchSuccess());
         }
     }
 
     const handleModal = async (value) => {
         if (value === 'save') {
-            await saveImage(orderHD.id);
+            console.log('save');
+            setOpen(false);
+            // await saveImage(orderHD.id);
+        } else {
+            setOpen(false);
         }
     }
 
@@ -139,8 +139,10 @@ const Order = () => {
             </div>
             {open && <OrderDetail
                 open={open}
-                handleChangeImage={handleChangeImage}
                 orderImage={orderImage}
+                orderHD={orderHD}
+                orderDT={orderDT}
+                memberData={memberData}
                 handleExport={handleExport}
                 handleModal={handleModal} />}
         </>
