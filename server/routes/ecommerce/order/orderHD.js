@@ -66,6 +66,15 @@ router.get("/", validateToken, async (req, res) => {
                     )`),
                     "logisticType",
                 ],
+                [
+                    Sequelize.literal(`(
+                        select sum(weight) from tbstocks t 
+                            where id in (select stockId from tborderdts t2 
+				                            where t2.isDeleted=0
+				                            and t2.orderId = tbOrderHD.id)
+                    )`),
+                    "sumWeight",
+                ],
             ],
         },
     });

@@ -1,11 +1,11 @@
 import React from 'react'
 
-const TextAreaUC = ({ type = 'text', row = '5', name, onChange, onBlur, value, disabled }) => {
+const TextAreaUC = ({ type = 'text', rows = '5', name, onChange, onBlur, value, disabled }) => {
     return (
         <textarea
             type={type}
             className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-            rows={row}
+            rows={rows}
             id={name}
             name={name}
             onChange={onChange}

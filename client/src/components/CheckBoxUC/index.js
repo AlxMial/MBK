@@ -9,6 +9,7 @@ const CheckBoxUC = ({
   classCheckBox,
   classLabel,
   classSpan,
+  disabled = false,
 }) => {
   return (
     <label className={"inline-flex items-center cursor-pointer  float-left " + classLabel}>
@@ -22,6 +23,7 @@ const CheckBoxUC = ({
         onChange={onChange}
         onBlur={onBlur}
         checked={checked}
+        disabled={disabled}
       />
       <span className={"ml-2 text-sm font-semibold text-blueGray-600 text-left " + classSpan}>
         {text}

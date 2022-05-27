@@ -124,12 +124,12 @@ const PurchaseOrder = ({ props }) => {
 
                                 </span>
                             </td>
-                            <td className={tdClass + ' text-right border-b'}>
+                            <td className={tdClass + ' text-right ' + (sumDiscount > 0 ? '' : 'border-b')}>
                                 <span className={footerClass}>
                                     ค่าจัดส่ง
                                 </span>
                             </td>
-                            <td className={tdClass + ' text-right border-b'}>
+                            <td className={tdClass + ' text-right ' + (sumDiscount > 0 ? '' : 'border-b')}>
                                 <span className={footerClass}>
                                     {orderHD.deliveryCost === 0 ? 'ฟรี' : ('฿' + orderHD.deliveryCost)}
                                 </span>

@@ -345,7 +345,7 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                     <div className="w-full lg:w-8/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <TextAreaUC
-                          row={3}
+                          rows={3}
                           name='description'
                           onBlur={formik.handleBlur}
                           value={formik.values.description}
@@ -364,7 +364,7 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                     <div className="w-full lg:w-8/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <TextAreaUC
-                          row={3}
+                          rows={3}
                           name='descriptionPromotion'
                           onBlur={formik.handleBlur}
                           value={formik.values.descriptionPromotion}

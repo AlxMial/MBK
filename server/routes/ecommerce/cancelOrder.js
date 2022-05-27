@@ -51,6 +51,17 @@ router.get("/byId/:id", validateToken, async (req, res) => {
     });
 });
 
+router.get("/byOrderId/:id", validateToken, async (req, res) => {
+    const id = req.params.id;
+    const data = await tbCancelOrder.findOne({ where: { orderId: id } });
+    res.json({
+        status: true,
+        message: "success",
+        tbCancelOrder: data,
+    });
+});
+
+
 router.put("/", validateToken, async (req, res) => {
     const data = await tbCancelOrder.findOne({
         where: {
