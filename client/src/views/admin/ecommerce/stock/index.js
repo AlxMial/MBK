@@ -121,8 +121,6 @@ const Stock = () => {
         dispatch(fetchSuccess());
     }
 
-    console.log(stockImage);
-
     const handleChangeImage = async (e) => {
         e.preventDefault();
         dispatch(fetchLoading());

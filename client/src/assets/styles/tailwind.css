@@ -3753,10 +3753,13 @@ input[type=tel]:disabled  {
 }
 
 
-s, strike{text-decoration:none;position:relative;}
-s::before, strike::before {
-    top: 50%; /*tweak this to adjust the vertical position if it's off a bit due to your font family */
-    background: gray; /*this is the color of the line*/
+s, strike{
+  text-decoration:line-through;
+  position:relative;
+}
+/* s::before, strike::before {
+    top: 50%;
+    background: gray;
     opacity:.7;
     content: '';
     width: 110%;
@@ -3767,8 +3770,8 @@ s::before, strike::before {
     white-space:nowrap;
     display: block;
     transform: rotate(-15deg);  
-}
-s.straight::before, strike.straight::before{transform: rotate(0deg);left:-1%;width:102%;}
+} */
+/* s.straight::before, strike.straight::before{transform: rotate(0deg);left:-1%;width:102%;} */
 
 /*Ant Tabs*/
 .ant-tabs-tab {

@@ -4,19 +4,18 @@ import './index.scss'
 
 const PurchaseOrder = ({ props }) => {
     const thClass = "px-2  py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
-    const tdClass = "border-t-0 px-2 align-middle border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
+    const tdClass = "border-t-0 px-2 align-middle border-l-0 border-r-0 p-3 text-sm whitespace-normal";
     const tdSpan = "text-gray-mbk hover:text-gray-mbk ";
     const footerClass = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
     const footerSumPrice = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-green-mbk ";
-    const totalClass = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-green-mbk ";
     const { orderHD, orderDT } = props;
 
     const sumPrice = orderDT.reduce((sum, item) => {
-        return sum + item.stockPrice * item.amount;
+        return parseFloat(sum) + ((parseFloat(item.price) + parseFloat(item.discount)) * parseFloat(item.amount));
     }, 0);
 
     const sumDiscount = orderDT.reduce((sum, item) => {
-        return sum + parseFloat(item.discount);
+        return parseFloat(sum) + parseFloat(item.discount);
     }, 0);
 
     return (
@@ -72,18 +71,18 @@ const PurchaseOrder = ({ props }) => {
                                                 <div className="flex flex-col">
                                                     <div>
                                                         <strike className='text-gray-300 straight'>
-                                                            ฿{(value.stockPrice).toLocaleString('en')}
+                                                            ฿{(parseFloat(parseFloat(value.price) + parseFloat(value.discount)).toFixed(2)).toLocaleString('en')}
                                                         </strike>
                                                     </div>
                                                     <div className='text-red-500'>
-                                                        ฿{(value.price).toLocaleString('en')}
+                                                        ฿{parseFloat(parseFloat(value.price).toFixed(2)).toLocaleString('en')}
                                                     </div>
                                                 </div>
                                             </td>
                                         ) : (
                                             <td className={tdClass + ' text-right'}>
                                                 <span className={tdSpan}>
-                                                    ฿{(value.price).toLocaleString('en')}
+                                                    ฿{parseFloat(value.price).toFixed(2).toLocaleString('en')}
                                                 </span>
                                             </td>
                                         )}
@@ -110,7 +109,7 @@ const PurchaseOrder = ({ props }) => {
                             </td>
                             <td className={tdClass + ' text-right'}>
                                 <span className={footerSumPrice}>
-                                    ฿{(sumPrice).toLocaleString('en')}
+                                    ฿{parseFloat(sumPrice.toFixed(2)).toLocaleString('en')}
                                 </span>
                             </td>
                         </tr>
@@ -156,7 +155,7 @@ const PurchaseOrder = ({ props }) => {
                                     </td>
                                     <td className={tdClass + ' text-right border-b'}>
                                         <span className="py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-red-500 ">
-                                            -฿{(sumDiscount).toLocaleString('en')}
+                                            -฿{parseFloat((sumDiscount.toFixed(2))).toLocaleString('en')}
                                         </span>
                                     </td>
                                 </tr>
@@ -177,7 +176,7 @@ const PurchaseOrder = ({ props }) => {
                                 <LabelUC label='รวมทั้งสิ้น' />
                             </td>
                             <td className={tdClass + ' text-right border-b'}>
-                                <LabelUC label={'฿' + (orderHD.deliveryCost + sumPrice - sumDiscount).toLocaleString('en')} />
+                                <LabelUC label={'฿' + parseFloat(parseFloat(orderHD.deliveryCost + sumPrice - sumDiscount).toFixed(2)).toLocaleString('en')} />
                             </td>
                         </tr>
                     </tfoot>

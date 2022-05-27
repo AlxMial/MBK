@@ -12,13 +12,13 @@ const Logistic = ({ props }) => {
 
     const getStatus = (value) => {
         if (value && value === 'done')
-            return { text: 'ส่งแล้ว', bg: ' bg-green-200 ' };
+            return { text: 'ส่งแล้ว', bg: ' rgba(188, 240, 218, 1) ' };
         else if (value && value === 'inTransit')
-            return { text: 'กำลังส่ง', bg: ' bg-orange-200 ' };
+            return { text: 'กำลังส่ง', bg: ' rgba(252, 217, 189,1) ' };
         else if (value && value === 'prepare')
-            return { text: 'เตรียมส่ง', bg: ' bg-lightBlue-300 ' };
+            return { text: 'เตรียมส่ง', bg: ' rgba(125, 211, 252,1) ' };
         else
-            return { text: '', bg: ' bg-lightBlue-300 ' };
+            return { text: '', bg: ' rgba(125, 211, 252,1) ' };
     }
 
     const logisticTypeList = [
@@ -51,7 +51,7 @@ const Logistic = ({ props }) => {
                     <div className='py-2 margin-auto-t-b '>
                         <LabelUC label={logisticTypeList.filter(e => e.value === orderHD.logisticType)[0]?.label} />
                     </div>
-                    <div className={'p-2 rounded ' + getStatus(transportStatus).bg}>
+                    <div className={'p-2 rounded '}>
                         {/* <div>{getStatus(orderHD).text}</div> */}
                         <SelectUC
                             name="transportType"
@@ -63,6 +63,7 @@ const Logistic = ({ props }) => {
                                 options,
                                 transportStatus
                             )}
+                            bgColor={getStatus(transportStatus).bg}
                         />
                     </div>
                 </div>

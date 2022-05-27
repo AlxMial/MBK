@@ -39,8 +39,8 @@ const OrderDetail = ({ open, handleModal, orderHD, orderDT, memberData, orderIma
                 <div className="flex flex-wrap">
                     <div className="w-full flex-auto mt-2">
                         <ModalHeader title="รายละเอียดการสั่งซื้อ" handleModal={() => handleModal('close')} />
-                        <div className="flex flex-wrap justify-center">
-                            <div className="w-full p-4 margin-auto-t-b flex flex-wrap Overflow-info">
+                        <div className="flex flex-wrap justify-center  Overflow-info">
+                            <div className="w-full p-4 margin-auto-t-b flex flex-wrap ">
                                 <div className="w-full lg:w-8/12 px-4  flex flex-col">
                                     <div className="w-full">
                                         <LabelUC label='รายการคำสั่งซื้อ' moreClassName='border-b py-2' />
@@ -68,8 +68,8 @@ const OrderDetail = ({ open, handleModal, orderHD, orderDT, memberData, orderIma
                                     </div>
                                 </div>
                             </div>
+                            <ButtonUCSaveModal showExport={true} exportBtnLabel='Export คำสั่งซื้อ' handleExport={handleExport} />
                         </div>
-                        <ButtonUCSaveModal showExport={true} exportBtnLabel='Export คำสั่งซื้อ' handleExport={handleExport} />
                     </div>
                 </div>
             </form>
