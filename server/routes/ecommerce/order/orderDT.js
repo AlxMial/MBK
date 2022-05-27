@@ -97,7 +97,7 @@ router.get("/byOrderId/:id", validateToken, async (req, res) => {
                             where id = tbOrderDT.stockId
                             and isDeleted = 0
                     )`),
-                    "price",
+                    "stockPrice",
                 ],
             ],
         },

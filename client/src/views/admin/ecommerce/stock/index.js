@@ -147,7 +147,7 @@ const Stock = () => {
             productCategoryId: '',
             price: '',
             discount: '',
-            discountType: 'baht',
+            discountType: 'THB',
             productCount: '',
             weight: '',
             description: '',

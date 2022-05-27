@@ -12,7 +12,11 @@ const PurchaseOrder = ({ props }) => {
     const { orderHD, orderDT } = props;
 
     const sumPrice = orderDT.reduce((sum, item) => {
-        return sum + item.price * item.amount;
+        return sum + item.stockPrice * item.amount;
+    }, 0);
+
+    const sumDiscount = orderDT.reduce((sum, item) => {
+        return sum + parseFloat(item.discount);
     }, 0);
 
     return (
@@ -57,18 +61,32 @@ const PurchaseOrder = ({ props }) => {
                                                     {value.description}
                                                 </div>
                                             </div>
-
                                         </td>
                                         <td className={tdClass + ' text-right'}>
                                             <span className={tdSpan}>
                                                 {value.amount}
                                             </span>
                                         </td>
-                                        <td className={tdClass + ' text-right'}>
-                                            <span className={tdSpan}>
-                                                ฿{value.price}
-                                            </span>
-                                        </td>
+                                        {value.discount > 0 ? (
+                                            <td className={tdClass + ' margin-auto-t-b text-right'}>
+                                                <div className="flex flex-col">
+                                                    <div>
+                                                        <strike className='text-gray-300 straight'>
+                                                            ฿{(value.stockPrice).toLocaleString('en')}
+                                                        </strike>
+                                                    </div>
+                                                    <div className='text-red-500'>
+                                                        ฿{(value.price).toLocaleString('en')}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        ) : (
+                                            <td className={tdClass + ' text-right'}>
+                                                <span className={tdSpan}>
+                                                    ฿{(value.price).toLocaleString('en')}
+                                                </span>
+                                            </td>
+                                        )}
                                     </tr>
                                 );
                             })}
@@ -92,7 +110,7 @@ const PurchaseOrder = ({ props }) => {
                             </td>
                             <td className={tdClass + ' text-right'}>
                                 <span className={footerSumPrice}>
-                                    ฿{sumPrice}
+                                    ฿{(sumPrice).toLocaleString('en')}
                                 </span>
                             </td>
                         </tr>
@@ -118,6 +136,32 @@ const PurchaseOrder = ({ props }) => {
                                 </span>
                             </td>
                         </tr>
+                        {
+                            sumDiscount > 0 && (
+                                <tr>
+                                    <td className={thClass}>
+                                        <span className={tdSpan}>
+
+                                        </span>
+                                    </td>
+                                    <td className={thClass}>
+                                        <span className={tdSpan}>
+
+                                        </span>
+                                    </td>
+                                    <td className={tdClass + ' text-right border-b'}>
+                                        <span className={footerClass}>
+                                            ส่วนลด
+                                        </span>
+                                    </td>
+                                    <td className={tdClass + ' text-right border-b'}>
+                                        <span className="py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-red-500 ">
+                                            -฿{(sumDiscount).toLocaleString('en')}
+                                        </span>
+                                    </td>
+                                </tr>
+                            )
+                        }
                         <tr>
                             <td className={thClass}>
                                 <span className={tdSpan}>
@@ -133,7 +177,7 @@ const PurchaseOrder = ({ props }) => {
                                 <LabelUC label='รวมทั้งสิ้น' />
                             </td>
                             <td className={tdClass + ' text-right border-b'}>
-                                <LabelUC label={'฿' + (orderHD.deliveryCost + sumPrice)} />
+                                <LabelUC label={'฿' + (orderHD.deliveryCost + sumPrice - sumDiscount).toLocaleString('en')} />
                             </td>
                         </tr>
                     </tfoot>

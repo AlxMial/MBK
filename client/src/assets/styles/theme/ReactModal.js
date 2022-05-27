@@ -13,6 +13,7 @@ export const customStyles = (width = '') => ({
     border: "1px solid #047a40",
     //   height:"80vh",
     width: width ? width : "65vw",
+    maxWidth: "75vw",
   }, overlay: { zIndex: 100, backgroundColor: 'rgba(70, 70, 70, 0.5)', }
 });
 

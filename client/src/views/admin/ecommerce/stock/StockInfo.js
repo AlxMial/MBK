@@ -28,7 +28,7 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
   Modal.setAppElement("#root");
 
   const discountList = [
-    { value: 'baht', label: 'บาท' },
+    { value: 'THB', label: 'บาท' },
     { value: 'percent', label: '%' },
   ]
 
