@@ -97,13 +97,15 @@ router.post("/", validateToken, async (req, res) => {
   if (!RedemptionConditionsHD) {
     const redemption = await tbRedemptionConditionsHD.create(req.body);
     if (redemption) {
-      req.body.coupon.expiredDate = (req.body.coupon.isNotExpired) ? null : req.body.coupon.expiredDate ;
+
       let coupon = null;
       let product = null;
       if (redemption.rewardType === "1") {
+        req.body.coupon.expiredDate = (req.body.coupon.isNotExpired) ? null : req.body.coupon.expiredDate ;
         req.body.coupon["redemptionConditionsHDId"] = redemption.dataValues.id;
         coupon = await tbRedemptionCoupon.create(req.body.coupon);
       } else if (redemption.rewardType === "2") {
+        req.body.product.isNoLimitReward = (req.body.product.isNoLimitReward) ? null : req.body.product.rewardCount ;
         req.body.product["redemptionConditionsHDId"] = redemption.dataValues.id;
         product = await tbRedemptionProduct.create(req.body.product);
       }
@@ -162,14 +164,16 @@ router.put("/", validateToken, async (req, res) => {
       where: { id: req.body.id },
     });
     if (redemption) {
-      req.body.coupon.expiredDate = (req.body.coupon.isNotExpired) ? null : req.body.coupon.expiredDate ;
       let coupon = null;
       let product = null;
       if (req.body.rewardType === "1") {
+        req.body.coupon.expiredDate = (req.body.coupon.isNotExpired) ? null : req.body.coupon.expiredDate ;
         coupon = await tbRedemptionCoupon.update(req.body.coupon, {
           where: { id: req.body.coupon.id },
         });
+
       } else if (req.body.rewardType === "2") {
+        req.body.product.rewardCount = (req.body.product.isNoLimitReward) ? null : req.body.product.rewardCount ;
         product = await tbRedemptionProduct.update(req.body.product, {
           where: { id: req.body.product.id },
         });

@@ -37,7 +37,7 @@ const StandardCoupon = ({ formik }) => {
 
   return (
     <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg ">
-      <div className="flex-auto lg:px-8 py-10">
+      <div className="flex-auto lg:px-8 py-6">
         <div className="flex flex-wrap">
           <div className="w-full lg:w-1/12 margin-auto-t-b">
             <div className="relative w-full">
@@ -237,8 +237,8 @@ const StandardCoupon = ({ formik }) => {
                 value={formik.values.couponCount}
                 onChange={(e) => {
                   //   formik.handleChange(e);
-                  setDelay(ValidateService.onHandleScore(e));
-                  formik.values.couponCount = ValidateService.onHandleScore(e);
+                  setDelay(ValidateService.onHandleNumber(e));
+                  formik.values.couponCount = ValidateService.onHandleNumber(e);
                 }}
                 min="0"
               />
@@ -270,8 +270,8 @@ const StandardCoupon = ({ formik }) => {
                 value={formik.values.usedPerDayCount}
                 onChange={(e) => {
                 //   formik.handleChange(e);
-                  setDelay(ValidateService.onHandleScore(e));
-                  formik.values.usedPerDayCount = ValidateService.onHandleScore(e);
+                  setDelay(ValidateService.onHandleNumber(e));
+                  formik.values.usedPerDayCount = ValidateService.onHandleNumber(e);
                 }}
                 min="0"
               />

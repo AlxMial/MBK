@@ -2,33 +2,34 @@ import React, { useState } from "react";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import "antd/dist/antd.css";
-import moment from "moment";
 import "moment/locale/th";
-import { Space, Radio } from "antd";
 import InputUC from "components/InputUC";
 import LabelUC from "components/LabelUC";
-import DatePickerUC from "components/DatePickerUC";
 import ProfilePictureUC from "components/ProfilePictureUC";
 import CheckBoxUC from "components/CheckBoxUC";
 import TextAreaUC from "components/InputUC/TextAreaUC";
+import FilesService from "../../../../services/files";
+import ValidateService from "services/validateValue";
 
-const StandardProduct = ({ formik, handleChangeImage }) => {
+const StandardProduct = ({ formik }) => {
   const { width } = useWindowDimensions();
-  const [isCancel, setIsCancel] = useState(false);
-  const [isClick, setIsClick] = useState({
-    couponStart: false,
-    couponEnd: false,
-    expireDate: false,
-  });
+  const [delay, setDelay] = useState();
+
+  const handleChangeImage = async (e) => {
+    const image = document.getElementById("eProductImage");
+    image.src = URL.createObjectURL(e.target.files[0]);
+    const base64 = await FilesService.convertToBase64(e.target.files[0]);
+    formik.setFieldValue("pictureProduct", base64);
+  };
 
   return (
     <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg ">
-      <div className="flex-auto lg:px-8 py-10">
+      <div className="flex-auto lg:px-8 py-6">
         <div className="flex flex-wrap">
           <div className="w-full lg:w-1/12 margin-auto-t-b">
             <div className="relative w-full">
               <LabelUC label="รูปสินค้าสัมนาคุณ" isRequired={true} />
-              {formik.touched.pictureCoupon && formik.errors.pictureCoupon ? (
+              {formik.touched.pictureProduct && formik.errors.pictureProduct ? (
                 <div className="text-sm py-2 px-2 text-red-500">&nbsp;</div>
               ) : null}
             </div>
@@ -36,14 +37,15 @@ const StandardProduct = ({ formik, handleChangeImage }) => {
           <div className="w-full lg:w-11/12 margin-auto-t-b">
             <div className="relative w-full px-4">
               <ProfilePictureUC
-                id="eCouponImage"
+                id="eProductImage"
                 hoverText="เลือกรูปสินค้าสัมนาคุณ"
                 onChange={handleChangeImage}
+                src={formik.values.pictureProduct}
               />
 
-              {formik.touched.pictureCoupon && formik.errors.pictureCoupon ? (
+              {formik.touched.pictureProduct && formik.errors.pictureProduct ? (
                 <div className="text-sm py-2 px-2  text-red-500">
-                  {formik.errors.pictureCoupon}
+                  {formik.errors.pictureProduct}
                 </div>
               ) : null}
             </div>
@@ -52,7 +54,7 @@ const StandardProduct = ({ formik, handleChangeImage }) => {
           <div className="w-full lg:w-1/12 margin-auto-t-b">
             <div className="relative w-full">
               <LabelUC label="ชื่อสินค้าสัมนาคุณ" isRequired={true} />
-              {formik.touched.couponName && formik.errors.couponName ? (
+              {formik.touched.productName && formik.errors.productName ? (
                 <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
               ) : null}
             </div>
@@ -60,18 +62,18 @@ const StandardProduct = ({ formik, handleChangeImage }) => {
           <div className="w-full lg:w-11/12 margin-auto-t-b">
             <div className="relative w-full px-4">
               <InputUC
-                name="couponName"
+                name="productName"
                 type="text"
                 maxLength={255}
                 onBlur={formik.handleBlur}
-                value={formik.values.couponName}
+                value={formik.values.productName}
                 onChange={(e) => {
                   formik.handleChange(e);
                 }}
               />
-              {formik.touched.couponName && formik.errors.couponName ? (
+              {formik.touched.productName && formik.errors.productName ? (
                 <div className="text-sm py-2 px-2  text-red-500">
-                  {formik.errors.couponName}
+                  {formik.errors.productName}
                 </div>
               ) : null}
             </div>
@@ -80,7 +82,7 @@ const StandardProduct = ({ formik, handleChangeImage }) => {
           <div
             className={
               "w-full " +
-              (formik.touched.couponName && formik.errors.couponName
+              (formik.touched.productName && formik.errors.productName
                 ? " hidden"
                 : "")
             }
@@ -89,6 +91,7 @@ const StandardProduct = ({ formik, handleChangeImage }) => {
           </div>
           <div className="w-full lg:w-1/12 margin-auto-t-b ">
             <LabelUC label="จำนวนสูงสุด" isRequired={true} />
+            <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
             {formik.touched.couponCount && formik.errors.couponCount ? (
               <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
             ) : null}
@@ -100,10 +103,12 @@ const StandardProduct = ({ formik, handleChangeImage }) => {
                 type="text"
                 maxLength={7}
                 onBlur={formik.handleBlur}
-                value={formik.values.rewardCount}
+                value={!formik.values.isNoLimitReward ? formik.values.rewardCount : 'ไม่จำกัด'}
                 onChange={(e) => {
-                  formik.handleChange(e);
+                  setDelay(ValidateService.onHandleNumber(e));
+                  formik.values.rewardCount = ValidateService.onHandleNumber(e);
                 }}
+                disabled={formik.values.isNoLimitReward ? true : false}
                 min="0"
               />
               <span
@@ -116,10 +121,10 @@ const StandardProduct = ({ formik, handleChangeImage }) => {
             <div className="relative">
               <CheckBoxUC
                 text="ไม่มีวันหมดอายุ"
-                name="isNotExpired"
+                name="isNoLimitReward"
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                checked={formik.values.isNotExpired}
+                checked={formik.values.isNoLimitReward}
                 classLabel="mt-2"
               />
             </div>
@@ -130,9 +135,9 @@ const StandardProduct = ({ formik, handleChangeImage }) => {
           <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
           <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
             <div className="relative">
-              {formik.touched.couponCount && formik.errors.couponCount ? (
+              {formik.touched.rewardCount && formik.errors.rewardCount ? (
                 <div className="text-sm py-2 px-2  text-red-500">
-                  {formik.errors.couponCount}
+                  {formik.errors.rewardCount}
                 </div>
               ) : null}
             </div>

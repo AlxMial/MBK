@@ -23,7 +23,7 @@ class ValidateService {
     // }
   };
 
-  onHandleScore = (e) => {
+  onHandleNumber = (e) => {
     var value = this.onHandleNumberChange(e.target.value);
     return value.toString();
   };

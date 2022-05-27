@@ -87,17 +87,6 @@ export default function PointEcommerce() {
     }
   };
 
-  /*พิมพ์เบอร์โทรศัพท์*/
-  const onHandleScore = (e) => {
-    if (
-      ValidateService.onHandleNumberChange(e.target.value) !== "" ||
-      e.target.value === ""
-    ) {
-      setScore(e.target.value);
-      formik.values.score = e.target.value;
-    }
-  };
-
   /* formik */
   const formik = useFormik({
     initialValues: {
@@ -366,10 +355,10 @@ export default function PointEcommerce() {
                                     maxLength={100}
                                     onChange={(event) => {
                                       setlangSymbo(
-                                        ValidateService.onHandleScore(event)
+                                        ValidateService.onHandleNumber(event)
                                       );
                                       formik.values.pointEcommerceLengthSymbol =
-                                        ValidateService.onHandleScore(event);
+                                        ValidateService.onHandleNumber(event);
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointEcommerceLengthSymbol"
@@ -395,10 +384,10 @@ export default function PointEcommerce() {
                                     maxLength={100}
                                     onChange={(event) => {
                                       setlangSymbo(
-                                        ValidateService.onHandleScore(event)
+                                        ValidateService.onHandleNumber(event)
                                       );
                                       formik.values.pointEcommerceLengthSymbol =
-                                        ValidateService.onHandleScore(event);
+                                        ValidateService.onHandleNumber(event);
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointEcommerceLengthSymbol"
@@ -437,10 +426,10 @@ export default function PointEcommerce() {
                                     maxLength={100}
                                     onChange={(event) => {
                                       setlangSymbo(
-                                        ValidateService.onHandleScore(event)
+                                        ValidateService.onHandleNumber(event)
                                       );
                                       formik.values.pointEcommerceQuantityCode =
-                                        ValidateService.onHandleScore(event);
+                                        ValidateService.onHandleNumber(event);
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointEcommerceQuantityCode"

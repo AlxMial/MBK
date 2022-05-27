@@ -868,10 +868,10 @@ export default function PointCode() {
                                     maxLength={10}
                                     onChange={(event) => {
                                       setlangSymbo(
-                                        ValidateService.onHandleScore(event)
+                                        ValidateService.onHandleNumber(event)
                                       );
                                       formikImport.values.pointCodePoint =
-                                        ValidateService.onHandleScore(event);
+                                        ValidateService.onHandleNumber(event);
                                     }}
                                     onBlur={formikImport.handleBlur}
                                     autoComplete="pointCodePoint"
@@ -1309,10 +1309,10 @@ export default function PointCode() {
                                     maxLength={2}
                                     onChange={(event) => {
                                       setlangSymbo(
-                                        ValidateService.onHandleScore(event)
+                                        ValidateService.onHandleNumber(event)
                                       );
                                       formik.values.pointCodeLengthSymbol =
-                                        ValidateService.onHandleScore(event);
+                                        ValidateService.onHandleNumber(event);
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointCodeLengthSymbol"
@@ -1403,10 +1403,10 @@ export default function PointCode() {
                                     maxLength={5}
                                     onChange={(event) => {
                                       setlangSymbo(
-                                        ValidateService.onHandleScore(event)
+                                        ValidateService.onHandleNumber(event)
                                       );
                                       formik.values.pointCodePoint =
-                                        ValidateService.onHandleScore(event);
+                                        ValidateService.onHandleNumber(event);
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointCodePoint"
@@ -1468,10 +1468,10 @@ export default function PointCode() {
                                     maxLength={7}
                                     onChange={(event) => {
                                       setlangSymbo(
-                                        ValidateService.onHandleScore(event)
+                                        ValidateService.onHandleNumber(event)
                                       );
                                       formik.values.pointCodeQuantityCode =
-                                        ValidateService.onHandleScore(event);
+                                        ValidateService.onHandleNumber(event);
 
                                       if (
                                         parseInt(event.target.value) > 1000000

@@ -69,10 +69,10 @@ router.get("/", validateToken, async (req, res) => {
         [
           Sequelize.literal(`(
               SELECT COUNT(id)
-              FROM tbMemberPoints AS mebmerPoint
+              FROM tbMemberPoints
               WHERE
-                mebmerPoint.tbPointCodeHDId = tbPointCodeHD.id AND
-                memberPoint.isDeleted = 0
+              tbMemberPoints.tbPointCodeHDId = tbPointCodeHD.id AND
+              tbMemberPoints.isDeleted = 0
           )`),
           "useCount",
         ],

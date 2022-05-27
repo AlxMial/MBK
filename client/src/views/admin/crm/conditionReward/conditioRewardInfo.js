@@ -13,7 +13,6 @@ import "antd/dist/antd.css";
 import moment from "moment";
 import "moment/locale/th";
 import useMenu from "services/useMenu";
-import { GetPermissionByUserName } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 import InputUC from "components/InputUC";
 import LabelUC from "components/LabelUC";
@@ -24,6 +23,8 @@ import StandardCoupon from "./StandardCoupon";
 import StandardProduct from "./StandardProduct";
 import { onSaveImage } from "services/ImageService";
 import FilesService from "../../../../services/files";
+import GameList from "./GameList";
+import TextAreaUC from "components/InputUC/TextAreaUC";
 
 export default function ConditioRewardInfo() {
   /* Option Select */
@@ -66,6 +67,9 @@ export default function ConditioRewardInfo() {
   };
   const [imageCoupon, setImageCoupon] = useState(imageData);
   const [imageProduct, setImageProduct] = useState(imageData);
+  const [isRewardType, setIsRewardType] = useState(false);
+  const [isRedemptionType, setIsRedemptionType] = useState(false);
+  const [isDisableType,setIsDisableType] = useState(false);
 
   const dispatch = useDispatch();
   let history = useHistory();
@@ -256,7 +260,7 @@ export default function ConditioRewardInfo() {
       pictureProduct: "",
       productName: "",
       rewardCount: 0,
-      isNoLimitReward:false,
+      isNoLimitReward: false,
       description: "",
       isDeleted: false,
       addBy: "",
@@ -284,7 +288,15 @@ export default function ConditioRewardInfo() {
         } else {
           if (response.data.tbRedemptionConditionsHD) {
             setIsNew(false);
+            setIsDisableType(true);
             for (var columns in response.data.tbRedemptionConditionsHD) {
+              if (columns === "rewardType") {
+                setIsRewardType(
+                  response.data.tbRedemptionConditionsHD[columns] === "1"
+                    ? false
+                    : true
+                );
+              }
               formik.setFieldValue(
                 columns,
                 response.data.tbRedemptionConditionsHD[columns],
@@ -305,6 +317,7 @@ export default function ConditioRewardInfo() {
                 false
               );
             }
+
             if (response.data.tbImage !== null) {
               if (
                 response.data.tbRedemptionConditionsHD["rewardType"] === "1"
@@ -322,6 +335,10 @@ export default function ConditioRewardInfo() {
                 setImageProduct({ ...imageProduct, ...response.data.tbImage });
               }
             }
+          } else {
+            setIsNew(true);
+            formik.setFieldValue("redemptionType", "1");
+            formik.setFieldValue("rewardType", "1");
           }
           dispatch(fetchSuccess());
         }
@@ -329,18 +346,19 @@ export default function ConditioRewardInfo() {
   }
 
   const defaultValue = () => {
-    formik.setFieldValue("rewardType", "1");
     formik.setFieldValue("redemptionType", "1");
+    formik.setFieldValue("rewardType", "2");
+    setIsRewardType(true);
     formik.setFieldValue("redemptionName", "ส่วนลดที่หาไม่ได้");
     formik.setFieldValue("points", 10);
     formik.setFieldValue("isDeleted", false);
 
-    formikCoupon.setFieldValue("couponName", "รหัสในตำนาน");
-    formikCoupon.setFieldValue("couponCount", 10);
-    formikCoupon.setFieldValue("isDeleted", false);
+    // formikCoupon.setFieldValue("couponName", "รหัสในตำนาน");
+    // formikCoupon.setFieldValue("couponCount", 10);
+    // formikCoupon.setFieldValue("isDeleted", false);
 
-    formikProduct.setFieldValue("couponName", "รหัสในตำนาน");
-    formikProduct.setFieldValue("couponCount", 10);
+    formikProduct.setFieldValue("productName", "รหัสในตำนาน");
+    formikProduct.setFieldValue("rewardCount", 10);
     formikProduct.setFieldValue("isDeleted", false);
   };
 
@@ -396,8 +414,11 @@ export default function ConditioRewardInfo() {
                       }
                       type="button"
                       onClick={() => {
-                        formikCoupon.handleSubmit();
-                        formikProduct.handleSubmit();
+                        if (!isRewardType) {
+                          formikCoupon.handleSubmit();
+                        } else {
+                          formikProduct.handleSubmit();
+                        }
                         formik.handleSubmit();
                       }}
                     >
@@ -436,8 +457,11 @@ export default function ConditioRewardInfo() {
                         <span
                           id="save"
                           onClick={() => {
-                            formikCoupon.handleSubmit();
-                            formikProduct.handleSubmit();
+                            if (!isRewardType) {
+                              formikCoupon.handleSubmit();
+                            } else {
+                              formikProduct.handleSubmit();
+                            }
                             formik.handleSubmit();
                           }}
                           className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
@@ -517,7 +541,11 @@ export default function ConditioRewardInfo() {
                     <div className="relative w-full px-4">
                       <SelectUC
                         name="redemptionType"
+                        isDisabled={isDisableType}
                         onChange={(value) => {
+                          setIsRedemptionType(
+                            value.value === "1" ? false : true
+                          );
                           formik.setFieldValue("redemptionType", value.value);
                         }}
                         options={redemptionType}
@@ -528,17 +556,33 @@ export default function ConditioRewardInfo() {
                       />
                     </div>
                   </div>
-                  <div className="w-full">&nbsp;</div>
-                  <div className="w-full lg:w-1/12 margin-auto-t-b">
+                  <div
+                    className={"w-full" + (isRedemptionType ? " hidden" : " ")}
+                  >
+                    &nbsp;
+                  </div>
+                  <div
+                    className={
+                      "w-full lg:w-1/12 margin-auto-t-b" +
+                      (isRedemptionType ? " hidden" : " ")
+                    }
+                  >
                     <div className="relative w-full">
                       <LabelUC label="ประเภทรางวัล" isRequired={true} />
                     </div>
                   </div>
-                  <div className="w-full lg:w-11/12 margin-auto-t-b">
+                  <div
+                    className={
+                      "w-full lg:w-11/12 margin-auto-t-b" +
+                      (isRedemptionType ? " hidden" : " ")
+                    }
+                  >
                     <div className="relative w-full px-4">
                       <SelectUC
                         name="rewardType"
+                        isDisabled={isDisableType}
                         onChange={(value) => {
+                          setIsRewardType(value.value === "1" ? false : true);
                           formik.setFieldValue("rewardType", value.value);
                         }}
                         options={rewardType}
@@ -572,9 +616,9 @@ export default function ConditioRewardInfo() {
                         onBlur={formik.handleBlur}
                         value={formik.values.points}
                         onChange={(e) => {
-                          setStateDelay(ValidateService.onHandleScore(e));
+                          setStateDelay(ValidateService.onHandleNumber(e));
                           formik.values.points =
-                            ValidateService.onHandleScore(e);
+                            ValidateService.onHandleNumber(e);
                         }}
                         min="0"
                       />
@@ -674,17 +718,40 @@ export default function ConditioRewardInfo() {
                     </div>
                   </div>
                   <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                    <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
+                  </div>
+                  <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+                    <div className="relative">
+                      <TextAreaUC
+                        name="description"
+                        onBlur={formik.handleBlur}
+                        value={formik.values.description}
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                        }}
+                      />
+                    </div>
+                  </div>
                   <div className="w-full">&nbsp;</div>
                   <span className="text-lg  text-green-mbk margin-auto font-bold">
                     <div className="w-full mb-2">
-                      {formik.values.rewardType === "1"
-                        ? "กำหนดคูปอง"
-                        : "กำหนดสินค้าสัมนาคุณ"}
+                      {!isRedemptionType
+                        ? !isRewardType
+                          ? "กำหนดคูปอง"
+                          : "กำหนดสินค้าสัมนาคุณ"
+                        : "กำหนด Game"}
                     </div>
                   </span>
-
-                  <StandardCoupon formik={formikCoupon} />
-                  {/* <StandardProduct formik={formikProduct} /> */}
+                  {!isRedemptionType ? (
+                    !isRewardType ? (
+                      <StandardCoupon formik={formikCoupon} />
+                    ) : (
+                      <StandardProduct formik={formikProduct} />
+                    )
+                  ) : (
+                    <GameList id={id} type={""} />
+                  )}
                 </div>
               </div>
             </div>

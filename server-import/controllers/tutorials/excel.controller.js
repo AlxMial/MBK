@@ -2,10 +2,10 @@ const db = require("../../models");
 const Tutorial = db.tutorials;
 const readXlsxFile = require("read-excel-file/node");
 const excel = require("exceljs");
-const crypto = require('crypto');
+const crypto = require("crypto");
 const ValidateEncrypt = require("../../services/crypto");
-const iv = '283d0ce11c80a9a4da9eebcb40e7c7d9';
-const content = '1fda3b405f0edf98ef80';
+const iv = "283d0ce11c80a9a4da9eebcb40e7c7d9";
+const content = "1fda3b405f0edf98ef80";
 const Encrypt = new ValidateEncrypt();
 
 const upload = async (req, res) => {
@@ -57,7 +57,6 @@ const upload = async (req, res) => {
   }
 };
 
-
 const deleteCode = (req, res) => {
   Tutorial.destroy({
     where: {
@@ -65,16 +64,15 @@ const deleteCode = (req, res) => {
     },
   });
   res.json({ status: true, message: "success", tbPointCodeDT: null });
-}
+};
 
-const generateCode = (req, res) => {
+const generateCode = async (req, res) => {
   var characters = "abcdefghijklmnopqrstuvwxyz";
   var splitCha = characters.split("");
-  var splitEncrypt = content.split('');
+  var splitEncrypt = content.split("");
   let ArrayCoupons = [];
 
   for (var x = 1; x > 0; x++) {
-  
     const n = crypto.randomInt(1000000000, 9999999999);
     const verificationCode = n
       .toString()
@@ -88,8 +86,12 @@ const generateCode = (req, res) => {
     }
 
     for (var i = 0; i < splitVar.length; i++) {
-      if(splitVar.length-1 === i || splitVar.length-2 === i || splitVar.length-3 === i || splitVar.length-4 === i)
-      {
+      if (
+        splitVar.length - 1 === i ||
+        splitVar.length - 2 === i ||
+        splitVar.length - 3 === i ||
+        splitVar.length - 4 === i
+      ) {
         var numEncrypt = Math.floor(Math.random() * splitEncrypt.length);
         codeCoupon += splitEncrypt[numEncrypt];
       } else codeCoupon += splitVar[i];
@@ -107,19 +109,41 @@ const generateCode = (req, res) => {
     if (ArrayCoupons.length === parseInt(req.body.pointCodeQuantityCode)) break;
     else if (!Duplicate) ArrayCoupons.push(ArrayCoupon);
   }
-  Tutorial.bulkCreate(ArrayCoupons)
-  .then(() => {
+
+  try {
+    var result = chunkArray(ArrayCoupons, 100);
+    for (var i = 0; i < result.length; i++) {
+      let successCode = await createCoupon(result[i]);
+    }
     res.status(200).send({
       message: "Generate successfully: ",
     });
-  })
-  .catch((error) => {
+  } catch (err) {
     res.status(500).send({
       message: "Fail to Generate data into database!",
-      error: error.message,
+      error: err.message,
     });
-  });
+  }
 };
+
+const createCoupon = async (Code) => {
+  let returnCode = await Tutorial.bulkCreate(Code);
+  return returnCode;
+};
+
+function chunkArray(myArray, chunk_size) {
+  var index = 0;
+  var arrayLength = myArray.length;
+  var tempArray = [];
+
+  for (index = 0; index < arrayLength; index += chunk_size) {
+    myChunk = myArray.slice(index, index + chunk_size);
+    // Do something if you want with the group
+    tempArray.push(myChunk);
+  }
+
+  return tempArray;
+}
 
 const getTutorials = (req, res) => {
   Tutorial.findAll()
@@ -137,14 +161,13 @@ const getTutorials = (req, res) => {
 const download = (req, res) => {
   const id = req.params.id;
   Tutorial.findAll({ where: { tbPointCodeHDId: id } }).then((objs) => {
-
     let tutorials = [];
 
     objs.forEach((obj) => {
       tutorials.push({
         code: Encrypt.DecodeKey(obj.code).toUpperCase(),
-        isUse: (obj.isUse) ? 'ใช้งาน' : 'ยังไม่ได้ใช้งาน',
-        isExpire: (obj.isExpire) ? 'หมดอายุ' : 'ยังไม่หมดอายุ', 
+        isUse: obj.isUse ? "ใช้งาน" : "ยังไม่ได้ใช้งาน",
+        isExpire: obj.isExpire ? "หมดอายุ" : "ยังไม่หมดอายุ",
       });
     });
     res.json(tutorials);

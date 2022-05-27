@@ -7,9 +7,8 @@ router.post("/", async (req, res) => {
     db.sequelize.query(qry, null, {raw: true}).then(result=>{
         res.json({message:"success"});
     }).catch(error =>{
-
         res.json({error: "error insert"});
     })
 });
 
-module.exports = router;
+module.exports = router; 
