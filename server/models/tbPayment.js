@@ -29,5 +29,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
   });
+  tbPayment.associate = (models) => {
+    tbPayment.hasMany(models.tbOrderHD, {
+      foreignKey: "paymentId",
+      onDelete: "cascade",
+    });
+  };
   return tbPayment;
 };

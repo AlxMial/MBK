@@ -20,17 +20,19 @@ const SlideShow = ({ img }) => {
         <Slide {...properties}>
           {[...img].map((e, i) => {
             return (
-              <div key={i} className="each-slide">
-                <img
-                  src={e.url}
-                  alt="..."
-                  className="w-15 h-15  border-2 border-blueGray-50 shadow"
-                ></img>
+              <div key={i} className="each-slide" style={{ margin: "auto" }}>
+                {/* <object className="w-32" data={require("assets/img/mbk/no-image.png").default} type="image/png"> */}
+                  <img
+                    src={e.url}
+                    alt="..."
+                    className="w-15 h-15  border-2 border-blueGray-50 shadow"
+                  ></img>
+                {/* </object> */}
               </div>
             );
           })}
         </Slide>
-      </div>
+      </div >
     </>
   );
 };

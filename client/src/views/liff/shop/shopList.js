@@ -4,78 +4,20 @@ import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 import { path } from "services/liff.services";
 import SlideShow from "./SlideShow";
+import axios from "services/axios";
 import * as fn from "services/default.service";
+import FilesService from "../../../services/files";
 // components
 
 const Cancel = () => {
   const history = useHistory();
   const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
+  const [ImgBanner, setImgBanner] = useState([]);
+
   const [cartNumberBadge, setcartNumberBadge] = useState(fn.getCartNumberBadge());
-  const [tbshop, settbshop] = useState([
-    {
-      id: 1,
-      img: require("assets/img/mbk/no-image.png").default,
-      detail:
-        "test 1",
-      endtime: "2022-05-24 13:00",
-      time: "",
-      price: 100,
-      discount: null,
-      status: null
-    },
-    {
-      id: 2,
-      img: require("assets/img/mbk/no-image.png").default,
-      detail: "test 2",
-      endtime: "2022-05-24 14:00",
-      time: "",
-      price: 200,
-      discount: 100,
-      status: "new"
-    },
-    {
-      id: 3,
-      img: require("assets/img/mbk/no-image.png").default,
-      detail: "test 3",
-      endtime: "2022-05-24 14:00",
-      time: "",
-      price: 300,
-      discount: null,
-      status: "hot"
-    },
-    {
-      id: 4,
-      img: require("assets/img/mbk/no-image.png").default,
-      detail: "test 4",
-      endtime: "2022-05-24 14:00",
-      time: "",
-      price: 400,
-      discount: 100,
-      status: null
-    },
-    {
-      id: 5,
-      img: require("assets/img/mbk/no-image.png").default,
-      detail: "test 5",
-      endtime: "2022-05-24 14:00",
-      time: "",
-      price: 500,
-      discount: 100,
-      status: null
-    },
-  ]);
-  const img = [
-    {
-      url: "https://www.w3schools.com/howto/img_nature_wide.jpg",
-    },
-    {
-      url: "https://www.w3schools.com/howto/img_snow_wide.jpg",
-    },
-    {
-      url: "https://www.w3schools.com/howto/img_mountains_wide.jpg",
-    },
-  ];
+  const [tbStock, settbStock] = useState([]);
+
   const [flashsale, setflashsale] = useState([
     {
       id: 6,
@@ -162,11 +104,56 @@ const Cancel = () => {
     }, [delay]);
   };
 
+  //#region รูป Banner 
+  const fetchDataImgBanner = async () => {
+    await axios.get("stock/getImgBanner").then((response) => {
+      console.log(response)
+      if (response.data.ImgBanner) {
+        let ImgBanner = response.data.ImgBanner
+        bufferToBase64(ImgBanner)
+      } else {
+        setImgBanner([])
+      }
+    });
+  };
+
+  const bufferToBase64 = async (ImgBanner) => {
+    let dataImg = []
+    for (var i = 0; i < ImgBanner.length; i++) {
+      console.log("id" + ImgBanner[i].id)
+      const base64 = await FilesService.convertToBase64(new Blob([ImgBanner[i].image.data], { type: "application/octet-binary" }));
+      ImgBanner[i].image = base64
+      dataImg.push({ url: base64 })
+    }
+    setImgBanner(dataImg)
+  }
+  //#endregion รูป Banner 
+
+  //#region 
+  const fetchDatatbStock = async () => {
+    await axios.post("stock/getStock").then((response) => {
+
+      if (response.data.status) {
+        let tbStock = response.data.tbStock
+        settbStock(tbStock)
+      } else {
+        settbStock([])
+        // error
+      }
+    });
+  };
+  //#endregion 
+  useEffect(() => {
+    fetchDataImgBanner();
+    fetchDatatbStock()
+  }, []);
+
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div >
-        <SlideShow img={img} />
+        {ImgBanner.length > 0 ?
+          <SlideShow img={ImgBanner} /> : null}
         <div className="flex relative flex" style={{ height: "35px", alignItems: "center" }}>
           <div className="px-2">สินค้าทั้งหมด</div>
           <div className="px-2">สิ้นค้าขายดี</div>
@@ -206,82 +193,90 @@ const Cancel = () => {
                   width: "100%",
                   maxWidth: "340px"
                 }}>
-                  {[...flashsale].map((e, i) => {
-                    return (
-                      <div
-                        key={i}
-                        className="relative"
-                        style={{ minWidth: "170px", paddingBottom: "25px" }}
-                        onClick={() => {
-                          history.push(path.showProducts.replace(":id", e.id))
-                        }}
-                      >
-                        <div className="relative" style={{}}>
-                          <div
-                            className="absolute text-white font-bold"
-                            style={{
-                              backgroundColor: "rgb(213 183 65 / 59%)",
-                              width: "80%",
-                              bottom: "0",
-                              left: "10%",
-                              height: "30px",
-                              borderRadius: "10px 0 10px 0",
-                              padding: "5px",
-                              textAlign: "center",
-                            }}
-                          >
-                            <Counter time={e.endtime} />
-                          </div>
-                          <img
-                            style={{ margin: "auto" }}
-                            src={e.img}
-                            alt="flash_sale"
-                            className="w-32 border-2 border-blueGray-50"
-                          ></img>
-
-
-                        </div>
-
-                        <div className="px-2 py-2">{e.detail}</div>
+                  {[...tbStock].map((e, i) => {
+                    if (e.isFlashSale) {
+                      return (
                         <div
-                          className="flex absolute"
-                          style={{ bottom: "0", left: "10px" }}
+                          key={i}
+                          className="px-2 relative"
+                          style={{ minWidth: "170px", paddingBottom: "25px" }}
+                          onClick={() => {
+                            history.push(path.showProducts.replace(":id", e.id))
+                          }}
                         >
-                          <div
-                            style={{
-                              color:
-                                e.discount !== null
-                                  ? "rgba(0,0,0,.54)"
-                                  : "#000",
-                              textDecoration:
-                                e.discount !== null ? "line-through" : "none",
-                            }}
-                          >
-                            {"฿" + e.price}
-                          </div>
-                          {e.discount !== null ? (
-                            <div style={{ color: "red", paddingLeft: "10px" }}>
-                              {"฿" + e.discount}
+                          <div className="relative" style={{}}>
+                            <div
+                              className="absolute text-white font-bold"
+                              style={{
+                                backgroundColor: "rgb(213 183 65 / 59%)",
+                                width: "100%",
+                                bottom: "0",
+                                // left: "10%",
+                                height: "30px",
+                                borderRadius: "10px 0 10px 0",
+                                padding: "5px",
+                                textAlign: "center",
+                                zIndex: "1"
+                              }}
+                            >
+                              <Counter time={e.endtime} />
                             </div>
-                          ) : null}
-                        </div>
-                        <div
-                          className="absolute"
-                          style={{ bottom: "0", right: "10px" }}
-                        >
-                          <i className="fas fa-cart-plus"></i>
-                        </div>
+                            <object className="w-32" data={require("assets/img/mbk/no-image.png").default} type="image/png">
+                              <img
+                                style={{ margin: "auto" }}
+                                src={e.img}
+                                alt="flash_sale"
+                                className="w-32 border-2 border-blueGray-50"
+                              ></img>
+                            </object>
+                            {(e.discount > 0) ?
+                              <div className="absolute" style={{ bottom: "0", left: "0px", backgroundColor: "red", borderRadius: "5px" }}>
+                                <div className=" text-white px-2">{"SALE -" + e.percent + "%"}</div>
+                              </div> : null}
 
-                        {!fn.IsNullOrEmpty(e.status) ? <div className="absolute" style={{ top: "0", right: "0" }}>{
-                          <img
-                            style={{ margin: "auto", width: "2rem" }}
-                            src={e.status === "new" ? require("assets/img/mbk/icon_new.png").default : require("assets/img/mbk/icon_hot.png").default}
-                            alt="flash_sale"
-                            className="w-32 border-2 border-blueGray-50"
-                          ></img>
-                        }</div> : null}
-                      </div>
-                    );
+                          </div>
+
+                          <div className="px-2 py-2">{e.description}</div>
+                          <div
+                            className="flex absolute"
+                            style={{ bottom: "0", left: "10px" }}
+                          >
+                            <div
+                              style={{
+                                color:
+                                  e.discount > 0
+                                    ? "rgba(0,0,0,.54)"
+                                    : "#000",
+                                textDecoration:
+                                  e.discount > 0 ? "line-through" : "none",
+                              }}
+                            >
+                              {"฿" + e.price}
+                            </div>
+                            {e.discount > 0 ? (
+                              <div style={{ color: "red", paddingLeft: "10px" }}>
+                                {"฿" + e.discount}
+                              </div>
+                            ) : null}
+                          </div>
+                          <div
+                            className="absolute"
+                            style={{ bottom: "0", right: "10px" }}
+                          >
+                            <i className="fas fa-cart-plus"></i>
+                          </div>
+
+                          {!fn.IsNullOrEmpty(e.status) ? <div className="absolute" style={{ top: "0", right: "0" }}>{
+                            <img
+                              style={{ margin: "auto", width: "2rem" }}
+                              src={e.status === "new" ? require("assets/img/mbk/icon_new.png").default : require("assets/img/mbk/icon_hot.png").default}
+                              alt="flash_sale"
+                              className="w-32 border-2 border-blueGray-50"
+                            ></img>
+                          }</div> : null}
+                        </div>
+                      );
+                    }
                   })}
                 </div>
               </div>
@@ -296,8 +291,8 @@ const Cancel = () => {
                 overflow: "scroll",
               }}
             >
-              {[
-                ...tbshop.map((e, i) => {
+              {[...tbStock].map((e, i) => {
+                if (!e.isFlashSale) {
                   return (
                     <div key={i} className="line-column mt-2"
                       onClick={() => {
@@ -306,12 +301,19 @@ const Cancel = () => {
                     >
                       <div className="line-card relative">
                         <div className="relative" style={{}}>
-                          <img
-                            style={{ margin: "auto" }}
-                            src={e.img}
-                            alt="flash_sale"
-                            className="w-32 border-2 border-blueGray-50"
-                          ></img>
+                          <object className="w-32" data={require("assets/img/mbk/no-image.png").default} type="image/png">
+                            <img
+                              style={{ margin: "auto" }}
+                              src={e.img}
+                              alt="flash_sale"
+                              className="w-32 border-2 border-blueGray-50"
+                            ></img>
+
+                          </object>
+                          {(e.discount > 0) ?
+                            <div className="absolute" style={{ bottom: "0", left: "0px", backgroundColor: "red", borderRadius: "5px" }}>
+                              <div className=" text-white px-2">{"SALE -" + e.percent + "%"}</div>
+                            </div> : null}
                         </div>
                         <div
                           className="px-2 py-2"
@@ -322,7 +324,7 @@ const Cancel = () => {
                             marginBottom: "10px",
                           }}
                         >
-                          {e.detail}
+                          {e.description}
                         </div>
                         <div
                           className="flex absolute"
@@ -331,18 +333,18 @@ const Cancel = () => {
                           <div
                             style={{
                               color:
-                                e.discount !== null
+                                (e.discount > 0)
                                   ? "rgba(0,0,0,.54)"
                                   : "#000",
                               textDecoration:
-                                e.discount !== null ? "line-through" : "none",
+                                (e.discount > 0) ? "line-through" : "none",
                             }}
                           >
                             {"฿" + e.price}
                           </div>
-                          {e.discount !== null ? (
+                          {(e.discount > 0) ? (
                             <div style={{ color: "red", paddingLeft: "10px" }}>
-                              {"฿" + e.discount}
+                              {"฿" + e.priceDiscount}
                             </div>
                           ) : null}
                         </div>
@@ -363,8 +365,9 @@ const Cancel = () => {
                       </div>
                     </div>
                   );
-                }),
-              ]}
+                }
+              })
+              }
             </div>
           </div>
         </div>

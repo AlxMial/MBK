@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const { tbStock } = require("../../models");
+const { tbStock, tbBanner, tbImage } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
+const ValidateEncrypt = require("../../services/crypto");
+const Encrypt = new ValidateEncrypt();
 const Op = Sequelize.Op;
 
 router.post("/", validateToken, async (req, res) => {
@@ -90,14 +92,89 @@ router.delete("/:id", validateToken, async (req, res) => {
 });
 
 // line liff
-router.get("/getStock", validateLineToken, async (req, res) => {
-    const data = await tbStock.findAll({
-        where: { isDeleted: false },
+
+router.post("/getStock", validateLineToken, async (req, res) => {
+
+    let id = req.body.id;
+
+    let status = true;
+    let _tbStock = []
+    let msg = null
+    let data;
+    try {
+
+        if (Encrypt.IsNullOrEmpty(id)) {
+            data = await tbStock.findAll({
+                where: { isDeleted: false, isInactive: true },
+            });
+        } else {
+            let Id = []
+            id.filter(e => {
+                Id.push(Encrypt.DecodeKey(e))
+            })
+            data = await tbStock.findAll({
+                where: { isDeleted: false, isInactive: true, id: Id },
+            });
+        }
+
+
+        data.filter((e) => {
+            let sale = (e.discountType.toLowerCase().includes("thb") ? e.discount : ((e.discount / e.price) * 100))
+            _tbStock.push({
+                id: Encrypt.EncodeKey(e.id),
+                productName: e.productName,
+                price: e.price,
+                discount: e.discount,
+                discountType: e.discountType,
+                productCount: e.productCount,
+                weight: e.weight,
+                description: e.description,
+                descriptionPromotion: e.descriptionPromotion,
+                isFlashSale: e.isFlashSale,
+                startDateCampaign: e.startDateCampaign,
+                endDateCampaign: e.endDateCampaign,
+                startTimeCampaign: e.startTimeCampaign,
+                endTimeCampaign: e.endTimeCampaign,
+                percent: e.discount > 0 ? ((e.discountType.toLowerCase().includes("percent") ? e.discount : ((e.discount / e.price) * 100))) : 0,
+                priceDiscount: e.discount > 0 ? ((e.discountType.toLowerCase().includes("thb") ? e.price - e.discount : (e.price - ((e.discount / 100) * e.price)))) : 0
+            })
+        })
+    } catch (e) {
+        status = false
+        msg = e.message
+    }
+
+    res.json({
+        status: status,
+        message: "success",
+        msg: msg,
+        tbStock: _tbStock,
     });
+});
+// รูป Banner
+router.get("/getImgBanner", validateLineToken, async (req, res) => {
+    tbBanner.hasMany(tbImage, { foreignKey: 'id' })
+    tbImage.belongsTo(tbBanner, { foreignKey: 'relatedId' })
+    const _tbBanner = await tbImage.findAll({
+        where: { isDeleted: false }, include: [{
+            model: tbBanner,
+            where: {
+                isDeleted: false, level: { [Op.col]: 'tbImage.relatedTable' }
+            }
+        }]
+    })
+    let data = [];
+    _tbBanner.filter((e) => {
+        data.push({
+            id: Encrypt.EncodeKey(e.id), imageName: e.imageName, relatedId: Encrypt.EncodeKey(e.relatedId),
+            relatedTable: e.relatedTable, typeLink: e.tbBanner.typeLink, shopId: Encrypt.EncodeKey(e.tbBanner.shopId),
+            stockId: Encrypt.EncodeKey(e.tbBanner.stockId), image: e.image
+        })
+    })
     res.json({
         status: true,
         message: "success",
-        tbStock: data,
+        ImgBanner: data,
     });
 });
 module.exports = router;

@@ -22,12 +22,13 @@ import DatePickerUC from "components/DatePickerUC";
 import ButtonUCSaveModal from "components/ButtonUCSaveModal";
 import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
+import ModalHeader from "views/admin/ModalHeader";
 
-const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage }) => {
+const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, isImageCoverNull = false }) => {
   Modal.setAppElement("#root");
 
   const discountList = [
-    { value: 'baht', label: 'บาท' },
+    { value: 'THB', label: 'บาท' },
     { value: 'percent', label: '%' },
   ]
 
@@ -140,26 +141,7 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
         <div className="flex flex-wrap">
           <div className="w-full flex-auto mt-2">
             <form onSubmit={formik.handleSubmit}>
-              <div className=" flex justify-between align-middle ">
-                <div className=" align-middle  mb-3">
-                  <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                    <label>เพิ่มสินค้า</label>
-                  </div>
-                </div>
-
-                <div className="  text-right align-middle  mb-3">
-                  <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
-                    <label
-                      className="cursor-pointer"
-                      onClick={() => {
-                        handleModal();
-                      }}
-                    >
-                      X
-                    </label>
-                  </div>
-                </div>
-              </div>
+              <ModalHeader title="เพิ่มสินค้า" handleModal={handleModal} />
               <div className="flex flex-wrap px-24 py-10 justify-center">
                 <div className="w-full lg:w-12/12 px-4 margin-auto-t-b Overflow-info">
                   <div className="flex flex-wrap">
@@ -171,16 +153,28 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
                       <div className="relative w-full px-4 flex">
                         {stockImage.map((item, i) => {
                           return (
-                            <ProfilePictureUC
-                              className='pr-4'
-                              key={i + 1}
-                              id={i + 1}
-                              hoverText='เลือกรูปสินค้า'
-                              src={item.image}
-                              onChange={handleChangeImage} />
+                            <div key={i + 1} className='flex justify-center flex-col'>
+                              <ProfilePictureUC
+                                className='pr-4'
+                                id={i + 1}
+                                hoverText='เลือกรูปสินค้า'
+                                src={item.image}
+                                onChange={handleChangeImage} />
+                              <LabelUC
+                                moreClassName='text-center mt-2 pr-4'
+                                label={i == 0 ? 'รูปปกสินค้า' : ('รูปสินค้า ' + (i + 1))}
+                                isRequired={i === 0} />
+                            </div>
                           )
                         })}
                       </div>
+                      {isImageCoverNull && (
+                        <div className="relative w-full px-4">
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            กรุณาเลือก รูปปกสินค้า
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="flex flex-wrap mt-4">
@@ -225,11 +219,6 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage })
                           placeholder="เลือกข้อมูล / เพิ่มข้อมูล"
                           onCreateOption={handleCreate}
                           value={categoryValue}
-                        // value={formik.values.productCategoryId}
-                        // value={ValidateService.defaultValue(
-                        //   productCategoryList,
-                        //   formik.values.productCategoryId
-                        // )}
                         />
                       </div>
                       <div className="relative w-full px-4">

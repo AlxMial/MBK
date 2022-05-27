@@ -11,6 +11,7 @@ import Select from "react-select";
 import ValidateService from "services/validateValue";
 import FilesService from "services/files";
 import axios from "services/axios";
+import ModalHeader from 'views/admin/ModalHeader';
 
 const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) => {
     Modal.setAppElement("#root");
@@ -165,26 +166,7 @@ const BannerModal = ({ open, handleModal, name, modalData, handleSubmitModal }) 
             <div className="flex flex-wrap">
                 <div className="w-full flex-auto mt-2">
                     <form>
-                        <div className=" flex justify-between align-middle ">
-                            <div className=" align-middle  mb-3">
-                                <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>กำหนด Banner</label>
-                                </div>
-                            </div>
-
-                            <div className="  text-right align-middle  mb-3">
-                                <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
-                                    <label
-                                        className="cursor-pointer"
-                                        onClick={() => {
-                                            handleModal();
-                                        }}
-                                    >
-                                        X
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
+                        <ModalHeader title='กำหนด Banner' handleModal={handleModal} />
                         <div className="flex flex-wrap px-24 py-10 justify-center">
                             <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
                                 <LabelUC label="รูป Banner" />

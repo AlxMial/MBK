@@ -11,6 +11,8 @@ import FilesService from "../../../../services/files";
 import { onSaveImage } from 'services/ImageService';
 import { useDispatch } from 'react-redux';
 import OrderList from './OrderList';
+import { EncodeKey } from 'services/default.service';
+import OrderDetail from './OrderDetail';
 
 const Order = () => {
     const dispatch = useDispatch();
@@ -18,30 +20,30 @@ const Order = () => {
     const [orderList, setOrderList] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
-
-    const _defaultImage = {
-        id: null,
-        image: null,
-        relatedId: null,
-        relatedTable: 'order',
-        isDeleted: false,
-        addBy: null,
-        updateBy: null,
-    }
-
-    const [orderImage, setOrderImage] = useState(_defaultImage);
+    const [orderHD, setOrderHD] = useState({});
+    const [orderDT, setOrderDT] = useState([]);
+    const [orderImage, setOrderImage] = useState(null);
+    const [memberData, setMemberData] = useState(null);
 
     const fetchData = async () => {
+        dispatch(fetchLoading());
+        setOrderImage(null);
         await axios.get("order/orderHD").then(async (response) => {
             if (!response.data.error && response.data.tbOrderHD) {
                 let _orderData = response.data.tbOrderHD;
                 await axios.get("members").then(res => {
                     _orderData = _orderData.map(order => {
-                        const member = res.data.tbMember.find(
-                            member => member.id === order.memberId
+                        const member = res.data.tbMember.filter(
+                            member => member.id === EncodeKey(order.memberId)
                         );
-                        order.memberName = member[0].firstName + ' ' + member[0].lastName;
+                        if (member && member.length > 0) {
+                            order.memberName = member[0].firstName + ' ' + member[0].lastName;
+                            order.phone = member[0].phone;
+                            setMemberData(member[0]);
+                        }
+                        return order;
                     })
+                    dispatch(fetchSuccess());
                 });
                 setOrderList(_orderData);
                 setListSearch(_orderData);
@@ -65,7 +67,7 @@ const Order = () => {
                         x.orderNumber.toLowerCase().includes(e) ||
                         x.orderDate.toLowerCase().includes(e) ||
                         x.memberName.toLowerCase().includes(e) ||
-                        x.sumPrice.toLowerCase().toString().includes(e) ||
+                        x.sumPrice.toString().toLowerCase().includes(e) ||
                         x.imageName.toLowerCase().includes(e)
                 )
             );
@@ -73,108 +75,47 @@ const Order = () => {
     };
 
     const openModal = async (id) => {
-        formik.resetForm();
+        dispatch(fetchLoading());
         const data = orderList.filter((x) => x.id === id);
         if (data && data.length > 0) {
-            for (const field in data[0]) {
-                formik.setFieldValue(field, data[0][field], false);
+            setOrderHD(data[0]);
+            const res = await axios.get("order/orderDT/byOrderId/" + id);
+            if (!res.data.error && res.data.tbOrderDT) {
+                const _orderDT = res.data.tbOrderDT;
+                setOrderDT(_orderDT.map((x) => {
+                    if (x.image) {
+                        const base64 = FilesService.buffer64UTF8(x.image);
+                        return { ...x, image: base64 };
+                    }
+                    return x;
+                }));
             }
+
+            const _orderImage = await axios.get(`image/byRelated/${id}/order`);
+            if (_orderImage && _orderImage.data.tbImage) {
+                const image = FilesService.buffer64UTF8(_orderImage.data.tbImage.image)
+                setOrderImage(image);
+            }
+
+            dispatch(fetchSuccess());
+            setOpen(true);
+        } else {
+            dispatch(fetchSuccess());
         }
-        setOpen(true);
     }
 
-    const handleChangeImage = async (e) => {
-        e.preventDefault();
-        const base64 = await FilesService.convertToBase64(e.target.files[0]);
-        const index = parseInt(e.target.id.replace('file', ''));
-        setOrderImage(orderImage.map((x, i) => {
-            if ((i + 1) === index) {
-                return { ...x, image: base64 };
-            }
-            return x;
-        }));
-    };
-
-    const formik = useFormik({
-        initialValues: {
-            id: "",
-            productName: '',
-            productCategoryId: '',
-            price: '',
-            discount: '',
-            discountType: 'baht',
-            productCount: '',
-            weight: '',
-            description: '',
-            descriptionPromotion: '',
-            isFlashSale: false,
-            startDateCampaign: '',
-            endDateCampaign: '',
-            startTimeCampaign: '',
-            endTimeCampaign: '',
-            isInactive: true,
-            isDeleted: false,
-            addBy: '',
-            updateBy: '',
-        },
-        validationSchema: yup.object({
-            productName: yup.string().required("* กรุณากรอก ชื่อสินค้า"),
-            productCategoryId: yup.string().required("* กรุณากรอก หมวดหมู่สินค้า"),
-            price: yup.string().required("* กรุณากรอก ราคา"),
-        }),
-        onSubmit: (values) => {
-            console.log('onSubmit', values);
-            dispatch(fetchLoading());
-            values.updateBy = localStorage.getItem('user');
-            if (values.id) {
-                axios.put("stock", values).then(async (res) => {
-                    console.log('res', res);
-                    if (res.data.status) {
-                        await saveImage(values.id);
-                        afterSaveSuccess();
-                    } else {
-                        dispatch(fetchSuccess());
-                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                            appearance: "warning",
-                            autoDismiss: true,
-                        });
-                    }
-                });
-            } else {
-                values.addBy = localStorage.getItem('user');
-                axios.post("stock", values).then(async (res) => {
-                    if (res.data.status) {
-                        await saveImage(res.data.tbStock.id);
-                        afterSaveSuccess();
-                    } else {
-                        dispatch(fetchSuccess());
-                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                            appearance: "warning",
-                            autoDismiss: true,
-                        });
-                    }
-                });
-            }
-
-        },
-    });
-
-    const afterSaveSuccess = () => {
-        fetchData();
-        setOpen(false);
-        dispatch(fetchSuccess());
-        addToast("บันทึกข้อมูลสำเร็จ",
-            { appearance: "success", autoDismiss: true }
-        );
+    const handleModal = async (value) => {
+        if (value === 'save') {
+            console.log('save');
+            setOpen(false);
+            // await saveImage(orderHD.id);
+        } else {
+            setOpen(false);
+        }
     }
 
-    const saveImage = async (id) => {
-        orderImage.forEach(async (item, index) => {
-            if (item.image) {
-                item.relatedId = id;
-                await onSaveImage(item);
-            }
-        });
+    const handleExport = async () => {
+
     }
 
     return (
@@ -191,21 +132,19 @@ const Order = () => {
                             <div className="w-full lg:w-6/12">
                                 <InputSearchUC onChange={(e) => InputSearch(e.target.value)} />
                             </div>
-                            <div className={"w-full lg:w-6/12 text-right block"} >
-                                <ButtonModalUC onClick={() => openModal()}
-                                    label='เพิ่มรายการสั่งซื้อ' />
-                            </div>
                         </div>
                     </div>
                     <OrderList orderList={orderList} openModal={openModal} />
                 </div>
             </div>
-            {/* {open && <StockInfo
+            {open && <OrderDetail
                 open={open}
-                formik={formik}
-                handleChangeImage={handleChangeImage}
-                stockImage={stockImage}
-                handleModal={() => setOpen(false)} />} */}
+                orderImage={orderImage}
+                orderHD={orderHD}
+                orderDT={orderDT}
+                memberData={memberData}
+                handleExport={handleExport}
+                handleModal={handleModal} />}
         </>
     )
 }

@@ -24,6 +24,12 @@ function PageTitle({ page }) {
             moduleIcon = 'fas fa-shopping-cart';
             pageIcon = 'fas fa-shopping-basket';
             break;
+        case 'cancelAndReturn':
+            module = 'E-commerce';
+            pageName = 'ยกเลิกและคืนสินค้า';
+            moduleIcon = 'fas fa-shopping-cart';
+            pageIcon = 'fas fa-undo-alt';
+            break;
         default:
             break;
     }

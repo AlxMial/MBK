@@ -20,6 +20,7 @@ const Logistic = () => {
     const [openLogistic, setOpenLogistic] = useState(false);
 
     const fetchData = async () => {
+        dispatch(fetchLoading());
         await axios.get("logistic").then((response) => {
             if (!response.data.error) {
                 setListLogistic(response.data.tbLogistic);
@@ -34,6 +35,7 @@ const Logistic = () => {
                 formikDelivery.setFieldValue(columns, promotionDelivery[columns], false);
             }
         }
+        dispatch(fetchSuccess());
     };
 
     useEffect(() => {

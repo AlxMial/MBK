@@ -20,6 +20,8 @@ import shopList from "views/liff/shop/shopList";
 import returnPage from "views/liff/shop/return";
 import cancelPage from "views/liff/shop/cancel";
 import showProducts from "views/liff/shop/showProducts";
+import showCart from "views/liff/shop/showCart";
+
 
 export const path = {
   privacypolicy: "/line/privacypolicy",
@@ -40,6 +42,7 @@ export const path = {
   returnPage: "/line/returnPage/:id",
   shopList: "/line/shopList",
   showProducts: "/line/showProducts/:id",
+  showCart: "/line/showCart",
 };
 export const routes = [
   {
@@ -108,6 +111,10 @@ export const routes = [
     path: path.showProducts,
     component: showProducts,
   },
+  {
+    path: path.showCart,
+    component: showCart,
+  },
 ];
 
 
@@ -124,7 +131,7 @@ const httpGet = (path, s, e, f) => {
       f();
     });
 };
-export const checkRegister = (s, e = () => {}, f = () => {}) => {
+export const checkRegister = (s, e = () => { }, f = () => { }) => {
   let _uid = Session.getLiff().uid;
   axios
     .post("/members/checkRegister", { uid: _uid })
@@ -139,14 +146,14 @@ export const checkRegister = (s, e = () => {}, f = () => {}) => {
     });
 };
 
-export const getMember = (s, e = () => {}, f = () => {}) => {
+export const getMember = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMember", s, e, f);
 };
 
-export const getMemberpoints = (s, e = () => {}, f = () => {}) => {
+export const getMemberpoints = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMemberPoints", s, e, f);
 };
-export const getMemberPointsList = (s, e = () => {}, f = () => {}) => {
+export const getMemberPointsList = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMemberPointsList", s, e, f);
   // axios
   //   .get("/members/getMemberPointsList")
@@ -161,7 +168,7 @@ export const getMemberPointsList = (s, e = () => {}, f = () => {}) => {
   //   });
 };
 
-export const membersDpd = (data, s, e = () => {}, f = () => {}) => {
+export const membersDpd = (data, s, e = () => { }, f = () => { }) => {
   axios
     .put("members", data)
     .then((res) => {
@@ -174,7 +181,7 @@ export const membersDpd = (data, s, e = () => {}, f = () => {}) => {
       f();
     });
 };
-export const redeem = (data, s, e = () => {}, f = () => {}) => {
+export const redeem = (data, s, e = () => { }, f = () => { }) => {
   axios
     .post("/redeem", data)
     .then((res) => {
@@ -188,7 +195,7 @@ export const redeem = (data, s, e = () => {}, f = () => {}) => {
     });
 };
 
-export const listPointStore = (s, e = () => {}, f = () => {}) => {
+export const listPointStore = (s, e = () => { }, f = () => { }) => {
   axios
     .get("pointStore/listPointStore")
     .then((res) => {

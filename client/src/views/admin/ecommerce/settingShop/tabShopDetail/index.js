@@ -43,6 +43,7 @@ const ShopDetail = () => {
     const [shopImage, setShopImage] = useState(_defaultImage);
 
     async function fetchData() {
+        dispatch(fetchLoading());
         const response = await axios.get('shop');
         const shop = await response.data.tbShop;
 
@@ -86,6 +87,7 @@ const ShopDetail = () => {
                 });
             }
         }
+        dispatch(fetchSuccess());
     }
 
     useEffect(() => {

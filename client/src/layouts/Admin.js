@@ -21,6 +21,7 @@ import ConditionRewardList from "views/admin/crm/conditionReward/conditionReward
 import ConditioRewardInfo from "views/admin/crm/conditionReward/conditioRewardInfo";
 import Stock from "views/admin/ecommerce/stock";
 import Order from "views/admin/ecommerce/order";
+import CancelAndReturn from "views/admin/ecommerce/cancelAndReturn";
 
 export default function Admin() {
 
@@ -66,6 +67,7 @@ export default function Admin() {
               <Route path="/admin/settingShop" exact component={SettingShop} />
               {/* <Route path="/admin/stocks" exact component={StockList} /> */}
               <Route path="/admin/order" exact component={Order} />
+              <Route path="/admin/cancelAndReturn" exact component={CancelAndReturn} />
               <Route path="/admin/stocks" exact component={Stock} />
               <Route path="/admin/stocksinfo" exact component={StockInfo} />
               <Route path="/admin/stocksinfo/:id" exact component={StockInfo} />
