@@ -5,7 +5,7 @@ import ProfilePictureUC from 'components/ProfilePictureUC';
 import React, { useState, useEffect } from 'react'
 import BannerControl from './BannerControl';
 import BannerModal from './BannerModal';
-import '../index.scss'
+import '../../index.scss'
 import { useFormik } from "formik";
 import * as yup from "yup";
 import { GetPermissionByUserName } from "services/Permission";

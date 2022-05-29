@@ -43,13 +43,13 @@ const Logistic = ({ props }) => {
     ];
 
     useEffect(async () => {
-        const subDistrict = await Address.getAddressName("subDistrict", "100101");
+        const subDistrict = await Address.getAddressName("subDistrict", memberData.subDistrict);
         const district = await Address.getAddressName("district", memberData.district);
         const _province = await Address.getAddressName("province", memberData.province);
 
         setAddress((subDistrict ? ('ตำบล/แขวง ' + subDistrict) : '')
             + ' ' + (district ? ('อำเภอ/เขต ' + district) : ''));
-        setProvince(_province ? ('จังหวัด ' + _province) : '');
+        setProvince(_province ? ((_province !== 'กรุงเทพมหานคร' ? 'จังหวัด ' : '') + _province) : '');
     }, [address, memberData]);
 
     const handleChangeOrderNumber = (value) => {

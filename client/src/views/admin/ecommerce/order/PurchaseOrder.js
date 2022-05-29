@@ -3,12 +3,13 @@ import React from 'react'
 import './index.scss'
 
 const PurchaseOrder = ({ props }) => {
+    const { orderHD, orderDT, openExport } = props;
     const thClass = "px-2  py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
     const tdClass = "border-t-0 px-2 align-middle border-l-0 border-r-0 p-3 text-sm whitespace-normal";
     const tdSpan = "text-gray-mbk hover:text-gray-mbk ";
     const footerClass = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
     const footerSumPrice = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-green-mbk ";
-    const { orderHD, orderDT } = props;
+
 
     const sumPrice = orderDT.reduce((sum, item) => {
         return parseFloat(sum) + ((parseFloat(item.price) + parseFloat(item.discount)) * parseFloat(item.amount));
@@ -20,10 +21,10 @@ const PurchaseOrder = ({ props }) => {
 
     return (
         <>
-            <div className="w-full lg:w-12/12 px-2 margin-auto-t-b ">
+            <div className="w-full lg:w-12/12 pr-2 margin-auto-t-b ">
                 <table className="items-center w-full ">
                     <thead>
-                        <tr>
+                        <tr className={openExport ? 'border-b' : ''}>
                             <th className={thClass + ' text-center'} >
                                 ลำดับที่
                             </th>
@@ -49,9 +50,11 @@ const PurchaseOrder = ({ props }) => {
                                             </span>
                                         </td>
                                         <td className={tdClass + ' flex margin-auto-t-b'}>
-                                            <div className="h-full mr-2">
-                                                <img className='order-image-stock' src={value.image ?? require('assets/img/mbk/no-image.png').default} />
-                                            </div>
+                                            {!openExport &&
+                                                <div className="h-full mr-2">
+                                                    <img className='order-image-stock' src={value.image ?? require('assets/img/mbk/no-image.png').default} />
+                                                </div>
+                                            }
                                             <div className="flex flex-col">
                                                 <div className={tdSpan}>
                                                     {value.productName}
@@ -70,7 +73,7 @@ const PurchaseOrder = ({ props }) => {
                                             <td className={tdClass + ' margin-auto-t-b text-right'}>
                                                 <div className="flex flex-col">
                                                     <div>
-                                                        <strike className='text-gray-300 straight'>
+                                                        <strike className='text-gray-300'>
                                                             ฿{(parseFloat(parseFloat(value.price) + parseFloat(value.discount)).toFixed(2)).toLocaleString('en')}
                                                         </strike>
                                                     </div>
