@@ -6,10 +6,10 @@ import {
 } from "assets/styles/theme/ReactModal";
 import LabelUC from 'components/LabelUC';
 import useWindowDimensions from "services/useWindowDimensions";
-import InputUC from 'components/InputUC';
-import ProfilePictureUC from 'components/ProfilePictureUC';
-import FilesService from "services/files";
-import ValidateService from "services/validateValue";
+// import InputUC from 'components/InputUC';
+// import ProfilePictureUC from 'components/ProfilePictureUC';
+// import FilesService from "services/files";
+// import ValidateService from "services/validateValue";
 import ButtonUCSaveModal from 'components/ButtonUCSaveModal';
 import ModalHeader from 'views/admin/ModalHeader';
 import PurchaseOrder from './PurchaseOrder';
@@ -19,7 +19,7 @@ import Logistic from './Logistic';
 import ExportPdf from './Export/ExportPdf';
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
-import ExportHeader from './ExportHeader';
+// import ExportHeader from './ExportHeader';
 import { useDispatch } from 'react-redux';
 import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 import * as Address from "services/GetAddress.js";
@@ -52,21 +52,21 @@ const OrderDetail = ({
             setIsCanEdit(false);
         }
 
-        // const subDistrict = await Address.getAddressName("subDistrict", memberData.subDistrict);
-        // const district = await Address.getAddressName("district", memberData.district);
-        // const _province = await Address.getAddressName("province", memberData.province);
+        const subDistrict = await Address.getAddressName("subDistrict", memberData.subDistrict);
+        const district = await Address.getAddressName("district", memberData.district);
+        const _province = await Address.getAddressName("province", memberData.province);
 
-        // setDataExport({
-        //     name: orderHD.memberName,
-        //     orderNumber: orderHD.orderNumber,
-        //     address: (subDistrict ? ('ตำบล/แขวง ' + subDistrict) : '')
-        //         + ' ' + (district ? ('อำเภอ/เขต ' + district) : '')
-        //         + ' ' + (_province ? ((_province !== 'กรุงเทพมหานคร' ? 'จังหวัด ' : '') + _province) : '')
-        //         + ' ' + memberData.postcode
-        //         + ' ' + memberData.country,
-        //     phone: memberData.phone,
-        //     email: memberData.email,
-        // });
+        setDataExport({
+            name: orderHD.memberName,
+            orderNumber: orderHD.orderNumber,
+            address: (subDistrict ? ('ตำบล/แขวง ' + subDistrict) : '')
+                + ' ' + (district ? ('อำเภอ/เขต ' + district) : '')
+                + ' ' + (_province ? ((_province !== 'กรุงเทพมหานคร' ? 'จังหวัด ' : '') + _province) : '')
+                + ' ' + memberData.postcode
+                + ' ' + memberData.country,
+            phone: memberData.phone,
+            email: memberData.email,
+        });
     }, []);
 
     useEffect(async () => {
@@ -85,24 +85,24 @@ const OrderDetail = ({
         }
     }, [openExport, dataExport]);
 
-    const createPDF = async () => {
-        const subDistrict = await Address.getAddressName("subDistrict", memberData.subDistrict);
-        const district = await Address.getAddressName("district", memberData.district);
-        const _province = await Address.getAddressName("province", memberData.province);
+    // const createPDF = async () => {
+    //     const subDistrict = await Address.getAddressName("subDistrict", memberData.subDistrict);
+    //     const district = await Address.getAddressName("district", memberData.district);
+    //     const _province = await Address.getAddressName("province", memberData.province);
 
-        setDataExport({
-            name: orderHD.memberName,
-            orderNumber: orderHD.orderNumber,
-            address: (subDistrict ? ('ตำบล/แขวง ' + subDistrict) : '')
-                + ' ' + (district ? ('อำเภอ/เขต ' + district) : '')
-                + ' ' + (_province ? ('จังหวัด ' + _province) : '')
-                + ' ' + memberData.postcode
-                + ' ' + memberData.country,
-            phone: memberData.phone,
-            email: memberData.email,
-        });
-        setOpenExport(true);
-    };
+    //     setDataExport({
+    //         name: orderHD.memberName,
+    //         orderNumber: orderHD.orderNumber,
+    //         address: (subDistrict ? ('ตำบล/แขวง ' + subDistrict) : '')
+    //             + ' ' + (district ? ('อำเภอ/เขต ' + district) : '')
+    //             + ' ' + (_province ? ('จังหวัด ' + _province) : '')
+    //             + ' ' + memberData.postcode
+    //             + ' ' + memberData.country,
+    //         phone: memberData.phone,
+    //         email: memberData.email,
+    //     });
+    //     setOpenExport(true);
+    // };
 
     return (
         <Modal
@@ -119,11 +119,12 @@ const OrderDetail = ({
                         <div className="w-full p-4 margin-auto-t-b flex flex-wrap ">
                             <div className="w-full lg:w-8/12 px-4  flex flex-col">
                                 <div className="w-full" id='purchaseOrder'>
-                                    {!openExport && <LabelUC label='รายการคำสั่งซื้อ' moreClassName='border-b py-2' />}
-                                    {openExport && (<ExportHeader dataExport={dataExport} />)}
-                                    {/* <LabelUC label='รายการคำสั่งซื้อ' moreClassName='border-b py-2' />
-                                    <ExportHeader dataExport={dataExport} /> */}
+                                    {/* {!openExport && <LabelUC label='รายการคำสั่งซื้อ' moreClassName='border-b py-2' />}
+                                    {openExport && (<ExportHeader dataExport={dataExport} />)} */}
+                                    <LabelUC label='รายการคำสั่งซื้อ' moreClassName='border-b py-2' />
+                                    {/* <ExportHeader dataExport={dataExport} /> */}
                                     <PurchaseOrder props={propsPurchaseOrder} />
+
                                 </div>
                                 <div className="w-full">
                                     <LabelUC label='หลักฐานการชำระ' moreClassName='py-2' />
@@ -147,14 +148,16 @@ const OrderDetail = ({
                                 </div>
                             </div>
                         </div>
-                        {/* <ExportPdf props={propsPurchaseOrder} dataExport={dataExport} /> */}
-                        <ButtonUCSaveModal
-                            showExport={true}
-                            exportBtnLabel='Export คำสั่งซื้อ'
-                            handleExport={createPDF}
-                            isShowSave={isCanEdit}
-                            onClick={() => handleModal('save')}
-                        />
+                        <div className="flex w-full justify-end">
+                            <ExportPdf props={propsPurchaseOrder} dataExport={dataExport} />
+                            <ButtonUCSaveModal
+                                // showExport={true}
+                                // exportBtnLabel='Export คำสั่งซื้อ'
+                                // handleExport={createPDF}
+                                // isShowSave={isCanEdit}
+                                onClick={() => handleModal('save')}
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

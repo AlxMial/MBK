@@ -4,7 +4,7 @@ import React from 'react'
 const ButtonUCSaveModal = ({ showExport = false, exportBtnLabel = 'Export', handleExport, onClick, isShowSave = true }) => {
     return (
         <>
-            <div className="relative w-full mb-3">
+            <div className="relative  mb-3">
                 <div className=" flex justify-end align-middle ">
                     {showExport && (
                         <div className={"border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 " + (!isShowSave ? 'pr-6' : 'px-0')}>
