@@ -77,12 +77,10 @@ export const liff_dateToString = (date, format) => {
     : moment(date).locale("th").add(543, "year").format(format);
 };
 
-
 export const getCartNumberBadge = (date, format) => {
-  let cart = Storage.get_cart()
-  return IsNullOrEmpty(cart) ? null : cart.shop_orders.length
+  let cart = Storage.get_cart();
+  return IsNullOrEmpty(cart) ? null : cart.shop_orders.length;
 };
-
 
 export const EncodeKey = (id) => {
   if (IsNullOrEmpty(id)) {
@@ -92,11 +90,15 @@ export const EncodeKey = (id) => {
   let buf = new Buffer.from(id, "ascii");
   id = buf.toString("base64");
   return id;
-}
+};
 
 const encrypt = (val) => {
   let cipher = crypto.createCipheriv("aes-256-cbc", ENC_KEY, IV);
   let encrypted = cipher.update(val, "utf8", "base64");
   encrypted += cipher.final("base64");
   return encrypted;
+};
+
+export const formatMoney = (val) => {
+  return parseFloat(val).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
 };

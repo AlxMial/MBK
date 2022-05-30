@@ -4208,7 +4208,13 @@ input[type=number] {
   border-bottom: 1px solid #eee;
   margin-top: 0.5rem;
 }
-
+.liff-Dialog{
+  transform: none !important;
+  width: 90% !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+    margin-top: 50%;
+}
 @media only screen and (max-width: 1536px) {
   .minHeight {
     min-height: 90.5vh;

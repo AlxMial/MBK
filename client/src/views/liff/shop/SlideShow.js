@@ -13,7 +13,8 @@ const properties = {
   },
 };
 
-const SlideShow = ({ img }) => {
+const SlideShow = (prop) => {
+  const { img, ...other } = prop;
   return (
     <>
       <div className="slide-container">
@@ -22,17 +23,17 @@ const SlideShow = ({ img }) => {
             return (
               <div key={i} className="each-slide" style={{ margin: "auto" }}>
                 {/* <object className="w-32" data={require("assets/img/mbk/no-image.png").default} type="image/png"> */}
-                  <img
-                    src={e.url}
-                    alt="..."
-                    className="w-15 h-15  border-2 border-blueGray-50 shadow"
-                  ></img>
+                <img
+                  src={e.url}
+                  alt="..."
+                  className="w-15 h-15  border-2 border-blueGray-50 shadow"
+                ></img>
                 {/* </object> */}
               </div>
             );
           })}
         </Slide>
-      </div >
+      </div>
     </>
   );
 };

@@ -21,6 +21,7 @@ import returnPage from "views/liff/shop/return";
 import cancelPage from "views/liff/shop/cancel";
 import showProducts from "views/liff/shop/showProducts";
 import showCart from "views/liff/shop/showCart";
+import usecoupon from "views/liff/shop/usecoupon";
 
 
 export const path = {
@@ -43,6 +44,8 @@ export const path = {
   shopList: "/line/shopList",
   showProducts: "/line/showProducts/:id",
   showCart: "/line/showCart",
+  usecoupon: "/line/usecoupon",
+  
 };
 export const routes = [
   {
@@ -115,6 +118,12 @@ export const routes = [
     path: path.showCart,
     component: showCart,
   },
+  {
+    path: path.usecoupon,
+    component: usecoupon,
+  },
+
+  
 ];
 
 
