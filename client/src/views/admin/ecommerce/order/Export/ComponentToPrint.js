@@ -1,5 +1,5 @@
 import React from 'react';
-import ExportHeader from '../ExportHeader';
+import ExportHeader from './ExportHeader';
 import PurchaseOrder from '../PurchaseOrder';
 import '../../index.scss';
 

@@ -20,7 +20,7 @@ export const styleSelect = (bgColor) => ({
     "&:hover": {
       backgroundColor: state.isSelected ? "#D0B027" : "#fff",
     },
-
+    zIndex: 9999,
   }),
 });
 
@@ -46,6 +46,6 @@ export const styleSelectLine = () => ({
     "&:hover": {
       backgroundColor: state.isSelected ? "#D0B027" : "#fff",
     },
-
+    zIndex: 9999,
   }),
 });

@@ -37,19 +37,19 @@ const ConfirmDialog = ({ open, formik, handleModal, status, type }) => {
             <form onSubmit={formik.handleSubmit}>
                 <div className="flex flex-wrap">
                     <div className="w-full flex-auto mt-2">
-                        <ModalHeader title={`ยืนยันการ ${type === 'cancel' ? 'ยกเลิก' : 'คืนสินค้า'}`} handleModal={handleModal} />
-                        <div className="flex flex-wrap px-24 py-10 justify-center">
-                            <div className="w-full lg:w-10/12 px-4 margin-auto-t-b ">
+                        <ModalHeader title={`${type === 'cancel' ? 'ยกเลิกสินค้า' : 'คืนสินค้า'}`} handleModal={handleModal} />
+                        <div className="flex flex-wrap px-24 justify-center">
+                            <div className="w-full px-4 margin-auto-t-b ">
                                 <LabelUC label={`ต้องการเปลี่ยนสถานะเป็น ${(type === 'cancel' ? cancelList : returnList)
                                     .filter(item => item.value === status)[0].label} ใช่หรือไม่?`} />
-                                <div className="flex flex-wrap">
-                                    <div className="w-full lg:w-12/12 px-4 margin-auto-t-b ">
+                                <div className="flex flex-wrap mt-4">
+                                    <div className="w-full lg:w-12/12 margin-auto-t-b ">
                                         <LabelUC label={`รายละเอียดที่${type === 'cancel' ? 'ยกเลิก' : 'รับคืน/ปฏิเสธ'}`} />
                                     </div>
                                 </div>
                                 <div className="flex flex-wrap mt-4">
                                     <div className="w-full lg:w-12/12 margin-auto-t-b">
-                                        <div className="relative w-full px-4">
+                                        <div className="relative w-full">
                                             <TextAreaUC
                                                 name="description"
                                                 onBlur={formik.handleBlur}
@@ -64,21 +64,30 @@ const ConfirmDialog = ({ open, formik, handleModal, status, type }) => {
                             </div>
                         </div>
                         <div className="relative w-full mb-3">
-                            <div className=" flex justify-between align-middle ">
-                                <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                    <label
-                                        className="text-orange-500 cursor-pointer"
+                            <div className=" flex justify-end align-middle ">
+                                <div className={"border-t-0 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4 px-0"}>
+                                    <button
+                                        className={
+                                            "px-24 bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm  py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                                        }
+                                        type="button"
                                         onClick={() => handleModal('save')}
                                     >
-                                        {" "}
-                                        <i className="fas fa-trash"></i> ตกลง
-                                    </label>
-                                    <label className="font-bold">&nbsp;|&nbsp;</label>
-                                    <label className="cursor-pointer" onClick={() => handleModal('cancel')}>
-                                        {" "}
-                                        <i className="fas fa-times"></i> ยกเลิก
-                                    </label>
+                                        บันทึก
+                                    </button>
                                 </div>
+                                <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
+                                    <button
+                                        className={
+                                            "px-24 text-gold-mbk bg-white active:bg-gold-mbk font-bold uppercase text-sm  py-2 rounded shadow hover:shadow-md outline-gold-mbk mr-1 ease-linear transition-all duration-150"
+                                        }
+                                        type={"button"}
+                                        onClick={() => handleModal('cancel')}
+                                    >
+                                        ยกเลิก
+                                    </button>
+                                </div>
+                                {/* </div> */}
                             </div>
                         </div>
                     </div>

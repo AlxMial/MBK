@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import ReactPaginate from "react-paginate";
 import SelectUC from 'components/SelectUC';
 import ValidateService from "services/validateValue";
+import moment from 'moment';
 
 const CancelTable = ({ listData, handleChangeStatus }) => {
     const thClass = "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
@@ -21,6 +22,15 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
         { label: "รอยกเลิก", value: 'wait' },
         { label: "ยกเลิกแล้ว", value: 'done' },
     ];
+
+    const getStatus = (value) => {
+        if (value && value === 'done')
+            return { text: 'ยกเลิกแล้ว', bg: ' rgba(255, 150, 150, 0.5) ' };
+        else if (value && value === 'wait')
+            return { text: 'รอยกเลิก', bg: ' rgba(244, 241, 197,1) ' };
+        else
+            return { text: '', bg: ' rgba(252, 217, 189,1' };
+    }
 
     const _thList = ['ลำดับที่', 'เลขที่ใบสั่งซื้อ', 'วันที่สั่งซื้อ', 'ผู้สั่งซื้อ', 'ยอดสุทธิ', 'สถานะ', 'สาเหตุที่ยกเลิกสินค้า', 'รายละเอียดที่ยกเลิกสินค้า'];
 
@@ -58,7 +68,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
                                         </td>
                                         <td className={tdClass}>
                                             <span className={tdSpan}>
-                                                {value.orderDate}
+                                                {moment(value.orderDate).format("DD/MM/YYYY HH:mm:ss") + ' น.'}
                                             </span>
                                         </td>
                                         <td className={tdClass}>
@@ -83,6 +93,8 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
                                                         cancelList,
                                                         value.cancelStatus
                                                     )}
+                                                    isDisabled={value.cancelStatus === 'done'}
+                                                    bgColor={getStatus(value.cancelStatus).bg}
                                                 />
                                             </span>
                                         </td>

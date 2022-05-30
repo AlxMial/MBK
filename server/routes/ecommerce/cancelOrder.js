@@ -30,7 +30,31 @@ router.get("/", validateToken, async (req, res) => {
 				                            and orderId = tbCancelOrder.orderId)
                     )`),
                     "sumPrice",
-                ]
+                ],
+                [
+                    Sequelize.literal(`(
+                        select memberId from tborderhds t
+                            where id = tbCancelOrder.orderId
+                            and isDeleted = 0
+                    )`),
+                    "memberId",
+                ],
+                [
+                    Sequelize.literal(`(
+                        select orderNumber from tborderhds t
+                            where id = tbCancelOrder.orderId
+                            and isDeleted = 0
+                    )`),
+                    "orderNumber",
+                ],
+                [
+                    Sequelize.literal(`(
+                        select orderDate from tborderhds t
+                            where id = tbCancelOrder.orderId
+                            and isDeleted = 0
+                    )`),
+                    "orderDate",
+                ],
             ],
         },
     });
