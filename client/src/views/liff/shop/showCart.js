@@ -65,9 +65,32 @@ const ShowCart = () => {
     setconfirmDelete(false);
   };
 
+  //upd quantity
+  const spinButton = (e, id) => {
+    let cart = Storage.get_cart();
+    let shop_orders = cart.shop_orders;
+    if (e === "plus") {
+      shop_orders.filter((e) => {
+        if (e.id == id) {
+          e.quantity = e.quantity + 1
+        }
+      })
+    } else {
+      shop_orders.filter((e) => {
+        if (e.id == id) {
+          e.quantity = e.quantity - 1
+        }
+      })
+    }
+    cart.shop_orders = shop_orders;
+    Storage.upd_cart(cart);
+    getProducts();
+  };
   useEffect(() => {
     getProducts();
   }, []);
+
+
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
@@ -79,7 +102,6 @@ const ShowCart = () => {
           {"รถเข็น"}
         </div>
       </div>
-      {/* <div className="liff-inline" /> */}
       <div
         className="mt-2 line-scroll"
         style={{
@@ -172,7 +194,7 @@ const ShowCart = () => {
                         }}
                         onClick={() => {
                           if (e.quantity !== 0) {
-                            // spinButton("minus")
+                            spinButton("minus", e.id)
                           }
                         }}
                       >
@@ -198,7 +220,7 @@ const ShowCart = () => {
                           color: "#000",
                         }}
                         onClick={() => {
-                          // spinButton("plus")
+                          spinButton("plus", e.id)
                         }}
                       >
                         <i className="fas fa-plus"></i>
@@ -264,7 +286,7 @@ const ShowCart = () => {
                 alignItems: "center",
                 justifyContent: "center",
               }}
-              // onClick={add_to_cart}
+            // onClick={add_to_cart}
             >
               {"ซื้อสินค้า (" + CartItem.length + ")"}
             </div>
