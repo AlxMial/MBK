@@ -25,6 +25,8 @@ export const exportExcel = async (dataExport, Title, TitleColumns, columns,sheet
     data.push(GenerateData.split(','));
   }
 
+  console.log(data)
+
   //Create workbook and worksheet
   let workbook = new Workbook();
   let worksheet = workbook.addWorksheet(sheetName);

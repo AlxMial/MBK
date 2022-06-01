@@ -18,20 +18,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
+      rewardGameAmount: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
       startDate: {
         type: DataTypes.DATE,
         allowNull: true,
       },
       endDate: {
         type: DataTypes.DATE,
-        allowNull: true,
-      },
-      rewardGameCount: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-      },
-      isNotLimitRewardGame: {
-        type: DataTypes.BOOLEAN,
         allowNull: true,
       },
       description: {

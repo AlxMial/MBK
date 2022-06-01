@@ -4,43 +4,43 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      discount: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
+      discountType: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       startDate: {
         type: DataTypes.DATE,
         allowNull: true,
       },
-      endDate: {
-        type: DataTypes.DATE,
+      isNotExpired: {
+        type: DataTypes.BOOLEAN,
         allowNull: true,
       },
       expiredDate: {
         type: DataTypes.DATE,
         allowNull: true,
       },
-      couponCount:{
+      couponCount: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      isNotExpired:{
-        type: DataTypes.BOOLEAN,
-        allowNull: true,
-      },
-      usedPerDayCount:{
+      usedPerDayCount: {
         type: DataTypes.INTEGER,
         allowNull: true,
       },
-      description:{
+      description: {
         type: DataTypes.TEXT,
         allowNull: true,
-      },
-      isCancelReclaim:{
+      }, 
+      isSelect: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
-      isCancel:{
-        type: DataTypes.BOOLEAN,
-        allowNull: true,
-      },
-      isReclaim:{
+      isCancel: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
@@ -48,16 +48,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
-      addBy:{
+      addBy: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      updateBy:{
+      updateBy: {
         type: DataTypes.STRING,
         allowNull: true,
       },
     });
-
     tbRedemptionCoupon.associate = (models) => {
       tbRedemptionCoupon.hasMany(models.tbCouponCode, {
         foreignKey: 'redemptionCouponId',

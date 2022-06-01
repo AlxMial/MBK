@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     memberId: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     isUse: {
       type: DataTypes.BOOLEAN,

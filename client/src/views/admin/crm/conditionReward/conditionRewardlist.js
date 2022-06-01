@@ -39,7 +39,7 @@ export default function ConditionRewardList() {
       setListRedemption(listSearch);
     } else {
       setListRedemption(
-        listRedemption.filter(
+        listSearch.filter(
           (x) =>
             x.firstName.includes(e) ||
             x.lastName.includes(e) ||

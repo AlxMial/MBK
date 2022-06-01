@@ -76,7 +76,7 @@ export default function PointEcommerce() {
       setListEcommerce(listSearch);
     } else {
       setListEcommerce(
-        listEcommerce.filter(
+        listSearch.filter(
           (x) =>
             x.firstName.includes(e) ||
             x.lastName.includes(e) ||

@@ -65,12 +65,13 @@ export default function ConditioRewardInfo() {
     addBy: null,
     updateBy: null,
   };
+
   const [imageCoupon, setImageCoupon] = useState(imageData);
   const [imageProduct, setImageProduct] = useState(imageData);
   const [isRewardType, setIsRewardType] = useState(false);
   const [isRedemptionType, setIsRedemptionType] = useState(false);
-  const [isDisableType,setIsDisableType] = useState(false);
-
+  const [isDisableType, setIsDisableType] = useState(false);
+  const [listGame, setListGame] = useState([]);
   const dispatch = useDispatch();
   let history = useHistory();
 
@@ -111,10 +112,9 @@ export default function ConditioRewardInfo() {
       redemptionType: "",
       rewardType: "",
       points: 0,
+      rewardGameAmount: 0,
       startDate: new Date(),
       endDate: new Date(),
-      rewardGameCount: 0,
-      isNotLimitRewardGame: false,
       description: "",
       isDeleted: false,
       addBy: "",
@@ -140,83 +140,116 @@ export default function ConditioRewardInfo() {
     }),
     onSubmit: (values) => {
       let ImageSave = {};
-      if (formik.values.rewardType === "1") {
-        values["coupon"] = formikCoupon.values;
-        ImageSave = {
-          ...imageCoupon,
-          image: formikCoupon.values.pictureCoupon,
-          relatedTable: "tbRedemptionCoupon",
-        };
-      } else {
-        values["product"] = formikProduct.values;
-        ImageSave = {
-          ...imageProduct,
-          image: formikProduct.values.pictureProduct,
-          relatedTable: "tbRedemptionProduct",
-        };
-      }
-      if (formikCoupon.isValid || formikProduct.isValid) {
+      if (formik.values.redemptionType === "2") {
+        values["listGame"] = listGame;
         if (isNew) {
           dispatch(fetchLoading());
           formik.values.addBy = localStorage.getItem("user");
-          axios.post("redemptions", values).then(async (res) => {
+          axios.post("redemptions/game", values).then(async (res) => {
             if (res.data.status) {
-              setIsNew(false);
-              formik.values.id = res.data.tbRedemptionConditionsHD.id;
-              ImageSave = {
-                ...ImageSave,
-                relatedId:
-                  formik.values.rewardType === "1"
-                    ? res.data.tbRedemptionCoupon.id
-                    : res.data.tbRedemptionProduct.id,
-              };
-              await onSaveImage(ImageSave, async (res) => {});
-              history.push(
-                `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
-              );
+              // setIsNew(false);
+              // formik.values.id = res.data.tbRedemptionConditionsHD.id;
+              // history.push(
+              //   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
+              // );
               addToast(
                 Storage.GetLanguage() === "th"
                   ? "บันทึกข้อมูลสำเร็จ"
                   : "Save data successfully",
                 { appearance: "success", autoDismiss: true }
               );
-            } else {
-              addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
-              );
             }
-            formik.setTouched({});
-            dispatch(fetchSuccess());
           });
+
+          dispatch(fetchSuccess());
         } else {
-          formik.values.updateBy = localStorage.getItem("user");
           dispatch(fetchLoading());
-          formik.setFieldValue("expireDate", null);
-          axios.put("redemptions", values).then(async (res) => {
-            if (res.data.status) {
-              await onSaveImage(ImageSave, async (res) => {});
-              addToast(
-                Storage.GetLanguage() === "th"
-                  ? "บันทึกข้อมูลสำเร็จ"
-                  : "Save data successfully",
-                { appearance: "success", autoDismiss: true }
-              );
-            } else {
-              addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
-              );
-            }
-            formik.setTouched({});
-            dispatch(fetchSuccess());
-          });
+          formik.values.updateBy = localStorage.getItem("user");
+
+
+
+          
+          dispatch(fetchSuccess());
+        }
+      } else {
+        if (formik.values.rewardType === "1") {
+          values["coupon"] = formikCoupon.values;
+          ImageSave = {
+            ...imageCoupon,
+            image: formikCoupon.values.pictureCoupon,
+            relatedTable: "tbRedemptionCoupon",
+          };
+        } else {
+          values["product"] = formikProduct.values;
+          ImageSave = {
+            ...imageProduct,
+            image: formikProduct.values.pictureProduct,
+            relatedTable: "tbRedemptionProduct",
+          };
+        }
+        if (formikCoupon.isValid || formikProduct.isValid) {
+          if (isNew) {
+            dispatch(fetchLoading());
+            formik.values.addBy = localStorage.getItem("user");
+            axios.post("redemptions", values).then(async (res) => {
+              if (res.data.status) {
+                setIsNew(false);
+                formik.values.id = res.data.tbRedemptionConditionsHD.id;
+                ImageSave = {
+                  ...ImageSave,
+                  relatedId:
+                    formik.values.rewardType === "1"
+                      ? res.data.tbRedemptionCoupon.id
+                      : res.data.tbRedemptionProduct.id,
+                };
+                await onSaveImage(ImageSave, async (res) => {});
+                history.push(
+                  `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
+                );
+                addToast(
+                  Storage.GetLanguage() === "th"
+                    ? "บันทึกข้อมูลสำเร็จ"
+                    : "Save data successfully",
+                  { appearance: "success", autoDismiss: true }
+                );
+              } else {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
+              formik.setTouched({});
+              dispatch(fetchSuccess());
+            });
+          } else {
+            formik.values.updateBy = localStorage.getItem("user");
+            dispatch(fetchLoading());
+            formik.setFieldValue("expireDate", null);
+            axios.put("redemptions", values).then(async (res) => {
+              if (res.data.status) {
+                await onSaveImage(ImageSave, async (res) => {});
+                addToast(
+                  Storage.GetLanguage() === "th"
+                    ? "บันทึกข้อมูลสำเร็จ"
+                    : "Save data successfully",
+                  { appearance: "success", autoDismiss: true }
+                );
+              } else {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
+              formik.setTouched({});
+              dispatch(fetchSuccess());
+            });
+          }
         }
       }
     },
@@ -227,17 +260,18 @@ export default function ConditioRewardInfo() {
       id: "",
       pictureCoupon: "",
       couponName: "",
+      discount: 0,
+      discountType: "1",
       startDate: new Date(),
-      endDate: new Date(),
+      isNotExpired: false,
       expiredDate: new Date(),
       couponCount: 0,
+      isNoLimitPerDayCount: false,
       usedPerDayCount: 0,
       description: "",
-      isCancelReclaim: false,
+      isSelect: false,
       isCancel: false,
-      isReclaim: false,
       isDeleted: false,
-      isNotExpired: false,
       addBy: "",
       updateBy: "",
     },
@@ -245,6 +279,13 @@ export default function ConditioRewardInfo() {
       couponName: Yup.string().required("* กรุณากรอก ชื่อคูปอง"),
       couponCount: Yup.number()
         .required("* กรุณากรอก จำนวนคูปอง")
+        .test(
+          "Is positive?",
+          "* จำนวนคูปองต้องมากกว่า 0",
+          (value) => value > 0
+        ),
+      discount: Yup.number()
+        .required("* กรุณากรอก ส่วนลด")
         .test(
           "Is positive?",
           "* จำนวนคูปองต้องมากกว่า 0",
@@ -262,6 +303,7 @@ export default function ConditioRewardInfo() {
       rewardCount: 0,
       isNoLimitReward: false,
       description: "",
+      isSelect: false,
       isDeleted: false,
       addBy: "",
       updateBy: "",
@@ -289,6 +331,8 @@ export default function ConditioRewardInfo() {
           if (response.data.tbRedemptionConditionsHD) {
             setIsNew(false);
             setIsDisableType(true);
+            let reademptionType =
+              response.data.tbRedemptionConditionsHD["redemptionType"];
             for (var columns in response.data.tbRedemptionConditionsHD) {
               if (columns === "rewardType") {
                 setIsRewardType(
@@ -303,42 +347,50 @@ export default function ConditioRewardInfo() {
                 false
               );
             }
-            for (var columnsCoupon in response.data.tbRedemptionCoupon) {
-              formikCoupon.setFieldValue(
-                columnsCoupon,
-                response.data.tbRedemptionCoupon[columnsCoupon],
-                false
-              );
-            }
-            for (var columnsProduct in response.data.tbRedemptionProduct) {
-              formikProduct.setFieldValue(
-                columnsProduct,
-                response.data.tbRedemptionProduct[columnsProduct],
-                false
-              );
-            }
-
-            if (response.data.tbImage !== null) {
-              if (
-                response.data.tbRedemptionConditionsHD["rewardType"] === "1"
-              ) {
+            if (reademptionType === "2") {
+              setListGame(response.data.listGame);
+            } else {
+              for (var columnsCoupon in response.data.tbRedemptionCoupon) {
                 formikCoupon.setFieldValue(
-                  "pictureCoupon",
-                  FilesService.buffer64UTF8(response.data.tbImage["image"])
+                  columnsCoupon,
+                  response.data.tbRedemptionCoupon[columnsCoupon],
+                  false
                 );
-                setImageCoupon({ ...imageCoupon, ...response.data.tbImage });
-              } else {
+              }
+              for (var columnsProduct in response.data.tbRedemptionProduct) {
                 formikProduct.setFieldValue(
-                  "pictureProduct",
-                  FilesService.buffer64UTF8(response.data.tbImage["image"])
+                  columnsProduct,
+                  response.data.tbRedemptionProduct[columnsProduct],
+                  false
                 );
-                setImageProduct({ ...imageProduct, ...response.data.tbImage });
+              }
+
+              if (response.data.tbImage !== null) {
+                if (
+                  response.data.tbRedemptionConditionsHD["rewardType"] === "1"
+                ) {
+                  formikCoupon.setFieldValue(
+                    "pictureCoupon",
+                    FilesService.buffer64UTF8(response.data.tbImage["image"])
+                  );
+                  setImageCoupon({ ...imageCoupon, ...response.data.tbImage });
+                } else {
+                  formikProduct.setFieldValue(
+                    "pictureProduct",
+                    FilesService.buffer64UTF8(response.data.tbImage["image"])
+                  );
+                  setImageProduct({
+                    ...imageProduct,
+                    ...response.data.tbImage,
+                  });
+                }
               }
             }
           } else {
             setIsNew(true);
-            formik.setFieldValue("redemptionType", "1");
-            formik.setFieldValue("rewardType", "1");
+            // formik.setFieldValue("redemptionType", "1");
+            // formik.setFieldValue("rewardType", "1");
+            // formikCoupon.setFieldValue("discountType", "1");
           }
           dispatch(fetchSuccess());
         }
@@ -346,16 +398,17 @@ export default function ConditioRewardInfo() {
   }
 
   const defaultValue = () => {
-    formik.setFieldValue("redemptionType", "1");
-    formik.setFieldValue("rewardType", "2");
-    setIsRewardType(true);
+    formik.setFieldValue("redemptionType", "2");
+    setIsRedemptionType(true);
+    formik.setFieldValue("rewardType", "1");
+    setIsRewardType(false);
     formik.setFieldValue("redemptionName", "ส่วนลดที่หาไม่ได้");
     formik.setFieldValue("points", 10);
     formik.setFieldValue("isDeleted", false);
 
-    // formikCoupon.setFieldValue("couponName", "รหัสในตำนาน");
-    // formikCoupon.setFieldValue("couponCount", 10);
-    // formikCoupon.setFieldValue("isDeleted", false);
+    formikCoupon.setFieldValue("couponName", "รหัสในตำนาน");
+    formikCoupon.setFieldValue("couponCount", 10);
+    formikCoupon.setFieldValue("isDeleted", false);
 
     formikProduct.setFieldValue("productName", "รหัสในตำนาน");
     formikProduct.setFieldValue("rewardCount", 10);
@@ -365,7 +418,7 @@ export default function ConditioRewardInfo() {
   useEffect(() => {
     /* Default Value for Testing */
     setIsNew(true);
-    //defaultValue();
+    defaultValue();
     fetchData();
   }, []);
 
@@ -414,10 +467,12 @@ export default function ConditioRewardInfo() {
                       }
                       type="button"
                       onClick={() => {
-                        if (!isRewardType) {
-                          formikCoupon.handleSubmit();
-                        } else {
-                          formikProduct.handleSubmit();
+                        if (!isRedemptionType) {
+                          if (!isRewardType) {
+                            formikCoupon.handleSubmit();
+                          } else {
+                            formikProduct.handleSubmit();
+                          }
                         }
                         formik.handleSubmit();
                       }}
@@ -457,10 +512,12 @@ export default function ConditioRewardInfo() {
                         <span
                           id="save"
                           onClick={() => {
-                            if (!isRewardType) {
-                              formikCoupon.handleSubmit();
-                            } else {
-                              formikProduct.handleSubmit();
+                            if (!isRedemptionType) {
+                              if (!isRewardType) {
+                                formikCoupon.handleSubmit();
+                              } else {
+                                formikProduct.handleSubmit();
+                              }
                             }
                             formik.handleSubmit();
                           }}
@@ -683,7 +740,7 @@ export default function ConditioRewardInfo() {
                     &nbsp;
                   </div>
                   <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
-                    <LabelUC label="วันที่สิ้นสุด" isRequired={true} />
+                    <LabelUC label="สิ้นสุด" isRequired={true} />
                   </div>
                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                     <div className="relative">
@@ -750,7 +807,7 @@ export default function ConditioRewardInfo() {
                       <StandardProduct formik={formikProduct} />
                     )
                   ) : (
-                    <GameList id={id} type={""} />
+                    <GameList id={id} setListGame={setListGame} listGame={listGame} />
                   )}
                 </div>
               </div>

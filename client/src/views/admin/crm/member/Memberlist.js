@@ -57,7 +57,7 @@ export default function MemberList() {
       setListUser(listSearch);
     } else {
       setListUser(
-        listUser.filter(
+        listSearch.filter(
           (x) =>
             x.firstName.includes(e) ||
             x.lastName.includes(e) ||
@@ -202,6 +202,7 @@ export default function MemberList() {
       if (response.data.error) {
         // console.log(response.data.error);
       } else {
+        console.log(response.data.tbMember)
         setListUser(response.data.tbMember);
         setListSerch(response.data.tbMember);
       }

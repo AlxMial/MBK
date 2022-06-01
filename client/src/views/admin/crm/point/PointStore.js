@@ -85,7 +85,7 @@ export default function PointStore() {
       setlistStore(listSearch);
     } else {
       setlistStore(
-        listStore.filter((x) => x.pointStoreName.toLowerCase().includes(e))
+        listSearch.filter((x) => x.pointStoreName.toLowerCase().includes(e))
       );
     }
   };
@@ -291,10 +291,30 @@ export default function PointStore() {
                         <div className={"flex-auto "}>
                           <div className="w-full mt-2">
                             <form onSubmit={formik.handleSubmit}>
-                              <div className="relative w-full mb-3">
+                              {/* <div className="relative w-full mb-3">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
                                     <label>เพิ่มร้านค้า</label>
+                                  </div>
+                                </div>
+                              </div> */}
+                              <div className=" flex justify-between align-middle ">
+                                <div className=" align-middle  mb-3">
+                                  <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
+                                    <label>เพิ่มร้านค้า</label>
+                                  </div>
+                                </div>
+
+                                <div className="  text-right align-middle  mb-3">
+                                  <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
+                                    <label
+                                      className="cursor-pointer"
+                                      onClick={() => {
+                                        closeModal();
+                                      }}
+                                    >
+                                      X
+                                    </label>
                                   </div>
                                 </div>
                               </div>

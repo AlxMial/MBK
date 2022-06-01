@@ -8,16 +8,16 @@ import useMenu from "services/useMenu";
 import InputSearchUC from "components/InputSearchUC";
 import GameInfo from "./GameInfo";
 
-const GameList = ({ id }) => {
-  console.log(id);
+const GameList = ({ id, setListGame, listGame }) => {
+  console.log(listGame);
   const { width } = useWindowDimensions();
   const [delay, setDelay] = useState();
-  const [listGame, setlistGame] = useState([]);
+  // const [listGame, setlistGame] = useState([]);
   const [listSearch, setListSerch] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
   const [open, setOpen] = useState(false);
   const [modalName, setModalName] = useState("");
-  const [modalData, setModalData] = useState({});
+  const [modalData, setModalData] = useState({ couponName: "" });
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
   const { menu } = useMenu();
@@ -25,24 +25,29 @@ const GameList = ({ id }) => {
   const InputSearch = (e) => {
     e = e.toLowerCase();
     if (e === "") {
-      setlistGame(listSearch);
+      setListGame(listSearch);
     } else {
-      setlistGame(listGame.filter((x) => x.gameName.toLowerCase().includes(e)));
+      setListGame(
+        listSearch.filter((x) => {
+          if (x.data.rewardType === "1") {
+            x.data.couponName.toLowerCase().includes(e);
+          } else if (x.data.rewardType === "2") {
+            x.data.productName.toLowerCase().includes(e);
+          }
+        })
+      );
     }
   };
 
-  const onSubmitModal = (data) => {
-  
-  }
-
-  const fetchData = async () => {
-    let Game = await axios
-      .get(`/redemption/game/byId/${id}`)
-      .then((response) => {});
-  };
+  const onSubmitModal = (data) => {};
 
   const handleSubmitModal = (data) => {
-    onSubmitModal(data);
+    setListGame((s) => {
+      return [...s, data];
+    });
+    setListSerch((s) => {
+      return [...s, data];
+    });
     setOpen(false);
   };
 
@@ -68,7 +73,9 @@ const GameList = ({ id }) => {
                       " bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 "
                     }
                     type="button"
-                    onClick={() => { setOpen(true); }}
+                    onClick={() => {
+                      setOpen(true);
+                    }}
                   >
                     เพิ่มของสัมนาคุณ
                   </button>
@@ -150,15 +157,15 @@ const GameList = ({ id }) => {
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
-                  >
-                    จัดการ
-                  </th>
+                  ></th>
                 </tr>
               </thead>
+
               <tbody>
                 {listGame
                   .slice(pagesVisited, pagesVisited + usersPerPage)
-                  .map(function (value, key) {
+                  .map((value, key) => {
+                    console.log(value);
                     return (
                       <tr key={key}>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8">
@@ -172,7 +179,9 @@ const GameList = ({ id }) => {
                           }}
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
-                          {value.pointStoreName}
+                          {value.rewardType === "1"
+                            ? value.couponName
+                            : value.productName}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
                           <i

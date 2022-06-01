@@ -16,6 +16,8 @@ import moment from "moment";
 import DatePickerUC from "components/DatePickerUC";
 import CheckBoxUC from "components/CheckBoxUC";
 import TextAreaUC from "components/InputUC/TextAreaUC";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 
 const GameInfo = ({
   open,
@@ -24,24 +26,146 @@ const GameInfo = ({
   modalData,
   handleSubmitModal,
 }) => {
+
   Modal.setAppElement("#root");
   const useStyle = customStyles();
   const useStyleMobile = customStylesMobile();
+  const [data, setData] = useState(modalData);
   const { width } = useWindowDimensions();
   const [isClick, setIsClick] = useState(false);
+  const [delay, setDelay] = useState();
+  const formikCoupon = useFormik({
+    initialValues: {
+      id: "",
+      rewardType: "",
+      pictureCoupon: "",
+      couponName: "",
+      discount: 0,
+      discountType: "1",
+      startDate: new Date(),
+      isNotExpired: false,
+      expiredDate: new Date(),
+      couponCount: 0,
+      isNoLimitPerDayCount: false,
+      usedPerDayCount: 0,
+      description: "",
+      isSelect: false,
+      isCancel: false,
+      isDeleted: false,
+      addBy: "",
+      updateBy: "",
+    },
+    validationSchema: Yup.object({
+      couponName: Yup.string().required("* กรุณากรอก ชื่อคูปอง"),
+      couponCount: Yup.number()
+        .required("* กรุณากรอก จำนวนคูปอง")
+        .test(
+          "Is positive?",
+          "* จำนวนคูปองต้องมากกว่า 0",
+          (value) => value > 0
+        ),
+      discount: Yup.number()
+        .required("* กรุณากรอก ส่วนลด")
+        .test(
+          "Is positive?",
+          "* จำนวนคูปองต้องมากกว่า 0",
+          (value) => value > 0
+        ),
+      pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
+    }),
+    onSubmit: (values) => {
+      if(formikCoupon.isValid)
+      {
+        formikCoupon.values.rewardType = data.rewardType;
+        onValidate(values);
+      }        
+    },
+  });
+
+  const formikProduct = useFormik({
+    initialValues: {
+      id: "",
+      rewardType: "",
+      pictureProduct: "",
+      productName: "",
+      rewardCount: 0,
+      isNoLimitReward: false,
+      description: "",
+      isSelect: false,
+      isDeleted: false,
+      addBy: "",
+      updateBy: "",
+    },
+    validationSchema: Yup.object({
+      productName: Yup.string().required("* กรุณากรอก ชื่อสินค้าสัมนาคุณ"),
+      rewardCount: Yup.number()
+        .required("* กรุณากรอก จำนวนสูงสุด")
+        .test(
+          "Is positive?",
+          "* จำนวนสูงสุดต้องมากกว่า 0",
+          (value) => value > 0
+        ),
+      pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสัมนาคุณ"),
+    }),
+    onSubmit: (values) => {
+      if(formikProduct.isValid)
+      {
+        formikProduct.values.rewardType = data.rewardType;
+        onValidate(values);
+      }
+    },
+  });
+
+  const discountType = [
+    { value: "1", label: "บาท" },
+    { value: "2", label: "%" },
+  ];
 
   const rewardType = [
     { value: "1", label: "E-Coupon" },
     { value: "2", label: "สินค้า" },
   ];
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setData((prevState) => {
+      return {
+        ...prevState,
+        rewardType:
+          prevState.rewardType === undefined ? "1" : prevState.rewardType,
+        startDate:
+          prevState.startDate === undefined ? new Date() : prevState.startDate,
+      };
+    });
+  }, []);
 
   const handleSeletectImage = async (e) => {
     const image = document.getElementById("eProductImage");
     image.src = URL.createObjectURL(e.target.files[0]);
     const base64 = await FilesService.convertToBase64(e.target.files[0]);
-    modalData["pictureProduct"] = base64;
+    formikProduct.setFieldValue("pictureProduct", base64);
+    // setData((prevState) => {
+    //   return {
+    //     ...prevState,
+    //     pictureProduct: base64,
+    //   };
+    // });
+  };
+
+  const handleChangeImage = async (e) => {
+    const image = document.getElementById("eCouponImage");
+    image.src = URL.createObjectURL(e.target.files[0]);
+    const base64 = await FilesService.convertToBase64(e.target.files[0]);
+    formikCoupon.setFieldValue("pictureCoupon", base64);
+    // setData((prevState) => {
+    //   return {
+    //     ...prevState,
+    //     pictureCoupon: base64,
+    //   };
+    // });
+  };
+
+  const onValidate = (data) => {
+    handleSubmitModal(data);
   };
 
   return (
@@ -75,164 +199,548 @@ const GameInfo = ({
               </div>
             </div>
             <div className="flex flex-wrap px-24 py-4 justify-center">
-              <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+              <div className="w-full lg:w-1/12 margin-auto-t-b ">
                 <LabelUC label="ประเภท" isRequired={true} />
               </div>
-              <div className="w-full lg:w-11/12 px-4 margin-auto-t-b ">
+              <div className="w-full  lg:w-11/12 px-4 margin-auto-t-b ">
                 <SelectUC
                   name="rewardType"
                   value={ValidateService.defaultValue(
                     rewardType,
-                    modalData.rewardType
+                    data.rewardType
                   )}
                   onChange={(value) => {
-                    modalData["rewardType"] = value.value;
+                    setData((prevState) => {
+                      return {
+                        ...prevState,
+                        rewardType: value.value,
+                      };
+                    });
                   }}
                   options={rewardType}
                 />
               </div>
-              <div className="w-full">&nbsp;</div>
-              <div className="w-full lg:w-1/12 px-4 margin-auto-t-b">
-                <LabelUC label="รูปสินค้า" />
-              </div>
-              <div className={"w-full lg:w-11/12 px-4 margin-auto-t-b"}>
-                <div className="relative w-full">
-                  <ProfilePictureUC
-                    id="eProductImage"
-                    hoverText="เลือกรูปภาพสินค้า"
-                    onChange={handleSeletectImage}
-                    src={modalData.pictureProduct}
-                  />
-                </div>
-              </div>
-              <div className="w-full">&nbsp;</div>
-              <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
-                <LabelUC label="ชื่อสินค้า" isRequired={true} />
-              </div>
-              <div className="w-full lg:w-11/12 px-4 margin-auto-t-b ">
-                <InputUC
-                  name="productName"
-                  maxLength={100}
-                  onChange={(e) => {
-                    modalData["productName"] = e.target.value;
-                  }}
-                />
-              </div>
 
-              <div className="w-full">&nbsp;</div>
-              <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
-                <LabelUC label="จำนวนสูงสุด" isRequired={true} />
-                <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
-              </div>
-              <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                <div className="relative flex">
-                  <InputUC
-                    name="rewardCount"
-                    type="text"
-                    maxLength={7}
-                    onChange={(e) => {
-                      modalData["rewardCount"] = e.target.value;
-                    }}
-                    min="0"
-                    value={modalData.rewardCount}
-                  />
-                  <span
-                    className="margin-auto-t-b font-bold"
-                    style={{ marginLeft: width < 764 ? "1rem" : "2rem" }}
+              <div
+                className={
+                  "w-full flex flex-wrap " +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
+                <div className="w-full">&nbsp;</div>
+                <div className="flex flex-wrap">
+                  <div className="w-full lg:w-1/12 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <LabelUC label="รูปคูปอง" isRequired={true} />
+                      {formikCoupon.touched.pictureCoupon &&
+                      formikCoupon.errors.pictureCoupon ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          &nbsp;
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-11/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <ProfilePictureUC
+                        id="eCouponImage"
+                        hoverText="เลือกรูปภาพคูปอง"
+                        onChange={handleChangeImage}
+                        src={formikCoupon.values.pictureCoupon}
+                      />
+
+                      {formikCoupon.touched.pictureCoupon &&
+                      formikCoupon.errors.pictureCoupon ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formikCoupon.errors.pictureCoupon}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <LabelUC label="ชื่อคูปอง" isRequired={true} />
+                      {formikCoupon.touched.couponName &&
+                      formikCoupon.errors.couponName ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          &nbsp;
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-11/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <InputUC
+                        name="couponName"
+                        type="text"
+                        maxLength={255}
+                        onBlur={formikCoupon.handleBlur}
+                        value={formikCoupon.values.couponName}
+                        onChange={(e) => {
+                          formikCoupon.handleChange(e);
+                        }}
+                      />
+                      {formikCoupon.touched.couponName &&
+                      formikCoupon.errors.couponName ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formikCoupon.errors.couponName}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <LabelUC label="ส่วนลด" isRequired={true} />
+                      {formikCoupon.touched.discount &&
+                      formikCoupon.errors.discount ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          &nbsp;
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-5/12 margin-auto-t-b">
+                    <div className="relative flex justify-between px-4">
+                      <InputUC
+                        name="discount"
+                        type="text"
+                        maxLength={7}
+                        onBlur={formikCoupon.handleBlur}
+                        value={formikCoupon.values.discount}
+                        onChange={(e) => {
+                          setDelay(ValidateService.onHandleNumber(e));
+                          formikCoupon.values.discount =
+                            ValidateService.onHandleNumber(e);
+                        }}
+                        min="0"
+                      />
+                      <span
+                        className="margin-auto-t-b font-bold ml-2"
+                        style={{ width: "120px" }}
+                      >
+                        <SelectUC
+                          options={discountType}
+                          name="discountType"
+                          onChange={(value) => {
+                            formikCoupon.setFieldValue(
+                              "discountType",
+                              value.value
+                            );
+                          }}
+                          value={ValidateService.defaultValue(
+                            discountType,
+                            formikCoupon.values.discountType
+                          )}
+                        />
+                      </span>
+                    </div>
+                    <div className="w-full px-4">
+                      {formikCoupon.touched.discount &&
+                      formikCoupon.errors.discount ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formikCoupon.errors.discount}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                    <LabelUC label="วันที่เริ่มใช้คูปอง" isRequired={true} />
+                    <div className="text-sm py-2 px-2  text-red-500">
+                      &nbsp;
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                    <div className="relative">
+                      <DatePickerUC
+                        onClick={(e) => {
+                          setIsClick({ ...isClick, couponStart: true });
+                        }}
+                        onBlur={(e) => {
+                          setIsClick({ ...isClick, couponStart: false });
+                        }}
+                        onChange={(e) => {
+                          setIsClick({ ...isClick, couponStart: false });
+                          if (e === null) {
+                            formikCoupon.setFieldValue(
+                              "startDate",
+                              new Date(),
+                              false
+                            );
+                          } else {
+                            formikCoupon.setFieldValue(
+                              "startDate",
+                              moment(e).toDate(),
+                              false
+                            );
+                          }
+                        }}
+                        value={
+                          !isClick.couponStart
+                            ? moment(
+                                new Date(formikCoupon.values.startDate),
+                                "DD/MM/YYYY"
+                              )
+                            : null
+                        }
+                      />
+                      <div className="text-sm py-2 px-2  text-red-500">
+                        &nbsp;
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    className={"w-full" + (width < 764 ? " block" : " hidden")}
                   >
-                    ชิ้น
-                  </span>
+                    &nbsp;
+                  </div>
+                  <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                    <LabelUC label="วันที่หมดอายุ" isRequired={true} />
+                    <div className="text-sm py-2 px-2  text-red-500">
+                      &nbsp;
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                    <div className="relative">
+                      <DatePickerUC
+                        placeholder={
+                          formikCoupon.values.isNotExpired
+                            ? "ไม่มีวันหมดอายุ"
+                            : "เลือกวันที่"
+                        }
+                        disabledValue={
+                          formikCoupon.values.isNotExpired ? true : false
+                        }
+                        disabled={
+                          formikCoupon.values.isNotExpired ? true : false
+                        }
+                        onClick={(e) => {
+                          setIsClick({
+                            ...isClick,
+                            expireDate: formikCoupon.values.isNotExpired
+                              ? false
+                              : true,
+                          });
+                          //   setIsClick({ ...isClick, expireDate: true });
+                        }}
+                        onBlur={(e) => {
+                          setIsClick({ ...isClick, expireDate: false });
+                        }}
+                        onChange={(e) => {
+                          setIsClick({ ...isClick, expireDate: false });
+                          if (e === null) {
+                            formikCoupon.setFieldValue(
+                              "expiredDate",
+                              new Date(),
+                              false
+                            );
+                          } else {
+                            formikCoupon.setFieldValue(
+                              "expiredDate",
+                              moment(e).toDate(),
+                              false
+                            );
+                          }
+                        }}
+                        value={
+                          !isClick.expireDate
+                            ? moment(
+                                new Date(
+                                  formikCoupon.values.expiredDate
+                                    ? formikCoupon.values.expiredDate
+                                    : new Date()
+                                ),
+                                "DD/MM/YYYY"
+                              )
+                            : null
+                        }
+                      />
+                      <CheckBoxUC
+                        text="ไม่มีวันหมดอายุ"
+                        name="isNotExpired"
+                        onChange={formikCoupon.handleChange}
+                        onBlur={formikCoupon.handleBlur}
+                        checked={formikCoupon.values.isNotExpired}
+                        classLabel="mt-2"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-1/12  margin-auto-t-b ">
+                    <LabelUC label="จำนวนคูปอง" isRequired={true} />
+                    {formikCoupon.touched.couponCount &&
+                    formikCoupon.errors.couponCount ? (
+                      <div className="text-sm py-2 px-2  text-red-500">
+                        &nbsp;
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                    <div className="relative">
+                      <InputUC
+                        name="couponCount"
+                        type="text"
+                        maxLength={7}
+                        onBlur={formikCoupon.handleBlur}
+                        value={formikCoupon.values.couponCount}
+                        onChange={(e) => {
+                          //   formik.handleChange(e);
+                          setDelay(ValidateService.onHandleNumber(e));
+                          formikCoupon.values.couponCount =
+                            ValidateService.onHandleNumber(e);
+                        }}
+                        min="0"
+                      />
+                      {formikCoupon.touched.couponCount &&
+                      formikCoupon.errors.couponCount ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formikCoupon.errors.couponCount}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div
+                    className={"w-full" + (width < 764 ? " block" : " hidden")}
+                  >
+                    &nbsp;
+                  </div>
+                  <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+                    <LabelUC label="จำนวนที่ใช้แลกต่อวัน" isRequired={false} />
+                    {formikCoupon.touched.couponCount &&
+                    formikCoupon.errors.couponCount ? (
+                      <div className="text-sm py-2 px-2  text-red-500">
+                        &nbsp;
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                    <div className="relative">
+                      <InputUC
+                        name="usedPerDayCount"
+                        type="text"
+                        maxLength={7}
+                        onBlur={formikCoupon.handleBlur}
+                        value={formikCoupon.values.usedPerDayCount}
+                        onChange={(e) => {
+                          setDelay(ValidateService.onHandleNumber(e));
+                          formikCoupon.values.usedPerDayCount =
+                            ValidateService.onHandleNumber(e);
+                        }}
+                        min="0"
+                      />
+                      {formikCoupon.touched.couponCount &&
+                      formikCoupon.errors.couponCount ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          &nbsp;
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                    <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
+                  </div>
+                  <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+                    <div className="relative">
+                      <TextAreaUC
+                        name="description"
+                        onBlur={formikCoupon.handleBlur}
+                        value={formikCoupon.values.description}
+                        onChange={(e) => {
+                          formikCoupon.handleChange(e);
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
+                  <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+                    <CheckBoxUC
+                      text="ยกเลิกคูปอง"
+                      name="isCancel"
+                      onChange={formikCoupon.handleChange}
+                      onBlur={formikCoupon.handleBlur}
+                      checked={formikCoupon.values.isCancel}
+                      classLabel="mt-2"
+                    />
+                  </div>
                 </div>
-                <div className="relative">
-                  <CheckBoxUC
-                    text="ไม่มีวันหมดอายุ"
-                    name="isNoLimitReward"
-                    classLabel="mt-2"
-                    onChange={(e) => { 
-                      modalData = ({...modalData,})
-                      modalData['isNoLimitReward'] = e.target.checked;
-                    }}
-                    checked={modalData.isNoLimitReward}
-                  />
-                </div>
               </div>
-              <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
-                &nbsp;
-              </div>
-              <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                &nbsp;
-              </div>
-              <div className="w-full">&nbsp;</div>
-              <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
-                <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
-              </div>
-              <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
-                <div className="relative">
-                  <TextAreaUC name="description" onChange={(e) => {}} />
-                </div>
-              </div>
-              {/* <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
-                <LabelUC label="วันที่เริ่มต้น" isRequired={true} />
-              </div>
-              <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                <div className="relative">
-                  <DatePickerUC
-                    onClick={(e) => {
-                      setIsClick({ ...isClick, couponStart: true });
-                    }}
-                    onBlur={(e) => {
-                      setIsClick({ ...isClick, couponStart: false });
-                    }}
-                    onChange={(e) => {
-                      setIsClick({ ...isClick, couponStart: false });
-                      if (e === null) {
-                       
-                      } else {
-                    
-                      }
-                    }}
-                    value={
-                      !isClick.couponStart
-                        ? moment(
-                            new Date(),
-                            "DD/MM/YYYY"
-                          )
-                        : null
+              <div
+                className={
+                  "w-full flex flex-wrap " +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                <div className="w-full">&nbsp;</div>
+                <div className="flex flex-wrap">
+                  <div className="w-full lg:w-1/12 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <LabelUC label="รูปสินค้าสัมนาคุณ" isRequired={true} />
+                      {formikProduct.touched.pictureProduct &&
+                      formikProduct.errors.pictureProduct ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          &nbsp;
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-11/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <ProfilePictureUC
+                        id="eProductImage"
+                        hoverText="เลือกรูปสินค้าสัมนาคุณ"
+                        onChange={handleSeletectImage}
+                        src={formikProduct.values.pictureProduct}
+                      />
+
+                      {formikProduct.touched.pictureProduct &&
+                      formikProduct.errors.pictureProduct ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formikProduct.errors.pictureProduct}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <LabelUC label="ชื่อสินค้าสัมนาคุณ" isRequired={true} />
+                      {formikProduct.touched.productName &&
+                      formikProduct.errors.productName ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          &nbsp;
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-11/12 margin-auto-t-b">
+                    <div className="relative w-full px-4">
+                      <InputUC
+                        name="productName"
+                        type="text"
+                        maxLength={255}
+                        onBlur={formikProduct.handleBlur}
+                        value={formikProduct.values.productName}
+                        onChange={(e) => {
+                          formikProduct.handleChange(e);
+                        }}
+                      />
+                      {formikProduct.touched.productName &&
+                      formikProduct.errors.productName ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formikProduct.errors.productName}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      "w-full " +
+                      (formikProduct.touched.productName &&
+                      formikProduct.errors.productName
+                        ? " hidden"
+                        : "")
                     }
-                  />
+                  >
+                    &nbsp;
+                  </div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                    <LabelUC label="จำนวนสูงสุด" isRequired={true} />
+                    <div className="text-sm py-2 px-2  text-red-500">
+                      &nbsp;
+                    </div>
+                    {formikProduct.touched.couponCount &&
+                    formikProduct.errors.couponCount ? (
+                      <div className="text-sm py-2 px-2  text-red-500">
+                        &nbsp;
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                    <div className="relative flex">
+                      <InputUC
+                        name="rewardCount"
+                        type="text"
+                        maxLength={7}
+                        onBlur={formikProduct.handleBlur}
+                        value={
+                          !formikProduct.values.isNoLimitReward
+                            ? formikProduct.values.rewardCount
+                            : "ไม่จำกัด"
+                        }
+                        onChange={(e) => {
+                          setDelay(ValidateService.onHandleNumber(e));
+                          formikProduct.values.rewardCount =
+                            ValidateService.onHandleNumber(e);
+                        }}
+                        disabled={
+                          formikProduct.values.isNoLimitReward ? true : false
+                        }
+                        min="0"
+                      />
+                      <span
+                        className="margin-auto-t-b font-bold"
+                        style={{ marginLeft: width < 764 ? "1rem" : "2rem" }}
+                      >
+                        ชิ้น
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <CheckBoxUC
+                        text="ไม่มีวันหมดอายุ"
+                        name="isNoLimitReward"
+                        onChange={formikProduct.handleChange}
+                        onBlur={formikProduct.handleBlur}
+                        checked={formikProduct.values.isNoLimitReward}
+                        classLabel="mt-2"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                    &nbsp;
+                  </div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                    &nbsp;
+                  </div>
+
+                  <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                    <div className="relative">
+                      {formikProduct.touched.rewardCount &&
+                      formikProduct.errors.rewardCount ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formikProduct.errors.rewardCount}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                    &nbsp;
+                  </div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+                    &nbsp;
+                  </div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                    <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
+                  </div>
+                  <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+                    <div className="relative">
+                      <TextAreaUC
+                        name="description"
+                        onBlur={formikProduct.handleBlur}
+                        value={formikProduct.values.description}
+                        onChange={(e) => {
+                          formikProduct.handleChange(e);
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className={"w-full" + (width < 764 ? " block" : " hidden")}>
-                &nbsp;
-              </div>
-              <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
-                <LabelUC label="วันที่สิ้นสุด" isRequired={true} />
-              </div>
-              <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                <div className="relative">
-                  <DatePickerUC
-                    onClick={(e) => {
-                      setIsClick({ ...isClick, couponEnd: true });
-                    }}
-                    onBlur={(e) => {
-                      setIsClick({ ...isClick, couponEnd: false });
-                    }}
-                    onChange={(e) => {
-                      setIsClick({ ...isClick, couponEnd: false });
-                      if (e === null) {
-                       
-                      } else {
-                        
-                      }
-                    }}
-                    value={
-                      !isClick.couponEnd
-                        ? moment(new Date(), "DD/MM/YYYY")
-                        : null
-                    }
-                  />
-                </div>
-              </div> */}
             </div>
             <div className="relative w-full mb-3">
               <div className=" flex justify-between align-middle ">
@@ -243,7 +751,10 @@ const GameInfo = ({
                       "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     }
                     type="button"
-                    onClick={() => {}}
+                    onClick={() => {
+                      if (data.rewardType === "1") formikCoupon.handleSubmit();
+                      else formikProduct.handleSubmit();
+                    }}
                   >
                     บันทึกข้อมูล
                   </button>

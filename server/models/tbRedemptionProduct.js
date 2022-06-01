@@ -16,15 +16,19 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+      isSelect: {
+        type: DataTypes.BOOLEAN,
+        allowNull: true,
+      },
       isDeleted: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
-      addBy:{
+      addBy: {
         type: DataTypes.STRING,
         allowNull: true,
       },
-      updateBy:{
+      updateBy: {
         type: DataTypes.STRING,
         allowNull: true,
       },

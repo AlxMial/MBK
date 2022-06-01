@@ -163,7 +163,7 @@ export default function PointCode() {
       setListPointCode(listSearch);
     } else {
       setListPointCode(
-        listPointCode.filter(
+        listSearch.filter(
           (x) =>
             x.pointCodeName.toLowerCase().includes(e) ||
             (x.pointCodeSymbol === null ? "" : x.pointCodeSymbol)
@@ -179,6 +179,7 @@ export default function PointCode() {
       );
     }
   };
+
 
   const onValidate = () => {
     if (formik.values.pointCodeSymbol === "") {
@@ -201,7 +202,7 @@ export default function PointCode() {
 
   const ExportFile = async (id, name) => {
     setIsLoading(true);
-    let coupon = await axiosUpload.get(`/api/excel/download/${id}`);
+    let coupon = await axios.get(`pointCode/exportExcel/${id}`);
     const TitleColumns = ["รหัส Coupon", "สถานะใช้งาน", "สถานะหมดอายุ"];
     const columns = ["code", "isUse", "isExpire"];
     exportExcel(coupon.data, name, TitleColumns, columns, "Coupon");

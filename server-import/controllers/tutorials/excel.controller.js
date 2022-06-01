@@ -105,12 +105,14 @@ const generateCode = async (req, res) => {
       isExpire: 0,
       isDeleted: 0,
     };
+
     var Duplicate = ArrayCoupons.some((item) => item.code === codeCoupon);
     if (ArrayCoupons.length === parseInt(req.body.pointCodeQuantityCode)) break;
     else if (!Duplicate) ArrayCoupons.push(ArrayCoupon);
   }
 
   try {
+
     var result = chunkArray(ArrayCoupons, 100);
     for (var i = 0; i < result.length; i++) {
       let successCode = await createCoupon(result[i]);
@@ -128,7 +130,7 @@ const generateCode = async (req, res) => {
 
 const createCoupon = async (Code) => {
   let returnCode = await Tutorial.bulkCreate(Code);
-  return returnCode;
+  return returnCode
 };
 
 function chunkArray(myArray, chunk_size) {
@@ -162,7 +164,7 @@ const download = (req, res) => {
   const id = req.params.id;
   Tutorial.findAll({ where: { tbPointCodeHDId: id } }).then((objs) => {
     let tutorials = [];
-
+    console.log(objs)
     objs.forEach((obj) => {
       tutorials.push({
         code: Encrypt.DecodeKey(obj.code).toUpperCase(),
