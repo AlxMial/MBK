@@ -39,7 +39,7 @@ const Promotion = () => {
             setListPromotion(listSearch);
         } else {
             setListPromotion(
-                listPromotion.filter(
+                listSearch.filter(
                     (x) =>
                         x.accountName.toLowerCase().includes(e) ||
                         x.accountNumber.toLowerCase().includes(e) ||

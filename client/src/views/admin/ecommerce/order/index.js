@@ -67,7 +67,7 @@ const Order = () => {
             setOrderList(listSearch);
         } else {
             setOrderList(
-                orderList.filter(
+                listSearch.filter(
                     (x) =>
                         x.orderNumber.toLowerCase().includes(e) ||
                         x.orderDate.toLowerCase().includes(e) ||

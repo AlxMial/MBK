@@ -49,7 +49,7 @@ const Logistic = () => {
             setListLogistic(listSearch);
         } else {
             setListLogistic(
-                listLogistic.filter(
+                listSearch.filter(
                     (x) =>
                         x.deliveryName.toLowerCase().includes(e) ||
                         x.deliveryTypeName.toLowerCase().includes(e) ||

@@ -75,7 +75,7 @@ const Stock = () => {
             setListStock(listSearch);
         } else {
             setListStock(
-                listStock.filter(
+                listSearch.filter(
                     (x) =>
                         x.productName.toLowerCase().includes(e) ||
                         x.categoryName.toLowerCase().includes(e) ||

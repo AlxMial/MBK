@@ -55,7 +55,7 @@ export default function UserList() {
       setListUser(listSearch);
     } else {
       setListUser(
-        listUser.filter(
+        listSearch.filter(
           (x) =>
             x.firstName.includes(e) ||
             x.lastName.includes(e) ||

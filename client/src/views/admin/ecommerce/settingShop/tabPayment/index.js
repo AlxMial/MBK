@@ -51,7 +51,7 @@ const Payment = () => {
             setListPayment(listSearch);
         } else {
             setListPayment(
-                listPayment.filter(
+                listSearch.filter(
                     (x) =>
                         x.accountName.toLowerCase().includes(e) ||
                         x.accountNumber.toLowerCase().includes(e) ||

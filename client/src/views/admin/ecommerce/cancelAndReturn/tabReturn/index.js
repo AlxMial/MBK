@@ -51,7 +51,7 @@ const TabReturn = () => {
             setListData(listSearch);
         } else {
             setListData(
-                listData.filter(
+                listSearch.filter(
                     (x) =>
                         x.orderNumber.toLowerCase().includes(e) ||
                         x.orderDate.toLowerCase().includes(e) ||
