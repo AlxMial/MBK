@@ -8,6 +8,7 @@ import InputSearchUC from 'components/InputSearchUC';
 import { useDispatch } from 'react-redux';
 import ConfirmDialog from '../ConfirmDialog';
 import ReturnList from './ReturnList';
+import { EncodeKey } from 'services/default.service';
 
 const TabReturn = () => {
     const dispatch = useDispatch();
@@ -15,23 +16,27 @@ const TabReturn = () => {
     const [listData, setListData] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
-    const [returnStatus, setReturnStatus] = useState(false);
 
     const fetchData = async () => {
+        dispatch(fetchLoading());
         await axios.get("returnOrder").then(async (response) => {
             if (!response.data.error && response.data.tbReturnOrder) {
                 let _cancelData = response.data.tbReturnOrder;
                 await axios.get("members").then(res => {
                     _cancelData = _cancelData.map(order => {
                         const member = res.data.tbMember.find(
-                            member => member.id === order.memberId
+                            member => member.id === EncodeKey(order.memberId)
                         );
-                        order.memberName = member[0].firstName + ' ' + member[0].lastName;
+                        if (member) {
+                            order.memberName = member.firstName + ' ' + member.lastName;
+                        }
+                        return order;
                     })
                 });
                 setListData(_cancelData);
                 setListSearch(_cancelData);
             }
+            dispatch(fetchSuccess());
         });
     };
 
@@ -110,16 +115,22 @@ const TabReturn = () => {
     });
 
     const handleChangeStatus = (row, status) => {
-        console.log('row', row);
-        setReturnStatus(status);
-        setOpen(true);
+        console.log('status', status);
+        for (const field in row) {
+            formik.setFieldValue(field, row[field], false);
+        }
+        formik.setFieldValue('returnStatus', status, false);
+        if (status !== 'wait') {
+            setOpen(true);
+        }
     }
 
     const handleModal = (data) => {
+        console.log('data', data);
         if (data === 'save') {
-            formik.setFieldValue('returnStatus', returnStatus);
             formik.handleSubmit();
         } else {
+            setOpen(false);
             fetchData();
         }
     }
@@ -156,8 +167,8 @@ const TabReturn = () => {
                 <ConfirmDialog
                     open={open}
                     formik={formik}
-                    status={returnStatus}
-                    handleModal={() => handleModal}
+                    status={formik.values.returnStatus}
+                    handleModal={handleModal}
                     type="return"
                 />
             )}

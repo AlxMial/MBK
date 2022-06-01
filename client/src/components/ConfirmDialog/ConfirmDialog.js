@@ -31,67 +31,69 @@ function ConfirmDialog({
   id,
   type,
   message,
+  className,
 }) {
   return (
-    <Modal
-      isOpen={showModal}
-      onAfterOpen={afterOpenModal}
-      onRequestClose={hideModal}
-      style={customStyles}
-      contentLabel="Example Modal"
-    >
-      <div className="flex flex-wrap">
-        <div className="w-full ">
-          <>
-            <div className="relative flex flex-col min-w-0 break-words w-full  rounded-lg  border-0">
-              <div className="rounded-t bg-white mb-0 px-4 py-2">
-                <div className="text-center flex justify-between">
-                  <div className="">
-                    <h6 className="text-green-mbk text-base  font-bold mt-2">
-                      <i className="fas fa-exclamation-triangle"></i>&nbsp;
-                      แจ้งเตือน
-                    </h6>
+      <Modal
+        isOpen={showModal}
+        onAfterOpen={afterOpenModal}
+        onRequestClose={hideModal}
+        style={customStyles}
+        contentLabel="Example Modal"
+        className ={className}
+      >
+        <div className="flex flex-wrap">
+          <div className="w-full ">
+            <>
+              <div className="relative flex flex-col min-w-0 break-words w-full  rounded-lg  border-0">
+                <div className="rounded-t bg-white mb-0 px-4 py-2">
+                  <div className="text-center flex justify-between">
+                    <div className="">
+                      <h6 className="text-green-mbk text-base  font-bold mt-2">
+                        <i className="fas fa-exclamation-triangle"></i>&nbsp;
+                        แจ้งเตือน
+                      </h6>
+                    </div>
+                    <div className=""></div>
                   </div>
-                  <div className=""></div>
                 </div>
               </div>
-            </div>
-            <div className={"flex-auto "}>
-              <div className="w-full">
-                <div className="relative w-full mb-3">
-                  <div className=" align-middle  mb-2">
-                    <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                      {Storage.GetLanguage() === "th" ? (
-                        <label className="cursor-pointer">
-                          คุณต้องการลบข้อมูล{message} ใช่หรือไม่
-                        </label>
-                      ) : (
-                        <label className="cursor-pointer">
-                          Do you want to delete {message} data?
-                        </label>
-                      )}
+              <div className={"flex-auto "}>
+                <div className="w-full">
+                  <div className="relative w-full mb-3">
+                    <div className=" align-middle  mb-2">
+                      <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
+                        {Storage.GetLanguage() === "th" ? (
+                          <label className="cursor-pointer">
+                            คุณต้องการลบข้อมูล{message} ใช่หรือไม่
+                          </label>
+                        ) : (
+                          <label className="cursor-pointer">
+                            Do you want to delete {message} data?
+                          </label>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="relative w-full mb-3">
-                  <div className=" flex justify-between align-middle ">
-                    <div></div>
-                    <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                      <label
-                        className="text-red-500 cursor-pointer"
-                        onClick={() => {
-                          confirmModal(id);
-                        }}
-                      >
-                        {" "}
-                        <i className="fas fa-trash"></i> ลบข้อมูล
-                      </label>
-                      <label className="font-bold">&nbsp;|&nbsp;</label>
-                      <label className="cursor-pointer" onClick={hideModal}>
-                        {" "}
-                        <i className="fas fa-times"></i> ยกเลิก
-                      </label>
-                      {/* <button
+                  <div className="relative w-full mb-3">
+                    <div className=" flex justify-between align-middle ">
+                      <div></div>
+                      <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
+                        <label
+                          className="text-red-500 cursor-pointer"
+                          onClick={() => {
+                            confirmModal(id);
+                          }}
+                        >
+                          {" "}
+                          <i className="fas fa-trash"></i> ลบข้อมูล
+                        </label>
+                        <label className="font-bold">&nbsp;|&nbsp;</label>
+                        <label className="cursor-pointer" onClick={hideModal}>
+                          {" "}
+                          <i className="fas fa-times"></i> ยกเลิก
+                        </label>
+                        {/* <button
                         className="mr-2 bg-lemon-mbk text-white active:bg-lemon-mbk font-bold  text-xs px-4 py-2 rounded shadow  outline-none focus:outline-none  ease-linear transition-all duration-150"
                         type="button"
                         onClick={() => {
@@ -109,15 +111,16 @@ function ConfirmDialog({
                       >
                         <span className="text-sm px-2">ไม่</span>
                       </button> */}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </>
+            </>
+          </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+
   );
 }
 

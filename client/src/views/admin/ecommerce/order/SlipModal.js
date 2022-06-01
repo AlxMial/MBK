@@ -6,6 +6,7 @@ import {
 } from "assets/styles/theme/ReactModal";
 import useWindowDimensions from "services/useWindowDimensions";
 import ModalHeader from 'views/admin/ModalHeader';
+import './index.scss'
 
 const SlipModal = ({ open, image, handleModal }) => {
     Modal.setAppElement("#root");
@@ -26,7 +27,7 @@ const SlipModal = ({ open, image, handleModal }) => {
                     <ModalHeader title="รูปภาพ" handleModal={handleModal} />
                     <div className="flex flex-wrap px-10 p-3 justify-center">
                         <div className="w-full">
-                            <img src={image} />
+                            <img src={image} className='image-slip' />
                         </div>
                     </div>
                 </div>

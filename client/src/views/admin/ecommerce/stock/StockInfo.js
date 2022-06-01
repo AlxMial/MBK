@@ -142,8 +142,8 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
           <div className="w-full flex-auto mt-2">
             <form onSubmit={formik.handleSubmit}>
               <ModalHeader title="เพิ่มสินค้า" handleModal={handleModal} />
-              <div className="flex flex-wrap px-24 py-10 justify-center">
-                <div className="w-full lg:w-12/12 px-4 margin-auto-t-b Overflow-info">
+              <div className="flex flex-wrap px-24 py-10 justify-center Overflow-info">
+                <div className="w-full lg:w-12/12 px-4 margin-auto-t-b">
                   <div className="flex flex-wrap">
                     {/* รูปสินค้า */}
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
@@ -345,10 +345,11 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                     <div className="w-full lg:w-8/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <TextAreaUC
-                          row={3}
+                          rows={3}
                           name='description'
                           onBlur={formik.handleBlur}
                           value={formik.values.description}
+                          maxLength={255}
                           onChange={(e) => {
                             formik.handleChange(e);
                           }} />
@@ -363,7 +364,7 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                     <div className="w-full lg:w-8/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <TextAreaUC
-                          row={3}
+                          rows={3}
                           name='descriptionPromotion'
                           onBlur={formik.handleBlur}
                           value={formik.values.descriptionPromotion}

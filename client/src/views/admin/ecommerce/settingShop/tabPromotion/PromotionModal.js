@@ -64,7 +64,7 @@ const PromotionModal = ({ open, formik, handleModal }) => {
                 <div className="flex flex-wrap">
                     <div className="w-full flex-auto mt-2">
                         <ModalHeader title={"เพิ่มโปรโมชั่นหน้าร้าน"} handleModal={handleModal} />
-                        <div className="flex flex-wrap px-24 py-10 justify-center">
+                        <div className="flex flex-wrap px-24 py-10 justify-center Overflow-info">
                             <div className="w-full lg:w-12/12 px-4 margin-auto-t-b ">
                                 <div className="flex flex-wrap justify-center">
                                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">

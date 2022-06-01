@@ -30,7 +30,31 @@ router.get("/", validateToken, async (req, res) => {
 				                            and orderId = tbCancelOrder.orderId)
                     )`),
                     "sumPrice",
-                ]
+                ],
+                [
+                    Sequelize.literal(`(
+                        select memberId from tborderhds t
+                            where id = tbCancelOrder.orderId
+                            and isDeleted = 0
+                    )`),
+                    "memberId",
+                ],
+                [
+                    Sequelize.literal(`(
+                        select orderNumber from tborderhds t
+                            where id = tbCancelOrder.orderId
+                            and isDeleted = 0
+                    )`),
+                    "orderNumber",
+                ],
+                [
+                    Sequelize.literal(`(
+                        select orderDate from tborderhds t
+                            where id = tbCancelOrder.orderId
+                            and isDeleted = 0
+                    )`),
+                    "orderDate",
+                ],
             ],
         },
     });
@@ -50,6 +74,17 @@ router.get("/byId/:id", validateToken, async (req, res) => {
         tbCancelOrder: data,
     });
 });
+
+router.get("/byOrderId/:id", validateToken, async (req, res) => {
+    const id = req.params.id;
+    const data = await tbCancelOrder.findOne({ where: { orderId: id } });
+    res.json({
+        status: true,
+        message: "success",
+        tbCancelOrder: data,
+    });
+});
+
 
 router.put("/", validateToken, async (req, res) => {
     const data = await tbCancelOrder.findOne({

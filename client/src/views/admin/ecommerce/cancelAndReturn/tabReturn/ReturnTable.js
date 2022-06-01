@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import ReactPaginate from "react-paginate";
 import SelectUC from 'components/SelectUC';
 import ValidateService from "services/validateValue";
+import moment from 'moment';
 
 const ReturnTable = ({ listData, handleChangeStatus }) => {
     const thClass = "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
@@ -22,6 +23,17 @@ const ReturnTable = ({ listData, handleChangeStatus }) => {
         { label: "เสร็จสิ้น", value: 'done' },
         { label: "ปฏิเสธ", value: 'notReturn' },
     ];
+
+    const getStatus = (value) => {
+        if (value && value === 'notReturn')
+            return { text: 'ปฏิเสธ', bg: ' rgba(255, 150, 150, 0.5) ' };
+        else if (value && value === 'wait')
+            return { text: 'รอการคืนสินค้า', bg: ' rgba(244, 241, 197,1) ' };
+        else if (value && value === 'done')
+            return { text: 'เสร็จสิ้น', bg: ' rgba(78, 222, 154,0.5) ' };
+        else
+            return { text: '', bg: ' rgba(252, 217, 189,1' };
+    }
 
     const _thList = ['ลำดับที่', 'เลขที่ใบสั่งซื้อ', 'วันที่สั่งซื้อ', 'ผู้สั่งซื้อ', 'ยอดสุทธิ', 'สถานะ', 'สาเหตุที่คืนสินค้า', 'รายละเอียด'];
 
@@ -59,7 +71,7 @@ const ReturnTable = ({ listData, handleChangeStatus }) => {
                                         </td>
                                         <td className={tdClass}>
                                             <span className={tdSpan}>
-                                                {value.orderDate}
+                                                {moment(value.orderDate).format("DD/MM/YYYY HH:mm:ss") + ' น.'}
                                             </span>
                                         </td>
                                         <td className={tdClass}>
@@ -84,6 +96,8 @@ const ReturnTable = ({ listData, handleChangeStatus }) => {
                                                         returnList,
                                                         value.returnStatus
                                                     )}
+                                                    isDisabled={value.returnStatus !== 'wait'}
+                                                    bgColor={getStatus(value.returnStatus).bg}
                                                 />
                                             </span>
                                         </td>

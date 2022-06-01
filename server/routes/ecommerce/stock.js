@@ -11,21 +11,21 @@ const Encrypt = new ValidateEncrypt();
 const Op = Sequelize.Op;
 
 router.post("/", validateToken, async (req, res) => {
-    const data = await tbStock.create(req.body);
-    res.json({
-        status: true,
-        message: "success",
-        tbStock: data,
-    });
+  const data = await tbStock.create(req.body);
+  res.json({
+    status: true,
+    message: "success",
+    tbStock: data,
+  });
 });
 
 router.get("/", validateToken, async (req, res) => {
-    const data = await tbStock.findAll({
-        where: { isDeleted: false },
-        attributes: {
-            include: [
-                [
-                    Sequelize.literal(`(
+  const data = await tbStock.findAll({
+    where: { isDeleted: false },
+    attributes: {
+      include: [
+        [
+          Sequelize.literal(`(
                         select count(dt.id) buy from tborderdts dt
                         where isDeleted = 0 
                         and orderId 
@@ -35,146 +35,231 @@ router.get("/", validateToken, async (req, res) => {
                             and not exists(select 1 from tbcancelorders where isDeleted = 0
                                             and cancelStatus = 'wait'))
                 )`),
-                    "buy",
-                ],
-                [
-                    Sequelize.literal(`(
+          "buy",
+        ],
+        [
+          Sequelize.literal(`(
                         select categoryName from tbproductcategories t
                         where isDeleted = 0 and id = tbStock.productCategoryId
                 )`),
-                    "categoryName",
-                ],
-            ],
-        },
-    });
-    res.json({
-        status: true,
-        message: "success",
-        tbStock: data,
-    });
+          "categoryName",
+        ],
+      ],
+    },
+  });
+  res.json({
+    status: true,
+    message: "success",
+    tbStock: data,
+  });
 });
 
 router.get("/byId/:id", validateToken, async (req, res) => {
-    const id = req.params.id;
-    const data = await tbStock.findOne({ where: { id: id } });
-    res.json({
-        status: true,
-        message: "success",
-        tbStock: data,
-    });
+  const id = req.params.id;
+  const data = await tbStock.findOne({ where: { id: id } });
+  res.json({
+    status: true,
+    message: "success",
+    tbStock: data,
+  });
 });
 
 router.put("/", validateToken, async (req, res) => {
-    const data = await tbStock.findOne({
-        where: {
-            isDeleted: false,
-            id: {
-                [Op.ne]: req.body.id,
-            }
-        },
-    });
+  const data = await tbStock.findOne({
+    where: {
+      isDeleted: false,
+      id: {
+        [Op.ne]: req.body.id,
+      },
+    },
+  });
 
-    const dataUpdate = await tbStock.update(req.body, {
-        where: { id: req.body.id },
-    });
-    res.json({
-        status: true,
-        message: "success",
-        tbStock: dataUpdate,
-    });
+  const dataUpdate = await tbStock.update(req.body, {
+    where: { id: req.body.id },
+  });
+  res.json({
+    status: true,
+    message: "success",
+    tbStock: dataUpdate,
+  });
 });
 
 router.delete("/:id", validateToken, async (req, res) => {
-    const id = req.params.id;
-    req.body.isDeleted = true;
-    tbStock.update(req.body, { where: { id: id } });
-    res.json({ status: true, message: "success", tbStock: null });
+  const id = req.params.id;
+  req.body.isDeleted = true;
+  tbStock.update(req.body, { where: { id: id } });
+  res.json({ status: true, message: "success", tbStock: null });
 });
 
-// line liff
+//#region line liff
 
 router.post("/getStock", validateLineToken, async (req, res) => {
+  let id = req.body.id;
+  let status = true;
+  let _tbStock = [];
+  let msg = null;
+  let data;
+  try {
+    tbStock.hasMany(tbImage, { foreignKey: "id" });
+    tbImage.belongsTo(tbStock, { foreignKey: "relatedId" });
 
-    let id = req.body.id;
-
-    let status = true;
-    let _tbStock = []
-    let msg = null
-    let data;
-    try {
-
-        if (Encrypt.IsNullOrEmpty(id)) {
-            data = await tbStock.findAll({
-                where: { isDeleted: false, isInactive: true },
-            });
-        } else {
-            let Id = []
-            id.filter(e => {
-                Id.push(Encrypt.DecodeKey(e))
-            })
-            data = await tbStock.findAll({
-                where: { isDeleted: false, isInactive: true, id: Id },
-            });
-        }
-
-
-        data.filter((e) => {
-            let sale = (e.discountType.toLowerCase().includes("thb") ? e.discount : ((e.discount / e.price) * 100))
-            _tbStock.push({
-                id: Encrypt.EncodeKey(e.id),
-                productName: e.productName,
-                price: e.price,
-                discount: e.discount,
-                discountType: e.discountType,
-                productCount: e.productCount,
-                weight: e.weight,
-                description: e.description,
-                descriptionPromotion: e.descriptionPromotion,
-                isFlashSale: e.isFlashSale,
-                startDateCampaign: e.startDateCampaign,
-                endDateCampaign: e.endDateCampaign,
-                startTimeCampaign: e.startTimeCampaign,
-                endTimeCampaign: e.endTimeCampaign,
-                percent: e.discount > 0 ? ((e.discountType.toLowerCase().includes("percent") ? e.discount : ((e.discount / e.price) * 100))) : 0,
-                priceDiscount: e.discount > 0 ? ((e.discountType.toLowerCase().includes("thb") ? e.price - e.discount : (e.price - ((e.discount / 100) * e.price)))) : 0
-            })
-        })
-    } catch (e) {
-        status = false
-        msg = e.message
+    if (Encrypt.IsNullOrEmpty(id)) {
+      data = await tbStock.findAll({
+        where: { isDeleted: false, isInactive: true },
+      });
+    } else {
+      let Id = [];
+      id.filter((e) => {
+        Id.push(Encrypt.DecodeKey(e));
+      });
+      data = await tbStock.findAll({
+        where: { isDeleted: false, isInactive: true, id: Id },
+      });
     }
+    if (data != null) {
+      data.filter((e) => {
+        _tbStock.push({
+          id: Encrypt.EncodeKey(e.id),
+          productName: e.productName,
+          price: e.price,
+          discount: e.discount,
+          discountType: e.discountType,
+          productCount: e.productCount,
+          weight: e.weight,
+          description: e.description,
+          descriptionPromotion: e.descriptionPromotion,
+          isFlashSale: e.isFlashSale,
+          startDateCampaign: e.startDateCampaign,
+          endDateCampaign: e.endDateCampaign,
+          startTimeCampaign: e.startTimeCampaign,
+          endTimeCampaign: e.endTimeCampaign,
+          percent:
+            e.discount > 0
+              ? e.discountType.toLowerCase().includes("percent")
+                ? e.discount
+                : (e.discount / e.price) * 100
+              : 0,
+          priceDiscount:
+            e.discount > 0
+              ? e.discountType.toLowerCase().includes("thb")
+                ? e.price - e.discount
+                : e.price - (e.discount / 100) * e.price
+              : 0,
+        });
+      });
+    }
+  } catch (e) {
+    status = false;
+    msg = e.message;
+  }
 
-    res.json({
-        status: status,
-        message: "success",
-        msg: msg,
-        tbStock: _tbStock,
-    });
+  res.json({
+    status: status,
+    message: "success",
+    msg: msg,
+    tbStock: _tbStock,
+  });
 });
 // รูป Banner
 router.get("/getImgBanner", validateLineToken, async (req, res) => {
-    tbBanner.hasMany(tbImage, { foreignKey: 'id' })
-    tbImage.belongsTo(tbBanner, { foreignKey: 'relatedId' })
+  let status = !0,
+    msg,
+    data = [],
+    func = Encrypt;
+
+  try {
+    tbBanner.hasMany(tbImage, { foreignKey: "id" });
+    tbImage.belongsTo(tbBanner, { foreignKey: "relatedId" });
     const _tbBanner = await tbImage.findAll({
-        where: { isDeleted: false }, include: [{
-            model: tbBanner,
-            where: {
-                isDeleted: false, level: { [Op.col]: 'tbImage.relatedTable' }
-            }
-        }]
-    })
-    let data = [];
-    _tbBanner.filter((e) => {
-        data.push({
-            id: Encrypt.EncodeKey(e.id), imageName: e.imageName, relatedId: Encrypt.EncodeKey(e.relatedId),
-            relatedTable: e.relatedTable, typeLink: e.tbBanner.typeLink, shopId: Encrypt.EncodeKey(e.tbBanner.shopId),
-            stockId: Encrypt.EncodeKey(e.tbBanner.stockId), image: e.image
-        })
-    })
-    res.json({
-        status: true,
-        message: "success",
-        ImgBanner: data,
+      where: { isDeleted: !1 },
+      include: [
+        {
+          model: tbBanner,
+          where: {
+            isDeleted: !1,
+            level: { [Op.col]: "tbImage.relatedTable" },
+          },
+        },
+      ],
     });
+
+    // !func.IsNullOrEmpty(_tbBanner)
+    for await (const i of _tbBanner.map((j) => {
+      // let img = j.image.toString("ascii");
+      // let reduceimg = func.reduce_image_file_size(img);
+      // j.image = reduceimg;
+      return j;
+    })) {
+      let e = i;
+      // let img = e.image.toString("ascii");
+      // let reduceimg = await func.reduce_image_file_size(img);
+      data.push({
+        id: func.EncodeKey(e.id),
+        imageName: e.imageName,
+        relatedId: func.EncodeKey(e.relatedId),
+        relatedTable: e.relatedTable,
+        typeLink: e.tbBanner.typeLink,
+        shopId: func.EncodeKey(e.tbBanner.shopId),
+        stockId: func.EncodeKey(e.tbBanner.stockId),
+        image: e.image,
+      });
+    }
+    // }
+    // ? _tbBanner.filter((e) => {
+    //   let img =e.image.toString('ascii')
+    //   img = func.reduce_image_file_size(img)
+    //     data.push({
+    //       id: func.EncodeKey(e.id),
+    //       imageName: e.imageName,
+    //       relatedId: func.EncodeKey(e.relatedId),
+    //       relatedTable: e.relatedTable,
+    //       typeLink: e.tbBanner.typeLink,
+    //       shopId: func.EncodeKey(e.tbBanner.shopId),
+    //       stockId: func.EncodeKey(e.tbBanner.stockId),
+    //       image: img,
+    //     });
+    //   })
+    // : (data = []);
+  } catch (e) {
+    status = !1;
+    msg = e.message;
+  }
+  res.json({
+    status: status,
+    msg: msg,
+    ImgBanner: data,
+  });
 });
+router.post("/getImg", validateLineToken, async (req, res) => {
+  let status = true;
+  let msg = null;
+  let data = [];
+  let id = req.body.id;
+  let relatedTable = req.body.relatedTable;
+  try {
+    const _tbImage = await tbImage.findAll({
+      where: {
+        isDeleted: false,
+        relatedId: Encrypt.DecodeKey(id),
+        relatedTable: relatedTable,
+      },
+    });
+    _tbImage.filter((e) => {
+      data.push({
+        id: Encrypt.EncodeKey(e.id),
+        imageName: e.imageName,
+        image: e.image,
+      });
+    });
+  } catch (e) {
+    status = false;
+    msg = e.message;
+  }
+  res.json({
+    status: status,
+    msg: msg,
+    data: data,
+  });
+});
+//#endregion line liff
 module.exports = router;

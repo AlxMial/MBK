@@ -8,6 +8,7 @@ import InputSearchUC from 'components/InputSearchUC';
 import { useDispatch } from 'react-redux';
 import CancelList from './CancelList';
 import ConfirmDialog from '../ConfirmDialog';
+import { EncodeKey } from 'services/default.service';
 
 const TabCancel = () => {
     const dispatch = useDispatch();
@@ -15,23 +16,29 @@ const TabCancel = () => {
     const [listData, setListData] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
-    const [cancelStatus, setCancelStatus] = useState(false);
+    // const [cancelStatus, setCancelStatus] = useState(false);
 
     const fetchData = async () => {
+        dispatch(fetchLoading());
         await axios.get("cancelOrder").then(async (response) => {
             if (!response.data.error && response.data.tbCancelOrder) {
+                console.log('response.data.tbCancelOrder', response.data.tbCancelOrder);
                 let _cancelData = response.data.tbCancelOrder;
                 await axios.get("members").then(res => {
                     _cancelData = _cancelData.map(order => {
                         const member = res.data.tbMember.find(
-                            member => member.id === order.memberId
+                            member => member.id === EncodeKey(order.memberId)
                         );
-                        order.memberName = member[0].firstName + ' ' + member[0].lastName;
+                        if (member) {
+                            order.memberName = member.firstName + ' ' + member.lastName;
+                        }
+                        return order;
                     })
                 });
                 setListData(_cancelData);
                 setListSearch(_cancelData);
             }
+            dispatch(fetchSuccess());
         });
     };
 
@@ -79,6 +86,7 @@ const TabCancel = () => {
             dispatch(fetchLoading());
             values.updateBy = localStorage.getItem('user');
             if (values.id) {
+                console.log('onSubmit update', values);
                 axios.put("cancelOrder", values).then(async (res) => {
                     console.log('res', res);
                     if (res.data.status) {
@@ -110,16 +118,20 @@ const TabCancel = () => {
     });
 
     const handleChangeStatus = (row, status) => {
-        console.log('row', row);
-        setCancelStatus(status);
+        for (const field in row) {
+            formik.setFieldValue(field, row[field], false);
+        }
+        formik.setFieldValue('cancelStatus', 'done', false);
+        // setCancelStatus(status);
         setOpen(true);
     }
 
     const handleModal = (data) => {
         if (data === 'save') {
-            formik.setFieldValue('cancelStatus', cancelStatus);
+            // formik.setFieldValue('cancelStatus', 'done', false);
             formik.handleSubmit();
         } else {
+            setOpen(false);
             fetchData();
         }
     }
@@ -156,8 +168,8 @@ const TabCancel = () => {
                 <ConfirmDialog
                     open={open}
                     formik={formik}
-                    status={cancelStatus}
-                    handleModal={() => handleModal}
+                    status={formik.values.cancelStatus}
+                    handleModal={handleModal}
                     type="cancel"
                 />
             )}

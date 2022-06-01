@@ -1,0 +1,16 @@
+.banner,
+.banner-label {
+    height: 120px;
+}
+
+.banner-picker {
+    height: 60px;
+}
+
+th,
+td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}

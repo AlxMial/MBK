@@ -24,7 +24,11 @@ const OrderTable = ({ orderList, openModal }) => {
     };
 
     const getStatus = (value) => {
-        if (value.transportStatus && value.transportStatus === 'done')
+        if (value.isCancel) {
+            return { text: 'ยกเลิกคำสั่งซื้อ', color: ' text-red-500 ' };
+        } else if (value.isReturn) {
+            return { text: 'คืนสินค้า', color: ' text-red-500 ' };
+        } else if (value.transportStatus && value.transportStatus === 'done')
             return { text: 'ส่งแล้ว', color: ' text-green-500 ' };
         else if (value.transportStatus && value.transportStatus === 'inTransit')
             return { text: 'กำลังส่ง', color: ' text-orange-500 ' };

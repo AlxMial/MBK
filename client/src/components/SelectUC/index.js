@@ -2,15 +2,16 @@ import React from "react";
 import Select from "react-select";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 
-const SelectUC = ({ name,options,value,onChange,isDisabled }) => {
- const useStyle = styleSelect();
-
+const SelectUC = ({ name, options, value, onChange, isDisabled, bgColor }) => {
+  const useStyle = styleSelect(bgColor);
+  const className = "border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded "
+    + "text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150";
   return (
     <Select
       id={name}
       name={name}
       onChange={onChange}
-      className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+      className={className}
       options={options}
       value={value}
       isDisabled={(isDisabled) ? isDisabled : false}

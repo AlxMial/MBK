@@ -1,3 +1,30 @@
 .order-image-stock {
     width: 40px;
+    min-width: 40px;
+}
+
+.image-slip {
+    max-height: 75vh;
+}
+
+// logistic
+.text-cancel {
+    color: red !important;
+}
+
+.image-header-export {
+    height: 80px;
+
+    img {
+        height: 80%;
+        margin: auto;
+    }
+
+    .text-header {
+        margin: auto;
+    }
+}
+
+.btn-export-pdf {
+    width: 150px;
 }
