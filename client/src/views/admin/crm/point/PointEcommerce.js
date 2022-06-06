@@ -72,6 +72,7 @@ export default function PointEcommerce() {
   }
 
   const InputSearch = (e) => {
+    e = e.toLowerCase();
     if (e === "") {
       setListEcommerce(listSearch);
     } else {

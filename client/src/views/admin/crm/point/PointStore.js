@@ -81,6 +81,7 @@ export default function PointStore() {
   }
 
   const InputSearch = (e) => {
+    e = e.toLowerCase();
     if (e === "") {
       setlistStore(listSearch);
     } else {

@@ -88,7 +88,7 @@ router.post("/", async (req, res) => {
     !Encrypt.IsNullOrEmpty(req.body.birthDate) &&
     !Encrypt.IsNullOrEmpty(req.body.registerDate) &&
     !Encrypt.IsNullOrEmpty(req.body.sex) &&
-    !Encrypt.IsNullOrEmpty(req.body.sMemberType) &&
+    !Encrypt.IsNullOrEmpty(req.body.isMemberType) &&
     !Encrypt.IsNullOrEmpty(req.body.memberType)
   ) {
     if (!member) {

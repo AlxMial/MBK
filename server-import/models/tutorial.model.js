@@ -24,6 +24,14 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      addBy: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      updateBy: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
     });
     return Tutorial;
   };

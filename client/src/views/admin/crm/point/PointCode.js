@@ -86,7 +86,6 @@ export default function PointCode() {
       setEnableCode(true);
     } else {
       setEnableCode(false);
-
       setActive("1");
       setType("1");
       setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
@@ -179,7 +178,6 @@ export default function PointCode() {
       );
     }
   };
-
 
   const onValidate = () => {
     if (formik.values.pointCodeSymbol === "") {

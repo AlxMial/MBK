@@ -44,7 +44,10 @@ router.get("/byId/:id", validateToken, async (req, res) => {
     if (listRedemption) {
       if (listRedemption.dataValues.redemptionType == "2") {
         Coupon = await tbRedemptionCoupon.findAll({
-          where: { isDeleted: false , redemptionConditionsHdId: listRedemption.dataValues.id },
+          where: {
+            isDeleted: false,
+            redemptionConditionsHdId: listRedemption.dataValues.id,
+          },
           attributes: {
             include: [
               [
@@ -53,14 +56,17 @@ router.get("/byId/:id", validateToken, async (req, res) => {
                   FROM tbimages
                   WHERE relatedId = tbRedemptionCoupon.id and relatedTable = 'tbRedemptionCoupon'
               )`),
-                "image",
+                "pictureCoupon",
               ],
             ],
           },
         });
 
         Product = await tbRedemptionProduct.findAll({
-          where: { isDeleted: false  , redemptionConditionsHdId: listRedemption.dataValues.id},
+          where: {
+            isDeleted: false,
+            redemptionConditionsHdId: listRedemption.dataValues.id,
+          },
           attributes: {
             include: [
               [
@@ -69,20 +75,20 @@ router.get("/byId/:id", validateToken, async (req, res) => {
                   FROM tbimages
                   WHERE relatedId = tbRedemptionProduct.id and relatedTable = 'tbRedemptionProduct'
               )`),
-                "image",
+                "pictureProduct",
               ],
             ],
           },
         });
 
-        for(var i = 0 ; i< Coupon.length ;i++){
-          Coupon[i].dataValues['rewardType'] = '1';
-          listGame.push(Coupon[i].dataValues)
+        for (var i = 0; i < Coupon.length; i++) {
+          Coupon[i].dataValues["rewardType"] = "1";
+          listGame.push(Coupon[i].dataValues);
         }
 
-        for(var i = 0 ; i< Product.length ;i++){
-          Product[i].dataValues['rewardType'] = '2';
-          listGame.push(Product[i].dataValues)
+        for (var i = 0; i < Product.length; i++) {
+          Product[i].dataValues["rewardType"] = "2";
+          listGame.push(Product[i].dataValues);
         }
       } else {
         listCoupon = await tbRedemptionCoupon.findOne({
@@ -224,12 +230,12 @@ router.post("/game", validateToken, async (req, res) => {
       let product = null;
 
       for (var i = 0; i < req.body.listGame.length; i++) {
-        req.body.listGame[i].data["redemptionConditionsHDId"] =
+        req.body.listGame[i]["redemptionConditionsHDId"] =
           redemption.dataValues.id;
-        if (req.body.listGame[i].data.rewardType === "1") {
-          coupon = await tbRedemptionCoupon.create(req.body.listGame[i].data);
-        } else if (req.body.listGame[i].data.rewardType === "2") {
-          product = await tbRedemptionProduct.create(req.body.listGame[i].data);
+        if (req.body.listGame[i].rewardType === "1") {
+          coupon = await tbRedemptionCoupon.create(req.body.listGame[i]);
+        } else if (req.body.listGame[i].rewardType === "2") {
+          product = await tbRedemptionProduct.create(req.body.listGame[i]);
         }
       }
 
@@ -268,7 +274,6 @@ router.post("/game", validateToken, async (req, res) => {
     }
   }
 });
-
 
 router.put("/game", validateToken, async (req, res) => {
   req.body.id = Encrypt.DecodeKey(req.body.id);
@@ -284,22 +289,83 @@ router.put("/game", validateToken, async (req, res) => {
   });
 
   if (!RedemptionConditionsHD) {
-    const redemption = await tbRedemptionConditionsHD.create(req.body);
+    const redemption = await tbRedemptionConditionsHD.update(req.body, {
+      where: { id: req.body.id },
+    });
     if (redemption) {
       let coupon = null;
       let product = null;
 
       for (var i = 0; i < req.body.listGame.length; i++) {
-        req.body.listGame[i].data["redemptionConditionsHDId"] =
-          redemption.dataValues.id;
-        if (req.body.listGame[i].data.rewardType === "1") {
-          coupon = await tbRedemptionCoupon.create(req.body.listGame[i].data);
-        } else if (req.body.listGame[i].data.rewardType === "2") {
-          product = await tbRedemptionProduct.create(req.body.listGame[i].data);
+        req.body.listGame[i]["redemptionConditionsHDId"] = req.body.id;
+        if (req.body.listGame[i].rewardType === "1") {
+          if (req.body.listGame[i].id) {
+            coupon = await tbRedemptionCoupon.update(req.body.listGame[i], {
+              where: { id: req.body.listGame[i].id },
+            });
+          } else {
+            coupon = await tbRedemptionCoupon.create(req.body.listGame[i]);
+          }
+        } else if (req.body.listGame[i].rewardType === "2") {
+          if (req.body.listGame[i].id) {
+            product = await tbRedemptionProduct.update(req.body.listGame[i], {
+              where: { id: req.body.listGame[i].id },
+            });
+          } else {
+            product = await tbRedemptionProduct.create(req.body.listGame[i]);
+          }
+        }
+
+        const Image = await tbImage.findOne({
+          where: {
+            relatedId: req.body.listGame[i].id,
+            relatedTable:
+              req.body.listGame[i].rewardType === "1"
+                ? "tbRedemptionCoupon"
+                : "tbRedemptionProduct",
+          },
+        });
+
+        if (Image) {
+          Image.image =
+            req.body.listGame[i].rewardType === "1"
+              ? req.body.listGame[i].pictureCoupon
+              : req.body.listGame[i].pictureProduct;
+          Image.updateBy = req.body.updateBy;
+          const Update = await tbImage.update(Image, {
+            where: {
+              relatedId: req.body.listGame[i].id,
+              relatedTable:
+                req.body.listGame[i].rewardType === "1"
+                  ? "tbRedemptionCoupon"
+                  : "tbRedemptionProduct",
+            },
+          });
+        } else {
+          let Value = {
+            relatedId: req.body.listGame[i].id,
+            relatedTable:
+              req.body.listGame[i].rewardType === "1"
+                ? "tbRedemptionCoupon"
+                : "tbRedemptionProduct",
+            isDeleted: 0,
+            addBy: req.body.addBy,
+          };
+          const Insert = await tbImage.create(Value);
         }
       }
 
-      Encrypt.encryptValueId(redemption);
+      //   for (var i = 0; i < req.body.listGame.length; i++) {
+      //     req.body.listGame[i].data["redemptionConditionsHDId"] =
+      //       redemption.dataValues.id;
+      //     if (req.body.listGame[i].data.rewardType === "1") {
+      //       coupon = await tbRedemptionCoupon.create(req.body.listGame[i].data);
+      //     } else if (req.body.listGame[i].data.rewardType === "2") {
+      //       product = await tbRedemptionProduct.create(req.body.listGame[i].data);
+      //     }
+      //   }
+
+      // Encrypt.encryptValueId(redemption);
       res.json({
         status: true,
         isError: false,
@@ -334,7 +400,6 @@ router.put("/game", validateToken, async (req, res) => {
     }
   }
 });
-
 
 router.put("/", validateToken, async (req, res) => {
   req.body.id = Encrypt.DecodeKey(req.body.id);
@@ -404,6 +469,44 @@ router.put("/", validateToken, async (req, res) => {
       });
     }
   }
+});
+
+router.delete("/:redemptionId", validateToken, async (req, res) => {
+  const redemptionId = Encrypt.DecodeKey(req.params.redemptionId);
+  tbRedemptionProduct.update(
+    { isDeleted: true },
+    { where: { redemptionConditionsHDId: redemptionId } }
+  );
+  tbRedemptionCoupon.update(
+    { isDeleted: true },
+    { where: { redemptionConditionsHDId: redemptionId } }
+  );
+  tbRedemptionConditionsHD.update(
+    { isDeleted: true },
+    { where: { id: redemptionId } }
+  );
+  res.json({
+    status: true,
+    message: "success",
+    tbRedemptionConditionsHD: null,
+  });
+});
+
+router.post("/redemptionsGame", validateToken, async (req, res) => {
+  if (req.body.rewardType === "1")
+    tbRedemptionCoupon.update(
+      { isDeleted: true },
+      { where: { id: req.body.rewardId } }
+    );
+  else
+    tbRedemptionProduct.update(
+      { isDeleted: true },
+      { where: { id: req.body.rewardId } }
+    );
+  res.json({
+    status: true,
+    message: "success",
+  });
 });
 
 module.exports = router;

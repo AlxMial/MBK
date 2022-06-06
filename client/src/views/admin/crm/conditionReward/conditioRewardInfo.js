@@ -147,29 +147,50 @@ export default function ConditioRewardInfo() {
           formik.values.addBy = localStorage.getItem("user");
           axios.post("redemptions/game", values).then(async (res) => {
             if (res.data.status) {
-              // setIsNew(false);
-              // formik.values.id = res.data.tbRedemptionConditionsHD.id;
-              // history.push(
-              //   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
-              // );
+              setIsNew(false);
+              formik.values.id = res.data.tbRedemptionConditionsHD.id;
+              history.push(
+                `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
+              );
               addToast(
                 Storage.GetLanguage() === "th"
                   ? "บันทึกข้อมูลสำเร็จ"
                   : "Save data successfully",
                 { appearance: "success", autoDismiss: true }
               );
+            } else {
+              addToast(
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
+                {
+                  appearance: "warning",
+                  autoDismiss: true,
+                }
+              );
             }
           });
-
           dispatch(fetchSuccess());
         } else {
-          dispatch(fetchLoading());
+          // dispatch(fetchLoading());
           formik.values.updateBy = localStorage.getItem("user");
-
-
-
-          
-          dispatch(fetchSuccess());
+          axios.put("redemptions/game", values).then(async (res) => {
+            if (res.data.status) {
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
+            } else {
+              addToast(
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
+                {
+                  appearance: "warning",
+                  autoDismiss: true,
+                }
+              );
+            }
+          });
+          // dispatch(fetchSuccess());
         }
       } else {
         if (formik.values.rewardType === "1") {
@@ -807,7 +828,11 @@ export default function ConditioRewardInfo() {
                       <StandardProduct formik={formikProduct} />
                     )
                   ) : (
-                    <GameList id={id} setListGame={setListGame} listGame={listGame} />
+                    <GameList
+                      id={id}
+                      setListGame={setListGame}
+                      listGame={listGame}
+                    />
                   )}
                 </div>
               </div>

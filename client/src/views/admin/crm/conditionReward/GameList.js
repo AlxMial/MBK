@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "services/axios";
+import { useToasts } from "react-toast-notifications";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import "antd/dist/antd.css";
@@ -7,6 +8,7 @@ import "moment/locale/th";
 import useMenu from "services/useMenu";
 import InputSearchUC from "components/InputSearchUC";
 import GameInfo from "./GameInfo";
+import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 
 const GameList = ({ id, setListGame, listGame }) => {
   console.log(listGame);
@@ -21,7 +23,10 @@ const GameList = ({ id, setListGame, listGame }) => {
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
   const { menu } = useMenu();
-
+  const [deleteValue, setDeleteValue] = useState("");
+  const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
+  const [rewardValue, setRewardValue] = useState("");
+  const { addToast } = useToasts();
   const InputSearch = (e) => {
     e = e.toLowerCase();
     if (e === "") {
@@ -39,7 +44,37 @@ const GameList = ({ id, setListGame, listGame }) => {
     }
   };
 
-  const onSubmitModal = (data) => {};
+  const deleteGame = (e, type) => {
+    axios
+      .post("redemptions/redemptionsGame", { rewardId: e, rewardType: type })
+      .then(() => {
+        setListGame(
+          listGame.filter((val) => {
+            return val.id !== e;
+          })
+        );
+        addToast("ลบข้อมูลสำเร็จ", {
+          appearance: "success",
+          autoDismiss: true,
+        });
+        closeModalSubject();
+      });
+  };
+
+  /* Modal */
+  function openModalSubject(id, type) {
+    setDeleteValue(id);
+    setRewardValue(type);
+    setIsOpenSubject(true);
+  }
+
+  function closeModalSubject() {
+    setIsOpenSubject(false);
+  }
+
+  const OpenModal = () => {
+
+  }
 
   const handleSubmitModal = (data) => {
     setListGame((s) => {
@@ -165,7 +200,6 @@ const GameList = ({ id, setListGame, listGame }) => {
                 {listGame
                   .slice(pagesVisited, pagesVisited + usersPerPage)
                   .map((value, key) => {
-                    console.log(value);
                     return (
                       <tr key={key}>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8">
@@ -175,7 +209,7 @@ const GameList = ({ id, setListGame, listGame }) => {
                         </td>
                         <td
                           onClick={() => {
-                            //   openModal(value.id);
+                            OpenModal(value);
                           }}
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
@@ -187,7 +221,7 @@ const GameList = ({ id, setListGame, listGame }) => {
                           <i
                             className="fas fa-trash text-red-500 cursor-pointer"
                             onClick={() => {
-                              // openModalSubject(value.id);
+                              openModalSubject(value.id, value.rewardType);
                             }}
                           ></i>
                         </td>
@@ -199,6 +233,16 @@ const GameList = ({ id, setListGame, listGame }) => {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        showModal={modalIsOpenSubject}
+        message={"กำหนด Game"}
+        hideModal={() => {
+          closeModalSubject();
+        }}
+        confirmModal={() => {
+          deleteGame(deleteValue, rewardValue);
+        }}
+      />
       {open && (
         <GameInfo
           name={modalName}
