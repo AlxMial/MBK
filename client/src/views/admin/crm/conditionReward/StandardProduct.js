@@ -103,7 +103,11 @@ const StandardProduct = ({ formik }) => {
                 type="text"
                 maxLength={7}
                 onBlur={formik.handleBlur}
-                value={!formik.values.isNoLimitReward ? formik.values.rewardCount : 'ไม่จำกัด'}
+                value={
+                  !formik.values.isNoLimitReward
+                    ? formik.values.rewardCount
+                    : "ไม่จำกัด"
+                }
                 onChange={(e) => {
                   setDelay(ValidateService.onHandleNumber(e));
                   formik.values.rewardCount = ValidateService.onHandleNumber(e);
@@ -122,7 +126,16 @@ const StandardProduct = ({ formik }) => {
               <CheckBoxUC
                 text="ไม่มีวันหมดอายุ"
                 name="isNoLimitReward"
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  formik.setFieldValue("isNoLimitReward", e.target.checked);
+                  if(e.target.checked)
+                    formik.setFieldValue("rewardCount", 1);
+                  else  
+                    formik.setFieldValue("rewardCount", 0);
+                  if (formik.values.rewardCount === "")
+                    formik.setFieldValue("rewardCount", 0);
+                  
+                }}
                 onBlur={formik.handleBlur}
                 checked={formik.values.isNoLimitReward}
                 classLabel="mt-2"

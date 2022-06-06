@@ -9,9 +9,9 @@ import useMenu from "services/useMenu";
 import InputSearchUC from "components/InputSearchUC";
 import GameInfo from "./GameInfo";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
+import FilesService from "services/files";
 
 const GameList = ({ id, setListGame, listGame }) => {
-  console.log(listGame);
   const { width } = useWindowDimensions();
   const [delay, setDelay] = useState();
   // const [listGame, setlistGame] = useState([]);
@@ -26,6 +26,7 @@ const GameList = ({ id, setListGame, listGame }) => {
   const [deleteValue, setDeleteValue] = useState("");
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [rewardValue, setRewardValue] = useState("");
+  const [index, setIndex] = useState();
   const { addToast } = useToasts();
   const InputSearch = (e) => {
     e = e.toLowerCase();
@@ -72,17 +73,32 @@ const GameList = ({ id, setListGame, listGame }) => {
     setIsOpenSubject(false);
   }
 
-  const OpenModal = () => {
-
-  }
+  const OpenModal = (value, key) => {
+    setIndex(key);
+    setModalData(value);
+    setOpen(true);
+  };
 
   const handleSubmitModal = (data) => {
-    setListGame((s) => {
-      return [...s, data];
-    });
-    setListSerch((s) => {
-      return [...s, data];
-    });
+    if (data.id) {
+      setListGame((s) => {
+        const newArr = s.slice();
+        newArr[index] = data;
+        return newArr;
+      });
+      setListSerch((s) => {
+        const newArr = s.slice();
+        newArr[index] = data;
+        return newArr;
+      });
+    } else {
+      setListGame((s) => {
+        return [...s, data];
+      });
+      setListSerch((s) => {
+        return [...s, data];
+      });
+    }
     setOpen(false);
   };
 
@@ -209,7 +225,7 @@ const GameList = ({ id, setListGame, listGame }) => {
                         </td>
                         <td
                           onClick={() => {
-                            OpenModal(value);
+                            OpenModal(value, key);
                           }}
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >

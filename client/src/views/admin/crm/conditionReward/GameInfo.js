@@ -8,7 +8,6 @@ import LabelUC from "components/LabelUC";
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
 import FilesService from "services/files";
-import axios from "services/axios";
 import SelectUC from "components/SelectUC";
 import ProfilePictureUC from "components/ProfilePictureUC";
 import InputUC from "components/InputUC";
@@ -133,6 +132,7 @@ const GameInfo = ({
           prevState.startDate === undefined ? new Date() : prevState.startDate,
       };
     });
+    fetchData();
   }, []);
 
   const handleSeletectImage = async (e) => {
@@ -159,6 +159,25 @@ const GameInfo = ({
     //     pictureCoupon: base64,
     //   };
     // });
+  };
+
+  const fetchData = async () => {
+    console.log(data);
+    for (var columns in data) {
+      if (data.rewardType === "1") {
+        if (data[columns] === null) {
+          formikCoupon.setFieldValue(columns, "", false);
+        } else {
+          formikCoupon.setFieldValue(columns, data[columns], false);
+        }
+      } else {
+        if (data[columns] === null) {
+          formikProduct.setFieldValue(columns, "", false);
+        } else {
+          formikProduct.setFieldValue(columns, data[columns], false);
+        }
+      }
+    }
   };
 
   const onValidate = (data) => {
@@ -195,7 +214,10 @@ const GameInfo = ({
                 </div>
               </div>
             </div>
-            <div className="flex flex-wrap px-24 py-4 justify-center Overflow-info">
+            <div
+              className="flex flex-wrap px-24 py-4 justify-center"
+              style={{ height: "100%", overflowY: "auto" }}
+            >
               <div className="w-full lg:w-1/12 margin-auto-t-b ">
                 <LabelUC label="ประเภท" isRequired={true} />
               </div>
@@ -218,7 +240,12 @@ const GameInfo = ({
                 />
               </div>
               <div className="w-full">&nbsp;</div>
-              <div className="w-full lg:w-1/12 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative w-full">
                   <LabelUC label="รูปคูปอง" isRequired={true} />
                   {formikCoupon.touched.pictureCoupon &&
@@ -227,7 +254,12 @@ const GameInfo = ({
                   ) : null}
                 </div>
               </div>
-              <div className="w-full lg:w-11/12 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-11/12 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative w-full px-4">
                   <ProfilePictureUC
                     id="eCouponImage"
@@ -246,8 +278,12 @@ const GameInfo = ({
                   )}
                 </div>
               </div>
-
-              <div className="w-full lg:w-1/12 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative w-full">
                   <LabelUC label="ชื่อคูปอง" isRequired={true} />
                   {formikCoupon.touched.couponName &&
@@ -258,7 +294,12 @@ const GameInfo = ({
                   ) : null}
                 </div>
               </div>
-              <div className="w-full lg:w-11/12 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-11/12 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative w-full px-4">
                   <InputUC
                     name="couponName"
@@ -280,8 +321,12 @@ const GameInfo = ({
                   )}
                 </div>
               </div>
-
-              <div className="w-full lg:w-1/12 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative w-full">
                   <LabelUC label="ส่วนลด" isRequired={true} />
                   {formikCoupon.touched.discount &&
@@ -292,7 +337,12 @@ const GameInfo = ({
                   ) : null}
                 </div>
               </div>
-              <div className="w-full lg:w-5/12 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-5/12 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative flex justify-between px-4">
                   <InputUC
                     name="discount"
@@ -332,14 +382,38 @@ const GameInfo = ({
                   )}
                 </div>
               </div>
-              <div className="w-full lg:w-1/12 margin-auto-t-b">&nbsp;</div>
-              <div className="w-full lg:w-5/12 margin-auto-t-b">&nbsp;</div>
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
+                &nbsp;
+              </div>
+              <div
+                className={
+                  "w-full lg:w-5/12 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
+                &nbsp;
+              </div>
               {/* <div className="w-full">&nbsp;</div> */}
-              <div className="w-full lg:w-1/12 margin-auto-t-b ">
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b " +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <LabelUC label="วันที่เริ่มใช้คูปอง" isRequired={true} />
                 <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
               </div>
-              <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-5/12 px-4 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative">
                   <DatePickerUC
                     onClick={(e) => {
@@ -376,14 +450,30 @@ const GameInfo = ({
                   <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                 </div>
               </div>
-              <div className={"w-full" + (width < 764 ? " block" : " hidden")}>
+              <div
+                className={
+                  "w-full" +
+                  (width < 764 ? " block" : " hidden") +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 &nbsp;
               </div>
-              <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+              <div
+                className={
+                  "w-full lg:w-1/12 px-4 margin-auto-t-b " +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <LabelUC label="วันที่หมดอายุ" isRequired={true} />
                 <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
               </div>
-              <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-5/12 px-4 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative">
                   <DatePickerUC
                     placeholder={
@@ -446,15 +536,31 @@ const GameInfo = ({
                   />
                 </div>
               </div>
-              <div className="w-full">&nbsp;</div>
-              <div className="w-full lg:w-1/12  margin-auto-t-b ">
+              <div
+                className={
+                  "w-full" + (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
+                &nbsp;
+              </div>
+              <div
+                className={
+                  "w-full lg:w-1/12  margin-auto-t-b " +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <LabelUC label="จำนวนคูปอง" isRequired={true} />
                 {formikCoupon.touched.couponCount &&
                 formikCoupon.errors.couponCount ? (
                   <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                 ) : null}
               </div>
-              <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-5/12 px-4 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative">
                   <InputUC
                     name="couponCount"
@@ -480,17 +586,33 @@ const GameInfo = ({
                   )}
                 </div>
               </div>
-              <div className={"w-full" + (width < 764 ? " block" : " hidden")}>
+              <div
+                className={
+                  "w-full" +
+                  (width < 764 ? " block" : " hidden") +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 &nbsp;
               </div>
-              <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+              <div
+                className={
+                  "w-full lg:w-1/12 px-4 margin-auto-t-b " +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <LabelUC label="จำนวนที่ใช้แลกต่อวัน" isRequired={false} />
                 {formikCoupon.touched.couponCount &&
                 formikCoupon.errors.couponCount ? (
                   <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                 ) : null}
               </div>
-              <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-5/12 px-4 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative">
                   <InputUC
                     name="usedPerDayCount"
@@ -517,10 +639,20 @@ const GameInfo = ({
               </div>
               {/* 
               <div className="w-full">&nbsp;</div> */}
-              <div className="w-full lg:w-1/12 margin-auto-t-b ">
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b " +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
               </div>
-              <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-11/12 px-4 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <div className="relative">
                   <TextAreaUC
                     name="description"
@@ -532,8 +664,18 @@ const GameInfo = ({
                   />
                 </div>
               </div>
-              <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
-              <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b " +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              ></div>
+              <div
+                className={
+                  "w-full lg:w-11/12 px-4 margin-auto-t-b" +
+                  (data.rewardType === "2" ? " hidden" : " ")
+                }
+              >
                 <CheckBoxUC
                   text="ยกเลิกคูปอง"
                   name="isCancel"
@@ -543,161 +685,223 @@ const GameInfo = ({
                   classLabel="mt-2"
                 />
               </div>
-              <div className="w-full">&nbsp;</div>
-              <div className="flex flex-wrap">
-                <div className="w-full lg:w-1/12 margin-auto-t-b">
-                  <div className="relative w-full">
-                    <LabelUC label="รูปสินค้าสัมนาคุณ" isRequired={true} />
-                    {formikProduct.touched.pictureProduct &&
-                    formikProduct.errors.pictureProduct ? (
-                      <div className="text-sm py-2 px-2 text-red-500">
-                        &nbsp;
-                      </div>
-                    ) : null}
-                  </div>
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b" +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                <div className="relative w-full">
+                  <LabelUC label="รูปสินค้าสัมนาคุณ" isRequired={true} />
+                  {formikProduct.touched.pictureProduct &&
+                  formikProduct.errors.pictureProduct ? (
+                    <div className="text-sm py-2 px-2 text-red-500">&nbsp;</div>
+                  ) : null}
                 </div>
-                <div className="w-full lg:w-11/12 margin-auto-t-b">
-                  <div className="relative w-full px-4">
-                    <ProfilePictureUC
-                      id="eProductImage"
-                      hoverText="เลือกรูปสินค้าสัมนาคุณ"
-                      onChange={handleSeletectImage}
-                      src={formikProduct.values.pictureProduct}
-                    />
+              </div>
+              <div
+                className={
+                  "w-full lg:w-11/12 margin-auto-t-b" +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                <div className="relative w-full px-4">
+                  <ProfilePictureUC
+                    id="eProductImage"
+                    hoverText="เลือกรูปสินค้าสัมนาคุณ"
+                    onChange={handleSeletectImage}
+                    src={formikProduct.values.pictureProduct}
+                  />
 
-                    {formikProduct.touched.pictureProduct &&
-                    formikProduct.errors.pictureProduct ? (
-                      <div className="text-sm py-2 px-2  text-red-500">
-                        {formikProduct.errors.pictureProduct}
-                      </div>
-                    ) : null}
-                  </div>
+                  {formikProduct.touched.pictureProduct &&
+                  formikProduct.errors.pictureProduct ? (
+                    <div className="text-sm py-2 px-2  text-red-500">
+                      {formikProduct.errors.pictureProduct}
+                    </div>
+                  ) : null}
                 </div>
-                <div className="w-full">&nbsp;</div>
-                <div className="w-full lg:w-1/12 margin-auto-t-b">
-                  <div className="relative w-full">
-                    <LabelUC label="ชื่อสินค้าสัมนาคุณ" isRequired={true} />
-                    {formikProduct.touched.productName &&
-                    formikProduct.errors.productName ? (
-                      <div className="text-sm py-2 px-2  text-red-500">
-                        &nbsp;
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-                <div className="w-full lg:w-11/12 margin-auto-t-b">
-                  <div className="relative w-full px-4">
-                    <InputUC
-                      name="productName"
-                      type="text"
-                      maxLength={255}
-                      onBlur={formikProduct.handleBlur}
-                      value={formikProduct.values.productName}
-                      onChange={(e) => {
-                        formikProduct.handleChange(e);
-                      }}
-                    />
-                    {formikProduct.touched.productName &&
-                    formikProduct.errors.productName ? (
-                      <div className="text-sm py-2 px-2  text-red-500">
-                        {formikProduct.errors.productName}
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-
-                <div
-                  className={
-                    "w-full " +
-                    (formikProduct.touched.productName &&
-                    formikProduct.errors.productName
-                      ? " hidden"
-                      : "")
-                  }
-                >
-                  &nbsp;
-                </div>
-                <div className="w-full lg:w-1/12 margin-auto-t-b ">
-                  <LabelUC label="จำนวนสูงสุด" isRequired={true} />
-                  <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
-                  {formikProduct.touched.couponCount &&
-                  formikProduct.errors.couponCount ? (
+              </div>
+              <div
+                className={
+                  "w-full" + (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                &nbsp;
+              </div>
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b" +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                <div className="relative w-full">
+                  <LabelUC label="ชื่อสินค้าสัมนาคุณ" isRequired={true} />
+                  {formikProduct.touched.productName &&
+                  formikProduct.errors.productName ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       &nbsp;
                     </div>
                   ) : null}
                 </div>
-                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                  <div className="relative flex">
-                    <InputUC
-                      name="rewardCount"
-                      type="text"
-                      maxLength={7}
-                      onBlur={formikProduct.handleBlur}
-                      value={
-                        !formikProduct.values.isNoLimitReward
-                          ? formikProduct.values.rewardCount
-                          : "ไม่จำกัด"
-                      }
-                      onChange={(e) => {
-                        setDelay(ValidateService.onHandleNumber(e));
-                        formikProduct.values.rewardCount =
-                          ValidateService.onHandleNumber(e);
-                      }}
-                      disabled={
-                        formikProduct.values.isNoLimitReward ? true : false
-                      }
-                      min="0"
-                    />
-                    <span
-                      className="margin-auto-t-b font-bold"
-                      style={{ marginLeft: width < 764 ? "1rem" : "2rem" }}
-                    >
-                      ชิ้น
-                    </span>
-                  </div>
-                  <div className="relative">
-                    <CheckBoxUC
-                      text="ไม่มีวันหมดอายุ"
-                      name="isNoLimitReward"
-                      onChange={formikProduct.handleChange}
-                      onBlur={formikProduct.handleBlur}
-                      checked={formikProduct.values.isNoLimitReward}
-                      classLabel="mt-2"
-                    />
-                  </div>
+              </div>
+              <div
+                className={
+                  "w-full lg:w-11/12 margin-auto-t-b" +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                <div className="relative w-full px-4">
+                  <InputUC
+                    name="productName"
+                    type="text"
+                    maxLength={255}
+                    onBlur={formikProduct.handleBlur}
+                    value={formikProduct.values.productName}
+                    onChange={(e) => {
+                      formikProduct.handleChange(e);
+                    }}
+                  />
+                  {formikProduct.touched.productName &&
+                  formikProduct.errors.productName ? (
+                    <div className="text-sm py-2 px-2  text-red-500">
+                      {formikProduct.errors.productName}
+                    </div>
+                  ) : null}
                 </div>
-                <div className="w-full lg:w-1/12 margin-auto-t-b ">&nbsp;</div>
-                <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                  &nbsp;
+              </div>
+
+              <div
+                className={
+                  "w-full " +
+                  (formikProduct.touched.productName &&
+                  formikProduct.errors.productName
+                    ? " hidden"
+                    : "") +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                &nbsp;
+              </div>
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b " +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                <LabelUC label="จำนวนสูงสุด" isRequired={true} />
+                <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
+                {formikProduct.touched.couponCount &&
+                formikProduct.errors.couponCount ? (
+                  <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
+                ) : null}
+              </div>
+              <div
+                className={
+                  "w-full lg:w-5/12 px-4 margin-auto-t-b" +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                <div className="relative flex">
+                  <InputUC
+                    name="rewardCount"
+                    type="text"
+                    maxLength={7}
+                    onBlur={formikProduct.handleBlur}
+                    value={
+                      !formikProduct.values.isNoLimitReward
+                        ? formikProduct.values.rewardCount
+                        : "ไม่จำกัด"
+                    }
+                    onChange={(e) => {
+                      setDelay(ValidateService.onHandleNumber(e));
+                      formikProduct.values.rewardCount =
+                        ValidateService.onHandleNumber(e);
+                    }}
+                    disabled={
+                      formikProduct.values.isNoLimitReward ? true : false
+                    }
+                    min="0"
+                  />
+                  <span
+                    className="margin-auto-t-b font-bold"
+                    style={{ marginLeft: width < 764 ? "1rem" : "2rem" }}
+                  >
+                    ชิ้น
+                  </span>
                 </div>
-                <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
-                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
-                  <div className="relative">
-                    {formikProduct.touched.rewardCount &&
-                    formikProduct.errors.rewardCount ? (
-                      <div className="text-sm py-2 px-2  text-red-500">
-                        {formikProduct.errors.rewardCount}
-                      </div>
-                    ) : (
-                      <div>&nbsp;</div>
-                    )}
-                  </div>
+                <div className="relative">
+                  <CheckBoxUC
+                    text="ไม่มีวันหมดอายุ"
+                    name="isNoLimitReward"
+                    onChange={formikProduct.handleChange}
+                    onBlur={formikProduct.handleBlur}
+                    checked={formikProduct.values.isNoLimitReward}
+                    classLabel="mt-2"
+                  />
                 </div>
-                <div className="w-full lg:w-1/12 margin-auto-t-b ">
-                  <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
+              </div>
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b " +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                &nbsp;
+              </div>
+              <div
+                className={
+                  "w-full lg:w-5/12 px-4 margin-auto-t-b" +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                &nbsp;
+              </div>
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b " +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              ></div>
+              <div
+                className={
+                  "w-full lg:w-11/12 px-4 margin-auto-t-b" +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                <div className="relative">
+                  {formikProduct.touched.rewardCount &&
+                  formikProduct.errors.rewardCount ? (
+                    <div className="text-sm py-2 px-2  text-red-500">
+                      {formikProduct.errors.rewardCount}
+                    </div>
+                  ) : (
+                    <div>&nbsp;</div>
+                  )}
                 </div>
-                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
-                  <div className="relative">
-                    <TextAreaUC
-                      name="description"
-                      onBlur={formikProduct.handleBlur}
-                      value={formikProduct.values.description}
-                      onChange={(e) => {
-                        formikProduct.handleChange(e);
-                      }}
-                    />
-                  </div>
+              </div>
+              <div
+                className={
+                  "w-full lg:w-1/12 margin-auto-t-b " +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
+              </div>
+              <div
+                className={
+                  "w-full lg:w-11/12 px-4 margin-auto-t-b" +
+                  (data.rewardType === "1" ? " hidden" : " ")
+                }
+              >
+                <div className="relative">
+                  <TextAreaUC
+                    name="description"
+                    onBlur={formikProduct.handleBlur}
+                    value={formikProduct.values.description}
+                    onChange={(e) => {
+                      formikProduct.handleChange(e);
+                    }}
+                  />
                 </div>
               </div>
             </div>

@@ -214,6 +214,49 @@ router.post("/", validateToken, async (req, res) => {
   }
 });
 
+const UpdateImage = async (listGame) => {
+  const Image = await tbImage.findOne({
+    where: {
+      relatedId: listGame.id,
+      relatedTable:
+        listGame.rewardType === "1"
+          ? "tbRedemptionCoupon"
+          : "tbRedemptionProduct",
+    },
+  });
+
+  if (Image) {
+    Image.image =
+      listGame.rewardType === "1"
+        ? listGame.pictureCoupon
+        : listGame.pictureProduct;
+    const Update = await tbImage.update(Image.dataValues, {
+      where: {
+        relatedId: listGame.id,
+        relatedTable:
+          listGame.rewardType === "1"
+            ? "tbRedemptionCoupon"
+            : "tbRedemptionProduct",
+      },
+    });
+  } else {
+    let Value = {
+      image:
+        listGame.rewardType === "1"
+          ? listGame.pictureCoupon
+          : listGame.pictureProduct,
+      relatedId: listGame.id,
+      relatedTable:
+        listGame.rewardType === "1"
+          ? "tbRedemptionCoupon"
+          : "tbRedemptionProduct",
+      isDeleted: 0,
+      addBy: req.body.addBy,
+    };
+    const Insert = await tbImage.create(Value);
+  }
+};
+
 router.post("/game", validateToken, async (req, res) => {
   let RedemptionConditionsHD;
   RedemptionConditionsHD = await tbRedemptionConditionsHD.findOne({
@@ -237,6 +280,7 @@ router.post("/game", validateToken, async (req, res) => {
         } else if (req.body.listGame[i].rewardType === "2") {
           product = await tbRedemptionProduct.create(req.body.listGame[i]);
         }
+        UpdateImage(req.body.listGame[i]);
       }
 
       Encrypt.encryptValueId(redemption);
@@ -315,57 +359,49 @@ router.put("/game", validateToken, async (req, res) => {
             product = await tbRedemptionProduct.create(req.body.listGame[i]);
           }
         }
+        UpdateImage(req.body.listGame[i]);
+        // const Image = await tbImage.findOne({
+        //   where: {
+        //     relatedId: req.body.listGame[i].id,
+        //     relatedTable:
+        //       req.body.listGame[i].rewardType === "1"
+        //         ? "tbRedemptionCoupon"
+        //         : "tbRedemptionProduct",
+        //   },
+        // });
 
-        const Image = await tbImage.findOne({
-          where: {
-            relatedId: req.body.listGame[i].id,
-            relatedTable:
-              req.body.listGame[i].rewardType === "1"
-                ? "tbRedemptionCoupon"
-                : "tbRedemptionProduct",
-          },
-        });
-
-        if (Image) {
-          Image.image =
-            req.body.listGame[i].rewardType === "1"
-              ? req.body.listGame[i].pictureCoupon
-              : req.body.listGame[i].pictureProduct;
-          Image.updateBy = req.body.updateBy;
-          const Update = await tbImage.update(Image, {
-            where: {
-              relatedId: req.body.listGame[i].id,
-              relatedTable:
-                req.body.listGame[i].rewardType === "1"
-                  ? "tbRedemptionCoupon"
-                  : "tbRedemptionProduct",
-            },
-          });
-        } else {
-          let Value = {
-            relatedId: req.body.listGame[i].id,
-            relatedTable:
-              req.body.listGame[i].rewardType === "1"
-                ? "tbRedemptionCoupon"
-                : "tbRedemptionProduct",
-            isDeleted: 0,
-            addBy: req.body.addBy,
-          };
-          const Insert = await tbImage.create(Value);
-        }
+        // if (Image) {
+        //   Image.image =
+        //     req.body.listGame[i].rewardType === "1"
+        //       ? req.body.listGame[i].pictureCoupon
+        //       : req.body.listGame[i].pictureProduct;
+        //   const Update = await tbImage.update(Image.dataValues, {
+        //     where: {
+        //       relatedId: req.body.listGame[i].id,
+        //       relatedTable:
+        //         req.body.listGame[i].rewardType === "1"
+        //           ? "tbRedemptionCoupon"
+        //           : "tbRedemptionProduct",
+        //     },
+        //   });
+        // } else {
+        //   let Value = {
+        //     image:
+        //       req.body.listGame[i].rewardType === "1"
+        //         ? req.body.listGame[i].pictureCoupon
+        //         : req.body.listGame[i].pictureProduct,
+        //     relatedId: req.body.listGame[i].id,
+        //     relatedTable:
+        //       req.body.listGame[i].rewardType === "1"
+        //         ? "tbRedemptionCoupon"
+        //         : "tbRedemptionProduct",
+        //     isDeleted: 0,
+        //     addBy: req.body.addBy,
+        //   };
+        //   const Insert = await tbImage.create(Value);
+        // }
       }
 
-      //   for (var i = 0; i < req.body.listGame.length; i++) {
-      //     req.body.listGame[i].data["redemptionConditionsHDId"] =
-      //       redemption.dataValues.id;
-      //     if (req.body.listGame[i].data.rewardType === "1") {
-      //       coupon = await tbRedemptionCoupon.create(req.body.listGame[i].data);
-      //     } else if (req.body.listGame[i].data.rewardType === "2") {
-      //       product = await tbRedemptionProduct.create(req.body.listGame[i].data);
-      //     }
-      //   }
-
-      // Encrypt.encryptValueId(redemption);
       res.json({
         status: true,
         isError: false,
@@ -428,6 +464,9 @@ router.put("/", validateToken, async (req, res) => {
         coupon = await tbRedemptionCoupon.update(req.body.coupon, {
           where: { id: req.body.coupon.id },
         });
+
+        
+
       } else if (req.body.rewardType === "2") {
         req.body.product.rewardCount = req.body.product.isNoLimitReward
           ? null

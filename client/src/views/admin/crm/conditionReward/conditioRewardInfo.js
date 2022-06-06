@@ -96,8 +96,10 @@ export default function ConditioRewardInfo() {
   const onEditValue = async () => {
     formik.handleSubmit();
     const valueError = JSON.stringify(formik.errors);
+    setIsOpenEdit(false);
+    if (valueError.length <= 2) 
+    { history.push("/admin/redemptions"); }
 
-    if (valueError.length > 2) setIsOpenEdit(false);
   };
 
   const onReturn = () => {
@@ -152,6 +154,8 @@ export default function ConditioRewardInfo() {
               history.push(
                 `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
               );
+              dispatch(fetchSuccess());
+              formik.setTouched({});
               addToast(
                 Storage.GetLanguage() === "th"
                   ? "บันทึกข้อมูลสำเร็จ"
@@ -159,6 +163,8 @@ export default function ConditioRewardInfo() {
                 { appearance: "success", autoDismiss: true }
               );
             } else {
+              dispatch(fetchSuccess());
+              formik.setTouched({});
               addToast(
                 "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
                 {
@@ -168,12 +174,13 @@ export default function ConditioRewardInfo() {
               );
             }
           });
-          dispatch(fetchSuccess());
         } else {
-          // dispatch(fetchLoading());
+          dispatch(fetchLoading());
           formik.values.updateBy = localStorage.getItem("user");
           axios.put("redemptions/game", values).then(async (res) => {
             if (res.data.status) {
+              dispatch(fetchSuccess());
+              formik.setTouched({});
               addToast(
                 Storage.GetLanguage() === "th"
                   ? "บันทึกข้อมูลสำเร็จ"
@@ -181,6 +188,8 @@ export default function ConditioRewardInfo() {
                 { appearance: "success", autoDismiss: true }
               );
             } else {
+              dispatch(fetchSuccess());
+              formik.setTouched({});
               addToast(
                 "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
                 {
@@ -190,7 +199,6 @@ export default function ConditioRewardInfo() {
               );
             }
           });
-          // dispatch(fetchSuccess());
         }
       } else {
         if (formik.values.rewardType === "1") {
@@ -208,7 +216,10 @@ export default function ConditioRewardInfo() {
             relatedTable: "tbRedemptionProduct",
           };
         }
-        if (formikCoupon.isValid || formikProduct.isValid) {
+        if (
+          (formik.values.rewardType === "1" && formikCoupon.isValid) ||
+          (formik.values.rewardType === "2" && formikProduct.isValid)
+        ) {
           if (isNew) {
             dispatch(fetchLoading());
             formik.values.addBy = localStorage.getItem("user");
@@ -251,6 +262,13 @@ export default function ConditioRewardInfo() {
             formik.setFieldValue("expireDate", null);
             axios.put("redemptions", values).then(async (res) => {
               if (res.data.status) {
+                ImageSave = {
+                  ...ImageSave,
+                  relatedId:
+                    formik.values.rewardType === "1"
+                      ? formikCoupon.values.id
+                      : formikProduct.values.id,
+                };
                 await onSaveImage(ImageSave, async (res) => {});
                 addToast(
                   Storage.GetLanguage() === "th"
@@ -355,35 +373,73 @@ export default function ConditioRewardInfo() {
             let reademptionType =
               response.data.tbRedemptionConditionsHD["redemptionType"];
             for (var columns in response.data.tbRedemptionConditionsHD) {
-              if (columns === "rewardType") {
-                setIsRewardType(
-                  response.data.tbRedemptionConditionsHD[columns] === "1"
-                    ? false
-                    : true
+              if (response.data.tbRedemptionConditionsHD[columns] === null) {
+                formik.setFieldValue(columns, "", false);
+              } else {
+                if (columns === "rewardType") {
+                  setIsRewardType(
+                    response.data.tbRedemptionConditionsHD[columns] === "1"
+                      ? false
+                      : true
+                  );
+                } else if (columns === "redemptionType") {
+                  setIsRedemptionType(
+                    response.data.tbRedemptionConditionsHD[columns] === "1"
+                      ? false
+                      : true
+                  );
+                }
+                formik.setFieldValue(
+                  columns,
+                  response.data.tbRedemptionConditionsHD[columns],
+                  false
                 );
               }
-              formik.setFieldValue(
-                columns,
-                response.data.tbRedemptionConditionsHD[columns],
-                false
-              );
             }
             if (reademptionType === "2") {
+              for (var i = 0; i < response.data.listGame.length; i++) {
+                if (response.data.listGame[i].rewardType === "1") {
+                  response.data.listGame[i]["pictureCoupon"] =
+                    FilesService.buffer64UTF8(
+                      response.data.listGame[i]["pictureCoupon"]
+                    );
+                } else {
+                  response.data.listGame[i]["pictureProduct"] =
+                    FilesService.buffer64UTF8(
+                      response.data.listGame[i]["pictureProduct"]
+                    );
+                }
+              }
               setListGame(response.data.listGame);
             } else {
               for (var columnsCoupon in response.data.tbRedemptionCoupon) {
-                formikCoupon.setFieldValue(
-                  columnsCoupon,
-                  response.data.tbRedemptionCoupon[columnsCoupon],
-                  false
-                );
+                if (response.data.tbRedemptionCoupon[columnsCoupon] === null) {
+                  formikCoupon.setFieldValue(columnsCoupon, "", false);
+                } else {
+                  formikCoupon.setFieldValue(
+                    columnsCoupon,
+                    response.data.tbRedemptionCoupon[columnsCoupon],
+                    false
+                  );
+                }
               }
               for (var columnsProduct in response.data.tbRedemptionProduct) {
-                formikProduct.setFieldValue(
-                  columnsProduct,
-                  response.data.tbRedemptionProduct[columnsProduct],
-                  false
-                );
+                if (
+                  response.data.tbRedemptionProduct[columnsProduct] === null
+                ) {
+                  if (
+                    columnsProduct === "rewardCount" &&
+                    response.data.tbRedemptionProduct["isNoLimitReward"]
+                  ) {
+                    formikProduct.setFieldValue(columnsProduct, 1, false);
+                  } else formikProduct.setFieldValue(columnsProduct, "", false);
+                } else {
+                  formikProduct.setFieldValue(
+                    columnsProduct,
+                    response.data.tbRedemptionProduct[columnsProduct],
+                    false
+                  );
+                }
               }
 
               if (response.data.tbImage !== null) {
@@ -409,9 +465,9 @@ export default function ConditioRewardInfo() {
             }
           } else {
             setIsNew(true);
-            // formik.setFieldValue("redemptionType", "1");
-            // formik.setFieldValue("rewardType", "1");
-            // formikCoupon.setFieldValue("discountType", "1");
+            formik.setFieldValue("redemptionType", "1");
+            formik.setFieldValue("rewardType", "1");
+            formikCoupon.setFieldValue("discountType", "1");
           }
           dispatch(fetchSuccess());
         }
@@ -439,7 +495,7 @@ export default function ConditioRewardInfo() {
   useEffect(() => {
     /* Default Value for Testing */
     setIsNew(true);
-    defaultValue();
+    // defaultValue();
     fetchData();
   }, []);
 
