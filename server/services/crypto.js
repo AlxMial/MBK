@@ -238,6 +238,14 @@ class ValidateEncrypt {
     }
     return list;
   }
+
+  decodePointCode(list) {
+    for (var i = 0; i < list.length; i++) {
+     list[i].code = this.DecodeKey(list[i].code).toUpperCase();
+    }
+    return list;
+  }
+
 }
 
 module.exports = ValidateEncrypt;

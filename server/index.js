@@ -57,6 +57,8 @@ const redeemRouter = require('./routes/redeem/redeem');
 app.use("/mbkserver/redeem", redeemRouter);
 const redemptionRouter = require('./routes/redemption/redemption');
 app.use("/mbkserver/redemptions", redemptionRouter);
+const MemberPointRouter = require('./routes/members/MemberPoint');
+app.use("/mbkserver/memberPoint", MemberPointRouter);
 // e-commerce
 const shop = require('./routes/ecommerce/shop');
 app.use("/mbkserver/shop", shop);

@@ -350,7 +350,7 @@ export default function ConditionRewardList() {
             </div>
             <ConfirmDialog
               showModal={modalIsOpenSubject}
-              message={"จัดการข้อมูลสมาชิก"}
+              message={"เงื่อนไขแลกของรางวัล"}
               hideModal={() => {
                 closeModalSubject();
               }}

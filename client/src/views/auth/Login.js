@@ -102,7 +102,7 @@ export default function Login() {
     <>
       <div className="container mx-auto px-4 h-full">
         <div className="flex content-center items-center justify-center h-full">
-          <div className="w-full lg:w-5/12 px-4 text-center">
+          <div className="w-full lg:w-5-5/12 px-4 text-center">
             <div className="flex flex-wrap mt-6 relative justify-center">
               <div className="่">
                 <span className="text-green-mbk text-3xl">

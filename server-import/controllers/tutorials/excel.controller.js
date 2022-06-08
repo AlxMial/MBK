@@ -164,7 +164,7 @@ const download = (req, res) => {
   const id = req.params.id;
   Tutorial.findAll({ where: { tbPointCodeHDId: id } }).then((objs) => {
     let tutorials = [];
-    console.log(objs)
+ 
     objs.forEach((obj) => {
       tutorials.push({
         code: Encrypt.DecodeKey(obj.code).toUpperCase(),

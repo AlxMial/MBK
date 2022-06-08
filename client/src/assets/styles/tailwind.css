@@ -1648,6 +1648,10 @@ select {
   justify-content: space-between;
 }
 
+.justify-content-right {
+  justify-content: right;
+}
+
 .flex-1 {
   -webkit-flex: 1 1 0%;
   flex: 1 1 0%;
@@ -1802,7 +1806,7 @@ select {
 
 .text-3xl {
   font-size: 2rem;
-  line-height: 2rem;
+  line-height: 3rem;
 }
 
 .text-4xl {
@@ -3373,6 +3377,10 @@ select {
     width: 35%;
   }
 
+  .lg\:w-5-5\/12 {
+    width: 45%;
+  }
+
   .lg\:w-11\/12 {
     width: 85%;
   }
@@ -3392,6 +3400,8 @@ select {
   .lg\:w-6\/12 {
     width: 50%;
   }
+
+  
 
   .lg\:w-8\/12 {
     width: 66.666667%;

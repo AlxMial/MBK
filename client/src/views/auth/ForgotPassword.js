@@ -15,7 +15,7 @@ export default function ForgotPassword() {
       email: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string().required("* กรุณากรอกอีเมล"),
+      email: Yup.string().required("* กรุณากรอก Email"),
     }),
     onSubmit: (values) => {
       axios.get(`/users/getemail/${values.email}`).then((response) => {
@@ -33,7 +33,6 @@ export default function ForgotPassword() {
 
   const sendmail = (tomail, id) => {
     const fullName = localStorage.getItem("fullName");
-    const key = "mjuproject,";
     axios
       .post("mails", {
         frommail: "no-reply@prg.co.th",
@@ -44,6 +43,10 @@ export default function ForgotPassword() {
       })
       .then((response) => {
         if (response.data.msg === "success") {
+          // addToast("ส่ง Email สำเร็จ กรุณราทำการตรวจสอบ Email", {
+          //   appearance: "success",
+          //   autoDismiss: true,
+          // });
         } else if (response.data.msg === "fail") {
           addToast("Oops, something went wrong. Try again", {
             appearance: "error",
@@ -58,7 +61,7 @@ export default function ForgotPassword() {
     <>
       <div className="container mx-auto px-4 h-full">
         <div className="flex content-center items-center justify-center h-full">
-          <div className="w-full lg:w-5/12 px-4 text-center">
+          <div className="w-full lg:w-5-5/12 px-4 text-center">
             <div className="flex flex-wrap mt-6 relative justify-center">
               <div className="่">
                 <span className="text-green-mbk text-3xl">
@@ -67,7 +70,7 @@ export default function ForgotPassword() {
               </div>
             </div>
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-white border-0">
-              <div className="rounded-t mb-0 px-3 py-3"></div>
+            <div className="rounded-t mb-0 px-3 py-3"></div>
               <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                 <form onSubmit={formik.handleSubmit}>
                   <div className="flex flex-wrap mt-6 relative">
@@ -94,8 +97,8 @@ export default function ForgotPassword() {
                     </div>
                   </div>
                   <div className="flex flex-wrap relative">
-                    <div className="lg:w-3/12 margin-auto-t-r "></div>
-                    <div className="lg:w-9/12">
+                    <div className="lg:w-3/12 "></div>
+                    <div className="lg:w-9/12 text-left">
                       {formik.touched.email && formik.errors.email ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.email}

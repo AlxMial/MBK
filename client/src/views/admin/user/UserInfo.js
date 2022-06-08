@@ -92,6 +92,8 @@ export default function UserInfo() {
     if (valueError.length > 2) {
       setIsOpenEdit(false);
       if (formik.values.password === "") setErrorPassword(true);
+    }else{
+      history.push("/admin/users");
     }
     // setIsModified(false);
     // history.push("/admin/users");
@@ -146,12 +148,12 @@ export default function UserInfo() {
         )
         .email(
           Storage.GetLanguage() === "th"
-            ? "* รูปแบบอีเมลไม่ถูกต้อง"
+            ? "* รูปแบบ Email ไม่ถูกต้อง"
             : "Invalid email format"
         )
         .required(
           Storage.GetLanguage() === "th"
-            ? "* กรุณากรอก อีเมล"
+            ? "* กรุณากรอก Email"
             : "* Please enter your email"
         ),
       empCode: Yup.string().required(
@@ -478,7 +480,7 @@ export default function UserInfo() {
                         }}
                         onBlur={formik.handleBlur}
                         value={formik.values.userName}
-                        autoComplete="userName"
+                        autoComplete="off"
                         disabled={isNew ? false : true}
                       />
                     </div>

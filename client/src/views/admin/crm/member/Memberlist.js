@@ -59,9 +59,9 @@ export default function MemberList() {
       setListUser(
         listSearch.filter(
           (x) =>
-            x.firstName.includes(e) ||
-            x.lastName.includes(e) ||
-            x.email.includes(e) ||
+            x.firstName.toLowerCase().includes(e) ||
+            x.lastName.toLowerCase().includes(e) ||
+            x.email.toLowerCase().includes(e) ||
             x.phone.includes(e) ||
             x.birthDate.toString().includes(e) ||
             x.registerDate.toString().includes(e)
@@ -167,16 +167,15 @@ export default function MemberList() {
       "memberPoint",
     ];
     for (var i = 0; i < member.data.tbMember.length; i++) {
-
-      member.data.tbMember[i]["province"]= await Address.getAddressName(
+      member.data.tbMember[i]["province"] = await Address.getAddressName(
         "province",
         member.data.tbMember[i]["province"]
       );
-      member.data.tbMember[i]["district"]= await Address.getAddressName(
+      member.data.tbMember[i]["district"] = await Address.getAddressName(
         "district",
         member.data.tbMember[i]["district"]
       );
-      member.data.tbMember[i]["subDistrict"]= await Address.getAddressName(
+      member.data.tbMember[i]["subDistrict"] = await Address.getAddressName(
         "subDistrict",
         member.data.tbMember[i]["subDistrict"]
       );
@@ -194,19 +193,30 @@ export default function MemberList() {
   const fetchPermission = async () => {
     const role = await GetPermissionByUserName();
     setTypePermission(role);
+    if (role === "1") {
+      axios.get("members/Show").then((response) => {
+        if (response.data.error) {
+          console.log(response.data.error);
+        } else {
+          setListUser(response.data.tbMember);
+          setListSerch(response.data.tbMember);
+        }
+      });
+    } else {
+      axios.get("members").then((response) => {
+        if (response.data.error) {
+          console.log(response.data.error);
+        } else {
+          setListUser(response.data.tbMember);
+          setListSerch(response.data.tbMember);
+        }
+      });
+    }
   };
 
   useEffect(() => {
     fetchPermission();
-    axios.get("members").then((response) => {
-      if (response.data.error) {
-        // console.log(response.data.error);
-      } else {
-        console.log(response.data.tbMember)
-        setListUser(response.data.tbMember);
-        setListSerch(response.data.tbMember);
-      }
-    });
+   
   }, []);
 
   return (
@@ -475,7 +485,7 @@ export default function MemberList() {
             </div>
             <ConfirmDialog
               showModal={modalIsOpenSubject}
-              message={"จัดการข้อมูลสมาชิก"}
+              message={"สมาชิก"}
               hideModal={() => {
                 closeModalSubject();
               }}
@@ -485,8 +495,15 @@ export default function MemberList() {
             />
             <div className="px-4">
               <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
-                <div className="lg:w-6/12 font-bold"        style={{ alignSelf: "stretch" }}>
-                {((pagesVisited+10) > listUser.length ? listUser.length : (pagesVisited+10))} {"/"}{listUser.length} {" "}รายการ
+                <div
+                  className="lg:w-6/12 font-bold"
+                  style={{ alignSelf: "stretch" }}
+                >
+                  {pagesVisited + 10 > listUser.length
+                    ? listUser.length
+                    : pagesVisited + 10}{" "}
+                  {"/"}
+                  {listUser.length} รายการ
                 </div>
                 <div className="lg:w-6/12">
                   <ReactPaginate

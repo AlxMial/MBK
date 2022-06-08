@@ -57,36 +57,14 @@ export default function UserList() {
       setListUser(
         listSearch.filter(
           (x) =>
-            x.firstName.includes(e) ||
-            x.lastName.includes(e) ||
-            x.email.includes(e) ||
-            x.role.includes(e) ||
-            x.position.includes(e) ||
-            x.empCode.includes(e)
+            x.firstName.toLowerCase().includes(e) ||
+            x.lastName.toLowerCase().includes(e) ||
+            x.email.toLowerCase().includes(e) ||
+            x.role.toLowerCase().includes(e) ||
+            x.position.toLowerCase().includes(e) ||
+            x.empCode.toLowerCase().includes(e)
         )
       );
-    }
-  };
-
-  const handleChange = (e) => {
-    const { name, checked } = e.target;
-    if (name === "allSelect") {
-      let tempUser = listUser.map((user) => {
-        return { ...user, isDeleted: checked };
-      });
-      setListUser(tempUser);
-      setDeleteNumber(tempUser.filter((x) => x.isDeleted === true).length);
-    } else {
-      let tempUser = listUser.map((user) =>
-        user.id.toString() === name
-          ? {
-              ...user,
-              isDeleted: checked,
-            }
-          : user
-      );
-      setListUser(tempUser);
-      setDeleteNumber(tempUser.filter((x) => x.isDeleted === true).length);
     }
   };
 
@@ -102,30 +80,6 @@ export default function UserList() {
     }
     return (value = options.filter((x) => x.value === value.toString())[0]
       .label);
-  };
-
-  /* API Deleted */
-  const deleteByList = async () => {
-    if (deleteNumber > 0) {
-      var ArrayDeleted = [];
-      listUser.forEach((field) => {
-        if (field.isDeleted === true) {
-          ArrayDeleted.push(field.id);
-        } else field.isDeleted = false;
-      });
-      if (ArrayDeleted.length > 0) {
-        console.log(ArrayDeleted);
-        axios.delete(`/users/multidelete/${ArrayDeleted}`).then(() => {
-          setDeleteNumber(0);
-          setListUser(
-            listUser.filter((val) => {
-              return val.isDeleted !== true;
-            })
-          );
-        });
-      }
-      closeModalSubject();
-    }
   };
 
   const deleteUser = (e, userName) => {

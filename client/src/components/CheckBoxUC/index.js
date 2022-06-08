@@ -18,7 +18,7 @@ const CheckBoxUC = ({
         type="checkbox"
         name={name}
         className={
-          "form-checkbox border-2 rounded text-gold-mbk ml-1 w-5 h-5 ease-linear transition-all duration-150 " + classCheckBox
+          "form-checkbox border-2 cursor-pointer rounded text-gold-mbk ml-1 w-5 h-5 ease-linear transition-all duration-150 " + classCheckBox
         }
         onChange={onChange}
         onBlur={onBlur}

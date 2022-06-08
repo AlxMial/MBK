@@ -18,11 +18,23 @@ router.get("/", validateToken, async (req, res) => {
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
     Encrypt.encryptValueIdArray(ValuesDecrypt);
+
     Encrypt.encryptPhoneArray(ValuesDecrypt);
     Encrypt.encryptEmailArray(ValuesDecrypt);
+
     res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
   } else res.json({ error: "not found member" });
 });
+
+router.get("/Show", validateToken, async (req, res) => {
+  const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
+  if (listMembers.length > 0) {
+    const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
+    Encrypt.encryptValueIdArray(ValuesDecrypt);
+    res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
+  } else res.json({ error: "not found member" });
+});
+
 
 router.get("/export", validateToken, async (req, res) => {
   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
@@ -42,6 +54,20 @@ router.get("/byId/:id", async (req, res) => {
     Encrypt.encryptValueId(listMembers);
     Encrypt.encryptPhone(listMembers);
     Encrypt.encryptEmail(listMembers);
+    res.json({ status: true, message: "success", tbMember: listMembers });
+  } else {
+    res.json({ status: true, message: "success", tbMember: null });
+  }
+});
+
+router.get("/Show/byId/:id", async (req, res) => {
+  if (req.params.id !== "undefined") {
+    const id = Encrypt.DecodeKey(req.params.id);
+    const listMembers = await tbMember.findOne({ where: { id: id } });
+    Encrypt.decryptAllData(listMembers);
+    Encrypt.encryptValueId(listMembers);
+    // Encrypt.encryptPhone(listMembers);
+    // Encrypt.encryptEmail(listMembers);
     res.json({ status: true, message: "success", tbMember: listMembers });
   } else {
     res.json({ status: true, message: "success", tbMember: null });
@@ -285,7 +311,7 @@ router.post("/checkRegister", async (req, res) => {
     let member = await tbMember.findOne({
       where: { uid: req.body.uid, isDeleted: false },
     });
-
+    console.log(member)
     if (member) {
       accessToken = sign(
         {
@@ -308,6 +334,7 @@ router.post("/checkRegister", async (req, res) => {
         .then((e) => {
           console.log(e);
         });
+
     } else {
       code = 200;
       isRegister = false;

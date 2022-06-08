@@ -21,14 +21,10 @@ import { GetPermissionByUserName } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 import SelectUC from "components/SelectUC";
 import DatePickerUC from "components/DatePickerUC";
+import MemberHistory from "./memberHistory";
 
 export default function MemberInfo() {
-  /* Option Select */
-  const options = [
-    { value: "1", label: "ผู้ดูแลระบบ" },
-    { value: "2", label: "บัญชี" },
-    { value: "3", label: "การตลาด" },
-  ];
+
   const useStyle = styleSelect();
   /* Service Function */
   const { height, width } = useWindowDimensions();
@@ -58,6 +54,8 @@ export default function MemberInfo() {
   const [errorRegisterDate, setErrorRegisterDate] = useState(false);
   const [isClick, setIsClick] = useState(false);
   const [isClickRegister, setIsClickRegister] = useState(false);
+  const [open, setOpen] = useState(false);
+
   let history = useHistory();
   const { addToast } = useToasts();
   /* Method Condition */
@@ -68,6 +66,15 @@ export default function MemberInfo() {
       history.push("/admin/members");
     }
   };
+
+  const OpenModal = () => {
+    console.log(id)
+    setOpen(true);
+  };
+
+  const handleSubmitModal = () => {
+    setOpen(false);
+  }
 
   function openModalSubject() {
     setIsOpenEdit(true);
@@ -246,7 +253,7 @@ export default function MemberInfo() {
               //     : res.data.message,
               //   { appearance: "warning", autoDismiss: true }
               // );
-              console.log(res.data);
+
               if (res.data.isPhone) {
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
@@ -280,7 +287,10 @@ export default function MemberInfo() {
   });
 
   async function fetchData() {
-    let response = await axios.get(`/members/byId/${id}`);
+    let response = {};
+    if (localStorage.getItem("roleUser") === "1")
+      response = await axios.get(`/members/Show/byId/${id}`);
+    else response = await axios.get(`/members/byId/${id}`);
     let member = await response.data.tbMember;
     if (member !== null) {
       var provinceId = response.data.tbMember["province"];
@@ -477,6 +487,19 @@ export default function MemberInfo() {
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info ">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
+                  {/* <div className="w-full lg:w-2/12 px-4 margin-auto-t-b"></div>
+                  <div className="w-full lg:w-8/12 px-4 mb-2 text-right">
+                    <div className="flex flex-wrap w-full justify-content-right">
+                      <img
+                        src={require("assets/img/mbk/giftReward.png").default}
+                        alt="..."
+                      ></img>
+                      <span className="text-green-mbk text-lg font-bold cursor-pointer margin-auto-t-b" onClick={() => OpenModal()}>
+                        &nbsp;{formik.values.memberPoint}&nbsp;คะแนน
+                      </span>
+                    </div>
+                  </div> */}
+
                   <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full margin-a">
                       <label
@@ -1064,6 +1087,14 @@ export default function MemberInfo() {
           onReturn();
         }}
       />
+      {open && (
+        <MemberHistory
+          open={open}
+          handleSubmitModal={handleSubmitModal}
+          memberId={id}
+          handleModal={() => setOpen(false)}
+        />
+      )}
     </>
   );
 }

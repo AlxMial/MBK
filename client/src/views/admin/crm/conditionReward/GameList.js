@@ -10,6 +10,7 @@ import InputSearchUC from "components/InputSearchUC";
 import GameInfo from "./GameInfo";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import FilesService from "services/files";
+import CheckBoxUC from "components/CheckBoxUC";
 
 const GameList = ({ id, setListGame, listGame }) => {
   const { width } = useWindowDimensions();
@@ -100,6 +101,15 @@ const GameList = ({ id, setListGame, listGame }) => {
       });
     }
     setOpen(false);
+  };
+
+  const handleChange = (e,key) => {
+    const { checked } = e.target;
+    setListGame((s) => {
+      const newArr = s.slice();
+      newArr[key].isSelect = checked;
+      return newArr;
+    });
   };
 
   useEffect(() => {
@@ -218,10 +228,10 @@ const GameList = ({ id, setListGame, listGame }) => {
                   .map((value, key) => {
                     return (
                       <tr key={key}>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8">
-                          <span className="px-4 margin-a">
-                            {pagesVisited + key + 1}
-                          </span>
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 " style={{paddingLeft:'25px'}}>
+               
+                            <CheckBoxUC onChange={(e) => { handleChange(e,key) }} checked={value.isSelect} name="isSelect"/>
+    
                         </td>
                         <td
                           onClick={() => {

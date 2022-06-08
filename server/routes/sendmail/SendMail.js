@@ -11,7 +11,6 @@ router.post("/",async (req,res)=>{
   const tomail=req.body.tomail
   const fullName = req.body.fullName
   const resetUrl = req.body.resetUrl
-
   const filePath = path.join(__dirname, './index.html');
   const source = fs.readFileSync(filePath, 'utf-8').toString();
   const template = handlebars.compile(source);
@@ -20,15 +19,18 @@ router.post("/",async (req,res)=>{
   };
   const htmlToSend = template(replacements);
   var transporter = nodemailer.createTransport({
-    // service: 'gmail',
+    // service: 'Outlook365',
     host: "smtp.office365.com",
     port: 587,
     auth: {
       user: frommail,
       pass: password
-    }
+    },
+    // secureConnection: false,
+    // tls: { ciphers: 'SSLv3' }
   });
-  
+
+
   var mailOptions = {
     from: frommail,
     to: tomail,

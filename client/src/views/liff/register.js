@@ -244,7 +244,9 @@ const Register = () => {
         // addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
         if (res.data.status) {
           Session.setcheckRegister({ isRegister: true });
-          history.push(path.member);
+          //history.push(path.member);
+          window.location.replace('/line/member');
+
         }
       })
       .catch((e) => {
