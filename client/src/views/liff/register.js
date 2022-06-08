@@ -243,10 +243,7 @@ const Register = () => {
 
         // addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
         if (res.data.status) {
-          Session.setcheckRegister({ isRegister: true });
-          //history.push(path.member);
-          window.location.replace('/line/member');
-
+          window.location.reload();
         }
       })
       .catch((e) => {
@@ -341,7 +338,11 @@ const Register = () => {
                     showHeader={false}
                     // showCaption={true}
                     min={new Date(1970, 0, 1)}
-                    max={new Date(new Date().setFullYear(new Date().getFullYear() - 13))}
+                    max={
+                      new Date(
+                        new Date().setFullYear(new Date().getFullYear() - 13)
+                      )
+                    }
                     value={Data.birthDate}
                     dateConfig={{
                       year: {
@@ -946,7 +947,7 @@ const Register = () => {
             <button
               className=" disableInput w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
               type="button"
-              disabled={(policy.policy1 && policy.policy2) ? false : true}
+              disabled={policy.policy1 && policy.policy2 ? false : true}
               style={{ width: "50%" }}
               onClick={policyAllow}
             >
@@ -983,9 +984,9 @@ const Register = () => {
                 {"รหัส OTP จะถูกส่งเป็น SMS ไปที่"}
               </div>
               <div className="flex text-gray-mbk text-2xs font-bold justify-center">
-                {"หมายเลข  " + Data.phone } 
+                {"หมายเลข  " + Data.phone}
               </div>
-                {/* + "(" + otp.generateOTP + ")" */}
+              {/* + "(" + otp.generateOTP + ")" */}
               <div className="flex text-gray-mbk text-2xs font-bold justify-center">
                 {"Referance No. " + otp.generateref}
               </div>
