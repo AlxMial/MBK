@@ -23,10 +23,14 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
 import { exportExcel } from "services/exportExcel";
+import { useDispatch } from "react-redux";
+import { fetchLoading, fetchSuccess } from "redux/actions/common";
+
 Modal.setAppElement("#root");
 
 export default function PointCode() {
   /* Set useState */
+  const dispatch = useDispatch();
   const [Active, setActive] = useState("1");
   const [Type, setType] = useState("1");
   const [isNew, setIsNew] = useState(0);
@@ -41,6 +45,7 @@ export default function PointCode() {
   const [isError, setIsError] = useState(false);
   const [startDateCode, setStartDateCode] = useState("");
   const [endDateCode, setEndDateCode] = useState("");
+  const [errorDate, setErrorDate] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -52,9 +57,10 @@ export default function PointCode() {
   const useStyle = customStyles();
   const useStyleMobile = customStylesMobile();
   const useStyleSelect = styleSelect();
-  const [errorPointCodeSymbol, setErrorPointCodeSymbol] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [enableCode, setEnableCode] = useState(false);
+
+  const [errorPointCodeSymbol, setErrorPointCodeSymbol] = useState(false);
   const [errorPointCodeLengthSymbol, setErrorPointCodeLengthSymbol] =
     useState(false);
   const [errorPointCodeQuantityCode, setErrorPointCodeQuantityCode] =
@@ -69,7 +75,9 @@ export default function PointCode() {
   const [isModefied, setIsModified] = useState(false);
   const [errorPointQuantity, seterrorPointQuantity] = useState(false);
   const { menu } = useMenu();
+  const [errorQuantityMoreOne, setErrorQuantityMoreOne] = useState(false);
   const { addToast } = useToasts();
+  const [errorExcel, setErrorExcel] = useState(false);
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
@@ -192,10 +200,19 @@ export default function PointCode() {
   };
 
   const selectFile = (e) => {
-    setFile(e.target.files[0]);
-    setFileName(e.target.files[0].name);
-    setErrorImport(false);
-    formikImport.setFieldValue("fileName", e.target.files[0].name);
+    if (
+      e.target.files[0].type ===
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      e.target.files[0].type === "application/vnd.ms-excel"
+    ) {
+      setErrorExcel(false);
+      setFile(e.target.files[0]);
+      setFileName(e.target.files[0].name);
+      setErrorImport(false);
+      formikImport.setFieldValue("fileName", e.target.files[0].name);
+    } else {
+      setErrorExcel(true);
+    }
   };
 
   const ExportFile = async (id, name) => {
@@ -230,26 +247,26 @@ export default function PointCode() {
           ? "* กรุณากรอก ชื่อแคมเปญ"
           : "* Please enter your Member Card"
       ),
-      pointCodeSymbol: Yup.string().required(
-        Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก รหัสแคมเปญ"
-          : "* Please enter your First Name"
-      ),
-      pointCodeLengthSymbol: Yup.string().required(
-        Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก จำนวนตัวอักษร"
-          : "* Please enter your Last Name"
-      ),
+      // pointCodeSymbol: Yup.string().required(
+      //   Storage.GetLanguage() === "th"
+      //     ? "* กรุณากรอก รหัสแคมเปญ"
+      //     : "* Please enter your First Name"
+      // ),
+      // pointCodeLengthSymbol: Yup.string().required(
+      //   Storage.GetLanguage() === "th"
+      //     ? "* กรุณากรอก จำนวนตัวอักษร"
+      //     : "* Please enter your Last Name"
+      // ),
       pointCodePoint: Yup.string().required(
         Storage.GetLanguage() === "th"
           ? "* กรุณากรอก คะแนน"
           : "* Please enter your Register Date"
       ),
-      pointCodeQuantityCode: Yup.string().required(
-        Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก จำนวน Code"
-          : "* Please enter your Register Date"
-      ),
+      // pointCodeQuantityCode: Yup.string().required(
+      //   Storage.GetLanguage() === "th"
+      //     ? "* กรุณากรอก จำนวน Code"
+      //     : "* Please enter your Register Date"
+      // ),
       startDate: Yup.string().required(
         Storage.GetLanguage() === "th"
           ? "* กรุณากรอก วันที่เริ่มสมัคร"
@@ -262,104 +279,128 @@ export default function PointCode() {
       ),
     }),
     onSubmit: (values) => {
-      if (new Date(formik.values.startDate) > new Date(formik.values.endDate))
-        formik.values.startDate = formik.values.endDate;
-      if (values.pointCodeQuantityCode === "")
-        values.pointCodeQuantityCode = null;
-      if (values.pointCodeLengthSymbol === "")
-        values.pointCodeLengthSymbol = null;
-      if (values.pointCodeSymbol === "") values.pointCodeSymbol = null;
+      if (new Date(formik.values.startDate) > new Date(formik.values.endDate)) {
+        setErrorDate(true);
+      } else {
+        setErrorDate(false);
+        setErrorPointCodeLengthSymbol(false);
+        setErrorPointCodeQuantityCode(false);
+        setErrorPointCodeSymbol(false);
 
-      setErrorPointCodeLengthSymbol(false);
-      if (
-        values.pointCodeLengthSymbol < 10 ||
-        values.pointCodeLengthSymbol > 16
-      ) {
-        setErrorPointCodeLengthSymbol(true);
-      }
-      if (
-        values.pointCodeLengthSymbol >= 10 &&
-        values.pointCodeLengthSymbol <= 16 &&
-        !errorPointQuantity
-      ) {
-        setIsLoading(true);
-        if (values.id) {
-          formikImport.values.updateBy = localStorage.getItem("user");
-          axios.put("pointCode", values).then((res) => {
-            if (res.data.status) {
-              setIsLoading(false);
-              fetchData();
-              addToast(
-                Storage.GetLanguage() === "th"
-                  ? "บันทึกข้อมูลสำเร็จ"
-                  : "Save data successfully",
-                { appearance: "success", autoDismiss: true }
-              );
-            } else {
-              addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                appearance: "warning",
-                autoDismiss: true,
-              });
-            }
-          });
-        } else {
-          formikImport.values.addBy = localStorage.getItem("user");
-          axios.post("pointCode", values).then(async (res) => {
-            if (res.data.status) {
-              values.tbPointCodeHDId = res.data.tbPointCodeHD.id;
-              fetchData();
-              await axiosUpload
-                .post("api/excel/generateCode", values)
-                .then(async (resGenerate) => {
-                  await axios.post("/uploadExcel").then((resUpload) => {
-                    if (resUpload.data.error) {
-                      axios
-                        .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
-                        .then(async (resDelete) => {
-                          await axiosUpload
-                            .delete(
-                              `api/excel/delete/${res.data.tbPointCodeHD.id}`
-                            )
-                            .then(() => {});
-                          fetchData();
-                          setIsLoading(false);
+        var checkError = true;
+        if (values.isType === "1") {
+          if (values.pointCodeQuantityCode === "") {
+            setErrorPointCodeQuantityCode(true);
+            values.pointCodeQuantityCode = null;
+          }
+          if (values.pointCodeLengthSymbol === "") {
+            setErrorPointCodeLengthSymbol(true);
+            values.pointCodeLengthSymbol = null;
+          }
+          if (values.pointCodeSymbol === "") {
+            setErrorPointCodeSymbol(true);
+            values.pointCodeSymbol = null;
+          }
 
-                          addToast(
-                            "บันทึกข้อมูลไม่สำเร็จ เนื่องจากการ Generate มีปัญหา",
-                            {
-                              appearance: "warning",
-                              autoDismiss: true,
-                            }
-                          );
-                        });
-                    } else {
-                      fetchData();
-                      closeModal();
-                      setIsLoading(false);
-                      addToast(
-                        Storage.GetLanguage() === "th"
-                          ? "บันทึกข้อมูลสำเร็จ"
-                          : "Save data successfully",
-                        { appearance: "success", autoDismiss: true }
-                      );
-                    }
-                  });
-                });
-            } else {
-              if (res.data.isPointCodeName) {
-                addToast("ชื่อแคมเปญซ้ำกับในระบบ กรุณากรอกข้อมูลใหม่", {
-                  appearance: "warning",
-                  autoDismiss: true,
-                });
-              } else if (res.data.isPointCodeSymbol) {
-                addToast("รหัสแคมเปญซ้ำกับในระบบ กรุณากรอกข้อมูลใหม่", {
+          if (
+            values.pointCodeLengthSymbol < 10 ||
+            values.pointCodeLengthSymbol > 16
+          ) {
+            setErrorPointCodeLengthSymbol(true);
+          }
+
+          if (
+            values.pointCodeLengthSymbol >= 10 &&
+            values.pointCodeLengthSymbol <= 16
+          ) {
+            checkError = true;
+          } else {
+            checkError = false;
+          }
+        }
+
+        if (checkError && !errorPointQuantity && !errorQuantityMoreOne) {
+          setIsLoading(true);
+          if (values.id) {
+            formikImport.values.updateBy = localStorage.getItem("user");
+            axios.put("pointCode", values).then((res) => {
+              if (res.data.status) {
+                setIsLoading(false);
+                fetchData();
+                addToast(
+                  Storage.GetLanguage() === "th"
+                    ? "บันทึกข้อมูลสำเร็จ"
+                    : "Save data successfully",
+                  { appearance: "success", autoDismiss: true }
+                );
+              } else {
+                addToast("บันทึกข้อมูลไม่สำเร็จ", {
                   appearance: "warning",
                   autoDismiss: true,
                 });
               }
-              setIsLoading(false);
-            }
-          });
+            });
+          } else {
+            formikImport.values.addBy = localStorage.getItem("user");
+            axios.post("pointCode", values).then(async (res) => {
+              if (res.data.status) {
+                values.tbPointCodeHDId = res.data.tbPointCodeHD.id;
+                fetchData();
+                await axiosUpload
+                  .post("api/excel/generateCode", values)
+                  .then(async (resGenerate) => {
+                    await axios.post("/uploadExcel").then((resUpload) => {
+                      if (resUpload.data.error) {
+                        axios
+                          .delete(
+                            `pointCode/delete/${res.data.tbPointCodeHD.id}`
+                          )
+                          .then(async (resDelete) => {
+                            await axiosUpload
+                              .delete(
+                                `api/excel/delete/${res.data.tbPointCodeHD.id}`
+                              )
+                              .then(() => {});
+                            fetchData();
+                            setIsLoading(false);
+
+                            addToast(
+                              "บันทึกข้อมูลไม่สำเร็จ เนื่องจากการ Generate มีปัญหา",
+                              {
+                                appearance: "warning",
+                                autoDismiss: true,
+                              }
+                            );
+                          });
+                      } else {
+                        fetchData();
+                        closeModal();
+                        setIsLoading(false);
+                        addToast(
+                          Storage.GetLanguage() === "th"
+                            ? "บันทึกข้อมูลสำเร็จ"
+                            : "Save data successfully",
+                          { appearance: "success", autoDismiss: true }
+                        );
+                      }
+                    });
+                  });
+              } else {
+                if (res.data.isPointCodeName) {
+                  addToast("ชื่อแคมเปญซ้ำกับในระบบ กรุณากรอกข้อมูลใหม่", {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  });
+                } else if (res.data.isPointCodeSymbol) {
+                  addToast("รหัสแคมเปญซ้ำกับในระบบ กรุณากรอกข้อมูลใหม่", {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  });
+                }
+                setIsLoading(false);
+              }
+            });
+          }
         }
       }
     },
@@ -406,94 +447,104 @@ export default function PointCode() {
       if (
         new Date(formikImport.values.startDate) >
         new Date(formikImport.values.endDate)
-      )
-        formikImport.values.startDate = formikImport.values.endDate;
-      setIsLoading(true);
-      if (values.id) {
-        formikImport.values.updateBy = localStorage.getItem("user");
-        axios.put("pointCode", values).then((res) => {
-          if (res.data.status) {
-            setIsLoading(false);
-            fetchData();
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            addToast("บันทึกข้อมูลไม่สำเร็จ", {
-              appearance: "warning",
-              autoDismiss: true,
-            });
-          }
-        });
+      ) {
+        setErrorDate(true);
       } else {
-        let formData = new FormData();
-        formData.append("file", file);
-        if (file) {
-          setErrorImport(false);
-          formikImport.values.addBy = localStorage.getItem("user");
-          axios.post("pointCode", values).then(async (res) => {
+        setErrorDate(false);
+        setIsLoading(true);
+        if (values.id) {
+          formikImport.values.updateBy = localStorage.getItem("user");
+          axios.put("pointCode", values).then((res) => {
             if (res.data.status) {
-              formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
-              await axiosUpload
-                .post("api/excel/upload", formData)
-                .then(async (resExcel) => {
-                  await axios.post("/uploadExcel").then((resUpload) => {
-                    if (resUpload.data.error) {
-                      axios
-                        .delete(`pointCode/delete/${res.data.tbPointCodeHD.id}`)
-                        .then((resDelete) => {
-                          fetchData();
-                          addToast(
-                            "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
-                            {
-                              appearance: "warning",
-                              autoDismiss: true,
-                            }
-                          );
-                        });
-                    } else {
-                      fetchData();
-                      addToast(
-                        Storage.GetLanguage() === "th"
-                          ? "บันทึกข้อมูลสำเร็จ"
-                          : "Save data successfully",
-                        { appearance: "success", autoDismiss: true }
-                      );
-                    }
-                  });
-                });
+              setIsLoading(false);
+              fetchData();
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
             } else {
-              if (res.data.isPointCodeName) {
-                addToast(
-                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                  {
-                    appearance: "warning",
-                    autoDismiss: true,
-                  }
-                );
-              } else if (res.data.isPointCodeSymbol) {
-                addToast(
-                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสแคมเปญซ้ำกับในระบบ",
-                  {
-                    appearance: "warning",
-                    autoDismiss: true,
-                  }
-                );
-              }
+              addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                appearance: "warning",
+                autoDismiss: true,
+              });
             }
-            setIsLoading(false);
-            closeModalImport();
           });
-        } else setErrorImport(true);
+        } else {
+          let formData = new FormData();
+          formData.append("file", file);
+          if (file) {
+            setErrorImport(false);
+            formikImport.values.addBy = localStorage.getItem("user");
+            axios.post("pointCode", values).then(async (res) => {
+              if (res.data.status) {
+                formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
+                await axiosUpload
+                  .post("api/excel/upload", formData)
+                  .then(async (resExcel) => {
+                    await axios.post("/uploadExcel").then((resUpload) => {
+                      if (resUpload.data.error) {
+                        axios
+                          .delete(
+                            `pointCode/delete/${res.data.tbPointCodeHD.id}`
+                          )
+                          .then((resDelete) => {
+                            fetchData();
+                            addToast(
+                              "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
+                              {
+                                appearance: "warning",
+                                autoDismiss: true,
+                              }
+                            );
+                          });
+                      } else {
+                        closeModalImport();
+                        fetchData();
+                        addToast(
+                          Storage.GetLanguage() === "th"
+                            ? "บันทึกข้อมูลสำเร็จ"
+                            : "Save data successfully",
+                          { appearance: "success", autoDismiss: true }
+                        );
+                      }
+                    });
+                  });
+              } else {
+                if (res.data.isPointCodeName) {
+                  addToast(
+                    "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                    {
+                      appearance: "warning",
+                      autoDismiss: true,
+                    }
+                  );
+                } else if (res.data.isPointCodeSymbol) {
+                  addToast(
+                    "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสแคมเปญซ้ำกับในระบบ",
+                    {
+                      appearance: "warning",
+                      autoDismiss: true,
+                    }
+                  );
+                }
+              }
+              setIsLoading(false);
+            });
+          } else {
+            setIsLoading(false);
+            setErrorImport(true);
+          }
+        }
       }
     },
   });
 
   const fetchData = async () => {
+    // dispatch(fetchLoading());
     await axios.get("pointCode").then((response) => {
+      // dispatch(fetchSuccess());
       if (response.data.error) {
       } else {
         // var JsonCampaign = [];
@@ -507,6 +558,8 @@ export default function PointCode() {
         //   formikImport.setFieldValue("tbPointCodeHDId", JsonCampaign[0].value);
         // setOptionCamp(aign(JsonCampaign);
 
+        setErrorPointCodeSymbol(false);
+        setErrorPointCodeQuantityCode(false);
         setErrorPointCodeLengthSymbol(false);
         setListPointCode(response.data.tbPointCodeHD);
         setListSerch(response.data.tbPointCodeHD);
@@ -532,19 +585,39 @@ export default function PointCode() {
           setEndDateCode(
             moment(new Date(response.data.tbPointCodeHD[columns]), "DD/MM/YYYY")
           );
-
         if (columns === "pointCodeSymbol") {
           if (response.data.tbPointCodeHD[columns] === null) setIsEnable(true);
         }
 
-        formik.setFieldValue(
-          columns,
-          response.data.tbPointCodeHD[columns] === null
-            ? ""
-            : response.data.tbPointCodeHD[columns],
-          false
-        );
+        if (columns === "pointCodeLengthSymbol") {
+          formik.setFieldValue(
+            columns,
+            response.data.tbPointCodeHD["isType"] === "2"
+              ? ""
+              : response.data.tbPointCodeHD[columns],
+            false
+          );
+        } else if (columns === "pointCodeQuantityCode") {
+          formik.setFieldValue(
+            columns,
+            response.data.tbPointCodeHD["isType"] === "2"
+              ? ""
+              : response.data.tbPointCodeHD[columns],
+            false
+          );
+        } else {
+          formik.setFieldValue(
+            columns,
+            response.data.tbPointCodeHD[columns] === null
+              ? ""
+              : response.data.tbPointCodeHD[columns],
+            false
+          );
+        }
       }
+      setErrorPointCodeSymbol(false);
+      setErrorPointCodeQuantityCode(false);
+      setErrorPointCodeLengthSymbol(false);
     }
   };
 
@@ -823,7 +896,7 @@ export default function PointCode() {
                                     <input
                                       id="file-input"
                                       type="file"
-                                      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                       onChange={(e) => {
                                         selectFile(e);
                                       }}
@@ -842,6 +915,12 @@ export default function PointCode() {
                                   {errorImport ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       * กรุณาเลือกไฟล์สำหรับการ Import
+                                    </div>
+                                  ) : null}
+                                  {errorExcel ? (
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      * ประเภทไฟล์ที่เลือกไม่ถูกต้อง
+                                      กรุณาเลือกไฟล์ใหม่
                                     </div>
                                   ) : null}
                                 </div>
@@ -1045,6 +1124,12 @@ export default function PointCode() {
                                         * กรุณากรอกวันที่เริ่มต้น
                                       </div>
                                     ) : null}
+                                    {errorDate ? (
+                                      <div className="text-sm py-2 px-2 text-red-500">
+                                        * วันที่เริ่มต้น
+                                        ต้องน้อยกว่าวันที่สิ้นสุด
+                                      </div>
+                                    ) : null}
                                   </div>
                                   <div className="w-full lg:w-1/12 px-4  margin-auto-t-b "></div>
                                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
@@ -1144,7 +1229,7 @@ export default function PointCode() {
                       <>
                         <div className={"flex-auto "}>
                           <div className="w-full mt-2">
-                            <form onSubmit={formik.handleSubmit}>
+                            <form>
                               <div className=" flex justify-between align-middle ">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
@@ -1268,15 +1353,19 @@ export default function PointCode() {
                                     id="pointCodeSymbol"
                                     name="pointCodeSymbol"
                                     maxLength={5}
-                                    onChange={formik.handleChange}
+                                    onChange={(e) => {
+                                      if (e.target.value.length > 0) {
+                                        setErrorPointCodeSymbol(false);
+                                      } else setErrorPointCodeSymbol(true);
+
+                                      formik.handleChange(e);
+                                    }}
                                     onBlur={formik.handleBlur}
                                     value={formik.values.pointCodeSymbol}
                                     autoComplete="pointCodeSymbol"
                                     disabled={isEnable || enableCode}
                                   />
-                                  {formik.touched.pointCodeSymbol &&
-                                  formik.errors.pointCodeSymbol &&
-                                  width < 764 ? (
+                                  {errorPointCodeSymbol && width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       * กรุณากรอก รหัสแคมเปญ
                                     </div>
@@ -1307,6 +1396,11 @@ export default function PointCode() {
                                     name="pointCodeLengthSymbol"
                                     maxLength={2}
                                     onChange={(event) => {
+                                      if (event.target.value.length > 0) {
+                                        setErrorPointCodeLengthSymbol(false);
+                                      } else
+                                        setErrorPointCodeLengthSymbol(true);
+
                                       setlangSymbo(
                                         ValidateService.onHandleNumber(event)
                                       );
@@ -1318,13 +1412,13 @@ export default function PointCode() {
                                     value={formik.values.pointCodeLengthSymbol}
                                     disabled={isEnable || enableCode}
                                   />
-                                  {formik.touched.pointCodeLengthSymbol &&
+                                  {/* {formik.touched.pointCodeLengthSymbol &&
                                   formik.errors.pointCodeLengthSymbol &&
                                   width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       {formik.errors.pointCodeLengthSymbol}
                                     </div>
-                                  ) : null}
+                                  ) : null} */}
                                   {errorPointCodeLengthSymbol && width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       * จำนวนตัวอักษรจะสามารถกำหนดได้ ตั้งแต่ 10
@@ -1341,8 +1435,7 @@ export default function PointCode() {
                                   <div className="w-full lg:w-1/12 px-4 margin-auto-t-b "></div>
                                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                     {" "}
-                                    {formik.touched.pointCodeSymbol &&
-                                    formik.errors.pointCodeSymbol ? (
+                                    {errorPointCodeSymbol ? (
                                       <div className="text-sm py-2  px-2 text-red-500">
                                         * กรุณากรอก รหัสแคมเปญ
                                       </div>
@@ -1350,12 +1443,11 @@ export default function PointCode() {
                                   </div>
                                   <div className="w-full lg:w-1/12 px-4  margin-auto-t-b "></div>
                                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                                    {formik.touched.pointCodeLengthSymbol &&
-                                    formik.errors.pointCodeLengthSymbol ? (
+                                    {/* {errorPointCodeLengthSymbol ? (
                                       <div className="text-sm py-2  px-2 text-red-500">
                                         {formik.errors.pointCodeLengthSymbol}
                                       </div>
-                                    ) : null}
+                                    ) : null} */}
                                     {errorPointCodeLengthSymbol ? (
                                       <div className="text-sm pt-2  px-2 text-red-500">
                                         * จำนวนตัวอักษรจะสามารถกำหนดได้ ตั้งแต่
@@ -1368,10 +1460,7 @@ export default function PointCode() {
                                 <div
                                   className={
                                     "w-full mb-4" +
-                                    (formik.errors.pointCodeSymbol &&
-                                    formik.touched.pointCodeSymbol
-                                      ? " hidden"
-                                      : " ")
+                                    (errorPointCodeSymbol ? " hidden" : " ")
                                   }
                                 ></div>
 
@@ -1466,6 +1555,18 @@ export default function PointCode() {
                                     name="pointCodeQuantityCode"
                                     maxLength={7}
                                     onChange={(event) => {
+                                      if (event.target.value === "") {
+                                        setErrorPointCodeQuantityCode(true);
+                                      } else {
+                                        setErrorPointCodeQuantityCode(false);
+                                      }
+
+                                      if (parseInt(event.target.value) === 0) {
+                                        setErrorQuantityMoreOne(true);
+                                      } else {
+                                        setErrorQuantityMoreOne(false);
+                                      }
+
                                       setlangSymbo(
                                         ValidateService.onHandleNumber(event)
                                       );
@@ -1483,16 +1584,19 @@ export default function PointCode() {
                                     value={formik.values.pointCodeQuantityCode}
                                     disabled={isEnable || enableCode}
                                   />
-                                  {formik.touched.pointCodeQuantityCode &&
-                                  formik.errors.pointCodeQuantityCode &&
-                                  width < 764 ? (
+                                  {errorPointCodeQuantityCode && width < 764 ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
-                                      {formik.errors.pointCodeQuantityCode}
+                                      * กรุณากรอก จำนวน Code
                                     </div>
                                   ) : null}
                                   {errorPointQuantity && width < 764 ? (
                                     <div className="text-sm pt-2  px-2 text-red-500">
                                       * จำนวน Code ต้องน้อยกว่าเท่ากับ 1 ล้าน
+                                    </div>
+                                  ) : null}
+                                  {errorQuantityMoreOne && width < 764 ? (
+                                    <div className="text-sm pt-2  px-2 text-red-500">
+                                      * จำนวน Code ต้องมากกว่า 0
                                     </div>
                                   ) : null}
                                 </div>
@@ -1505,15 +1609,19 @@ export default function PointCode() {
                                 >
                                   <div className="w-full lg:w-1/12 px-4  margin-auto-t-b "></div>
                                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
-                                    {formik.touched.pointCodeQuantityCode &&
-                                    formik.errors.pointCodeQuantityCode ? (
+                                    {errorPointCodeQuantityCode ? (
                                       <div className="text-sm py-2 px-2 text-red-500">
-                                        {formik.errors.pointCodeQuantityCode}
+                                        * กรุณากรอก จำนวน Code
                                       </div>
                                     ) : null}
                                     {errorPointQuantity ? (
                                       <div className="text-sm pt-2  px-2 text-red-500">
                                         * จำนวน Code ต้องน้อยกว่าเท่ากับ 1 ล้าน
+                                      </div>
+                                    ) : null}
+                                    {errorQuantityMoreOne ? (
+                                      <div className="text-sm pt-2  px-2 text-red-500">
+                                        * จำนวน Code ต้องมากกว่า 0
                                       </div>
                                     ) : null}
                                   </div>
@@ -1522,8 +1630,7 @@ export default function PointCode() {
                                 <div
                                   className={
                                     "w-full mb-4" +
-                                    (formik.errors.pointCodeQuantityCode &&
-                                    formik.touched.pointCodeQuantityCode
+                                    (errorPointCodeQuantityCode
                                       ? " hidden"
                                       : " ")
                                   }
@@ -1670,6 +1777,12 @@ export default function PointCode() {
                                         * กรุณากรอกวันที่เริ่มต้น
                                       </div>
                                     ) : null}
+                                    {errorDate ? (
+                                      <div className="text-sm py-2 px-2 text-red-500">
+                                        * วันที่เริ่มต้น
+                                        ต้องน้อยกว่าวันที่สิ้นสุด
+                                      </div>
+                                    ) : null}
                                   </div>
                                   <div className="w-full lg:w-1/12 px-4  margin-auto-t-b "></div>
                                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
@@ -1731,7 +1844,12 @@ export default function PointCode() {
                                       className={
                                         "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                       }
-                                      type="submit"
+                                      // type="submit"
+                                      type="button"
+                                      onClick={() => {
+                                        onValidate();
+                                        formik.handleSubmit();
+                                      }}
                                     >
                                       บันทึกข้อมูล
                                     </button>
@@ -1750,7 +1868,7 @@ export default function PointCode() {
           </div>
           <div className="block w-full overflow-x-auto  px-4 py-2">
             {/* Projects table */}
-            <table className="items-center w-full border ">
+            <table className="items-center w-full border table-fill ">
               <thead>
                 <tr>
                   <th
@@ -1848,11 +1966,12 @@ export default function PointCode() {
                           onClick={() => {
                             openModal(value.id);
                           }}
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
+                          className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                          <span title={value.pointCodeName} className="text-gray-mbk  hover:text-gray-mbk ">
                             {value.pointCodeName}
                           </span>
+                          <span class="details">more info here</span>
                         </td>
                         <td
                           onClick={() => {

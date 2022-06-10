@@ -40,6 +40,7 @@ function ConfirmEdit({
       onRequestClose={hideModal}
       style={customStyles}
       contentLabel="Example Modal"
+      shouldCloseOnOverlayClick={false}
     >
       <div className="flex flex-wrap">
         <div className="w-full ">

@@ -10,17 +10,21 @@ const EmailRegExp = /^[A-Za-z0-9_.@]+$/;
 const useStyle = styleSelectLine();
 
 export const validationSchema = Yup.object({
-  firstName: Yup.string().required("* กรุณากรอก ชื่อ"),
-  lastName: Yup.string().required("* กรุณากรอก นามสกุล"),
+  firstName: Yup.string().required("* โปรดระบุชื่อ"),
+  lastName: Yup.string().required("* โปรดระบุนามสกุล"),
   phone: Yup.string()
     .matches(phoneRegExp, "* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง")
-    .required("* กรุณากรอก เบอร์โทรศัพท์"),
+    .required("* โปรดระบุเบอร์โทร"),
   email: Yup.string()
     .matches(
       EmailRegExp,
       "* ขออภัย อนุญาตให้ใช้เฉพาะตัวอักษร (a-z), ตัวเลข (0-9) และเครื่องหมายมหัพภาค (.) เท่านั้น"
     )
-    .email("* กรุณากรอก อีเมล"),
+    .email("* โปรดระบุอีเมล"),
+  address: Yup.string()
+    .required("* โปรดระบุที่อยู่"),
+  postcode: Yup.string()
+    .required("* โปรดระบุรหัสไปรษณีย์"),
 });
 export const DatePickerContainer = styled.div`
   .datepicker {
@@ -80,6 +84,7 @@ export const InputUC = ({
             maxLength={length}
             onChange={onChange}
             value={value}
+            autoComplete="dsfasdf"
             ref={refs}
           />
         ) : (
@@ -109,12 +114,17 @@ export const InputUC = ({
     </>
   );
 };
-export const SelectUC = ({ name, lbl, onChange, options, value }) => {
+export const SelectUC = ({ name, lbl, onChange, options, value, valid }) => {
   return (
     <>
       <div className="mb-4">
         <div className="noselect flex text-green-mbk font-bold text-sm ">
           {lbl}
+          {valid == true ? (
+            <span className="ml-1" style={{ color: "red" }}>
+              {" *"}
+            </span>
+          ) : null}
         </div>
 
         <Select

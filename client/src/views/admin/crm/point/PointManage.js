@@ -1,34 +1,97 @@
-import React,{ useEffect ,useState } from "react";
+import React, { useEffect, useState } from "react";
 import "antd/dist/antd.css";
 import { Tabs } from "antd";
+import axios from "services/axios";
 /* Service */
 import PointRegister from "./PointRegister";
 import PointEcommerce from "./PointEcommerce";
 import PointCode from "./PointCode";
 import PointStore from "./PointStore";
 import { GetPermissionByUserName } from "services/Permission";
+import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
+import { useToasts } from "react-toast-notifications";
 
 export default function PointManage() {
   const { TabPane } = Tabs;
   const [typePermission, setTypePermission] = useState("");
+  const [isModified, setModified] = useState(false);
+  const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
+  const [activeTab, setActiveTab] = useState("1");
+  const [activeConfirmTab, setActiveConfirmTab] = useState();
+  const { addToast } = useToasts();
+  const [data, setData] = useState({
+    id: "",
+    pointRegisterScore: "",
+    isActive: "",
+    addBy:"",
+    updateBy:"",
+    isDeleted:false
+  });
+  function openModalSubject() {
+    setIsOpenEdit(true);
+  }
+
+  function closeModalSubject() {
+    setIsOpenEdit(false);
+  }
+
+  const onEditValue = async () => {
+    if (data.id === "") {
+      setData((prevState) => {
+        return {
+          ...prevState,
+          addBy: localStorage.getItem("user")
+        };
+      });
+      axios.post("pointRegister", data).then((res) => {
+        if (res.data.status) {
+          setData((prevState) => {
+            return {
+              ...prevState,
+              id: res.data.tbPointRegister.id
+            };
+          });
+          setModified(false);
+          addToast("บันทึกข้อมูลสำเร็จ",
+            
+            { appearance: "success", autoDismiss: true }
+          );
+        }
+      });
+    } else {
+      axios.put("pointRegister", data).then((res) => {
+        if (res.data.status) {
+          setModified(false);
+          addToast("บันทึกข้อมูลสำเร็จ",
+            { appearance: "success", autoDismiss: true }
+          );
+        }
+      });
+    }
+    setActiveTab(activeConfirmTab);
+    closeModalSubject();
+  };
+
+  const onReturn = () => {
+    closeModalSubject();
+  };
+
   /* Set useState */
 
   /* Method Condition */
+  const changeTab = (activeKey) => {
+    setActiveConfirmTab(activeKey);
+    console.log(data);
+    if (isModified) openModalSubject();
+    else setActiveTab(activeKey);
+  };
 
-  function callback(key) {
-    //console.log(key);
-  }
-
-  /*ตรวจสอบข้อมูล รหัสผ่านตรงกัน*/
-  async function fetchData() {}
-
-  const fetchPermission = async  () => {
+  const fetchPermission = async () => {
     const role = await GetPermissionByUserName();
     setTypePermission(role);
-  }
+  };
 
-  
-  useEffect( () => {
+  useEffect(() => {
     fetchPermission();
   }, []);
 
@@ -46,20 +109,42 @@ export default function PointManage() {
         </span>
         <span className="text-base margin-auto font-bold">เงื่อนไขคะแนน</span>
       </div>
-      <Tabs defaultActiveKey="1" onChange={callback} type="card" className="mt-6">
+      <Tabs
+        activeKey={activeTab}
+        onChange={changeTab}
+        type="card"
+        className="mt-6"
+      >
         <TabPane tab="Register" key="1">
-          <PointRegister />
+          <PointRegister setModified={setModified} setData={setData} />
         </TabPane>
         {/* <TabPane tab="E-Commerce" key="2">
           <PointEcommerce />
         </TabPane> */}
-        <TabPane tab="Code" key="3" disabled={((typePermission === "1") ? false : true)}>
+        <TabPane
+          tab="Code"
+          key="3"
+          disabled={typePermission === "1" ? false : true}
+        >
           <PointCode />
         </TabPane>
         <TabPane tab="Store" key="4">
           <PointStore />
         </TabPane>
       </Tabs>
+      <ConfirmEdit
+        showModal={modalIsOpenEdit}
+        message={"คะแนนสำหรับสมาชิกใหม่"}
+        hideModal={() => {
+          closeModalSubject();
+        }}
+        confirmModal={() => {
+          onEditValue();
+        }}
+        returnModal={() => {
+          onReturn();
+        }}
+      />
     </>
   );
 }

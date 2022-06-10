@@ -21,8 +21,15 @@ import Spinner from "components/Loadings/spinner/Spinner";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
 import ValidateService from "services/validateValue";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
-
 import Select from "react-select";
+import {
+  optionsDay30,
+  optionsDay31,
+  optionsDayFab,
+  optionsDayFab29,
+  optionsMonth,
+  isLeapYear,
+} from "services/selectDate";
 
 const Register = () => {
   //ref element
@@ -38,59 +45,12 @@ const Register = () => {
   const [dataDistrict, setDataDistrict] = useState([]);
   const [dataSubDistrict, setSubDistrict] = useState([]);
   const [dataOTP, setdataOTP] = useState({});
-  const [ optionYears, setOptionYears ] = useState([]);
-  const [page, setpage] = useState("register");
+  const [optionYears, setOptionYears] = useState([]);
+  const [OptionDay, setOptionDay] = useState([]);
+  const [page, setpage] = useState("privacypolicy");
   const useStyle = styleSelect();
-  const optionsDay = [
-    { value: "01", label: "01" },
-    { value: "02", label: "02" },
-    { value: "03", label: "03" },
-    { value: "04", label: "04" },
-    { value: "05", label: "05" },
-    { value: "06", label: "06" },
-    { value: "07", label: "07" },
-    { value: "08", label: "08" },
-    { value: "09", label: "09" },
-    { value: "10", label: "10" },
-    { value: "11", label: "11" },
-    { value: "12", label: "12" },
-    { value: "13", label: "13" },
-    { value: "14", label: "14" },
-    { value: "15", label: "15" },
-    { value: "16", label: "16" },
-    { value: "17", label: "17" },
-    { value: "18", label: "18" },
-    { value: "19", label: "19" },
-    { value: "20", label: "20" },
-    { value: "21", label: "21" },
-    { value: "22", label: "22" },
-    { value: "23", label: "23" },
-    { value: "24", label: "24" },
-    { value: "25", label: "25" },
-    { value: "26", label: "26" },
-    { value: "27", label: "27" },
-    { value: "28", label: "28" },
-    { value: "29", label: "29" },
-    { value: "30", label: "30" },
-    { value: "31", label: "31" },
-  ];
 
-  const optionsMonth =[
-    { value: "01", label: "มกราคม" },
-    { value: "02", label: "กุมภาพันธ์" },
-    { value: "03", label: "มีนาคม" },
-    { value: "04", label: "เมษายน" },
-    { value: "05", label: "พฤษภาคม" },
-    { value: "06", label: "มิถุนายน" },
-    { value: "07", label: "กรฎาคม" },
-    { value: "08", label: "สิงหาคม" },
-    { value: "09", label: "กันยายน" },
-    { value: "10", label: "ตุลาคม" },
-    { value: "11", label: "พฤศจิกายน" },
-    { value: "12", label: "ธันวาคม" },
-  ]
-
-  const optionsYear =[];
+  const optionsYear = [];
 
   const address = async () => {
     const province = await Address.getProvince();
@@ -100,7 +60,7 @@ const Register = () => {
     setDataDistrict(district);
     setSubDistrict(subDistrict);
   };
-  
+
   const [Data, setData] = useState({
     id: "",
     memberCard: "",
@@ -121,9 +81,9 @@ const Register = () => {
     isMemberType: "1",
     memberType: "1",
     memberPoint: 0,
-    day:"01",
-    month:"01",
-    year:(new Date().getFullYear()-13),
+    day: "01",
+    month: "01",
+    year: new Date().getFullYear() - 13,
     memberPointExpire: moment(new Date()).toDate(),
     uid: Session.getLiff().uid,
   });
@@ -248,18 +208,36 @@ const Register = () => {
     }));
   };
 
-
-  const setOptionYear = () =>{
-    for(var i = new Date().getFullYear()-13 ; i > ((new Date().getFullYear()-13) - 60) ; i-- ){
+  const setOptionYear = () => {
+    for (
+      var i = new Date().getFullYear() - 13;
+      i > new Date().getFullYear() - 13 - 60;
+      i--
+    ) {
       optionsYear.push({ value: i, label: i });
     }
     setOptionYears(optionsYear);
-  }
+  };
+
+  const selectOptionDay = (month, year) => {
+    if (isLeapYear(year) && month === "02") {
+      setOptionDay(optionsDayFab29);
+    } else if (month === "02") setOptionDay(optionsDayFab);
+    else if (
+      month === "04" ||
+      month === "06" ||
+      month === "09" ||
+      month === "11"
+    )
+      setOptionDay(optionsDay30);
+    else setOptionDay(optionsDay31);
+  };
 
   useEffect(() => {
     address();
     SenderOTP();
     setOptionYear();
+    selectOptionDay();
     //confirmotp();
   }, []);
 
@@ -345,11 +323,11 @@ const Register = () => {
               style={{
                 width: "100%",
                 backgroundColor: "#FFF",
-                height: "calc(100vh - 200px)",
+                height: "calc(100vh - 150px)",
                 minHeight: "450px",
                 borderRadius: "10px",
                 padding: "20px",
-                overflow: "scroll",
+                overflowY: "scroll",
               }}
             >
               <div className="flex text-green-mbk font-bold text-lg mb-4">
@@ -391,6 +369,7 @@ const Register = () => {
               <SelectUC
                 name="sex"
                 lbl="เพศ"
+                valid={true}
                 onChange={(e) => {
                   handleChange({ target: { name: "sex", value: e.value } });
                 }}
@@ -405,24 +384,23 @@ const Register = () => {
               <div className="">
                 <div className="flex text-green-mbk font-bold text-sm ">
                   {"วันเกิด"}
+                  <span className="ml-1" style={{ color: "red" }}>
+                    {" *"}
+                  </span>
                 </div>
                 <div className="w-full flex ">
                   <div className="mt-2 mb-2 w-full">
                     <Select
                       name="day"
+                      className=" text-gray-mbk text-center datePicker"
                       isSearchable={false}
-                      components={
-                        {
-                          DropdownIndicator: () => null,
-                          IndicatorSeparator: () => null
-                        }
-                      }
-                      className="text-gray-mbk mt-1 text-sm w-full border-none text-center"
-                      value={ValidateService.defaultValue(
-                        optionsDay,
-                        Data.day
-                      )}
-                      options={optionsDay}
+                      components={{
+                        DropdownIndicator: () => null,
+                        IndicatorSeparator: () => null,
+                      }}
+                      // className="text-gray-mbk mt-1 text-sm w-full border-none text-center"
+                      value={ValidateService.defaultValue(OptionDay, Data.day)}
+                      options={OptionDay}
                       onChange={(e) => {
                         handleChange({
                           target: { name: "day", value: e.value },
@@ -434,16 +412,15 @@ const Register = () => {
                   <div className="ml-2">&nbsp;</div>
                   <div className="mt-2 mb-2 w-full">
                     <Select
-                      className="text-gray-mbk mt-1 text-sm w-full border-none text-center dateRemove"
+                      className="text-gray-mbk text-center datePicker dateRemove"
                       isSearchable={false}
                       name="month"
-                      components={
-                        {
-                          DropdownIndicator: () => null,
-                          IndicatorSeparator: () => null
-                        }
-                      }
+                      components={{
+                        DropdownIndicator: () => null,
+                        IndicatorSeparator: () => null,
+                      }}
                       onChange={(e) => {
+                        selectOptionDay(e.value, Data.year);
                         handleChange({
                           target: { name: "month", value: e.value },
                         });
@@ -459,16 +436,15 @@ const Register = () => {
                   <div className="mr-2">&nbsp;</div>
                   <div className="mt-2 mb-2 w-full">
                     <Select
-                      className="text-gray-mbk mt-1 text-sm w-full border-none text-center"
+                      className="text-gray-mbk text-center datePicker"
                       isSearchable={false}
-                      components={
-                        {
-                          DropdownIndicator: () => null,
-                          IndicatorSeparator: () => null
-                        }
-                      }
+                      components={{
+                        DropdownIndicator: () => null,
+                        IndicatorSeparator: () => null,
+                      }}
                       name="year"
                       onChange={(e) => {
+                        selectOptionDay(Data.month, e.value);
                         handleChange({
                           target: { name: "year", value: e.value },
                         });
@@ -551,6 +527,7 @@ const Register = () => {
               <InputUC
                 name="address"
                 lbl="ที่อยู่"
+                valid={true}
                 type="text"
                 onChange={handleChange}
                 value={Data.address}
@@ -634,6 +611,7 @@ const Register = () => {
                 name="postcode"
                 lbl="รหัสไปรษณีย์"
                 type="tel"
+                valid={true}
                 onChange={handleChange}
                 value={Data.postcode}
                 error={errors.postcode}
@@ -667,12 +645,13 @@ const Register = () => {
             style={{
               width: "90%",
               backgroundColor: "#FFF",
-              height: "45vh",
+       
               padding: "20px",
               margin: "auto",
               borderRadius: "10px",
               overflowY: "auto",
             }}
+            className="heightPolicy"
           >
             <div className="text-center mt-2">
               <span className="text-green-mbk font-bold text-base">
@@ -1127,6 +1106,7 @@ const Register = () => {
                 borderRadius: "10px",
                 marginTop: "10vh",
                 padding: "20px",
+                paddingTop: "45px",
               }}
             >
               <div className="flex text-gray-mbk text-2xs font-bold justify-center">

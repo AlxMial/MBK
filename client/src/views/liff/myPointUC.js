@@ -35,17 +35,17 @@ const MyPointUC = () => {
         <div className=" text-lg text-center font-bold mt-4">คะแนนของฉัน</div>
         <div className="text-center mt-6">
           <div
-            className="text-3xl font-bold"
+            className="text-3xl font-bold shadow-lg"
             style={{
               backgroundColor: "#d0b027",
-              height: "40px",
+              height: "45px",
               width: "50%",
               margin: "auto",
               borderRadius: "20px",
-              padding: "5px",
+       
             }}
           >
-            {tbMember.memberPoint === null ? 0 : tbMember.memberPoint}
+            <span className="text-shadow">{tbMember.memberPoint === null ? 0 : tbMember.memberPoint}</span>
           </div>
         </div>
         <div className=" text-sm font-bold text-center mt-4 ">

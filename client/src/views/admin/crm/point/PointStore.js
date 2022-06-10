@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams, Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 import "antd/dist/antd.css";
 import ReactPaginate from "react-paginate";
-import moment from "moment";
 import "antd/dist/antd.css";
 import Modal from "react-modal";
-import { Radio, DatePicker, Space, ConfigProvider } from "antd";
-import locale from "antd/lib/locale/th_TH";
 import * as Storage from "../../../../services/Storage.service";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import {
@@ -19,10 +15,12 @@ import {
 } from "assets/styles/theme/ReactModal";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
-import ValidateService from "services/validateValue";
+import { useDispatch } from 'react-redux';
+import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 
 export default function PointStore() {
   /* Set useState */
+  const dispatch = useDispatch();
   const [Active, setActive] = useState("1");
   const [score, setScore] = useState(0);
   const { height, width } = useWindowDimensions();
@@ -196,7 +194,9 @@ export default function PointStore() {
   };
 
   const fetchData = async () => {
+    dispatch(fetchLoading());
     axios.get("pointStore").then((response) => {
+      dispatch(fetchSuccess());
       if (response.data.error) {
       } else {
         setlistStore(response.data.tbPointStoreHD);

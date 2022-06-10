@@ -21,6 +21,8 @@ const GetReward = () => {
     { index: 0, code: "", state: null },
     { index: 1, code: "", state: null },
     { index: 2, code: "", state: null },
+    { index: 3, code: "", state: null },
+    { index: 4, code: "", state: null },
   ]);
   const [tbMember, settbMember] = useState({});
   const [valueStore, setvalueStore] = useState(null);
@@ -148,7 +150,7 @@ const GetReward = () => {
             <>
               {/* กรอก code  */}
               <div className="noselect text-lg text-white font-bold text-center ">
-                {"กรองโค้ดเพื่อสะสมคะแนน"}
+                {"กรอกโค้ดเพื่อสะสมคะแนน"}
               </div>
               <div
                 className="overflow-y-auto liff-minHeight"
@@ -310,7 +312,7 @@ const GetReward = () => {
                             {!IsNullOrEmpty(_succeedData) || e.state ? (
                               <div className="text-xs pt-2 px-2 Noto Sans">
                                 <i className={msg.icon}></i>
-                                <span className="font-bold text-red-500">
+                                <span className={"font-bold " + ((msg.msg === "กรอก Code สำเร็จ") ? " text-green-mbk" : " text-red-500")}>
                                   {" "}
                                   {msg.msg}
                                 </span>
@@ -320,7 +322,7 @@ const GetReward = () => {
                         </div>
                       );
                     })}
-                    <div className="noselect relative  px-4  flex-grow flex-1 mt-2">
+                    <div className="noselect relative  px-4  flex-grow flex-1 mt-4">
                       <div
                         style={{
                           width: "40px",
@@ -340,7 +342,7 @@ const GetReward = () => {
                       >
                         <i className="fas fa-plus-circle text-green-mbk"></i>
                       </div>
-                      <div className="relative  px-4  flex-grow flex-1 flex mt-1">
+                      <div className="relative  px-4  flex-grow flex-1 flex mt-4 mb-4">
                         <button
                           className=" w-6\/12 text-gray-mbk  font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                           type="button"

@@ -63,6 +63,7 @@ export default function Admin() {
               />
               <Route path="/admin/redemptions" exact component={ConditionRewardList} />
               <Route path="/admin/redemptionsinfo" exact component={ConditioRewardInfo} />
+              <Route path="/admin/redemptionsimport" exact component={ConditioRewardInfo} />
               <Route path="/admin/redemptionsinfo/:id" exact component={ConditioRewardInfo} />
               <Route path="/admin/settingShop" exact component={SettingShop} />
               {/* <Route path="/admin/stocks" exact component={StockList} /> */}

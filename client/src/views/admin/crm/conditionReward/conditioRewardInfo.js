@@ -25,6 +25,7 @@ import { onSaveImage } from "services/ImageService";
 import FilesService from "../../../../services/files";
 import GameList from "./GameList";
 import TextAreaUC from "components/InputUC/TextAreaUC";
+import ImportCoupon from "./ImportCoupon";
 
 export default function ConditioRewardInfo() {
   /* Option Select */
@@ -45,6 +46,7 @@ export default function ConditioRewardInfo() {
 
   /* Set useState */
   const [isNew, setIsNew] = useState(false);
+  const [isImport, setIsImport] = useState("");
   const [typePermission, setTypePermission] = useState("");
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
   const [isClick, setIsClick] = useState({
@@ -54,8 +56,11 @@ export default function ConditioRewardInfo() {
     couponEnd: false,
     expireDate: false,
   });
+
   const [stateDelay, setStateDelay] = useState("");
+
   const [isCancel, setIsCancel] = useState(false);
+
   const imageData = {
     id: null,
     image: null,
@@ -97,9 +102,9 @@ export default function ConditioRewardInfo() {
     formik.handleSubmit();
     const valueError = JSON.stringify(formik.errors);
     setIsOpenEdit(false);
-    if (valueError.length <= 2) 
-    { history.push("/admin/redemptions"); }
-
+    if (valueError.length <= 2) {
+      history.push("/admin/redemptions");
+    }
   };
 
   const onReturn = () => {
@@ -334,6 +339,48 @@ export default function ConditioRewardInfo() {
     }),
   });
 
+  const formikCouponImport = useFormik({
+    initialValues: {
+      id: "",
+      pictureCoupon: "",
+      fileName: "",
+      couponName: "",
+      discount: 0,
+      discountType: "1",
+      startDate: new Date(),
+      isNotExpired: false,
+      expiredDate: new Date(),
+      couponCount: 0,
+      isNoLimitPerDayCount: false,
+      usedPerDayCount: 0,
+      description: "",
+      isSelect: false,
+      isCancel: false,
+      isDeleted: false,
+      addBy: "",
+      updateBy: "",
+    },
+    validationSchema: Yup.object({
+      couponName: Yup.string().required("* กรุณากรอก ชื่อคูปอง"),
+      couponCount: Yup.number()
+        .required("* กรุณากรอก จำนวนคูปอง")
+        .test(
+          "Is positive?",
+          "* จำนวนคูปองต้องมากกว่า 0",
+          (value) => value > 0
+        ),
+      discount: Yup.number()
+        .required("* กรุณากรอก ส่วนลด")
+        .test(
+          "Is positive?",
+          "* จำนวนคูปองต้องมากกว่า 0",
+          (value) => value > 0
+        ),
+      pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
+      fileName: Yup.string().required("* กรุณาเลือก ไฟล์"),
+    }),
+  });
+
   const formikProduct = useFormik({
     initialValues: {
       id: "",
@@ -357,6 +404,7 @@ export default function ConditioRewardInfo() {
           (value) => value > 0
         ),
       pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสัมนาคุณ"),
+
     }),
   });
 
@@ -497,6 +545,10 @@ export default function ConditioRewardInfo() {
     setIsNew(true);
     // defaultValue();
     fetchData();
+    setIsImport(window.location.href.includes("redemptionsimport"));
+    if (window.location.href.includes("redemptionsimport")) {
+      setIsDisableType(true);
+    }
   }, []);
 
   return (
@@ -544,12 +596,16 @@ export default function ConditioRewardInfo() {
                       }
                       type="button"
                       onClick={() => {
-                        if (!isRedemptionType) {
-                          if (!isRewardType) {
-                            formikCoupon.handleSubmit();
-                          } else {
-                            formikProduct.handleSubmit();
+                        if (!isImport) {
+                          if (!isRedemptionType) {
+                            if (!isRewardType) {
+                              formikCoupon.handleSubmit();
+                            } else {
+                              formikProduct.handleSubmit();
+                            }
                           }
+                        } else {
+                          formikCouponImport.handleSubmit();
                         }
                         formik.handleSubmit();
                       }}
@@ -589,12 +645,16 @@ export default function ConditioRewardInfo() {
                         <span
                           id="save"
                           onClick={() => {
-                            if (!isRedemptionType) {
-                              if (!isRewardType) {
-                                formikCoupon.handleSubmit();
-                              } else {
-                                formikProduct.handleSubmit();
+                            if (!isImport) {
+                              if (!isRedemptionType) {
+                                if (!isRewardType) {
+                                  formikCoupon.handleSubmit();
+                                } else {
+                                  formikProduct.handleSubmit();
+                                }
                               }
+                            } else {
+                              formikCouponImport.handleSubmit();
                             }
                             formik.handleSubmit();
                           }}
@@ -877,7 +937,9 @@ export default function ConditioRewardInfo() {
                         : "กำหนด Game"}
                     </div>
                   </span>
-                  {!isRedemptionType ? (
+                  {isImport ? (
+                    <ImportCoupon formik={formikCouponImport} />
+                  ) : !isRedemptionType ? (
                     !isRewardType ? (
                       <StandardCoupon formik={formikCoupon} />
                     ) : (

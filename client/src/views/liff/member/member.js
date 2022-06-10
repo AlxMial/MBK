@@ -115,10 +115,10 @@ const Member = () => {
                   }}
                 >
                   {tbMember.memberType === "1"
-                    ? "Green MEMBER"
+                    ? "GREEN MEMBER"
                     : tbMember.memberType === "2"
-                    ? "Sliver MEMBER"
-                    : "Gold MEMBER"}
+                    ? "SLIVER MEMBER"
+                    : "GOLD MEMBER"}
                 </div>
                 <div className="text-white font-bold text-xs mt-2">
                   {tbMember.firstName + " " + tbMember.lastName}
@@ -157,9 +157,9 @@ const Member = () => {
                   <img
                     src={require("assets/img/mbk/Coint1.png").default}
                     alt="..."
-                    className="w-5 h-5 rounded-full border-2 border-blueGray-50 shadow"
+                    className="w-8 h-8 rounded-full border-2 border-blueGray-50 shadow"
                   ></img>
-                  <span className="text-white font-bold text-lg pl-2 ">
+                  <span className="text-white font-bold text-xl pl-2 margin-auto-t-b">
                     {tbMember.memberPoint === null ? 0 : tbMember.memberPoint}
                   </span>
                 </div>
@@ -193,10 +193,10 @@ const Member = () => {
               width: "90%",
               padding: "10px",
               height: "40px",
+              marginTop:"15px",
               borderRadius: "10px",
             }}
             onClick={() => {
-              console.log("GetReward");
               history.push(path.getreward);
             }}
           >

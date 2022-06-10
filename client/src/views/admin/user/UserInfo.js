@@ -13,7 +13,7 @@ import * as Storage from "../../../services/Storage.service";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
-import SelectUC from "components/SelectUC";
+import SelectUC  from "components/SelectUC";
 
 export default function UserInfo() {
   /* Option Select */
@@ -56,7 +56,6 @@ export default function UserInfo() {
   };
 
   const toggleConfirmPassword = () => {
-    console.log(confirmpasswordShown);
     setConfirmpasswordShown(!confirmpasswordShown);
   };
 
@@ -93,7 +92,8 @@ export default function UserInfo() {
       setIsOpenEdit(false);
       if (formik.values.password === "") setErrorPassword(true);
     }else{
-      history.push("/admin/users");
+      if(!isModefied)
+        history.push("/admin/users");
     }
     // setIsModified(false);
     // history.push("/admin/users");
@@ -216,6 +216,9 @@ export default function UserInfo() {
               formik.resetForm();
               fetchData();
               setConfirmPassword(false);
+              setIsOpenEdit(false);
+
+              if (modalIsOpenEdit) history.push("/admin/members");
               // formik.setFieldValue("confirmPassword", "");
               // formik.setFieldValue("password", "");
               // formik.setFieldValue("currentPassword", "");
@@ -232,7 +235,7 @@ export default function UserInfo() {
                 { appearance: "warning", autoDismiss: true }
               );
             } else {
-              setIsOpenEdit(false);
+       
               addToast(
                 Storage.GetLanguage() === "th"
                   ? res.data.message
@@ -448,6 +451,9 @@ export default function UserInfo() {
                             seterrorCurrentPassword(false);
                             setErrorPassword(false);
                             setConfirmPassword(false);
+                            formik.values.currentPassword = ""
+                            formik.values.confirmPassword = ""
+                            formik.values.password = ""
                           }}
                         >
                           ยกเลิกเปลี่ยนแปลงรหัสผ่าน

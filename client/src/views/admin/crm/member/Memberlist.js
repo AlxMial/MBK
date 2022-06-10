@@ -4,42 +4,28 @@ import axios from "services/axios";
 import ReactPaginate from "react-paginate";
 import Modal from "react-modal";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
-import { Workbook } from "exceljs";
 import { exportExcel } from "services/exportExcel";
 import { GetPermissionByUserName } from "services/Permission";
-import * as fs from "file-saver";
 import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
 import * as Address from "../../../../services/GetAddress.js";
+import { useDispatch } from 'react-redux';
+import { fetchLoading, fetchSuccess } from 'redux/actions/common';
+
 // components
 Modal.setAppElement("#root");
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    padding: "0%",
-    transform: "translate(-50%, -50%)",
-    overflowY: "auto",
-    overflowX: "auto",
-    backgroundColor: "#F1F5F9",
-  },
-  overlay: { zIndex: 100, backgroundColor: "rgba(70, 70, 70, 0.5)" },
-};
 
 export default function MemberList() {
   const [listUser, setListUser] = useState([]);
   const [listSearch, setListSerch] = useState([]);
-  const [pageNumber, setPageNumber] = useState(0);
-  const [deleteNumber, setDeleteNumber] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);  
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [typePermission, setTypePermission] = useState("");
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
+  const dispatch = useDispatch();
 
   /* Modal */
   function openModalSubject(id) {
@@ -193,8 +179,10 @@ export default function MemberList() {
   const fetchPermission = async () => {
     const role = await GetPermissionByUserName();
     setTypePermission(role);
+    dispatch(fetchLoading());
     if (role === "1") {
       axios.get("members/Show").then((response) => {
+        dispatch(fetchSuccess());
         if (response.data.error) {
           console.log(response.data.error);
         } else {
@@ -204,6 +192,7 @@ export default function MemberList() {
       });
     } else {
       axios.get("members").then((response) => {
+        dispatch(fetchSuccess());
         if (response.data.error) {
           console.log(response.data.error);
         } else {
@@ -342,7 +331,7 @@ export default function MemberList() {
                         "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                       }
                     >
-                      Member Card
+                      รหัสสมาชิก
                     </th>
                     <th
                       className={
@@ -422,7 +411,7 @@ export default function MemberList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/membersInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-150">
+                              <div title={value.firstName +" " + value.lastName} className="TextWordWarp-150">
                                 {value.firstName} {value.lastName}
                               </div>
                             </Link>
@@ -440,7 +429,7 @@ export default function MemberList() {
                               className="text-gray-mbk  hover:text-gray-mbk"
                               to={`/admin/membersInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200">
+                              <div className="TextWordWarp-200" title={value.email}>
                                 {value.email}
                               </div>
                             </Link>

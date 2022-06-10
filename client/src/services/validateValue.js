@@ -54,6 +54,7 @@ class ValidateService {
     if ((value === undefined || value === null || value.toString() === "") && options[0] !== undefined) {
       value = options[0].value;
     }
+  
     return options
       ? options.find((option) => option.value.toString() === value.toString())
       : "";

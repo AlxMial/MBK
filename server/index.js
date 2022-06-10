@@ -3,6 +3,9 @@ const app = express();
 const cors = require('cors');
 const initRoutes = require("./routes/tutorial.routes");
 const ValidateEncrypt = require("./services/crypto")
+const swaggerUI = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
+
 global.__basedir = __dirname + "/..";
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
@@ -34,10 +37,27 @@ function authentication(req, res, next) {
     }
 
 }
+
+const options = {
+	definition: {
+		openapi: "3.0.0",
+		info: {
+			title: "MBK Library API",
+			version: "1.0.0",
+		},
+		servers: [
+			{
+				url: "http://localhost:3001",
+			},
+		],
+	},
+	apis: ["./routes/members/*.js"],
+};
+
+const specs = swaggerJsDoc(options);
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
 app.use(authentication)
-
 const db = require('./models');
-
 // // Routers
 const SendMailRouter = require('./routes/sendmail/SendMail');
 app.use("/mbkserver/mails", SendMailRouter);
@@ -88,6 +108,10 @@ const promotionStore = require('./routes/ecommerce/promotionStore');
 app.use("/mbkserver/promotionStore", promotionStore);
 const image = require('./routes/image/image');
 app.use("/mbkserver/image", image);
+
+
+
+
 initRoutes(app);
 
 const port = process.env.PORT || 3001;

@@ -11,7 +11,7 @@ import * as Storage from "../../../../services/Storage.service";
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
 
-export default function PointRegister() {
+export default function PointRegister({ setModified, setData }) {
   /* Set useState */
   const [Active, setActive] = useState("1");
   const [pointRegisterScore, setpointRegisterScore] = useState(0);
@@ -43,8 +43,8 @@ export default function PointRegister() {
       pointRegisterScore: "",
       isActive: "1",
       isDeleted: false,
-      addBy:"",
-      updateBy:""
+      addBy: "",
+      updateBy: "",
     },
     validationSchema: Yup.object({
       pointRegisterScore: Yup.string().required(
@@ -55,7 +55,7 @@ export default function PointRegister() {
     }),
     onSubmit: (values) => {
       if (isNew) {
-        formik.values.addBy = localStorage.getItem('user');
+        formik.values.addBy = localStorage.getItem("user");
         axios.post("pointRegister", values).then((res) => {
           if (res.data.status) {
             formik.values.id = res.data.tbPointRegister.id;
@@ -69,7 +69,7 @@ export default function PointRegister() {
           }
         });
       } else {
-        formik.values.updateBy = localStorage.getItem('user');
+        formik.values.updateBy = localStorage.getItem("user");
         axios.put("pointRegister", values).then((res) => {
           if (res.data.status) {
             formik.values.id = res.data.tbPointRegister.id;
@@ -92,16 +92,31 @@ export default function PointRegister() {
       } else {
         if (response.data.tbPointRegister.length > 0) {
           setIsNew(false);
-          setActive(response.data.tbPointRegister[0].isActive)
-          formik.setFieldValue('id',response.data.tbPointRegister[0].id);
-          formik.setFieldValue('pointRegisterScore',response.data.tbPointRegister[0].pointRegisterScore);
-          formik.setFieldValue('isActive',response.data.tbPointRegister[0].isActive);
+          setData((prevState) => {
+            return {
+              ...prevState,
+              id: response.data.tbPointRegister[0].id,
+              pointRegisterScore: response.data.tbPointRegister[0].pointRegisterScore,
+              isActive:response.data.tbPointRegister[0].isActive
+            };
+          });
+          setActive(response.data.tbPointRegister[0].isActive);
+          formik.setFieldValue("id", response.data.tbPointRegister[0].id);
+          formik.setFieldValue(
+            "pointRegisterScore",
+            response.data.tbPointRegister[0].pointRegisterScore
+          );
+          formik.setFieldValue(
+            "isActive",
+            response.data.tbPointRegister[0].isActive
+          );
         }
       }
     });
   };
 
   useEffect(() => {
+
     setIsNew(true);
     fetchData();
     /* Default Value for Testing */
@@ -131,6 +146,13 @@ export default function PointRegister() {
                       name="pointRegisterScore"
                       maxLength={5}
                       onChange={(event) => {
+                        setData((prevState) => {
+                          return {
+                            ...prevState,
+                            pointRegisterScore: event.target.value
+                          };
+                        });
+                        setModified(true);
                         onHandlepointRegisterScore(event);
                       }}
                       onBlur={formik.handleBlur}
@@ -163,6 +185,13 @@ export default function PointRegister() {
                     <Radio.Group
                       options={options}
                       onChange={(e) => {
+                        setModified(true);
+                        setData((prevState) => {
+                          return {
+                            ...prevState,
+                            isActive: e.target.value
+                          };
+                        });
                         setActive(e.target.value);
                         formik.setFieldValue("isActive", e.target.value);
                       }}

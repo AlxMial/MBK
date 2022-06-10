@@ -5,25 +5,13 @@ import ReactPaginate from "react-paginate";
 import Modal from "react-modal";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import * as Storage from "../../../services/Storage.service";
+import { useDispatch } from 'react-redux';
+import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 // components
 Modal.setAppElement("#root");
-const customStyles = {
-  content: {
-    top: "50%",
-    left: "50%",
-    right: "auto",
-    bottom: "auto",
-    marginRight: "-50%",
-    padding: "0%",
-    transform: "translate(-50%, -50%)",
-    overflowY: "auto",
-    overflowX: "auto",
-    backgroundColor: "#F1F5F9",
-  },
-  overlay: { zIndex: 100, backgroundColor: "rgba(70, 70, 70, 0.5)" },
-};
 
 export default function UserList() {
+  const dispatch = useDispatch();
   const [listUser, setListUser] = useState([]);
   const [listSearch, setListSerch] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
@@ -98,7 +86,9 @@ export default function UserList() {
   };
 
   useEffect(() => {
+    dispatch(fetchLoading());
     axios.get("users").then((response) => {
+      dispatch(fetchSuccess());
       if (response.data.error) {
       } else {
         response.data.tbUser.forEach(
@@ -286,7 +276,7 @@ export default function UserList() {
                         "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                       }
                     >
-                      อีเมล
+                      Email
                     </th>
                     <th
                       className={
@@ -300,7 +290,7 @@ export default function UserList() {
                         "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                       }
                     >
-                      ระดับ
+                      Role User
                     </th>
                     <th
                       className={
@@ -344,7 +334,7 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200">
+                              <div className="TextWordWarp-200" title={value.firstName+" "+value.lastName}>
                                 {value.firstName} {value.lastName}
                               </div>
                             </Link>
@@ -354,7 +344,7 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200">
+                              <div className="TextWordWarp-200" title={value.email}>
                                 {value.email}
                               </div>
                             </Link>
@@ -364,7 +354,7 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200">
+                              <div className="TextWordWarp-200" title={value.position}>
                                 {value.position}
                               </div>
                             </Link>
@@ -374,7 +364,7 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-150">
+                              <div className="TextWordWarp-150"  title={value.role}>
                                 {value.role}
                               </div>
                             </Link>

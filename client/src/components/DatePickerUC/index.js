@@ -4,13 +4,14 @@ import locale from "antd/lib/locale/th_TH";
 import { DatePicker, ConfigProvider } from "antd";
 import "antd/dist/antd.css";
 
-const DatePickerUC = ({  value, onChange,onClick,onBlur,disabled,placeholder,disabledValue }) => {
+const DatePickerUC = ({  value, onChange,onClick,onBlur,disabled,placeholder,disabledValue,suffixIcon }) => {
   return (
     <ConfigProvider locale={locale}>
       <DatePicker
         format={"DD/MM/yyyy"}
         placeholder={placeholder}
         showToday={false}
+        suffixIcon={(suffixIcon) ? null : <i className="far fa-calendar"></i>}
         disabled={disabled}
         defaultValue={moment(new Date(), "DD/MM/YYYY")}
         onBlur={onBlur}

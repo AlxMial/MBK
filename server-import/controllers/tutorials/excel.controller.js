@@ -19,7 +19,7 @@ const upload = async (req, res) => {
       "/server-import/resources/static/assets/uploads/" +
       req.file.filename;
 
-    readXlsxFile(path).then((rows) => {
+    readXlsxFile(path).then(async (rows) => {
       // skip header
       rows.shift();
 
@@ -27,28 +27,42 @@ const upload = async (req, res) => {
 
       rows.forEach((row) => {
         let tutorial = {
-          code: row[0],
+          code:  Encrypt.EncodeKey(row[0].toLocaleLowerCase()),
           tbPointCodeHDId: req.body.tbPointCodeHDId,
           memberId: null,
           isUse: 0,
           isDeleted: 0,
         };
-
         tutorials.push(tutorial);
       });
 
-      Tutorial.bulkCreate(tutorials)
-        .then(() => {
-          res.status(200).send({
-            message: "Uploaded the file successfully: " + req.file.originalname,
-          });
-        })
-        .catch((error) => {
-          res.status(500).send({
-            message: "Fail to import data into database!",
-            error: error.message,
-          });
+      try {
+        var result = chunkArray(tutorials, 100);
+        for (var i = 0; i < result.length; i++) {
+          let successCode = await createCoupon(result[i]);
+        }
+        res.status(200).send({
+          message: "Generate successfully: ",
         });
+      } catch (err) {
+        res.status(500).send({
+          message: "Fail to Generate data into database!",
+          error: err.message,
+        });
+      }
+
+      // Tutorial.bulkCreate(tutorials)
+      //   .then(() => {
+      //     res.status(200).send({
+      //       message: "Uploaded the file successfully: " + req.file.originalname,
+      //     });
+      //   })
+      //   .catch((error) => {
+      //     res.status(500).send({
+      //       message: "Fail to import data into database!",
+      //       error: error.message,
+      //     });
+      //   });
     });
   } catch (error) {
     res.status(500).send({
@@ -112,7 +126,6 @@ const generateCode = async (req, res) => {
   }
 
   try {
-
     var result = chunkArray(ArrayCoupons, 100);
     for (var i = 0; i < result.length; i++) {
       let successCode = await createCoupon(result[i]);
@@ -130,7 +143,7 @@ const generateCode = async (req, res) => {
 
 const createCoupon = async (Code) => {
   let returnCode = await Tutorial.bulkCreate(Code);
-  return returnCode
+  return returnCode;
 };
 
 function chunkArray(myArray, chunk_size) {
@@ -164,7 +177,7 @@ const download = (req, res) => {
   const id = req.params.id;
   Tutorial.findAll({ where: { tbPointCodeHDId: id } }).then((objs) => {
     let tutorials = [];
- 
+
     objs.forEach((obj) => {
       tutorials.push({
         code: Encrypt.DecodeKey(obj.code).toUpperCase(),

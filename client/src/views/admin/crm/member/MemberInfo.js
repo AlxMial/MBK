@@ -24,7 +24,6 @@ import DatePickerUC from "components/DatePickerUC";
 import MemberHistory from "./memberHistory";
 
 export default function MemberInfo() {
-
   const useStyle = styleSelect();
   /* Service Function */
   const { height, width } = useWindowDimensions();
@@ -68,13 +67,13 @@ export default function MemberInfo() {
   };
 
   const OpenModal = () => {
-    console.log(id)
+    console.log(id);
     setOpen(true);
   };
 
   const handleSubmitModal = () => {
     setOpen(false);
-  }
+  };
 
   function openModalSubject() {
     setIsOpenEdit(true);
@@ -89,6 +88,11 @@ export default function MemberInfo() {
     const valueError = JSON.stringify(formik.errors);
 
     if (valueError.length > 2) setIsOpenEdit(false);
+    else {
+      if (!isModefied) {
+        history.push("/admin/members");
+      }
+    }
     //   history.push("/admin/members");
     // setIsModified(false);
     // history.push("/admin/members");
@@ -141,7 +145,7 @@ export default function MemberInfo() {
       memberCard: Yup.string().required(
         Storage.GetLanguage() === "th"
           ? "* กรุณากรอก รหัสสมาชิก"
-          : "* Please enter your Member Card"
+          : "* Please enter your รหัสสมาชิก"
       ),
       firstName: Yup.string().required(
         Storage.GetLanguage() === "th"
@@ -205,7 +209,7 @@ export default function MemberInfo() {
                 { appearance: "success", autoDismiss: true }
               );
             } else {
-              // setIsOpenEdit(false);
+              setIsOpenEdit(false);
               if (res.data.isPhone) {
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
@@ -224,7 +228,7 @@ export default function MemberInfo() {
                 );
               } else if (res.data.isMemberCard) {
                 addToast(
-                  "บันทึกข้อมูลไม่สำเร็จ Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
+                  "บันทึกข้อมูลไม่สำเร็จ รหัสสมาชิกซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
                   {
                     appearance: "warning",
                     autoDismiss: true,
@@ -238,6 +242,8 @@ export default function MemberInfo() {
           axios.put("members", values).then((res) => {
             if (res.data.status) {
               setIsModified(false);
+              setIsOpenEdit(false);
+              if (modalIsOpenEdit) history.push("/admin/members");
               addToast(
                 Storage.GetLanguage() === "th"
                   ? "บันทึกข้อมูลสำเร็จ"
@@ -245,15 +251,7 @@ export default function MemberInfo() {
                 { appearance: "success", autoDismiss: true }
               );
             } else {
-              // setIsOpenEdit(false);
-
-              // addToast(
-              //   Storage.GetLanguage() === "th"
-              //     ? res.data.message
-              //     : res.data.message,
-              //   { appearance: "warning", autoDismiss: true }
-              // );
-
+              setIsOpenEdit(false);
               if (res.data.isPhone) {
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
@@ -272,7 +270,7 @@ export default function MemberInfo() {
                 );
               } else if (res.data.isMemberCard) {
                 addToast(
-                  "บันทึกข้อมูลไม่สำเร็จ Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
+                  "บันทึกข้อมูลไม่สำเร็จ รหัสสมาชิกซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว",
                   {
                     appearance: "warning",
                     autoDismiss: true,
@@ -487,7 +485,7 @@ export default function MemberInfo() {
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info ">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
-                  {/* <div className="w-full lg:w-2/12 px-4 margin-auto-t-b"></div>
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b"></div>
                   <div className="w-full lg:w-8/12 px-4 mb-2 text-right">
                     <div className="flex flex-wrap w-full justify-content-right">
                       <img
@@ -498,15 +496,14 @@ export default function MemberInfo() {
                         &nbsp;{formik.values.memberPoint}&nbsp;คะแนน
                       </span>
                     </div>
-                  </div> */}
-
+                  </div>
                   <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full margin-a">
                       <label
                         className=" text-blueGray-600 text-sm font-bold "
                         htmlFor="grid-password"
                       >
-                        Member Card
+                        รหัสสมาชิก
                       </label>
                       <span className="text-sm ml-2 text-red-500">*</span>
                     </div>
@@ -729,7 +726,7 @@ export default function MemberInfo() {
                       <DatePickerUC
                         disabled={typePermission === "1" ? false : true}
                         onClick={(e) => {
-                          setIsClick(true);
+                          if (typePermission === "1") setIsClick(true);
                         }}
                         onBlur={(e) => {
                           setIsClick(false);
@@ -795,7 +792,7 @@ export default function MemberInfo() {
                           setIsClickRegister(false);
                         }}
                         onClick={(e) => {
-                          setIsClickRegister(true);
+                          if (typePermission === "1") setIsClickRegister(true);
                         }}
                         value={
                           !isClickRegister

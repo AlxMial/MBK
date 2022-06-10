@@ -2570,6 +2570,11 @@ select {
     var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.text-shadow {
+  text-shadow: 0px 4px 3px rgba(0, 0, 0, 0.4), 0px 8px 13px rgba(0, 0, 0, 0.1),
+    0px 18px 23px rgba(0, 0, 0, 0.1);
+}
+
 .hover\:shadow-md:hover {
   --tw-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -3401,8 +3406,6 @@ select {
     width: 50%;
   }
 
-  
-
   .lg\:w-8\/12 {
     width: 66.666667%;
   }
@@ -3841,6 +3844,7 @@ strike {
 .Tabs-line .ant-tabs-tab-active .ant-tabs-tab-btn {
   color: #000 !important;
 }
+
 /*Radio Antd*/
 .ant-radio-checked .ant-radio-inner {
   border-color: #047738 !important;
@@ -3932,6 +3936,45 @@ strike {
 }
 
 /* Text Code */
+.has-details {
+  position: relative;
+}
+
+.details {
+  position: absolute;
+  top: 0;
+  transform: translateY(70%) scale(0);
+  transition: transform 0.1s ease-in;
+  transform-origin: left;
+  display: inline;
+  background: white;
+  z-index: 20;
+  min-width: 100%;
+  padding: 1rem;
+  border: 1px solid black;
+}
+
+.has-details:hover span {
+  transform: translateY(70%) scale(1);
+}
+
+.dateRegister .ant-picker-input > input {
+  text-align: center;
+}
+.dateRemove {
+  width: 120px;
+}
+
+.datePicker .css-gfn0bc-control {
+  border-radius: 1rem !important;
+}
+.datePicker .css-1p3eba7-control {
+  border-radius: 1rem !important;
+}
+.datePicker .css-14pn5zw-control {
+  border-radius: 1rem !important;
+}
+
 .TextWordWarp-150 {
   white-space: nowrap;
   overflow: hidden;
@@ -4201,7 +4244,7 @@ input[type="number"] {
     overflow-y: auto;
   }
   .widthDigi {
-    width:120px;
+    width: 120px;
   }
 }
 
@@ -4238,9 +4281,8 @@ input[type="number"] {
   }
 
   .widthDigi {
-    width:130px;
+    width: 130px;
   }
-  
 }
 
 @media only screen and (max-width: 1280px) {
@@ -4371,6 +4413,10 @@ input[type="number"] {
   .liff-Reward-height {
     height: 70%;
   }
+
+  .heightPolicy {
+    height: 60vh;
+  }
 }
 @media only screen and (max-width: 414px) {
   .minHeight {
@@ -4405,6 +4451,9 @@ input[type="number"] {
   .liff-Reward-height {
     height: 70%;
   }
+  .heightPolicy {
+    height: 55vh;
+  }
 }
 
 @media only screen and (max-width: 391px) {
@@ -4426,6 +4475,9 @@ input[type="number"] {
   }
   .liff-Reward-height {
     height: 70%;
+  }
+  .heightPolicy {
+    height: 45vh;
   }
 }
 
@@ -4456,6 +4508,13 @@ input[type="number"] {
     height: 70%;
   }
 }
+
+@media only screen and (max-width: 280px) {
+  .heightPolicy {
+    height: 25vh;
+  }
+}
+
 @media only screen and (max-height: 860px) {
   .liff-minHeight {
     min-height: 550px;

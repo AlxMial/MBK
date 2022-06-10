@@ -19,6 +19,7 @@ export default function ConditionRewardList() {
   const RedemptionsPerPage = 10;
   const pagesVisited = pageNumber * RedemptionsPerPage;
   const dispatch = useDispatch();
+
   const redemptionType = [
     { value: "1", label: "Standard" },
     { value: "2", label: "Game" },
@@ -96,7 +97,9 @@ export default function ConditionRewardList() {
   };
 
   useEffect(() => {
+    dispatch(fetchLoading());
     axios.get("redemptions").then((response) => {
+      dispatch(fetchSuccess());
       if (response.data.error) {
       } else {
         if (response.data.tbRedemptionConditionsHD !== null) {
@@ -172,6 +175,17 @@ export default function ConditionRewardList() {
                       className="imgExcel margin-auto-t-b cursor-pointer "
                     ></img> */}
                     {/* <span onClick={() => Excel("ข้อมูลสมาชิก")} className="text-gray-500 font-bold margin-auto-t-b ml-2 cursor-pointer ">Export Excel</span> */}
+                    <Link to="/admin/redemptionsimport">
+                      <button
+                        className="bg-gold-mbk text-black ml-2 active:bg-gold-mbk font-bold text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                        type="button"
+                      >
+                        <i className="fas fa-plus-circle text-white "></i>{" "}
+                        <span className="text-white text-sm px-2">
+                          Import Partner Coupon
+                        </span>
+                      </button>
+                    </Link>
                     <Link to="/admin/redemptionsinfo">
                       <button
                         className="bg-gold-mbk text-black ml-2 active:bg-gold-mbk font-bold text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
