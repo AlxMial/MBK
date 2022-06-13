@@ -8,6 +8,7 @@ const DatePickerUC = ({  value, onChange,onClick,onBlur,disabled,placeholder,dis
   return (
     <ConfigProvider locale={locale}>
       <DatePicker
+        inputReadOnly={true}
         format={"DD/MM/yyyy"}
         placeholder={placeholder}
         showToday={false}

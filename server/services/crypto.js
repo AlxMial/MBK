@@ -229,11 +229,17 @@ class ValidateEncrypt {
         columns !== "consentDate" &&
         list[columns] !== ""
       ) {
+
         for (var i = 0; i < list.length; i++) {
+          try{
           list[i].dataValues[columns] = this.DecodeKey(
             list[i].dataValues[columns]
           );
+          }catch{
+            console.log(list[i].dataValues[columns])
+          }
         }
+
       }
     }
     return list;

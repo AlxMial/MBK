@@ -24,16 +24,19 @@ const upload = async (req, res) => {
       rows.shift();
 
       let tutorials = [];
-
+      var rowx = 0;
       rows.forEach((row) => {
-        let tutorial = {
-          code:  Encrypt.EncodeKey(row[0].toLocaleLowerCase()),
-          tbPointCodeHDId: req.body.tbPointCodeHDId,
-          memberId: null,
-          isUse: 0,
-          isDeleted: 0,
-        };
-        tutorials.push(tutorial);
+        if(row[0] !== null && rowx > 2){
+          let tutorial = {
+            code:  Encrypt.EncodeKey(row[0].toLocaleLowerCase()),
+            tbPointCodeHDId: req.body.tbPointCodeHDId,
+            memberId: null,
+            isUse: 0,
+            isDeleted: 0,
+          };
+          tutorials.push(tutorial);
+        }
+        rowx++;
       });
 
       try {

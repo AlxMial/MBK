@@ -23,6 +23,7 @@ router.post("/login", async (req, res) => {
       if (!match) {
         res.json({ error: "Wrong Username And Password Combination" });
       } else {
+        console.log(user)
         const accessToken = sign(
           {
             userName: Encrypt.DecodeKey(user.userName),
@@ -110,7 +111,7 @@ router.get("/",validateToken, async (req, res) => {
   if (listUser.length > 0) {
     const valueData = Encrypt.decryptAllDataArray(listUser);
     Encrypt.encryptValueIdArray(valueData);
-    res.json({ status: true, message: "success", tbUser: valueData });
+    res.json({ status: true, message: "success", tbUser: listUser });
   } else
     res.json({ status: false, message: "not found user", tbUser: null });
 });

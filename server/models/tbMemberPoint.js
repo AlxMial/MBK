@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
     const tbMemberPoint = sequelize.define("tbMemberPoint", {
       campaignType: {
         type: DataTypes.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       code: {
         type: DataTypes.STRING,

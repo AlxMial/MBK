@@ -42,14 +42,10 @@ export default function ConditionRewardList() {
       setListRedemption(
         listSearch.filter(
           (x) =>
-            x.firstName.includes(e) ||
-            x.lastName.includes(e) ||
-            x.email.includes(e) ||
-            x.phone.includes(e) ||
-            x.birthDate.toString().includes(e) ||
-            x.registerDate.toString().includes(e)
+            x.redemptionName.includes(e)
         )
       );
+      setPageNumber(0);
     }
   };
 

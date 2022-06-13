@@ -5,6 +5,7 @@ const initRoutes = require("./routes/tutorial.routes");
 const ValidateEncrypt = require("./services/crypto")
 const swaggerUI = require("swagger-ui-express");
 const swaggerJsDoc = require("swagger-jsdoc");
+const YAML = require('yamljs');
 
 global.__basedir = __dirname + "/..";
 app.use(express.json({ limit: '50mb' }));
@@ -35,27 +36,9 @@ function authentication(req, res, next) {
         err.status = 401;
         return res.status(401).json({ status: 401, message: 'You are not authenticated!' })
     }
-
 }
-
-const options = {
-	definition: {
-		openapi: "3.0.0",
-		info: {
-			title: "MBK Library API",
-			version: "1.0.0",
-		},
-		servers: [
-			{
-				url: "http://localhost:3001",
-			},
-		],
-	},
-	apis: ["./routes/members/*.js"],
-};
-
-const specs = swaggerJsDoc(options);
-app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+const swaggerDocument = YAML.load('swagger.yaml');
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use(authentication)
 const db = require('./models');
 // // Routers
@@ -108,9 +91,6 @@ const promotionStore = require('./routes/ecommerce/promotionStore');
 app.use("/mbkserver/promotionStore", promotionStore);
 const image = require('./routes/image/image');
 app.use("/mbkserver/image", image);
-
-
-
 
 initRoutes(app);
 

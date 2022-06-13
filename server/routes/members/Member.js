@@ -13,61 +13,6 @@ const line = require("@line/bot-sdk");
 const config = require("../../services/config.line");
 const { sign } = require("jsonwebtoken");
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     tbMembers:
- *       type: object
- *       required:
- *         - firstName
- *         - lastName
- *         - phone
- *         - email
- *         - birthDate
- *         - registerDate
- *       properties:
- *         id:
- *           type: int
- *           description: The auto-generated id of the member
- *         firstName:
- *           type: string
- *           description: The member first name
- *         lastName:
- *           type: string
- *           description: The member last name
- *         phone:
- *           type: string
- *           description: The member phone
- *         email:
- *           type: string
- *           description: The member email
- *         birthDate:
- *           type: string
- *           description: The member birthDate
- *         registerDate:
- *           type: date
- *           description: The member registerDate
- *       example:
- *         id: 1
- *         firstName: cha....
- *         lastName: kan....
- *         phone: 080-1510000
- *         email: wwww@gmail.com
- *         birthDate: 09/09/2009
- *         registerDate: 09/09/2009
- */
-
-/**
- * @swagger
- * /mbkserver/members:
- *   get:
- *     summary: Returns the list of all the member
- *     tags: [Members]
- *     responses:
- *       200:
- *         description: The list of the member
- */
 router.get("/", validateToken, async (req, res) => {
   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
   if (listMembers.length > 0) {
@@ -102,26 +47,6 @@ router.get("/export", validateToken, async (req, res) => {
 });
 
 
-/**
- * @swagger
- * /mbkserver/members/byId/{id}:
- *   get:
- *     summary: Get the members by id
- *     tags: [Members]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: string
- *         required: true
- *         description: The members id
- *     responses:
- *       200:
- *         description: The members description by id
- *       404:
- *         description: The members was not found
- */
-
 router.get("/byId/:id", async (req, res) => {
   if (req.params.id !== "undefined") {
     const id = Encrypt.DecodeKey(req.params.id);
@@ -150,30 +75,6 @@ router.get("/Show/byId/:id", async (req, res) => {
   }
 });
 
-
-/**
- * @swagger
- * /mbkserver/members/byUid:
- *   post:
- *     summary: Create a new member
- *     tags: [Members]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/tbMembers'
- *     responses:
- *       200:
- *         description: The member was successfully created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/tbMembers'
- *       500:
- *         description: Some server error
- */
-
 router.post("/byUid", validateLineToken, async (req, res) => {
   if (req.body.uid !== "") {
     const listMembers = await tbMember.findOne({
@@ -188,29 +89,6 @@ router.post("/byUid", validateLineToken, async (req, res) => {
     res.json({ status: true, message: "success", tbMember: null });
   }
 });
-
-/**
- * @swagger
- * /mbkserver/members:
- *   post:
- *     summary: Create a new member
- *     tags: [Members]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/tbMembers'
- *     responses:
- *       200:
- *         description: The member was successfully created
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/tbMembers'
- *       500:
- *         description: Some server error
- */
 
 router.post("/", async (req, res) => {
   const MemberCards = await genMember.generateMemberCard();
@@ -318,28 +196,6 @@ router.post("/", async (req, res) => {
     res.json({ status: false, error: "value is empty" });
   }
 });
-
-
-/**
- * @swagger
- * /mbkserver/members:
- *  put:
- *    summary: Update the member by the id with req
- *    tags: [Members]
- *    requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/tbMembers'
- *    responses:
- *      200:
- *        description: The book was updated
- *      404:
- *        description: The book was not found
- *      500:
- *        description: Some error happened
- */
 
 router.put("/", async (req, res) => {
   req.body.id = Encrypt.DecodeKey(req.body.id);

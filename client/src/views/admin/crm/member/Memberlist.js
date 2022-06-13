@@ -53,6 +53,7 @@ export default function MemberList() {
             x.registerDate.toString().includes(e)
         )
       );
+      setPageNumber(0);
     }
   };
 

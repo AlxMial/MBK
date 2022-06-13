@@ -18,7 +18,8 @@ export default function Login() {
   const dispatch = useDispatch();
 
   const togglePassword = () => {
-    setPasswordShown(!passwordShown);
+    if(formik.values.password !== "")
+      setPasswordShown(!passwordShown);
   };
 
   const formik = useFormik({
@@ -130,6 +131,7 @@ export default function Login() {
                         placeholder="Username"
                         id="userName"
                         name="userName"
+                        maxLength={50}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.userName}
@@ -142,10 +144,10 @@ export default function Login() {
                     </div>
                   </div>
                   <div className="flex flex-wrap relative">
-                    <div className="lg:w-3/12 margin-auto-t-r "></div>
+                    <div className="lg:w-3/12 "></div>
                     <div className="lg:w-9/12">
                       {formik.touched.userName && formik.errors.userName ? (
-                        <div className="text-sm py-2 px-2 text-red-500">
+                        <div className="text-sm  text-left py-2 px-2 text-red-500">
                           {formik.errors.userName}
                         </div>
                       ) : null}
@@ -164,7 +166,7 @@ export default function Login() {
                       <div>
                         <span
                           onClick={togglePassword}
-                          className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                          className="z-3 h-full leading-snug font-normal cursor-pointer text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
                         >
                           <i
                             className={
@@ -178,6 +180,7 @@ export default function Login() {
                           placeholder="Password"
                           name="password"
                           id="password"
+                          maxLength={50}
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                           value={formik.values.password}
@@ -186,10 +189,10 @@ export default function Login() {
                     </div>
                   </div>
                   <div className="flex flex-wrap relative">
-                    <div className="lg:w-3/12 margin-auto-t-r "></div>
-                    <div className="lg:w-9/12">
+                    <div className="lg:w-3/12"></div>
+                    <div className="lg:w-9/12 ">
                       {formik.touched.password && formik.errors.password ? (
-                        <div className="text-sm py-2 px-2 text-red-500">
+                        <div className="text-sm py-2 px-2 text-left text-red-500">
                           {formik.errors.password}
                         </div>
                       ) : null}

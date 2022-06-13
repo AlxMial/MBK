@@ -53,6 +53,7 @@ export default function UserList() {
             x.empCode.toLowerCase().includes(e)
         )
       );
+      setPageNumber(0);
     }
   };
 

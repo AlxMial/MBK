@@ -15,10 +15,30 @@ import {
 } from "assets/styles/theme/ReactModal";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
-import { useDispatch } from 'react-redux';
-import { fetchLoading, fetchSuccess } from 'redux/actions/common';
+import { useDispatch } from "react-redux";
+import { fetchLoading, fetchSuccess } from "redux/actions/common";
+import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 
 export default function PointStore() {
+  const customStylesConfirm = {
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      padding: "0%",
+      transform: "translate(-50%, -50%)",
+      overflowY: "auto",
+      overflowX: "auto",
+      backgroundColor: "white",
+      border: "1px solid #047a40",
+      //   height:"80vh",
+      width: "25vw",
+    },
+    overlay: { zIndex: 100, backgroundColor: "rgba(70, 70, 70, 0.5)" },
+  };
+
   /* Set useState */
   const dispatch = useDispatch();
   const [Active, setActive] = useState("1");
@@ -37,6 +57,8 @@ export default function PointStore() {
   const [langSymbo, setlangSymbo] = useState("");
   const [deleteValue, setDeleteValue] = useState("");
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
+  const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
+  const [ isModified, setIsModified ] = useState(false);
   const { addToast } = useToasts();
   const changePage = ({ selected }) => {
     setPageNumber(selected);
@@ -65,8 +87,34 @@ export default function PointStore() {
   }
 
   function closeModal() {
-    setIsOpen(false);
+    if(isModified)
+    {
+      setIsOpenEdit(true);
+    } else setIsOpen(false);
   }
+
+  function openModalSubject() {
+    setIsOpenEdit(true);
+  }
+
+  function closeModalSubject() {
+    setIsOpenEdit(false);
+  }
+
+  const onEditValue = async () => {
+    formik.handleSubmit();
+    const valueError = JSON.stringify(formik.errors);
+    setIsOpenEdit(false);
+    if (valueError.length <= 2)
+      setIsOpen(false); 
+  };
+
+  const onReturn = () => {
+    setIsModified(false);
+    setIsOpenEdit(false);
+    setIsOpen(false);
+  };
+
 
   /* Modal */
   function openModalSubject(id) {
@@ -86,6 +134,7 @@ export default function PointStore() {
       setlistStore(
         listSearch.filter((x) => x.pointStoreName.toLowerCase().includes(e))
       );
+      setPageNumber(0);
     }
   };
 
@@ -111,6 +160,7 @@ export default function PointStore() {
             formik.values.id = res.data.tbPointStoreHD.id;
             setIsNew(false);
             fetchData();
+            setIsModified(false);
             addToast(
               Storage.GetLanguage() === "th"
                 ? "บันทึกข้อมูลสำเร็จ"
@@ -134,6 +184,7 @@ export default function PointStore() {
         axios.put("pointStore", values).then((res) => {
           if (res.data.status) {
             fetchData();
+            setIsModified(false);
             addToast(
               Storage.GetLanguage() === "th"
                 ? "บันทึกข้อมูลสำเร็จ"
@@ -169,6 +220,7 @@ export default function PointStore() {
 
   const fetchDataById = async (id) => {
     let response = await axios.get(`/pointStore/byId/${id}`);
+    formik.resetForm();
     let pointStore = await response.data.tbPointStoreHD;
     let pointStoreDT = await response.data.tbPointStoreDT;
     if (pointStore !== null) {
@@ -286,7 +338,7 @@ export default function PointStore() {
                   contentLabel="Example Modal"
                   shouldCloseOnOverlayClick={false}
                 >
-                  <div className="flex flex-wrap">
+                  <div id="Store" className="flex flex-wrap">
                     <div className="w-full ">
                       <>
                         <div className={"flex-auto "}>
@@ -344,7 +396,7 @@ export default function PointStore() {
                                     id="pointStoreName"
                                     name="pointStoreName"
                                     maxLength={100}
-                                    onChange={formik.handleChange}
+                                    onChange={(e) => { setIsModified(true); formik.handleChange(e);}}
                                     onBlur={formik.handleBlur}
                                     value={formik.values.pointStoreName}
                                     autoComplete="pointStoreName"
@@ -431,8 +483,10 @@ export default function PointStore() {
                                                   <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                                                     <div className="w-full margin-auto-t-b">
                                                       <input
-                                                        onChange={
-                                                          handleChangeBranch
+                                                        onChange={() =>{
+                                                          setIsModified(true);
+                                                          handleChangeBranch();
+                                                        }
                                                         }
                                                         value={item.value}
                                                         id={i}
@@ -492,6 +546,19 @@ export default function PointStore() {
                     </div>
                   </div>
                 </Modal>
+                <ConfirmEdit 
+                  showModal={modalIsOpenEdit}
+                  message={"ร้านค้า"}
+                  hideModal={() => {
+                    closeModalSubject();
+                  }}
+                  confirmModal={() => {
+                    onEditValue();
+                  }}
+                  returnModal={() => {
+                    onReturn();
+                  }}
+                />
               </div>
             </div>
           </div>
@@ -504,6 +571,7 @@ export default function PointStore() {
                     className={
                       "px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 w-8"
                     }
+                    style={{ width: "20px" }}
                   >
                     ลำดับที่
                   </th>
@@ -511,6 +579,7 @@ export default function PointStore() {
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                     }
+                    style={{ width: "80%" }}
                   >
                     ชื่อร้าน
                   </th>
@@ -539,6 +608,7 @@ export default function PointStore() {
                             openModal(value.id);
                           }}
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
+                          title={value.pointStoreName}
                         >
                           {value.pointStoreName}
                         </td>
@@ -572,7 +642,11 @@ export default function PointStore() {
                 className="lg:w-6/12 font-bold"
                 style={{ alignSelf: "stretch" }}
               >
-                {((pagesVisited+10) > listStore.length ? listStore.length : (pagesVisited+10))} {"/"}{listStore.length} รายการ
+                {pagesVisited + 10 > listStore.length
+                  ? listStore.length
+                  : pagesVisited + 10}{" "}
+                {"/"}
+                {listStore.length} รายการ
               </div>
               <div className="lg:w-6/12">
                 <ReactPaginate

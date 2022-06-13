@@ -25,6 +25,7 @@ import useMenu from "services/useMenu";
 import { exportExcel } from "services/exportExcel";
 import { useDispatch } from "react-redux";
 import { fetchLoading, fetchSuccess } from "redux/actions/common";
+import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 
 Modal.setAppElement("#root");
 
@@ -40,6 +41,7 @@ export default function PointCode() {
   const [listSearch, setListSerch] = useState([]);
   const [optionCampaign, setOptionCampaign] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const [file, setFile] = useState();
   const [fileName, setFileName] = useState();
   const [isError, setIsError] = useState(false);
@@ -72,7 +74,7 @@ export default function PointCode() {
   const [errorEndDateImport, setErrorEndDateImport] = useState(false);
   const [errorImport, setErrorImport] = useState(false);
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
-  const [isModefied, setIsModified] = useState(false);
+  const [isModified, setIsModified] = useState(false);
   const [errorPointQuantity, seterrorPointQuantity] = useState(false);
   const { menu } = useMenu();
   const [errorQuantityMoreOne, setErrorQuantityMoreOne] = useState(false);
@@ -81,6 +83,7 @@ export default function PointCode() {
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
 
   async function openModal(id) {
@@ -110,8 +113,42 @@ export default function PointCode() {
   }
 
   function closeModal() {
-    setIsOpen(false);
+    if (isModified) {
+      setIsOpenEdit(true);
+    } else { setIsOpen(false); setIsOpenImport(false); }
   }
+
+  function openModalEdit() {
+    setIsOpenEdit(true);
+  }
+
+  function closeModalEdit() {
+    setIsOpenEdit(false);
+  }
+
+  const onEditValue = async () => {
+    setIsOpenEdit(false);
+    if (modalIsOpenImport) {
+      formikImport.handleSubmit();
+      const valueError = JSON.stringify(formikImport.errors);
+      if (valueError.length <= 2) {
+        setIsOpenImport(false);
+      }
+    } else {
+      formik.handleSubmit();
+      const valueError = JSON.stringify(formik.errors);
+      if (valueError.length <= 2) {
+        setIsOpen(false);
+      }
+    }
+  };
+
+  const onReturn = () => {
+    setIsModified(false);
+    setIsOpenEdit(false);
+    if (modalIsOpenImport) setIsOpenImport(false);
+    else setIsOpen(false);
+  };
 
   function openModalImport() {
     setOptionCampaign([]);
@@ -138,19 +175,6 @@ export default function PointCode() {
   function closeModalSubject() {
     setIsOpenSubject(false);
   }
-
-  /* Modal Edit */
-  function openModalEdit() {
-    setIsOpenEdit(true);
-  }
-
-  function closeModalEdit() {
-    setIsOpenEdit(false);
-  }
-
-  const onReturn = () => {
-    setIsOpenEdit(false);
-  };
 
   /* Method Condition */
   const options = [
@@ -180,10 +204,12 @@ export default function PointCode() {
             (x.pointCodeQuantityCode === null ? "" : x.pointCodeQuantityCode)
               .toString()
               .includes(e) ||
-            x.isActive.toLowerCase().toString().includes(e) ||
+            x.status.toLowerCase().toString().includes(e) ||
             x.useCount.toString().includes(e)
         )
       );
+      setPageNumber(0);
+      setForcePage(0);
     }
   };
 
@@ -327,6 +353,7 @@ export default function PointCode() {
               if (res.data.status) {
                 setIsLoading(false);
                 fetchData();
+                setIsModified(false);
                 addToast(
                   Storage.GetLanguage() === "th"
                     ? "บันทึกข้อมูลสำเร็จ"
@@ -376,6 +403,7 @@ export default function PointCode() {
                         fetchData();
                         closeModal();
                         setIsLoading(false);
+                        setIsModified(false);
                         addToast(
                           Storage.GetLanguage() === "th"
                             ? "บันทึกข้อมูลสำเร็จ"
@@ -458,6 +486,7 @@ export default function PointCode() {
             if (res.data.status) {
               setIsLoading(false);
               fetchData();
+              setIsModified(false);
               addToast(
                 Storage.GetLanguage() === "th"
                   ? "บันทึกข้อมูลสำเร็จ"
@@ -502,6 +531,7 @@ export default function PointCode() {
                       } else {
                         closeModalImport();
                         fetchData();
+                        setIsModified(false);
                         addToast(
                           Storage.GetLanguage() === "th"
                             ? "บันทึกข้อมูลสำเร็จ"
@@ -557,6 +587,13 @@ export default function PointCode() {
         // if (JsonCampaign.length > 0)
         //   formikImport.setFieldValue("tbPointCodeHDId", JsonCampaign[0].value);
         // setOptionCamp(aign(JsonCampaign);
+
+        for (var i = 0; i < response.data.tbPointCodeHD.length; i++) {
+          response.data.tbPointCodeHD[i]["status"] =
+            response.data.tbPointCodeHD[i].isActive === "2"
+              ? "Inactive"
+              : "Active";
+        }
 
         setErrorPointCodeSymbol(false);
         setErrorPointCodeQuantityCode(false);
@@ -785,7 +822,8 @@ export default function PointCode() {
                                     <label
                                       className="cursor-pointer"
                                       onClick={() => {
-                                        closeModalImport();
+                                        // closeModalImport();
+                                        closeModal();
                                       }}
                                     >
                                       X
@@ -835,7 +873,7 @@ export default function PointCode() {
                                     id="pointCodeName"
                                     name="pointCodeName"
                                     maxLength={100}
-                                    onChange={formikImport.handleChange}
+                                    onChange={(e) => { setIsModified(true); formikImport.handleChange(e);}}
                                     onBlur={formikImport.handleBlur}
                                     value={formikImport.values.pointCodeName}
                                     autoComplete="pointCodeName"
@@ -898,6 +936,7 @@ export default function PointCode() {
                                       type="file"
                                       accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                       onChange={(e) => {
+                                        setIsModified(true);
                                         selectFile(e);
                                       }}
                                     />
@@ -945,6 +984,7 @@ export default function PointCode() {
                                     name="pointCodePoint"
                                     maxLength={10}
                                     onChange={(event) => {
+                                      setIsModified(true);
                                       setlangSymbo(
                                         ValidateService.onHandleNumber(event)
                                       );
@@ -995,6 +1035,7 @@ export default function PointCode() {
                                   <div className="relative">
                                     <ConfigProvider locale={locale}>
                                       <DatePicker
+                                        inputReadOnly={true}
                                         format={"DD/MM/yyyy"}
                                         placeholder="เลือกวันที่"
                                         showToday={false}
@@ -1011,6 +1052,7 @@ export default function PointCode() {
                                           paddingRight: "0.5rem",
                                         }}
                                         onChange={(e) => {
+                                          setIsModified(true);
                                           if (e === null) {
                                             formikImport.setFieldValue(
                                               "startDate",
@@ -1065,6 +1107,7 @@ export default function PointCode() {
                                 <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <ConfigProvider locale={locale}>
                                     <DatePicker
+                                      inputReadOnly={true}
                                       format={"DD/MM/yyyy"}
                                       placeholder="เลือกวันที่"
                                       showToday={false}
@@ -1081,6 +1124,7 @@ export default function PointCode() {
                                         paddingRight: "0.5rem",
                                       }}
                                       onChange={(e) => {
+                                        setIsModified(true);
                                         if (e === null) {
                                           setErrorEndDateImport(true);
                                           formikImport.setFieldValue(
@@ -1162,6 +1206,7 @@ export default function PointCode() {
                                   <Radio.Group
                                     options={options}
                                     onChange={(e) => {
+                                      setIsModified(true);
                                       setActive(e.target.value);
                                       formikImport.setFieldValue(
                                         "isActive",
@@ -1310,7 +1355,7 @@ export default function PointCode() {
                                     id="pointCodeName"
                                     name="pointCodeName"
                                     maxLength={100}
-                                    onChange={formik.handleChange}
+                                    onChange={(e) => { setIsModified(true); formik.handleChange(e); }}
                                     onBlur={formik.handleBlur}
                                     value={formik.values.pointCodeName}
                                     autoComplete="pointCodeName"
@@ -1354,6 +1399,7 @@ export default function PointCode() {
                                     name="pointCodeSymbol"
                                     maxLength={5}
                                     onChange={(e) => {
+                                      setIsModified(true);
                                       if (e.target.value.length > 0) {
                                         setErrorPointCodeSymbol(false);
                                       } else setErrorPointCodeSymbol(true);
@@ -1396,6 +1442,7 @@ export default function PointCode() {
                                     name="pointCodeLengthSymbol"
                                     maxLength={2}
                                     onChange={(event) => {
+                                      setIsModified(true);
                                       if (event.target.value.length > 0) {
                                         setErrorPointCodeLengthSymbol(false);
                                       } else
@@ -1490,6 +1537,7 @@ export default function PointCode() {
                                     name="pointCodePoint"
                                     maxLength={5}
                                     onChange={(event) => {
+                                      setIsModified(true);
                                       setlangSymbo(
                                         ValidateService.onHandleNumber(event)
                                       );
@@ -1555,6 +1603,7 @@ export default function PointCode() {
                                     name="pointCodeQuantityCode"
                                     maxLength={7}
                                     onChange={(event) => {
+                                      setIsModified(true);
                                       if (event.target.value === "") {
                                         setErrorPointCodeQuantityCode(true);
                                       } else {
@@ -1651,6 +1700,7 @@ export default function PointCode() {
                                   <div className="relative">
                                     <ConfigProvider locale={locale}>
                                       <DatePicker
+                                        inputReadOnly={true}
                                         format={"DD/MM/yyyy"}
                                         placeholder="เลือกวันที่"
                                         showToday={false}
@@ -1667,6 +1717,7 @@ export default function PointCode() {
                                           paddingRight: "0.5rem",
                                         }}
                                         onChange={(e) => {
+                                          setIsModified(true);
                                           if (e === null) {
                                             setErrorStartDate(true);
                                             formik.setFieldValue(
@@ -1719,6 +1770,7 @@ export default function PointCode() {
                                 <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <ConfigProvider locale={locale}>
                                     <DatePicker
+                                      inputReadOnly={true}
                                       format={"DD/MM/yyyy"}
                                       placeholder="เลือกวันที่"
                                       showToday={false}
@@ -1735,6 +1787,7 @@ export default function PointCode() {
                                         paddingRight: "0.5rem",
                                       }}
                                       onChange={(e) => {
+                                        setIsModified(true);
                                         if (e === null) {
                                           setErrorEndDate(true);
                                           formik.setFieldValue(
@@ -1815,7 +1868,8 @@ export default function PointCode() {
                                 >
                                   <Radio.Group
                                     options={options}
-                                    onChange={(e) => {
+                                    onChange={(e) => {          
+                                      setIsModified(true);
                                       setActive(e.target.value);
                                       formik.setFieldValue(
                                         "isActive",
@@ -1968,10 +2022,13 @@ export default function PointCode() {
                           }}
                           className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
-                          <span title={value.pointCodeName} className="text-gray-mbk  hover:text-gray-mbk ">
+                          <span
+                            title={value.pointCodeName}
+                            className="text-gray-mbk  hover:text-gray-mbk "
+                          >
                             {value.pointCodeName}
                           </span>
-                          <span class="details">more info here</span>
+                          <span className="details">more info here</span>
                         </td>
                         <td
                           onClick={() => {
@@ -2082,25 +2139,26 @@ export default function PointCode() {
                   nextLinkClassName={"nextBttn"}
                   disabledClassName={"paginationDisabled"}
                   activeClassName={"paginationActive"}
+                  forcePage={forcePage}
                 />
               </div>
             </div>
           </div>
         </div>
       </div>
-      {/* <ConfirmEdit
+      <ConfirmEdit
         showModal={modalIsOpenEdit}
-        message={"สมาชิก"}
-        // hideModal={() => {
-        //   closeModalEdit();
-        // }}
+        message={"แคมเปญ"}
+        hideModal={() => {
+          closeModalEdit();
+        }}
         confirmModal={() => {
-          // onEditValue();
+          onEditValue();
         }}
         returnModal={() => {
           onReturn();
         }}
-      /> */}
+      />
     </>
   );
 }

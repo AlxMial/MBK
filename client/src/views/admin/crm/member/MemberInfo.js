@@ -31,6 +31,11 @@ export default function MemberInfo() {
   let { id } = useParams();
   const [isModefied, setIsModified] = useState(false);
 
+  /* Option Select */
+  const optionsSex = [
+    { value: "1", label: "ชาย" },
+    { value: "2", label: "หญิง" },
+  ];
   /* RegEx formatter */
   const phoneRegExp =
     /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
@@ -67,7 +72,6 @@ export default function MemberInfo() {
   };
 
   const OpenModal = () => {
-    console.log(id);
     setOpen(true);
   };
 
@@ -485,7 +489,7 @@ export default function MemberInfo() {
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info ">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
-                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b"></div>
+                  {/* <div className="w-full lg:w-2/12 px-4 margin-auto-t-b"></div>
                   <div className="w-full lg:w-8/12 px-4 mb-2 text-right">
                     <div className="flex flex-wrap w-full justify-content-right">
                       <img
@@ -496,7 +500,7 @@ export default function MemberInfo() {
                         &nbsp;{formik.values.memberPoint}&nbsp;คะแนน
                       </span>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full margin-a">
                       <label
@@ -608,6 +612,46 @@ export default function MemberInfo() {
                         value={formik.values.lastName}
                         autoComplete="lastName"
                         disabled={typePermission === "1" ? false : true}
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
+                      {formik.touched.lastName && formik.errors.lastName ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {formik.errors.lastName}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4  margin-auto-t-b">
+                    <div className="relative w-full">
+                      <label
+                        className=" text-blueGray-600 text-sm font-bold"
+                        htmlFor="grid-password"
+                      >
+                        เพศ
+                      </label>
+                      <span className="text-sm ml-2 text-red-500">*</span>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4  margin-auto-t-b">
+                    <div className="relative w-full">
+                      <SelectUC
+                        name="sex"
+                        isDisabled={typePermission === "1" ? false : true}
+                        options={optionsSex}
+                        onChange={async (value) => {
+                          setIsModified(true);
+                          formik.setFieldValue("sex", value.value);
+                        }}
+                        value={ValidateService.defaultValue(
+                          optionsSex,
+                          formik.values.sex
+                        )}
                       />
                     </div>
                   </div>

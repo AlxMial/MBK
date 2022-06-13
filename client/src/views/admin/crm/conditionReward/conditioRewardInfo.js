@@ -223,7 +223,8 @@ export default function ConditioRewardInfo() {
         }
         if (
           (formik.values.rewardType === "1" && formikCoupon.isValid) ||
-          (formik.values.rewardType === "2" && formikProduct.isValid)
+          (formik.values.rewardType === "2" && formikProduct.isValid) ||
+          (formikCouponImport.isValid && isImport)
         ) {
           if (isNew) {
             dispatch(fetchLoading());

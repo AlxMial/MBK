@@ -81,7 +81,6 @@ export default function PointManage() {
   /* Method Condition */
   const changeTab = (activeKey) => {
     setActiveConfirmTab(activeKey);
-    console.log(data);
     if (isModified) openModalSubject();
     else setActiveTab(activeKey);
   };

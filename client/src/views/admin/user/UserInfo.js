@@ -43,6 +43,7 @@ export default function UserInfo() {
   const [confirmpasswordShown, setConfirmpasswordShown] = useState(false);
   const [currentpasswordShown, setcurrentpasswordShown] = useState(false);
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
+  const [isUserSpace, setIsUserSpace] = useState(false);
   // const [isMenu, setIsMenu] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const useStyle = styleSelect();
@@ -52,15 +53,18 @@ export default function UserInfo() {
 
   /* Method Condition */
   const togglePassword = () => {
-    setPasswordShown(!passwordShown);
+    if(!enablePassword && formik.values.password !== "")
+      setPasswordShown(!passwordShown);
   };
 
   const toggleConfirmPassword = () => {
-    setConfirmpasswordShown(!confirmpasswordShown);
+    if(!enablePassword && formik.values.confirmPassword !== "")
+      setConfirmpasswordShown(!confirmpasswordShown);
   };
 
   const toggleCurrentPassword = () => {
-    setcurrentpasswordShown(!currentpasswordShown);
+    if(!enablePassword && formik.values.currentPassword !== "")
+      setcurrentpasswordShown(!currentpasswordShown);
   };
 
   /*ตรวจสอบข้อมูล รหัสผ่านตรงกัน*/
@@ -168,7 +172,10 @@ export default function UserInfo() {
       ),
     }),
     onSubmit: (values) => {
-      if (!errorCurrentPassword && !errorPassword) {
+      if(values.userName.split(' ').length > 1){
+        setIsUserSpace(true);
+      }
+      if (!errorCurrentPassword && !errorPassword && values.userName.split(' ').length === 1) {
         if (isNew) {
           formik.values.role =
             formik.values.role === "" ? "1" : formik.values.role;
@@ -252,6 +259,7 @@ export default function UserInfo() {
   async function fetchData() {
     let response = await axios.get(`/users/byId/${id}`);
     let user = await response.data.tbUser;
+
     formik.resetForm();
     setValueConfirm("");
     validateConfirm("");
@@ -479,8 +487,13 @@ export default function UserInfo() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="userName"
                         name="userName"
-                        maxLength={100}
+                        maxLength={50}
                         onChange={(e) => {
+                          if(e.target.value.split(' ').length > 1){
+                            setIsUserSpace(true);
+                          }else{
+                            setIsUserSpace(false);
+                          }
                           formik.handleChange(e);
                           setIsModified(true);
                         }}
@@ -499,6 +512,11 @@ export default function UserInfo() {
                       {formik.touched.userName && formik.errors.userName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           {formik.errors.userName}
+                        </div>
+                      ) : null}
+                      {isUserSpace ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          Username จะต้องไม่มีค่าว่าง
                         </div>
                       ) : null}
                     </div>
@@ -528,7 +546,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <span
                         onClick={toggleCurrentPassword}
-                        className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                        className="z-3 h-full leading-snug font-normal cursor-pointer text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
                       >
                         <i
                           className={
@@ -543,7 +561,7 @@ export default function UserInfo() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="currentPassword"
                         name="currentPassword"
-                        maxLength={100}
+                        maxLength={50}
                         onChange={(e) => {
                           formik.handleChange(e);
                           setIsModified(true);
@@ -596,7 +614,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <span
                         onClick={togglePassword}
-                        className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                        className="z-3 h-full leading-snug font-normal cursor-pointer text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
                       >
                         <i
                           className={
@@ -609,7 +627,7 @@ export default function UserInfo() {
                         className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                         id="password"
                         name="password"
-                        maxLength={100}
+                        maxLength={50}
                         onChange={(e) => {
                           setIsModified(true);
                           if (e.target.value !== valueConfirm) {
@@ -661,7 +679,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <span
                         onClick={toggleConfirmPassword}
-                        className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                        className="z-3 h-full leading-snug font-normal cursor-pointer text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
                       >
                         <i
                           className={
@@ -678,7 +696,7 @@ export default function UserInfo() {
                         name="confirmPassword"
                         onBlur={formik.handleBlur}
                         autoComplete="confirmPassword"
-                        maxLength={100}
+                        maxLength={50}
                         onChange={(e) => {
                           formik.handleChange(e);
                           setIsModified(true);
