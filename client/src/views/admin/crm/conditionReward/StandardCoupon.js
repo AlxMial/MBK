@@ -19,6 +19,8 @@ const StandardCoupon = ({ formik }) => {
   const { width } = useWindowDimensions();
   const [isCancel, setIsCancel] = useState(false);
   const [delay, setDelay] = useState();
+
+  const [ disableCountCoupon,setDisableCountCoupon ] = useState(false);
   const [isClick, setIsClick] = useState({
     couponStart: false,
     couponEnd: false,
@@ -38,6 +40,7 @@ const StandardCoupon = ({ formik }) => {
   };
 
   useEffect(() => {
+    setDisableCountCoupon(formik.values.id !== "" ? true : false)
     /* Default Value for Testing */
   }, []);
 
@@ -115,6 +118,8 @@ const StandardCoupon = ({ formik }) => {
                 onBlur={formik.handleBlur}
                 value={formik.values.discount}
                 onChange={(e) => {
+                  if (formik.values.discountType === "2")
+                    if (e.target.value > 100) e.target.value = 100;
                   setDelay(ValidateService.onHandleNumber(e));
                   formik.values.discount = ValidateService.onHandleNumber(e);
                 }}
@@ -128,6 +133,9 @@ const StandardCoupon = ({ formik }) => {
                   options={discountType}
                   name="discountType"
                   onChange={(value) => {
+                    if (value.value === "2")
+                      if (formik.values.discount > 100)
+                        formik.values.discount = 100;
                     formik.setFieldValue("discountType", value.value);
                   }}
                   value={ValidateService.defaultValue(
@@ -252,6 +260,7 @@ const StandardCoupon = ({ formik }) => {
               <InputUC
                 name="couponCount"
                 type="text"
+                disabled={(formik.values.id !== "") ? true : false}
                 maxLength={7}
                 onBlur={formik.handleBlur}
                 value={formik.values.couponCount}

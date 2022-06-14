@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import { useDispatch } from "react-redux";
 import * as Yup from "yup";
 import axios from "services/axios";
+import axiosUpload from "services/axiosUpload";
 import { useToasts } from "react-toast-notifications";
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
@@ -49,6 +50,7 @@ export default function ConditioRewardInfo() {
   const [isImport, setIsImport] = useState("");
   const [typePermission, setTypePermission] = useState("");
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
+  const [file, setFile] = useState();
   const [isClick, setIsClick] = useState({
     redemptionStart: false,
     redemptionEnd: false,
@@ -206,14 +208,23 @@ export default function ConditioRewardInfo() {
           });
         }
       } else {
-        if (formik.values.rewardType === "1") {
+        let formData = new FormData();
+        if (isImport) {
+          values["coupon"] = formikCouponImport.values;
+          formData.append("file", file);
+          ImageSave = {
+            ...imageCoupon,
+            image: formikCouponImport.values.pictureCoupon,
+            relatedTable: "tbRedemptionCoupon",
+          };
+        } else if (formik.values.rewardType === "1") {
           values["coupon"] = formikCoupon.values;
           ImageSave = {
             ...imageCoupon,
             image: formikCoupon.values.pictureCoupon,
             relatedTable: "tbRedemptionCoupon",
           };
-        } else {
+        } else if (formik.values.rewardType === "2") {
           values["product"] = formikProduct.values;
           ImageSave = {
             ...imageProduct,
@@ -233,6 +244,18 @@ export default function ConditioRewardInfo() {
               if (res.data.status) {
                 setIsNew(false);
                 formik.values.id = res.data.tbRedemptionConditionsHD.id;
+                formikCoupon.setFieldValue(
+                  "pictureCoupon",
+                  formikCouponImport.values.pictureCoupon
+                );
+                if (isImport) {
+                  for (var columns in res.data.tbRedemptionCoupon) {
+                    formikCoupon.setFieldValue(
+                      columns,
+                      res.data.tbRedemptionCoupon[columns]
+                    );
+                  }
+                }
                 ImageSave = {
                   ...ImageSave,
                   relatedId:
@@ -241,16 +264,56 @@ export default function ConditioRewardInfo() {
                       : res.data.tbRedemptionProduct.id,
                 };
                 await onSaveImage(ImageSave, async (res) => {});
+                if (formik.values.rewardType === "1") {
+                  formikCoupon.values.id = res.data.tbRedemptionCoupon.id;
+                  if (isImport) {
+                    formData.append("id", res.data.tbRedemptionCoupon.id);
+                    formData.append("addBy", localStorage.getItem("user"));
+                    await axiosUpload
+                      .post("api/coupon/uploadCoupon", formData)
+                      .then(async (resExcel) => {
+                        if (resExcel.data.status) {
+                          await axios
+                            .post("/uploadExcel/coupon")
+                            .then((resUpload) => {
+                              dispatch(fetchSuccess());
+                              addToast(
+                                Storage.GetLanguage() === "th"
+                                  ? "บันทึกข้อมูลสำเร็จ"
+                                  : "Save data successfully",
+                                { appearance: "success", autoDismiss: true }
+                              );
+                            });
+                        } else {
+                          dispatch(fetchSuccess());
+                          addToast(
+                            Storage.GetLanguage() === "th"
+                              ? "บันทึกข้อมูลไม่สำเร็จ"
+                              : "Unsuccessfully",
+                            { appearance: "error", autoDismiss: true }
+                          );
+                        }
+                      });
+                  } else {
+                    dispatch(fetchSuccess());
+                  }
+                } else if (formik.values.rewardType === "2") {
+                  formikProduct.values.id = res.data.tbRedemptionProduct.id;
+                  dispatch(fetchSuccess());
+                  addToast(
+                    Storage.GetLanguage() === "th"
+                      ? "บันทึกข้อมูลสำเร็จ"
+                      : "Save data successfully",
+                    { appearance: "success", autoDismiss: true }
+                  );
+                }
+
                 history.push(
                   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
                 );
-                addToast(
-                  Storage.GetLanguage() === "th"
-                    ? "บันทึกข้อมูลสำเร็จ"
-                    : "Save data successfully",
-                  { appearance: "success", autoDismiss: true }
-                );
+                setIsImport(false);
               } else {
+                dispatch(fetchSuccess());
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
                   {
@@ -260,7 +323,6 @@ export default function ConditioRewardInfo() {
                 );
               }
               formik.setTouched({});
-              dispatch(fetchSuccess());
             });
           } else {
             formik.values.updateBy = localStorage.getItem("user");
@@ -333,7 +395,7 @@ export default function ConditioRewardInfo() {
         .required("* กรุณากรอก ส่วนลด")
         .test(
           "Is positive?",
-          "* จำนวนคูปองต้องมากกว่า 0",
+          "* จำนวนส่วนลดต้องมากกว่า 0",
           (value) => value > 0
         ),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
@@ -351,7 +413,7 @@ export default function ConditioRewardInfo() {
       startDate: new Date(),
       isNotExpired: false,
       expiredDate: new Date(),
-      couponCount: 0,
+      couponCount: "",
       isNoLimitPerDayCount: false,
       usedPerDayCount: 0,
       description: "",
@@ -363,18 +425,11 @@ export default function ConditioRewardInfo() {
     },
     validationSchema: Yup.object({
       couponName: Yup.string().required("* กรุณากรอก ชื่อคูปอง"),
-      couponCount: Yup.number()
-        .required("* กรุณากรอก จำนวนคูปอง")
-        .test(
-          "Is positive?",
-          "* จำนวนคูปองต้องมากกว่า 0",
-          (value) => value > 0
-        ),
       discount: Yup.number()
         .required("* กรุณากรอก ส่วนลด")
         .test(
           "Is positive?",
-          "* จำนวนคูปองต้องมากกว่า 0",
+          "* จำนวนส่วนลดต้องมากกว่า 0",
           (value) => value > 0
         ),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
@@ -405,7 +460,6 @@ export default function ConditioRewardInfo() {
           (value) => value > 0
         ),
       pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสัมนาคุณ"),
-
     }),
   });
 
@@ -939,7 +993,10 @@ export default function ConditioRewardInfo() {
                     </div>
                   </span>
                   {isImport ? (
-                    <ImportCoupon formik={formikCouponImport} />
+                    <ImportCoupon
+                      formik={formikCouponImport}
+                      setFile={setFile}
+                    />
                   ) : !isRedemptionType ? (
                     !isRewardType ? (
                       <StandardCoupon formik={formikCoupon} />

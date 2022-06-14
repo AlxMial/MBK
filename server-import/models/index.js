@@ -37,5 +37,6 @@ db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
 db.tutorials = require("./tutorial.model.js")(sequelize, Sequelize);
+db.codeCoupon = require("./tbCouponCode.model.js")(sequelize, Sequelize);
 
 module.exports = db;

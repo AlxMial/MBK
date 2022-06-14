@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
+      redemptionCouponId:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
       addBy: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -20,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
+
     });
     return tbCouponCode;
   };
-  

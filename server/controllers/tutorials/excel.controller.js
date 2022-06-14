@@ -41,6 +41,7 @@ const upload = async (req, res) => {
 
         tutorials.push(tutorial);
       });
+      
       writeFileSync(pathJson, JSON.stringify(tutorials, null, 2), 'utf8');
       const data = readFileSync(pathJson);
       Tutorial

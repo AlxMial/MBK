@@ -15,13 +15,12 @@ import FilesService from "../../../../services/files";
 import ValidateService from "services/validateValue";
 import SelectUC from "components/SelectUC";
 
-const ImportCoupon = ({ formik }) => {
+const ImportCoupon = ({ formik,setFile }) => {
   const { width } = useWindowDimensions();
   const [isCancel, setIsCancel] = useState(false);
   const [delay, setDelay] = useState();
   const [errorExcel, setErrorExcel] = useState(false);
   const [errorImport, setErrorImport] = useState(false);
-  const [file, setFile] = useState();
   const [fileName, setFileName] = useState();
   const [isClick, setIsClick] = useState({
     couponStart: false,
@@ -319,18 +318,10 @@ const ImportCoupon = ({ formik }) => {
                 maxLength={7}
                 onBlur={formik.handleBlur}
                 value={formik.values.couponCount}
-                onChange={(e) => {
-                  //   formik.handleChange(e);
-                  setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.couponCount = ValidateService.onHandleNumber(e);
-                }}
+                onChange={(e) => {}}
                 min="0"
+                disabled={true}
               />
-              {formik.touched.couponCount && formik.errors.couponCount ? (
-                <div className="text-sm py-2 px-2  text-red-500">
-                  {formik.errors.couponCount}
-                </div>
-              ) : null}
             </div>
           </div>
           <div className={"w-full" + (width < 764 ? " block" : " hidden")}>

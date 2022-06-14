@@ -6,7 +6,7 @@ const excelFilter = (req, file, cb) => {
     file.mimetype.includes("spreadsheetml")
   ) {
     cb(null, true);
-  } else {
+  } else { 
     cb("Please upload only excel file.", false);
   }
 };

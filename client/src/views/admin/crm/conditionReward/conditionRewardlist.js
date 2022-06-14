@@ -173,11 +173,11 @@ export default function ConditionRewardList() {
                     {/* <span onClick={() => Excel("ข้อมูลสมาชิก")} className="text-gray-500 font-bold margin-auto-t-b ml-2 cursor-pointer ">Export Excel</span> */}
                     <Link to="/admin/redemptionsimport">
                       <button
-                        className="bg-gold-mbk text-black ml-2 active:bg-gold-mbk font-bold text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                        className="bg-white bg-import text-black ml-2 active:bg-white font-bold text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                         type="button"
                       >
-                        <i className="fas fa-plus-circle text-white "></i>{" "}
-                        <span className="text-white text-sm px-2">
+                        <i className="fas fa-file-import text-gray-700 "></i>{" "}
+                        <span className="text-gray-700 text-sm px-2">
                           Import Partner Coupon
                         </span>
                       </button>

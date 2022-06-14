@@ -5,12 +5,15 @@ const {
   tbRedemptionCoupon,
   tbRedemptionProduct,
   tbImage,
+  tbCouponCode,
 } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
 const ValidateEncrypt = require("../../services/crypto");
+const axiosInstance = require("../../services/axiosUpload");
 const Op = Sequelize.Op;
 const Encrypt = new ValidateEncrypt();
+const db = require("../../models");
 
 router.get("/", validateToken, async (req, res) => {
   const listRedemption = await tbRedemptionConditionsHD.findAll({
@@ -171,23 +174,85 @@ router.post("/", validateToken, async (req, res) => {
           : req.body.coupon.expiredDate;
         req.body.coupon["redemptionConditionsHDId"] = redemption.dataValues.id;
         coupon = await tbRedemptionCoupon.create(req.body.coupon);
+
+        if (coupon && req.body.coupon.couponCount !== "") {
+          const generateCode = await axiosInstance
+            .post("api/coupon/generateCoupon", coupon)
+            .then(async (resGenerate) => {
+              if (resGenerate.data.status) {
+                const qry = `INSERT INTO mbk_database.tbcouponcodes SELECT * FROM mbk_temp.tbcouponcodes where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
+                db.sequelize
+                  .query(qry, null, { raw: true })
+                  .then((result) => {
+                    const deleteqry = `DELETE FROM mbk_temp.tbcouponcodes WHERE mbk_temp.tbcouponcodes.redemptionCouponId IN (select redemptionCouponId from mbk_database.tbcouponcodes)`;
+                    db.sequelize
+                      .query(deleteqry, null, { raw: true })
+                      .then((result) => {
+                        Encrypt.encryptValueId(redemption);
+                        res.json({
+                          status: true,
+                          isError: false,
+                          isRedemptionName: false,
+                          message: "success",
+                          tbRedemptionConditionsHD: redemption,
+                          tbRedemptionCoupon: coupon,
+                          tbRedemptionProduct: product,
+                        });
+                      })
+                      .catch((error) => {
+                        res.json({
+                          status: false,
+                          isError: true,
+                          isRedemptionName: false,
+                          message: "unsuccess",
+                          tbRedemptionConditionsHD: null,
+                          tbRedemptionCoupon: null,
+                          tbRedemptionProduct: null,
+                        });
+                      });
+                  })
+                  .catch((error) => {
+                    res.json({
+                      status: false,
+                      isError: true,
+                      isRedemptionName: false,
+                      message: "unsuccess",
+                      tbRedemptionConditionsHD: null,
+                      tbRedemptionCoupon: null,
+                      tbRedemptionProduct: null,
+                    });
+                  });
+              }
+            });
+        }else{
+          Encrypt.encryptValueId(redemption);
+          res.json({
+            status: true,
+            isError: false,
+            isRedemptionName: false,
+            message: "success",
+            tbRedemptionConditionsHD: redemption,
+            tbRedemptionCoupon: coupon,
+            tbRedemptionProduct: product,
+          });
+        }
       } else if (redemption.rewardType === "2") {
         req.body.product.rewardCount = req.body.product.isNoLimitReward
           ? null
           : req.body.product.rewardCount;
         req.body.product["redemptionConditionsHDId"] = redemption.dataValues.id;
         product = await tbRedemptionProduct.create(req.body.product);
+        Encrypt.encryptValueId(redemption);
+        res.json({
+          status: true,
+          isError: false,
+          isRedemptionName: false,
+          message: "success",
+          tbRedemptionConditionsHD: redemption,
+          tbRedemptionCoupon: coupon,
+          tbRedemptionProduct: product,
+        });
       }
-      Encrypt.encryptValueId(redemption);
-      res.json({
-        status: true,
-        isError: false,
-        isRedemptionName: false,
-        message: "success",
-        tbRedemptionConditionsHD: redemption,
-        tbRedemptionCoupon: coupon,
-        tbRedemptionProduct: product,
-      });
     } else {
       res.json({
         status: false,
@@ -464,9 +529,6 @@ router.put("/", validateToken, async (req, res) => {
         coupon = await tbRedemptionCoupon.update(req.body.coupon, {
           where: { id: req.body.coupon.id },
         });
-
-        
-
       } else if (req.body.rewardType === "2") {
         req.body.product.rewardCount = req.body.product.isNoLimitReward
           ? null
@@ -546,6 +608,26 @@ router.post("/redemptionsGame", validateToken, async (req, res) => {
     status: true,
     message: "success",
   });
+});
+
+router.post("/CloneCoupon", async (req, res) => {
+  const qry = `INSERT INTO mbk_database.tbcouponcodes SELECT * FROM mbk_temp.tbcouponcodes where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
+  db.sequelize
+    .query(qry, null, { raw: true })
+    .then((result) => {
+      const deleteqry = `DELETE FROM mbk_temp.tbcouponcodes WHERE mbk_temp.tbcouponcodes.redemptionCouponId IN (select redemptionCouponId from mbk_database.tbcouponcodes)`;
+      db.sequelize
+        .query(deleteqry, null, { raw: true })
+        .then((result) => {
+          res.json({ message: "success" });
+        })
+        .catch((error) => {
+          res.json({ error: "error insert" });
+        });
+    })
+    .catch((error) => {
+      res.json({ error: "error insert" });
+    });
 });
 
 module.exports = router;

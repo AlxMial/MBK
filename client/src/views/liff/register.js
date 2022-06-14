@@ -47,7 +47,7 @@ const Register = () => {
   const [dataOTP, setdataOTP] = useState({});
   const [optionYears, setOptionYears] = useState([]);
   const [OptionDay, setOptionDay] = useState([]);
-  const [page, setpage] = useState("privacypolicy");
+  const [page, setpage] = useState("register");
   const useStyle = styleSelect();
 
   const optionsYear = [];
@@ -645,7 +645,7 @@ const Register = () => {
             style={{
               width: "90%",
               backgroundColor: "#FFF",
-       
+
               padding: "20px",
               margin: "auto",
               borderRadius: "10px",
@@ -685,6 +685,7 @@ const Register = () => {
             <br />
             5. หากบริษัทฯ มีการเปลี่ยนแปลงข้อตกลงนี้ จะแสดงบนเว็บไซต์ของบริษัท
             และให้การเปลี่ยนแปลงข้อตกลงนี้มีผลบังคับใช้ทันทีที่แสดงข้อมูลดังกล่าว
+            <br />
             <br />
             6. หากสมาชิกไม่ยอมรับการเปลี่ยนแปลงตามข้อตกลงนี้
             โปรดหยุดการใช้งานโปรแกรมนี้ทันที
@@ -994,6 +995,9 @@ const Register = () => {
             <br />
             <br />
           </div>
+          {/* <a href="https://www.google.com/" target="_blank">
+            https://www.google.com/
+          </a> */}
           <div style={{ width: "90%", margin: "auto" }}>
             <div className="mt-5">
               <label className="inline-flex items-center cursor-pointer">

@@ -281,8 +281,6 @@ export default function PointStore() {
   };
 
   const handleChangeBranch = (e) => {
-    e.preventDefault();
-
     const index = e.target.id;
     setArr((s) => {
       const newArr = s.slice();
@@ -483,9 +481,9 @@ export default function PointStore() {
                                                   <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                                                     <div className="w-full margin-auto-t-b">
                                                       <input
-                                                        onChange={() =>{
+                                                        onChange={(e) =>{
                                                           setIsModified(true);
-                                                          handleChangeBranch();
+                                                          handleChangeBranch(e);
                                                         }
                                                         }
                                                         value={item.value}

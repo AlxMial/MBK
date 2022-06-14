@@ -89,6 +89,8 @@ export default function PointCode() {
   async function openModal(id) {
     setIsEnable(false);
     setErrorPointCodeLengthSymbol(false);
+    setErrorPointCodeQuantityCode(false);
+    setErrorPointCodeSymbol(false);
     setErrorEndDate(false);
     setErrorStartDate(false);
     if (id) {
@@ -114,8 +116,11 @@ export default function PointCode() {
 
   function closeModal() {
     if (isModified) {
-      setIsOpenEdit(true);
-    } else { setIsOpen(false); setIsOpenImport(false); }
+      openModalEdit();
+    } else {
+      setIsOpen(false);
+      setIsOpenImport(false);
+    }
   }
 
   function openModalEdit() {
@@ -127,7 +132,7 @@ export default function PointCode() {
   }
 
   const onEditValue = async () => {
-    setIsOpenEdit(false);
+    closeModalEdit();
     if (modalIsOpenImport) {
       formikImport.handleSubmit();
       const valueError = JSON.stringify(formikImport.errors);
@@ -135,9 +140,19 @@ export default function PointCode() {
         setIsOpenImport(false);
       }
     } else {
+      onValidate();
       formik.handleSubmit();
       const valueError = JSON.stringify(formik.errors);
-      if (valueError.length <= 2) {
+      if (
+        valueError.length <= 2 &&
+        !errorPointQuantity &&
+        !errorQuantityMoreOne &&
+        !errorPointCodeQuantityCode &&
+        !errorPointCodeLengthSymbol &&
+        !errorPointCodeSymbol &&
+        !errorEndDate &&
+        !errorStartDate
+      ) {
         setIsOpen(false);
       }
     }
@@ -145,7 +160,7 @@ export default function PointCode() {
 
   const onReturn = () => {
     setIsModified(false);
-    setIsOpenEdit(false);
+    closeModalEdit();
     if (modalIsOpenImport) setIsOpenImport(false);
     else setIsOpen(false);
   };
@@ -153,6 +168,7 @@ export default function PointCode() {
   function openModalImport() {
     setOptionCampaign([]);
     setErrorEndDateImport(false);
+    setErrorDate(false);
     setErrorStartDateImport(false);
     setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
     setEndDateCode(moment(new Date(), "DD/MM/YYYY"));
@@ -214,6 +230,9 @@ export default function PointCode() {
   };
 
   const onValidate = () => {
+    setErrorPointCodeSymbol(false);
+    setErrorPointCodeQuantityCode(false);
+    setErrorPointCodeLengthSymbol(false);
     if (formik.values.pointCodeSymbol === "") {
       setErrorPointCodeSymbol(true);
     }
@@ -221,6 +240,12 @@ export default function PointCode() {
       setErrorPointCodeQuantityCode(true);
     }
     if (formik.values.pointCodeLengthSymbol === "") {
+      setErrorPointCodeLengthSymbol(true);
+    }
+    if (
+      formik.values.pointCodeLengthSymbol < 10 ||
+      formik.values.pointCodeLengthSymbol > 16
+    ) {
       setErrorPointCodeLengthSymbol(true);
     }
   };
@@ -309,43 +334,14 @@ export default function PointCode() {
         setErrorDate(true);
       } else {
         setErrorDate(false);
-        setErrorPointCodeLengthSymbol(false);
-        setErrorPointCodeQuantityCode(false);
-        setErrorPointCodeSymbol(false);
-
-        var checkError = true;
-        if (values.isType === "1") {
-          if (values.pointCodeQuantityCode === "") {
-            setErrorPointCodeQuantityCode(true);
-            values.pointCodeQuantityCode = null;
-          }
-          if (values.pointCodeLengthSymbol === "") {
-            setErrorPointCodeLengthSymbol(true);
-            values.pointCodeLengthSymbol = null;
-          }
-          if (values.pointCodeSymbol === "") {
-            setErrorPointCodeSymbol(true);
-            values.pointCodeSymbol = null;
-          }
-
-          if (
-            values.pointCodeLengthSymbol < 10 ||
-            values.pointCodeLengthSymbol > 16
-          ) {
-            setErrorPointCodeLengthSymbol(true);
-          }
-
-          if (
-            values.pointCodeLengthSymbol >= 10 &&
-            values.pointCodeLengthSymbol <= 16
-          ) {
-            checkError = true;
-          } else {
-            checkError = false;
-          }
-        }
-
-        if (checkError && !errorPointQuantity && !errorQuantityMoreOne) {
+        if (
+          !errorPointQuantity &&
+          !errorQuantityMoreOne &&
+          !errorPointCodeQuantityCode &&
+          !errorPointCodeLengthSymbol &&
+          !errorEndDate &&
+          !errorStartDate
+        ) {
           setIsLoading(true);
           if (values.id) {
             formikImport.values.updateBy = localStorage.getItem("user");
@@ -372,7 +368,6 @@ export default function PointCode() {
             axios.post("pointCode", values).then(async (res) => {
               if (res.data.status) {
                 values.tbPointCodeHDId = res.data.tbPointCodeHD.id;
-                fetchData();
                 await axiosUpload
                   .post("api/excel/generateCode", values)
                   .then(async (resGenerate) => {
@@ -390,7 +385,6 @@ export default function PointCode() {
                               .then(() => {});
                             fetchData();
                             setIsLoading(false);
-
                             addToast(
                               "บันทึกข้อมูลไม่สำเร็จ เนื่องจากการ Generate มีปัญหา",
                               {
@@ -401,7 +395,7 @@ export default function PointCode() {
                           });
                       } else {
                         fetchData();
-                        closeModal();
+                        setIsOpen(false);
                         setIsLoading(false);
                         setIsModified(false);
                         addToast(
@@ -478,93 +472,95 @@ export default function PointCode() {
       ) {
         setErrorDate(true);
       } else {
-        setErrorDate(false);
-        setIsLoading(true);
-        if (values.id) {
-          formikImport.values.updateBy = localStorage.getItem("user");
-          axios.put("pointCode", values).then((res) => {
-            if (res.data.status) {
-              setIsLoading(false);
-              fetchData();
-              setIsModified(false);
-              addToast(
-                Storage.GetLanguage() === "th"
-                  ? "บันทึกข้อมูลสำเร็จ"
-                  : "Save data successfully",
-                { appearance: "success", autoDismiss: true }
-              );
-            } else {
-              addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                appearance: "warning",
-                autoDismiss: true,
-              });
-            }
-          });
-        } else {
-          let formData = new FormData();
-          formData.append("file", file);
-          if (file) {
-            setErrorImport(false);
-            formikImport.values.addBy = localStorage.getItem("user");
-            axios.post("pointCode", values).then(async (res) => {
+        if (!errorStartDateImport && !errorEndDateImport) {
+          setErrorDate(false);
+          setIsLoading(true);
+          if (values.id) {
+            formikImport.values.updateBy = localStorage.getItem("user");
+            axios.put("pointCode", values).then((res) => {
               if (res.data.status) {
-                formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
-                await axiosUpload
-                  .post("api/excel/upload", formData)
-                  .then(async (resExcel) => {
-                    await axios.post("/uploadExcel").then((resUpload) => {
-                      if (resUpload.data.error) {
-                        axios
-                          .delete(
-                            `pointCode/delete/${res.data.tbPointCodeHD.id}`
-                          )
-                          .then((resDelete) => {
-                            fetchData();
-                            addToast(
-                              "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
-                              {
-                                appearance: "warning",
-                                autoDismiss: true,
-                              }
-                            );
-                          });
-                      } else {
-                        closeModalImport();
-                        fetchData();
-                        setIsModified(false);
-                        addToast(
-                          Storage.GetLanguage() === "th"
-                            ? "บันทึกข้อมูลสำเร็จ"
-                            : "Save data successfully",
-                          { appearance: "success", autoDismiss: true }
-                        );
-                      }
-                    });
-                  });
+                setIsLoading(false);
+                fetchData();
+                setIsModified(false);
+                addToast(
+                  Storage.GetLanguage() === "th"
+                    ? "บันทึกข้อมูลสำเร็จ"
+                    : "Save data successfully",
+                  { appearance: "success", autoDismiss: true }
+                );
               } else {
-                if (res.data.isPointCodeName) {
-                  addToast(
-                    "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                    {
-                      appearance: "warning",
-                      autoDismiss: true,
-                    }
-                  );
-                } else if (res.data.isPointCodeSymbol) {
-                  addToast(
-                    "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสแคมเปญซ้ำกับในระบบ",
-                    {
-                      appearance: "warning",
-                      autoDismiss: true,
-                    }
-                  );
-                }
+                addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                  appearance: "warning",
+                  autoDismiss: true,
+                });
               }
-              setIsLoading(false);
             });
           } else {
-            setIsLoading(false);
-            setErrorImport(true);
+            let formData = new FormData();
+            formData.append("file", file);
+            if (file) {
+              setErrorImport(false);
+              formikImport.values.addBy = localStorage.getItem("user");
+              axios.post("pointCode", values).then(async (res) => {
+                if (res.data.status) {
+                  formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);
+                  await axiosUpload
+                    .post("api/excel/upload", formData)
+                    .then(async (resExcel) => {
+                      await axios.post("/uploadExcel").then((resUpload) => {
+                        if (resUpload.data.error) {
+                          axios
+                            .delete(
+                              `pointCode/delete/${res.data.tbPointCodeHD.id}`
+                            )
+                            .then((resDelete) => {
+                              fetchData();
+                              addToast(
+                                "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
+                                {
+                                  appearance: "warning",
+                                  autoDismiss: true,
+                                }
+                              );
+                            });
+                        } else {
+                          closeModalImport();
+                          fetchData();
+                          setIsModified(false);
+                          addToast(
+                            Storage.GetLanguage() === "th"
+                              ? "บันทึกข้อมูลสำเร็จ"
+                              : "Save data successfully",
+                            { appearance: "success", autoDismiss: true }
+                          );
+                        }
+                      });
+                    });
+                } else {
+                  if (res.data.isPointCodeName) {
+                    addToast(
+                      "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                      {
+                        appearance: "warning",
+                        autoDismiss: true,
+                      }
+                    );
+                  } else if (res.data.isPointCodeSymbol) {
+                    addToast(
+                      "บันทึกข้อมูลไม่สำเร็จ เนื่องจากรหัสแคมเปญซ้ำกับในระบบ",
+                      {
+                        appearance: "warning",
+                        autoDismiss: true,
+                      }
+                    );
+                  }
+                }
+                setIsLoading(false);
+              });
+            } else {
+              setIsLoading(false);
+              setErrorImport(true);
+            }
           }
         }
       }
@@ -598,6 +594,11 @@ export default function PointCode() {
         setErrorPointCodeSymbol(false);
         setErrorPointCodeQuantityCode(false);
         setErrorPointCodeLengthSymbol(false);
+        setErrorDate(false);
+        setErrorStartDate(false);
+        setErrorEndDate(false);
+        setErrorQuantityMoreOne(false);
+        seterrorPointQuantity(false);
         setListPointCode(response.data.tbPointCodeHD);
         setListSerch(response.data.tbPointCodeHD);
       }
@@ -689,6 +690,7 @@ export default function PointCode() {
   useEffect(() => {
     /* Default Value for Testing */
     //DefaultValue();
+
     setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
     setEndDateCode(moment(new Date(), "DD/MM/YYYY"));
     fetchData();
@@ -775,7 +777,7 @@ export default function PointCode() {
                           className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
                         >
                           <i className="fas fa-save mr-2"></i>
-                          เพิ่มแคมเปญ
+                          {(formik.values.id !== "") ? "แก้ไข" : "เพิ่ม"}แคมเปญ
                         </span>
                       </div>
                     </li>
@@ -788,13 +790,14 @@ export default function PointCode() {
                 }
               >
                 <button
-                  className="bg-lemon-mbk text-white  mr-2 active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                  className="bg-white bg-import text-white  mr-2 active:bg-white font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                   type="button"
                   onClick={() => {
                     openModalImport();
                   }}
                 >
-                  <span className="= text-sm px-2">Import</span>
+                  <i className="fas fa-file-import text-gray-700 "></i>{" "}
+                  <span className="text-gray-700 text-sm px-2">Import</span>
                 </button>
                 <Modal
                   isOpen={modalIsOpenImport}
@@ -873,7 +876,10 @@ export default function PointCode() {
                                     id="pointCodeName"
                                     name="pointCodeName"
                                     maxLength={100}
-                                    onChange={(e) => { setIsModified(true); formikImport.handleChange(e);}}
+                                    onChange={(e) => {
+                                      setIsModified(true);
+                                      formikImport.handleChange(e);
+                                    }}
                                     onBlur={formikImport.handleBlur}
                                     value={formikImport.values.pointCodeName}
                                     autoComplete="pointCodeName"
@@ -982,7 +988,7 @@ export default function PointCode() {
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodePoint"
                                     name="pointCodePoint"
-                                    maxLength={10}
+                                    maxLength={5}
                                     onChange={(event) => {
                                       setIsModified(true);
                                       setlangSymbo(
@@ -1061,6 +1067,11 @@ export default function PointCode() {
                                             );
                                             setErrorStartDateImport(true);
                                           } else {
+                                            if(ValidateService.withOutTime(e) > ValidateService.withOutTime(formikImport.values.endDate))
+                                              setErrorDate(true);
+                                            else  
+                                              setErrorDate(false);
+
                                             setErrorStartDateImport(false);
                                             formikImport.setFieldValue(
                                               "startDate",
@@ -1259,7 +1270,8 @@ export default function PointCode() {
                     openModal();
                   }}
                 >
-                  <span className=" text-sm px-2">เพิ่มแคมเปญ</span>
+                  <i className="fas fa-plus-circle text-white "></i>{" "}
+                  <span className=" text-sm px-2">{(formik.values.id !== "") ? "แก้ไข" : "เพิ่ม"}แคมเปญ</span>
                 </button>
                 <Modal
                   isOpen={modalIsOpen}
@@ -1278,7 +1290,7 @@ export default function PointCode() {
                               <div className=" flex justify-between align-middle ">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>เพิ่มแคมเปญ</label>
+                                    <label>{(formik.values.id !== "") ? "แก้ไข" : "เพิ่ม"}แคมเปญ</label>
                                   </div>
                                 </div>
 
@@ -1355,7 +1367,10 @@ export default function PointCode() {
                                     id="pointCodeName"
                                     name="pointCodeName"
                                     maxLength={100}
-                                    onChange={(e) => { setIsModified(true); formik.handleChange(e); }}
+                                    onChange={(e) => {
+                                      setIsModified(true);
+                                      formik.handleChange(e);
+                                    }}
                                     onBlur={formik.handleBlur}
                                     value={formik.values.pointCodeName}
                                     autoComplete="pointCodeName"
@@ -1847,10 +1862,7 @@ export default function PointCode() {
                                   </div>
                                 </div>
                                 <div
-                                  className={
-                                    "w-full lg:w-1/12 px-4 mb-2 mt-2" +
-                                    (errorEndDate ? " hidden" : " ")
-                                  }
+                                  className={"w-full lg:w-1/12 px-4 mb-2 mt-2"}
                                 >
                                   <label
                                     className="text-blueGray-600 text-sm font-bold mb-2"
@@ -1868,7 +1880,7 @@ export default function PointCode() {
                                 >
                                   <Radio.Group
                                     options={options}
-                                    onChange={(e) => {          
+                                    onChange={(e) => {
                                       setIsModified(true);
                                       setActive(e.target.value);
                                       formik.setFieldValue(

@@ -69,6 +69,12 @@ class ValidateService {
       .label)
       : "";
   };
+
+  withOutTime = (dateTime) => {
+    var date = new Date(dateTime);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }
 }
 
 export default new ValidateService();

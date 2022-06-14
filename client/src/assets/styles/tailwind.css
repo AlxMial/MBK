@@ -4186,6 +4186,10 @@ input[type="number"] {
   margin-top: 50%;
 }
 
+.bg-import{
+  border:1px solid #d0b027;
+}
+
 /* Overflow Info */
 @media only screen and (max-width: 2500px) {
   .mobile {

@@ -14,7 +14,7 @@ import {
 } from "@services/liff.services";
 
 // components
-const dev = false;
+const dev = true;
 
 const getRoutes = () => {
   return routes.map((prop, key) => {
@@ -45,14 +45,14 @@ const initLine = (callback, setView) => {
 const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "U9c1efefc12c8f4d592ae9b01a28678xx",
+      uid: "U66c3a95352d2269cc83129a2268f1xxx",
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {
       apiCheckRegister((res) => {
         let lifdata = {
-          uid: "U9c1efefc12c8f4d592ae9b01a28678xx",
+          uid: "U66c3a95352d2269cc83129a2268f1xxx",
           pictureUrl: null,
         }
         if (res.data.code === 200) {
