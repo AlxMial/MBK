@@ -3962,7 +3962,13 @@ strike {
   text-align: center;
 }
 .dateRemove {
-  width: 120px;
+  width: 100px;
+}
+.dataDate {
+  width: 50px;
+}
+.dataYear {
+  width: 80px;
 }
 
 .datePicker .css-gfn0bc-control {

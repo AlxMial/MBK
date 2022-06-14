@@ -47,6 +47,7 @@ const Register = () => {
   const [dataOTP, setdataOTP] = useState({});
   const [optionYears, setOptionYears] = useState([]);
   const [OptionDay, setOptionDay] = useState([]);
+  const [ sameEmail,setSameEmail ] = useState(false);
   const [page, setpage] = useState("register");
   const useStyle = styleSelect();
 
@@ -255,7 +256,14 @@ const Register = () => {
       abortEarly: false,
     });
     if (isFormValid) {
-      setpage("privacypolicy");
+      const response = await axios.get(`/members/byEmail/${Data.email}`);
+      console.log(response)
+      if (response.data.tbMember) {
+        setSameEmail(true);
+      } else {
+        setSameEmail(false);
+        setpage("privacypolicy");
+      }
     } else {
       validationSchema
         .validate(Data, {
@@ -396,10 +404,10 @@ const Register = () => {
                   </span>
                 </div>
                 <div className="w-full flex ">
-                  <div className="mt-2 mb-2 w-full">
+                  <div className="mt-2 mb-2">
                     <Select
                       name="day"
-                      className=" text-gray-mbk text-center datePicker"
+                      className=" text-gray-mbk text-center datePicker dataDate"
                       isSearchable={false}
                       components={{
                         DropdownIndicator: () => null,
@@ -419,7 +427,7 @@ const Register = () => {
                   <div className="ml-2">&nbsp;</div>
                   <div className="mt-2 mb-2 w-full">
                     <Select
-                      className="text-gray-mbk text-center datePicker dateRemove"
+                      className="text-gray-mbk text-center datePicker "
                       isSearchable={false}
                       name="month"
                       components={{
@@ -441,9 +449,9 @@ const Register = () => {
                     />
                   </div>
                   <div className="mr-2">&nbsp;</div>
-                  <div className="mt-2 mb-2 w-full">
+                  <div className="mt-2 mb-2">
                     <Select
-                      className="text-gray-mbk text-center datePicker"
+                      className="text-gray-mbk text-center datePicker dataYear"
                       isSearchable={false}
                       components={{
                         DropdownIndicator: () => null,
@@ -515,6 +523,11 @@ const Register = () => {
                 valid={true}
                 refs={inputEmailRef}
               />
+              {sameEmail? (
+                <div className="text-sm py-2 px-2 text-red-500" style={{marginTop:"-1rem"}}>
+                  * อีเมลเคยมีการลงทะเบียนไว้แล้ว กรุณาทำการเปลี่ยนอีเมลใหม่
+                </div>
+              ) : null}
               <div className="mb-5" style={{ display: "none" }}>
                 <Radio.Group
                   options={[

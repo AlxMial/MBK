@@ -199,6 +199,7 @@ class ValidateEncrypt {
         columns !== "consentDate" &&
         list[columns] !== ""
       ) {
+
         list.dataValues[columns] = this.DecodeKey(list.dataValues[columns]);
       }
     }

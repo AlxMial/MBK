@@ -324,6 +324,7 @@ const GetReward = () => {
                     })}
                     <div className="noselect relative  px-4  flex-grow flex-1 mt-4">
                       <div
+                       className={(rewardCode.length === 10) ? " hidden" : " "}
                         style={{
                           width: "40px",
                           height: "40px",

@@ -35,7 +35,6 @@ router.get("/Show", validateToken, async (req, res) => {
   } else res.json({ error: "not found member" });
 });
 
-
 router.get("/export", validateToken, async (req, res) => {
   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
   if (listMembers.length > 0) {
@@ -46,16 +45,39 @@ router.get("/export", validateToken, async (req, res) => {
     res.json({ status: false, message: "not found member", tbMember: null });
 });
 
-
 router.get("/byId/:id", async (req, res) => {
   if (req.params.id !== "undefined") {
     const id = Encrypt.DecodeKey(req.params.id);
     const listMembers = await tbMember.findOne({ where: { id: id } });
-    Encrypt.decryptAllData(listMembers);
-    Encrypt.encryptValueId(listMembers);
-    Encrypt.encryptPhone(listMembers);
-    Encrypt.encryptEmail(listMembers);
-    res.json({ status: true, message: "success", tbMember: listMembers });
+    if (listMembers) {
+      Encrypt.decryptAllData(listMembers);
+      Encrypt.encryptValueId(listMembers);
+      Encrypt.encryptPhone(listMembers);
+      Encrypt.encryptEmail(listMembers);
+      res.json({ status: true, message: "success", tbMember: listMembers });
+    } else {
+      res
+        .status(404)
+        .json({ status: false, message: "email not found", tbMember: null });
+    }
+  } else {
+    res.json({ status: true, message: "success", tbMember: null });
+  }
+});
+
+router.get("/byEmail/:email", async (req, res) => {
+  if (req.params.email !== "undefined") {
+    const email = Encrypt.EncodeKey(req.params.email);
+    const listMembers = await tbMember.findOne({ where: { email: email } });
+    if (listMembers) {
+      Encrypt.decryptAllData(listMembers);
+      Encrypt.encryptValueId(listMembers);
+      Encrypt.encryptPhone(listMembers);
+      Encrypt.encryptEmail(listMembers);
+      res.json({ status: true, message: "success", tbMember: listMembers });
+    } else {
+      res.json({ status: true, message: "success", tbMember: null });
+    }
   } else {
     res.json({ status: true, message: "success", tbMember: null });
   }
@@ -65,11 +87,17 @@ router.get("/Show/byId/:id", async (req, res) => {
   if (req.params.id !== "undefined") {
     const id = Encrypt.DecodeKey(req.params.id);
     const listMembers = await tbMember.findOne({ where: { id: id } });
-    Encrypt.decryptAllData(listMembers);
-    Encrypt.encryptValueId(listMembers);
-    // Encrypt.encryptPhone(listMembers);
-    // Encrypt.encryptEmail(listMembers);
-    res.json({ status: true, message: "success", tbMember: listMembers });
+    if (listMembers) {
+      Encrypt.decryptAllData(listMembers);
+      Encrypt.encryptValueId(listMembers);
+      // Encrypt.encryptPhone(listMembers);
+      // Encrypt.encryptEmail(listMembers);
+      res.json({ status: true, message: "success", tbMember: listMembers });
+    } else {
+      res
+        .status(404)
+        .json({ status: false, message: "email not found", tbMember: null });
+    }
   } else {
     res.json({ status: true, message: "success", tbMember: null });
   }
@@ -80,11 +108,17 @@ router.post("/byUid", validateLineToken, async (req, res) => {
     const listMembers = await tbMember.findOne({
       where: { uid: req.body.uid },
     });
-    Encrypt.decryptAllData(listMembers);
-    Encrypt.encryptValueId(listMembers);
-    Encrypt.encryptPhone(listMembers);
-    Encrypt.encryptEmail(listMembers);
-    res.json({ status: true, message: "success", tbMember: listMembers });
+    if (listMembers) {
+      Encrypt.decryptAllData(listMembers);
+      Encrypt.encryptValueId(listMembers);
+      Encrypt.encryptPhone(listMembers);
+      Encrypt.encryptEmail(listMembers);
+      res.json({ status: true, message: "success", tbMember: listMembers });
+    } else {
+      res
+        .status(404)
+        .json({ status: false, message: "email not found", tbMember: null });
+    }
   } else {
     res.json({ status: true, message: "success", tbMember: null });
   }
@@ -334,7 +368,6 @@ router.post("/checkRegister", async (req, res) => {
         .then((e) => {
           console.log(e);
         });
-
     } else {
       code = 200;
       isRegister = false;
