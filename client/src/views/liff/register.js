@@ -159,11 +159,18 @@ const Register = () => {
         dataOTP.result.ref_code,
         (e) => {
           if (e.code === "000") {
-            setdataOtp((prevState) => ({
-              ...prevState,
-              ["confirmotp"]: true,
-            }));
-            DoSave();
+            if (e.result.status) {
+              setdataOtp((prevState) => ({
+                ...prevState,
+                ["confirmotp"]: true,
+              }));
+              DoSave();
+            } else {
+              setotp((prevState) => ({
+                ...prevState,
+                ["incorrect"]: true,
+              }));
+            }
           } else {
             setotp((prevState) => ({
               ...prevState,
