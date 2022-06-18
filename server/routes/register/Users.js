@@ -246,7 +246,7 @@ router.delete("/:userId", validateToken, async (req, res) => {
   res.json({ status: true, message: "success", tbUser: null });
 });
 
-router.get("/getemail/:email",validateToken , async (req, res) => {
+router.get("/getemail/:email" , async (req, res) => {
   const email = Encrypt.EncodeKey(req.params.email.toLocaleLowerCase());
   const user = await tbUser.findOne({
     where: { email: email, IsDeleted: false },

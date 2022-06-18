@@ -274,8 +274,9 @@ export default function ConditioRewardInfo() {
                       .then(async (resExcel) => {
                         if (resExcel.data.status) {
                           await axios
-                            .post("/uploadExcel/coupon")
+                            .post("/uploadExcel/coupon",{couponId:res.data.tbRedemptionCoupon.id})
                             .then((resUpload) => {
+                              console.log(resUpload)
                               dispatch(fetchSuccess());
                               addToast(
                                 Storage.GetLanguage() === "th"

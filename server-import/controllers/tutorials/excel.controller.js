@@ -26,9 +26,9 @@ const upload = async (req, res) => {
       let tutorials = [];
       var rowx = 0;
       rows.forEach((row) => {
-        if(row[0] !== null && rowx > 2){
+        if(row[0] !== null && rowx > 2 && row[0].length > 5){
           let tutorial = {
-            code:  Encrypt.EncodeKey(row[0].toLocaleLowerCase()),
+            code:  Encrypt.EncodeKey(row[0].toLowerCase()),
             tbPointCodeHDId: req.body.tbPointCodeHDId,
             memberId: null,
             isUse: 0,

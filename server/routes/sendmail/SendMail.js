@@ -26,7 +26,7 @@ router.post("/",async (req,res)=>{
       user: frommail,
       pass: password
     },
-    // secureConnection: false,
+    secureConnection: true,
     // tls: { ciphers: 'SSLv3' }
   });
 
@@ -42,7 +42,7 @@ router.post("/",async (req,res)=>{
   transporter.sendMail(mailOptions, function(error, info){
     if (error) {
       res.json({
-        msg: 'fail'
+        msg: error
       });
     } 
     else{
