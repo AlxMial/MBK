@@ -68,7 +68,7 @@ router.get("/byId/:id", async (req, res) => {
 router.get("/byEmail/:email", async (req, res) => {
   if (req.params.email !== "undefined") {
     const email = Encrypt.EncodeKey(req.params.email);
-    const listMembers = await tbMember.findOne({ where: { email: email } });
+    const listMembers = await tbMember.findOne({ where: { email: email, isDeleted : false } });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
       Encrypt.encryptValueId(listMembers);

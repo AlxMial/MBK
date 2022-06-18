@@ -5,9 +5,12 @@ import urlForgot from "services/urlForgot";
 import { useToasts } from "react-toast-notifications";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useDispatch } from 'react-redux';
+import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 
 export default function ForgotPassword() {
   const { addToast } = useToasts();
+  const dispatch = useDispatch();
   let history = useHistory();
 
   const formik = useFormik({
@@ -18,8 +21,10 @@ export default function ForgotPassword() {
       email: Yup.string().required("* กรุณากรอก Email"),
     }),
     onSubmit: (values) => {
+      dispatch(fetchLoading());
       axios.get(`/users/getemail/${values.email}`).then((response) => {
         if (response.data !== null) {
+          
           sendmail(values.email, response.data.id);
         } else {
           addToast("ไม่พบอีเมลในระบบ กรุณาทำการกรอกอีเมลใหม่อีกครั้ง", {
@@ -35,13 +40,19 @@ export default function ForgotPassword() {
     const fullName = localStorage.getItem("fullName");
     axios
       .post("mails", {
-        frommail: "no-reply@prg.co.th",
-        password: "Tus92278",
+        // frommail: "no-reply@prg.co.th",
+        // password: "Tus92278",
+        // tomail: tomail,
+        // fullName: fullName,
+        // resetUrl: urlForgot + `/auth/resetpassword/${id}`,
+        frommail: "noreply@undefined.co.th",
+        password: "Has88149*",
         tomail: tomail,
         fullName: fullName,
         resetUrl: urlForgot + `/auth/resetpassword/${id}`,
       })
       .then((response) => {
+        dispatch(fetchSuccess());
         if (response.data.msg === "success") {
           // addToast("ส่ง Email สำเร็จ กรุณราทำการตรวจสอบ Email", {
           //   appearance: "success",

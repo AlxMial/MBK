@@ -136,7 +136,7 @@ export default function PointCode() {
     if (modalIsOpenImport) {
       formikImport.handleSubmit();
       const valueError = JSON.stringify(formikImport.errors);
-      if (valueError.length <= 2) {
+      if (valueError.length <= 2 && !errorEndDateImport && !errorStartDateImport) {
         setIsOpenImport(false);
       }
     } else {

@@ -166,7 +166,7 @@ export default function Login() {
                       <div>
                         <span
                           onClick={togglePassword}
-                          className="z-3 h-full leading-snug font-normal cursor-pointer text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                          className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
                         >
                           <i
                             className={

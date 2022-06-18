@@ -546,7 +546,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <span
                         onClick={toggleCurrentPassword}
-                        className="z-3 h-full leading-snug font-normal cursor-pointer text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                        className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
                       >
                         <i
                           className={
@@ -614,7 +614,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <span
                         onClick={togglePassword}
-                        className="z-3 h-full leading-snug font-normal cursor-pointer text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                        className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
                       >
                         <i
                           className={
@@ -679,7 +679,7 @@ export default function UserInfo() {
                     <div className="relative w-full">
                       <span
                         onClick={toggleConfirmPassword}
-                        className="z-3 h-full leading-snug font-normal cursor-pointer text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
+                        className="z-3 h-full leading-snug font-normal text-blueGray-600 absolute right-2  bg-transparent text-sm py-2"
                       >
                         <i
                           className={

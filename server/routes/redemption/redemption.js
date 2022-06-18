@@ -224,7 +224,7 @@ router.post("/", validateToken, async (req, res) => {
                   });
               }
             });
-        }else{
+        } else {
           Encrypt.encryptValueId(redemption);
           res.json({
             status: true,
@@ -611,6 +611,7 @@ router.post("/redemptionsGame", validateToken, async (req, res) => {
 });
 
 router.post("/CloneCoupon", async (req, res) => {
+  const couponId = req.body.couponId;
   const qry = `INSERT INTO mbk_database.tbcouponcodes SELECT * FROM mbk_temp.tbcouponcodes where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
   db.sequelize
     .query(qry, null, { raw: true })
@@ -619,7 +620,19 @@ router.post("/CloneCoupon", async (req, res) => {
       db.sequelize
         .query(deleteqry, null, { raw: true })
         .then((result) => {
-          res.json({ message: "success" });
+          const updateCount =
+            `update mbk_database.tbredemptioncoupons set couponCount = (select count(id) from mbk_database.tbcouponcodes where  mbk_database.tbcouponcodes.redemptionCouponId = ` +
+            couponId +
+            ` ) WHERE mbk_database.tbredemptioncoupons.id = ` +
+            couponId;
+          db.sequelize
+            .query(updateCount, null, { raw: true })
+            .then((result) => {
+              res.json({ message: "success" });
+            })
+            .catch((error) => {
+              res.json({ error: "error insert" });
+            });
         })
         .catch((error) => {
           res.json({ error: "error insert" });
