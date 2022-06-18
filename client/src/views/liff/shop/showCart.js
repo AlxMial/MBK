@@ -19,14 +19,21 @@ const ShowCart = () => {
   const [deleteValue, setDeleteValue] = useState(null);
 
   const [CartItem, setCartItem] = useState([]);
+  const [usecoupon, setusecoupon] = useState(null);
+
   const [sumprice, setsumprice] = useState(0);
 
   const getProducts = async () => {
     let id = [];
-    let shop_orders = Storage.get_cart().shop_orders;
+    let cart = Storage.get_cart()
+    let shop_orders = cart.shop_orders;
     shop_orders.map((e, i) => {
       id.push(e.id);
     });
+    if (!fn.IsNullOrEmpty(cart.usecoupon)) {
+      setusecoupon(cart.usecoupon)
+    }
+
     await axios.post("stock/getStock", { id: id }).then((response) => {
       if (response.data.status) {
         let tbStock = response.data.tbStock;
@@ -41,7 +48,9 @@ const ShowCart = () => {
             price += parseFloat(e.price) * parseInt(quantity);
           }
         });
-
+        if (usecoupon != null) {
+          price = price - usecoupon
+        }
         setsumprice(price);
       } else {
         setCartItem([]);
@@ -102,11 +111,20 @@ const ShowCart = () => {
           {"รถเข็น"}
         </div>
       </div>
+
+      <div className="flex px-5 mt-5" style={{ color: "var(--mq-txt-color, rgb(255, 168, 52))" }}>
+        <i class="fas fa-exclamation-circle" style={{ width: "22px", height: "22px" }}></i>
+        <div className=" px-2 text-xs ">
+          <p style={{ marginBottom: "0" }}>หลังจากกดสั่งสินค้าหากไม่ได้ชำระเงินภายใน 48 ชั่วโมง</p>
+          <p>สินค้าจะถูกยกเลิกทันที</p>
+        </div>
+      </div>
+
       <div
         className="mt-2 line-scroll"
         style={{
-          maxHeight: "530px",
-          overflow: "scroll",
+          height: "calc(100% - 420px)",
+          // overflow: "scroll",
           width: "95%",
           marginLeft: "auto",
           marginRight: "auto",
@@ -126,9 +144,9 @@ const ShowCart = () => {
                     className="w-32 border-2 border-blueGray-50"
                   ></ImageUC>
                 </div>
-                <div style={{ width: "70%" }}>
-                  <div className="flex" style={{ height: "70%" }}>
-                    <div style={{ width: "80%" }}>{e.description}</div>
+                <div className="px-2" style={{ width: "70%" }}>
+                  <div className="flex" style={{ height: "60%" }}>
+                    <div style={{ width: "80%" }}>{e.productName}</div>
                     <div
                       className="relative"
                       style={{ width: "20%" }}
@@ -146,7 +164,28 @@ const ShowCart = () => {
                         }}
                       ></i>
                     </div>
+
                   </div>
+
+                  <div style={{ height: "15%" }}>
+                    <div className="flex  relative" >
+                      <div
+                        style={{
+                          color: e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
+                          textDecoration:
+                            e.discount > 0 ? "line-through" : "none",
+                        }}
+                      >
+                        {"฿ " + fn.formatMoney(e.price)}
+                      </div>
+                      {e.discount > 0 ? (
+                        <div style={{ color: "red", paddingLeft: "10px" }}>
+                          {"฿ " + fn.formatMoney(e.priceDiscount)}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+
                   <div
                     className="flex relative"
                     style={{
@@ -156,23 +195,8 @@ const ShowCart = () => {
                       justifyContent: "center",
                     }}
                   >
-                    {/* {e.quantity} */}
-                    <div className="flex  absolute" style={{ left: "10px" }}>
-                      <div
-                        style={{
-                          color: e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
-                          textDecoration:
-                            e.discount > 0 ? "line-through" : "none",
-                        }}
-                      >
-                        {"฿" + fn.formatMoney(e.price)}
-                      </div>
-                      {e.discount > 0 ? (
-                        <div style={{ color: "red", paddingLeft: "10px" }}>
-                          {"฿" + fn.formatMoney(e.priceDiscount)}
-                        </div>
-                      ) : null}
-                    </div>
+
+
                     <div
                       className="flex absolute"
                       style={{
@@ -191,6 +215,7 @@ const ShowCart = () => {
                           height: "35px",
                           outline: "none",
                           color: e.quantity === 0 ? "gray" : "#000",
+                          borderRadius: " 5px 0 0 5px "
                         }}
                         onClick={() => {
                           if (e.quantity !== 0) {
@@ -218,6 +243,7 @@ const ShowCart = () => {
                           height: "35px",
                           outline: "none",
                           color: "#000",
+                          borderRadius: "0 5px 5px 0"
                         }}
                         onClick={() => {
                           spinButton("plus", e.id)
@@ -240,22 +266,29 @@ const ShowCart = () => {
           height: "40px",
           alignItems: "center",
           justifyContent: "center",
+          marginTop: "0.5rem"
         }}
       >
         <div className="px-2 absolute" style={{ left: "10px" }}>
-          icon{" "}
+          <img
+            style={{ margin: "auto", width: "22px", height: "22px" }}
+            src={require("assets/img/mbk/icon_sale.png").default
+            }
+            alt="icon_sale"
+            className="w-32 border-2 border-blueGray-50"
+          ></img>
         </div>
-        <div className="px-2 absolute" style={{ left: "50px" }}>
-          {"รหัสส่วนลด"}
+        <div className="px-2 absolute text-bold" style={{ left: "50px" }}>
+          {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
         </div>
         <div
           className="absolute"
-          style={{ right: "10px", color: "gray" }}
+          style={{ right: "10px", color: usecoupon != null ? "red" : "var(--mq-txt-color, rgb(192, 192, 192))" }}
           onClick={() => {
             history.push(path.usecoupon);
           }}
         >
-          {"ใช้ส่วนลด >"}
+          {usecoupon != null ? ("-฿ " + fn.formatMoney(usecoupon.discount)) : "ใช้ส่วนลด >"}
         </div>
       </div>
       <div className="liff-inline" />
@@ -293,7 +326,7 @@ const ShowCart = () => {
           </div>
         </div>
       </div>
-      <div className="absolute w-full flex" style={{ bottom: "40px" }}>
+      <div className="absolute w-full flex" style={{ bottom: "0" }}>
         <div style={{ width: "100%", padding: "10px" }}>
           <div
             className="flex bg-green-mbk text-white text-center text-lg  font-bold "
@@ -313,19 +346,21 @@ const ShowCart = () => {
           </div>
         </div>
       </div>
-      {confirmDelete && (
-        <ConfirmDialog
-          className={" liff-Dialog "}
-          showModal={confirmDelete}
-          message={"สินค้า"}
-          hideModal={() => {
-            setconfirmDelete(false);
-          }}
-          confirmModal={() => {
-            deleteCart(deleteValue);
-          }}
-        />
-      )}
+      {
+        confirmDelete && (
+          <ConfirmDialog
+            className={" liff-Dialog "}
+            showModal={confirmDelete}
+            message={"สินค้า"}
+            hideModal={() => {
+              setconfirmDelete(false);
+            }}
+            confirmModal={() => {
+              deleteCart(deleteValue);
+            }}
+          />
+        )
+      }
     </>
   );
 };

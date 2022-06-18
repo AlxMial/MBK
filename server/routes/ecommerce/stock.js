@@ -133,6 +133,8 @@ router.post("/getStock", validateLineToken, async (req, res) => {
           endDateCampaign: e.endDateCampaign,
           startTimeCampaign: e.startTimeCampaign,
           endTimeCampaign: e.endTimeCampaign,
+          IsBestSeller: e.IsBestSeller,
+          productCategoryId:e.productCategoryId,
           percent:
             e.discount > 0
               ? e.discountType.toLowerCase().includes("percent")

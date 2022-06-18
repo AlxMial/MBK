@@ -8,6 +8,7 @@ const {
   tbCouponCode,
 } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
+const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const ValidateEncrypt = require("../../services/crypto");
 const axiosInstance = require("../../services/axiosUpload");
@@ -224,7 +225,7 @@ router.post("/", validateToken, async (req, res) => {
                   });
               }
             });
-        }else{
+        } else {
           Encrypt.encryptValueId(redemption);
           res.json({
             status: true,
@@ -629,5 +630,94 @@ router.post("/CloneCoupon", async (req, res) => {
       res.json({ error: "error insert" });
     });
 });
+
+//#region line liff
+
+router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
+
+  tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+  tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
+
+  try {
+    let item = []
+    let item2 = []
+    const _tbRedemptionCoupon = await tbCouponCode.findAll({
+      where: { isDeleted: !1, isUse: !1 },
+      attributes: ['redemptionCouponId'],
+      include: [
+        {
+          model: tbRedemptionCoupon,
+          attributes: ['id', 'discount', "isNotExpired", "startDate", "expiredDate", "couponName"],
+          where: {
+            isDeleted: !1,
+            id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
+          },
+        },
+      ],
+    });
+
+    if (_tbRedemptionCoupon.length > 0) {
+      // let RedemptionCoupon = []
+      _tbRedemptionCoupon.map((e, i) => {
+        let dup = []
+        item.filter(f => {
+          if (f.id == Encrypt.EncodeKey(e.tbRedemptionCoupon.id)) { dup.push(e) }
+        })
+        if (dup.length == 0) {
+
+          item.push({
+            id: Encrypt.EncodeKey(e.tbRedemptionCoupon.id),
+            discount: e.tbRedemptionCoupon.discount,
+            isNotExpired: e.tbRedemptionCoupon.isNotExpired,
+            startDate: e.tbRedemptionCoupon.startDate,
+            expiredDate: e.tbRedemptionCoupon.expiredDate,
+            couponName: e.tbRedemptionCoupon.couponName
+          })
+        }
+      })
+
+      for (var i = 0; i < item.length; i++) {
+        let sdate = new Date(new Date(item[i].startDate).toISOString().split("T")[0])
+        let edate = new Date(new Date(item[i].expiredDate).toISOString().split("T")[0])
+        let today = new Date(new Date().toISOString().split("T")[0])
+        if ((today >= sdate && today <= edate) || (today >= sdate && item[i].isNotExpired)) {
+
+          const _tbImage = await tbImage.findAll({
+            attributes: ['image'],
+            where: {
+              isDeleted: false,
+              relatedId: Encrypt.DecodeKey(item[i].id),
+              relatedTable: "tbRedemptionCoupon",
+            },
+          });
+          let data = item[i]
+          if (_tbImage.length > 0) {
+            data.image = _tbImage[0].image
+          }
+
+          item2.push(item[i])
+        }
+      }
+
+      res.json({
+        status: true,
+        message: "success",
+        tbRedemptionCoupon: item2,
+      });
+    } else
+      res.json({
+        status: false,
+        message: "not found user",
+        tbredemptioncoupons: null,
+      });
+  } catch (e) {
+    res.json({
+      status: false,
+      message: e.message,
+      tbredemptioncoupons: null,
+    });
+  }
+});
+//#endregion line liff
 
 module.exports = router;

@@ -36,6 +36,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
+    IsBestSeller: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+    },
     startDateCampaign: {
       type: DataTypes.DATE,
       allowNull: true,

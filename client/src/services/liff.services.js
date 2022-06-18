@@ -44,7 +44,7 @@ export const path = {
   shopList: "/line/shopList",
   showProducts: "/line/showProducts/:id",
   showCart: "/line/showCart",
-  usecoupon: "/line/usecoupon",
+  usecoupon: "/line/usecoupon/:id",
   
 };
 export const routes = [
