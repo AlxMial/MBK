@@ -32,6 +32,8 @@ const ShowCart = () => {
     });
     if (!fn.IsNullOrEmpty(cart.usecoupon)) {
       setusecoupon(cart.usecoupon)
+    } else {
+      setusecoupon(null)
     }
 
     await axios.post("stock/getStock", { id: id }).then((response) => {
@@ -48,16 +50,24 @@ const ShowCart = () => {
             price += parseFloat(e.price) * parseInt(quantity);
           }
         });
-        if (usecoupon != null) {
-          price = price - usecoupon
+        if (!fn.IsNullOrEmpty(cart.usecoupon)) {
+          price = price - cart.usecoupon.discount
         }
-        setsumprice(price);
+        setsumprice(price < 1 ? 0 : price);
       } else {
         setCartItem([]);
         // error
       }
     });
   };
+
+  const Cancelcoupon = () => {
+    let cart = Storage.get_cart()
+    cart.usecoupon = null
+    Storage.upd_cart(cart);
+    getProducts()
+
+  }
   //ลบ
   const deleteCart = () => {
     let cart = Storage.get_cart();
@@ -283,13 +293,24 @@ const ShowCart = () => {
         </div>
         <div
           className="absolute"
-          style={{ right: "10px", color: usecoupon != null ? "red" : "var(--mq-txt-color, rgb(192, 192, 192))" }}
+          style={{ right: "10px" }}
           onClick={() => {
-            history.push(path.usecoupon);
+            usecoupon != null ? Cancelcoupon() :
+              history.push(path.usecoupon.replace(":id", "cart"))
           }}
         >
-          {usecoupon != null ? ("-฿ " + fn.formatMoney(usecoupon.discount)) : "ใช้ส่วนลด >"}
+          <div className="flex">
+            <div style={{ color: usecoupon != null ? "red" : "var(--mq-txt-color, rgb(192, 192, 192))" }}>
+              {usecoupon != null ? ("-฿ " + fn.formatMoney(usecoupon.discount)) : "ใช้ส่วนลด >"}
+            </div>
+            <div className="px-2">
+              {usecoupon != null ? <i class="fas fa-times-circle" style={{ color: "red" }} ></i> : null}
+            </div>
+          </div>
+
         </div>
+
+
       </div>
       <div className="liff-inline" />
       <div
