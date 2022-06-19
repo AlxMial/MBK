@@ -91,7 +91,8 @@ const promotionStore = require('./routes/ecommerce/promotionStore');
 app.use("/mbkserver/promotionStore", promotionStore);
 const image = require('./routes/image/image');
 app.use("/mbkserver/image", image);
-
+const pointHistoryReport = require('./routes/report/Report');
+app.use("/mbkserver/report", pointHistoryReport);
 initRoutes(app);
 
 const port = process.env.PORT || 3001;

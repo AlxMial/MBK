@@ -18,7 +18,7 @@ export const exportExcel = async (dataExport, Title, TitleColumns, columns,sheet
       }
       else {
         if (valueColumns.toLocaleLowerCase().includes("date"))
-          GenerateData += "," + moment(val[valueColumns]).format("DD/MM/YYYY");
+          GenerateData += "," + (val[valueColumns] !== "" ? moment(val[valueColumns]).format("DD/MM/YYYY") : "");
         else GenerateData += "," + ( (val[valueColumns] === '') ? " ": val[valueColumns]);
       }
     }
