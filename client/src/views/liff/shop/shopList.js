@@ -11,12 +11,10 @@ import Select from "react-select";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
 
 import ImageUC from "components/Image/index";
-// import { ItalicOutlined } from "@ant-design/icons";
-// import { display } from "html2canvas/dist/types/css/property-descriptors/display";
 const useStyle = styleSelectLine();
 // components
 
-const Cancel = () => {
+const ShopList = () => {
   const history = useHistory();
   const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
@@ -355,8 +353,8 @@ const Cancel = () => {
                               <ImageUC
                                 style={{ margin: "auto", minHeight: "120px" }}
                                 find={1}
-                                relatedId={e.id}
-                                relatedTable={["stock1"]}
+                                relatedid={e.id}
+                                relatedtable={["stock1"]}
                                 alt="flash_sale"
                                 className="w-32 border-2 border-blueGray-50"
                               ></ImageUC>
@@ -444,8 +442,8 @@ const Cancel = () => {
                             maxHeight: "120px",
                           }}
                           find={1}
-                          relatedId={e.id}
-                          relatedTable={["stock1"]}
+                          relatedid={e.id}
+                          relatedtable={["stock1"]}
                           alt="flash_sale"
                           className="w-32 border-2 border-blueGray-50"
                         ></ImageUC>
@@ -529,4 +527,4 @@ const Cancel = () => {
     </>
   );
 };
-export default Cancel;
+export default ShopList;

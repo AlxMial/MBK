@@ -44,8 +44,14 @@ const ShowCart = () => {
       shop_orders.usecoupon = e
       Storage.upd_cart(shop_orders);
 
-      history.push(path.showCart);
+      // history.push(path.showCart);
+    } else {
+      let item = Storage.getbyorder()
+      item.usecoupon = e
+      Storage.updbyorder(item)
+      // history.push(path.makeorder.replace(":id", "byorder"));
     }
+    history.goBack()
   }
 
   useEffect(() => {
@@ -171,7 +177,12 @@ const ShowCart = () => {
                 justifyContent: "center",
               }}
               onClick={() => {
-                history.push(path.showCart);
+                // if (id == "cart") {
+                //   history.push(path.showCart);
+                // } else {
+                //   history.push(path.makeorder.replace(":id", "byorder"));
+                // }
+                history.goBack()
               }}
             >
               {"กลับไปที่ชำระเงิน"}

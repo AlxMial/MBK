@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbMember, tbPointRegister, tbMemberPoint } = require("../../models");
+const { tbMember, tbPointRegister, tbMemberPoint, tbOtherAddress } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
@@ -68,7 +68,7 @@ router.get("/byId/:id", async (req, res) => {
 router.get("/byEmail/:email", async (req, res) => {
   if (req.params.email !== "undefined") {
     const email = Encrypt.EncodeKey(req.params.email);
-    const listMembers = await tbMember.findOne({ where: { email: email, isDeleted : false } });
+    const listMembers = await tbMember.findOne({ where: { email: email, isDeleted: false } });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
       Encrypt.encryptValueId(listMembers);
@@ -460,11 +460,93 @@ router.get("/getMemberPointsList", validateLineToken, async (req, res) => {
     if (data) {
       tbMemberPointList = data;
     }
-  } catch {}
+  } catch { }
   res.json({
     code: code,
     tbMemberPoint: tbMemberPointList,
   });
 });
+
+
+router.get("/getMemberAddress", validateLineToken, async (req, res) => {
+  let code = 500;
+  const id = Encrypt.DecodeKey(req.user.id);
+  // let members;
+  let option = []
+  try {
+    code = 200;
+    let member = await tbMember.findOne({
+      attributes: ["id", "firstName", "lastName", "address", "province", "district", "subDistrict", "postcode", "email"],
+      where: { id: id, isDeleted: false },
+    });
+
+    if (member) {
+      member = Encrypt.decryptAllData(member);
+      Encrypt.encryptValueId(member);
+      let dataValues = member.dataValues
+      dataValues.isDefault = true
+      option.push(dataValues);
+
+      let OtherAddress = await tbOtherAddress.findAll({
+        attributes: ["id", "firstName", "lastName", "address", "province", "district", "subDistrict", "postcode", "email"],
+        where: { memberID: id }
+      });
+      if (OtherAddress) {
+        OtherAddress.map((e, i) => {
+          let _OtherAddress = Encrypt.decryptAllData(e);
+          Encrypt.encryptValueId(_OtherAddress);
+
+          let dataValues = _OtherAddress.dataValues
+          dataValues.isDefault = false
+          option.push(dataValues)
+        })
+      }
+    }
+  } catch (e) {
+    code = 300;
+  }
+
+  res.json({
+    code: code,
+    option: option,
+  });
+});
+
+router.post("/addMemberAddress", validateLineToken, async (req, res) => {
+
+  const uid = Encrypt.DecodeKey(req.user.uid);
+  let data = req.body
+  let Member;
+  let msg;
+  try {
+
+    Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+    if (Member) {
+
+      if (
+        !Encrypt.IsNullOrEmpty(data.firstName) &&
+        !Encrypt.IsNullOrEmpty(data.lastName) &&
+        !Encrypt.IsNullOrEmpty(data.phone) &&
+        !Encrypt.IsNullOrEmpty(data.email)
+      ) {
+        data.email = data.email.toLowerCase();
+        data.memberID = Member.id
+        const ValuesEncrypt = Encrypt.encryptAllData(data);
+        const MemberAddress = await tbOtherAddress.create(ValuesEncrypt);
+        res.json({ status: true });
+
+      } else {
+        res.json({ status: false, msg: "Data Empty" });
+      }
+    } else {
+      res.json({ status: false, msg: "Member Empty" });
+    }
+
+  } catch (e) {
+    msg = e.message
+    res.json({ status: false, msg: msg });
+  }
+});
+
 
 module.exports = router;
