@@ -10,13 +10,18 @@ import useWindowDimensions from "services/useWindowDimensions";
 
 export default function CollectPointsReport() {
   const [listSearch, setListSerch] = useState([]);
-  const [listPointCode, setListPointCode] = useState([]);  
+  const [listPoint, setListPoint] = useState([]);  
   const { width } = useWindowDimensions();
   const [forcePage, setForcePage] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);  
   const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;  
+  const listPointType = [
+    { value: "1", type: "Code", status: "แลกคะแนน"},
+    { value: "2", type: "E-Commerce", status: "รับคะแนน" },
+    { value: "3", type: "Register", status: "รับคะแนน" },
+  ];
   const formSerch =  useFormik({
     initialValues:  { 
       inputSerch: "",    
@@ -29,26 +34,33 @@ export default function CollectPointsReport() {
       let startDate = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
       let endDate = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
     if (inputSerch === "" && startDate === null && endDate === null) {
-      setListPointCode(listSearch);
+      setListPoint(listSearch);
     } else {
      
-     setListPointCode(
+      setListPoint(
         listSearch.filter(
         (x) => {
-            const _startDate = convertToDate(x.startDate);
-            const _endDate = convertToDate(x.endDate);
+          const _startDate = convertToDate(x.startDate);
+          const _endDate = convertToDate(x.endDate);
+          let isDate = false;
+            if(x.startDate !== '' && x.endDate !== '') {             
+              isDate = true;
+            }            
             if((inputSerch !== "" ? (x.pointCodeName.toLowerCase().includes(inputSerch) ||
-            (x.pointCodeSymbol === null ? "" : x.pointCodeSymbol)
+            (x.memberName === null ? "" : x.memberName)
             .toLowerCase()
             .includes(inputSerch) ||
-            x.pointCodePoint.toString().includes(inputSerch) ||
-            (x.pointCodeQuantityCode === null ? "" : x.pointCodeQuantityCode)
+            x.point.toString().includes(inputSerch) ||
+            (x.pointType === null ? "" : x.pointType)
             .toString()
             .includes(inputSerch) ||
             x.status.toLowerCase().toString().includes(inputSerch) ||
-            x.useCount.toString().includes(inputSerch)) : true) &&
+            (x.code === null ? "" : x.code)
+            .toLowerCase()
+            .includes(inputSerch)
+           ) : true) &&
 
-            ((startDate !== null && endDate !== null) ? (startDate <= _startDate  && startDate <= _endDate &&
+            ((startDate !== null && endDate !== null && isDate) ? (startDate <= _startDate  && startDate <= _endDate &&
             endDate >= _startDate && endDate >= _endDate) : true)) {
                 return true;
             }
@@ -79,7 +91,7 @@ export default function CollectPointsReport() {
   };
 
  
-  const pageCount = Math.ceil(listPointCode.length / usersPerPage);
+  const pageCount = Math.ceil(listPoint.length / usersPerPage);
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
@@ -91,40 +103,40 @@ export default function CollectPointsReport() {
     const TitleColumns = [
       "ลำดับที่",
       "แคมเปญ",
-      "รหัสแคมเปญ",
-      "จำนวนตัวอักษร",
-      "คะแนน",
       "วันที่เริ่มต้น",
       "วันที่สิ้นสุด",
-      "จำนวน Code",
-      "แลกแล้ว",
-      "คงเหลือ",
+      "ประเภท",
+      "ชื่อลูกค้า",
+      "เบอร์โทรศัพท์",
+      "Code",
+      "คะแนน",
       "สถานะ",
+      "วันที่แลก"
     ];
     const columns = [
-      "listNo",
+      "listNo",      
       "pointCodeName",
-      "pointCodeSymbol",
-      "pointCodeLengthSymbol",
-      "pointCodePoint",
       "startDate",
       "endDate",
-      "codeCount",
-      "useCount",
-      "remain",
+      "pointType",
+      "memberName",
+      "phone",
+      "code",
+      "point",
       "status",
+      "exchangedate",
     ];
     let count = 0;
-    listPointCode.forEach(el => { 
+    listPoint.forEach(el => { 
         count++; 
         el.listNo = count;
     });
     exportExcel(
-        listPointCode,
-      "รายงานสะสมคะแนน'",
+        listPoint,
+      "รายงานสะสมคะแนน",
       TitleColumns,
       columns,
-      "รายงานสะสมคะแนน'"
+      "รายงานสะสมคะแนน"
     );
     setIsLoading(false);
   };
@@ -135,28 +147,19 @@ export default function CollectPointsReport() {
         
         const dateNow = new Date();
         dateNow.setHours(0,0,0,0);
-        if (response.data.error) {
-        } else {
-          for (var i = 0; i < response.data.tbPointCodeDT.length; i++) {
-            const startDate = new Date(response.data.tbPointCodeHD[i]["startDate"]);
-            startDate.setHours(0,0,0,0);
-            const endDate = new Date(response.data.tbPointCodeHD[i]["endDate"]);
-            endDate.setHours(0,0,0,0);
-            let status = '';
-            const codeCount = response.data.tbPointCodeHD[i]["codeCount"];
-            const useCount = response.data.tbPointCodeHD[i]["useCount"];
-            if(!((startDate <= dateNow && dateNow <= endDate) || (startDate > dateNow && endDate > dateNow))) {
-                status = "หมดอายุ";
-            } else if(response.data.tbPointCodeHD[i].isActive === "1") {
-                status = "เปิดการใช้งาน";
-            } else {
-                status = "ปิดการใช้งาน";
+        if (response.data.length > 0) {
+          response.data.forEach(e => {
+            const datatype = listPointType.find(l => l.value === e.pointTypeId);
+            if(datatype) {
+              e.status = datatype.status;
+              e.pointType = datatype.type;
+              e.startDate = e.pointTypeId === "1" ? e.startDate : "";
+              e.endDate = e.pointTypeId === "1" ? e.endDate : "";
             }
-            response.data.tbPointCodeHD[i]["status"] = status;
-            response.data.tbPointCodeHD[i]["remain"] =  codeCount - useCount;
-          }         
-          setListSerch(response.data.tbPointCodeHD);
-          setListPointCode(response.data.tbPointCodeHD);
+          });
+                 
+          setListSerch(response.data);
+          setListPoint(response.data);
         }
       });
   };
@@ -339,28 +342,6 @@ export default function CollectPointsReport() {
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    รหัสแคมเปญ
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    จำนวนตัวอักษร
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    คะแนน
-                  </th>
-
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
                     วันที่เริ่มต้น
                   </th>
                   <th
@@ -369,27 +350,42 @@ export default function CollectPointsReport() {
                     }
                   >
                     วันที่สิ้นสุด
-                  </th>                 
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    จำนวน Code
                   </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    แลกแล้ว
-                  </th> 
+                    ประเภท
+                  </th>
+
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    คงเหลือ
+                    ชื่อลูกค้า
+                  </th>
+                  <th
+                    className={
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                    }
+                  >
+                    เบอร์โทรศัพท์
+                  </th>                 
+                  <th
+                    className={
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                    }
+                  >
+                    Code
+                  </th>
+                  <th
+                    className={
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                    }
+                  >
+                    คะแนน
                   </th> 
                   <th
                     className={
@@ -397,11 +393,18 @@ export default function CollectPointsReport() {
                     }
                   >
                     สถานะ
+                  </th> 
+                  <th
+                    className={
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                    }
+                  >
+                    วันที่แลก
                   </th>                               
                 </tr>
               </thead>
               <tbody>
-                {listPointCode
+                {listPoint
                   .slice(pagesVisited, pagesVisited + usersPerPage)
                   .map(function (value, key) {
                     value.listNo = pagesVisited + key + 1;
@@ -427,54 +430,52 @@ export default function CollectPointsReport() {
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.pointCodeSymbol}
+                          { value.pointTypeId === "1" ? moment(value.startDate).format("DD/MM/YYYY") : ""}
                           </span>
                         </td>
                         <td                         
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.pointCodeLengthSymbol}
+                          { value.pointTypeId === "1" ? moment(value.endDate).format("DD/MM/YYYY") : ""}
                           </span>
                         </td>
                         <td                          
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.pointCodePoint}
+                            {value.pointType}
                           </span>
                         </td>
                         <td                         
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {moment(value.startDate).format("DD/MM/YYYY")}
+                            {value.memberName}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {moment(value.endDate).format("DD/MM/YYYY")}
+                            {value.phone}
                           </span>
                         </td>                       
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.codeCount}
+                            {value.code}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.useCount}
+                            {value.point}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.remain}
+                            {value.status}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {//value.isActive === "2" ? "ปิดการใช้งาน" : "เปิดใช้งาน"
-                          value.status
-                          }
+                          {moment(value.exchangedate).format("DD/MM/YYYY")}
                         </td>
                       </tr>
                     );
@@ -488,11 +489,11 @@ export default function CollectPointsReport() {
                 className="lg:w-6/12 font-bold"
                 style={{ alignSelf: "stretch" }}
               >
-                {pagesVisited + 10 > listPointCode.length
-                  ? listPointCode.length
+                {pagesVisited + 10 > listPoint.length
+                  ? listPoint.length
                   : pagesVisited + 10}{" "}
                 {"/"}
-                {listPointCode.length} รายการ
+                {listPoint.length} รายการ
               </div>
               <div className="lg:w-6/12">
                 <ReactPaginate

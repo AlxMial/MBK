@@ -176,7 +176,7 @@ export default function PointHistoryReport() {
   };
 
   const fetchPermission = async () => {
-    await axios.get("pointCode").then((response) => {
+    await axios.get("report/ShowPointsHistory").then((response) => {
         // dispatch(fetchSuccess());
         
         const dateNow = new Date();
@@ -290,7 +290,6 @@ export default function PointHistoryReport() {
                     format={"DD/MM/yyyy"}
                     placeholder="เลือกวันที่"
                     showToday={false}
-                    //defaultValue={startDateCode}
                     style={{
                         height: "100%",
                         width: "100%",
@@ -329,7 +328,6 @@ export default function PointHistoryReport() {
                     format={"DD/MM/yyyy"}
                     placeholder="เลือกวันที่"
                     showToday={false}
-                    //defaultValue={endDateCode}
                     style={{
                     height: "100%",
                     width: "100%",
@@ -382,7 +380,7 @@ export default function PointHistoryReport() {
                   isOpen={modalIsOpen}
                   onAfterOpen={afterOpenModal}
                   onRequestClose={closeModal}
-                  style={useStyle}
+                  style={width <= 1180 ? useStyleMobile : useStyle}
                   contentLabel="Example Modal"
                   shouldCloseOnOverlayClick={false}
                 >
