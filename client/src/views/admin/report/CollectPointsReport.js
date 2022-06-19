@@ -143,8 +143,7 @@ export default function CollectPointsReport() {
 
   const fetchPermission = async () => {
     await axios.get("report/ShowCollectPoints").then((response) => {
-        // dispatch(fetchSuccess());
-        
+        // dispatch(fetchSuccess());        
         const dateNow = new Date();
         dateNow.setHours(0,0,0,0);
         if (response.data.length > 0) {
