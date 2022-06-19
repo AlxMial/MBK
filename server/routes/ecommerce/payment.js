@@ -4,6 +4,7 @@ const { tbPayment } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
+const jwt = require('jsonwebtoken');
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
@@ -71,5 +72,8 @@ router.delete("/:id", validateToken, async (req, res) => {
     tbPayment.update(req.body, { where: { id: id } });
     res.json({ status: true, message: "success", tbPayment: null });
 });
+
+
+
 
 module.exports = router;

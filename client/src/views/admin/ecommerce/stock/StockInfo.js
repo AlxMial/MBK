@@ -94,7 +94,8 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
     if (_categoryValue) {
       setCategoryValue(_categoryValue[0]);
     }
-    formik.setFieldValue('productCategoryId', newValue, false);
+    console.log(newValue.value)
+    formik.setFieldValue('productCategoryId', newValue.value, false);
   };
 
   const handleCreate = (inputValue) => {

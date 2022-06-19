@@ -352,7 +352,7 @@ export default function PointStore() {
                               <div className=" flex justify-between align-middle ">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>เพิ่มร้านค้า</label>
+                                    <label>{(formik.values.id !== "") ? "แก้ไข" : "เพิ่ม"}ร้านค้า</label>
                                   </div>
                                 </div>
 

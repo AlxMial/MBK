@@ -1,24 +1,25 @@
 import React from "react";
 import { Slide } from "react-slideshow-image";
 import "react-slideshow-image/dist/styles.css";
-const properties = {
-  duration: 5000,
-  transitionDuration: 500,
-  infinite: true,
-  indicators: true,
-  arrows: true,
-  pauseOnHover: true,
-  onChange: (oldIndex, newIndex) => {
-    console.log(`slide transition from ${oldIndex} to ${newIndex}`);
-  },
-};
+
 
 const SlideShow = (prop) => {
-  const { img, ...other } = prop;
+  const { img, duration, ...other } = prop;
+  const properties = {
+    duration: duration,
+    transitionDuration: 500,
+    infinite: true,
+    indicators: true,
+    arrows: true,
+    pauseOnHover: true,
+    onChange: (oldIndex, newIndex) => {
+      console.log(`slide transition from ${oldIndex} to ${newIndex}`);
+    },
+  };
   return (
     <>
-      <div className="slide-container">
-        <Slide {...properties}>
+      <div className="slide-container" style={{ height: "100%" }}>
+        <Slide {...properties} style={{ height: "100%" }}>
           {[...img].map((e, i) => {
             return (
               <div key={i} className="each-slide" style={{ margin: "auto" }}>

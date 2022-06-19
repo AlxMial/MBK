@@ -166,6 +166,7 @@ const Stock = () => {
             price: yup.string().required("* กรุณากรอก ราคา"),
         }),
         onSubmit: (values) => {
+            console.log(values.productCategoryId)
             console.log('onSubmit', values);
             dispatch(fetchLoading());
             const cover = stockImage.filter((x) => x.relatedTable === 'stock1')[0].image;

@@ -16,6 +16,7 @@ const ShowProducts = () => {
   const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
   const [Img, setImg] = useState([]);
+  const [ImgLoading, setImgLoading] = useState(true);
   const [cartNumberBadge, setcartNumberBadge] = useState(
     fn.getCartNumberBadge()
   );
@@ -62,21 +63,21 @@ const ShowProducts = () => {
         if (item.quantity + spin > tbStock.productCount) {
           addToast(
             "ไม่สามารถเพิ่มจำนวนสินค้านี้ได้ เนื่องจากคุณเพิ่มสินค้านี้ไว้ในรถเข็นแล้ว " +
-              item.quantity +
-              " ชิ้น",
+            item.quantity +
+            " ชิ้น",
             {
               appearance: "warning",
               autoDismiss: true,
             }
           );
-        }else{
-            Storage.set_add_to_cart({ id: id, quantity: spin });
-            NumberBadge();
-    
-            addToast("คุณได้เพิ่มสินค้าลงในรถเข็นเรียบร้อยแล้ว", {
-              appearance: "success",
-              autoDismiss: true,
-            });
+        } else {
+          Storage.set_add_to_cart({ id: id, quantity: spin });
+          NumberBadge();
+
+          addToast("คุณได้เพิ่มสินค้าลงในรถเข็นเรียบร้อยแล้ว", {
+            appearance: "success",
+            autoDismiss: true,
+          });
         }
       }
     }
@@ -101,16 +102,16 @@ const ShowProducts = () => {
         if (item.quantity + spin > tbStock.productCount) {
           addToast(
             "ไม่สามารถเพิ่มจำนวนสินค้านี้ได้ เนื่องจากคุณเพิ่มสินค้านี้ไว้ในรถเข็นแล้ว " +
-              item.quantity +
-              " ชิ้น",
+            item.quantity +
+            " ชิ้น",
             {
               appearance: "warning",
               autoDismiss: true,
             }
           );
-        }else{
-            Storage.set_add_to_cart({ id: id, quantity: spin });
-            history.push(path.showCart);
+        } else {
+          Storage.set_add_to_cart({ id: id, quantity: spin });
+          history.push(path.showCart);
         }
       }
     }
@@ -137,9 +138,8 @@ const ShowProducts = () => {
         if (response.data.status) {
           let data = response.data.data;
           if (data.length > 0) {
-            data.map((e, i) => {
-              tobase64(e.image.data);
-            });
+            // setImglength(data.length)
+            tobase64(data)
           } else {
             tobase64(require("assets/img/mbk/no-image.png").default);
           }
@@ -150,17 +150,29 @@ const ShowProducts = () => {
   };
   const tobase64 = async (data) => {
     let _Img = Img;
-    const base64 = await FilesService.buffer64UTF8(data);
-    _Img.push({ url: base64 });
+    for (var i = 0; i < data.length; i++) {
+      const base64 = await FilesService.buffer64UTF8(data[i].image.data);
+      console.log("base64 " + i)
+      console.log("base64 " + base64)
+      _Img.push({ url: base64 });
+    }
+
+    // const base64 = await FilesService.buffer64UTF8(data[i].image.data);
+    console.log("set image")
     setImg(_Img);
+    console.log(Img)
+    setImgLoading(false)
   };
 
   useEffect(() => {
     fetchDatatbStock();
     fetchImg();
-  }, []);
+  }, [Img]);
+
   return (
+
     <>
+      {/* {console.log(Imglength)} */}
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {tbStock != null ? (
         <>
@@ -183,7 +195,7 @@ const ShowProducts = () => {
                 right: "0",
                 alignItems: "center",
               }}
-              onClick={()=>{
+              onClick={() => {
                 history.push(path.showCart);
               }}
             >
@@ -195,117 +207,130 @@ const ShowProducts = () => {
               ) : null}
             </div>
           </div>
-          <div className="liff-inline" />
+
+
 
           {/* products */}
-          <div style={{ width: "98%", margin: "auto" }}>
-            <div>
-              {Img.length > 0 ? <SlideShow img={Img} /> : null}
-              {/* <img
-                style={{ margin: "auto" }}
-                src={Img[0]}
-                alt="flash_sale"
-                className="w-32 border-2 border-blueGray-50"
-              ></img> */}
+          <div className="mt-2" style={{ width: "98%", margin: "auto", height: "200px", }}>
+            <div style={{
+              maxWidth: "200px",
+              height: "200px",
+              margin: "auto"
+            }}>
+              {Img.length > 0 ?
+                <SlideShow img={Img} duration={60000} />
+                : null}
+
             </div>
-            <div className="font-bold mt-2"> ราคาสินค้า </div>
+
+          </div>
+
+
+          <div className="font-bold mt-2 text-base " style={{ width: "98%", margin: "auto" }}> {tbStock.productName} </div>
+
+          <div className="font-bold mt-3 text-xs" style={{ width: "98%", margin: "auto" }}> ราคาสินค้า </div>
+          <div
+            className="flex mt-2"
+            style={{
+              width: "98%", margin: "auto",
+              color: tbStock.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
+            }}
+
+          >
             <div
-              className="flex mt-2"
               style={{
-                color: tbStock.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
+                textDecoration:
+                  tbStock.discount > 0 ? "line-through" : "none",
               }}
             >
+              {"฿ " + fn.formatMoney(tbStock.price)}
+            </div>
+            {tbStock.discount > 0 ? (
+              <div style={{ color: "red", paddingLeft: "10px" }}>
+                {"฿ " + fn.formatMoney(tbStock.priceDiscount)}
+              </div>
+            ) : null}
+            {tbStock.discount > 0 ? (
               <div
+                className="absolute text-white text-xs"
                 style={{
-                  textDecoration:
-                    tbStock.discount > 0 ? "line-through" : "none",
+                  borderRadius: "5px",
+                  padding: "0 10px",
+                  right: "10px",
+                  background: "red",
                 }}
               >
-                {"฿" + fn.formatMoney(tbStock.price)}
+                {"SALE -" + tbStock.percent + "%"}
               </div>
-              {tbStock.discount > 0 ? (
-                <div style={{ color: "red", paddingLeft: "10px" }}>
-                  {"฿" + fn.formatMoney(tbStock.priceDiscount)}
-                </div>
-              ) : null}
-              {tbStock.discount > 0 ? (
-                <div
-                  className="absolute text-white"
-                  style={{
-                    borderRadius: "5px",
-                    padding: "0 10px",
-                    right: "10px",
-                    background: "red",
-                  }}
-                >
-                  {"SALE -" + tbStock.percent + "%"}
-                </div>
-              ) : null}
-            </div>
+            ) : null}
           </div>
-          <div className="liff-inline" />
 
+
+
+
+          <div className="liff-inline" />
           <div style={{ width: "98%", margin: "auto" }}>
-            <div className="font-bold mt-2"> รายละเอียดสินค้า </div>
-            <div className="mt-2"> {tbStock.description} </div>
+            <div className="font-bold text-ิฟหำ"> รายละเอียดสินค้า </div>
+            <div className="mt-2 px-4"> {tbStock.description} </div>
           </div>
-          <div
-            className="mt-2"
-            style={{ width: "100%", borderBottom: "1px solid #eee" }}
-          ></div>
-          <div style={{ width: "98%", margin: "auto" }}>
-            <div className="mt-2">
-              <div
-                className="flex "
-                style={{ color: "gray", alignItems: "center" }}
-              >
-                <div className=" px-2">จำนวน</div>
-                <button
-                  name="minus"
-                  disabled={spin === 0 ? true : false}
-                  style={{
-                    width: "35px",
-                    border: "1px solid #ddd",
-                    height: "35px",
-                    outline: "none",
-                    color: spin === 0 ? "gray" : "#000",
-                  }}
-                  onClick={() => {
-                    if (spin !== 0) {
-                      spinButton("minus");
-                    }
-                  }}
+
+
+          <div className="absolute w-full" style={{ bottom: "0" }}>
+            <div className="liff-inline" />
+            <div style={{ width: "98%", margin: "auto" }}>
+              <div className="mt-2">
+                <div
+                  className="flex "
+                  style={{ color: "gray", alignItems: "center" }}
                 >
-                  <i className="fas fa-minus"></i>
-                </button>
-                <input
-                  style={{
-                    width: "50px",
-                    border: "1px solid #ddd",
-                    height: "35px",
-                    color: "#000",
-                  }}
-                  type="tel"
-                  value={spin}
-                  onChange={(e) => {
-                    console.log(e.target.value);
-                    let value = e.target.value;
-                    if (!fn.IsNullOrEmpty(value)) {
-                      value = parseInt(e.target.value);
-                    }
-                    setspin(value);
-                  }}
-                  onBlur={(e) => {
-                    let value = e.target.value;
-                    if (fn.IsNullOrEmpty(value)) {
-                      value = 0;
+                  <div className=" text-xs px-2">จำนวน</div>
+                  <button
+                    name="minus"
+                    disabled={spin === 0 ? true : false}
+                    style={{
+                      width: "35px",
+                      border: "1px solid #ddd",
+                      height: "35px",
+                      outline: "none",
+                      color: spin === 0 ? "gray" : "#000",
+                      borderRadius: " 5px 0 0 5px "
+                    }}
+                    onClick={() => {
+                      if (spin !== 0) {
+                        spinButton("minus");
+                      }
+                    }}
+                  >
+                    <i className="fas fa-minus"></i>
+                  </button>
+                  <input
+                    style={{
+                      width: "50px",
+                      border: "1px solid #ddd",
+                      height: "35px",
+                      color: "#000",
+                    }}
+                    type="tel"
+                    value={spin}
+                    onChange={(e) => {
+                      console.log(e.target.value);
+                      let value = e.target.value;
+                      if (!fn.IsNullOrEmpty(value)) {
+                        value = parseInt(e.target.value);
+                      }
                       setspin(value);
-                    }
-                    if (parseInt(value) > tbStock.productCount) {
-                      value = tbStock.productCount;
-                      setspin(value);
-                    }
-                  }}
+                    }}
+                    onBlur={(e) => {
+                      let value = e.target.value;
+                      if (fn.IsNullOrEmpty(value)) {
+                        value = 0;
+                        setspin(value);
+                      }
+                      if (parseInt(value) > tbStock.productCount) {
+                        value = tbStock.productCount;
+                        setspin(value);
+                      }
+                    }}
                   //   onKeyDown={(e) => {
                   //     let value = e.target.value;
                   //     if (parseInt(value) > tbStock.productCount) {
@@ -313,68 +338,70 @@ const ShowProducts = () => {
                   //       setspin(value);
                   //     }
                   //   }}
-                />
-                <button
-                  name="plus"
-                  style={{
-                    width: "35px",
-                    border: "1px solid #ddd",
-                    height: "35px",
-                    outline: "none",
-                    color: "#000",
-                  }}
-                  onClick={() => {
-                    spinButton("plus");
-                  }}
-                >
-                  <i className="fas fa-plus"></i>
-                </button>
+                  />
+                  <button
+                    name="plus"
+                    style={{
+                      width: "35px",
+                      border: "1px solid #ddd",
+                      height: "35px",
+                      outline: "none",
+                      color: "#000",
+                      borderRadius: "0 5px 5px 0"
+                    }}
+                    onClick={() => {
+                      spinButton("plus");
+                    }}
+                  >
+                    <i className="fas fa-plus"></i>
+                  </button>
 
-                <div className=" px-2 absolute" style={{ right: "10px" }}>
-                  {"มีสินค้าทั้งหมด " + tbStock.productCount + " ชิ้น"}
+                  <div className=" px-2 absolute" style={{ right: "10px" }}>
+                    {"มีสินค้าทั้งหมด " + tbStock.productCount + " ชิ้น"}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="liff-inline" />
-          <div className="absolute w-full flex" style={{ bottom: "40px" }}>
-            <div style={{ width: "50%", padding: "10px" }}>
-              <div
-                className="bg-green-mbk text-white text-center text-lg  font-bold "
-                style={{
-                  margin: "auto",
-                  height: "45px",
-                  borderRadius: "10px",
-                  padding: "5px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                onClick={add_to_cart}
-              >
-                {"เพิ่มไปยังรถเข็น"}
+            <div className="liff-inline" />
+            <div className=" w-full flex">
+              <div style={{ width: "50%", padding: "10px" }}>
+                <div
+                  className="bg-green-mbk text-white text-center text-lg  font-bold "
+                  style={{
+                    margin: "auto",
+                    height: "45px",
+                    borderRadius: "10px",
+                    padding: "5px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onClick={add_to_cart}
+                >
+                  {"เพิ่มไปยังรถเข็น"}
+                </div>
               </div>
-            </div>
-            <div style={{ width: "50%", padding: "10px" }}>
-              <div
-                className="bg-yellow-mbk  text-white text-center text-lg  font-bold "
-                style={{
-                  margin: "auto",
-                  height: "45px",
-                  borderRadius: "10px",
-                  padding: "5px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-                // onClick={() => {
-                //     btbuy
-                //   Storage.set_add_to_cart({ id: id, quantity: spin });
-                //   // history.push(path.member);
-                // }}
-                onClick={btbuy}
-              >
-                {"ซื้อสินค้า"}
+              <div style={{ width: "50%", padding: "10px" }}>
+                <div
+                  className="bg-yellow-mbk  text-white text-center text-lg  font-bold "
+                  style={{
+                    margin: "auto",
+                    height: "45px",
+                    borderRadius: "10px",
+                    padding: "5px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  // onClick={() => {
+                  //     btbuy
+                  //   Storage.set_add_to_cart({ id: id, quantity: spin });
+                  //   // history.push(path.member);
+                  // }}
+                  onClick={btbuy}
+                >
+                  {"ซื้อสินค้า"}
+                </div>
               </div>
             </div>
           </div>

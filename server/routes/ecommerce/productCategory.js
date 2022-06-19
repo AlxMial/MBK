@@ -4,6 +4,7 @@ const { tbProductCategory } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
+const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
@@ -63,5 +64,18 @@ router.delete("/:id", validateToken, async (req, res) => {
     tbProductCategory.update(req.body, { where: { id: id } });
     res.json({ status: true, message: "success", tbProductCategory: null });
 });
+
+//#region line liff
+router.get("/getProductCategory", validateLineToken, async (req, res) => {
+    const data = await tbProductCategory.findAll({
+        where: { isDeleted: false },
+    });
+    res.json({
+        status: true,
+        message: "success",
+        tbProductCategory: data,
+    });
+});
+//#endregion line liff
 
 module.exports = router;

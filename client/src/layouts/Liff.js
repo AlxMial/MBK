@@ -14,7 +14,7 @@ import {
 } from "@services/liff.services";
 
 // components
-const dev = false;
+const dev = true;
 
 const getRoutes = () => {
   return routes.map((prop, key) => {
@@ -45,14 +45,14 @@ const initLine = (callback, setView) => {
 const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "U66c3a95352d2269cc83129a2268f1xxx",
+      uid: "U66c3a95352d2269cc83129a2268f1893",
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {
       apiCheckRegister((res) => {
         let lifdata = {
-          uid: "U66c3a95352d2269cc83129a2268f1xxx",
+          uid: "U66c3a95352d2269cc83129a2268f1893",
           pictureUrl: null,
         }
         if (res.data.code === 200) {
@@ -163,7 +163,7 @@ const LiffAPP = () => {
   return (
     <>
       {!isInClient ? (
-        <div style={{ minHeight: "100vh" }}>
+        <div style={{ height: "100vh" }}>
           <div
             className={"noselect bg-green-mbk flex"}
             style={{ height: "100px" }}
@@ -191,7 +191,7 @@ const LiffAPP = () => {
       ) : !view ? (
         <Spinner customText={"Loading"} />
       ) : (
-        <div style={{ display: !view ? "none" : "", minHeight: "100vh" }}>
+        <div style={{ display: !view ? "none" : "", height: "100vh" }}>
           <div
             className={"noselect " + (!ismemberpage ? "bg-green-mbk flex" : "")}
             style={{ height: bg }}
@@ -200,20 +200,20 @@ const LiffAPP = () => {
               {pathname
                 .toLowerCase()
                 .includes("shoplist") ? null : ismemberpage ? (
-                <img
-                  className="w-full"
-                  src={
-                    pathname.includes("point") ||
-                    pathname.toLowerCase().includes("/reward")
-                      ? require("assets/img/mbk/Background.jpg").default
-                      : require("assets/img/mbk/line_head_img.jpg").default
-                  }
-                  alt="line_head_img"
-                  style={{
-                    objectFit: "fill",
-                  }}
-                ></img>
-              ) : (
+                  <img
+                    className="w-full"
+                    src={
+                      pathname.includes("point") ||
+                        pathname.toLowerCase().includes("/reward")
+                        ? require("assets/img/mbk/Background.jpg").default
+                        : require("assets/img/mbk/line_head_img.jpg").default
+                    }
+                    alt="line_head_img"
+                    style={{
+                      objectFit: "fill",
+                    }}
+                  ></img>
+                ) : (
                 <img
                   src="https://www.prg.co.th/images/logo.png"
                   alt="logo_mbk"
