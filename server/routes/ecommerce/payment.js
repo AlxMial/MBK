@@ -4,7 +4,10 @@ const { tbPayment } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
+const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const jwt = require('jsonwebtoken');
+const ValidateEncrypt = require("../../services/crypto");
+const Encrypt = new ValidateEncrypt();
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
@@ -74,6 +77,33 @@ router.delete("/:id", validateToken, async (req, res) => {
 });
 
 
+//#region line liff
+router.get("/gettbPayment", validateLineToken, async (req, res) => {
+    // let data = []
+    let code = 200
+    let option = []
+    try {
+        const data = await tbPayment.findAll({
+            attributes: ["id", "accountName", "accountNumber", "bankBranchName", "bankName"],
+            where: { isDeleted: false },
+        });
 
+        if (data) {
+            data.map(e => {
+                option.push({ id: Encrypt.EncodeKey(e.id), accountName: e.accountName, accountNumber: e.accountNumber, bankBranchName: e.bankBranchName, bankName: e.bankName });
+            })
+        }
+
+    } catch (e) {
+        code = 300;
+    }
+
+    res.json({
+        code: code,
+        tbPayment: option,
+    });
+
+});
+//#endregion line liff
 
 module.exports = router;

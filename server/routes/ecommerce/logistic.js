@@ -1,9 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const { tbLogistic } = require("../../models");
+const { tbLogistic, tbPromotionDelivery } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
+const { validateLineToken } = require("../../middlewares/LineMiddleware");
+const ValidateEncrypt = require("../../services/crypto");
+const Encrypt = new ValidateEncrypt();
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
@@ -64,4 +67,47 @@ router.delete("/:id", validateToken, async (req, res) => {
     res.json({ status: true, message: "success", tbLogistic: null });
 });
 
+//#region line liff
+router.get("/gettbLogistic", validateLineToken, async (req, res) => {
+    let LogisticData = []
+    let PromotionDelivery = null
+    let status = true
+    let message = ""
+    try {
+        //#region tbLogistic
+        const _tbLogistic = await tbLogistic.findAll({
+            attributes: ["id", "logisticType", "deliveryName", "description", "deliveryCost"],
+            where: { isDeleted: false, isShow: true },
+        });
+        if (_tbLogistic) {
+            _tbLogistic.map((e, i) => {
+                LogisticData.push({ id: Encrypt.EncodeKey(e.id), logisticType: e.logisticType, deliveryName: e.deliveryName, description: e.description, deliveryCost: e.deliveryCost })
+            })
+        }
+        //#endregion tbLogistic
+        //#region tbLogistic
+
+        const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
+            attributes: ["id", "promotionName", "buy", "deliveryCost", "deliveryCost"],
+            where: { isDeleted: false, isInactive: true },
+        });
+        if (_tbPromotionDelivery) {
+            Encrypt.encryptValueId(_tbPromotionDelivery)
+            PromotionDelivery = _tbPromotionDelivery
+        }
+        //#endregion tbLogistic
+
+    } catch (e) {
+        status = false
+        message = e.message
+    }
+    res.json({
+        status: status,
+        message: message,
+        tbLogistic: LogisticData,
+        tbPromotionDelivery: PromotionDelivery
+    });
+});
+
+//#endregion line liff
 module.exports = router;

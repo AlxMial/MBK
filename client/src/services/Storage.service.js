@@ -93,3 +93,18 @@ export const upd_cart = (obj) => {
 export const remove_cart = () => {
   localStorage.removeItem("cart");
 };
+
+
+export const setbyorder = (obj) => {
+  let data = { shop_orders: [obj] };
+  localStorage.setItem("byorder", JSON.stringify(data));
+};
+export const getbyorder = () => {
+  let byorder = localStorage.getItem("byorder");
+  byorder = IsNullOrEmpty(byorder) ? "" : JSON.parse(byorder);
+  return byorder;
+};
+
+export const updbyorder = (obj) => {
+  localStorage.setItem("byorder", JSON.stringify(obj));
+};

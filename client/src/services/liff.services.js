@@ -23,6 +23,9 @@ import showProducts from "views/liff/shop/showProducts";
 import showCart from "views/liff/shop/showCart";
 import usecoupon from "views/liff/shop/usecoupon";
 
+import makeorder from "views/liff/makeorder/makeorder";
+
+import addAddress from "views/liff/makeorder/addAddress";
 
 export const path = {
   privacypolicy: "/line/privacypolicy",
@@ -45,7 +48,10 @@ export const path = {
   showProducts: "/line/showProducts/:id",
   showCart: "/line/showCart",
   usecoupon: "/line/usecoupon/:id",
-  
+
+  makeorder: "/line/makeorder/:id",
+  addAddress: "/line/addAddress",
+
 };
 export const routes = [
   {
@@ -122,8 +128,15 @@ export const routes = [
     path: path.usecoupon,
     component: usecoupon,
   },
+  {
+    path: path.makeorder,
+    component: makeorder,
+  },
+  {
+    path: path.addAddress,
+    component: addAddress,
+  },
 
-  
 ];
 
 
@@ -140,6 +153,20 @@ const httpGet = (path, s, e, f) => {
       f();
     });
 };
+const httpPost = (path, data, s, e, f) => {
+  axios
+    .post(path, data)
+    .then((res) => {
+      s(res);
+    })
+    .catch((error) => {
+      e(error);
+    })
+    .finally((final) => {
+      f();
+    });
+};
+
 export const checkRegister = (s, e = () => { }, f = () => { }) => {
   let _uid = Session.getLiff().uid;
   axios
@@ -164,18 +191,22 @@ export const getMemberpoints = (s, e = () => { }, f = () => { }) => {
 };
 export const getMemberPointsList = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMemberPointsList", s, e, f);
-  // axios
-  //   .get("/members/getMemberPointsList")
-  //   .then((res) => {
-  //     s(res);
-  //   })
-  //   .catch((error) => {
-  //     e(error);
-  //   })
-  //   .finally((final) => {
-  //     f();
-  //   });
 };
+export const getMemberAddress = (s, e = () => { }, f = () => { }) => {
+  httpGet("/members/getMemberAddress", s, e, f);
+};
+export const addMemberAddress = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/members/addMemberAddress", data, s, e, f);
+};
+export const gettbPayment = (s, e = () => { }, f = () => { }) => {
+  httpGet("/payment/gettbPayment", s, e, f);
+};
+export const gettbLogistic = (s, e = () => { }, f = () => { }) => {
+  httpGet("/logistic/gettbLogistic", s, e, f);
+};
+
+
+
 
 export const membersDpd = (data, s, e = () => { }, f = () => { }) => {
   axios

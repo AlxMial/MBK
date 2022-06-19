@@ -35,23 +35,10 @@ const ShowProducts = () => {
     setcartNumberBadge(fn.getCartNumberBadge());
   };
   const add_to_cart = () => {
-    let cart = Storage.get_cart();
-    if (fn.IsNullOrEmpty(cart.shop_orders)) {
-      Storage.set_add_to_cart({ id: id, quantity: spin });
-      NumberBadge();
+    if (spin > 0) {
+      let cart = Storage.get_cart();
 
-      addToast("คุณได้เพิ่มสินค้าลงในรถเข็นเรียบร้อยแล้ว", {
-        appearance: "success",
-        autoDismiss: true,
-      });
-    } else {
-      let item;
-      cart.shop_orders.map((e, i) => {
-        if (e.id == id) {
-          item = e;
-        }
-      });
-      if (fn.IsNullOrEmpty(item)) {
+      if (fn.IsNullOrEmpty(cart.shop_orders)) {
         Storage.set_add_to_cart({ id: id, quantity: spin });
         NumberBadge();
 
@@ -60,17 +47,13 @@ const ShowProducts = () => {
           autoDismiss: true,
         });
       } else {
-        if (item.quantity + spin > tbStock.productCount) {
-          addToast(
-            "ไม่สามารถเพิ่มจำนวนสินค้านี้ได้ เนื่องจากคุณเพิ่มสินค้านี้ไว้ในรถเข็นแล้ว " +
-            item.quantity +
-            " ชิ้น",
-            {
-              appearance: "warning",
-              autoDismiss: true,
-            }
-          );
-        } else {
+        let item;
+        cart.shop_orders.map((e, i) => {
+          if (e.id == id) {
+            item = e;
+          }
+        });
+        if (fn.IsNullOrEmpty(item)) {
           Storage.set_add_to_cart({ id: id, quantity: spin });
           NumberBadge();
 
@@ -78,43 +61,34 @@ const ShowProducts = () => {
             appearance: "success",
             autoDismiss: true,
           });
+        } else {
+          if (item.quantity + spin > tbStock.productCount) {
+            addToast(
+              "ไม่สามารถเพิ่มจำนวนสินค้านี้ได้ เนื่องจากคุณเพิ่มสินค้านี้ไว้ในรถเข็นแล้ว " +
+              item.quantity +
+              " ชิ้น",
+              {
+                appearance: "warning",
+                autoDismiss: true,
+              }
+            );
+          } else {
+            Storage.set_add_to_cart({ id: id, quantity: spin });
+            NumberBadge();
+
+            addToast("คุณได้เพิ่มสินค้าลงในรถเข็นเรียบร้อยแล้ว", {
+              appearance: "success",
+              autoDismiss: true,
+            });
+          }
         }
       }
     }
   };
 
   const btbuy = () => {
-    let cart = Storage.get_cart();
-    if (fn.IsNullOrEmpty(cart.shop_orders)) {
-      Storage.set_add_to_cart({ id: id, quantity: spin });
-      history.push(path.showCart);
-    } else {
-      let item;
-      cart.shop_orders.map((e, i) => {
-        if (e.id == id) {
-          item = e;
-        }
-      });
-      if (fn.IsNullOrEmpty(item)) {
-        Storage.set_add_to_cart({ id: id, quantity: spin });
-        history.push(path.showCart);
-      } else {
-        if (item.quantity + spin > tbStock.productCount) {
-          addToast(
-            "ไม่สามารถเพิ่มจำนวนสินค้านี้ได้ เนื่องจากคุณเพิ่มสินค้านี้ไว้ในรถเข็นแล้ว " +
-            item.quantity +
-            " ชิ้น",
-            {
-              appearance: "warning",
-              autoDismiss: true,
-            }
-          );
-        } else {
-          Storage.set_add_to_cart({ id: id, quantity: spin });
-          history.push(path.showCart);
-        }
-      }
-    }
+    Storage.setbyorder({ id: id, quantity: spin })
+    history.push(path.makeorder.replace(":id", "byorder"))
   };
   const fetchDatatbStock = async () => {
     await axios.post("stock/getStock", { id: [id] }).then((response) => {
@@ -186,7 +160,7 @@ const ShowProducts = () => {
           </div>
 
           <div
-            className="flex relative "
+            className="flex relative mt-2 "
             style={{ height: "35px", alignItems: "center" }}
           >
             <div
@@ -201,7 +175,7 @@ const ShowProducts = () => {
             >
               <i className="fas fa-cart-plus relative icon-cart"></i>
               {!IsNullOrEmpty(cartNumberBadge) ? (
-                <div className="cart-number-badge" style={{}}>
+                <div className="cart-number-badge" style={{ fontSize: "11px" }}>
                   {cartNumberBadge}{" "}
                 </div>
               ) : null}
@@ -211,7 +185,7 @@ const ShowProducts = () => {
 
 
           {/* products */}
-          <div className="mt-2" style={{ width: "98%", margin: "auto", height: "200px", }}>
+          <div className="mt-2" style={{ width: "95%", margin: "auto", height: "200px", }}>
             <div style={{
               maxWidth: "200px",
               height: "200px",
@@ -226,13 +200,13 @@ const ShowProducts = () => {
           </div>
 
 
-          <div className="font-bold mt-2 text-base " style={{ width: "98%", margin: "auto" }}> {tbStock.productName} </div>
+          <div className="font-bold mt-2 text-base " style={{ width: "95%", margin: "auto" }}> {tbStock.productName} </div>
 
-          <div className="font-bold mt-3 text-xs" style={{ width: "98%", margin: "auto" }}> ราคาสินค้า </div>
+          <div className="font-bold mt-3 text-xs" style={{ width: "95%", margin: "auto" }}> ราคาสินค้า </div>
           <div
             className="flex mt-2"
             style={{
-              width: "98%", margin: "auto",
+              width: "95%", margin: "auto",
               color: tbStock.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
             }}
 
@@ -260,7 +234,7 @@ const ShowProducts = () => {
                   background: "red",
                 }}
               >
-                {"SALE -" + tbStock.percent + "%"}
+                {"SALE -" + fn.formatMoney(tbStock.percent) + "%"}
               </div>
             ) : null}
           </div>
@@ -269,7 +243,7 @@ const ShowProducts = () => {
 
 
           <div className="liff-inline" />
-          <div style={{ width: "98%", margin: "auto" }}>
+          <div style={{ width: "95%", margin: "auto" }}>
             <div className="font-bold text-ิฟหำ"> รายละเอียดสินค้า </div>
             <div className="mt-2 px-4"> {tbStock.description} </div>
           </div>
@@ -277,7 +251,7 @@ const ShowProducts = () => {
 
           <div className="absolute w-full" style={{ bottom: "0" }}>
             <div className="liff-inline" />
-            <div style={{ width: "98%", margin: "auto" }}>
+            <div style={{ width: "95%", margin: "auto" }}>
               <div className="mt-2">
                 <div
                   className="flex "
@@ -286,17 +260,17 @@ const ShowProducts = () => {
                   <div className=" text-xs px-2">จำนวน</div>
                   <button
                     name="minus"
-                    disabled={spin === 0 ? true : false}
+                    disabled={spin === 1 ? true : false}
                     style={{
                       width: "35px",
                       border: "1px solid #ddd",
                       height: "35px",
                       outline: "none",
-                      color: spin === 0 ? "gray" : "#000",
+                      color: spin === 1 ? "gray" : "#000",
                       borderRadius: " 5px 0 0 5px "
                     }}
                     onClick={() => {
-                      if (spin !== 0) {
+                      if (spin !== 1) {
                         spinButton("minus");
                       }
                     }}
@@ -309,6 +283,7 @@ const ShowProducts = () => {
                       border: "1px solid #ddd",
                       height: "35px",
                       color: "#000",
+                      fontSize: "12px"
                     }}
                     type="tel"
                     value={spin}
@@ -331,26 +306,23 @@ const ShowProducts = () => {
                         setspin(value);
                       }
                     }}
-                  //   onKeyDown={(e) => {
-                  //     let value = e.target.value;
-                  //     if (parseInt(value) > tbStock.productCount) {
-                  //       value = tbStock.productCount;
-                  //       setspin(value);
-                  //     }
-                  //   }}
+
                   />
                   <button
                     name="plus"
+                    disabled={spin === tbStock.productCount ? true : false}
                     style={{
                       width: "35px",
                       border: "1px solid #ddd",
                       height: "35px",
                       outline: "none",
-                      color: "#000",
+                      color: spin === tbStock.productCount ? "gray" : "#000",
                       borderRadius: "0 5px 5px 0"
                     }}
                     onClick={() => {
-                      spinButton("plus");
+                      if (spin !== tbStock.productCount) {
+                        spinButton("plus");
+                      }
                     }}
                   >
                     <i className="fas fa-plus"></i>
@@ -383,21 +355,15 @@ const ShowProducts = () => {
               </div>
               <div style={{ width: "50%", padding: "10px" }}>
                 <div
-                  className="bg-yellow-mbk  text-white text-center text-lg  font-bold "
+                  className="bg-yellow-mbk flex text-white text-center text-lg  font-bold "
                   style={{
                     margin: "auto",
                     height: "45px",
                     borderRadius: "10px",
                     padding: "5px",
-                    display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                   }}
-                  // onClick={() => {
-                  //     btbuy
-                  //   Storage.set_add_to_cart({ id: id, quantity: spin });
-                  //   // history.push(path.member);
-                  // }}
                   onClick={btbuy}
                 >
                   {"ซื้อสินค้า"}

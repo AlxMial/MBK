@@ -7,8 +7,8 @@ const ImageUC = (prop) => {
   const fetchImg = async () => {
     await axios
       .post("stock/getImg", {
-        id: other.relatedId,
-        relatedTable: other.relatedTable,
+        id: other.relatedid,
+        relatedTable: other.relatedtable,
       })
       .then((response) => {
         if (response.data.status) {
