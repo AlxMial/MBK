@@ -22,7 +22,8 @@ import ConditioRewardInfo from "views/admin/crm/conditionReward/conditioRewardIn
 import Stock from "views/admin/ecommerce/stock";
 import Order from "views/admin/ecommerce/order";
 import CancelAndReturn from "views/admin/ecommerce/cancelAndReturn";
-
+import ReportPointHistoryReport from "views/admin/report/PointHistoryReport";
+import CollectPointsReport from "views/admin/report/CollectPointsReport";
 export default function Admin() {
 
   const { height, width } = useWindowDimensions();
@@ -73,8 +74,9 @@ export default function Admin() {
               <Route path="/admin/stocksinfo" exact component={StockInfo} />
               <Route path="/admin/stocksinfo/:id" exact component={StockInfo} />
               <Route path="/admin/points" exact component={PointManage} />
-
-              <Redirect from="/admin" to="/admin/users" />
+              <Route path="/admin/pointhistoryreport" exact component={ReportPointHistoryReport} />
+              <Route path="/admin/collectPointsReport" exact component={CollectPointsReport} />
+              <Redirect from="/admin" to="/admin/users" />              
             </Switch>
             {/* <FooterAdmin /> */}
           </div>

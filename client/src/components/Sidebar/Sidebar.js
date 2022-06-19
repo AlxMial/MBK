@@ -70,8 +70,8 @@ export default function Sidebar() {
     { id: 5, module: 'ecommerce', link: '/admin/stocks', label: 'คลังสินค้า', icon: 'fas fa-warehouse' },
     { id: 6, module: 'ecommerce', link: '/admin/order', label: 'รายการสั่งซื้อ', icon: 'fas fa-shopping-basket' },
     { id: 7, module: 'ecommerce', link: '/admin/cancelAndReturn', label: 'ยกเลิกและคืนสินต้า', icon: 'fas fa-undo-alt' },
-    { id: 8, module: 'report', link: '/admin/pointHistoryReport', label: 'ประวัติการรับคะแนน', icon: 'fas fa-history' },
-    { id: 9, module: 'report', link: '/admin/redemtionHistoryReport', label: 'ประวัติการแลกรางวัล', icon: 'fas fa-gift' },
+    { id: 8, module: 'report', link: '/admin/pointHistoryReport', label: 'รายงานแสดงข้อมูลแคมเปญของ Code คะแนนทั้งหมด'},
+    { id: 9, module: 'report', link: '/admin/collectPointsReport', label: 'รายงานสะสมคะแนน'},
   ]
 
   return (
