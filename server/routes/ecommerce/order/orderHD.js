@@ -8,7 +8,7 @@ const ValidateEncrypt = require("../../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
 const Sequelize = require("sequelize");
-const { tbOrderHD, tbMember, tbOrderDT } = require("../../../models");
+const { tbOrderHD, tbMember, tbOrderDT, tbStock } = require("../../../models");
 
 const Op = Sequelize.Op;
 
@@ -153,25 +153,141 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
                 const _tbOrderDT = await tbOrderDT.create(orderdt[i]);
             }
         }
-
-
-        // data.dataValues.id
-        // console.log()
-
-
     } catch (e) {
         status = false
         msg = e.message
     }
-    // const data = await tbOrderHD.create(req.body);
-
     return res.json({
         status: status,
         msg: msg,
         orderId: orderId
     });
 });
+router.post("/getOrderHD", validateLineToken, async (req, res) => {
 
+    let status = true;
+    let msg;
+    let Member;
+    let { PaymentStatus, TransportStatus, isCancel, isReturn } = req.body
+    let OrderHDData;
+    let OrderHD = []
+    try {
+        const uid = Encrypt.DecodeKey(req.user.uid);
+        Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+        if (Member) {
+
+
+            if (PaymentStatus == "Wating" && TransportStatus == "Prepare" && !isCancel && !isReturn) {
+                ///ที่ต้องชำระ
+                OrderHDData = await tbOrderHD.findAll({
+                    attributes: ["id", "orderNumber",],
+                    where: {
+                        isCancel: isCancel,
+                        IsDeleted: false, memberId: Member.id,
+                        paymentStatus: PaymentStatus,
+                        transportStatus: TransportStatus,
+                        isReturn: isReturn
+                    }
+                });
+            } else if (PaymentStatus == "Done" && TransportStatus == "Prepare") {
+                //เตรียมสินค้า
+                OrderHDData = await tbOrderHD.findAll({
+                    attributes: ["id", "orderNumber",],
+                    where: {
+                        isCancel: false,
+                        IsDeleted: false, memberId: Member.id,
+                        paymentStatus: PaymentStatus,
+                        transportStatus: TransportStatus
+                    }
+                });
+            } else if (PaymentStatus == "Done" && TransportStatus == "In Transit") {
+                //ที่ต้องได้รับ
+                OrderHDData = await tbOrderHD.findAll({
+                    attributes: ["id", "orderNumber",],
+                    where: {
+                        isCancel: false,
+                        IsDeleted: false, memberId: Member.id,
+                        paymentStatus: PaymentStatus,
+                        transportStatus: TransportStatus,
+                        isReturn: isReturn
+                    }
+                });
+            }
+            else if (PaymentStatus == "Done" && TransportStatus == "Done" && !isReturn) {
+                //สำเร็จ
+                OrderHDData = await tbOrderHD.findAll({
+                    attributes: ["id", "orderNumber",],
+                    where: {
+                        isCancel: false,
+                        IsDeleted: false, memberId: Member.id,
+                        paymentStatus: PaymentStatus,
+                        transportStatus: TransportStatus,
+                        isReturn: isReturn
+                    }
+                });
+            }
+            else if (PaymentStatus == "Wating" && TransportStatus == "Prepare" && isCancel && !isReturn) {
+                //ยกเลิก
+                OrderHDData = await tbOrderHD.findAll({
+                    attributes: ["id", "orderNumber",],
+                    where: {
+                        isCancel: isCancel,
+                        IsDeleted: false, memberId: Member.id,
+                        paymentStatus: PaymentStatus,
+                        transportStatus: TransportStatus,
+                        isReturn: isReturn
+                    }
+                });
+            }
+            else if (PaymentStatus == "Done" && TransportStatus == "Done" && !isCancel && isReturn) {
+                //คืนสินค้า
+                OrderHDData = await tbOrderHD.findAll({
+                    attributes: ["id", "orderNumber",],
+                    where: {
+                        isCancel: isCancel,
+                        IsDeleted: false,
+                        memberId: Member.id,
+                        paymentStatus: PaymentStatus,
+                        transportStatus: TransportStatus,
+                        isReturn: isReturn
+                    }
+                });
+            }
+            if (OrderHDData) {
+                for (var i = 0; i < OrderHDData.length; i++) {
+                    let hd = OrderHDData[i].dataValues
+
+                    hd.dt = []
+                    const OrderDTData = await tbOrderDT.findAll({
+                        attributes: ["id", "amount", "price", "discount", "discountType", "stockId", "orderId"],
+                        where: { IsDeleted: false, orderId: hd.id }
+                    });
+                    for (var j = 0; j < OrderDTData.length; j++) {
+                        let dt = OrderDTData[j].dataValues
+                        dt.id = Encrypt.EncodeKey(dt.id)
+                        const _tbStock = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
+                        dt.stockId = Encrypt.EncodeKey(dt.stockId)
+                        dt.stock = _tbStock
+                        hd.dt.push(dt)
+                    }
+                    hd.id = Encrypt.EncodeKey(hd.id)
+                    OrderHD.push(hd)
+                }
+            }
+
+        }
+
+    } catch (e) {
+        status = false
+        msg = e.message
+    }
+
+    return res.json({
+        status: status,
+        msg: msg,
+        OrderHD: OrderHD
+    });
+});
 
 //#endregion line liff
 module.exports = router;

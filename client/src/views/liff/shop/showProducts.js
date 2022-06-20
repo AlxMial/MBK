@@ -128,12 +128,7 @@ const ShowProducts = () => {
       const base64 = await FilesService.buffer64UTF8(data[i].image.data);
       _Img.push({ url: base64 });
     }
-
-    // const base64 = await FilesService.buffer64UTF8(data[i].image.data);
-    // console.log("set image")
     setImg(_Img);
-    // console.log(Img)
-    // setImgLoading(false)
   };
 
   useEffect(() => {
@@ -171,7 +166,7 @@ const ShowProducts = () => {
                 history.push(path.showCart);
               }}
             >
-              <i className="fas fa-cart-plus relative icon-cart"></i>
+              <i className="fas fa-shopping-cart relative icon-cart" style={{ color: "#ddd" }}></i>
               {!IsNullOrEmpty(cartNumberBadge) ? (
                 <div className="cart-number-badge" style={{ fontSize: "11px" }}>
                   {cartNumberBadge}{" "}
@@ -190,7 +185,7 @@ const ShowProducts = () => {
               margin: "auto"
             }}>
               {Img.length > 0 ?
-                <SlideShow img={Img} duration={60000} />
+                <SlideShow img={Img} duration={1000} />
                 : null}
 
             </div>
@@ -353,7 +348,7 @@ const ShowProducts = () => {
               </div>
               <div style={{ width: "50%", padding: "10px" }}>
                 <div
-                  className="bg-yellow-mbk flex text-white text-center text-lg  font-bold "
+                  className="bg-gold-mbk flex text-white text-center text-lg  font-bold "
                   style={{
                     margin: "auto",
                     height: "45px",

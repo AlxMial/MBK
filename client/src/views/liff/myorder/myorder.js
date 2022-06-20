@@ -65,9 +65,10 @@ const MyOrder = () => {
                 style={{
                     alignItems: "center",
                     justifyContent: "center",
+                    height: "calc(100% - 235px)"
                 }}
             >
-                <div className="w-full" style={{ width: "98%", margin: "auto" }}>
+                <div className="w-full" style={{ width: "98%", margin: "auto", height: "100%" }}>
 
 
                     {selectMenu === 1 ?
