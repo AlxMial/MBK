@@ -72,6 +72,8 @@ export default function Sidebar() {
     { id: 7, module: 'ecommerce', link: '/admin/cancelAndReturn', label: 'ยกเลิกและคืนสินค้า', icon: 'fas fa-undo-alt' },
     { id: 8, module: 'report', link: '/admin/pointHistoryReport', label: 'รายงานแสดงข้อมูลแคมเปญของ Code คะแนนทั้งหมด'},
     { id: 9, module: 'report', link: '/admin/collectPointsReport', label: 'รายงานสะสมคะแนน'},
+    { id: 10, module: 'report', link: '/admin/campaignRewardReport', label: 'รายงานข้อมูลแคมเปญรางวัล'},
+    { id: 11, module: 'report', link: '/admin/campaignExchangeHistoryReport', label: 'รายงานประวัติการแลกของรางวัล'},    
   ]
 
   return (
