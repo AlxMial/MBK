@@ -112,20 +112,6 @@ const ShowCart = () => {
     getProducts();
   };
 
-  // const setspin = (e, id) => {
-  //   let cart = Storage.get_cart();
-  //   let shop_orders = cart.shop_orders;
-  //   shop_orders.filter((e) => {
-  //     if (e.id === id) {
-  //       e.quantity = e
-  //     }
-  //   })
-
-  //   cart.shop_orders = shop_orders;
-  //   Storage.upd_cart(cart);
-  //   getProducts();
-
-  // }
   useEffect(() => {
     getProducts();
   }, []);

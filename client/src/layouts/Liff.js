@@ -191,7 +191,7 @@ const LiffAPP = () => {
       ) : !view ? (
         <Spinner customText={"Loading"} />
       ) : (
-        <div style={{ display: !view ? "none" : "", height: "100vh" }}>
+        <div className="noselect" style={{ display: !view ? "none" : "", height: "100vh" }}>
           <div
             className={"noselect " + (!ismemberpage ? "bg-green-mbk flex" : "")}
             style={{ height: bg }}

@@ -281,7 +281,7 @@ const ShopList = () => {
               history.push(path.showCart);
             }}
           >
-            <i className="fas fa-cart-plus relative icon-cart"></i>
+            <i className="fas fa-shopping-cart relative icon-cart" style={{ color: "#ddd" }}></i>
             {!fn.IsNullOrEmpty(cartNumberBadge) ? (
               <div className="cart-number-badge" style={{}}>
                 {cartNumberBadge}
@@ -290,7 +290,7 @@ const ShopList = () => {
           </div>
         </div>
         <div className="liff-inline" />
-        <div id="scroll" className="product-scroll"style={{
+        <div id="scroll" className="product-scroll" style={{
           width: "90%", margin: "auto", height: "calc(100% - " + (y > 120 ? (165 - 120) : (165 - y)) + "px)", overflow: "scroll",
         }} onScroll={listenScrollEvent}>
           {/* flash_sale */}
@@ -308,12 +308,13 @@ const ShopList = () => {
                   <div>
                     <img
                       src={require("assets/img/mbk/flash_sale.png").default}
-                      alt="..."
-                      className="w-32 border-2 border-blueGray-50"
+                      alt="flash_sale"
+                      className="border-2 border-blueGray-50 "
+                      style={{ width: "100px" }}
                     ></img>
                   </div>
                   <div
-                    className="flex mt-2"
+                    className="flex mt-2 line-scroll "
                     style={{
                       overflowX: "auto",
                       width: "100%",
@@ -326,7 +327,7 @@ const ShopList = () => {
                           <div
                             key={i}
                             className="px-2 relative"
-                            style={{ minWidth: "170px", paddingBottom: "25px", width: "200px" }}
+                            style={{ minWidth: "170px", width: "200px" }}
                             onClick={() => {
                               history.push(
                                 path.showProducts.replace(":id", e.id)
@@ -373,21 +374,22 @@ const ShopList = () => {
                                 : null}
                             </div>
 
-                            <div className="px-2 py-2"><p style={{
+                            <div className="px-2 py-2"><div style={{
                               WebkitLineClamp: "2",
                               display: "-webkit-box",
                               WebkitBoxOrient: "vertical",
                               overflow: "hidden",
-                              fontSize: "11px"
-                            }}>{e.productName}</p></div>
+                              fontSize: "11px",
+                              height: "35px"
+                            }}>{e.productName}</div></div>
                             <div
-                              className="flex absolute"
+                              className="flex relative"
                               style={{ bottom: "0", left: "10px", fontSize: "10px" }}
                             >
                               <div
                                 style={{
                                   color:
-                                    e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
+                                    e.discount > 0 ? "#ddd" : "#000",
                                   textDecoration:
                                     e.discount > 0 ? "line-through" : "none",
                                 }}
@@ -402,13 +404,14 @@ const ShopList = () => {
                                   {"฿ " + fn.formatMoney(e.priceDiscount)}
                                 </div>
                               ) : null}
+                              <div
+                                className="absolute"
+                                style={{ bottom: "0", right: "10px", color: "gray" }}
+                              >
+                                <i className="fas fa-shopping-cart" style={{ color: "#ddd", fontSize: "10px" }}></i>
+                              </div>
                             </div>
-                            <div
-                              className="absolute"
-                              style={{ bottom: "0", right: "10px", color: "gray" }}
-                            >
-                              <i className="fas fa-cart-plus"></i>
-                            </div>
+
 
 
                           </div>
@@ -478,7 +481,7 @@ const ShopList = () => {
                           : null}
                       </div>
                       <div
-                        className="px-2 py-2"
+                        className="px-1 py-2 line-scroll"
                         style={{
                           height: "40px",
                           lineHeight: "15px",
@@ -487,16 +490,16 @@ const ShopList = () => {
                           fontSize: "11px"
                         }}
                       >
-                        {e.description}
+                        {e.productName}
                       </div>
                       <div
-                        className="flex absolute"
+                        className="flex mb-1 "
                         style={{ bottom: "0", left: "10px", fontSize: "10px" }}
                       >
                         <div
                           style={{
                             color:
-                              e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
+                              e.discount > 0 ? "#ddd" : "#000",
                             textDecoration:
                               e.discount > 0 ? "line-through" : "none",
                           }}
@@ -513,7 +516,7 @@ const ShopList = () => {
                         className="absolute"
                         style={{ bottom: "0", right: "10px", color: "gray" }}
                       >
-                        <i className="fas fa-cart-plus"></i>
+                        <i className="fas fa-shopping-cart" style={{ color: "#ddd", fontSize: "10px" }}></i>
                       </div>
 
                     </div>

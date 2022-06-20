@@ -228,6 +228,12 @@ export const gettbLogistic = (s, e = () => { }, f = () => { }) => {
 export const doSaveOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/doSaveOrder", data, s, e, f);
 };
+//PaymentStatus ,TransportStatus 
+export const getOrderHD = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/order/orderHD/getOrderHD", data, s, e, f);
+};
+
+
 
 
 export const membersDpd = (data, s, e = () => { }, f = () => { }) => {

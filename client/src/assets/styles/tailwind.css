@@ -2852,6 +2852,7 @@ select {
 .w-60 {
   width: 13rem;
 }
+
 .w-63 {
   width: 18rem;
 }
@@ -4190,7 +4191,7 @@ strike {
 }
 
 .line-card {
-  padding: 16px;
+  /* padding: 16px; */
   border-bottom: 1px solid rgb(238, 238, 238);
 }
 
@@ -4725,6 +4726,13 @@ input[type="number"] {
   box-shadow: none;
 }
 
-.Radio-Payment > span:nth-child(2) {
+.Radio-Payment>span:nth-child(2) {
   width: 100%;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
