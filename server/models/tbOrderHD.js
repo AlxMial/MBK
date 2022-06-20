@@ -1,8 +1,11 @@
+const { v4: uuidv4 } = require('uuid');
 module.exports = (sequelize, DataTypes) => {
   const tbOrderHD = sequelize.define("tbOrderHD", {
     orderNumber: {
       type: DataTypes.STRING,
       allowNull: true,
+      defaultValue: uuidv4()
+
     },
     orderDate: {
       type: DataTypes.DATE,
@@ -27,14 +30,17 @@ module.exports = (sequelize, DataTypes) => {
     isCancel: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
+      defaultValue: false
     },
     isReturn: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
+      defaultValue: false
     },
     isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
+      defaultValue: false
     },
     addBy: {
       type: DataTypes.STRING,

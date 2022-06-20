@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useHistory, useParams } from "react-router-dom";
-import Spinner from "components/Loadings/spinner/Spinner";
-import { useToasts } from "react-toast-notifications";
+import { useHistory } from "react-router-dom";
+// import Spinner from "components/Loadings/spinner/Spinner";
+// import { useToasts } from "react-toast-notifications";
 import axios from "services/axios";
 import { path } from "services/liff.services";
-import { IsNullOrEmpty } from "services/default.service";
 import * as Storage from "@services/Storage.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
@@ -13,8 +12,8 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 
 const ShowCart = () => {
   const history = useHistory();
-  const { addToast } = useToasts();
-  const [isLoading, setIsLoading] = useState(false);
+  // const { addToast } = useToasts();
+  // const [isLoading, setIsLoading] = useState(false);
   const [confirmDelete, setconfirmDelete] = useState(false);
   const [deleteValue, setDeleteValue] = useState(null);
 
@@ -27,8 +26,9 @@ const ShowCart = () => {
     let id = [];
     let cart = Storage.get_cart()
     let shop_orders = cart.shop_orders;
-    shop_orders.map((e, i) => {
+    shop_orders.filter((e) => {
       id.push(e.id);
+      return e
     });
     if (!fn.IsNullOrEmpty(cart.usecoupon)) {
       setusecoupon(cart.usecoupon)
@@ -41,14 +41,15 @@ const ShowCart = () => {
         let tbStock = response.data.tbStock;
         setCartItem(tbStock);
         let price = 0;
-        tbStock.map((e, i) => {
-          let quantity = shop_orders.find((o) => o.id == e.id).quantity;
+        tbStock.filter((e) => {
+          let quantity = shop_orders.find((o) => o.id === e.id).quantity;
           e.quantity = quantity;
           if (e.priceDiscount > 0) {
             price += parseFloat(e.priceDiscount) * parseInt(quantity);
           } else {
             price += parseFloat(e.price) * parseInt(quantity);
           }
+          return e
         });
         if (!fn.IsNullOrEmpty(cart.usecoupon)) {
           price = price - cart.usecoupon.discount
@@ -74,7 +75,7 @@ const ShowCart = () => {
     let cart = Storage.get_cart();
     let shop_orders = cart.shop_orders;
     shop_orders = shop_orders.filter((e) => {
-      if (e.id != deleteValue) {
+      if (e.id !== deleteValue) {
         return e;
       }
     });
@@ -92,16 +93,18 @@ const ShowCart = () => {
 
     if (e === "plus") {
       shop_orders.filter((e) => {
-        if (e.id == id) {
+        if (e.id === id) {
           e.quantity = e.quantity + 1
         }
+        return e
       })
 
     } else {
       shop_orders.filter((e) => {
-        if (e.id == id) {
+        if (e.id === id) {
           e.quantity = e.quantity - 1
         }
+        return e
       })
     }
     cart.shop_orders = shop_orders;
@@ -109,20 +112,20 @@ const ShowCart = () => {
     getProducts();
   };
 
-  const setspin = (e, id) => {
-    let cart = Storage.get_cart();
-    let shop_orders = cart.shop_orders;
-    shop_orders.filter((e) => {
-      if (e.id == id) {
-        e.quantity = e
-      }
-    })
+  // const setspin = (e, id) => {
+  //   let cart = Storage.get_cart();
+  //   let shop_orders = cart.shop_orders;
+  //   shop_orders.filter((e) => {
+  //     if (e.id === id) {
+  //       e.quantity = e
+  //     }
+  //   })
 
-    cart.shop_orders = shop_orders;
-    Storage.upd_cart(cart);
-    getProducts();
+  //   cart.shop_orders = shop_orders;
+  //   Storage.upd_cart(cart);
+  //   getProducts();
 
-  }
+  // }
   useEffect(() => {
     getProducts();
   }, []);
@@ -130,7 +133,7 @@ const ShowCart = () => {
 
   return (
     <>
-      {isLoading ? <Spinner customText={"Loading"} /> : null}
+      {/* {isLoading ? <Spinner customText={"Loading"} /> : null} */}
       <div className="bg-green-mbk">
         <div
           style={{ height: "40px" }}
@@ -277,17 +280,17 @@ const ShowCart = () => {
                       />
                       <button
                         name="plus"
-                        disabled={e.quantity >= CartItem.find(f => f.id == e.id).productCount ? true : false}
+                        disabled={e.quantity >= CartItem.find(f => f.id === e.id).productCount ? true : false}
                         style={{
                           width: "30px",
                           border: "1px solid #ddd",
                           height: "30px",
                           outline: "none",
-                          color: e.quantity >= CartItem.find(f => f.id == e.id).productCount ? "var(--mq-txt-color, rgb(170, 170, 170))" : "#000",
+                          color: e.quantity >= CartItem.find(f => f.id === e.id).productCount ? "var(--mq-txt-color, rgb(170, 170, 170))" : "#000",
                           borderRadius: "0 5px 5px 0"
                         }}
                         onClick={() => {
-                          let Item = CartItem.find(f => f.id == e.id)
+                          let Item = CartItem.find(f => f.id === e.id)
                           if (e.quantity < Item.productCount) {
                             spinButton("plus", e.id)
                           }

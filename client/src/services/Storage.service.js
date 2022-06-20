@@ -65,7 +65,7 @@ export const set_add_to_cart = (obj) => {
     localStorage.setItem("cart", JSON.stringify(data));
   } else {
     let old_shop_orders = cart.shop_orders;
-    let old = old_shop_orders.find((e) => e.id == obj.id);
+    let old = old_shop_orders.find((e) => e.id === obj.id);
     // ยังไม่มี
     if (IsNullOrEmpty(old)) {
       old_shop_orders.push(obj);
@@ -73,7 +73,7 @@ export const set_add_to_cart = (obj) => {
       localStorage.setItem("cart", JSON.stringify(data));
     } else {
       old_shop_orders.filter((e) => {
-        if (e.id == obj.id) {
+        if (e.id === obj.id) {
           e.quantity = e.quantity + obj.quantity;
         }
       });
@@ -107,4 +107,7 @@ export const getbyorder = () => {
 
 export const updbyorder = (obj) => {
   localStorage.setItem("byorder", JSON.stringify(obj));
+};
+export const remove_byorder = () => {
+  localStorage.removeItem("byorder");
 };

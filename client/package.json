@@ -29,6 +29,7 @@
     "postcss": "8.2.8",
     "react": "17.0.1",
     "react-barcode": "^1.4.1",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "17.0.1",
     "react-export-excel": "^0.5.3",
     "react-ga": "^3.3.0",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import Spinner from "components/Loadings/spinner/Spinner";
+// import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 import { path } from "services/liff.services";
 import axios from "services/axios";
@@ -14,9 +14,9 @@ import SlideShow from "./SlideShow";
 const ShowProducts = () => {
   const history = useHistory();
   const { addToast } = useToasts();
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [Img, setImg] = useState([]);
-  const [ImgLoading, setImgLoading] = useState(true);
+  // const [ImgLoading, setImgLoading] = useState(true);
   const [cartNumberBadge, setcartNumberBadge] = useState(
     fn.getCartNumberBadge()
   );
@@ -49,7 +49,7 @@ const ShowProducts = () => {
       } else {
         let item;
         cart.shop_orders.map((e, i) => {
-          if (e.id == id) {
+          if (e.id === id) {
             item = e;
           }
         });
@@ -126,16 +126,14 @@ const ShowProducts = () => {
     let _Img = Img;
     for (var i = 0; i < data.length; i++) {
       const base64 = await FilesService.buffer64UTF8(data[i].image.data);
-      console.log("base64 " + i)
-      console.log("base64 " + base64)
       _Img.push({ url: base64 });
     }
 
     // const base64 = await FilesService.buffer64UTF8(data[i].image.data);
-    console.log("set image")
+    // console.log("set image")
     setImg(_Img);
-    console.log(Img)
-    setImgLoading(false)
+    // console.log(Img)
+    // setImgLoading(false)
   };
 
   useEffect(() => {
@@ -147,7 +145,7 @@ const ShowProducts = () => {
 
     <>
       {/* {console.log(Imglength)} */}
-      {isLoading ? <Spinner customText={"Loading"} /> : null}
+      {/* {isLoading ? <Spinner customText={"Loading"} /> : null} */}
       {tbStock != null ? (
         <>
           <div className="bg-green-mbk">
