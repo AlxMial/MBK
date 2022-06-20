@@ -18,7 +18,7 @@ import {
 Modal.setAppElement("#root");
 export default function PointHistoryReport() {
   const [listSearch, setListSerch] = useState([]);
-  const [listPointCode, setListPointCode] = useState([]);  
+  const [listPointCode, setListPointCode] = useState([]);
   const { height, width } = useWindowDimensions();
   const [forcePage, setForcePage] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);  
@@ -32,6 +32,25 @@ export default function PointHistoryReport() {
     { value: "1", label: "ค้นหา" },
     { value: "2", label: "ค้นหาจาก Code" },
   ];
+  const listPointType = [
+    { value: "1", type: "Code", status: "แลกคะแนน"},
+    { value: "2", type: "E-Commerce", status: "รับคะแนน" },
+    { value: "3", type: "Register", status: "รับคะแนน" },
+  ];
+  const dataPopUp =  useFormik({
+    initialValues: {
+      code: "",
+      pointCodeName: "",
+      startDate: "",
+      endDate: "",
+      memberName: "",
+      phone: "",
+      point: 11,
+      exchangedate: "",
+      status: "",
+      pointType: "", 
+    }
+});
   /* Modal */
   /* Form insert value */
   const formSerch =  useFormik({
@@ -76,9 +95,7 @@ export default function PointHistoryReport() {
           )
         );
       } else {
-        if(inputSerch === "1234"){
-          openModal()
-        }
+        getDataPoint();        
       }
      
       setPageNumber(0);
@@ -203,6 +220,38 @@ export default function PointHistoryReport() {
           }         
           setListSerch(response.data.tbPointCodeHD);
           setListPointCode(response.data.tbPointCodeHD);
+        }
+      });
+  };
+
+  const getDataPoint = async () => {
+    await axios.get("report/GetPoint").then((response) => {
+      const inputSerch = formSerch.values.inputSerch;
+        if (response.data.length > 0) {
+          response.data.forEach(e => {
+            const datatype = listPointType.find(l => l.value === e.pointTypeId);
+            if(datatype) {
+              e.status = datatype.status;
+              e.pointType = datatype.type;
+            }
+          });
+          // setListPointPopup(response.data);
+          if(response.data.length > 0){
+            const listModel = response.data.filter(el => inputSerch.toUpperCase().includes(el.code));
+            if(listModel.length === 1) {
+              dataPopUp.values.code = listModel[0].code;
+              dataPopUp.values.pointCodeName = listModel[0].pointCodeName;
+              dataPopUp.values.startDate = listModel[0].startDate;
+              dataPopUp.values.endDate = listModel[0].endDate;
+              dataPopUp.values.memberName = listModel[0].memberName;
+              dataPopUp.values.phone = listModel[0].phone;
+              dataPopUp.values.point = listModel[0].point;
+              dataPopUp.values.exchangedate = listModel[0].exchangedate;
+              dataPopUp.values.status = listModel[0].status ;
+              dataPopUp.values.pointType = listModel[0].pointType ;
+              openModal()             
+            }          
+          }
         }
       });
   };
@@ -432,7 +481,7 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    CD-0001
+                                   {dataPopUp.values.code}
                                   </label>                                                                
                                 </div>                                
                               </div>
@@ -459,7 +508,7 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    แลกแล้ว
+                                   { dataPopUp.values.status} 
                                   </label>                                                                
                                 </div>                                
                               </div>
@@ -486,7 +535,7 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    แคมเปญ
+                                    {dataPopUp.values.pointCodeName}
                                   </label>                                                                
                                 </div>                                
                               </div> 
@@ -513,7 +562,7 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    19/06/2022
+                                    {moment(dataPopUp.values.startDate).format("DD/MM/YYYY")}
                                   </label>                                                                
                                 </div>                                
                               </div>
@@ -540,7 +589,7 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    31/12/2022
+                                     {moment(dataPopUp.values.endDate).format("DD/MM/YYYY")}
                                   </label>                                                                
                                 </div>                                
                               </div> 
@@ -567,7 +616,7 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    นายทดสอบ ทดสอบ
+                                    {dataPopUp.values.memberName}
                                   </label>                                                                
                                 </div>                                
                               </div>
@@ -594,7 +643,7 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    0999999999
+                                    {dataPopUp.values.phone}
                                   </label>                                                                
                                 </div>                                
                               </div> 
@@ -621,7 +670,7 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    999 คะเเนน
+                                    {dataPopUp.point} คะเเนน
                                   </label>                                                                
                                 </div>                                
                               </div>   
@@ -648,7 +697,7 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    20/06/2022
+                                     {moment(dataPopUp.values.exchangedate).format("DD/MM/YYYY")}
                                   </label>                                                                
                                 </div>                     
                               </div>
