@@ -70,10 +70,10 @@ export default function Sidebar() {
     { id: 5, module: 'ecommerce', link: '/admin/stocks', label: 'คลังสินค้า', icon: 'fas fa-warehouse' },
     { id: 6, module: 'ecommerce', link: '/admin/order', label: 'รายการสั่งซื้อ', icon: 'fas fa-shopping-basket' },
     { id: 7, module: 'ecommerce', link: '/admin/cancelAndReturn', label: 'ยกเลิกและคืนสินค้า', icon: 'fas fa-undo-alt' },
-    { id: 8, module: 'report', link: '/admin/pointHistoryReport', label: 'รายงานแสดงข้อมูลแคมเปญของ Code คะแนนทั้งหมด'},
-    { id: 9, module: 'report', link: '/admin/collectPointsReport', label: 'รายงานสะสมคะแนน'},
-    { id: 10, module: 'report', link: '/admin/campaignRewardReport', label: 'รายงานข้อมูลแคมเปญรางวัล'},
-    { id: 11, module: 'report', link: '/admin/campaignExchangeHistoryReport', label: 'รายงานประวัติการแลกของรางวัล'},    
+    { id: 8, module: 'report', link: '/admin/pointHistoryReport', label: 'รายงานแสดงข้อมูลแคมเปญของ Code คะแนนทั้งหมด', icon: 'fas fa-file'},
+    { id: 9, module: 'report', link: '/admin/collectPointsReport', label: 'รายงานสะสมคะแนน', icon: 'fas fa-file'},
+    { id: 10, module: 'report', link: '/admin/campaignRewardReport', label: 'รายงานข้อมูลแคมเปญรางวัล', icon: 'fas fa-file'},
+    { id: 11, module: 'report', link: '/admin/campaignExchangeHistoryReport', label: 'รายงานประวัติการแลกของรางวัล', icon: 'fas fa-file'},    
   ]
 
   return (
