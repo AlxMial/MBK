@@ -40,8 +40,8 @@ export default function CollectPointsReport() {
       setListPoint(
         listSearch.filter(
         (x) => {
-          const _startDate = convertToDate(x.startDate);
-          const _endDate = convertToDate(x.endDate);
+          const _startDate = x.startDate !== "" ? convertToDate(x.startDate) : null;
+          const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
           let isDate = false;
             if(x.startDate !== '' && x.endDate !== '') {             
               isDate = true;
@@ -60,12 +60,12 @@ export default function CollectPointsReport() {
             .includes(inputSerch)
            ) : true) &&
 
-            ((startDate !== null && endDate !== null && isDate) ? (startDate <= _startDate  && startDate <= _endDate &&
-            endDate >= _startDate && endDate >= _endDate) : true)) {
+            ((startDate !== null && endDate !== null) ? (isDate ? ((startDate <= _startDate  && startDate <= _endDate &&
+            endDate >= _startDate && endDate >= _endDate)) : false) : true)) {
                 return true;
             }
             return false;
-        }            
+          }            
         )
      );
       setPageNumber(0);

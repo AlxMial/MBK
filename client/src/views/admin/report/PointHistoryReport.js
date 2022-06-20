@@ -19,6 +19,7 @@ Modal.setAppElement("#root");
 export default function PointHistoryReport() {
   const [listSearch, setListSerch] = useState([]);
   const [listPointCode, setListPointCode] = useState([]);
+  const [listPointCodeDt, setListPointCodeDt] = useState([]);
   const { height, width } = useWindowDimensions();
   const [forcePage, setForcePage] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);  
@@ -33,9 +34,9 @@ export default function PointHistoryReport() {
     { value: "2", label: "ค้นหาจาก Code" },
   ];
   const listPointType = [
-    { value: "1", type: "Code", status: "แลกคะแนน"},
-    { value: "2", type: "E-Commerce", status: "รับคะแนน" },
-    { value: "3", type: "Register", status: "รับคะแนน" },
+    { value: "1", color: "green", status: "แลกไปแล้ว"},
+    { value: "2", color: "red", status: "ยังไม่ถูกแลก" },
+    { value: "3", color: "red", status: "ยังไม่ถูกแลก" },
   ];
   const dataPopUp =  useFormik({
     initialValues: {
@@ -46,6 +47,7 @@ export default function PointHistoryReport() {
       memberName: "",
       phone: "",
       point: 11,
+      isUse: "1",
       exchangedate: "",
       status: "",
       pointType: "", 
@@ -95,9 +97,8 @@ export default function PointHistoryReport() {
           )
         );
       } else {
-        getDataPoint();        
-      }
-     
+        getDataPoint();
+      }     
       setPageNumber(0);
       setForcePage(0);
     }
@@ -111,10 +112,13 @@ export default function PointHistoryReport() {
 
   const setDataSearch = (e, type) => {    
     if (type === "s_input") {
-      formSerch.values.inputSerch = e.toLowerCase();
-      InputSearch();      
+      formSerch.values.inputSerch = e.target.value.toLowerCase();
+      InputSearch(); 
     } else if(type === "s_type") {     
-      formSerch.values.serchType = e;      
+      // formSerch.values.serchType = e;
+      // if(e === "2") {
+      //   getDataPoint();
+      // }
     } else if(type === "s_stdate") {    
       formSerch.values.startDate = e; 
     } else if(type === "s_eddate") {     
@@ -229,13 +233,12 @@ export default function PointHistoryReport() {
       const inputSerch = formSerch.values.inputSerch;
         if (response.data.length > 0) {
           response.data.forEach(e => {
-            const datatype = listPointType.find(l => l.value === e.pointTypeId);
+            const datatype = listPointType.find(l => l.value === e.isUse);
             if(datatype) {
               e.status = datatype.status;
-              e.pointType = datatype.type;
             }
-          });
-          // setListPointPopup(response.data);
+          });         
+          //setListPointCodeDt(response.data);
           if(response.data.length > 0){
             const listModel = response.data.filter(el => inputSerch.toUpperCase().includes(el.code));
             if(listModel.length === 1) {
@@ -246,6 +249,7 @@ export default function PointHistoryReport() {
               dataPopUp.values.memberName = listModel[0].memberName;
               dataPopUp.values.phone = listModel[0].phone;
               dataPopUp.values.point = listModel[0].point;
+              dataPopUp.values.isUse = listModel[0].isUse;
               dataPopUp.values.exchangedate = listModel[0].exchangedate;
               dataPopUp.values.status = listModel[0].status ;
               dataPopUp.values.pointType = listModel[0].pointType ;
@@ -297,12 +301,15 @@ export default function PointHistoryReport() {
                 <span className="z-3 h-full leading-snug font-normal text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center pl-3 py-2">
                   <i className="fas fa-search"></i>
                 </span>
-                <input
+                <input 
                   type="text"
                   placeholder="Search here..."
                   className="border-0 pl-12 w-63 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded-xl text-sm shadow outline-none focus:outline-none focus:ring"
+                  // onChange={(e) => {
+                  //   setDataSearch(e, "s_input")
+                  // }}
                   onChange={(e) => {
-                    setDataSearch(e.target.value, "s_input");
+                    setDataSearch(e, "s_input")
                   }}
                 />
               </div>
@@ -503,12 +510,15 @@ export default function PointHistoryReport() {
                                     :
                                   </label>                                                                
                                 </div>    
-                                <div className="w-full lg:w-4/12 px-4 margin-auto-t-b">
+                                <div className="w-full lg:w-4/12 px-4 margin-auto-t-b ">
                                   <label
-                                    className="text-blueGray-600 text-sm font-bold "
+                                    className={ dataPopUp.values.isUse === "1" ? "text-green-mbk text-sm font-bold" :
+                                    "text-red-500 text-sm font-bold" }
                                     htmlFor="grid-password"
                                   >
                                    { dataPopUp.values.status} 
+                                   <i className={ dataPopUp.values.isUse === "1" ? "fas fa-check-circle px-1" : 
+                                   "fas fa-hourglass-start px-1" }></i>
                                   </label>                                                                
                                 </div>                                
                               </div>

@@ -149,7 +149,7 @@ router.get("/GetPoint", validateToken, async (req, res) => {
           pointCodeName:  tb_pointCodeHD !== null ? tb_pointCodeHD.pointCodeName : "",
           startDate:  (tb_pointCodeHD !== null) ? tb_pointCodeHD.startDate : "",
           endDate:   (tb_pointCodeHD !== null) ? tb_pointCodeHD.endDate : "",
-          pointTypeId: obj.campaignType,
+          isUse: obj.campaignType,
           memberName: obj.campaignType === "1" ? fullname :"",
           phone   : obj.campaignType === "1" ? (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : "") : "",       
           point: obj.point,
