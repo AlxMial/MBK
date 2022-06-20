@@ -27,6 +27,11 @@ import makeorder from "views/liff/makeorder/makeorder";
 
 import addAddress from "views/liff/makeorder/addAddress";
 
+//paymentInfo 
+import paymentInfo from "views/liff/payment/paymentInfo";
+
+import myorder from "views/liff/myorder/myorder";
+
 export const path = {
   privacypolicy: "/line/privacypolicy",
   register: "/line/register",
@@ -51,6 +56,11 @@ export const path = {
 
   makeorder: "/line/makeorder/:id",
   addAddress: "/line/addAddress",
+
+  paymentInfo: "/line/paymentInfo/:id",
+
+  myorder: "/line/myorder",
+
 
 };
 export const routes = [
@@ -137,6 +147,16 @@ export const routes = [
     component: addAddress,
   },
 
+  {
+    path: path.paymentInfo,
+    component: paymentInfo,
+  },
+
+  {
+    path: path.myorder,
+    component: myorder,
+  },
+
 ];
 
 
@@ -205,7 +225,9 @@ export const gettbLogistic = (s, e = () => { }, f = () => { }) => {
   httpGet("/logistic/gettbLogistic", s, e, f);
 };
 
-
+export const doSaveOrder = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/order/orderHD/doSaveOrder", data, s, e, f);
+};
 
 
 export const membersDpd = (data, s, e = () => { }, f = () => { }) => {

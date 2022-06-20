@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-import Spinner from "components/Loadings/spinner/Spinner";
-import { useToasts } from "react-toast-notifications";
+// import Spinner from "components/Loadings/spinner/Spinner";
+// import { useToasts } from "react-toast-notifications";
 import InputMask from "react-input-mask";
 import axios from "services/axios";
-import { path } from "services/liff.services";
-import { IsNullOrEmpty } from "services/default.service";
+// import { path } from "services/liff.services";
+// import { IsNullOrEmpty } from "services/default.service";
 import * as Storage from "@services/Storage.service";
-import * as fn from "@services/default.service";
-import ImageUC from "components/Image/index";
+// import * as fn from "@services/default.service";
+// import ImageUC from "components/Image/index";
 import FilesService from "../../../services/files";
 import moment from "moment";
 // components
@@ -18,8 +18,8 @@ const ShowCart = () => {
   let { id } = useParams();
 
   const history = useHistory();
-  const { addToast } = useToasts();
-  const [isLoading, setIsLoading] = useState(false);
+  // const { addToast } = useToasts();
+  // const [isLoading, setIsLoading] = useState(false);
   const [tbcouponcodes, settbcouponcodes] = useState([]);
 
   const fetchgettbcouponcodes = async () => {
@@ -39,7 +39,7 @@ const ShowCart = () => {
   const usecoupon = (e) => {
     console.log(" id " + id)
     console.log(e)
-    if (id == "cart") {
+    if (id === "cart") {
       let shop_orders = Storage.get_cart()
       shop_orders.usecoupon = e
       Storage.upd_cart(shop_orders);
@@ -59,7 +59,7 @@ const ShowCart = () => {
   }, []);
   return (
     <>
-      {isLoading ? <Spinner customText={"Loading"} /> : null}
+      {/* {isLoading ? <Spinner customText={"Loading"} /> : null} */}
       <div className="bg-green-mbk">
         <div
           style={{ height: "40px" }}

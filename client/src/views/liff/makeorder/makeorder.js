@@ -1,28 +1,24 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 import axios from "services/axios";
 import { path } from "services/liff.services";
-import { IsNullOrEmpty } from "services/default.service";
 import * as Storage from "@services/Storage.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
-import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import Select from "react-select";
 import {
     getMemberAddress,
     gettbPayment,
-    gettbLogistic
+    gettbLogistic, doSaveOrder
+
 } from "@services/liff.services";
 import { Radio } from "antd";
 
 import api_province from "../../../assets/data/api_province.json";
 import api_amphure from "../../../assets/data/api_amphure.json";
 import api_tombon from "../../../assets/data/api_tombon.json";
-
-
-
 // components
 
 const MakeOrder = () => {
@@ -41,7 +37,9 @@ const MakeOrder = () => {
     const [tbPromotionDelivery, settbPromotionDelivery] = useState(null);
 
     const [optionPayment, setPayment] = useState([]);
+    const [paymentID, setpaymentID] = useState(null);
     const [RadioPayment, setRadio] = useState(1);
+
     const [CartItem, setCartItem] = useState([]);
     const [usecoupon, setusecoupon] = useState(null);
 
@@ -159,6 +157,7 @@ const MakeOrder = () => {
                         option[i].value = option[i].id
                     }
                     setPayment(option)
+                    setpaymentID(option[0].id)
                 }
             },
         );
@@ -183,7 +182,55 @@ const MakeOrder = () => {
             },
         );
     }
+    //สั่งสินค้า 
+    const sendOrder = () => {
+        console.log("สั่งสินค้า")
+        let item;
+        if (id == "cart") {
+            item = Storage.get_cart()
+        }
+        else {
+            item = Storage.getbyorder()
+        }
+        let shop_orders = item.shop_orders;
+        let dt = []
+        CartItem.filter(e => {
+            dt.push({
+                stockId: e.id,
+                amount: e.quantity,
+                price: e.price,
+                discount: e.discount,
+                discountType: e.discountType
+            })
+        })
+        let order = {
+            orderhd: {
+                paymentId: RadioPayment === 1 ? paymentID : null,
+                paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
+                logisticId: isLogistic,
+                stockNumber: shop_orders.length,
+                paymentStatus: "Wating",
+                transportStatus: "Prepare",
+            },
+            orderdt: dt
+        }
 
+        doSaveOrder(order, (res) => {
+            if (res.status) {
+                // console.log()
+                // ลบข้อมูล
+                if (id == "cart") {
+                    item = Storage.remove_cart()
+                }
+                else {
+                    item = Storage.remove_byorder()
+                }
+
+            } else {
+
+            }
+        })
+    }
 
     useEffect(() => {
         getProducts();
@@ -192,15 +239,7 @@ const MakeOrder = () => {
         getTbLogistic()
     }, []);
 
-    // // calcsumprice(sumprice, usecoupon, deliveryCost, tbPromotionDelivery)
-    // const calcsumprice = (sumprice, usecoupon, deliveryCost, tbPromotionDelivery) => {
-    //     if (usecoupon != null) {
-    //         sumprice = sumprice - usecoupon.discount
-    //     }
 
-    //     return sumprice
-
-    // }
     return (
         <>
             {isLoading ? <Spinner customText={"Loading"} /> : null}
@@ -471,11 +510,11 @@ const MakeOrder = () => {
 
                                                 value={optionPayment.filter(o =>
                                                     o.value
-                                                    === "WFNmSXVwS3htNlFuMSttRWxPMGMvdz09")}
+                                                    === paymentID)}
 
                                                 options={optionPayment}
 
-                                                formatOptionLabel={({ value, bankName, accountNumber, bankBranchName, customAbbreviation }) => (
+                                                formatOptionLabel={({ bankName, accountNumber, bankBranchName }) => (
                                                     <div >
                                                         <div className="font-bold">{bankName}</div>
                                                         <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"เลขบัญชี : " + accountNumber}</div>
@@ -483,6 +522,10 @@ const MakeOrder = () => {
 
                                                     </div>
                                                 )}
+
+                                                onChange={(e) => {
+                                                    setpaymentID(e.id)
+                                                }}
 
                                             />
                                             : null}
@@ -625,8 +668,7 @@ const MakeOrder = () => {
                                 justifyContent: "center",
                             }}
                             onClick={() => {
-                                // history.push(path.shopList);
-                                console.log("สั่งสินค้า")
+                                sendOrder()
                             }}
                         >
                             {"สั่งสินค้า"}

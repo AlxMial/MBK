@@ -4,8 +4,11 @@ const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../../middlewares/LineMiddleware");
+const ValidateEncrypt = require("../../../services/crypto");
+const Encrypt = new ValidateEncrypt();
+
 const Sequelize = require("sequelize");
-const { tbOrderHD } = require("../../../models");
+const { tbOrderHD, tbMember, tbOrderDT } = require("../../../models");
 
 const Op = Sequelize.Op;
 
@@ -122,4 +125,53 @@ router.delete("/:id", validateToken, async (req, res) => {
     res.json({ status: true, message: "success", tbOrderHD: null });
 });
 
+
+
+//#region line liff
+
+router.post("/doSaveOrder", validateLineToken, async (req, res) => {
+    let status = true;
+    let msg;
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    let Member;
+    let orderId;
+    let { orderhd, orderdt } = req.body
+    try {
+
+        Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+        orderhd.memberId = Member.id
+        orderhd.orderDate = new Date()
+        orderhd.paymentId = Encrypt.DecodeKey(orderhd.paymentId)
+        orderhd.logisticId = Encrypt.DecodeKey(orderhd.logisticId)
+        const _tbOrderHD = await tbOrderHD.create(orderhd);
+
+        if (_tbOrderHD) {
+            orderId = Encrypt.EncodeKey(_tbOrderHD.dataValues.id)
+            for (var i = 0; i < orderdt.length; i++) {
+                orderdt[i].stockId = Encrypt.DecodeKey(orderdt[i].stockId)
+                orderdt[i].orderId = _tbOrderHD.dataValues.id
+                const _tbOrderDT = await tbOrderDT.create(orderdt[i]);
+            }
+        }
+
+
+        // data.dataValues.id
+        // console.log()
+
+
+    } catch (e) {
+        status = false
+        msg = e.message
+    }
+    // const data = await tbOrderHD.create(req.body);
+
+    return res.json({
+        status: status,
+        msg: msg,
+        orderId: orderId
+    });
+});
+
+
+//#endregion line liff
 module.exports = router;
