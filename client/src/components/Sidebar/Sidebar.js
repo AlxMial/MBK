@@ -13,6 +13,8 @@ export default function Sidebar() {
   const [isEcommerce, setIsEcommerce] = useState(false);
   const [isReport, setIsReport] = useState(false);
   const [typePermission, setTypePermission] = useState("");
+  const [menuList,setMenuList] = useState([]);
+  const [showMenu,setShowMenu] = useState("");
   let history = useHistory();
   const ClickCRM = () => {
     setIsCRM(!isCRM);
@@ -28,15 +30,17 @@ export default function Sidebar() {
 
   const fetchPermission = async () => {
     const role = await GetPermissionByUserName();
-    setTypePermission(role);
-    if (role === "3") {
-      history.push("/admin/members");
-      setIsCRM(true);
+    if(role.data.data.length > 0)
+    {
+      if(role.data.data.filter(e => e.id === 1).length > 0){
+        setTypePermission("3")
+      } else  if(role.data.data.filter(e => e.id === 10).length > 0) {
+        setTypePermission("1")
+      } else {
+        setTypePermission("2")
+      }
     }
-    else if (role === "2") {
-      history.push("/admin/empty");
-      setIsCRM(true);
-    }
+    setMenuList(role.data.data);
   }
 
   useEffect(() => {
@@ -62,19 +66,17 @@ export default function Sidebar() {
           : " text-white")
   }
 
-  const menuList = [
-    { id: 1, module: 'crm', link: '/admin/members', label: 'จัดการสมาชิก', icon: 'fas fa-users-cog' },
-    { id: 2, module: 'crm', link: '/admin/points', label: 'เงื่อนไขคะแนน', icon: 'fas fa-coins' },
-    { id: 3, module: 'crm', link: '/admin/redemptions', label: 'เงื่อนไขแลกของรางวัล', icon: 'fas fa-gift' },
-    { id: 4, module: 'ecommerce', link: '/admin/settingShop', label: 'ตั้งค่าร้านค้า', icon: 'fas fa-store' },
-    { id: 5, module: 'ecommerce', link: '/admin/stocks', label: 'คลังสินค้า', icon: 'fas fa-warehouse' },
-    { id: 6, module: 'ecommerce', link: '/admin/order', label: 'รายการสั่งซื้อ', icon: 'fas fa-shopping-basket' },
-    { id: 7, module: 'ecommerce', link: '/admin/cancelAndReturn', label: 'ยกเลิกและคืนสินค้า', icon: 'fas fa-undo-alt' },
-    { id: 8, module: 'report', link: '/admin/pointHistoryReport', label: 'รายงานแสดงข้อมูลแคมเปญของ Code คะแนนทั้งหมด', icon: 'fas fa-file'},
-    { id: 9, module: 'report', link: '/admin/collectPointsReport', label: 'รายงานสะสมคะแนน', icon: 'fas fa-file'},
-    { id: 10, module: 'report', link: '/admin/campaignRewardReport', label: 'รายงานข้อมูลแคมเปญรางวัล', icon: 'fas fa-file'},
-    { id: 11, module: 'report', link: '/admin/campaignExchangeHistoryReport', label: 'รายงานประวัติการแลกของรางวัล', icon: 'fas fa-file'},    
-  ]
+  // const menuList = [
+  //   { id: 1, module: 'crm', link: '/admin/members', label: 'จัดการสมาชิก', icon: 'fas fa-users-cog' },
+  //   { id: 2, module: 'crm', link: '/admin/points', label: 'เงื่อนไขคะแนน', icon: 'fas fa-coins' },
+  //   { id: 3, module: 'crm', link: '/admin/redemptions', label: 'เงื่อนไขแลกของรางวัล', icon: 'fas fa-gift' },
+  //   { id: 4, module: 'ecommerce', link: '/admin/settingShop', label: 'ตั้งค่าร้านค้า', icon: 'fas fa-store' },
+  //   { id: 5, module: 'ecommerce', link: '/admin/stocks', label: 'คลังสินค้า', icon: 'fas fa-warehouse' },
+  //   { id: 6, module: 'ecommerce', link: '/admin/order', label: 'รายการสั่งซื้อ', icon: 'fas fa-shopping-basket' },
+  //   { id: 7, module: 'ecommerce', link: '/admin/cancelAndReturn', label: 'ยกเลิกและคืนสินค้า', icon: 'fas fa-undo-alt'},
+  //   { id: 8, module: 'report', link: '/admin/pointHistoryReport', label: 'รายงานแสดงข้อมูลแคมเปญของ Code คะแนนทั้งหมด'},
+  //   { id: 9, module: 'report', link: '/admin/collectPointsReport', label: 'รายงานสะสมคะแนน'},
+  // ]
 
   return (
     <>
@@ -156,7 +158,7 @@ export default function Sidebar() {
             </h6>
             {/* Navigation */}
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-              <li className={"items-center" + ((typePermission !== "1") ? " hidden" : " ")}>
+              <li className={"items-center" + ((menuList.filter(e => e.id.toString().includes(10)).length > 0) ? " " : " hidden")}>
                 <Link to="/admin/users" className={linkClassName("/admin/users")}>
                   <i className={iClassName("/admin/users", 'fas fa-user-friends')}></i>
                   จัดการผู้ดูแลระบบ
@@ -182,7 +184,7 @@ export default function Sidebar() {
                     <li className="items-center" key={item.id}>
                       <Link to={item.link} className={linkClassName(item.link)}>
                         <i className={iClassName(item.link, item.icon)}></i>
-                        {item.label}
+                        {item.label} 
                       </Link>
                     </li>
                   );
