@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-// import Spinner from "components/Loadings/spinner/Spinner";
+import Spinner from "components/Loadings/spinner/Spinner";
 // import { useToasts } from "react-toast-notifications";
 import axios from "services/axios";
 import { path } from "services/liff.services";
@@ -13,7 +13,7 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 const ShowCart = () => {
   const history = useHistory();
   // const { addToast } = useToasts();
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [confirmDelete, setconfirmDelete] = useState(false);
   const [deleteValue, setDeleteValue] = useState(null);
 
@@ -23,44 +23,50 @@ const ShowCart = () => {
   const [sumprice, setsumprice] = useState(0);
 
   const getProducts = async () => {
+
     let id = [];
     let cart = Storage.get_cart()
-    let shop_orders = cart.shop_orders;
-    shop_orders.filter((e) => {
-      id.push(e.id);
-      return e
-    });
-    if (!fn.IsNullOrEmpty(cart.usecoupon)) {
-      setusecoupon(cart.usecoupon)
-    } else {
-      setusecoupon(null)
-    }
-
-    await axios.post("stock/getStock", { id: id }).then((response) => {
-      if (response.data.status) {
-        let tbStock = response.data.tbStock;
-        setCartItem(tbStock);
-        let price = 0;
-        tbStock.filter((e) => {
-          let quantity = shop_orders.find((o) => o.id === e.id).quantity;
-          e.quantity = quantity;
-          if (e.priceDiscount > 0) {
-            price += parseFloat(e.priceDiscount) * parseInt(quantity);
-          } else {
-            price += parseFloat(e.price) * parseInt(quantity);
-          }
-          return e
-        });
-        if (!fn.IsNullOrEmpty(cart.usecoupon)) {
-          price = price - cart.usecoupon.discount
-        }
-        price = price < 1 ? 0 : price
-        setsumprice(price);
+    if (!fn.IsNullOrEmpty(cart)) {
+      let shop_orders = cart.shop_orders;
+      shop_orders.filter((e) => {
+        id.push(e.id);
+        return e
+      });
+      if (!fn.IsNullOrEmpty(cart.usecoupon)) {
+        setusecoupon(cart.usecoupon)
       } else {
-        setCartItem([]);
-        // error
+        setusecoupon(null)
       }
-    });
+      setIsLoading(true)
+      await axios.post("stock/getStock", { id: id }).then((response) => {
+        if (response.data.status) {
+          let tbStock = response.data.tbStock;
+          setCartItem(tbStock);
+          let price = 0;
+          tbStock.filter((e) => {
+            let quantity = shop_orders.find((o) => o.id === e.id).quantity;
+            e.quantity = quantity;
+            if (e.priceDiscount > 0) {
+              price += parseFloat(e.priceDiscount) * parseInt(quantity);
+            } else {
+              price += parseFloat(e.price) * parseInt(quantity);
+            }
+            return e
+          });
+          if (!fn.IsNullOrEmpty(cart.usecoupon)) {
+            price = price - cart.usecoupon.discount
+          }
+          price = price < 1 ? 0 : price
+          setsumprice(price);
+        } else {
+          setCartItem([]);
+          // error
+        }
+
+      }).finally((e) => {
+        setIsLoading(false)
+      });
+    }
   };
 
   const Cancelcoupon = () => {
@@ -119,7 +125,7 @@ const ShowCart = () => {
 
   return (
     <>
-      {/* {isLoading ? <Spinner customText={"Loading"} /> : null} */}
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="bg-green-mbk">
         <div
           style={{ height: "40px" }}
@@ -136,163 +142,164 @@ const ShowCart = () => {
           <p>สินค้าจะถูกยกเลิกทันที</p>
         </div>
       </div>
-
-      <div
-        className="mt-2 line-scroll"
-        style={{
-          height: "calc(100% - 420px)",
-          // overflow: "scroll",
-          width: "95%",
-          marginLeft: "auto",
-          marginRight: "auto",
-        }}
-      >
-        {[...CartItem].map((e, i) => {
-          return (
-            <div key={i}>
-              <div className="flex mt-2" style={{ height: "90px " }}>
-                <div style={{ width: "30%" }}>
-                  <ImageUC
-                    style={{ margin: "auto", height: "90px" }}
-                    find={1}
-                    relatedid={e.id}
-                    relatedtable={["stock1"]}
-                    alt="flash_sale"
-                    className="w-32 border-2 border-blueGray-50"
-                  ></ImageUC>
-                </div>
-                <div className="px-2" style={{ width: "70%" }}>
-                  <div className="flex" style={{ height: "40px" }}>
-                    <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
-                    <div
-                      className="relative"
-                      style={{ width: "20%" }}
-                      onClick={() => {
-                        setconfirmDelete(true);
-                        setDeleteValue(e.id);
-                      }}
-                    >
-                      <i
-                        className="absolute fas fa-trash opacity-50"
-                        style={{
-                          right: "10px",
-                          fontSize: "22px",
-                          color: "var(--mq-txt-color, rgb(170, 170, 170))",
-                        }}
-                      ></i>
-                    </div>
-
+      {CartItem.length > 0 ?
+        <div
+          className="mt-2 line-scroll"
+          style={{
+            height: "calc(100% - 420px)",
+            width: "95%",
+            marginLeft: "auto",
+            marginRight: "auto",
+          }}
+        >
+          {[...CartItem].map((e, i) => {
+            return (
+              <div key={i}>
+                <div className="flex mt-2" style={{ height: "90px " }}>
+                  <div style={{ width: "30%" }}>
+                    <ImageUC
+                      style={{ margin: "auto", height: "90px" }}
+                      find={1}
+                      relatedid={e.id}
+                      relatedtable={["stock1"]}
+                      alt="flash_sale"
+                      className="w-32 border-2 border-blueGray-50"
+                    ></ImageUC>
                   </div>
-
-                  <div style={{ height: "15px" }}>
-                    <div className="flex  relative" style={{ fontSize: "11px" }} >
+                  <div className="px-2" style={{ width: "70%" }}>
+                    <div className="flex" style={{ height: "35px" }}>
+                      <div className="font-bold line-clamp-2" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
                       <div
-                        style={{
-                          color: e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
-                          textDecoration:
-                            e.discount > 0 ? "line-through" : "none",
+                        className="relative"
+                        style={{ width: "20%" }}
+                        onClick={() => {
+                          setconfirmDelete(true);
+                          setDeleteValue(e.id);
                         }}
                       >
-                        {"฿ " + fn.formatMoney(e.price)}
+                        <i
+                          className="absolute fas fa-trash opacity-50"
+                          style={{
+                            right: "10px",
+                            fontSize: "22px",
+                            color: "var(--mq-txt-color, rgb(170, 170, 170))",
+                          }}
+                        ></i>
                       </div>
-                      {e.discount > 0 ? (
-                        <div style={{ color: "red", paddingLeft: "10px" }}>
-                          {"฿ " + fn.formatMoney(e.priceDiscount)}
-                        </div>
-                      ) : null}
+
                     </div>
-                  </div>
 
-                  <div
-                    className="flex relative"
-                    style={{
-                      height: "35px",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-
+                    <div style={{ height: "15px" }}>
+                      <div className="flex  relative" style={{ fontSize: "11px" }} >
+                        <div
+                          style={{
+                            color: e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
+                            textDecoration:
+                              e.discount > 0 ? "line-through" : "none",
+                          }}
+                        >
+                          {"฿ " + fn.formatMoney(e.price)}
+                        </div>
+                        {e.discount > 0 ? (
+                          <div style={{ color: "red", paddingLeft: "10px" }}>
+                            {"฿ " + fn.formatMoney(e.priceDiscount)}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
 
                     <div
-                      className="flex absolute"
+                      className="flex relative"
                       style={{
-                        color: "var(--mq-txt-color, rgb(170, 170, 170))",
+                        height: "35px",
                         alignItems: "center",
-                        right: "0px",
+                        justifyContent: "center",
                       }}
                     >
-                      <button
-                        name="minus"
+
+
+                      <div
+                        className="flex absolute"
                         style={{
-                          width: "30px",
-                          border: "1px solid #ddd",
-                          height: "30px",
-                          outline: "none",
-                          color: "#000",
-                          borderRadius: " 5px 0 0 5px "
-                        }}
-                        onClick={() => {
-                          if (e.quantity !== 1) {
-                            spinButton("minus", e.id)
-                          } else {
-                            setconfirmDelete(true);
-                            setDeleteValue(e.id);
-                          }
+                          color: "var(--mq-txt-color, rgb(170, 170, 170))",
+                          alignItems: "center",
+                          right: "0px",
                         }}
                       >
-                        <i className="fas fa-minus"></i>
-                      </button>
-                      <input
-                        style={{
-                          width: "50px",
-                          border: "1px solid #ddd",
-                          height: "30px",
-                          color: "#000",
-                          fontSize: "12px"
-                        }}
-                        type="tel"
-                        value={e.quantity}
-                        onBlur={(even) => {
-                          let value = even.target.value;
-                          if (fn.IsNullOrEmpty(value)) {
-                            value = 0;
-                            // setspin(value, e.id);
-                          }
-                          // if (parseInt(value) > tbStock.productCount) {
-                          //   value = tbStock.productCount;
-                          //   setspin(value, e.id);
-                          // }
-                        }}
-                      />
-                      <button
-                        name="plus"
-                        disabled={e.quantity >= CartItem.find(f => f.id === e.id).productCount ? true : false}
-                        style={{
-                          width: "30px",
-                          border: "1px solid #ddd",
-                          height: "30px",
-                          outline: "none",
-                          color: e.quantity >= CartItem.find(f => f.id === e.id).productCount ? "var(--mq-txt-color, rgb(170, 170, 170))" : "#000",
-                          borderRadius: "0 5px 5px 0"
-                        }}
-                        onClick={() => {
-                          let Item = CartItem.find(f => f.id === e.id)
-                          if (e.quantity < Item.productCount) {
-                            spinButton("plus", e.id)
-                          }
-                        }}
-                      >
-                        <i className="fas fa-plus"></i>
-                      </button>
+                        <button
+                          name="minus"
+                          style={{
+                            width: "30px",
+                            border: "1px solid #ddd",
+                            height: "30px",
+                            outline: "none",
+                            color: "#000",
+                            borderRadius: " 5px 0 0 5px "
+                          }}
+                          onClick={() => {
+                            if (e.quantity !== 1) {
+                              spinButton("minus", e.id)
+                            } else {
+                              setconfirmDelete(true);
+                              setDeleteValue(e.id);
+                            }
+                          }}
+                        >
+                          <i className="fas fa-minus"></i>
+                        </button>
+                        <input
+                          style={{
+                            width: "50px",
+                            border: "1px solid #ddd",
+                            height: "30px",
+                            color: "#000",
+                            fontSize: "12px"
+                          }}
+                          type="tel"
+                          value={e.quantity}
+                          onBlur={(even) => {
+                            let value = even.target.value;
+                            if (fn.IsNullOrEmpty(value)) {
+                              value = 0;
+                              // setspin(value, e.id);
+                            }
+                            // if (parseInt(value) > tbStock.productCount) {
+                            //   value = tbStock.productCount;
+                            //   setspin(value, e.id);
+                            // }
+                          }}
+                        />
+                        <button
+                          name="plus"
+                          disabled={e.quantity >= CartItem.find(f => f.id === e.id).productCount ? true : false}
+                          style={{
+                            width: "30px",
+                            border: "1px solid #ddd",
+                            height: "30px",
+                            outline: "none",
+                            color: e.quantity >= CartItem.find(f => f.id === e.id).productCount ? "var(--mq-txt-color, rgb(170, 170, 170))" : "#000",
+                            borderRadius: "0 5px 5px 0"
+                          }}
+                          onClick={() => {
+                            let Item = CartItem.find(f => f.id === e.id)
+                            if (e.quantity < Item.productCount) {
+                              spinButton("plus", e.id)
+                            }
+                          }}
+                        >
+                          <i className="fas fa-plus"></i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <div className="liff-inline" />
               </div>
-              <div className="liff-inline" />
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div> : null}
+
+
       <div
         className="flex relative"
         style={{
@@ -317,12 +324,15 @@ const ShowCart = () => {
         <div
           className="absolute"
           style={{ right: "10px" }}
-          onClick={() => {
-            history.push(path.usecoupon.replace(":id", "cart"))
-          }}
+
         >
           <div className="flex">
-            <div style={{ color: usecoupon != null ? "red" : "var(--mq-txt-color, rgb(192, 192, 192))" }}>
+            <div style={{ color: usecoupon != null ? "red" : "var(--mq-txt-color, rgb(192, 192, 192))" }}
+              onClick={() => {
+                if (CartItem.length > 0) {
+                  history.push(path.usecoupon.replace(":id", "cart"))
+                }
+              }}>
               {usecoupon != null ? ("-฿ " + fn.formatMoney(usecoupon.discount)) : "ใช้ส่วนลด >"}
             </div>
             <div className="px-2">
@@ -364,7 +374,9 @@ const ShowCart = () => {
                 fontSize: "16px"
               }}
               onClick={() => {
-                history.push(path.makeorder.replace(":id", "cart"))
+                if (CartItem.length > 0) {
+                  history.push(path.makeorder.replace(":id", "cart"))
+                }
               }}
             >
               {"ชำระเงิน"}
@@ -393,7 +405,7 @@ const ShowCart = () => {
           </div>
         </div>
       </div>
-      {
+      {/* {
         confirmDelete && (
           <ConfirmDialog
             className={" liff-Dialog "}
@@ -407,7 +419,7 @@ const ShowCart = () => {
             }}
           />
         )
-      }
+      } */}
     </>
   );
 };

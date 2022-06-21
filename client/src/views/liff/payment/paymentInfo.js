@@ -7,6 +7,10 @@ import { path } from "services/liff.services";
 import * as Storage from "@services/Storage.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
+import {
+    getOrder
+} from "@services/liff.services";
+
 
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
@@ -15,11 +19,25 @@ const PaymentInfo = () => {
     const history = useHistory();
     const { addToast } = useToasts();
     const [isLoading, setIsLoading] = useState(false);
-
+    const [OrderHD, setOrderHD] = useState(null);
     const [isAttachLater, setisAttachLater] = useState(false);
 
-    useEffect(() => {
+    const GetOrder = () => {
+        setIsLoading(true)
+        getOrder({ orderId: id }, (res) => {
+            if (res.status) {
+                if (res.data.status) {
+                    setOrderHD(res.data.OrderHD)
+                }
+            } else {
 
+            }
+        }, () => { }, () => {
+            setIsLoading(false)
+        })
+    }
+    useEffect(() => {
+        GetOrder()
     }, []);
 
 
@@ -46,7 +64,7 @@ const PaymentInfo = () => {
                         <div className="w-full" style={{ width: "90%", margin: "auto" }}>
                             <div className="w-full flex font-bold relative" style={{ fontSize: "14px" }}>
                                 <div style={{ width: "50%" }}>ยอดชำระเงินทั้งหมด</div>
-                                <div className="text-green-mbk " style={{ width: "50%", textAlign: "end" }}>฿ 1,426.00</div>
+                                <div className="text-green-mbk " style={{ width: "50%", textAlign: "end" }}>{"฿ " + fn.formatMoney((OrderHD == null ? 0 : OrderHD.price))}</div>
                             </div>
 
                         </div>
@@ -60,24 +78,24 @@ const PaymentInfo = () => {
                         }}
                     >
                         <div className="w-full" style={{ width: "90%", margin: "auto" }}>
+                            {OrderHD != null ?
+                                <div className="w-full  relative">
 
-                            <div className="w-full  relative">
-
-                                <div className="w-full font-bold" style={{ fontSize: "13px" }}>ธนาคารกสิกรไทย จำกัด (มหาชน)</div>
-                                <div className="w-full " style={{ fontSize: "13px", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>สาขา : อำเภอเมือง</div>
-                                <div className="w-full flex" style={{ fontSize: "20px" }}>
-                                    <div className="flex " style={{ width: "70%", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>
-                                        เลขบัญชี : <div className="text-green-mbk px-2 font-bold " >123-4-56789-0</div>
-                                    </div>
-                                    <CopyToClipboard text={"123-4-56789-0"}>
-                                        <div style={{ width: "30%", textAlign: "end", color: "var(--mq-txt-color, rgb(170, 170, 170))", fontSize: "13px" }}>
-                                            คัดลอก
+                                    <div className="w-full font-bold" style={{ fontSize: "13px" }}>{OrderHD.Payment.bankName}</div>
+                                    <div className="w-full " style={{ fontSize: "13px", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"สาขา : " + OrderHD.Payment.bankBranchName}</div>
+                                    <div className="w-full flex" style={{ fontSize: "20px" }}>
+                                        <div className="flex " style={{ width: "70%", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>
+                                            เลขบัญชี : <div className="text-green-mbk px-2 font-bold " >{OrderHD.Payment.accountNumber}</div>
                                         </div>
-                                    </CopyToClipboard>
+                                        <CopyToClipboard text={OrderHD.Payment.accountNumber}>
+                                            <div style={{ width: "30%", textAlign: "end", color: "var(--mq-txt-color, rgb(170, 170, 170))", fontSize: "13px" }}>
+                                                คัดลอก
+                                            </div>
+                                        </CopyToClipboard>
+                                    </div>
+
                                 </div>
-
-                            </div>
-
+                                : null}
                         </div>
                     </div>
 
@@ -243,7 +261,7 @@ const PaymentInfo = () => {
                                         fontSize: "14px", width: "90%"
                                     }}
                                     onClick={() => {
-                                        // history.goBack()
+                                        history.push(path.shopList)
                                     }}
                                 >
                                     {"กลับไปที่ร้านค้า"}
@@ -261,7 +279,7 @@ const PaymentInfo = () => {
                                         fontSize: "14px", width: "90%"
                                     }}
                                     onClick={() => {
-                                        // history.goBack()
+                                        history.push(path.myorder)
                                     }}
                                 >
                                     {"ไปหน้า คำสั่งซื้อของฉัน"}

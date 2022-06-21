@@ -374,14 +374,14 @@ const ShopList = () => {
                                 : null}
                             </div>
 
-                            <div className="px-2 py-2"><div style={{
-                              WebkitLineClamp: "2",
-                              display: "-webkit-box",
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                              fontSize: "11px",
-                              height: "35px"
-                            }}>{e.productName}</div></div>
+                            <div className="px-2 py-2">
+                              <div className="line-clamp-2" style={{
+                                fontSize: "11px",
+                                height: "35px"
+                              }}>
+                                {e.productName}
+                              </div>
+                            </div>
                             <div
                               className="flex relative"
                               style={{ bottom: "0", left: "10px", fontSize: "10px" }}
@@ -481,7 +481,7 @@ const ShopList = () => {
                           : null}
                       </div>
                       <div
-                        className="px-1 py-2 line-scroll"
+                        className="px-1 py-2 line-scroll line-clamp-2"
                         style={{
                           height: "40px",
                           lineHeight: "15px",

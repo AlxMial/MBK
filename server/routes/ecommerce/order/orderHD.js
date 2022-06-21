@@ -8,7 +8,7 @@ const ValidateEncrypt = require("../../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
 const Sequelize = require("sequelize");
-const { tbOrderHD, tbMember, tbOrderDT, tbStock } = require("../../../models");
+const { tbOrderHD, tbMember, tbOrderDT, tbStock, tbLogistic, tbPromotionDelivery, tbPayment } = require("../../../models");
 
 const Op = Sequelize.Op;
 
@@ -273,6 +273,173 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                     hd.id = Encrypt.EncodeKey(hd.id)
                     OrderHD.push(hd)
                 }
+            }
+
+        }
+
+    } catch (e) {
+        status = false
+        msg = e.message
+    }
+
+    return res.json({
+        status: status,
+        msg: msg,
+        OrderHD: OrderHD
+    });
+});
+
+router.post("/getOrder", validateLineToken, async (req, res) => {
+
+    let status = true;
+    let msg;
+    let Member;
+    let { orderId } = req.body
+    let OrderHDData;
+    let OrderHD;
+    try {
+        const uid = Encrypt.DecodeKey(req.user.uid);
+        Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+        if (Member) {
+            OrderHDData = await tbOrderHD.findOne({
+                attributes: ["id", "logisticId", "paymentId"],
+                where: {
+                    id: Encrypt.DecodeKey(orderId),
+                    isCancel: false,
+                    IsDeleted: false, memberId: Member.id,
+                    paymentStatus: "Wating",
+                    transportStatus: "Prepare",
+                    isReturn: false
+                }
+            });
+            let sumprice = 0
+            if (OrderHDData) {
+                const OrderDTData = await tbOrderDT.findAll({
+                    attributes: ["id", "amount", "price", "discount", "discountType", "stockId", "orderId"],
+                    where: { IsDeleted: false, orderId: OrderHDData.dataValues.id }
+                });
+                // ลดราคา    
+                for (var j = 0; j < OrderDTData.length; j++) {
+                    let dt = OrderDTData[j].dataValues
+                    //ลดราคา 
+                    if (dt.discount > 0) {
+                        let price = 0;
+                        if (dt.discountType === 'Percent') {
+                            price = dt.price - ((dt.discount / 100) * dt.price)
+                        } else {
+                            price = dt.price - dt.discount
+                        }
+                        sumprice = sumprice + (price * dt.amount)
+                    } else {
+
+                        sumprice = sumprice + (dt.price * dt.amount)
+                    }
+                }
+                // คูปอง
+
+                // ค่าขนส่ง 
+                const _tbLogistic = await tbLogistic.findOne({
+                    attributes: ["id", "logisticType", "deliveryName", "description", "deliveryCost"],
+                    where: {
+                        isDeleted: false, id:
+                            OrderHDData.dataValues.logisticId
+                    },
+                });
+                //โปรโมชั่นขนส่ง
+                const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
+                    attributes: ["id", "promotionName", "buy", "deliveryCost", "deliveryCost"],
+                    where: { isDeleted: false, isInactive: true },
+                });
+                if (_tbLogistic && _tbPromotionDelivery) {
+                    let _tbPromotionDeliveryData = _tbPromotionDelivery.dataValues
+                    let LogisticData = _tbLogistic.dataValues
+
+                    if (_tbPromotionDeliveryData.buy >= sumprice) {
+                        sumprice = sumprice + LogisticData.deliveryCost
+                    } else {
+                        let deliveryCostt = LogisticData.deliveryCost
+                        if (deliveryCostt > _tbPromotionDeliveryData.deliveryCost) {
+                            deliveryCost = deliveryCostt - _tbPromotionDeliveryData.deliveryCost
+                        } else {
+                            deliveryCostt = 0
+                        }
+                        sumprice = sumprice + deliveryCostt
+                    }
+                }
+
+                const _tbPayment = await tbPayment.findOne({
+                    attributes: ["id", "accountName", "accountNumber", "bankBranchName", "bankName"],
+                    where: { isDeleted: false, id: OrderHDData.dataValues.paymentId },
+                });
+
+                OrderHD = { id: Encrypt.EncodeKey(OrderHDData.dataValues.id), price: sumprice, Payment: _tbPayment }
+            }
+
+        }
+
+    } catch (e) {
+        status = false
+        msg = e.message
+    }
+
+    return res.json({
+        status: status,
+        msg: msg,
+        OrderHD: OrderHD
+    });
+});
+
+
+router.post("/getOrderHDById", validateLineToken, async (req, res) => {
+
+    let status = true;
+    let msg;
+    let Member;
+    let { Id } = req.body
+    let OrderHDData;
+    let OrderHD;
+    try {
+        const uid = Encrypt.DecodeKey(req.user.uid);
+        Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+        if (Member) {
+
+            OrderHDData = await tbOrderHD.findOne({
+                attributes: ["id"
+                    , "orderNumber"
+                    , "paymentType"
+                    , "paymentStatus"
+                    , "transportStatus"
+                    , "isCancel"
+                    , "isReturn"
+                    , "logisticId"
+                    , "memberId"
+                    , "paymentId"],
+                where: {
+                    IsDeleted: false, id: Encrypt.DecodeKey(Id),
+                }
+            });
+
+
+            if (OrderHDData) {
+
+                let hd = OrderHDData.dataValues
+                hd.dt = []
+                const OrderDTData = await tbOrderDT.findAll({
+                    attributes: ["id", "amount", "price", "discount", "discountType", "stockId", "orderId"],
+                    where: { IsDeleted: false, orderId: hd.id }
+                });
+
+                for (var j = 0; j < OrderDTData.length; j++) {
+                    let dt = OrderDTData[j].dataValues
+                    dt.id = Encrypt.EncodeKey(dt.id)
+                    const _tbStock = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
+                    dt.stockId = Encrypt.EncodeKey(dt.stockId)
+                    dt.stock = _tbStock
+                    hd.dt.push(dt)
+                }
+                hd.id = Encrypt.EncodeKey(hd.id)
+                OrderHD = hd
+
             }
 
         }
