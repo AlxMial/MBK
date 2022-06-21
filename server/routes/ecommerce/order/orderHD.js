@@ -8,7 +8,7 @@ const ValidateEncrypt = require("../../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
 const Sequelize = require("sequelize");
-const { tbOrderHD, tbMember, tbOrderDT, tbStock, tbLogistic, tbPromotionDelivery, tbPayment, tbRedemptionCoupon, tbCouponCode } = require("../../../models");
+const { tbOrderHD, tbMember, tbOrderDT, tbStock, tbLogistic, tbPromotionDelivery, tbPayment, tbRedemptionCoupon, tbCouponCode, tbCancelOrder } = require("../../../models");
 
 const Op = Sequelize.Op;
 
@@ -228,7 +228,9 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             }
             else if (PaymentStatus == "Wating" && TransportStatus == "Prepare" && isCancel && !isReturn) {
                 //ยกเลิก
-                OrderHDData = await tbOrderHD.findAll({
+                OrderHDData = []
+
+                const _OrderHDData = await tbOrderHD.findAll({
                     attributes: ["id", "orderNumber",],
                     where: {
                         isCancel: isCancel,
@@ -238,6 +240,12 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                         isReturn: isReturn
                     }
                 });
+                if (_OrderHDData) {
+                    _OrderHDData.map((e, i) => {
+                        console.log(e.dataValues.id)
+                    })
+                    // tbCancelOrder
+                }
             }
             else if (PaymentStatus == "Done" && TransportStatus == "Done" && !isCancel && isReturn) {
                 //คืนสินค้า
@@ -476,6 +484,14 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     hd.RedemptionCoupon = _tbRedemptionCoupon.dataValues
                 }
 
+                const _tbCancelOrder = await tbCancelOrder.findOne({
+                    attributes: ["id", "cancelStatus", "cancelDetail", "description"],
+                    where: { isDeleted: false, orderId: hd.id },
+                });
+
+                if (_tbCancelOrder) {
+                    hd.tbCancelOrder = _tbCancelOrder
+                }
                 hd.id = Encrypt.EncodeKey(hd.id)
                 hd.paymentId = Encrypt.EncodeKey(hd.paymentId)
                 hd.logisticId = Encrypt.EncodeKey(hd.logisticId)

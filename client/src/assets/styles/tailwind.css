@@ -4727,6 +4727,22 @@ input[type="number"] {
   box-shadow: none;
 }
 
+.select-remark .css-1s2u09g-control,
+.select-remark .css-1pahdxg-control,
+.select-remark .css-1insrsq-control {
+  border-color: #007a40;
+  border-radius: 10px;
+  height: auto;
+  max-height: unset !important;
+}
+
+.select-remark .css-1pahdxg-control {
+  border-radius: 10px;
+  border-color: #007a40;
+  box-shadow: none;
+}
+
+
 .Radio-Payment>span:nth-child(2) {
   width: 100%;
 }
@@ -4737,9 +4753,25 @@ input[type="number"] {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.Modal-line {
+  background-color: #fff;
+  padding: 20px;
+  width: 90%;
+  margin: auto;
+  display: flex;
+  margin-top: 20%;
+  border-radius: 20px;
+  border: 1px solid #047738;
+}
+
+.Modal-Overlay {
+  /* background-color: transparent; */
 }

@@ -113,4 +113,26 @@ router.delete("/:id", validateToken, async (req, res) => {
     res.json({ status: true, message: "success", tbCancelOrder: null });
 });
 
+
+//#region line liff
+router.post("/cancelOrder", validateLineToken, async (req, res) => {
+    let { orderId, CancelDetail, description } = req.body;
+    try {
+        // cancelStatus
+        // cancelDetail
+        // description
+        // orderId
+        // const data = await tbCancelOrder.create({ orderId: orderId, cancelStatus: "Wait", CancelDetail: CancelDetail, description: description, });
+
+    } catch {
+
+    }
+
+    res.json({
+        status: true,
+        message: "success",
+        tbCancelOrder: req.body,
+    });
+});
+//#endregion line liff
 module.exports = router;

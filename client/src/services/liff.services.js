@@ -62,7 +62,7 @@ export const path = {
   paymentInfo: "/line/paymentInfo/:id",
 
   myorder: "/line/myorder",
-  orderpaymentdone :  "/line/orderpaymentdone/:id",
+  orderpaymentdone: "/line/orderpaymentdone/:id",
 
 
 };
@@ -153,7 +153,7 @@ export const routes = [
     path: path.orderpaymentdone,
     component: orderpaymentdone,
   },
-  
+
   {
     path: path.addAddress,
     component: addAddress,
@@ -249,6 +249,10 @@ export const getOrder = (data, s, e = () => { }, f = () => { }) => {
 };
 export const getOrderHDById = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/getOrderHDById", data, s, e, f);
+};
+
+export const cancelOrder = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/cancelOrder/cancelOrder", data, s, e, f);
 };
 
 
