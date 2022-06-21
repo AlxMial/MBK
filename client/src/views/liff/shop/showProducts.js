@@ -13,6 +13,7 @@ import SlideShow from "./SlideShow";
 
 const ShowProducts = () => {
   const history = useHistory();
+  const { id } = useParams();
   const { addToast } = useToasts();
   // const [isLoading, setIsLoading] = useState(false);
   const [Img, setImg] = useState([]);
@@ -21,7 +22,6 @@ const ShowProducts = () => {
     fn.getCartNumberBadge()
   );
   const [spin, setspin] = useState(1);
-  const { id } = useParams();
   const [tbStock, settbStock] = useState(null);
   const spinButton = (e) => {
     if (e === "plus") {

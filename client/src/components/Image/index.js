@@ -30,10 +30,12 @@ const ImageUC = (prop) => {
     fetchImg();
   }, []);
 
-  return <img {...other} src={Img} onError={({ currentTarget }) => {
-    currentTarget.onerror = null;
-    currentTarget.src = require("assets/img/mbk/no-image.png").default
-  }}></img>;
+  return <div>
+    <img {...other} src={Img} onError={({ currentTarget }) => {
+      currentTarget.onerror = null;
+      currentTarget.src = require("assets/img/mbk/no-image.png").default
+    }}></img>
+  </div>
 };
 
 export default ImageUC;

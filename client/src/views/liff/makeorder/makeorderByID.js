@@ -11,7 +11,8 @@ import Select from "react-select";
 import {
     getMemberAddress,
     gettbPayment,
-    gettbLogistic, doSaveOrder
+    gettbLogistic, doSaveOrder,
+    getOrderHDById
 
 } from "@services/liff.services";
 import { Radio } from "antd";
@@ -21,7 +22,8 @@ import api_amphure from "../../../assets/data/api_amphure.json";
 import api_tombon from "../../../assets/data/api_tombon.json";
 // components
 
-const MakeOrder = () => {
+const MakeOrderById = () => {
+    const { id } = useParams();
     const history = useHistory();
     const { addToast } = useToasts();
     const [isLoading, setIsLoading] = useState(false);
@@ -40,59 +42,57 @@ const MakeOrder = () => {
     const [paymentID, setpaymentID] = useState(null);
     const [RadioPayment, setRadio] = useState(1);
 
-    const [CartItem, setCartItem] = useState([]);
+    const [OrderHD, setOrderHD] = useState(null);
+
     const [usecoupon, setusecoupon] = useState(null);
 
     const [sumprice, setsumprice] = useState(0);
-    let { id } = useParams();
     const getProducts = async () => {
         let idlist = [];
         let item;
-        if (id === "cart") {
-            item = Storage.get_cart()
-        }
-        else if (id === "byorder") {
-            item = Storage.getbyorder()
-        }
-
-        if (!fn.IsNullOrEmpty(item)) {
-            let shop_orders = item.shop_orders;
-            shop_orders.map((e, i) => {
-                idlist.push(e.id);
-            });
-            if (!fn.IsNullOrEmpty(item.usecoupon)) {
-                setusecoupon(item.usecoupon)
-            } else {
-                setusecoupon(null)
-            }
-
-            await axios.post("stock/getStock", { id: idlist }).then((response) => {
-                if (response.data.status) {
-                    let tbStock = response.data.tbStock;
-                    setCartItem(tbStock);
-                    let price = 0;
-                    tbStock.map((e, i) => {
-                        let quantity = shop_orders.find((o) => o.id == e.id).quantity;
-                        e.quantity = quantity;
-                        if (e.priceDiscount > 0) {
-                            price += parseFloat(e.priceDiscount) * parseInt(quantity);
-                        } else {
-                            price += parseFloat(e.price) * parseInt(quantity);
-                        }
-                    });
-                    // if (!fn.IsNullOrEmpty(item.usecoupon)) {
-                    //     price = price - item.usecoupon.discount
-                    // }
-                    price = price
-                    setsumprice(price < 1 ? 0 : price);
-                } else {
-                    setCartItem([]);
-                    // error
+        if (!fn.IsNullOrEmpty(id)) {
+            getOrderHDById({ Id: id }, (res) => {
+                if (res.status) {
+                    setOrderHD(res.data.OrderHD)
                 }
-            });
-        } else {
-
+            }, () => { }, () => { setIsLoading(false) })
         }
+
+
+        // let shop_orders = item.shop_orders;
+        // shop_orders.map((e, i) => {
+        //     idlist.push(e.id);
+        // });
+        // if (!fn.IsNullOrEmpty(item.usecoupon)) {
+        //     setusecoupon(item.usecoupon)
+        // } else {
+        //     setusecoupon(null)
+        // }
+
+        // await axios.post("stock/getStock", { id: idlist }).then((response) => {
+        //     if (response.data.status) {
+        //         let tbStock = response.data.tbStock;
+        //         setCartItem(tbStock);
+        //         let price = 0;
+        //         tbStock.map((e, i) => {
+        //             let quantity = shop_orders.find((o) => o.id == e.id).quantity;
+        //             e.quantity = quantity;
+        //             if (e.priceDiscount > 0) {
+        //                 price += parseFloat(e.priceDiscount) * parseInt(quantity);
+        //             } else {
+        //                 price += parseFloat(e.price) * parseInt(quantity);
+        //             }
+        //         });
+        //         // if (!fn.IsNullOrEmpty(item.usecoupon)) {
+        //         //     price = price - item.usecoupon.discount
+        //         // }
+        //         price = price
+        //         setsumprice(price < 1 ? 0 : price);
+        //     } else {
+        //         setCartItem([]);
+        //         // error
+        //     }
+        // });
     };
     const setDeliveryCost = (e) => {
 
@@ -186,54 +186,53 @@ const MakeOrder = () => {
     }
     //สั่งสินค้า 
     const sendOrder = () => {
-        if (!fn.IsNullOrEmpty(CartItem)) {
-            let item;
-            if (id == "cart") {
-                item = Storage.get_cart()
-            }
-            else {
-                item = Storage.getbyorder()
-            }
-            let shop_orders = item.shop_orders;
-            let dt = []
-            CartItem.filter(e => {
-                dt.push({
-                    stockId: e.id,
-                    amount: e.quantity,
-                    price: e.price,
-                    discount: e.discount,
-                    discountType: e.discountType
-                })
-            })
-            let order = {
-                orderhd: {
-                    paymentId: RadioPayment === 1 ? paymentID : null,
-                    paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
-                    logisticId: isLogistic,
-                    stockNumber: shop_orders.length,
-                    paymentStatus: "Wating",
-                    transportStatus: "Prepare",
-                },
-                orderdt: dt
-            }
+        // console.log("สั่งสินค้า")
+        // let item;
+        // if (id == "cart") {
+        //     item = Storage.get_cart()
+        // }
+        // else {
+        //     item = Storage.getbyorder()
+        // }
+        // let shop_orders = item.shop_orders;
+        // let dt = []
+        // CartItem.filter(e => {
+        //     dt.push({
+        //         stockId: e.id,
+        //         amount: e.quantity,
+        //         price: e.price,
+        //         discount: e.discount,
+        //         discountType: e.discountType
+        //     })
+        // })
+        // let order = {
+        //     orderhd: {
+        //         paymentId: RadioPayment === 1 ? paymentID : null,
+        //         paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
+        //         logisticId: isLogistic,
+        //         stockNumber: shop_orders.length,
+        //         paymentStatus: "Wating",
+        //         transportStatus: "Prepare",
+        //     },
+        //     orderdt: dt
+        // }
 
-            doSaveOrder(order, (res) => {
-                if (res.status) {
-                    // console.log()
-                    // ลบข้อมูล
-                    if (id == "cart") {
-                        item = Storage.remove_cart()
-                    }
-                    else {
-                        item = Storage.remove_byorder()
-                    }
+        // doSaveOrder(order, (res) => {
+        //     if (res.status) {
+        //         // console.log()
+        //         // ลบข้อมูล
+        //         if (id == "cart") {
+        //             item = Storage.remove_cart()
+        //         }
+        //         else {
+        //             item = Storage.remove_byorder()
+        //         }
 
-                    history.push(path.paymentInfo.replace(":id", res.data.orderId))
-                } else {
+        //         history.push(path.paymentInfo.replace(":id", res.data.orderId))
+        //     } else {
 
-                }
-            })
-        }
+        //     }
+        // })
     }
 
     useEffect(() => {
@@ -256,62 +255,64 @@ const MakeOrder = () => {
                 </div>
             </div>
             <div className="overflow-scroll line-scroll" style={{ height: "calc(100% - 200px)" }}>
-                <div
-                    className="mt-2 line-scroll"
-                    style={{
-                        maxHeight: "calc(100% - 420px)",
-                        width: "95%",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                    }}
-                >
-                    {[...CartItem].map((e, i) => {
-                        return (
-                            <div key={i}>
-                                <div className="flex mt-2" style={{ height: "90px " }}>
-                                    <div style={{ width: "30%" }}>
-                                        <ImageUC
-                                            style={{ margin: "auto", height: "90px" }}
-                                            find={1}
-                                            relatedid={e.id}
-                                            relatedtable={["stock1"]}
-                                            alt="flash_sale"
-                                            className="w-32 border-2 border-blueGray-50"
-                                        ></ImageUC>
-                                    </div>
-                                    <div className="px-2" style={{ width: "70%" }}>
-                                        <div className="flex" style={{ height: "60%" }}>
-                                            <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
+                {OrderHD != null ?
+                    <div
+                        className="mt-2 line-scroll"
+                        style={{
+                            maxHeight: "calc(100% - 420px)",
+                            width: "95%",
+                            marginLeft: "auto",
+                            marginRight: "auto",
+                        }}
+                    >
+                        {[...OrderHD.dt].map((e, i) => {
+                            return (
+                                <div key={i}>
+                                    <div className="flex mt-2" style={{ height: "90px " }}>
+                                        <div style={{ width: "30%" }}>
+                                            <ImageUC
+                                                style={{ margin: "auto", height: "90px" }}
+                                                find={1}
+                                                relatedid={e.id}
+                                                relatedtable={["stock1"]}
+                                                alt="flash_sale"
+                                                className="w-32 border-2 border-blueGray-50"
+                                            ></ImageUC>
                                         </div>
-                                        <div style={{ height: "15%" }}>
-                                            <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{"จำนวน : " + e.quantity}</div>
-                                        </div>
-                                        <div style={{ height: "15%" }}>
-                                            <div className="flex  relative" style={{ fontSize: "11px" }} >
-                                                <div
-                                                    style={{
-                                                        color: e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
-                                                        textDecoration:
-                                                            e.discount > 0 ? "line-through" : "none",
-                                                    }}
-                                                >
-                                                    {"฿ " + fn.formatMoney(e.price)}
-                                                </div>
-                                                {e.discount > 0 ? (
-                                                    <div style={{ color: "red", paddingLeft: "10px" }}>
-                                                        {"฿ " + fn.formatMoney(e.priceDiscount)}
-                                                    </div>
-                                                ) : null}
+                                        <div className="px-2" style={{ width: "70%" }}>
+                                            <div className="flex" style={{ height: "60%" }}>
+                                                <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.stock.productName}</div>
                                             </div>
-                                        </div>
+                                            <div style={{ height: "15%" }}>
+                                                <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{"จำนวน : " + e.amount}</div>
+                                            </div>
+                                            <div style={{ height: "15%" }}>
+                                                <div className="flex relative font-bold" style={{ fontSize: "11px" }} >
+                                                    <div
+                                                        style={{
+                                                            color: e.discount > 0 ? "rgba(0,0,0,.54)" : "",
+                                                            textDecoration:
+                                                                e.discount > 0 ? "line-through" : "none",
+                                                        }}
+                                                    >
+                                                        {"฿ " + fn.formatMoney(e.price)}
+                                                    </div>
+                                                    {e.discount > 0 ? (
+                                                        <div style={{ color: "red", paddingLeft: "10px" }}>
+                                                            {"฿ " + fn.formatMoney(e.discountType === "THB" ? e.discount : e.price - ((e.discount / 100) * e.price))}
+                                                        </div>
+                                                    ) : null}
+                                                </div>
+                                            </div>
 
+                                        </div>
                                     </div>
+                                    <div className="liff-inline" />
                                 </div>
-                                <div className="liff-inline" />
-                            </div>
-                        );
-                    })}
-                </div>
+                            );
+                        })}
+                    </div> : null}
+
                 <div
                     className="flex relative"
                     style={{
@@ -341,9 +342,8 @@ const MakeOrder = () => {
                         <div className="flex">
                             <div style={{ color: usecoupon != null ? "red" : "var(--mq-txt-color, rgb(192, 192, 192))" }}
                                 onClick={() => {
-                                    if (CartItem.length > 0) {
-                                        history.push(path.usecoupon.replace(":id", id))
-                                    }
+
+                                    history.push(path.usecoupon.replace(":id", id))
                                 }}
                             >
                                 {usecoupon != null ? ("-฿ " + fn.formatMoney(usecoupon.discount)) : "ใช้ส่วนลด >"}
@@ -686,4 +686,4 @@ const MakeOrder = () => {
 };
 
 
-export default MakeOrder;
+export default MakeOrderById;

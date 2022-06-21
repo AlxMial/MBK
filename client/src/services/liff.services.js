@@ -24,6 +24,7 @@ import showCart from "views/liff/shop/showCart";
 import usecoupon from "views/liff/shop/usecoupon";
 
 import makeorder from "views/liff/makeorder/makeorder";
+import makeorderbyid from "views/liff/makeorder/makeorderByID";
 
 import addAddress from "views/liff/makeorder/addAddress";
 
@@ -55,6 +56,7 @@ export const path = {
   usecoupon: "/line/usecoupon/:id",
 
   makeorder: "/line/makeorder/:id",
+  makeorderbyid: "/line/makeorderbyid/:id",
   addAddress: "/line/addAddress",
 
   paymentInfo: "/line/paymentInfo/:id",
@@ -142,6 +144,11 @@ export const routes = [
     path: path.makeorder,
     component: makeorder,
   },
+  {
+    path: path.makeorderbyid,
+    component: makeorderbyid,
+  },
+
   {
     path: path.addAddress,
     component: addAddress,
@@ -232,7 +239,12 @@ export const doSaveOrder = (data, s, e = () => { }, f = () => { }) => {
 export const getOrderHD = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/getOrderHD", data, s, e, f);
 };
-
+export const getOrder = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/order/orderHD/getOrder", data, s, e, f);
+};
+export const getOrderHDById = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/order/orderHD/getOrderHDById", data, s, e, f);
+};
 
 
 
