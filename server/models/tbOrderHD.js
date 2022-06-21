@@ -31,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    paymentDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     isCancel: {
       type: DataTypes.BOOLEAN,
       allowNull: true,

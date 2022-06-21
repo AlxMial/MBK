@@ -2,24 +2,18 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
-import axios from "services/axios";
 import { path } from "services/liff.services";
 import * as Storage from "@services/Storage.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import {
-    getMemberAddress,
-    gettbPayment,
-    gettbLogistic, doSaveOrder,
+
     getOrderHDById
 
 } from "@services/liff.services";
-import { Radio } from "antd";
 
-import api_province from "../../../assets/data/api_province.json";
-import api_amphure from "../../../assets/data/api_amphure.json";
-import api_tombon from "../../../assets/data/api_tombon.json";
+
 // components
 
 const OrderPaymentDone = () => {
@@ -28,23 +22,11 @@ const OrderPaymentDone = () => {
     const { addToast } = useToasts();
     const [isLoading, setIsLoading] = useState(false);
 
-
-    const [optionaddress, setoptionaddress] = useState([]);
-    const [isAddress, setisAddress] = useState(null);
-
-    const [optionLogistic, setoptionLogistic] = useState([]);
-    const [isLogistic, setisLogistic] = useState(null);
     const [deliveryCost, setdeliveryCost] = useState(0);
-
-    const [tbPromotionDelivery, settbPromotionDelivery] = useState(null);
-
-    const [optionPayment, setPayment] = useState([]);
-    const [paymentID, setpaymentID] = useState(null);
-    const [RadioPayment, setRadio] = useState(1);
 
     const [OrderHD, setOrderHD] = useState(null);
 
-    const [usecoupon, setusecoupon] = useState(null);
+    const [discount, setdiscount] = useState(null);
 
     const [sumprice, setsumprice] = useState(0);
     const getProducts = async () => {
@@ -55,10 +37,6 @@ const OrderPaymentDone = () => {
                 if (res.status) {
                     let OrderHD = res.data.OrderHD
                     setOrderHD(OrderHD)
-                    setpaymentID(OrderHD.paymentId)
-                    setisLogistic(OrderHD.logisticId)
-
-
                     let _sumprice = 0
                     OrderHD.dt.map((e, i) => {
                         if (e.discount > 0) {
@@ -82,6 +60,11 @@ const OrderPaymentDone = () => {
                         setdeliveryCost(OrderHD.deliveryCost)
                     }
 
+                    if (!fn.IsNullOrEmpty(OrderHD.couponCodeId)) {
+                        setdiscount(OrderHD.RedemptionCoupon.tbRedemptionCoupon.discount)
+                    }
+
+
                     setsumprice(_sumprice)
 
                 }
@@ -93,78 +76,8 @@ const OrderPaymentDone = () => {
     };
 
 
-
-    const getMemberaddress = async () => {
-        getMemberAddress(
-            (res) => {
-                if (res.data.code === 200) {
-                    let option = res.data.option
-                    option.map((e, i) => {
-                        if (e.isDefault) {
-                            setisAddress(e.id)
-                        }
-                    })
-                    getAddress(option)
-
-                }
-            },
-        );
-    }
-
-    const getAddress = async (option) => {
-        for (var i = 0; i < option.length; i++) {
-            let province = await api_province
-            province = province.find(e => e.value.toString() === option[i].province)
-
-            let district = await api_amphure
-            district = district.find(e => e.value.toString() === option[i].district)
-
-            let subDistrict = await api_tombon
-            subDistrict = subDistrict.find(e => e.value.toString() === option[i].subDistrict)
-
-            option[i].address = `${option[i].address} ต.${subDistrict.label} อ.${district.label} จ.${province.label} ${option[i].postcode} ${option[i].email}`
-            option[i].name = `คุณ${option[i].firstName} ${option[i].lastName}`
-            option[i].value = option[i].id
-        }
-        setoptionaddress(option)
-    }
-    const gettbpayment = async (option) => {
-        gettbPayment(
-            (res) => {
-                if (res.data.code === 200) {
-                    let option = res.data.tbPayment
-                    for (var i = 0; i < option.length; i++) {
-                        option[i].value = option[i].id
-                    }
-                    setPayment(option)
-                }
-            },
-        );
-    }
-
-    const getTbLogistic = async (option) => {
-        gettbLogistic(
-            (res) => {
-                if (res.data.status) {
-                    let option = res.data.tbLogistic
-                    let tbPromotionDelivery = res.data.tbPromotionDelivery
-
-                    for (var i = 0; i < option.length; i++) {
-                        option[i].value = option[i].id
-                        option[i].name = `${option[i].deliveryName}`
-                    }
-                    setoptionLogistic(option)
-
-                }
-            },
-        );
-    }
-
     useEffect(() => {
         getProducts();
-        getMemberaddress()
-        gettbpayment()
-        getTbLogistic()
     }, []);
 
 
@@ -176,7 +89,7 @@ const OrderPaymentDone = () => {
                     style={{ height: "40px" }}
                     className=" noselect text-lg text-white font-bold text-center "
                 >
-                    {"ทำการสั่งซื้อ"}
+                    {"คำสั่งซื้อของฉัน"}
                 </div>
             </div>
             <div className="overflow-scroll line-scroll" style={{ height: "calc(100% - 200px)" }}>
@@ -196,6 +109,32 @@ const OrderPaymentDone = () => {
                                 </div>
                             </CopyToClipboard>
                         </div>
+
+                        {(OrderHD.paymentStatus === "Done" && OrderHD.transportStatus === "Prepare" || OrderHD.transportStatus === "In Transit") ?
+                            <div>
+                                <div className="flex mt-2 " style={{
+                                    width: "95%",
+                                    marginLeft: "auto",
+                                    marginRight: "auto",
+                                }}>
+                                    <div className="" style={{ width: "100px", color: "#ddd" }}>เวลาสั่งซื้อ  </div>
+                                    <div style={{ width: "calc(100% - 100px)", textAlign: "end", color: "var(--mq-txt-color, rgb(170, 170, 170))", fontSize: "13px" }}>
+                                        {OrderHD.orderDate}
+                                    </div>
+                                </div>
+                                <div className="flex mt-2 " style={{
+                                    width: "95%",
+                                    marginLeft: "auto",
+                                    marginRight: "auto",
+                                }}>
+                                    <div className="" style={{ width: "100px", color: "#ddd" }}>เวลาชำระเงิน  </div>
+                                    <div style={{ width: "calc(100% - 100px)", textAlign: "end", color: "var(--mq-txt-color, rgb(170, 170, 170))", fontSize: "13px" }}>
+                                        {OrderHD.paymentDate}
+                                    </div>
+                                </div>
+                            </div>
+
+                            : null}
                         <div
                             className="mt-2 line-scroll"
                             style={{
@@ -270,8 +209,8 @@ const OrderPaymentDone = () => {
                             <div className="flex relative mb-2">
                                 <div>ยอดรวมสิ้นค้า : </div>
                                 <div className="absolute" style={{ right: "0" }}>
-                                    {usecoupon == null ? "฿ " + fn.formatMoney(sumprice) :
-                                        "฿ " + fn.formatMoney(sumprice + usecoupon.discount)
+                                    {discount == null ? "฿ " + fn.formatMoney(sumprice) :
+                                        "฿ " + fn.formatMoney(sumprice)
                                     }
                                 </div>
                             </div>
@@ -284,9 +223,9 @@ const OrderPaymentDone = () => {
                             </div>
                             <div className="flex relative mb-2">
                                 <div>ส่วนลด : </div>
-                                {usecoupon != null ?
+                                {discount != null ?
                                     <div className="absolute text-gold-mbk" style={{ right: "0" }}>
-                                        {"-฿ " + fn.formatMoney(usecoupon.discount)}
+                                        {"-฿ " + fn.formatMoney(discount)}
                                     </div> : <div className="absolute" style={{ right: "0" }}>
                                         {"฿ " + fn.formatMoney(0)}
                                     </div>}
@@ -295,26 +234,7 @@ const OrderPaymentDone = () => {
                                 <div>ยอดรวมสินค้า : </div>
                                 <div className="absolute text-green-mbk font-blod " style={{ right: "0", fontSize: "20px" }}>
                                     {"฿ " + fn.formatMoney(
-                                        usecoupon == null ?
-                                            //ไม่มีสวนลด
-                                            sumprice + (
-                                                //ไม่โปร
-                                                tbPromotionDelivery == null ? deliveryCost :
-                                                    //มีโปร
-                                                    (sumprice + deliveryCost) > tbPromotionDelivery.buy ?
-                                                        (deliveryCost > tbPromotionDelivery.deliveryCost ? deliveryCost - tbPromotionDelivery.deliveryCost : 0)
-                                                        : deliveryCost
-                                            ) :
-                                            //มีส่วนลด   
-                                            (sumprice < usecoupon.discount ? 0 :
-                                                sumprice - usecoupon.discount) + (
-                                                //ไม่โปร
-                                                tbPromotionDelivery == null ? deliveryCost :
-                                                    //มีโปร
-                                                    (sumprice + deliveryCost) > tbPromotionDelivery.buy ?
-                                                        (deliveryCost > tbPromotionDelivery.deliveryCost ? deliveryCost - tbPromotionDelivery.deliveryCost : 0)
-                                                        : deliveryCost
-                                            )
+                                        (sumprice - discount + deliveryCost)
                                     )}
 
                                 </div>
@@ -323,6 +243,73 @@ const OrderPaymentDone = () => {
                     </div>
 
 
+                </div>
+
+                <div className="w-full  relative mt-2" style={{ alignItems: "center", justifyContent: "center", }} >
+                    {OrderHD != null ?
+                        OrderHD.transportStatus == "Prepare" || OrderHD.transportStatus == "In Transit" ?
+                            <><div style={{ width: "90%", margin: "auto" }}>
+                                <div>
+                                    <div className="flex relative mb-2 text-gold-mbk ">
+                                        <div><i class="fas fa-truck"></i> </div>
+                                        <div className=" px-2 ">{OrderHD.transportStatus == "Prepare" ? "เตรียมสินค้า" : OrderHD.transportStatus == "In Transit" ? "อยู่ระหว่างการจัดส่ง" : ""} </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                                <div className="liff-inline" />
+                            </>
+                            : null
+                        :
+                        null}
+                </div>
+
+
+                <div className="w-full  relative mt-2" style={{ alignItems: "center", justifyContent: "center", }} >
+                    <div className="flex">
+                        <div style={{ width: "50%", padding: "10px" }}>
+                            <div
+                                className="flex  text-center text-lg  font-bold "
+                                style={{
+                                    margin: "auto",
+                                    height: "45px",
+                                    borderRadius: "10px",
+                                    padding: "5px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    backgroundColor: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? "red" : "") : ""),
+                                    border: ("1px solid " + (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? "red" : "#ddd") : "#ddd")),
+                                    color: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? "#FFFFFF" : "#ddd") : "#ddd"),
+                                }}
+                                onClick={() => {
+                                    if (OrderHD.transportStatus == "Prepare") {
+                                        // history.goBack()
+                                        console.log("ยกเลิกคำสั่งซื้อ")
+                                    }
+                                }}
+                            >
+                                {"ยกเลิกคำสั่งซื้อ"}
+                            </div>
+                        </div>
+                        <div style={{ width: "50%", padding: "10px" }}>
+                            <div
+                                className="flex  text-gold-mbk outline-gold-mbk text-center text-lg  font-bold "
+                                style={{
+                                    margin: "auto",
+                                    height: "45px",
+                                    borderRadius: "10px",
+                                    padding: "5px",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                                onClick={() => {
+                                    history.goBack()
+                                }}
+                            >
+                                {"แนบสลิปโอนเงิน"}
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="absolute w-full flex" style={{ bottom: "0" }}>

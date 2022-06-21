@@ -78,7 +78,7 @@ const ReturnOrder = () => {
                                         <div className="w-full flex mb-2" style={{ fontSize: "12px", justifyContent: "end", color: "#ddd" }}>
                                             <div className="font-bold"
                                                 onClick={() => {
-                                                    history.push(path.makeorderbyid.replace(":id", e.id))
+                                                    history.push(path.orderpaymentdone.replace(":id", e.id))
                                                 }}>
                                                 {"ดูรายละเอียดคำสั่งซื้อ >"}
                                             </div>

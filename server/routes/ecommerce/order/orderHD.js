@@ -8,7 +8,7 @@ const ValidateEncrypt = require("../../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
 const Sequelize = require("sequelize");
-const { tbOrderHD, tbMember, tbOrderDT, tbStock, tbLogistic, tbPromotionDelivery, tbPayment } = require("../../../models");
+const { tbOrderHD, tbMember, tbOrderDT, tbStock, tbLogistic, tbPromotionDelivery, tbPayment, tbRedemptionCoupon, tbCouponCode } = require("../../../models");
 
 const Op = Sequelize.Op;
 
@@ -417,7 +417,9 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     , "logisticId"
                     , "memberId"
                     , "paymentId"
-                    , "couponCodeId"],
+                    , "couponCodeId"
+                    , "orderDate"
+                    , "paymentDate"],
                 where: {
                     IsDeleted: false, id: Encrypt.DecodeKey(Id),
                 }
@@ -453,7 +455,26 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     attributes: ["id", "promotionName", "buy", "deliveryCost", "deliveryCost"],
                     where: { isDeleted: false, isInactive: true },
                 });
-                couponCodeId
+                // couponCodeId
+                if (hd.couponCodeId != null) {
+                    tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+                    tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
+                    const _tbRedemptionCoupon = await tbCouponCode.findOne({
+                        where: { id: hd.couponCodeId },
+                        attributes: ['redemptionCouponId'],
+                        include: [
+                            {
+                                model: tbRedemptionCoupon,
+                                attributes: ['id', 'discount', "isNotExpired", "startDate", "expiredDate", "couponName"],
+                                where: {
+                                    isDeleted: !1,
+                                    id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
+                                },
+                            },
+                        ],
+                    });
+                    hd.RedemptionCoupon = _tbRedemptionCoupon.dataValues
+                }
 
                 hd.id = Encrypt.EncodeKey(hd.id)
                 hd.paymentId = Encrypt.EncodeKey(hd.paymentId)
