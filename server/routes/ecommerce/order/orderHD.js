@@ -265,8 +265,11 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                     for (var j = 0; j < OrderDTData.length; j++) {
                         let dt = OrderDTData[j].dataValues
                         dt.id = Encrypt.EncodeKey(dt.id)
-                        const _tbStock = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
+                        const _tbStockData = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
                         dt.stockId = Encrypt.EncodeKey(dt.stockId)
+                        let _tbStock = _tbStockData.dataValues
+                        _tbStock.id = Encrypt.EncodeKey(_tbStock.id)
+
                         dt.stock = _tbStock
                         hd.dt.push(dt)
                     }
@@ -413,7 +416,8 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     , "isReturn"
                     , "logisticId"
                     , "memberId"
-                    , "paymentId"],
+                    , "paymentId"
+                    , "couponCodeId"],
                 where: {
                     IsDeleted: false, id: Encrypt.DecodeKey(Id),
                 }
@@ -432,12 +436,30 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                 for (var j = 0; j < OrderDTData.length; j++) {
                     let dt = OrderDTData[j].dataValues
                     dt.id = Encrypt.EncodeKey(dt.id)
-                    const _tbStock = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
+                    const _tbStockData = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
                     dt.stockId = Encrypt.EncodeKey(dt.stockId)
+                    let _tbStock = _tbStockData.dataValues
+                    _tbStock.id = Encrypt.EncodeKey(_tbStock.id)
                     dt.stock = _tbStock
                     hd.dt.push(dt)
                 }
+
+                const _tbLogistic = await tbLogistic.findOne({
+                    attributes: ["id", "logisticType", "deliveryName", "description", "deliveryCost"],
+                    where: { isDeleted: false, isShow: true, id: hd.logisticId },
+                });
+                //โปรโมชั่นขนส่ง
+                const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
+                    attributes: ["id", "promotionName", "buy", "deliveryCost", "deliveryCost"],
+                    where: { isDeleted: false, isInactive: true },
+                });
+                couponCodeId
+
                 hd.id = Encrypt.EncodeKey(hd.id)
+                hd.paymentId = Encrypt.EncodeKey(hd.paymentId)
+                hd.logisticId = Encrypt.EncodeKey(hd.logisticId)
+                hd.deliveryCost = _tbLogistic.dataValues.deliveryCost
+                hd.PromotionDelivery = _tbPromotionDelivery.dataValues
                 OrderHD = hd
 
             }

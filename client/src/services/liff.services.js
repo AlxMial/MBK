@@ -25,7 +25,7 @@ import usecoupon from "views/liff/shop/usecoupon";
 
 import makeorder from "views/liff/makeorder/makeorder";
 import makeorderbyid from "views/liff/makeorder/makeorderByID";
-
+import orderpaymentdone from "views/liff/makeorder/orderpaymentdone";
 import addAddress from "views/liff/makeorder/addAddress";
 
 //paymentInfo 
@@ -62,6 +62,7 @@ export const path = {
   paymentInfo: "/line/paymentInfo/:id",
 
   myorder: "/line/myorder",
+  orderpaymentdone :  "/line/orderpaymentdone/:id",
 
 
 };
@@ -148,7 +149,11 @@ export const routes = [
     path: path.makeorderbyid,
     component: makeorderbyid,
   },
-
+  {
+    path: path.orderpaymentdone,
+    component: orderpaymentdone,
+  },
+  
   {
     path: path.addAddress,
     component: addAddress,

@@ -48,7 +48,7 @@ const ReturnOrder = () => {
                                                                 width: "80px", height: "80px"
                                                             }}
                                                             find={1}
-                                                            relatedid={dt.id}
+                                                            relatedid={dt.stock.id}
                                                             relatedtable={["stock1"]}
                                                             alt="flash_sale"
                                                             className=" border-2 border-blueGray-50"

@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    couponCodeId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     isCancel: {
       type: DataTypes.BOOLEAN,
       allowNull: true,

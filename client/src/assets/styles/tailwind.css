@@ -4715,7 +4715,8 @@ input[type="number"] {
 }
 
 .select-address .css-1s2u09g-control,
-.select-address .css-1pahdxg-control {
+.select-address .css-1pahdxg-control,
+.select-address .css-1insrsq-control {
   border-color: transparent;
   height: auto;
   max-height: unset !important;

@@ -48,7 +48,7 @@ const Toreceive = () => {
                                                                 width: "80px", height: "80px"
                                                             }}
                                                             find={1}
-                                                            relatedid={dt.id}
+                                                            relatedid={dt.stock.id}
                                                             relatedtable={["stock1"]}
                                                             alt="flash_sale"
                                                             className=" border-2 border-blueGray-50"
@@ -78,7 +78,7 @@ const Toreceive = () => {
                                         <div className="w-full flex mb-2" style={{ fontSize: "12px", justifyContent: "end", color: "#ddd" }}>
                                             <div className="font-bold"
                                                 onClick={() => {
-                                                    history.push(path.makeorderbyid.replace(":id", e.id))
+                                                    history.push(path.orderpaymentdone.replace(":id", e.id))
                                                 }}>
                                                 {"ดูรายละเอียดคำสั่งซื้อ >"}
                                             </div>

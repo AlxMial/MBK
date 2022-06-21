@@ -53,7 +53,13 @@ const MakeOrderById = () => {
         if (!fn.IsNullOrEmpty(id)) {
             getOrderHDById({ Id: id }, (res) => {
                 if (res.status) {
-                    setOrderHD(res.data.OrderHD)
+                    let OrderHD = res.data.OrderHD
+                    setOrderHD(OrderHD)
+                    setpaymentID(OrderHD.paymentId)
+                    setisLogistic(OrderHD.logisticId)
+                    setdeliveryCost(OrderHD.deliveryCost)
+                    // settbPromotionDelivery(tbPromotionDelivery)
+
                 }
             }, () => { }, () => { setIsLoading(false) })
         }
@@ -98,7 +104,7 @@ const MakeOrderById = () => {
 
         setdeliveryCost(e)
         setTimeout(() => {
-            getProducts()
+            // getProducts()
         }, 1000);
 
 
@@ -159,7 +165,6 @@ const MakeOrderById = () => {
                         option[i].value = option[i].id
                     }
                     setPayment(option)
-                    setpaymentID(option[0].id)
                 }
             },
         );
@@ -177,62 +182,16 @@ const MakeOrderById = () => {
                         option[i].name = `${option[i].deliveryName}`
                     }
                     setoptionLogistic(option)
-                    setisLogistic(option[0].value)
-                    setdeliveryCost(option[0].deliveryCost)
-                    settbPromotionDelivery(tbPromotionDelivery)
+
                 }
             },
         );
     }
     //สั่งสินค้า 
     const sendOrder = () => {
-        // console.log("สั่งสินค้า")
-        // let item;
-        // if (id == "cart") {
-        //     item = Storage.get_cart()
-        // }
-        // else {
-        //     item = Storage.getbyorder()
-        // }
-        // let shop_orders = item.shop_orders;
-        // let dt = []
-        // CartItem.filter(e => {
-        //     dt.push({
-        //         stockId: e.id,
-        //         amount: e.quantity,
-        //         price: e.price,
-        //         discount: e.discount,
-        //         discountType: e.discountType
-        //     })
-        // })
-        // let order = {
-        //     orderhd: {
-        //         paymentId: RadioPayment === 1 ? paymentID : null,
-        //         paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
-        //         logisticId: isLogistic,
-        //         stockNumber: shop_orders.length,
-        //         paymentStatus: "Wating",
-        //         transportStatus: "Prepare",
-        //     },
-        //     orderdt: dt
-        // }
-
-        // doSaveOrder(order, (res) => {
-        //     if (res.status) {
-        //         // console.log()
-        //         // ลบข้อมูล
-        //         if (id == "cart") {
-        //             item = Storage.remove_cart()
-        //         }
-        //         else {
-        //             item = Storage.remove_byorder()
-        //         }
-
-        //         history.push(path.paymentInfo.replace(":id", res.data.orderId))
-        //     } else {
-
-        //     }
-        // })
+        if (OrderHD.paymentStatus == "Wating") {
+            console.log("update")
+        }
     }
 
     useEffect(() => {
@@ -273,7 +232,7 @@ const MakeOrderById = () => {
                                             <ImageUC
                                                 style={{ margin: "auto", height: "90px" }}
                                                 find={1}
-                                                relatedid={e.id}
+                                                relatedid={e.stock.id}
                                                 relatedtable={["stock1"]}
                                                 alt="flash_sale"
                                                 className="w-32 border-2 border-blueGray-50"
@@ -338,20 +297,21 @@ const MakeOrderById = () => {
                         className="absolute"
                         style={{ right: "10px" }}
 
-                    >
+                    > {OrderHD != null ?
                         <div className="flex">
                             <div style={{ color: usecoupon != null ? "red" : "var(--mq-txt-color, rgb(192, 192, 192))" }}
                                 onClick={() => {
-
-                                    history.push(path.usecoupon.replace(":id", id))
+                                    if (OrderHD.paymentStatus != "Done" && !OrderHD.isCancel) {
+                                        history.push(path.usecoupon.replace(":id", id))
+                                    }
                                 }}
                             >
                                 {usecoupon != null ? ("-฿ " + fn.formatMoney(usecoupon.discount)) : "ใช้ส่วนลด >"}
                             </div>
                             <div className="px-2">
-                                {usecoupon != null ? <i className="fas fa-times-circle" style={{ color: "red" }} onClick={Cancelcoupon}></i> : null}
+                                {usecoupon != null && OrderHD.paymentStatus != "Done" && !OrderHD.isCancel? <i className="fas fa-times-circle" style={{ color: "red" }} onClick={Cancelcoupon}></i> : null}
                             </div>
-                        </div>
+                        </div> : null}
 
                     </div>
 
@@ -379,8 +339,9 @@ const MakeOrderById = () => {
                     }}>
                         <div className="mb-2">
 
-                            {optionaddress.length > 0 ?
+                            {optionaddress.length > 0 && OrderHD != null ?
                                 <Select
+                                    isDisabled={OrderHD.transportStatus == "In Transit" ||OrderHD.transportStatus=="Done"||OrderHD.isCancel? true : false}
                                     className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
                                     isSearchable={false}
                                     id={"category"}
@@ -407,10 +368,14 @@ const MakeOrderById = () => {
                                 : null}
 
                         </div>
-                        <div className="flex">
-                            <i className="fas fa-plus-circle flex " style={{ alignItems: "center" }}></i>
-                            <div className="px-2">เพิ่มที่อยู่</div>
-                        </div>
+                        {OrderHD != null ?
+                            <div className="flex">
+                                {OrderHD.transportStatus != "In Transit"||OrderHD.transportStatus=="Done"||OrderHD.isCancel ?
+                                    <>
+                                        <i className="fas fa-plus-circle flex " style={{ alignItems: "center" }}></i>
+                                        <div className="px-2">เพิ่มที่อยู่</div>
+                                    </> : null}
+                            </div> : null}
                     </div>
                 </div>
 
@@ -435,8 +400,9 @@ const MakeOrderById = () => {
                     }}>
                         <div className="mb-2">
 
-                            {optionLogistic.length > 0 ?
+                            {optionLogistic.length > 0 && OrderHD != null ?
                                 <Select
+                                    isDisabled={OrderHD.transportStatus == "In Transit" ||OrderHD.transportStatus=="Done" || OrderHD.isCancel? true : false}
                                     className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
                                     isSearchable={false}
                                     value={optionLogistic.filter(o => o.value === isLogistic)}
@@ -489,82 +455,84 @@ const MakeOrderById = () => {
                         border: "1px solid var(--mq-txt-color, rgb(170, 170, 170))",
                         borderRadius: "10px"
                     }}>
-                        <Radio.Group
-                            className="w-full radio-lbl-full"
+                        {OrderHD != null ?
+                            <Radio.Group
+                                className="w-full radio-lbl-full"
+                                disabled={OrderHD.paymentStatus == "Done" ? true : false}
+                                onChange={(e) => {
+                                    setRadio(e.target.value)
+                                }}
+                                value={RadioPayment}
+                            >
+                                <Radio value={1} className="w-full Radio-Payment " >
+                                    <div >
+                                        <div className="flex mb-2">
+                                            <i className="fas fa-landmark flex " style={{ alignItems: "center", color: "rgb(208 175 44)" }}></i>
+                                            <div className="font-bold px-2">โอนผ่านธนาคาร</div>
+                                        </div>
 
-                            onChange={(e) => {
-                                setRadio(e.target.value)
-                            }}
-                            value={RadioPayment}
-                        >
-                            <Radio value={1} className="w-full Radio-Payment " >
-                                <div >
-                                    <div className="flex mb-2">
-                                        <i className="fas fa-landmark flex " style={{ alignItems: "center", color: "rgb(208 175 44)" }}></i>
-                                        <div className="font-bold px-2">โอนผ่านธนาคาร</div>
-                                    </div>
+                                        <div className="mb-2" style={{ display: RadioPayment == 2 ? "none" : "" }}>
+                                            {optionPayment.length > 0 ?
+                                                <Select
+                                                    isDisabled={OrderHD.paymentStatus == "Done"||OrderHD.isCancel ? true : false}
+                                                    className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
 
-                                    <div className="mb-2" style={{ display: RadioPayment == 2 ? "none" : "" }}>
-                                        {optionPayment.length > 0 ?
-                                            <Select
-                                                className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
+                                                    isSearchable={false}
+                                                    // id={"category"}
+                                                    // name={"category"}
 
-                                                isSearchable={false}
-                                                // id={"category"}
-                                                // name={"category"}
+                                                    value={optionPayment.filter(o =>
+                                                        o.value
+                                                        === paymentID)}
 
-                                                value={optionPayment.filter(o =>
-                                                    o.value
-                                                    === paymentID)}
+                                                    options={optionPayment}
 
-                                                options={optionPayment}
+                                                    formatOptionLabel={({ bankName, accountNumber, bankBranchName }) => (
+                                                        <div >
+                                                            <div className="font-bold">{bankName}</div>
+                                                            <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"เลขบัญชี : " + accountNumber}</div>
+                                                            <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"สาขา : " + bankBranchName}</div>
 
-                                                formatOptionLabel={({ bankName, accountNumber, bankBranchName }) => (
-                                                    <div >
-                                                        <div className="font-bold">{bankName}</div>
-                                                        <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"เลขบัญชี : " + accountNumber}</div>
-                                                        <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"สาขา : " + bankBranchName}</div>
+                                                        </div>
+                                                    )}
 
-                                                    </div>
-                                                )}
+                                                    onChange={(e) => {
+                                                        setpaymentID(e.id)
+                                                    }}
 
-                                                onChange={(e) => {
-                                                    setpaymentID(e.id)
-                                                }}
+                                                />
+                                                : null}
 
-                                            />
-                                            : null}
-
-                                    </div>
-                                </div>
-                            </Radio>
-
-
-                            <Radio value={2} className="w-full Radio-Payment ">
-                                <div>
-                                    <div className="flex  ">
-                                        <i className="fas fa-credit-card flex " style={{ alignItems: "center", color: "rgb(208 175 44)" }}></i>
-                                        <div className="font-bold px-2">ผ่านบัตรเครดิต</div>
-                                    </div>
-                                    <div className="flex mt-2" style={{
-                                        width: "100%",
-                                        border: "1px solid var(--mq-txt-color, rgb(170, 170, 170))",
-                                        borderRadius: "10px",
-                                        height: "50px",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        display: RadioPayment == 1 ? "none" : ""
-                                    }}>
-                                        <div className="mb-2 flex">
-                                            <i className="fas fa-plus-circle flex " style={{ alignItems: "center" }}></i>
-                                            <div className="px-2 w-full font-bold">เพิ่มบัตรเครดิต/เดบิต</div>
                                         </div>
                                     </div>
-                                </div>
-                            </Radio>
+                                </Radio>
 
-                        </Radio.Group>
 
+                                <Radio value={2} className="w-full Radio-Payment ">
+                                    <div>
+                                        <div className="flex  ">
+                                            <i className="fas fa-credit-card flex " style={{ alignItems: "center", color: "rgb(208 175 44)" }}></i>
+                                            <div className="font-bold px-2">ผ่านบัตรเครดิต</div>
+                                        </div>
+                                        <div className="flex mt-2" style={{
+                                            width: "100%",
+                                            border: "1px solid var(--mq-txt-color, rgb(170, 170, 170))",
+                                            borderRadius: "10px",
+                                            height: "50px",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            display: RadioPayment == 1 ? "none" : ""
+                                        }}>
+                                            <div className="mb-2 flex">
+                                                <i className="fas fa-plus-circle flex " style={{ alignItems: "center" }}></i>
+                                                <div className="px-2 w-full font-bold">เพิ่มบัตรเครดิต/เดบิต</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Radio>
+
+                            </Radio.Group>
+                            : null}
 
                     </div>
                 </div>
@@ -673,6 +641,7 @@ const MakeOrderById = () => {
                                 justifyContent: "center",
                             }}
                             onClick={() => {
+
                                 sendOrder()
                             }}
                         >
