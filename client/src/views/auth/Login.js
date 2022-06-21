@@ -7,6 +7,7 @@ import { useToasts } from "react-toast-notifications";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import useWindowDimensions from "services/useWindowDimensions";
+import { GetPermissionByUserName } from "../../services/Permission";
 
 export default function Login() {
   /* Variable Set UseState */
@@ -14,9 +15,9 @@ export default function Login() {
   const { addToast } = useToasts();
   const { height, width } = useWindowDimensions();
   const [passwordShown, setPasswordShown] = useState(false);
+  const [typePermission, setTypePermission] = useState("");
   let history = useHistory();
   const dispatch = useDispatch();
-
   const togglePassword = () => {
     if(formik.values.password !== "")
       setPasswordShown(!passwordShown);
@@ -33,8 +34,9 @@ export default function Login() {
       password: Yup.string().required("* กรุณากรอกข้อมูล Password"),
     }),
     onSubmit: (values) => {
+
       const data = { userName: values.userName, password: values.password };
-      axios.post("/users/login", data).then((response) => {
+      axios.post("/users/login", data).then(async (response) => {
         if (response.data.error) {
           addToast(
             "ไม่สามารถเข้าสู่ระบบได้ เนื่องจาก Username หรือ Passwod ที่คุณป้อนไม่ถูกต้อง",
@@ -80,7 +82,21 @@ export default function Login() {
             role: response.data.role,
           });
           // window.location.replace('/admin/users');
-          history.push("/admin/users");
+          const role = await GetPermissionByUserName();
+          if(role.data.data.length > 0)
+          {
+            if (role.data.data.filter(e => e.id === 10).length > 0) {
+              setTypePermission("1")
+              history.push("/admin/users");
+            } 
+            else if(role.data.data.filter(e => e.id === 1).length > 0){
+              setTypePermission("3")
+              history.push("/admin/members");
+            } else {
+              setTypePermission("2")
+              history.push("/admin/empty");
+            }
+          }
           //set loading
           setTimeout(() => {
             //finish loading
@@ -90,7 +106,13 @@ export default function Login() {
     },
   });
 
+  const fetchPermission = async () => {
+    
+  }
+
+
   useEffect(() => {
+    fetchPermission();
     var retrievedObject = JSON.parse(localStorage.getItem("login"));
     if (retrievedObject !== null) {
       formik.setFieldValue("userName", retrievedObject.userName);

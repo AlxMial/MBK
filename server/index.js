@@ -42,6 +42,13 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 app.use(authentication)
 const db = require('./models');
 // // Routers
+// Menu
+const MenuRouter = require('./routes/menu/menu');
+app.use("/mbkserver/menus", MenuRouter);
+//Permission
+const PermissionRouter = require('./routes/permission/permission');
+app.use("/mbkserver/permission", PermissionRouter);
+//email
 const SendMailRouter = require('./routes/sendmail/SendMail');
 app.use("/mbkserver/mails", SendMailRouter);
 const UsersRouter = require('./routes/register/Users');

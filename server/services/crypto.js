@@ -118,7 +118,7 @@ class ValidateEncrypt {
         list.dataValues.email =
           splitEmail[0].substring(0, 3) + "xxxx.xxx@" + splitEmail[1];
       }
-    }catch{
+    } catch {
       const splitEmail = list.split("@");
       if (splitEmail.length > 1) {
         1;
@@ -126,7 +126,6 @@ class ValidateEncrypt {
           splitEmail[0].substring(0, 3) + "xxxx.xxx@" + splitEmail[1];
       }
     }
- 
     return list;
   }
 
@@ -197,6 +196,7 @@ class ValidateEncrypt {
         columns !== "country" &&
         columns !== "memberPoint" &&
         columns !== "consentDate" &&
+        columns !== "role" &&
         list[columns] !== ""
       ) {
 
@@ -228,6 +228,7 @@ class ValidateEncrypt {
         columns !== "country" &&
         columns !== "memberPoint" &&
         columns !== "consentDate" &&
+        columns !== "role" &&
         list[columns] !== ""
       ) {
 

@@ -7,13 +7,13 @@ import PointRegister from "./PointRegister";
 import PointEcommerce from "./PointEcommerce";
 import PointCode from "./PointCode";
 import PointStore from "./PointStore";
-import { GetPermissionByUserName } from "services/Permission";
+import { GetPermissionControl } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 import { useToasts } from "react-toast-notifications";
 
 export default function PointManage() {
   const { TabPane } = Tabs;
-  const [typePermission, setTypePermission] = useState("");
+  const [typePermission, setTypePermission] = useState(false);
   const [isModified, setModified] = useState(false);
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
@@ -23,9 +23,9 @@ export default function PointManage() {
     id: "",
     pointRegisterScore: "",
     isActive: "",
-    addBy:"",
-    updateBy:"",
-    isDeleted:false
+    addBy: "",
+    updateBy: "",
+    isDeleted: false,
   });
   function openModalSubject() {
     setIsOpenEdit(true);
@@ -40,7 +40,7 @@ export default function PointManage() {
       setData((prevState) => {
         return {
           ...prevState,
-          addBy: localStorage.getItem("user")
+          addBy: localStorage.getItem("user"),
         };
       });
       axios.post("pointRegister", data).then((res) => {
@@ -48,12 +48,13 @@ export default function PointManage() {
           setData((prevState) => {
             return {
               ...prevState,
-              id: res.data.tbPointRegister.id
+              id: res.data.tbPointRegister.id,
             };
           });
           setModified(false);
-          addToast("บันทึกข้อมูลสำเร็จ",
-            
+          addToast(
+            "บันทึกข้อมูลสำเร็จ",
+
             { appearance: "success", autoDismiss: true }
           );
         }
@@ -62,9 +63,10 @@ export default function PointManage() {
       axios.put("pointRegister", data).then((res) => {
         if (res.data.status) {
           setModified(false);
-          addToast("บันทึกข้อมูลสำเร็จ",
-            { appearance: "success", autoDismiss: true }
-          );
+          addToast("บันทึกข้อมูลสำเร็จ", {
+            appearance: "success",
+            autoDismiss: true,
+          });
         }
       });
     }
@@ -86,8 +88,13 @@ export default function PointManage() {
   };
 
   const fetchPermission = async () => {
-    const role = await GetPermissionByUserName();
-    setTypePermission(role);
+    const role = await GetPermissionControl(3);
+    if(role.data.data.length > 0)
+    {
+      setTypePermission(role.data.data[0].isEnable)
+    } else {
+      setTypePermission(false)
+    }
   };
 
   useEffect(() => {
@@ -114,7 +121,7 @@ export default function PointManage() {
         type="card"
         className="mt-6"
       >
-        <TabPane tab="Register" key="1">
+        <TabPane id="tbRegister" tab="Register" key="1">
           <PointRegister setModified={setModified} setData={setData} />
         </TabPane>
         {/* <TabPane tab="E-Commerce" key="2">
@@ -122,12 +129,13 @@ export default function PointManage() {
         </TabPane> */}
         <TabPane
           tab="Code"
+          id="tabCode"
           key="3"
-          disabled={typePermission === "1" ? false : true}
+          disabled={typePermission}
         >
           <PointCode />
         </TabPane>
-        <TabPane tab="Store" key="4">
+        <TabPane id="tabStore" tab="Store" key="4">
           <PointStore />
         </TabPane>
       </Tabs>

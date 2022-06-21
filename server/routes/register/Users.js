@@ -23,14 +23,13 @@ router.post("/login", async (req, res) => {
       if (!match) {
         res.json({ error: "Wrong Username And Password Combination" });
       } else {
-        console.log(user)
         const accessToken = sign(
           {
-            userName: Encrypt.DecodeKey(user.userName),
+            userName: user.userName,
             id: user.id,
-            role: Encrypt.DecodeKey(user.role),
-            firstName: Encrypt.DecodeKey(user.firstName),
-            lastName: Encrypt.DecodeKey(user.lastName)
+            role: user.role,
+            firstName: user.firstName,
+            lastName: user.lastName
           },
           "MBKPROJECT", { expiresIn: "1440m" }
         );
@@ -38,7 +37,7 @@ router.post("/login", async (req, res) => {
           token: accessToken,
           userName: userName,
           id: user.id,
-          role: Encrypt.DecodeKey(user.role),
+          role: user.role,
           firstName: Encrypt.DecodeKey(user.firstName),
           lastName: Encrypt.DecodeKey(user.lastName),
         });

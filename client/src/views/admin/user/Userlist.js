@@ -92,9 +92,9 @@ export default function UserList() {
       dispatch(fetchSuccess());
       if (response.data.error) {
       } else {
-        response.data.tbUser.forEach(
-          (value) => (value.role = ChangeSelect(options, value.role))
-        );
+        // response.data.tbUser.forEach(
+        //   (value) => (value.role = ChangeSelect(options, value.role))
+        // );
         setListUser(response.data.tbUser);
         setListSerch(response.data.tbUser);
       }

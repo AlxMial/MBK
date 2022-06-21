@@ -1,20 +1,18 @@
 
 import axios from "./axios";
 
-export const GetPermissionByUserName = (userName) => {
+export const GetPermissionByUserName = () => {
   async function fetchMyAPI() {
-    let tbUser = await axios.get(
-      `users/permission/${localStorage.getItem("user")}`
-    );
-    if(tbUser.data.error)
-    {
-      window.location.replace('/auth/login');
-    }
-    else
-    {
-      return tbUser.data.tbUser.role;
-    }
+    let tbMenus = await axios.get("menus");
+    return tbMenus;
   }
+  return fetchMyAPI();
+};
 
+export const GetPermissionControl = (menuId) => {
+  async function fetchMyAPI() {
+    let tbPermission = await axios.post("permission",{menuId:menuId});
+    return tbPermission;
+  }
   return fetchMyAPI();
 };

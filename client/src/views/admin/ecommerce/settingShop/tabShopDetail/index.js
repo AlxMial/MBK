@@ -97,7 +97,14 @@ const ShopDetail = () => {
 
     const fetchPermission = async () => {
         const role = await GetPermissionByUserName();
-        setTypePermission(role);
+        if(role.data.data.filter(e => e.id === 1).length > 0){
+            setTypePermission("3")
+        } else  if(role.data.data.filter(e => e.id === 10).length > 0) {
+            setTypePermission("1")
+        } else {
+            setTypePermission("2")
+        }
+        // setTypePermission(role);
     };
 
     const onSubmitModal = (data) => {
