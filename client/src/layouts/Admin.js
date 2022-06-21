@@ -24,6 +24,8 @@ import Order from "views/admin/ecommerce/order";
 import CancelAndReturn from "views/admin/ecommerce/cancelAndReturn";
 import ReportPointHistoryReport from "views/admin/report/PointHistoryReport";
 import CollectPointsReport from "views/admin/report/CollectPointsReport";
+import CampaignRewardReport from "views/admin/report/CampaignRewardReport";
+import CampaignExchangeHistoryReport from "views/admin/report/CampaignExchangeHistoryReport";
 export default function Admin() {
 
   const { height, width } = useWindowDimensions();
@@ -76,6 +78,9 @@ export default function Admin() {
               <Route path="/admin/points" exact component={PointManage} />
               <Route path="/admin/pointhistoryreport" exact component={ReportPointHistoryReport} />
               <Route path="/admin/collectPointsReport" exact component={CollectPointsReport} />
+              <Route path="/admin/campaignRewardReport" exact component={CampaignRewardReport} />
+              <Route path="/admin/campaignExchangeHistoryReport" exact component={CampaignExchangeHistoryReport} />
+              
               <Redirect from="/admin" to="/admin/users" />              
             </Switch>
             {/* <FooterAdmin /> */}
