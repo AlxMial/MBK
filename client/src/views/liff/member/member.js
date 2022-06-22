@@ -18,7 +18,7 @@ const Member = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const { TabPane } = Tabs;
-  const tabsChange = () => {};
+  const tabsChange = () => { };
   const [tbMember, settbMember] = useState({});
   const [Memberpoints, setMemberpoints] = useState({});
   const { width, height } = useWindowDimensions();
@@ -32,7 +32,7 @@ const Member = () => {
           getMemberpoints({ id: res.data.tbMember.id });
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -46,7 +46,7 @@ const Member = () => {
           setMemberpoints(res.data);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -68,15 +68,14 @@ const Member = () => {
             padding: "20px",
             height: "180px",
             borderRadius: "10px",
-            backgroundImage: `url(${
-              IsNullOrEmpty(tbMember)
-                ? null
-                : require(tbMember.memberType === "1"
-                    ? "assets/img/mbk/Green.png"
-                    : tbMember.memberType === "2"
-                    ? "assets/img/mbk/Silver.png"
-                    : "assets/img/mbk/Gold.png").default
-            })`,
+            backgroundImage: `url(${IsNullOrEmpty(tbMember)
+              ? null
+              : require(tbMember.memberType === "1"
+                ? "assets/img/mbk/Green.png"
+                : tbMember.memberType === "2"
+                  ? "assets/img/mbk/Silver.png"
+                  : "assets/img/mbk/Gold.png").default
+              })`,
             backgroundSize: "cover",
           }}
         >
@@ -102,14 +101,14 @@ const Member = () => {
                       tbMember.memberType === "1"
                         ? "#cbe8ba"
                         : tbMember.memberType === "2"
-                        ? "#ebebeb"
-                        : "#f3eac1",
+                          ? "#ebebeb"
+                          : "#f3eac1",
                     color:
                       tbMember.memberType === "1"
                         ? "#047738"
                         : tbMember.memberType === "2"
-                        ? "#929292"
-                        : "#d0af2c",
+                          ? "#929292"
+                          : "#d0af2c",
                     borderRadius: "20px",
                     padding: "2px 10px",
                   }}
@@ -117,8 +116,8 @@ const Member = () => {
                   {tbMember.memberType === "1"
                     ? "GREEN MEMBER"
                     : tbMember.memberType === "2"
-                    ? "SLIVER MEMBER"
-                    : "GOLD MEMBER"}
+                      ? "SLIVER MEMBER"
+                      : "GOLD MEMBER"}
                 </div>
                 <div className="text-white font-bold text-xs mt-2">
                   {tbMember.firstName + " " + tbMember.lastName}
@@ -174,7 +173,7 @@ const Member = () => {
                 <span className=" text-2xs text-white ">
                   {
                     "จะหมดอายุ : " +
-                      liff_dateToString(Memberpoints.enddate, "DD/MM/yyyy")
+                    liff_dateToString(Memberpoints.enddate, "DD/MM/yyyy")
                     // (IsNullOrEmpty(Memberpoints.enddate)
                     //   ? "-"
                     //   : moment(Memberpoints.enddate.split("T")[0])
@@ -193,7 +192,7 @@ const Member = () => {
               width: "90%",
               padding: "10px",
               height: "40px",
-              marginTop:"15px",
+              marginTop: "15px",
               borderRadius: "10px",
             }}
             onClick={() => {
@@ -216,7 +215,7 @@ const Member = () => {
 
         <Tabs
           className="Tabs-line noselect m-0"
-          defaultActiveKey="1"
+          defaultActiveKey="2"
           onChange={tabsChange}
         >
           <TabPane tab="รางวัลของฉัน" key="1">
@@ -226,6 +225,21 @@ const Member = () => {
             <MyOrder />
           </TabPane>
         </Tabs>
+        <div className="flex" style={{
+          height: "50px", border: "1px solid", backgroundColor: "#047a40", fontSize: "10px", justifyContent: "center",
+          alignItems: "center"
+        }}>
+          <div>
+            <div style={{ color: "#FFF", textAlign: "center" }}>©2022 Mahboonkrong Rice, All Rights Reserved.</div>
+            <div className="flex" style={{ color: "#FFF", textAlign: "center", justifyContent: "center" }}>
+              <div style={{ textDecoration: "underline" }} onClick={() => {
+                window.location.href = 'https://www.prg.co.th/th/privacy_policy'
+              }} >นโยบายความเป็นส่วนตัว</div>
+              <div className="px-2">•</div>
+              <div style={{ textDecoration: "underline" }}>ข้อกำหนดและเงื่อนไข</div>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );

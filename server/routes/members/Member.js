@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbMember, tbPointRegister, tbMemberPoint, tbOtherAddress } = require("../../models");
+const { tbMember, tbPointRegister, tbMemberPoint, tbOtherAddress, tbOrderHD, tbOrderDT, tbStock } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
@@ -547,6 +547,66 @@ router.post("/addMemberAddress", validateLineToken, async (req, res) => {
     res.json({ status: false, msg: msg });
   }
 });
+
+router.get("/getMyOrder", validateLineToken, async (req, res) => {
+
+  let status = true;
+  let msg;
+  let Member;
+  let OrderHD;
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+    if (Member) {
+
+      const _tbOrderHD = await tbOrderHD.findAll({
+        limit: 1,
+        attributes: ["id", "orderNumber"], where: { memberId: Member.id }
+      });
+      if (_tbOrderHD) {
+        let hd = _tbOrderHD[0].dataValues
+        hd.dt = []
+        const OrderDTData = await tbOrderDT.findAll({
+          // limit: 2,
+          attributes: ["id", "amount", "price", "discount", "discountType", "stockId", "orderId"],
+          where: { IsDeleted: false, orderId: hd.id }
+        });
+        let sumamount = 0
+        let sumprice = 0
+        for (var j = 0; j < OrderDTData.length; j++) {
+          let dt = OrderDTData[j].dataValues
+          dt.id = Encrypt.EncodeKey(dt.id)
+          const _tbStockData = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
+          let _tbStock = _tbStockData.dataValues
+          dt.productName = _tbStock.productName
+
+          sumamount += dt.amount
+          sumprice += (dt.discount > 0 ? (dt.discountType == "THB" ? parseFloat(dt.price) - parseFloat(dt.discount) : parseFloat(dt.price) - ((parseFloat(dt.discount) / 100) * parseFloat(dt.price))) : parseFloat(dt.price)) * dt.amount
+          if (j < 2) {
+            hd.dt.push(dt)
+          }
+        }
+        hd.sumamount = sumamount
+        hd.sumprice = sumprice
+        hd.id = Encrypt.EncodeKey(hd.id)
+        OrderHD = hd
+      }
+
+
+    }
+
+  } catch (e) {
+    status = false
+    msg = e.message
+  }
+
+  return res.json({
+    status: status,
+    msg: msg,
+    OrderHD: OrderHD
+  });
+});
+
 
 
 module.exports = router;

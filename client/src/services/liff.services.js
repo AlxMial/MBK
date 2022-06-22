@@ -217,6 +217,11 @@ export const checkRegister = (s, e = () => { }, f = () => { }) => {
 export const getMember = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMember", s, e, f);
 };
+export const getMyOrder = (s, e = () => { }, f = () => { }) => {
+  httpGet("/members/getMyOrder", s, e, f);
+};
+
+
 
 export const getMemberpoints = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMemberPoints", s, e, f);
