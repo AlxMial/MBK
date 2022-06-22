@@ -111,3 +111,15 @@ export const updbyorder = (obj) => {
 export const remove_byorder = () => {
   localStorage.removeItem("byorder");
 };
+
+export const setusecoupon = (obj) => {
+  // let data = { shop_orders: [obj] };
+  localStorage.setItem("usecoupon", JSON.stringify(obj));
+};
+
+export const getusecoupon = () => {
+  let obj = localStorage.getItem("usecoupon");
+  obj = IsNullOrEmpty(obj) ? null : JSON.parse(obj);
+  return obj;
+};
+

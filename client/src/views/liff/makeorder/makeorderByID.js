@@ -51,54 +51,60 @@ const MakeOrderById = () => {
         let idlist = [];
         let item;
         if (!fn.IsNullOrEmpty(id)) {
-            getOrderHDById({ Id: id }, (res) => {
+            getOrderHDById({ Id: id }, async (res) => {
                 if (res.status) {
                     let OrderHD = res.data.OrderHD
                     setOrderHD(OrderHD)
                     setpaymentID(OrderHD.paymentId)
                     setisLogistic(OrderHD.logisticId)
                     setdeliveryCost(OrderHD.deliveryCost)
-                    // settbPromotionDelivery(tbPromotionDelivery)
+                    settbPromotionDelivery(OrderHD.PromotionDelivery)
+
+
+                    let shop_orders = OrderHD.dt;
+                    shop_orders.map((e, i) => {
+                        idlist.push(e.stockId);
+                    });
+
+                    if (Storage.getusecoupon() == null) {
+                        if (!fn.IsNullOrEmpty(OrderHD.couponCodeId)) {
+                            setusecoupon(OrderHD.couponCodeId)
+                        } else {
+                            setusecoupon(null)
+                        }
+                    } else {
+                        let usecoupon = Storage.getusecoupon()
+                        if (usecoupon.id === id) {
+                            setusecoupon(usecoupon.usecoupon)
+                        }
+                    }
+                    await axios.post("stock/getStock", { id: idlist }).then((response) => {
+                        if (response.data.status) {
+                            let tbStock = response.data.tbStock;
+                            // setCartItem(tbStock);
+                            let price = 0;
+                            tbStock.map((e, i) => {
+                                let quantity = shop_orders.find((o) => o.stockId == e.id).amount;
+                                e.quantity = quantity;
+                                if (e.priceDiscount > 0) {
+                                    price += parseFloat(e.priceDiscount) * parseInt(quantity);
+                                } else {
+                                    price += parseFloat(e.price) * parseInt(quantity);
+                                }
+                            });
+
+                            price = price
+                            setsumprice(price < 1 ? 0 : price);
+                        }
+                    });
+
 
                 }
             }, () => { }, () => { setIsLoading(false) })
         }
 
 
-        // let shop_orders = item.shop_orders;
-        // shop_orders.map((e, i) => {
-        //     idlist.push(e.id);
-        // });
-        // if (!fn.IsNullOrEmpty(item.usecoupon)) {
-        //     setusecoupon(item.usecoupon)
-        // } else {
-        //     setusecoupon(null)
-        // }
 
-        // await axios.post("stock/getStock", { id: idlist }).then((response) => {
-        //     if (response.data.status) {
-        //         let tbStock = response.data.tbStock;
-        //         setCartItem(tbStock);
-        //         let price = 0;
-        //         tbStock.map((e, i) => {
-        //             let quantity = shop_orders.find((o) => o.id == e.id).quantity;
-        //             e.quantity = quantity;
-        //             if (e.priceDiscount > 0) {
-        //                 price += parseFloat(e.priceDiscount) * parseInt(quantity);
-        //             } else {
-        //                 price += parseFloat(e.price) * parseInt(quantity);
-        //             }
-        //         });
-        //         // if (!fn.IsNullOrEmpty(item.usecoupon)) {
-        //         //     price = price - item.usecoupon.discount
-        //         // }
-        //         price = price
-        //         setsumprice(price < 1 ? 0 : price);
-        //     } else {
-        //         setCartItem([]);
-        //         // error
-        //     }
-        // });
     };
     const setDeliveryCost = (e) => {
 
@@ -182,7 +188,7 @@ const MakeOrderById = () => {
                         option[i].name = `${option[i].deliveryName}`
                     }
                     setoptionLogistic(option)
-
+                    settbPromotionDelivery(tbPromotionDelivery)
                 }
             },
         );
@@ -309,7 +315,7 @@ const MakeOrderById = () => {
                                 {usecoupon != null ? ("-฿ " + fn.formatMoney(usecoupon.discount)) : "ใช้ส่วนลด >"}
                             </div>
                             <div className="px-2">
-                                {usecoupon != null && OrderHD.paymentStatus != "Done" && !OrderHD.isCancel? <i className="fas fa-times-circle" style={{ color: "red" }} onClick={Cancelcoupon}></i> : null}
+                                {usecoupon != null && OrderHD.paymentStatus != "Done" && !OrderHD.isCancel ? <i className="fas fa-times-circle" style={{ color: "red" }} onClick={Cancelcoupon}></i> : null}
                             </div>
                         </div> : null}
 
@@ -341,7 +347,7 @@ const MakeOrderById = () => {
 
                             {optionaddress.length > 0 && OrderHD != null ?
                                 <Select
-                                    isDisabled={OrderHD.transportStatus == "In Transit" ||OrderHD.transportStatus=="Done"||OrderHD.isCancel? true : false}
+                                    isDisabled={OrderHD.transportStatus == "In Transit" || OrderHD.transportStatus == "Done" || OrderHD.isCancel ? true : false}
                                     className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
                                     isSearchable={false}
                                     id={"category"}
@@ -370,7 +376,7 @@ const MakeOrderById = () => {
                         </div>
                         {OrderHD != null ?
                             <div className="flex">
-                                {OrderHD.transportStatus != "In Transit"||OrderHD.transportStatus=="Done"||OrderHD.isCancel ?
+                                {OrderHD.transportStatus != "In Transit" || OrderHD.transportStatus == "Done" || OrderHD.isCancel ?
                                     <>
                                         <i className="fas fa-plus-circle flex " style={{ alignItems: "center" }}></i>
                                         <div className="px-2">เพิ่มที่อยู่</div>
@@ -402,7 +408,7 @@ const MakeOrderById = () => {
 
                             {optionLogistic.length > 0 && OrderHD != null ?
                                 <Select
-                                    isDisabled={OrderHD.transportStatus == "In Transit" ||OrderHD.transportStatus=="Done" || OrderHD.isCancel? true : false}
+                                    isDisabled={OrderHD.transportStatus == "In Transit" || OrderHD.transportStatus == "Done" || OrderHD.isCancel ? true : false}
                                     className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
                                     isSearchable={false}
                                     value={optionLogistic.filter(o => o.value === isLogistic)}
@@ -474,7 +480,7 @@ const MakeOrderById = () => {
                                         <div className="mb-2" style={{ display: RadioPayment == 2 ? "none" : "" }}>
                                             {optionPayment.length > 0 ?
                                                 <Select
-                                                    isDisabled={OrderHD.paymentStatus == "Done"||OrderHD.isCancel ? true : false}
+                                                    isDisabled={OrderHD.paymentStatus == "Done" || OrderHD.isCancel ? true : false}
                                                     className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
 
                                                     isSearchable={false}
@@ -552,7 +558,7 @@ const MakeOrderById = () => {
                                 <div>ยอดรวมสิ้นค้า : </div>
                                 <div className="absolute" style={{ right: "0" }}>
                                     {usecoupon == null ? "฿ " + fn.formatMoney(sumprice) :
-                                        "฿ " + fn.formatMoney(sumprice + usecoupon.discount)
+                                        "฿ " + fn.formatMoney(sumprice)
                                     }
                                 </div>
                             </div>
@@ -591,13 +597,15 @@ const MakeOrderById = () => {
                                                         : deliveryCost
                                             ) :
                                             //มีส่วนลด   
-                                            (sumprice < usecoupon.discount ? 0 :
-                                                sumprice - usecoupon.discount) + (
+                                            (sumprice < usecoupon.discount ? 0 : sumprice-usecoupon.discount)
+                                            + (
                                                 //ไม่โปร
                                                 tbPromotionDelivery == null ? deliveryCost :
                                                     //มีโปร
                                                     (sumprice + deliveryCost) > tbPromotionDelivery.buy ?
+
                                                         (deliveryCost > tbPromotionDelivery.deliveryCost ? deliveryCost - tbPromotionDelivery.deliveryCost : 0)
+
                                                         : deliveryCost
                                             )
                                     )}

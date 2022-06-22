@@ -45,11 +45,12 @@ const ShowCart = () => {
       Storage.upd_cart(shop_orders);
 
       // history.push(path.showCart);
-    } else {
+    } else if (id === "byorder") {
       let item = Storage.getbyorder()
       item.usecoupon = e
       Storage.updbyorder(item)
-      // history.push(path.makeorder.replace(":id", "byorder"));
+    } else {
+      Storage.setusecoupon({ id: id, usecoupon: e })
     }
     history.goBack()
   }

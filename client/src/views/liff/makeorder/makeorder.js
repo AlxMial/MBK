@@ -97,6 +97,7 @@ const MakeOrder = () => {
     const setDeliveryCost = (e) => {
 
         setdeliveryCost(e)
+        console.log(tbPromotionDelivery)
         setTimeout(() => {
             getProducts()
         }, 1000);
@@ -584,7 +585,7 @@ const MakeOrder = () => {
                                 <div>ยอดรวมสิ้นค้า : </div>
                                 <div className="absolute" style={{ right: "0" }}>
                                     {usecoupon == null ? "฿ " + fn.formatMoney(sumprice) :
-                                        "฿ " + fn.formatMoney(sumprice + usecoupon.discount)
+                                        "฿ " + fn.formatMoney(sumprice)
                                     }
                                 </div>
                             </div>
@@ -628,7 +629,7 @@ const MakeOrder = () => {
                                                 //ไม่โปร
                                                 tbPromotionDelivery == null ? deliveryCost :
                                                     //มีโปร
-                                                    (sumprice + deliveryCost) > tbPromotionDelivery.buy ?
+                                                    ((sumprice - usecoupon.discount)) > tbPromotionDelivery.buy ?
                                                         (deliveryCost > tbPromotionDelivery.deliveryCost ? deliveryCost - tbPromotionDelivery.deliveryCost : 0)
                                                         : deliveryCost
                                             )
