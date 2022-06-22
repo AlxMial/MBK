@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    returnType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,

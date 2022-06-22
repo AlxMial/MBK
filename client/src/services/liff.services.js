@@ -61,7 +61,7 @@ export const path = {
 
   paymentInfo: "/line/paymentInfo/:id",
 
-  myorder: "/line/myorder",
+  myorder: "/line/myorder/:id",
   orderpaymentdone: "/line/orderpaymentdone/:id",
 
 
@@ -253,6 +253,9 @@ export const getOrderHDById = (data, s, e = () => { }, f = () => { }) => {
 
 export const cancelOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/cancelOrder/cancelOrder", data, s, e, f);
+};
+export const returnOrder = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/returnOrder/returnOrder ", data, s, e, f);
 };
 
 

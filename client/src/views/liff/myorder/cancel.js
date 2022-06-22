@@ -35,9 +35,17 @@ const Cancel = () => {
                             return (
                                 <div key={i}>
                                     <div className="w-full" >
-                                        <div className="w-full flex mb-2" style={{ fontSize: "12px" }}>
+                                        <div className="w-full flex mb-2 relative" style={{ fontSize: "12px" }}>
                                             <div className="font-bold">หมายเลขคำสั่งซื้อ : </div>
                                             <div >{e.orderNumber} </div>
+                                            <div className="absolute flex" style={{
+                                                right: "10px",
+                                                width: "90px",
+                                                backgroundColor: "#ebebeb",
+                                                borderRadius: "10px",
+                                                justifyContent: "center",
+                                                color: "var(--mq-txt-color, rgb(20, 100, 246))"
+                                            }}>{e.cancelStatus === "Wait" ? "รอดำเนินการ" : e.cancelStatus === "Refund" ? "คืนเงิน" : "ไม่คืนเงิน"} </div>
                                         </div>
                                         {[...e.dt].length > 0 ?
                                             [...e.dt].map((dt, j) => {

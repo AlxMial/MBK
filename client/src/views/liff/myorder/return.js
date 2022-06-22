@@ -34,10 +34,27 @@ const ReturnOrder = () => {
                         {[...OrderHD].map((e, i) => {
                             return (
                                 <div key={i}>
-                                    <div className="w-full" >
+                                    <div className="w-full" style={{ opacity: "0.7" }} >
                                         <div className="w-full flex mb-2" style={{ fontSize: "12px" }}>
+                                            <div className="flex" style={{ width: "calc(100% - 120px)" }}>
                                             <div className="font-bold">หมายเลขคำสั่งซื้อ : </div>
                                             <div >{e.orderNumber} </div>
+                                            </div>
+                                            {
+                                                e.returnStatus != null ?
+                                                    <div className="flex" style={{
+                                                        width: "120px",
+                                                        backgroundColor: "#ebebeb",
+                                                        borderRadius: "10px",
+                                                        textAlign: "center", color: "var(--mq-txt-color, rgb(20, 100, 246))", fontSize: "13px",
+                                                        justifyContent: "center",
+                                                        alignItems: "center"
+                                                    }}>
+                                                        { e.returnStatus ==="Wait"?"รอดำเนินการ" :e.returnStatus ==="Done" ?"คืนสำเร็จ" :"การคืนถูกปฏิเสธ"}
+                                                    </div>
+                                                    : null
+                                            }
+
                                         </div>
                                         {[...e.dt].length > 0 ?
                                             [...e.dt].map((dt, j) => {

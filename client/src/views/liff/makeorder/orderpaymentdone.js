@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
-import { path } from "services/liff.services";
-import * as Storage from "@services/Storage.service";
+// import { path } from "services/liff.services";
+// import * as Storage from "@services/Storage.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Select from "react-select";
-import TextAreaUC from 'components/InputUC/TextAreaUC';
+import moment from "moment";
 import {
 
     getOrderHDById,
@@ -90,7 +90,7 @@ const OrderPaymentDone = () => {
     const Cancelorder = () => {
         console.log(id)
         setIsLoading(true)
-        cancelOrder({ orderId: id, CancelDetail: Cancelvalue, description: remark }, (res) => {
+        cancelOrder({ orderId: id, cancelDetail: Cancelvalue, description: remark }, (res) => {
             setisOpenmodel(false)
             getProducts();
         }, () => {
@@ -98,6 +98,9 @@ const OrderPaymentDone = () => {
         }, () => {
             setIsLoading(false)
         })
+    }
+    const openImage = () => {
+
     }
     useEffect(() => {
         getProducts();
@@ -119,6 +122,115 @@ const OrderPaymentDone = () => {
 
                 {OrderHD != null ?
                     <>
+
+                        {/* ยกเลิก */}
+                        {OrderHD.tbCancelOrder != null ?
+                            <>
+                                <div className="flex mt-2 " style={{
+                                    width: "95%",
+                                    marginLeft: "auto",
+                                    marginRight: "auto",
+                                }}>
+                                    <div className="flex" style={{ width: "calc(100% - 90px)", color: "red" }}>
+                                        <i className="flex fas fa-backspace" style={{ alignItems: "center" }}></i>
+                                        <div className="px-2">ยกเลิกคำสั่งซื้อ</div>
+                                    </div>
+
+                                    <div className="flex" style={{
+                                        width: "90px",
+                                        backgroundColor: "#ebebeb",
+                                        borderRadius: "10px",
+                                        textAlign: "center", color: "var(--mq-txt-color, rgb(20, 100, 246))", fontSize: "13px",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        {OrderHD.tbCancelOrder.cancelStatus === "Wait" ? "รอดำเนินการ" : OrderHD.tbCancelOrder.cancelStatus === "Refund" ? "คืนเงิน" : "ไม่คืนเงิน"}
+                                    </div>
+                                </div>
+
+                                <div className=" mt-2 py-2 px-2" style={{
+                                    width: "100%",
+                                    backgroundColor: "#ffe9e2"
+                                }}>
+                                    <div className="flex mb-2" style={{ width: "100%", color: "var(--mq-txt-color, rgb(122, 122, 122))" }}>
+                                        <i className="flex fas fa-times" style={{ alignItems: "center" }}></i>
+                                        <div className="px-2">{"ประเภทการยกเลิก : " + (OrderHD.tbCancelOrder.cancelType === "User" ? "ยกเลิกโดยผู้ใช้" : OrderHD.tbCancelOrder.cancelType === "Admin" ? "ผู้ดูแลระบบ" : "ยกเลิกอัตโนมัติ")}</div>
+                                    </div>
+                                    <div className="flex" style={{ width: "100%", color: "var(--mq-txt-color, rgb(122, 122, 122))" }}>
+                                        <i className="flex fas fa-clock" style={{ alignItems: "center" }}></i>
+                                        <div className="px-2">{"วันที่ยกเลิก : " + moment(OrderHD.tbCancelOrder.createdAt).format("DD-MM-YYYY")}</div>
+                                    </div>
+                                    <div className="liff-inline" />
+                                    <div className="flex mb-2" style={{ width: "100%", color: "var(--mq-txt-color, rgb(122, 122, 122))" }}>
+                                        <i className="flex fas fa-clipboard" style={{ alignItems: "center" }}></i>
+                                        <div className="px-2">{"สาเหตุ : " + OrderHD.tbCancelOrder.cancelDetail}</div>
+                                    </div>
+                                    <div className="flex" style={{ width: "100%", color: "var(--mq-txt-color, rgb(122, 122, 122))" }}>
+                                        <i className="flex fas fa-question-circle" style={{ alignItems: "center" }}></i>
+                                        <div className="px-2">{"รายละเอียด : " + OrderHD.tbCancelOrder.description}</div>
+                                    </div>
+                                </div>
+
+                            </>
+                            : null
+                        }
+                        {/* คืนสินค้า */}
+                        {OrderHD.tbReturnOrder != null ?
+                            <>
+                                <div className="flex mt-2 " style={{
+                                    width: "95%",
+                                    marginLeft: "auto",
+                                    marginRight: "auto",
+                                }}>
+                                    <div className="flex" style={{ width: "calc(100% - 90px)", color: "red" }}>
+                                        <i className="flex fas fa-long-arrow-alt-left" style={{ alignItems: "center" }}></i>
+                                        <div className="px-2">คืนสินค้า</div>
+                                    </div>
+
+                                    <div className="flex" style={{
+                                        width: "90px",
+                                        backgroundColor: "#ebebeb",
+                                        borderRadius: "10px",
+                                        textAlign: "center", color: "var(--mq-txt-color, rgb(20, 100, 246))", fontSize: "13px",
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        {OrderHD.tbReturnOrder.returnStatus === "Wait" ? "รอดำเนินการ" : OrderHD.tbReturnOrder.returnStatus === "Done" ? "คืนสำเร็จ" : "การคืนถูกปฏิเสธ"}
+                                    </div>
+                                </div>
+
+                                <div className=" mt-2 py-2 px-2" style={{
+                                    width: "100%",
+                                    backgroundColor: "#ffe9e2"
+                                }}>
+
+                                    <div className="flex" style={{ width: "100%", color: "var(--mq-txt-color, rgb(122, 122, 122))" }}>
+                                        <i className="flex fas fa-clock" style={{ alignItems: "center" }}></i>
+                                        <div className="px-2">{"วันที่ยกเลิก : " + moment(OrderHD.tbReturnOrder.createdAt).format("DD-MM-YYYY")}</div>
+                                    </div>
+                                    <div className="flex mb-2" style={{ width: "100%", color: "var(--mq-txt-color, rgb(122, 122, 122))" }}>
+                                        <i className="flex fas fa-paperclip" style={{ alignItems: "center" }}></i>
+                                        <div className="px-2 flex">{"รูปภาพ  : "}<div className="px-2" style={{
+                                            textDecoration: "underline", color: "blue"
+                                        }} onClick={openImage}>ดูรูปภาพ</div>
+                                        </div>
+                                    </div>
+                                    <div className="liff-inline" />
+                                    <div className="flex mb-2" style={{ width: "100%", color: "var(--mq-txt-color, rgb(122, 122, 122))" }}>
+                                        <i className="flex fas fa-clipboard" style={{ alignItems: "center" }}></i>
+                                        <div className="px-2">{"สาเหตุ : " + OrderHD.tbReturnOrder.returnDetail}</div>
+                                    </div>
+                                    <div className="flex" style={{ width: "100%", color: "var(--mq-txt-color, rgb(122, 122, 122))" }}>
+                                        <i className="flex fas fa-question-circle" style={{ alignItems: "center" }}></i>
+                                        <div className="px-2">{"รายละเอียด : " + OrderHD.tbReturnOrder.description}</div>
+                                    </div>
+                                </div>
+
+                            </>
+                            : null
+                        }
+
+
                         <div className="flex mt-2 " style={{
                             width: "95%",
                             marginLeft: "auto",
@@ -300,19 +412,19 @@ const OrderPaymentDone = () => {
                                     padding: "5px",
                                     alignItems: "center",
                                     justifyContent: "center",
-                                    backgroundColor: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? "red" : "") : ""),
-                                    border: ("1px solid " + (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? "red" : "#ddd") : "#ddd")),
-                                    color: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? "#FFFFFF" : "#ddd") : "#ddd"),
+                                    backgroundColor: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "red" : "") : "") : ""),
+                                    border: ("1px solid " + (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "red" : "#ddd") : "#ddd") : "#ddd")),
+                                    color: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "#FFFFFF" : "#ddd") : "#ddd") : "#ddd"),
                                 }}
                                 onClick={() => {
-                                    if (OrderHD.transportStatus == "Prepare") {
-                                        // history.goBack()
-                                        // console.log("ยกเลิกคำสั่งซื้อ")
+                                    if (OrderHD.transportStatus == "Prepare" && OrderHD.tbCancelOrder == null) {
+
                                         setisOpenmodel(true)
                                     }
                                 }}
                             >
-                                {"ยกเลิกคำสั่งซื้อ"}
+                                <i className="fas fa-backspace"></i>
+                                <div className="px-2">ยกเลิกคำสั่งซื้อ</div>
                             </div>
                         </div>
                         <div style={{ width: "50%", padding: "10px" }}>
@@ -361,12 +473,8 @@ const OrderPaymentDone = () => {
             <div>
                 <Modal
                     isOpen={isOpenmodel}
-                    // onRequestClose={handleModal}
                     className="Modal-line"
-                    // overlayClassName="Modal-Overlay"
                     style={{ borderRadius: "10px" }}
-                // contentLabel="Example Modal"
-                // shouldCloseOnOverlayClick={false}
                 >
                     <div className="w-full flex flex-wrap">
                         <div className="w-full flex-auto mt-2">
@@ -392,11 +500,8 @@ const OrderPaymentDone = () => {
                             </div>
                             <div className="mb-2">
                                 <textarea
-                                    disabled={Cancelvalue === "อื่นๆ" ? false : true}
-                                    // disabled={false}
                                     className="w-full border-green-mbk"
                                     style={{ borderRadius: "20px", padding: "15px", height: "150px" }}
-                                    // value={remark}
                                     name="CancelOtherRemark "
                                     onBlur={(e) => {
                                         setremark(e.target.value)

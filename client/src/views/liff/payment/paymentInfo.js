@@ -279,7 +279,7 @@ const PaymentInfo = () => {
                                         fontSize: "14px", width: "90%"
                                     }}
                                     onClick={() => {
-                                        history.push(path.myorder)
+                                        history.push(path.myorder.replace(":id", "1"))
                                     }}
                                 >
                                     {"ไปหน้า คำสั่งซื้อของฉัน"}

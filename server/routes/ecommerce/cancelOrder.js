@@ -7,6 +7,8 @@ const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const { tbCancelOrder } = require("../../models");
 const Op = Sequelize.Op;
+const ValidateEncrypt = require("../../../server/services/crypto");
+const Encrypt = new ValidateEncrypt();
 
 router.post("/", validateToken, async (req, res) => {
     const data = await tbCancelOrder.create(req.body);
@@ -116,21 +118,21 @@ router.delete("/:id", validateToken, async (req, res) => {
 
 //#region line liff
 router.post("/cancelOrder", validateLineToken, async (req, res) => {
-    let { orderId, CancelDetail, description } = req.body;
+    let { orderId, cancelDetail, description } = req.body;
+    let status = true
+    let msg = ""
     try {
-        // cancelStatus
-        // cancelDetail
-        // description
-        // orderId
-        // const data = await tbCancelOrder.create({ orderId: orderId, cancelStatus: "Wait", CancelDetail: CancelDetail, description: description, });
 
-    } catch {
+        const data = await tbCancelOrder.create({ orderId: Encrypt.DecodeKey(orderId), cancelStatus: "Wait", cancelType: "User", cancelDetail: cancelDetail, description: description, isDeleted: false });
 
+    } catch (e) {
+        status = false
+        msg = e.message
     }
 
     res.json({
-        status: true,
-        message: "success",
+        status: status,
+        message: msg,
         tbCancelOrder: req.body,
     });
 });
