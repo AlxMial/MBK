@@ -23,15 +23,15 @@ const UserDropdown = () => {
   };
 
   const OnLogOut = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("roleUser");
-    localStorage.removeItem("username");
-    localStorage.removeItem("fullName");
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("roleUser");
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("fullName");
     history.push("/auth/login");
   }
 
   useEffect(() => {
-    const getFullName = localStorage.getItem('fullName');
+    const getFullName = sessionStorage.getItem('fullName');
     setFullName(getFullName);
     const checkIfClickedOutside = (e) => {
       setIsDropDown(true);

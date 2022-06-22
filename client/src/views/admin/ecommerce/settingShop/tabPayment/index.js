@@ -97,7 +97,7 @@ const Payment = () => {
         }),
         onSubmit: (values) => {
             fetchLoading();
-            values.updateBy = localStorage.getItem('user');
+            values.updateBy = sessionStorage.getItem('user');
             if (values.id) {
                 axios.put("payment", values).then(async (res) => {
                     if (res.data.status) {
@@ -119,7 +119,7 @@ const Payment = () => {
                     }
                 });
             } else {
-                values.addBy = localStorage.getItem('user');
+                values.addBy = sessionStorage.getItem('user');
                 axios.post("payment", values).then(async (res) => {
                     if (res.data.status) {
                         // Save Image ต่อ

@@ -11,8 +11,6 @@ router.post("/", validateToken, async (req, res) => {
   const listMenu = await tbPermission.findOne({
     where: { role: Encrypt.DecodeKey(req.user.role) , menuId : req.body.menuId },
   });
-  console.log( req.body.menuId)
-  console.log(console.log( req.body.menuId))
   if(listMenu){
     const permissionShow = await tbPermissionControl.findAll({
       where: { permissionId : listMenu.dataValues.id },

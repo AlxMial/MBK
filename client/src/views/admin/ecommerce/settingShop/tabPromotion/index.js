@@ -88,7 +88,7 @@ const Promotion = () => {
         }),
         onSubmit: (values) => {
             dispatch(fetchLoading());
-            values.updateBy = localStorage.getItem('user');
+            values.updateBy = sessionStorage.getItem('user');
             if (values.id) {
                 axios.put("promotionStore", values).then((res) => {
                     if (res.data.status) {
@@ -106,7 +106,7 @@ const Promotion = () => {
                     }
                 });
             } else {
-                values.addBy = localStorage.getItem('user');
+                values.addBy = sessionStorage.getItem('user');
                 axios.post("promotionStore", values).then(async (res) => {
                     if (res.data.status) {
                         fetchData();

@@ -98,7 +98,7 @@ const Logistic = () => {
         }),
         onSubmit: (values) => {
             dispatch(fetchLoading());
-            values.updateBy = localStorage.getItem('user');
+            values.updateBy = sessionStorage.getItem('user');
             if (values.id) {
                 axios.put("logistic", values).then((res) => {
                     if (res.data.status) {
@@ -108,7 +108,7 @@ const Logistic = () => {
                     }
                 });
             } else {
-                values.addBy = localStorage.getItem('user');
+                values.addBy = sessionStorage.getItem('user');
                 axios.post("logistic", values).then(async (res) => {
                     if (res.data.status) {
                         saveLogisticSuccess();
@@ -136,7 +136,7 @@ const Logistic = () => {
         },
         onSubmit: async (values) => {
             dispatch(fetchLoading());
-            values.updateBy = localStorage.getItem('user');
+            values.updateBy = sessionStorage.getItem('user');
             if (values.id) {
                 await axios.put("promotionDelivery", values).then((res) => {
                     if (res.data.status) {
@@ -150,7 +150,7 @@ const Logistic = () => {
                     }
                 });
             } else {
-                values.addBy = localStorage.getItem('user');
+                values.addBy = sessionStorage.getItem('user');
                 await axios.post("promotionDelivery", values).then(async (res) => {
                     if (res.data.status) {
                         dispatch(fetchSuccess());

@@ -10,13 +10,14 @@ const token = Buffer.from(`${username}:${password}`, 'utf8').toString('base64')
 //   // baseURL: `http://localhost:3002/mbkimport/`,
 //   headers: {
 //     'Authorization': `Basic ${token}`,
-//     accessToken : localStorage.getItem("accessToken")
+//     accessToken : sessionStorage.getItem("accessToken")
 //   }
 // });
 
 const axiosInstance = axios.create({
   // baseURL: `https://undefined.ddns.net/mbkimport/`,
-  baseURL: `http://localhost:3002/mbkimport/`,
+  baseURL: `https://undefined.ddns.net/mahboonkrongimport/`,
+  // baseURL: `http://localhost:3002/mahboonkrongimport/`,
 });
 
 axiosInstance.interceptors.request.use(
