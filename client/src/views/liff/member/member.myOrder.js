@@ -81,6 +81,15 @@ const MyOrder = () => {
                 </div>
               )
             })}
+            <div className="w-full flex mb-2" style={{ fontSize: "12px", justifyContent: "end", color: "#ddd" }}>
+              <div className="font-bold"
+                onClick={() => {
+                  history.push(OrderHD.paymentStatus == "Wating" ? path.makeorderbyid.replace(":id", OrderHD.id) : path.orderpaymentdone.replace(":id", OrderHD.id))
+                }}>
+                {"ดูรายละเอียดคำสั่งซื้อ >"}
+              </div>
+            </div>
+
             <div className="flex" >
               <div style={{ width: "50%", color: "#ddd" }}>{"รวม " + OrderHD.sumamount + " ชิ้น"}</div>
               <div className="font-bold" style={{ width: "50%", textAlign: "end", color: "#047738" }}>{"฿ " + fn.formatMoney(OrderHD.sumprice) + " บาท"} </div>

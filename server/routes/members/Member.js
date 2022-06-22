@@ -561,7 +561,7 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
 
       const _tbOrderHD = await tbOrderHD.findAll({
         limit: 1,
-        attributes: ["id", "orderNumber"], where: { memberId: Member.id }
+        attributes: ["id", "orderNumber", "paymentStatus"], where: { memberId: Member.id }
       });
       if (_tbOrderHD) {
         let hd = _tbOrderHD[0].dataValues
