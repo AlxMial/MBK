@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
-// import { path } from "services/liff.services";
-// import * as Storage from "@services/Storage.service";
+// import Modal from "react-modal";
+// import ModalHeader from 'views/admin/ModalHeader';
+// import ProfilePictureUC from 'components/ProfilePictureUC';
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import { CopyToClipboard } from "react-copy-to-clipboard";
@@ -33,6 +34,8 @@ const OrderPaymentDone = () => {
 
     const [sumprice, setsumprice] = useState(0);
     const [remark, setremark] = useState("");
+
+    const [isOpenmodelimg, setisOpenmodelimg] = useState(false);
 
     const [isOpenmodel, setisOpenmodel] = useState(false);
     const OpenmodelCancel = [{ value: "ต้องการเปลี่ยนแปลงที่อยู่ในการจัดส่งสินค้า", label: "ต้องการเปลี่ยนแปลงที่อยู่ในการจัดส่งสินค้า" },
@@ -212,7 +215,9 @@ const OrderPaymentDone = () => {
                                         <i className="flex fas fa-paperclip" style={{ alignItems: "center" }}></i>
                                         <div className="px-2 flex">{"รูปภาพ  : "}<div className="px-2" style={{
                                             textDecoration: "underline", color: "blue"
-                                        }} onClick={openImage}>ดูรูปภาพ</div>
+                                        }} onClick={() => {
+                                            setisOpenmodelimg(true)
+                                        }}>ดูรูปภาพ</div>
                                         </div>
                                     </div>
                                     <div className="liff-inline" />
@@ -547,6 +552,34 @@ const OrderPaymentDone = () => {
                     </div>
                 </Modal>
             </div>
+
+
+            {OrderHD != null ?
+                <Modal
+                    isOpen={isOpenmodelimg}
+                    className="Modal-line"
+                    style={{ borderRadius: "10px" }}
+                >
+                    <div className="w-full flex flex-wrap">
+                        <div className="w-full flex-auto mt-2">
+                            <ModalHeader title="รูปภาพ" handleModal={() => {
+                                setisOpenmodelimg(false)
+                            }} />
+
+                            <div>
+                                <ImageUC
+                                    style={{ margin: "auto", height: "90px" }}
+                                    find={1}
+                                    relatedid={OrderHD.tbReturnOrder.id}
+                                    relatedtable={["tbReturnOrder"]}
+                                    alt="flash_sale"
+                                    className="w-32 border-2 border-blueGray-50"
+                                ></ImageUC>
+                            </div>
+
+                        </div>
+                    </div>
+                </Modal> : null}
         </>
     );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { path } from "services/liff.services";
 import * as fn from "@services/default.service";
