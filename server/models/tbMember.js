@@ -94,6 +94,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "memberId",
       onDelete: "cascade",
     });
+    tbMember.hasMany(models.tbMemberReward, {
+      foreignKey: "memberId",
+      onDelete: "cascade",
+    });
   };
   return tbMember;
 };
