@@ -222,7 +222,7 @@ const ShopDetail = () => {
         }),
         onSubmit: (values) => {
             dispatch(fetchLoading());
-            values.updateBy = localStorage.getItem('user');
+            values.updateBy = sessionStorage.getItem('user');
             if (values.id) {
                 axios.put("shop", values).then(async (res) => {
                     if (res.data.status) {
@@ -236,7 +236,7 @@ const ShopDetail = () => {
                     dispatch(fetchSuccess());
                 });
             } else {
-                values.addBy = localStorage.getItem('user');
+                values.addBy = sessionStorage.getItem('user');
                 axios.post("shop", values).then(async (res) => {
                     if (res.data.status) {
                         await saveAfterShop(res.data.tbShop.id);
@@ -326,7 +326,7 @@ const ShopDetail = () => {
 
 
     const saveBanners = async (data, id) => {
-        data.updateBy = localStorage.getItem('user');
+        data.updateBy = sessionStorage.getItem('user');
         data.shopId = id;
         data.isDeleted = false;
         dispatch(fetchLoading());
@@ -341,7 +341,7 @@ const ShopDetail = () => {
                 }
             });
         } else {
-            data.addBy = localStorage.getItem('user');
+            data.addBy = sessionStorage.getItem('user');
             axios.post("banner", data).then(async (res) => {
                 if (res.data.status) {
                     const success = await saveBannerImage(data, res.data.tbBanner.id);

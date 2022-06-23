@@ -72,7 +72,7 @@ export default function UserList() {
   };
 
   const deleteUser = (e, userName) => {
-    if (localStorage.getItem("user") === userName) {
+    if (sessionStorage.getItem("user") === userName) {
       closeModalSubject();
     } else {
       axios.delete(`/users/${e}`).then(() => {
@@ -375,12 +375,12 @@ export default function UserList() {
                             <i
                               className={
                                 "fas fa-trash cursor-pointer" +
-                                (localStorage.getItem("user") === value.userName
+                                (sessionStorage.getItem("user") === value.userName
                                   ? " text-gray-500"
                                   : " text-red-500")
                               }
                               onClick={(e) => {
-                                localStorage.getItem("user") === value.userName
+                                sessionStorage.getItem("user") === value.userName
                                   ? e.preventDefault()
                                   : openModalSubject(value.id, value.userName);
                               }}

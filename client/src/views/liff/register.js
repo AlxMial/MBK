@@ -660,12 +660,12 @@ const Register = () => {
         </div>
       ) : null}
       {page === "privacypolicy" ? (
-        <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
+        <div className="bg-green-mbk" style={{ height: "100%" }}>
           <div
             style={{
               width: "90%",
               backgroundColor: "#FFF",
-
+              height:"50%",
               padding: "20px",
               margin: "auto",
               borderRadius: "10px",
@@ -1085,9 +1085,7 @@ const Register = () => {
                 </span>
               </label>
             </div>
-          </div>
-
-          <div className="relative  px-4  flex-grow flex-1 flex mt-5">
+            <div className="relative  px-4  flex-grow flex-1 flex mt-5">
             <button
               className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
               type="button"
@@ -1106,6 +1104,9 @@ const Register = () => {
               {"อนุญาต"}
             </button>
           </div>
+          </div>
+
+          
         </div>
       ) : null}
 

@@ -15,8 +15,23 @@ import useGaTracker from './services/useGaTracker'
 import Liff from "layouts/Liff";
 import configureStore, { history } from "redux/store";
 import { ConnectedRouter } from 'connected-react-router';
+import { GetPermissionByUserName } from "services/Permission";
 
 export const store = configureStore();
+
+const getPermission = async  () =>{
+
+  const role = await GetPermissionByUserName();
+
+  if(!role.data.error)
+  if (role.data.data.filter((e) => e.id === 1).length > 0) {
+    history.push("/admin/members");
+  } else if (role.data.data.filter((e) => e.id === 10).length > 0) {
+    history.push("/admin/users");
+  } else {
+    history.push("/admin/empty");
+  }
+}
 
 function App() {
   const [authState, setAuthState] = useState({
@@ -28,7 +43,7 @@ function App() {
 
   useGaTracker();
 
-  useEffect(() => {
+  useEffect( () => {
     axios
       .get("/users/auth")
       .then((response) => {
@@ -40,10 +55,10 @@ function App() {
             email: response.data.email,
             id: response.data.id,
             status: true,
-            role: response.data.role,
           });
         }
       });
+      getPermission();
 
   }, []);
 

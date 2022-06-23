@@ -174,7 +174,7 @@ const Stock = () => {
                 setIsImageCoverNull(true);
                 dispatch(fetchSuccess());
             } else {
-                values.updateBy = localStorage.getItem('user');
+                values.updateBy = sessionStorage.getItem('user');
                 if (values.id) {
                     axios.put("stock", values).then(async (res) => {
                         console.log('res', res);
@@ -190,7 +190,7 @@ const Stock = () => {
                         }
                     });
                 } else {
-                    values.addBy = localStorage.getItem('user');
+                    values.addBy = sessionStorage.getItem('user');
                     axios.post("stock", values).then(async (res) => {
                         if (res.data.status) {
                             await saveImage(res.data.tbStock.id);

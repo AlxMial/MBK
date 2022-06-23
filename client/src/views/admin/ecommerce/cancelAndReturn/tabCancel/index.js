@@ -84,7 +84,7 @@ const TabCancel = () => {
         onSubmit: (values) => {
             console.log('onSubmit', values);
             dispatch(fetchLoading());
-            values.updateBy = localStorage.getItem('user');
+            values.updateBy = sessionStorage.getItem('user');
             if (values.id) {
                 console.log('onSubmit update', values);
                 axios.put("cancelOrder", values).then(async (res) => {
@@ -100,7 +100,7 @@ const TabCancel = () => {
                     }
                 });
             } else {
-                values.addBy = localStorage.getItem('user');
+                values.addBy = sessionStorage.getItem('user');
                 axios.post("cancelOrder", values).then(async (res) => {
                     if (res.data.status) {
                         afterSaveSuccess();

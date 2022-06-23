@@ -29,12 +29,17 @@ class ValidateEncrypt {
   }
 
   DecodeKey(id) {
-    if (this.IsNullOrEmpty(id)) {
-      return "";
+    try{
+      if (this.IsNullOrEmpty(id)) {
+        return "";
+      }
+      let buff = new Buffer.from(id, "base64");
+      id = buff.toString("ascii");
+      return this.decrypt(id);
+    }catch{
+      return id;
     }
-    let buff = new Buffer.from(id, "base64");
-    id = buff.toString("ascii");
-    return this.decrypt(id);
+
   }
 
   IsNullOrEmpty = (obj) => {

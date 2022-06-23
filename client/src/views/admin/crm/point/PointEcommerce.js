@@ -9,7 +9,7 @@ import ReactPaginate from "react-paginate";
 import moment from "moment";
 import "antd/dist/antd.css";
 import Modal from "react-modal";
-import { Radio, DatePicker, Space, ConfigProvider } from "antd";
+import { Radio, DatePicker, ConfigProvider } from "antd";
 import locale from "antd/lib/locale/th_TH";
 import * as Storage from "../../../../services/Storage.service";
 import {
@@ -19,13 +19,15 @@ import {
 /* Service */
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
-
+import { useDispatch } from "react-redux";
+import { fetchLoading, fetchSuccess } from "redux/actions/common";
+import Select from "react-select";
+import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 export default function PointEcommerce() {
   /* Set useState */
   const [Active, setActive] = useState("1");
   const [sale, setIsSale] = useState("1");
-  const [score, setScore] = useState(0);
-  const { height, width } = useWindowDimensions();
+  const { width } = useWindowDimensions();
   const [listEcommerce, setListEcommerce] = useState([]);
   const [listSearch, setListSerch] = useState([]);
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -36,11 +38,20 @@ export default function PointEcommerce() {
   const useStyle = customEcomStyles();
   const useStyleMobile = customStylesMobile();
   const pageCount = Math.ceil(listEcommerce.length / usersPerPage);
+  const [errorStartDate, setErrorStartDate] = useState(false);
+  const [errorEndDate, setErrorEndDate] = useState(false);
+  const [errorDate, setErrorDate] = useState(false);
   const [langSymbo, setlangSymbo] = useState("");
+  const [startDateCode, setStartDateCode] = useState("");
+  const [endDateCode, setEndDateCode] = useState("");
+  const [listProduct , setListProduct] = useState([]);
   const { addToast } = useToasts();
   const changePage = ({ selected }) => {
     setPageNumber(selected);
   };
+  const dispatch = useDispatch();
+  const UseStyleSelect = styleSelect();
+  
 
   /* Method Condition */
   const options = [
@@ -57,6 +68,8 @@ export default function PointEcommerce() {
     if (id) {
       setIsNew(false);
     } else {
+      setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
+      setEndDateCode(moment(new Date(), "DD/MM/YYYY"));
       // formik.resetForm();
       setIsNew(true);
     }
@@ -92,29 +105,27 @@ export default function PointEcommerce() {
   const formik = useFormik({
     initialValues: {
       id: "",
-      pointEcommerceName: "",
-      pointEcommercePrice: "",
-      productId: "",
-      pointEcommerceQuantity: "",
-      pointEcommerceCode: "",
+      campaignName: "",
+      type: "",
+      purchaseAmount: "",
+      productAmount: "",
+      point: "",
       startDate: new Date(),
       endDate: new Date(),
-      isActive: false,
-      isSale: false,
       isDeleted: false,
     },
     validationSchema: Yup.object({
-      pointEcommerceName: Yup.string().required(
+      campaignName: Yup.string().required(
         Storage.GetLanguage() === "th"
           ? "* กรุณากรอก ชื่อแคมเปญ"
           : "* Please enter your Member Card"
       ),
-      pointEcommerceCode: Yup.string().required(
+      point: Yup.string().required(
         Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก รหัสแคมเปญ"
-          : "* Please enter your First Name"
+          ? "* กรุณากรอก จำนวนคะแนน"
+          : "* Please enter your point"
       ),
-     
+
       startDate: Yup.string().required(
         Storage.GetLanguage() === "th"
           ? "* กรุณากรอก วันที่สมัคร"
@@ -186,8 +197,23 @@ export default function PointEcommerce() {
     });
   };
 
+  const fetchProduct = async () => {
+      dispatch(fetchLoading());
+      await axios.get("stock").then((response) => {
+          if (!response.data.error && response.data.tbStock) {
+              let _stockData = response.data.tbStock;
+              _stockData = _stockData.map(stock => {
+                  return { value: stock.id, label: stock.productName };
+              });
+              setListProduct(_stockData)
+          }
+          dispatch(fetchSuccess());
+      });
+  };
+
   useEffect(() => {
     /* Default Value for Testing */
+    fetchProduct();
   }, []);
 
   return (
@@ -215,7 +241,7 @@ export default function PointEcommerce() {
               </div>
               <div className="lg:w-6/12 text-right">
                 <button
-                  className="bg-lemon-mbk text-blueGray-600 active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                  className="bg-lemon-mbk text-white active:bg-lemon-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                   type="button"
                   onClick={() => {
                     openModal();
@@ -292,7 +318,7 @@ export default function PointEcommerce() {
                                     htmlFor="grid-password"
                                   ></label>
                                 </div>
-                                <div className={"w-full lg:w-11/12 px-4 mt-2 "}>
+                                <div className={"w-full lg:w-11/12 px-4 mt-2 mb-2 "}>
                                   <Radio.Group
                                     options={optionsSale}
                                     onChange={(e) => {
@@ -316,10 +342,10 @@ export default function PointEcommerce() {
                                     htmlFor="grid-password"
                                   ></label>
                                 </div>
-                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b flex">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-11/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-left py-2 w-full placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointEcommerceSymbol"
                                     name="pointEcommerceSymbol"
                                     maxLength={100}
@@ -329,7 +355,7 @@ export default function PointEcommerce() {
                                     autoComplete="pointEcommerceSymbol"
                                   />
                                   <span
-                                    className="text-blueGray-600 text-sm font-bold pl-4 "
+                                    className="text-blueGray-600 text-sm font-bold pl-2 margin-auto "
                                     htmlFor="grid-password"
                                   >
                                     บาท
@@ -347,10 +373,10 @@ export default function PointEcommerce() {
                                     htmlFor="grid-password"
                                   ></label>
                                 </div>
-                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
-                                  <input
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b flex">
+                                  {/* <input
                                     type="text"
-                                    className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-6-7/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-6-7/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointEcommerceLengthSymbol"
                                     name="pointEcommerceLengthSymbol"
                                     maxLength={100}
@@ -363,10 +389,27 @@ export default function PointEcommerce() {
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointEcommerceLengthSymbol"
-                                    value={formik.values.pointEcommerceLengthSymbol}
+                                    value={
+                                      formik.values.pointEcommerceLengthSymbol
+                                    }
+                                  /> */}
+                                  <Select 
+                                      name="productId"
+                               
+                                      onChange={(value) => {
+                                        formik.setFieldValue("productId", value.value);
+                                      }}
+                                      menuPortalTarget={document.body}
+                                      menuPosition="fixed"
+                                      options={listProduct}
+                                      value={ValidateService.defaultValue(
+                                        listProduct,
+                                        formik.values.redemptionType
+                                      )}
+                                      styles={UseStyleSelect}
                                   />
                                   <span
-                                    className="text-blueGray-600 text-sm font-bold px-4 "
+                                    className="text-blueGray-600 text-sm font-bold px-4 margin-auto "
                                     htmlFor="grid-password"
                                   >
                                     จำนวน
@@ -379,7 +422,7 @@ export default function PointEcommerce() {
                                   ></div>
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-3-3/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-3-3/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointEcommerceLengthSymbol"
                                     name="pointEcommerceLengthSymbol"
                                     maxLength={100}
@@ -392,10 +435,12 @@ export default function PointEcommerce() {
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointEcommerceLengthSymbol"
-                                    value={formik.values.pointEcommerceLengthSymbol}
+                                    value={
+                                      formik.values.pointEcommerceLengthSymbol
+                                    }
                                   />
                                   <span
-                                    className="text-blueGray-600 text-sm font-bold pl-4 "
+                                    className="text-blueGray-600 text-sm font-bold pl-2 margin-auto "
                                     htmlFor="grid-password"
                                   >
                                     ชิ้น
@@ -412,7 +457,7 @@ export default function PointEcommerce() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    จำนวน Code
+                                    จำนวนคะแนน
                                   </label>
                                   <span className="text-sm ml-2 text-red-500">
                                     *
@@ -421,7 +466,7 @@ export default function PointEcommerce() {
                                 <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-right py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointEcommerceQuantityCode"
                                     name="pointEcommerceQuantityCode"
                                     maxLength={100}
@@ -434,7 +479,9 @@ export default function PointEcommerce() {
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointEcommerceQuantityCode"
-                                    value={formik.values.pointEcommerceQuantityCode}
+                                    value={
+                                      formik.values.pointEcommerceQuantityCode
+                                    }
                                   />
                                   {formik.touched.pointEcommerceQuantityCode &&
                                   formik.errors.pointEcommerceQuantityCode ? (
@@ -464,13 +511,11 @@ export default function PointEcommerce() {
                                   <div className="relative">
                                     <ConfigProvider locale={locale}>
                                       <DatePicker
+                                        inputReadOnly={true}
                                         format={"DD/MM/yyyy"}
                                         placeholder="เลือกวันที่"
                                         showToday={false}
-                                        defaultValue={moment(
-                                          new Date(),
-                                          "DD/MM/YYYY"
-                                        )}
+                                        defaultValue={startDateCode}
                                         style={{
                                           height: "100%",
                                           width: "100%",
@@ -489,7 +534,18 @@ export default function PointEcommerce() {
                                               new Date(),
                                               false
                                             );
+                                            setErrorStartDate(true);
                                           } else {
+                                            if (
+                                              ValidateService.withOutTime(e) >
+                                              ValidateService.withOutTime(
+                                                formik.values.endDate
+                                              )
+                                            )
+                                              setErrorDate(true);
+                                            else setErrorDate(false);
+
+                                            setErrorStartDate(false);
                                             formik.setFieldValue(
                                               "startDate",
                                               moment(e).toDate(),
@@ -497,10 +553,12 @@ export default function PointEcommerce() {
                                             );
                                           }
                                         }}
-                                        value={moment(
-                                          new Date(formik.values.startDate),
-                                          "DD/MM/YYYY"
-                                        )}
+                                        // value={moment(
+                                        //   new Date(
+                                        //     formikImport.values.startDate
+                                        //   ),
+                                        //   "DD/MM/YYYY"
+                                        // )}
                                       />
                                     </ConfigProvider>
                                     {formik.touched.startDate &&
@@ -536,13 +594,11 @@ export default function PointEcommerce() {
                                 <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <ConfigProvider locale={locale}>
                                     <DatePicker
+                                      inputReadOnly={true}
                                       format={"DD/MM/yyyy"}
                                       placeholder="เลือกวันที่"
                                       showToday={false}
-                                      defaultValue={moment(
-                                        new Date(),
-                                        "DD/MM/YYYY"
-                                      )}
+                                      defaultValue={endDateCode}
                                       style={{
                                         height: "100%",
                                         width: "100%",
@@ -556,12 +612,14 @@ export default function PointEcommerce() {
                                       }}
                                       onChange={(e) => {
                                         if (e === null) {
+                                          setErrorEndDate(true);
                                           formik.setFieldValue(
                                             "endDate",
                                             new Date(),
                                             false
                                           );
                                         } else {
+                                          setErrorEndDate(false);
                                           formik.setFieldValue(
                                             "endDate",
                                             moment(e).toDate(),
@@ -569,10 +627,10 @@ export default function PointEcommerce() {
                                           );
                                         }
                                       }}
-                                      value={moment(
-                                        new Date(formik.values.endDate),
-                                        "DD/MM/YYYY"
-                                      )}
+                                      // value={moment(
+                                      //   new Date(formikImport.values.endDate),
+                                      //   "DD/MM/YYYY"
+                                      // )}
                                     />
                                   </ConfigProvider>
                                   {formik.touched.endDate &&

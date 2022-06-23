@@ -13,7 +13,7 @@ import * as Storage from "../../../services/Storage.service";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import useMenu from "services/useMenu";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
-import SelectUC  from "components/SelectUC";
+import SelectUC from "components/SelectUC";
 
 export default function UserInfo() {
   /* Option Select */
@@ -44,6 +44,11 @@ export default function UserInfo() {
   const [currentpasswordShown, setcurrentpasswordShown] = useState(false);
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
   const [isUserSpace, setIsUserSpace] = useState(false);
+  const [errorPassword1, setErrorPassword1] = useState(false);
+  const [errorPassword2, setErrorPassword2] = useState(false);
+  const [errorPassword3, setErrorPassword3] = useState(false);
+  const [errorPassword4, setErrorPassword4] = useState(false);
+  const [errorPassword5, setErrorPassword5] = useState(false);
   // const [isMenu, setIsMenu] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const useStyle = styleSelect();
@@ -51,19 +56,24 @@ export default function UserInfo() {
   const { addToast } = useToasts();
   const [isModefied, setIsModified] = useState(false);
 
+  const poorRegExp = /[a-zA-Z]/;
+  const weakRegExp = /(?=.*?[0-9])/;
+  const strongRegExp = /(?=.*?[#?!@$%^&*-])/;
+  const whitespaceRegExp = /^$|\s+/;
+
   /* Method Condition */
   const togglePassword = () => {
-    if(!enablePassword && formik.values.password !== "")
+    if (!enablePassword && formik.values.password !== "")
       setPasswordShown(!passwordShown);
   };
 
   const toggleConfirmPassword = () => {
-    if(!enablePassword && formik.values.confirmPassword !== "")
+    if (!enablePassword && formik.values.confirmPassword !== "")
       setConfirmpasswordShown(!confirmpasswordShown);
   };
 
   const toggleCurrentPassword = () => {
-    if(!enablePassword && formik.values.currentPassword !== "")
+    if (!enablePassword && formik.values.currentPassword !== "")
       setcurrentpasswordShown(!currentpasswordShown);
   };
 
@@ -95,9 +105,8 @@ export default function UserInfo() {
     if (valueError.length > 2) {
       setIsOpenEdit(false);
       if (formik.values.password === "") setErrorPassword(true);
-    }else{
-      if(!isModefied)
-        history.push("/admin/users");
+    } else {
+      if (!isModefied) history.push("/admin/users");
     }
     // setIsModified(false);
     // history.push("/admin/users");
@@ -172,14 +181,23 @@ export default function UserInfo() {
       ),
     }),
     onSubmit: (values) => {
-      if(values.userName.split(' ').length > 1){
+      if (values.userName.split(" ").length > 1) {
         setIsUserSpace(true);
       }
-      if (!errorCurrentPassword && !errorPassword && values.userName.split(' ').length === 1) {
+      if (
+        !errorCurrentPassword &&
+        !errorPassword &&
+        !errorPassword1 &&
+        !errorPassword2 &&
+        !errorPassword3 &&
+        !errorPassword4 &&
+        !errorPassword5 &&
+        values.userName.split(" ").length === 1
+      ) {
         if (isNew) {
           formik.values.role =
             formik.values.role === "" ? "1" : formik.values.role;
-          formik.values.addBy = localStorage.getItem("user");
+          formik.values.addBy = sessionStorage.getItem("user");
           axios.post("users", values).then((res) => {
             if (res.data.status) {
               setIsNew(false);
@@ -215,7 +233,7 @@ export default function UserInfo() {
         } else {
           formik.values.role =
             formik.values.role === "" ? "1" : formik.values.role;
-          formik.values.updateBy = localStorage.getItem("user");
+          formik.values.updateBy = sessionStorage.getItem("user");
           axios.put("users", values).then((res) => {
             if (res.data.status) {
               setenablePassword(true);
@@ -242,7 +260,6 @@ export default function UserInfo() {
                 { appearance: "warning", autoDismiss: true }
               );
             } else {
-       
               addToast(
                 Storage.GetLanguage() === "th"
                   ? res.data.message
@@ -459,9 +476,9 @@ export default function UserInfo() {
                             seterrorCurrentPassword(false);
                             setErrorPassword(false);
                             setConfirmPassword(false);
-                            formik.values.currentPassword = ""
-                            formik.values.confirmPassword = ""
-                            formik.values.password = ""
+                            formik.values.currentPassword = "";
+                            formik.values.confirmPassword = "";
+                            formik.values.password = "";
                           }}
                         >
                           ยกเลิกเปลี่ยนแปลงรหัสผ่าน
@@ -489,9 +506,9 @@ export default function UserInfo() {
                         name="userName"
                         maxLength={50}
                         onChange={(e) => {
-                          if(e.target.value.split(' ').length > 1){
+                          if (e.target.value.split(" ").length > 1) {
                             setIsUserSpace(true);
-                          }else{
+                          } else {
                             setIsUserSpace(false);
                           }
                           formik.handleChange(e);
@@ -630,6 +647,23 @@ export default function UserInfo() {
                         maxLength={50}
                         onChange={(e) => {
                           setIsModified(true);
+                          const poorPassword = poorRegExp.test(e.target.value);
+                          const weakPassword = weakRegExp.test(e.target.value);
+                          const strongPassword = strongRegExp.test(
+                            e.target.value
+                          );
+                          const whitespace = whitespaceRegExp.test(
+                            e.target.value
+                          );
+                          setErrorPassword1(!poorPassword);
+                          setErrorPassword2(!weakPassword);
+                          setErrorPassword3(!strongPassword);
+                          setErrorPassword4(
+                            e.target.value.length < 8 ? true : false
+                          );
+                          setErrorPassword5(whitespace);
+
+                          console.log(whitespace);
                           if (e.target.value !== valueConfirm) {
                             setConfirmPassword(true);
                           } else if (
@@ -656,10 +690,45 @@ export default function UserInfo() {
                     <div className="relative w-full"></div>
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
-                    <div className="relative w-full mb-2">
+                    <div className="relative w-full mb-1">
                       {errorPassword ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           * Password ไม่สามารถเป็นค่าว่างได้
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="relative w-full mb-1">
+                      {errorPassword1 ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {"* ตัวอักษร (a-z, A-Z)"}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="relative w-full mb-1">
+                      {errorPassword2 ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {"* ตัวเลข (0-9)"}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="relative w-full mb-1">
+                      {errorPassword3 ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {"* เครื่องหมายหรืออักขระพิเศษ  (#?!@$%^&*-)"}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="relative w-full mb-1">
+                      {errorPassword4 ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {"* รหัสผ่านต้องไม่น้อยกว่า 8 ตัวอักษร"}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="relative w-full mb-1">
+                      {errorPassword5 ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {"* รหัสผ่านต้องไม่มีค่าว่าง"}
                         </div>
                       ) : null}
                     </div>

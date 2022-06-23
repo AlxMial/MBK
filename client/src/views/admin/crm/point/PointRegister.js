@@ -55,7 +55,7 @@ export default function PointRegister({ setModified, setData }) {
     }),
     onSubmit: (values) => {
       if (isNew) {
-        formik.values.addBy = localStorage.getItem("user");
+        formik.values.addBy = sessionStorage.getItem("user");
         axios.post("pointRegister", values).then((res) => {
           if (res.data.status) {
             formik.values.id = res.data.tbPointRegister.id;
@@ -69,7 +69,7 @@ export default function PointRegister({ setModified, setData }) {
           }
         });
       } else {
-        formik.values.updateBy = localStorage.getItem("user");
+        formik.values.updateBy = sessionStorage.getItem("user");
         axios.put("pointRegister", values).then((res) => {
           if (res.data.status) {
             formik.values.id = res.data.tbPointRegister.id;

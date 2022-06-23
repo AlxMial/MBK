@@ -153,7 +153,7 @@ export default function ConditioRewardInfo() {
         values["listGame"] = listGame;
         if (isNew) {
           dispatch(fetchLoading());
-          formik.values.addBy = localStorage.getItem("user");
+          formik.values.addBy = sessionStorage.getItem("user");
           axios.post("redemptions/game", values).then(async (res) => {
             if (res.data.status) {
               setIsNew(false);
@@ -183,7 +183,7 @@ export default function ConditioRewardInfo() {
           });
         } else {
           dispatch(fetchLoading());
-          formik.values.updateBy = localStorage.getItem("user");
+          formik.values.updateBy = sessionStorage.getItem("user");
           axios.put("redemptions/game", values).then(async (res) => {
             if (res.data.status) {
               dispatch(fetchSuccess());
@@ -239,7 +239,7 @@ export default function ConditioRewardInfo() {
         ) {
           if (isNew) {
             dispatch(fetchLoading());
-            formik.values.addBy = localStorage.getItem("user");
+            formik.values.addBy = sessionStorage.getItem("user");
             axios.post("redemptions", values).then(async (res) => {
               if (res.data.status) {
                 setIsNew(false);
@@ -268,7 +268,7 @@ export default function ConditioRewardInfo() {
                   formikCoupon.values.id = res.data.tbRedemptionCoupon.id;
                   if (isImport) {
                     formData.append("id", res.data.tbRedemptionCoupon.id);
-                    formData.append("addBy", localStorage.getItem("user"));
+                    formData.append("addBy", sessionStorage.getItem("user"));
                     await axiosUpload
                       .post("api/coupon/uploadCoupon", formData)
                       .then(async (resExcel) => {
@@ -326,7 +326,7 @@ export default function ConditioRewardInfo() {
               formik.setTouched({});
             });
           } else {
-            formik.values.updateBy = localStorage.getItem("user");
+            formik.values.updateBy = sessionStorage.getItem("user");
             dispatch(fetchLoading());
             formik.setFieldValue("expireDate", null);
             axios.put("redemptions", values).then(async (res) => {

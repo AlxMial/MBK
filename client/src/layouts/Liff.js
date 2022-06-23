@@ -14,7 +14,7 @@ import {
 } from "@services/liff.services";
 
 // components
-const dev = true;
+const dev = false;
 
 const getRoutes = () => {
   return routes.map((prop, key) => {
@@ -29,7 +29,7 @@ const initLine = (callback, setView) => {
     runApp(callback, setView);
   } else {
     liff.init(
-      { liffId: "1657109260-L0jrqxlN" },
+      { liffId: "1657238460-3deq6ard" },
       () => {
         if (liff.isLoggedIn()) {
           runApp(callback, setView);

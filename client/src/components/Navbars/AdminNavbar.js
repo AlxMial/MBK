@@ -6,10 +6,10 @@ export default function Navbar() {
   let history = useHistory();
 
   const OnLogOut = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("roleUser");
-    localStorage.removeItem("user");
-    localStorage.removeItem("fullName");
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("roleUser");
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("fullName");
     history.push("/auth/login");
   };
 
@@ -27,7 +27,7 @@ export default function Navbar() {
           </a> */}
           {/* User */}
           <ul className="flex-col md:flex-row list-none items-center hidden md:flex text-white">
-            <span className="mr-1">{localStorage.getItem("fullName")}</span>{" "}
+            <span className="mr-1">{sessionStorage.getItem("fullName")}</span>{" "}
             {" : "}{" "}
             <span onClick={(e) => OnLogOut()} className="ml-1 cursor-pointer">
               ออกจากระบบ

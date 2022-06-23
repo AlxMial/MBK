@@ -20,8 +20,9 @@ export const styleSelect = (bgColor) => ({
     "&:hover": {
       backgroundColor: state.isSelected ? "#D0B027" : "#fff",
     },
-    zIndex: 9999,
   }),
+  menuPortal: (provided) => ({ ...provided, zIndex: 9999 }),
+  menu: (provided) => ({ ...provided, zIndex: 9999 })
 });
 
 export const styleSelectLine = () => ({
@@ -48,4 +49,5 @@ export const styleSelectLine = () => ({
     },
     zIndex: 9999,
   }),
+
 });
