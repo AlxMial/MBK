@@ -4767,6 +4767,7 @@ input[type="number"] {
   background-color: #fff;
   padding: 20px;
   width: 90%;
+  height: 80%;
   margin: auto;
   display: flex;
   margin-top: 20%;
@@ -4833,4 +4834,15 @@ button.bt-quantity.broder-plus {
 button.bt-quantity.broder-minus:focus,
 button.bt-quantity.broder-plus {
   outline: none
+}
+
+.Policy {
+  /* text-align: justify; */
+
+}
+
+.Policy:after {
+  content: "";
+  display: inline-block;
+  width: 100%;
 }
