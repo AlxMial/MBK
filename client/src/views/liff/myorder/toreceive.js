@@ -48,27 +48,27 @@ const Toreceive = () => {
                                                                 width: "80px", height: "80px"
                                                             }}
                                                             find={1}
-                                                            relatedid={dt.stock.id}
+                                                            relatedid={dt.id}
                                                             relatedtable={["stock1"]}
                                                             alt="flash_sale"
-                                                            className=" border-2 border-blueGray-50"
+                                                            className=" border-2 border-blueGray-50  animated-img"
                                                         ></ImageUC>
                                                     </div>
-                                                    <div className=" px-2 " style={{ width: "calc(100% - 80px)" }}>
-                                                        <div className="font-bold">{dt.stock.productName}</div>
-                                                        <div style={{ color: "#ddd", fontSize: "10px" }}>{"x" + dt.amount}</div>
-                                                        <div className="flex" style={{ justifyContent: "end", fontSize: "14px" }}>
-                                                            <div style={{
-                                                                textDecoration:
-                                                                    dt.stock.discount > 0 ? "line-through" : "none",
-                                                                color: dt.stock.discount > 0 ? "#ddd" : "#047738"
+                                                    <div className=" px-2 relative " style={{ width: "calc(100% - 80px)" }}>
+                                                        <div className="font-bold line-clamp-1">{dt.productName}</div>
 
-                                                            }}>{"฿ " + fn.formatMoney(dt.stock.price)}</div>
-                                                            {dt.stock.discount > 0 ?
-                                                                <div className="px-2" style={{ color: "red" }}>{"฿ " + fn.formatMoney(dt.stock.discountType === "THB" ? dt.stock.discount : (
-                                                                    dt.stock.price - ((dt.stock.discount / 100) * dt.stock.price))
-                                                                )}</div> : null}
+                                                        <div className="flex" style={{ fontSize: "14px" }}>
+                                                            <div className="flex absolute" style={{ right: "0" }}>
+                                                                <div style={{
+                                                                    textDecoration:
+                                                                        dt.discount > 0 ? "line-through" : "none",
+                                                                    color: dt.discount > 0 ? "#ddd" : "#047738"
 
+                                                                }}>{"฿ " + fn.formatMoney(dt.price)}</div>
+                                                                {dt.discount > 0 ?
+                                                                    <div className="px-2" style={{ color: "red" }}>{"฿ " + fn.formatMoney(dt.discount)}</div> : null}
+                                                            </div>
+                                                            <div className="" style={{ color: "#ddd" }}>{"x" + dt.amount}</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -85,6 +85,11 @@ const Toreceive = () => {
                                         </div>
 
 
+                                    </div>
+                                    <div className="liff-inline mb-2" />
+                                    <div className="flex relative">
+                                        <div className="font-bold">{"ยอดรวมสินค้า ( " + e.amount + " ชิ้น)"}</div>
+                                        <div className="font-bold absolute " style={{ right: "0", color: "#047738" }}>{"฿ " + fn.formatMoney(e.price)}</div>
                                     </div>
                                     <div className="liff-inline mb-2" />
                                 </div>

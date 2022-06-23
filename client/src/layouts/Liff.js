@@ -14,7 +14,7 @@ import {
 } from "@services/liff.services";
 
 // components
-const dev = true;
+const dev = false;
 
 const getRoutes = () => {
   return routes.map((prop, key) => {
@@ -29,7 +29,7 @@ const initLine = (callback, setView) => {
     runApp(callback, setView);
   } else {
     liff.init(
-      { liffId: "1657109260-L0jrqxlN" },
+      { liffId: "1657238460-3deq6ard" },
       () => {
         if (liff.isLoggedIn()) {
           runApp(callback, setView);
@@ -45,14 +45,14 @@ const initLine = (callback, setView) => {
 const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "U66c3a95352d2269cc83129a2268f1893",
+      uid: "U17068a8797b1f7c44866067f1871826a",
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {
       apiCheckRegister((res) => {
         let lifdata = {
-          uid: "U66c3a95352d2269cc83129a2268f1893",
+          uid: "U17068a8797b1f7c44866067f1871826a",
           pictureUrl: null,
         }
         if (res.data.code === 200) {

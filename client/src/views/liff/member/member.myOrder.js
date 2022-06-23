@@ -21,8 +21,6 @@ const MyOrder = () => {
       }
     }, () => { }, () => { setIsLoading(false) })
   }
-
-
   useEffect(() => {
     GetMyOrder()
   }, []);
@@ -42,7 +40,7 @@ const MyOrder = () => {
           <div style={{ height: "calc(100% - 40px)" }}>
             <div className="flex" style={{ height: "30px" }}>
               <div className="font-bold">หมายเลขคำสั่งซื้อ : </div>
-              <div className="px-2">{OrderHD.orderNumber} </div>
+              <div className="px-2 line-clamp-1">{OrderHD.orderNumber} </div>
             </div>
 
             {OrderHD.dt.map((e, i) => {
@@ -51,17 +49,16 @@ const MyOrder = () => {
                   <div className="flex" style={{ width: "30%", justifyContent: "center" }}>
                     <div style={{ width: "80px", height: "80px" }}>
                       <ImageUC
-
                         find={1}
                         relatedid={e.id}
                         relatedtable={["stock1"]}
                         alt="flash_sale"
-                        className=" border-2 border-blueGray-50"
+                        className=" border-2 border-blueGray-50 animated-img"
                       ></ImageUC>
                     </div>
                   </div>
                   <div style={{ width: "70%" }}>
-                    <div className="font-bold">
+                    <div className="font-bold line-clamp-1">
                       {e.productName}
                     </div>
                     <div className="flex">
@@ -73,7 +70,7 @@ const MyOrder = () => {
                           color: e.discount > 0 ? "#ddd" : "#047738"
                         }}> {"฿ " + fn.formatMoney(e.price)}</div>
                         {e.discount > 0 ?
-                          <div className="" style={{ color: "red", marginLeft: "5px" }}> {"฿ " + fn.formatMoney(e.discountType == "THB" ? e.price - e.discount : e.price - ((e.discount / 100) * e.price))}</div> : null}
+                          <div className="" style={{ color: "red", marginLeft: "5px" }}> {"฿ " + fn.formatMoney(e.discount)}</div> : null}
                       </div>
                     </div>
                   </div>

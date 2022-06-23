@@ -33,7 +33,7 @@ const LogisticTable = ({ listLogistic, openModal, saveLogisticSuccess, saveLogis
     const handleChangeShowToEmp = (value, newValue) => {
         value.isShow = newValue;
         fetchLoading();
-        value.updateBy = localStorage.getItem('user');
+        value.updateBy = sessionStorage.getItem('user');
         console.log(value);
         if (value.id) {
             axios.put("logistic", value).then((res) => {
@@ -44,7 +44,7 @@ const LogisticTable = ({ listLogistic, openModal, saveLogisticSuccess, saveLogis
                 }
             });
         } else {
-            value.addBy = localStorage.getItem('user');
+            value.addBy = sessionStorage.getItem('user');
             axios.post("logistic", value).then(async (res) => {
                 if (res.data.status) {
                     saveLogisticSuccess();

@@ -108,8 +108,8 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
         id: '',
         categoryName: inputValue,
         isDeleted: false,
-        addBy: localStorage.getItem('user'),
-        updateBy: localStorage.getItem('user'),
+        addBy: sessionStorage.getItem('user'),
+        updateBy: sessionStorage.getItem('user'),
       }
       axios.post('productCategory', newItem).then(res => {
         if (res.data.status) {

@@ -82,7 +82,7 @@ const TabReturn = () => {
         onSubmit: (values) => {
             console.log('onSubmit', values);
             dispatch(fetchLoading());
-            values.updateBy = localStorage.getItem('user');
+            values.updateBy = sessionStorage.getItem('user');
             if (values.id) {
                 axios.put("returnOrder", values).then(async (res) => {
                     console.log('res', res);
@@ -97,7 +97,7 @@ const TabReturn = () => {
                     }
                 });
             } else {
-                values.addBy = localStorage.getItem('user');
+                values.addBy = sessionStorage.getItem('user');
                 axios.post("returnOrder", values).then(async (res) => {
                     if (res.data.status) {
                         afterSaveSuccess();

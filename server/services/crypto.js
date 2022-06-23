@@ -29,12 +29,17 @@ class ValidateEncrypt {
   }
 
   DecodeKey(id) {
-    if (this.IsNullOrEmpty(id)) {
-      return "";
+    try{
+      if (this.IsNullOrEmpty(id)) {
+        return "";
+      }
+      let buff = new Buffer.from(id, "base64");
+      id = buff.toString("ascii");
+      return this.decrypt(id);
+    }catch{
+      return id;
     }
-    let buff = new Buffer.from(id, "base64");
-    id = buff.toString("ascii");
-    return this.decrypt(id);
+
   }
 
   IsNullOrEmpty = (obj) => {
@@ -167,6 +172,8 @@ class ValidateEncrypt {
         columns !== "country" &&
         columns !== "memberPoint" &&
         columns !== "consentDate" &&
+        columns !== "isPolicy1" &&
+        columns !== "isPolicy2" &&
         list[columns] !== ""
       ) {
         list[columns] = this.EncodeKey(list[columns]);
@@ -196,6 +203,8 @@ class ValidateEncrypt {
         columns !== "country" &&
         columns !== "memberPoint" &&
         columns !== "consentDate" &&
+        columns !== "isPolicy1" &&
+        columns !== "isPolicy2" &&
         columns !== "role" &&
         list[columns] !== ""
       ) {
@@ -227,7 +236,9 @@ class ValidateEncrypt {
         columns !== "uid" &&
         columns !== "country" &&
         columns !== "memberPoint" &&
-        columns !== "consentDate" &&
+        columns !== "consentDate" &&        
+        columns !== "isPolicy1" &&
+        columns !== "isPolicy2" &&
         columns !== "role" &&
         list[columns] !== ""
       ) {

@@ -4,7 +4,7 @@ import jwt_decode from "jwt-decode";
 
 const AuthVerify = (props) => {
   props.history.listen(() => {
-    const user = localStorage.getItem("accessToken");
+    const user = sessionStorage.getItem("accessToken");
     if (user) {
       let decodedJwt = jwt_decode(user);
       const d = new Date(0);

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
-// import { useToasts } from "react-toast-notifications";
 import axios from "services/axios";
 import { path } from "services/liff.services";
 import * as Storage from "@services/Storage.service";
@@ -12,16 +11,12 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 
 const ShowCart = () => {
   const history = useHistory();
-  // const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
   const [confirmDelete, setconfirmDelete] = useState(false);
   const [deleteValue, setDeleteValue] = useState(null);
-
   const [CartItem, setCartItem] = useState([]);
   const [usecoupon, setusecoupon] = useState(null);
-
   const [sumprice, setsumprice] = useState(0);
-
   const getProducts = async () => {
 
     let id = [];
@@ -32,40 +27,42 @@ const ShowCart = () => {
         id.push(e.id);
         return e
       });
-      if (!fn.IsNullOrEmpty(cart.usecoupon)) {
-        setusecoupon(cart.usecoupon)
-      } else {
-        setusecoupon(null)
-      }
-      setIsLoading(true)
-      await axios.post("stock/getStock", { id: id }).then((response) => {
-        if (response.data.status) {
-          let tbStock = response.data.tbStock;
-          setCartItem(tbStock);
-          let price = 0;
-          tbStock.filter((e) => {
-            let quantity = shop_orders.find((o) => o.id === e.id).quantity;
-            e.quantity = quantity;
-            if (e.priceDiscount > 0) {
-              price += parseFloat(e.priceDiscount) * parseInt(quantity);
-            } else {
-              price += parseFloat(e.price) * parseInt(quantity);
-            }
-            return e
-          });
-          if (!fn.IsNullOrEmpty(cart.usecoupon)) {
-            price = price - cart.usecoupon.discount
-          }
-          price = price < 1 ? 0 : price
-          setsumprice(price);
+      if (id.length > 0) {
+        if (!fn.IsNullOrEmpty(cart.usecoupon)) {
+          setusecoupon(cart.usecoupon)
         } else {
-          setCartItem([]);
-          // error
+          setusecoupon(null)
         }
+        setIsLoading(true)
+        await axios.post("stock/getStock", { id: id }).then((response) => {
+          if (response.data.status) {
+            let tbStock = response.data.tbStock;
+            setCartItem(tbStock);
+            let price = 0;
+            tbStock.filter((e) => {
+              let quantity = shop_orders.find((o) => o.id === e.id).quantity;
+              e.quantity = quantity;
+              if (e.priceDiscount > 0) {
+                price += parseFloat(e.priceDiscount) * parseInt(quantity);
+              } else {
+                price += parseFloat(e.price) * parseInt(quantity);
+              }
+              return e
+            });
+            if (!fn.IsNullOrEmpty(cart.usecoupon)) {
+              price = price - cart.usecoupon.discount
+            }
+            price = price < 1 ? 0 : price
+            setsumprice(price);
+          } else {
+            setCartItem([]);
+            // error
+          }
 
-      }).finally((e) => {
-        setIsLoading(false)
-      });
+        }).finally((e) => {
+          setIsLoading(false)
+        });
+      }
     }
   };
 
@@ -163,10 +160,10 @@ const ShowCart = () => {
                       relatedid={e.id}
                       relatedtable={["stock1"]}
                       alt="flash_sale"
-                      className="w-32 border-2 border-blueGray-50"
+                      className="w-32 border-2 border-blueGray-50 animated-img"
                     ></ImageUC>
                   </div>
-                  <div className="px-2" style={{ width: "70%" }}>
+                  <div className="px-2 relative" style={{ width: "70%" }}>
                     <div className="flex" style={{ height: "35px" }}>
                       <div className="font-bold line-clamp-2" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
                       <div
@@ -189,37 +186,38 @@ const ShowCart = () => {
 
                     </div>
 
-                    <div style={{ height: "15px" }}>
-                      <div className="flex  relative" style={{ fontSize: "11px" }} >
-                        <div
-                          style={{
-                            color: e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
-                            textDecoration:
-                              e.discount > 0 ? "line-through" : "none",
-                          }}
-                        >
-                          {"฿ " + fn.formatMoney(e.price)}
-                        </div>
-                        {e.discount > 0 ? (
-                          <div style={{ color: "red", paddingLeft: "10px" }}>
-                            {"฿ " + fn.formatMoney(e.priceDiscount)}
-                          </div>
-                        ) : null}
-                      </div>
-                    </div>
 
                     <div
-                      className="flex relative"
+                      className="w-full flex absolute"
                       style={{
                         height: "35px",
                         alignItems: "center",
-                        justifyContent: "center",
+                        bottom: "0"
                       }}
                     >
 
+                      <div style={{ width: "calc(100% - 100px)", height: "15px" }}>
+                        <div className="flex " style={{ fontSize: "11px" }} >
+                          <div
+                            style={{
+                              color: e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
+                              textDecoration:
+                                e.discount > 0 ? "line-through" : "none",
+                            }}
+                          >
+                            {"฿ " + fn.formatMoney(e.price)}
+                          </div>
+                          {e.discount > 0 ? (
+                            <div style={{ color: "red", paddingLeft: "10px" }}>
+                              {"฿ " + fn.formatMoney(e.priceDiscount)}
+                            </div>
+                          ) : null}
+                        </div>
+                      </div>
+
 
                       <div
-                        className="flex absolute"
+                        className="flex"
                         style={{
                           color: "var(--mq-txt-color, rgb(170, 170, 170))",
                           alignItems: "center",
@@ -228,13 +226,9 @@ const ShowCart = () => {
                       >
                         <button
                           name="minus"
+                          className="bt-quantity broder-minus"
                           style={{
-                            width: "30px",
-                            border: "1px solid #ddd",
-                            height: "30px",
-                            outline: "none",
-                            color: "#000",
-                            borderRadius: " 5px 0 0 5px "
+                            color: "#000"
                           }}
                           onClick={() => {
                             if (e.quantity !== 1) {
@@ -245,40 +239,27 @@ const ShowCart = () => {
                             }
                           }}
                         >
-                          <i className="fas fa-minus"></i>
+                          <i className="flex fas fa-minus" style={{ justifyContent: "center" }}></i>
                         </button>
                         <input
-                          style={{
-                            width: "50px",
-                            border: "1px solid #ddd",
-                            height: "30px",
-                            color: "#000",
-                            fontSize: "12px"
-                          }}
+                          className="input-products-quantity"
+
                           type="tel"
                           value={e.quantity}
                           onBlur={(even) => {
                             let value = even.target.value;
                             if (fn.IsNullOrEmpty(value)) {
                               value = 0;
-                              // setspin(value, e.id);
                             }
-                            // if (parseInt(value) > tbStock.productCount) {
-                            //   value = tbStock.productCount;
-                            //   setspin(value, e.id);
-                            // }
+
                           }}
                         />
                         <button
                           name="plus"
                           disabled={e.quantity >= CartItem.find(f => f.id === e.id).productCount ? true : false}
+                          className="bt-quantity broder-plus"
                           style={{
-                            width: "30px",
-                            border: "1px solid #ddd",
-                            height: "30px",
-                            outline: "none",
                             color: e.quantity >= CartItem.find(f => f.id === e.id).productCount ? "var(--mq-txt-color, rgb(170, 170, 170))" : "#000",
-                            borderRadius: "0 5px 5px 0"
                           }}
                           onClick={() => {
                             let Item = CartItem.find(f => f.id === e.id)
@@ -287,9 +268,11 @@ const ShowCart = () => {
                             }
                           }}
                         >
-                          <i className="fas fa-plus"></i>
+                          <i className="flex fas fa-plus" style={{ justifyContent: "center" }}></i>
                         </button>
                       </div>
+
+
                     </div>
                   </div>
                 </div>
@@ -297,7 +280,14 @@ const ShowCart = () => {
               </div>
             );
           })}
-        </div> : null}
+        </div> :
+        <div className="flex" style={{
+          height: "50px",
+          justifyContent: "center",
+          alignItems: "center"
+        }}>
+          ยังไม่มีรายการสินค้า
+        </div>}
 
 
       <div
@@ -405,7 +395,7 @@ const ShowCart = () => {
           </div>
         </div>
       </div>
-      {/* {
+      {
         confirmDelete && (
           <ConfirmDialog
             className={" liff-Dialog "}
@@ -419,7 +409,7 @@ const ShowCart = () => {
             }}
           />
         )
-      } */}
+      }
     </>
   );
 };

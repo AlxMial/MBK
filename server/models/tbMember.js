@@ -83,6 +83,14 @@ module.exports = (sequelize, DataTypes) => {
     consentDate: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    isPolicy1: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    }
+    ,isPolicy2: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
     }
   });
 
@@ -91,6 +99,10 @@ module.exports = (sequelize, DataTypes) => {
       onDelete: "cascade",
     });
     tbMember.hasMany(models.tbOrderHD, {
+      foreignKey: "memberId",
+      onDelete: "cascade",
+    });
+    tbMember.hasMany(models.tbMemberReward, {
       foreignKey: "memberId",
       onDelete: "cascade",
     });

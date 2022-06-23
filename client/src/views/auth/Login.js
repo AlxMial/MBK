@@ -52,7 +52,7 @@ export default function Login() {
             { appearance: "error", autoDismiss: true }
           );
         } else {
-          localStorage.removeItem("accessToken");
+          sessionStorage.removeItem("accessToken");
           if (formik.values.isRemember)
             localStorage.setItem(
               "login",
@@ -69,9 +69,9 @@ export default function Login() {
           });
 
           sessionStorage.setItem("accessToken", response.data.token);
-          localStorage.setItem("roleUser", response.data.role);
-          localStorage.setItem("user", response.data.userName);
-          localStorage.setItem(
+          sessionStorage.setItem("roleUser", response.data.role);
+          sessionStorage.setItem("user", response.data.userName);
+          sessionStorage.setItem(
             "fullName",
             response.data.firstName + " " + response.data.lastName
           );
@@ -79,24 +79,9 @@ export default function Login() {
             userName: response.data.userName,
             id: response.data.id,
             status: true,
-            role: response.data.role,
           });
           // window.location.replace('/admin/users');
-          const role = await GetPermissionByUserName();
-          if(role.data.data.length > 0)
-          {
-            if (role.data.data.filter(e => e.id === 10).length > 0) {
-              setTypePermission("1")
-              history.push("/admin/users");
-            } 
-            else if(role.data.data.filter(e => e.id === 1).length > 0){
-              setTypePermission("3")
-              history.push("/admin/members");
-            } else {
-              setTypePermission("2")
-              history.push("/admin/empty");
-            }
-          }
+          history.push(response.data.link);
           //set loading
           setTimeout(() => {
             //finish loading

@@ -5,7 +5,8 @@ const token = Buffer.from(`${username}:${password}`, "utf8").toString("base64");
 
 const axiosInstance = axios.create({
   // baseURL: `https://undefined.ddns.net/mbkserver/`,
-  baseURL: `http://localhost:3001/mbkserver/`,
+  // baseURL: `https://undefined.ddns.net/mahboonkrongserver/`,
+  baseURL: `http://localhost:3001/mahboonkrongserver/`,
 });
 
 axiosInstance.interceptors.request.use(

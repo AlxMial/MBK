@@ -197,7 +197,7 @@ export default function MemberInfo() {
 
       if (!errorRegisterDate && !errorBirthDate) {
         if (isNew) {
-          formik.values.addBy = localStorage.getItem("user");
+          formik.values.addBy = sessionStorage.getItem("user");
           axios.post("members", values).then((res) => {
             if (res.data.status) {
               setIsNew(false);
@@ -242,7 +242,7 @@ export default function MemberInfo() {
             }
           });
         } else {
-          formik.values.updateBy = localStorage.getItem("user");
+          formik.values.updateBy = sessionStorage.getItem("user");
           axios.put("members", values).then((res) => {
             if (res.data.status) {
               setIsModified(false);
@@ -289,10 +289,13 @@ export default function MemberInfo() {
   });
 
   async function fetchData() {
+    // const role = await GetPermissionByUserName();
     let response = {};
-    if (localStorage.getItem("roleUser") === "1")
-      response = await axios.get(`/members/Show/byId/${id}`);
-    else response = await axios.get(`/members/byId/${id}`);
+    // if (role.data.data.filter((e) => e.id === 10).length > 0)
+    //   response = await axios.get(`/members/Show/byId/${id}`);
+    // else
+    response = await axios.get(`/members/byId/${id}`);
+
     let member = await response.data.tbMember;
     if (member !== null) {
       var provinceId = response.data.tbMember["province"];

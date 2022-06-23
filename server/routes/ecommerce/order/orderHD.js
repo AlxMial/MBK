@@ -181,7 +181,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             if (PaymentStatus == "Wating" && TransportStatus == "Prepare" && !isCancel && !isReturn) {
                 ///ที่ต้องชำระ
                 OrderHDData = await tbOrderHD.findAll({
-                    attributes: ["id", "orderNumber",],
+                    attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
                     where: {
                         isCancel: isCancel,
                         IsDeleted: false, memberId: Member.id,
@@ -193,7 +193,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             } else if (PaymentStatus == "Done" && TransportStatus == "Prepare") {
                 //เตรียมสินค้า
                 let _OrderHDData = await tbOrderHD.findAll({
-                    attributes: ["id", "orderNumber",],
+                    attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
                     where: {
                         isCancel: false,
                         IsDeleted: false, memberId: Member.id,
@@ -220,7 +220,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             } else if (PaymentStatus == "Done" && TransportStatus == "In Transit") {
                 //ที่ต้องได้รับ
                 OrderHDData = await tbOrderHD.findAll({
-                    attributes: ["id", "orderNumber",],
+                    attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
                     where: {
                         isCancel: false,
                         IsDeleted: false, memberId: Member.id,
@@ -233,7 +233,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             else if (PaymentStatus == "Done" && TransportStatus == "Done" && !isReturn) {
                 //สำเร็จ
                 let _OrderHDData = await tbOrderHD.findAll({
-                    attributes: ["id", "orderNumber",],
+                    attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
                     where: {
                         isCancel: false,
                         IsDeleted: false, memberId: Member.id,
@@ -279,10 +279,11 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                 if (_tbCancelOrder) {
                     for (var i = 0; i < _tbCancelOrder.length; i++) {
                         const _tbOrderHD = await tbOrderHD.findOne({
-                            attributes: ["id", "orderNumber"],
+                            attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
                             where: {
                                 IsDeleted: false,
-                                id: _tbCancelOrder[i].orderId
+                                id: _tbCancelOrder[i].orderId,
+                                memberId: Member.id,
                             }
                         });
                         if (_tbOrderHD != null) {
@@ -307,10 +308,11 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                 if (_tbReturnOrder) {
                     for (var i = 0; i < _tbReturnOrder.length; i++) {
                         const _tbOrderHD = await tbOrderHD.findOne({
-                            attributes: ["id", "orderNumber"],
+                            attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
                             where: {
                                 IsDeleted: false,
-                                id: _tbReturnOrder[i].orderId
+                                id: _tbReturnOrder[i].orderId,
+                                memberId: Member.id,
                             }
                         });
                         if (_tbOrderHD != null) {
@@ -319,41 +321,100 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                         }
                     }
                 }
-
-                // OrderHDData = await tbOrderHD.findAll({
-                //     attributes: ["id", "orderNumber",],
-                //     where: {
-                //         isCancel: isCancel,
-                //         IsDeleted: false,
-                //         memberId: Member.id,
-                //         paymentStatus: PaymentStatus,
-                //         transportStatus: TransportStatus,
-                //         isReturn: isReturn
-                //     }
-                // });
             }
             if (OrderHDData) {
                 for (var i = 0; i < OrderHDData.length; i++) {
                     let hd = OrderHDData[i].dataValues
 
                     hd.dt = []
+                    let amount = 0
+                    let price = 0
                     const OrderDTData = await tbOrderDT.findAll({
-                        attributes: ["id", "amount", "price", "discount", "discountType", "stockId", "orderId"],
+                        attributes: ["id", "amount", "price", "discount", "discountType", "stockId"
+                            // , "orderId"
+                        ],
                         where: { IsDeleted: false, orderId: hd.id }
                     });
+
                     for (var j = 0; j < OrderDTData.length; j++) {
                         let dt = OrderDTData[j].dataValues
                         dt.id = Encrypt.EncodeKey(dt.id)
                         const _tbStockData = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
-                        dt.stockId = Encrypt.EncodeKey(dt.stockId)
                         let _tbStock = _tbStockData.dataValues
-                        _tbStock.id = Encrypt.EncodeKey(_tbStock.id)
+                        dt.productName = _tbStock.productName
+                        dt.discount = parseFloat(_tbStock.discount) > 0 ? _tbStock.discountType == "THB" ? (parseFloat(_tbStock.price) - parseFloat(_tbStock.discount))
+                            : (parseFloat(_tbStock.price) - ((parseFloat(_tbStock.discount) / 100) * (parseFloat(_tbStock.price)))) : 0;
+                        dt.price = parseFloat(_tbStock.price)
+                        amount += dt.amount
+                        hd.dt.push({ id: Encrypt.EncodeKey(dt.stockId), price: dt.price, discount: dt.discount, productName: dt.productName, amount: dt.amount })
 
-                        dt.stock = _tbStock
-                        hd.dt.push(dt)
+                        price += (dt.discount > 0 ? dt.discount : dt.price) * dt.amount
+
                     }
+
+                    const _tbLogistic = await tbLogistic.findOne({
+                        attributes: ["id", "logisticType", "deliveryName", "description", "deliveryCost"],
+                        where: {
+                            isDeleted: false, id:
+                                hd.logisticId
+                        },
+                    });
+                    let deliveryCost = 0
+                    let Coupondiscount = 0
+
+
+                    if (hd.couponCodeId != null) {
+
+                        tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+                        tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
+                        const _tbRedemptionCoupon = await tbCouponCode.findOne({
+                            where: { id: hd.couponCodeId },
+                            attributes: ['redemptionCouponId'],
+                            include: [
+                                {
+                                    model: tbRedemptionCoupon,
+                                    attributes: ['id', 'discount', "isNotExpired", "startDate", "expiredDate", "couponName"],
+                                    where: {
+                                        isDeleted: !1,
+                                        id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
+                                    },
+                                },
+                            ],
+                        });
+                        if (_tbRedemptionCoupon) {
+                            Coupondiscount = _tbRedemptionCoupon.dataValues.tbRedemptionCoupon.dataValues.discount
+                        }
+
+                    }
+                    price = Coupondiscount > price ? 0 : price - Coupondiscount
+
+                    if (_tbLogistic) {
+                        deliveryCost = _tbLogistic.dataValues.deliveryCost
+                        if (deliveryCost > 0) {
+                            const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
+                                attributes: ["id", "promotionName", "buy", "deliveryCost", "deliveryCost"],
+                                where: { isDeleted: false, isInactive: true },
+                            });
+                            if (_tbPromotionDelivery) {
+                                if (price > _tbPromotionDelivery.buy) {
+                                    let promodeliveryCost = _tbPromotionDelivery.dataValues.deliveryCost
+                                    if (promodeliveryCost > deliveryCost) {
+                                        deliveryCost = 0
+                                    } else {
+                                        deliveryCost = deliveryCost - promodeliveryCost
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                    price += deliveryCost
+
+
+                    hd.amount = amount
+                    hd.price = price
                     hd.id = Encrypt.EncodeKey(hd.id)
-                    OrderHD.push(hd)
+                    OrderHD.push({ id: hd.id, orderNumber: hd.orderNumber, amount: hd.amount, price: hd.price, returnStatus: hd.returnStatus, dt: hd.dt })
                 }
             }
 

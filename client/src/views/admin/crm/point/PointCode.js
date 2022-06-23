@@ -344,7 +344,7 @@ export default function PointCode() {
         ) {
           setIsLoading(true);
           if (values.id) {
-            formikImport.values.updateBy = localStorage.getItem("user");
+            formikImport.values.updateBy = sessionStorage.getItem("user");
             axios.put("pointCode", values).then((res) => {
               if (res.data.status) {
                 setIsLoading(false);
@@ -364,7 +364,7 @@ export default function PointCode() {
               }
             });
           } else {
-            formikImport.values.addBy = localStorage.getItem("user");
+            formikImport.values.addBy = sessionStorage.getItem("user");
             axios.post("pointCode", values).then(async (res) => {
               if (res.data.status) {
                 values.tbPointCodeHDId = res.data.tbPointCodeHD.id;
@@ -476,7 +476,7 @@ export default function PointCode() {
           setErrorDate(false);
           setIsLoading(true);
           if (values.id) {
-            formikImport.values.updateBy = localStorage.getItem("user");
+            formikImport.values.updateBy = sessionStorage.getItem("user");
             axios.put("pointCode", values).then((res) => {
               if (res.data.status) {
                 setIsLoading(false);
@@ -500,7 +500,7 @@ export default function PointCode() {
             formData.append("file", file);
             if (file) {
               setErrorImport(false);
-              formikImport.values.addBy = localStorage.getItem("user");
+              formikImport.values.addBy = sessionStorage.getItem("user");
               axios.post("pointCode", values).then(async (res) => {
                 if (res.data.status) {
                   formData.append("tbPointCodeHDId", res.data.tbPointCodeHD.id);

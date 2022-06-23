@@ -241,11 +241,10 @@ const ShopList = () => {
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div style={{ height: "100%" }}>
         <div style={{
-          width: "100%",
           height: ((125 - y) + "px"),
           margin: "auto",
         }}
-          className={"animated-SlideShow "}
+          className={"wfull animated-SlideShow "}
         >
           {ImgBanner.length > 0 ? <SlideShow img={ImgBanner} duration={5000} /> : null}
         </div>
@@ -283,9 +282,10 @@ const ShopList = () => {
           >
             <i className="fas fa-shopping-cart relative icon-cart" style={{ color: "#ddd" }}></i>
             {!fn.IsNullOrEmpty(cartNumberBadge) ? (
-              <div className="cart-number-badge" style={{}}>
-                {cartNumberBadge}
-              </div>
+              cartNumberBadge > 0 ?
+                <div className="cart-number-badge">
+                  {cartNumberBadge}
+                </div> : null
             ) : null}
           </div>
         </div>
@@ -448,7 +448,7 @@ const ShopList = () => {
                           relatedid={e.id}
                           relatedtable={["stock1"]}
                           alt="flash_sale"
-                          className="w-32 border-2 border-blueGray-50"
+                          className="w-32 border-2 border-blueGray-50 animated-img"
                         ></ImageUC>
 
                         {e.discount > 0 ? (

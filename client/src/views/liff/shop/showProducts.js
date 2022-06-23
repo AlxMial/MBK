@@ -123,7 +123,7 @@ const ShowProducts = () => {
       });
   };
   const tobase64 = async (data) => {
-    let _Img = Img;
+    let _Img = [];
     for (var i = 0; i < data.length; i++) {
       const base64 = await FilesService.buffer64UTF8(data[i].image.data);
       _Img.push({ url: base64 });
@@ -134,7 +134,7 @@ const ShowProducts = () => {
   useEffect(() => {
     fetchDatatbStock();
     fetchImg();
-  }, [Img]);
+  }, []);
 
   return (
 
@@ -185,7 +185,7 @@ const ShowProducts = () => {
               margin: "auto"
             }}>
               {Img.length > 0 ?
-                <SlideShow img={Img} duration={1000} />
+                <SlideShow img={Img} duration={60000} />
                 : null}
 
             </div>
@@ -193,9 +193,9 @@ const ShowProducts = () => {
           </div>
 
 
-          <div className="font-bold mt-2 text-base " style={{ width: "95%", margin: "auto" }}> {tbStock.productName} </div>
+          <div className="font-bold mt-2 text-base " style={{ width: "95%", margin: "auto", fontSize: "14px" }}> {tbStock.productName} </div>
 
-          <div className="font-bold mt-3 text-xs" style={{ width: "95%", margin: "auto" }}> ราคาสินค้า </div>
+          <div className="font-bold mt-3 text-xs" style={{ width: "95%", margin: "auto", fontSize: "12px" }}> ราคาสินค้า </div>
           <div
             className="flex mt-2"
             style={{
@@ -206,6 +206,7 @@ const ShowProducts = () => {
           >
             <div
               style={{
+                color: tbStock.discount > 0 ? "#ddd" : "#047738",
                 textDecoration:
                   tbStock.discount > 0 ? "line-through" : "none",
               }}
@@ -250,17 +251,13 @@ const ShowProducts = () => {
                   className="flex "
                   style={{ color: "gray", alignItems: "center" }}
                 >
-                  <div className=" text-xs px-2">จำนวน</div>
+                  <div className=" text-xs px-2" style={{ color: "#ddd" }}>จำนวน</div>
                   <button
                     name="minus"
                     disabled={spin === 1 ? true : false}
+                    className="bt-quantity broder-minus"
                     style={{
-                      width: "35px",
-                      border: "1px solid #ddd",
-                      height: "35px",
-                      outline: "none",
-                      color: spin === 1 ? "gray" : "#000",
-                      borderRadius: " 5px 0 0 5px "
+                      color: spin === 1 ? "#ddd" : "#000",
                     }}
                     onClick={() => {
                       if (spin !== 1) {
@@ -268,20 +265,14 @@ const ShowProducts = () => {
                       }
                     }}
                   >
-                    <i className="fas fa-minus"></i>
+                    <i className=" flex fas fa-minus" style={{ justifyContent: "center" }}></i>
                   </button>
                   <input
-                    style={{
-                      width: "50px",
-                      border: "1px solid #ddd",
-                      height: "35px",
-                      color: "#000",
-                      fontSize: "12px"
-                    }}
+                    className="input-products-quantity"
                     type="tel"
                     value={spin}
                     onChange={(e) => {
-                      console.log(e.target.value);
+                      // console.log(e.target.value);
                       let value = e.target.value;
                       if (!fn.IsNullOrEmpty(value)) {
                         value = parseInt(e.target.value);
@@ -304,13 +295,9 @@ const ShowProducts = () => {
                   <button
                     name="plus"
                     disabled={spin === tbStock.productCount ? true : false}
+                    className="bt-quantity broder-plus"
                     style={{
-                      width: "35px",
-                      border: "1px solid #ddd",
-                      height: "35px",
-                      outline: "none",
-                      color: spin === tbStock.productCount ? "gray" : "#000",
-                      borderRadius: "0 5px 5px 0"
+                      color: spin === tbStock.productCount ? "#ddd" : "#000",
                     }}
                     onClick={() => {
                       if (spin !== tbStock.productCount) {
@@ -321,7 +308,7 @@ const ShowProducts = () => {
                     <i className="fas fa-plus"></i>
                   </button>
 
-                  <div className=" px-2 absolute" style={{ right: "10px" }}>
+                  <div className=" px-2 absolute" style={{ right: "10px", color: "#ddd" }}>
                     {"มีสินค้าทั้งหมด " + tbStock.productCount + " ชิ้น"}
                   </div>
                 </div>
@@ -365,7 +352,8 @@ const ShowProducts = () => {
             </div>
           </div>
         </>
-      ) : null}
+      ) : null
+      }
     </>
   );
 };

@@ -9,10 +9,20 @@ const ValidateEncrypt = require("../../services/crypto");
 const Op = Sequelize.Op;
 const Encrypt = new ValidateEncrypt();
 
-
 router.post("/login", async (req, res) => {
   const { userName, password } = req.body;
   const user = await tbUser.findOne({
+    attributes: [
+      "id",
+      "userName",
+      "password",
+      "role",
+      "firstName",
+      "lastName",
+      "email",
+      "empCode",
+      "position",
+    ],
     where: { userName: Encrypt.EncodeKey(userName.toLowerCase()) },
   });
 
@@ -29,17 +39,23 @@ router.post("/login", async (req, res) => {
             id: user.id,
             role: user.role,
             firstName: user.firstName,
-            lastName: user.lastName
+            lastName: user.lastName,
           },
-          "MBKPROJECT", { expiresIn: "1440m" }
+          "MBKPROJECT",
+          { expiresIn: "1440m" }
         );
         res.json({
           token: accessToken,
           userName: userName,
           id: user.id,
-          role: user.role,
           firstName: Encrypt.DecodeKey(user.firstName),
           lastName: Encrypt.DecodeKey(user.lastName),
+          link:
+            Encrypt.DecodeKey(user.role) === "3"
+              ? "/admin/members"
+              : Encrypt.DecodeKey(user.role) === "2"
+              ? "/admin/empty"
+              : "/admin/users",
         });
       }
     });
@@ -53,6 +69,16 @@ router.get("/auth", (req, res) => {
 router.post("/", validateToken, async (req, res) => {
   try {
     const user = await tbUser.findOne({
+      attributes: [
+        "id",
+        "userName",
+        "password",
+        "firstName",
+        "lastName",
+        "email",
+        "empCode",
+        "position",
+      ],
       where: {
         [Op.or]: [
           { email: Encrypt.EncodeKey(req.body.email.toLowerCase()) },
@@ -65,7 +91,7 @@ router.post("/", validateToken, async (req, res) => {
     if (!user) {
       if (
         !Encrypt.IsNullOrEmpty(req.body.role) &&
-        !Encrypt.IsNullOrEmpty(req.body.firstName)  &&
+        !Encrypt.IsNullOrEmpty(req.body.firstName) &&
         !Encrypt.IsNullOrEmpty(req.body.lastName) &&
         !Encrypt.IsNullOrEmpty(req.body.email) &&
         !Encrypt.IsNullOrEmpty(req.body.empCode) &&
@@ -93,7 +119,9 @@ router.post("/", validateToken, async (req, res) => {
           message: "Email ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
           tbUser: null,
         });
-      else if (user.userName === Encrypt.EncodeKey(req.body.userName.toLowerCase()))
+      else if (
+        user.userName === Encrypt.EncodeKey(req.body.userName.toLowerCase())
+      )
         res.json({
           status: false,
           message: "Username ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
@@ -105,32 +133,75 @@ router.post("/", validateToken, async (req, res) => {
   }
 });
 
-router.get("/",validateToken, async (req, res) => {
-  const listUser = await tbUser.findAll({ where: { isDeleted: false } });
+router.get("/", validateToken, async (req, res) => {
+  const listUser = await tbUser.findAll({
+    attributes: [
+      "id",
+      "userName",
+      "password",
+      "firstName",
+      "lastName",
+      "email",
+      "empCode",
+      "position",
+    ],
+    where: { isDeleted: false },
+  });
   if (listUser.length > 0) {
     const valueData = Encrypt.decryptAllDataArray(listUser);
     Encrypt.encryptValueIdArray(valueData);
-    res.json({ status: true, message: "success", tbUser: listUser });
-  } else
-    res.json({ status: false, message: "not found user", tbUser: null });
+    for (var i = 0; i < valueData.length; i++) {
+      valueData[i].dataValues.role =
+        Encrypt.DecodeKey(valueData[i].dataValues.role) === "1"
+          ? "ผู้ดูแลระบบ"
+          : Encrypt.DecodeKey(valueData[i].dataValues.role) === "2"
+          ? "บัญชี"
+          : "การตลาด";
+    }
+    res.json({ status: true, message: "success", tbUser: valueData });
+  } else res.json({ status: false, message: "not found user", tbUser: null });
 });
 
-router.get("/byId/:id",validateToken, async (req, res) => {
+router.get("/byId/:id", validateToken, async (req, res) => {
   if (req.params.id !== "undefined") {
     const id = Encrypt.DecodeKey(req.params.id);
-    const listUser = await tbUser.findOne({ where: { id: id } });
+    const listUser = await tbUser.findOne({
+      attributes: [
+        "id",
+        "userName",
+        "password",
+        "firstName",
+        "lastName",
+        "email",
+        "empCode",
+        "position",
+      ],
+      where: { id: id },
+    });
     const valueData = Encrypt.decryptAllData(listUser);
     Encrypt.encryptValueId(valueData);
+    valueData.dataValues.role = Encrypt.DecodeKey(valueData.dataValues.role);
     res.json({ status: true, message: "success", tbUser: valueData });
   } else {
     res.json({ status: true, message: "success", tbUser: null });
   }
 });
 
-router.get("/permission/:username",validateToken,async (req, res) => {
+router.get("/permission/:username", validateToken, async (req, res) => {
   if (req.params.username !== "undefined") {
     const username = req.params.username;
     const listUser = await tbUser.findOne({
+      attributes: [
+        "id",
+        "userName",
+        "password",
+        "role",
+        "firstName",
+        "lastName",
+        "email",
+        "empCode",
+        "position",
+      ],
       where: { userName: Encrypt.EncodeKey(username.toLocaleLowerCase()) },
     });
     const valueData = Encrypt.decryptAllData(listUser);
@@ -141,11 +212,32 @@ router.get("/permission/:username",validateToken,async (req, res) => {
   }
 });
 
-router.put("/", validateToken ,async (req, res) => {
+router.put("/", validateToken, async (req, res) => {
   req.body.id = Encrypt.DecodeKey(req.body.id);
-  const user = await tbUser.findOne({ where: { id: req.body.id } });
+  const user = await tbUser.findOne({ 
+    attributes: [
+      "id",
+      "userName",
+      "password",
+      "firstName",
+      "lastName",
+      "email",
+      "empCode",
+      "position",
+    ],
+    where: { id: req.body.id } });
 
   const userCheck = await tbUser.findOne({
+    attributes: [
+      "id",
+      "userName",
+      "password",
+      "firstName",
+      "lastName",
+      "email",
+      "empCode",
+      "position",
+    ],
     where: {
       [Op.or]: [
         { userName: Encrypt.EncodeKey(req.body.userName.toLowerCase()) },
@@ -164,7 +256,7 @@ router.put("/", validateToken ,async (req, res) => {
     } else {
       if (
         !Encrypt.IsNullOrEmpty(req.body.role) &&
-        !Encrypt.IsNullOrEmpty(req.body.firstName)  &&
+        !Encrypt.IsNullOrEmpty(req.body.firstName) &&
         !Encrypt.IsNullOrEmpty(req.body.lastName) &&
         !Encrypt.IsNullOrEmpty(req.body.email) &&
         !Encrypt.IsNullOrEmpty(req.body.empCode) &&
@@ -219,7 +311,9 @@ router.put("/", validateToken ,async (req, res) => {
         message: "Email ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
         tbUser: null,
       });
-    else if (userCheck.userName === Encrypt.EncodeKey(req.body.userName.toLowerCase()))
+    else if (
+      userCheck.userName === Encrypt.EncodeKey(req.body.userName.toLowerCase())
+    )
       res.json({
         status: false,
         message: "Username ซ้ำกับในระบบกรุณากรอกข้อมูลใหม่",
@@ -228,7 +322,7 @@ router.put("/", validateToken ,async (req, res) => {
   }
 });
 
-router.delete("/multidelete/:userId", validateToken,(req, res) => {
+router.delete("/multidelete/:userId", validateToken, (req, res) => {
   const userId = Encrypt.DecodeKey(req.params.userId);
   const words = Encrypt.encryptValueIdArray(userId.split(","));
   for (const type of words) {
@@ -245,9 +339,19 @@ router.delete("/:userId", validateToken, async (req, res) => {
   res.json({ status: true, message: "success", tbUser: null });
 });
 
-router.get("/getemail/:email" , async (req, res) => {
+router.get("/getemail/:email", async (req, res) => {
   const email = Encrypt.EncodeKey(req.params.email.toLocaleLowerCase());
   const user = await tbUser.findOne({
+    attributes: [
+      "id",
+      "userName",
+      "password",
+      "firstName",
+      "lastName",
+      "email",
+      "empCode",
+      "position",
+    ],
     where: { email: email, IsDeleted: false },
   });
 
@@ -260,7 +364,7 @@ router.get("/getemail/:email" , async (req, res) => {
   }
 });
 
-router.put("/updatePassword", validateToken,(req, res) => {
+router.put("/updatePassword", validateToken, (req, res) => {
   bcrypt.hash(req.body.password, 10).then((hash) => {
     req.body.password = hash;
     req.body.id = Encrypt.DecodeKey(req.body.id);

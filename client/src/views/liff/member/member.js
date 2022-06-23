@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Tabs } from "antd";
 import MyAward from "./member.myAward";
 import MyOrder from "./member.myOrder";
-import useWindowDimensions from "services/useWindowDimensions";
 import { useHistory } from "react-router-dom";
 import {
   path,
@@ -12,6 +11,7 @@ import {
 import { IsNullOrEmpty, liff_dateToString } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import * as Session from "@services/Session.service";
+import ModelPolicy from "./modelpolicy"
 // components
 
 const Member = () => {
@@ -21,7 +21,8 @@ const Member = () => {
   const tabsChange = () => { };
   const [tbMember, settbMember] = useState({});
   const [Memberpoints, setMemberpoints] = useState({});
-  const { width, height } = useWindowDimensions();
+  const [isOpenPolicy, setisOpenPolicy] = useState(false);
+
 
   const getMembers = async () => {
     setIsLoading(true);
@@ -215,7 +216,7 @@ const Member = () => {
 
         <Tabs
           className="Tabs-line noselect m-0"
-          defaultActiveKey="2"
+          defaultActiveKey="1"
           onChange={tabsChange}
         >
           <TabPane tab="รางวัลของฉัน" key="1">
@@ -233,14 +234,18 @@ const Member = () => {
             <div style={{ color: "#FFF", textAlign: "center" }}>©2022 Mahboonkrong Rice, All Rights Reserved.</div>
             <div className="flex" style={{ color: "#FFF", textAlign: "center", justifyContent: "center" }}>
               <div style={{ textDecoration: "underline" }} onClick={() => {
+                setIsLoading(true);
                 window.location.href = 'https://www.prg.co.th/th/privacy_policy'
               }} >นโยบายความเป็นส่วนตัว</div>
               <div className="px-2">•</div>
-              <div style={{ textDecoration: "underline" }}>ข้อกำหนดและเงื่อนไข</div>
+              <div style={{ textDecoration: "underline" }} onClick={() => { setisOpenPolicy(true) }}>ข้อกำหนดและเงื่อนไข</div>
             </div>
           </div>
         </div>
       </div>
+
+      <ModelPolicy isOpen={isOpenPolicy} closemodel={() => { setisOpenPolicy(false) }} />
+
     </>
   );
 };

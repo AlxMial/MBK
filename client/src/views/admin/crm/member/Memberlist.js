@@ -9,8 +9,8 @@ import { GetPermissionByUserName } from "services/Permission";
 import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
 import * as Address from "../../../../services/GetAddress.js";
-import { useDispatch } from 'react-redux';
-import { fetchLoading, fetchSuccess } from 'redux/actions/common';
+import { useDispatch } from "react-redux";
+import { fetchLoading, fetchSuccess } from "redux/actions/common";
 
 // components
 Modal.setAppElement("#root");
@@ -18,7 +18,7 @@ Modal.setAppElement("#root");
 export default function MemberList() {
   const [listUser, setListUser] = useState([]);
   const [listSearch, setListSerch] = useState([]);
-  const [pageNumber, setPageNumber] = useState(0);  
+  const [pageNumber, setPageNumber] = useState(0);
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -178,45 +178,47 @@ export default function MemberList() {
   };
 
   const fetchPermission = async () => {
-    const role = await GetPermissionByUserName();
-    if(role.data.data.filter(e => e.id === 1).length > 0){
-        setTypePermission("3")
-    } else  if(role.data.data.filter(e => e.id === 10).length > 0) {
-        setTypePermission("1")
-    } else {
-        setTypePermission("2")
-    }
-
-    // setTypePermission(role);
-
-
     dispatch(fetchLoading());
-    if (role === "1") {
-      axios.get("members/Show").then((response) => {
-        dispatch(fetchSuccess());
-        if (response.data.error) {
-          console.log(response.data.error);
-        } else {
-          setListUser(response.data.tbMember);
-          setListSerch(response.data.tbMember);
-        }
-      });
-    } else {
-      axios.get("members").then((response) => {
-        dispatch(fetchSuccess());
-        if (response.data.error) {
-          console.log(response.data.error);
-        } else {
-          setListUser(response.data.tbMember);
-          setListSerch(response.data.tbMember);
-        }
-      });
-    }
+    axios.get("members").then((response) => {
+      dispatch(fetchSuccess());
+      if (response.data.error) {
+        console.log(response.data.error);
+      } else {
+        setListUser(response.data.tbMember);
+        setListSerch(response.data.tbMember);
+      }
+    });
+    // const role = await GetPermissionByUserName();
+    // if (role.data.data.filter((e) => e.id === 10).length > 0) {
+    //   setTypePermission("1");
+    //   axios.get("members/Show").then((response) => {
+    //     dispatch(fetchSuccess());
+    //     if (response.data.error) {
+    //       console.log(response.data.error);
+    //     } else {
+    //       setListUser(response.data.tbMember);
+    //       setListSerch(response.data.tbMember);
+    //     }
+    //   });
+    // } else if (role.data.data.filter((e) => e.id === 1).length > 0) {
+    //   setTypePermission("3");
+    //   axios.get("members").then((response) => {
+    //     dispatch(fetchSuccess());
+    //     if (response.data.error) {
+    //       console.log(response.data.error);
+    //     } else {
+    //       setListUser(response.data.tbMember);
+    //       setListSerch(response.data.tbMember);
+    //     }
+    //   });
+    // } else {
+    //   dispatch(fetchSuccess());
+    //   setTypePermission("2");
+    // }
   };
 
   useEffect(() => {
     fetchPermission();
-   
   }, []);
 
   return (
@@ -422,7 +424,10 @@ export default function MemberList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/membersInfo/${value.id}`}
                             >
-                              <div title={value.firstName +" " + value.lastName} className="TextWordWarp-150">
+                              <div
+                                title={value.firstName + " " + value.lastName}
+                                className="TextWordWarp-150"
+                              >
                                 {value.firstName} {value.lastName}
                               </div>
                             </Link>
@@ -440,7 +445,10 @@ export default function MemberList() {
                               className="text-gray-mbk  hover:text-gray-mbk"
                               to={`/admin/membersInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200" title={value.email}>
+                              <div
+                                className="TextWordWarp-200"
+                                title={value.email}
+                              >
                                 {value.email}
                               </div>
                             </Link>

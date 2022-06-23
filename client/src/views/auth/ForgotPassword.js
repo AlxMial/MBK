@@ -37,7 +37,7 @@ export default function ForgotPassword() {
   });
 
   const sendmail = (tomail, id) => {
-    const fullName = localStorage.getItem("fullName");
+    const fullName = sessionStorage.getItem("fullName");
     axios
       .post("mails", {
         // frommail: "no-reply@prg.co.th",

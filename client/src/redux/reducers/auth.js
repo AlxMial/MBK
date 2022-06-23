@@ -6,7 +6,7 @@ import {
     LOGOUT,
   } from "../actionTypes";
   
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(setImmediate.getItem("user"));
   
   const initialState = user
     ? { isLoggedIn: true, user }

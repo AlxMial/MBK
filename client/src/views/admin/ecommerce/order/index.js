@@ -151,8 +151,8 @@ const Order = () => {
                                 cancelStatus: 'done',
                                 cancelDetail: '',
                                 description: cancelReason,
-                                addBy: localStorage.getItem('user'),
-                                updateBy: localStorage.getItem('user'),
+                                addBy: sessionStorage.getItem('user'),
+                                updateBy: sessionStorage.getItem('user'),
                                 isDeleted: false,
                             }
                             await axios.post("cancelOrder", _dataCancel).then(async (res) => {

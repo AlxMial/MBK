@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbMember, tbPointRegister, tbMemberPoint, tbOtherAddress, tbOrderHD, tbOrderDT, tbStock } = require("../../models");
+const { tbMember, tbPointRegister, tbMemberPoint, tbOtherAddress, tbOrderHD, tbOrderDT, tbStock, tbMemberReward } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
@@ -14,29 +14,83 @@ const config = require("../../services/config.line");
 const { sign } = require("jsonwebtoken");
 
 router.get("/", validateToken, async (req, res) => {
-  const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
+  const listMembers = await tbMember.findAll({
+    attributes: [
+      "id",
+      "memberCard",
+      "firstName",
+      "lastName",
+      "phone",
+      "email",
+      "birthDate",
+      "registerDate",
+      "address",
+      "subDistrict",
+      "district",
+      "province",
+      "country",
+      "postcode",
+      "isDeleted",
+      "uid",
+      "isMemberType",
+      "memberPoint",
+      "memberPointExpire",
+      "memberType",
+      "consentDate",
+      "isPolicy1",
+      "isPolicy2",
+    ],
+    where: { isDeleted: false }
+  });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
     Encrypt.encryptValueIdArray(ValuesDecrypt);
-
-    Encrypt.encryptPhoneArray(ValuesDecrypt);
-    Encrypt.encryptEmailArray(ValuesDecrypt);
-
+    if (Encrypt.DecodeKey(req.user.role) === "3") {
+      Encrypt.encryptPhoneArray(ValuesDecrypt);
+      Encrypt.encryptEmailArray(ValuesDecrypt);
+    }
     res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
   } else res.json({ error: "not found member" });
 });
 
-router.get("/Show", validateToken, async (req, res) => {
-  const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
-  if (listMembers.length > 0) {
-    const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
-    Encrypt.encryptValueIdArray(ValuesDecrypt);
-    res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
-  } else res.json({ error: "not found member" });
-});
+// router.get("/Show", validateToken, async (req, res) => {
+//   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
+//   if (listMembers.length > 0) {
+//     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
+//     Encrypt.encryptValueIdArray(ValuesDecrypt);
+//     res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
+//   } else res.json({ error: "not found member" });
+// });
 
 router.get("/export", validateToken, async (req, res) => {
-  const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
+  const listMembers = await tbMember.findAll({
+    attributes: [
+      "id",
+      "memberCard",
+      "firstName",
+      "lastName",
+      "phone",
+      "email",
+      "birthDate",
+      "registerDate",
+      "address",
+      "subDistrict",
+      "district",
+      "province",
+      "country",
+      "postcode",
+      "isDeleted",
+      "uid",
+      "isMemberType",
+      "memberPoint",
+      "memberPointExpire",
+      "memberType",
+      "consentDate",
+      "isPolicy1",
+      "isPolicy2",
+    ],
+    where: { isDeleted: false }
+  });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
     Encrypt.encryptValueIdArray(ValuesDecrypt);
@@ -45,15 +99,44 @@ router.get("/export", validateToken, async (req, res) => {
     res.json({ status: false, message: "not found member", tbMember: null });
 });
 
-router.get("/byId/:id", async (req, res) => {
+router.get("/byId/:id", validateToken, async (req, res) => {
   if (req.params.id !== "undefined") {
     const id = Encrypt.DecodeKey(req.params.id);
-    const listMembers = await tbMember.findOne({ where: { id: id } });
+    const listMembers = await tbMember.findOne({
+      attributes: [
+        "id",
+        "memberCard",
+        "firstName",
+        "lastName",
+        "phone",
+        "email",
+        "birthDate",
+        "registerDate",
+        "address",
+        "subDistrict",
+        "district",
+        "province",
+        "country",
+        "postcode",
+        "isDeleted",
+        "uid",
+        "isMemberType",
+        "memberPoint",
+        "memberPointExpire",
+        "memberType",
+        "consentDate",
+        "isPolicy1",
+        "isPolicy2",
+      ],
+      where: { id: id }
+    });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
       Encrypt.encryptValueId(listMembers);
-      Encrypt.encryptPhone(listMembers);
-      Encrypt.encryptEmail(listMembers);
+      if (Encrypt.DecodeKey(req.user.role) === "3") {
+        Encrypt.encryptPhone(listMembers);
+        Encrypt.encryptEmail(listMembers);
+      }
       res.json({ status: true, message: "success", tbMember: listMembers });
     } else {
       res
@@ -68,7 +151,34 @@ router.get("/byId/:id", async (req, res) => {
 router.get("/byEmail/:email", async (req, res) => {
   if (req.params.email !== "undefined") {
     const email = Encrypt.EncodeKey(req.params.email);
-    const listMembers = await tbMember.findOne({ where: { email: email, isDeleted: false } });
+    const listMembers = await tbMember.findOne({
+      attributes: [
+        "id",
+        "memberCard",
+        "firstName",
+        "lastName",
+        "phone",
+        "email",
+        "birthDate",
+        "registerDate",
+        "address",
+        "subDistrict",
+        "district",
+        "province",
+        "country",
+        "postcode",
+        "isDeleted",
+        "uid",
+        "isMemberType",
+        "memberPoint",
+        "memberPointExpire",
+        "memberType",
+        "consentDate",
+        "isPolicy1",
+        "isPolicy2",
+      ],
+      where: { email: email, isDeleted: false }
+    });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
       Encrypt.encryptValueId(listMembers);
@@ -86,12 +196,37 @@ router.get("/byEmail/:email", async (req, res) => {
 router.get("/Show/byId/:id", async (req, res) => {
   if (req.params.id !== "undefined") {
     const id = Encrypt.DecodeKey(req.params.id);
-    const listMembers = await tbMember.findOne({ where: { id: id } });
+    const listMembers = await tbMember.findOne({
+      attributes: [
+        "id",
+        "memberCard",
+        "firstName",
+        "lastName",
+        "phone",
+        "email",
+        "birthDate",
+        "registerDate",
+        "address",
+        "subDistrict",
+        "district",
+        "province",
+        "country",
+        "postcode",
+        "isDeleted",
+        "uid",
+        "isMemberType",
+        "memberPoint",
+        "memberPointExpire",
+        "memberType",
+        "consentDate",
+        "isPolicy1",
+        "isPolicy2",
+      ],
+      where: { id: id }
+    });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
       Encrypt.encryptValueId(listMembers);
-      // Encrypt.encryptPhone(listMembers);
-      // Encrypt.encryptEmail(listMembers);
       res.json({ status: true, message: "success", tbMember: listMembers });
     } else {
       res
@@ -579,11 +714,12 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
           const _tbStockData = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
           let _tbStock = _tbStockData.dataValues
           dt.productName = _tbStock.productName
-
+          let price = (dt.discount > 0 ? (dt.discountType == "THB" ? parseFloat(dt.price) - parseFloat(dt.discount) : parseFloat(dt.price) - ((parseFloat(dt.discount) / 100) * parseFloat(dt.price))) : parseFloat(dt.price))
+          let discount = (dt.discount > 0 ? (dt.discountType == "THB" ? parseFloat(dt.price) - parseFloat(dt.discount) : parseFloat(dt.price) - ((parseFloat(dt.discount) / 100) * parseFloat(dt.price))) : 0)
           sumamount += dt.amount
-          sumprice += (dt.discount > 0 ? (dt.discountType == "THB" ? parseFloat(dt.price) - parseFloat(dt.discount) : parseFloat(dt.price) - ((parseFloat(dt.discount) / 100) * parseFloat(dt.price))) : parseFloat(dt.price)) * dt.amount
+          sumprice += price * dt.amount
           if (j < 2) {
-            hd.dt.push(dt)
+            hd.dt.push({ id: Encrypt.EncodeKey(dt.stockId), price: parseFloat(dt.price), discount: parseFloat(discount), productName: dt.productName, amount: dt.amount })
           }
         }
         hd.sumamount = sumamount
@@ -606,7 +742,39 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
     OrderHD: OrderHD
   });
 });
+router.get("/getMyReward", validateLineToken, async (req, res) => {
 
+  let status = true;
+  let msg;
+  let Member;
+  let coupon;
+  let product;
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+    if (Member) {
+      //Coupon 
+      // let _coupon = await tbMemberReward.findAll({ limit: 2, attributes: ["id", "rewardType", "tableId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"], where: { memberId: Member.id } })
+      let _coupon = [{ name: "test data coupon 1", StartDate: new Date(), EndDate: new Date() }, { name: "test data coupon 2", StartDate: new Date(), EndDate: new Date() }]
+      coupon = _coupon
+      //Product
+      // let _product = await tbMemberReward.findAll({ limit: 2, attributes: ["id", "rewardType", "tableId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"], where: { memberId: Member.id } })
+      let _product = [{ name: "test data product 1", StartDate: new Date(), EndDate: new Date() }, { name: "test data product 2", StartDate: new Date(), EndDate: new Date() }]
+      product = _product
+    }
+
+  } catch (e) {
+    status = false
+    msg = e.message
+  }
+
+  return res.json({
+    status: status,
+    msg: msg,
+    coupon: coupon,
+    product: product
+  });
+});
 
 
 module.exports = router;

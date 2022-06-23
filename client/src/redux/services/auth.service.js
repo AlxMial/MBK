@@ -1,9 +1,9 @@
 
 const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("roleUser");
-    localStorage.removeItem("user");
-    localStorage.removeItem("fullName");
+    sessionStorage.removeItem("accessToken");
+    sessionStorage.removeItem("roleUser");
+    sessionStorage.removeItem("user");
+    sessionStorage.removeItem("fullName");
     window.location.replace('/auth/login'); 
 };
 

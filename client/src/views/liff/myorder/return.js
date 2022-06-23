@@ -30,15 +30,15 @@ const ReturnOrder = () => {
         <> {isLoading ? <Spinner customText={"Loading"} /> : null}
             <div className="line-scroll" style={{ width: "95%", margin: "auto", height: "100%", overflow: "scroll" }}>
                 {OrderHD.length > 0 ?
-                    <div className="w-full" >
+                    <div className="w-full" style={{ opacity: "0.7" }} >
                         {[...OrderHD].map((e, i) => {
                             return (
                                 <div key={i}>
-                                    <div className="w-full" style={{ opacity: "0.7" }} >
+                                    <div className="w-full" >
                                         <div className="w-full flex mb-2" style={{ fontSize: "12px" }}>
                                             <div className="flex" style={{ width: "calc(100% - 120px)" }}>
-                                            <div className="font-bold">หมายเลขคำสั่งซื้อ : </div>
-                                            <div >{e.orderNumber} </div>
+                                                <div className="font-bold">หมายเลขคำสั่งซื้อ : </div>
+                                                <div >{e.orderNumber} </div>
                                             </div>
                                             {
                                                 e.returnStatus != null ?
@@ -50,7 +50,7 @@ const ReturnOrder = () => {
                                                         justifyContent: "center",
                                                         alignItems: "center"
                                                     }}>
-                                                        { e.returnStatus ==="Wait"?"รอดำเนินการ" :e.returnStatus ==="Done" ?"คืนสำเร็จ" :"การคืนถูกปฏิเสธ"}
+                                                        {e.returnStatus === "Wait" ? "รอดำเนินการ" : e.returnStatus === "Done" ? "คืนสำเร็จ" : "การคืนถูกปฏิเสธ"}
                                                     </div>
                                                     : null
                                             }
@@ -65,27 +65,27 @@ const ReturnOrder = () => {
                                                                 width: "80px", height: "80px"
                                                             }}
                                                             find={1}
-                                                            relatedid={dt.stock.id}
+                                                            relatedid={dt.id}
                                                             relatedtable={["stock1"]}
                                                             alt="flash_sale"
-                                                            className=" border-2 border-blueGray-50"
+                                                            className=" border-2 border-blueGray-50  animated-img"
                                                         ></ImageUC>
                                                     </div>
-                                                    <div className=" px-2 " style={{ width: "calc(100% - 80px)" }}>
-                                                        <div className="font-bold">{dt.stock.productName}</div>
-                                                        <div style={{ color: "#ddd", fontSize: "10px" }}>{"x" + dt.amount}</div>
-                                                        <div className="flex" style={{ justifyContent: "end", fontSize: "14px" }}>
-                                                            <div style={{
-                                                                textDecoration:
-                                                                    dt.stock.discount > 0 ? "line-through" : "none",
-                                                                color: dt.stock.discount > 0 ? "#ddd" : "#047738"
+                                                    <div className=" px-2 relative " style={{ width: "calc(100% - 80px)" }}>
+                                                        <div className="font-bold line-clamp-1">{dt.productName}</div>
 
-                                                            }}>{"฿ " + fn.formatMoney(dt.stock.price)}</div>
-                                                            {dt.stock.discount > 0 ?
-                                                                <div className="px-2" style={{ color: "red" }}>{"฿ " + fn.formatMoney(dt.stock.discountType === "THB" ? dt.stock.discount : (
-                                                                    dt.stock.price - ((dt.stock.discount / 100) * dt.stock.price))
-                                                                )}</div> : null}
+                                                        <div className="flex" style={{ fontSize: "14px" }}>
+                                                            <div className="flex absolute" style={{ right: "0" }}>
+                                                                <div style={{
+                                                                    textDecoration:
+                                                                        dt.discount > 0 ? "line-through" : "none",
+                                                                    color: dt.discount > 0 ? "#ddd" : "#047738"
 
+                                                                }}>{"฿ " + fn.formatMoney(dt.price)}</div>
+                                                                {dt.discount > 0 ?
+                                                                    <div className="px-2" style={{ color: "red" }}>{"฿ " + fn.formatMoney(dt.discount)}</div> : null}
+                                                            </div>
+                                                            <div className="" style={{ color: "#ddd" }}>{"x" + dt.amount}</div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -102,6 +102,11 @@ const ReturnOrder = () => {
                                         </div>
 
 
+                                    </div>
+                                    <div className="liff-inline mb-2" />
+                                    <div className="flex relative">
+                                        <div className="font-bold">{"ยอดรวมสินค้า ( " + e.amount + " ชิ้น)"}</div>
+                                        <div className="font-bold absolute " style={{ right: "0", color: "#047738" }}>{"฿ " + fn.formatMoney(e.price)}</div>
                                     </div>
                                     <div className="liff-inline mb-2" />
                                 </div>
