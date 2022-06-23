@@ -282,7 +282,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                             attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
                             where: {
                                 IsDeleted: false,
-                                id: _tbCancelOrder[i].orderId
+                                id: _tbCancelOrder[i].orderId,
+                                memberId: Member.id,
                             }
                         });
                         if (_tbOrderHD != null) {
@@ -310,7 +311,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                             attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
                             where: {
                                 IsDeleted: false,
-                                id: _tbReturnOrder[i].orderId
+                                id: _tbReturnOrder[i].orderId,
+                                memberId: Member.id,
                             }
                         });
                         if (_tbOrderHD != null) {
