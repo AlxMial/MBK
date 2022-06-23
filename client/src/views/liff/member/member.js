@@ -216,7 +216,7 @@ const Member = () => {
 
         <Tabs
           className="Tabs-line noselect m-0"
-          defaultActiveKey="2"
+          defaultActiveKey="1"
           onChange={tabsChange}
         >
           <TabPane tab="รางวัลของฉัน" key="1">

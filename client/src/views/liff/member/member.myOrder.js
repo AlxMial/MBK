@@ -21,8 +21,6 @@ const MyOrder = () => {
       }
     }, () => { }, () => { setIsLoading(false) })
   }
-
-
   useEffect(() => {
     GetMyOrder()
   }, []);
@@ -51,7 +49,6 @@ const MyOrder = () => {
                   <div className="flex" style={{ width: "30%", justifyContent: "center" }}>
                     <div style={{ width: "80px", height: "80px" }}>
                       <ImageUC
-
                         find={1}
                         relatedid={e.id}
                         relatedtable={["stock1"]}

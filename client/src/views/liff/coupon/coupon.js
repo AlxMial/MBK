@@ -40,11 +40,11 @@ const Member = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ marginTop: "-100px", position: "absolute", width: "100%" }}>
+      <div style={{ marginTop: "-50px", position: "absolute", width: "100%" }}>
         <div className="line-text-brown noselect">
           <div className=" text-xl text-center mt-4">คูปองของฉัน</div>
         </div>
-        <div style={{ marginTop: "70px" }}>
+        <div style={{ marginTop: "20px" }}>
           <Tabs
             className="Tabs-line noselect"
             defaultActiveKey="1"
