@@ -579,11 +579,12 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
           const _tbStockData = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
           let _tbStock = _tbStockData.dataValues
           dt.productName = _tbStock.productName
-
+          let price = (dt.discount > 0 ? (dt.discountType == "THB" ? parseFloat(dt.price) - parseFloat(dt.discount) : parseFloat(dt.price) - ((parseFloat(dt.discount) / 100) * parseFloat(dt.price))) : parseFloat(dt.price))
+          let discount = (dt.discount > 0 ? (dt.discountType == "THB" ? parseFloat(dt.price) - parseFloat(dt.discount) : parseFloat(dt.price) - ((parseFloat(dt.discount) / 100) * parseFloat(dt.price))) : 0)
           sumamount += dt.amount
-          sumprice += (dt.discount > 0 ? (dt.discountType == "THB" ? parseFloat(dt.price) - parseFloat(dt.discount) : parseFloat(dt.price) - ((parseFloat(dt.discount) / 100) * parseFloat(dt.price))) : parseFloat(dt.price)) * dt.amount
+          sumprice += price * dt.amount
           if (j < 2) {
-            hd.dt.push(dt)
+            hd.dt.push({ id: Encrypt.EncodeKey(dt.stockId), price: parseFloat(dt.price), discount: parseFloat(discount), productName: dt.productName, amount: dt.amount })
           }
         }
         hd.sumamount = sumamount
