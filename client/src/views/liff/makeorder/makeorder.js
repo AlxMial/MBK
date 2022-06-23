@@ -284,7 +284,7 @@ const MakeOrder = () => {
                                         <div className="flex" style={{ height: "60%" }}>
                                             <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
                                         </div>
-                                        <div className="font-bold" style={{ height: "15%" }}>
+                                        <div className="font-bold"style={{ height: "15%" }}>
                                             <div className="flex  relative" style={{ fontSize: "11px" }} >
                                                 <div
                                                     style={{
