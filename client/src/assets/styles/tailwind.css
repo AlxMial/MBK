@@ -4772,6 +4772,63 @@ input[type="number"] {
   border: 1px solid #047738;
 }
 
-.Modal-Overlay {
-  /* background-color: transparent; */
+
+.animated-img {
+  animation-duration: 2s;
+  animation-fill-mode: forwards;
+  animation-iteration-count: infinite;
+  animation-name: placeHolderShimmer;
+  animation-timing-function: linear;
+  background: linear-gradient(to right, #eeeeee 8%, #fbfbfb 18%, #eeeeee 33%);
+  background-size: 800px 104px;
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+@keyframes placeHolderShimmer {
+  0% {
+    background-position: -800px 0
+  }
+
+  100% {
+    background-position: 800px 0
+  }
+}
+
+.input-products-quantity {
+  width: 40px;
+  border: 1px solid #ddd;
+  height: 25px;
+  outline: none;
+  padding: 0 5px;
+  text-align: center;
+  font-size: 10px;
+}
+
+.input-products-quantity:focus {
+  box-shadow: none;
+  border: 1px solid #ddd;
+}
+
+.bt-quantity {
+  width: 25px;
+  border: 1px solid #ddd;
+  height: 25px;
+  outline: none;
+  font-size: 10px;
+}
+
+button.bt-quantity.broder-minus {
+  border-radius: 5px 0 0 5px
+}
+
+button.bt-quantity.broder-plus {
+  border-radius: 0 5px 5px 0
+}
+
+button.bt-quantity.broder-minus:focus,
+button.bt-quantity.broder-plus {
+  outline: none
 }

@@ -56,7 +56,7 @@ const MyOrder = () => {
                         relatedid={e.id}
                         relatedtable={["stock1"]}
                         alt="flash_sale"
-                        className=" border-2 border-blueGray-50"
+                        className=" border-2 border-blueGray-50 animated-img"
                       ></ImageUC>
                     </div>
                   </div>

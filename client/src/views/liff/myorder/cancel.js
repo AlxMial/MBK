@@ -59,7 +59,7 @@ const Cancel = () => {
                                                             relatedid={dt.stock.id}
                                                             relatedtable={["stock1"]}
                                                             alt="flash_sale"
-                                                            className=" border-2 border-blueGray-50"
+                                                            className=" border-2 border-blueGray-50 animated-img"
                                                         ></ImageUC>
                                                     </div>
                                                     <div className=" px-2 " style={{ width: "calc(100% - 80px)" }}>

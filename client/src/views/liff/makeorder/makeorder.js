@@ -277,17 +277,14 @@ const MakeOrder = () => {
                                             relatedid={e.id}
                                             relatedtable={["stock1"]}
                                             alt="flash_sale"
-                                            className="w-32 border-2 border-blueGray-50"
+                                            className="w-32 border-2 border-blueGray-50 animated-img"
                                         ></ImageUC>
                                     </div>
                                     <div className="px-2" style={{ width: "70%" }}>
                                         <div className="flex" style={{ height: "60%" }}>
                                             <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
                                         </div>
-                                        <div style={{ height: "15%" }}>
-                                            <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{"จำนวน : " + e.quantity}</div>
-                                        </div>
-                                        <div style={{ height: "15%" }}>
+                                        <div className="font-bold" style={{ height: "15%" }}>
                                             <div className="flex  relative" style={{ fontSize: "11px" }} >
                                                 <div
                                                     style={{
@@ -305,7 +302,9 @@ const MakeOrder = () => {
                                                 ) : null}
                                             </div>
                                         </div>
-
+                                        <div style={{ height: "15%" }}>
+                                            <div  style={{ width: "80%", fontSize: "11px" }}>{"จำนวน : " + e.quantity}</div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="liff-inline" />

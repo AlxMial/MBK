@@ -23,13 +23,11 @@ const SlideShow = (prop) => {
           {[...img].map((e, i) => {
             return (
               <div key={i} className="each-slide" style={{ margin: "auto" }}>
-                {/* <object className="w-32" data={require("assets/img/mbk/no-image.png").default} type="image/png"> */}
                 <img
                   src={e.url}
                   alt="..."
-                  className="w-15 h-15  border-2 border-blueGray-50 shadow"
+                  className="w-15 h-15  border-2 border-blueGray-50 "
                 ></img>
-                {/* </object> */}
               </div>
             );
           })}
