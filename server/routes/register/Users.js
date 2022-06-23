@@ -12,6 +12,17 @@ const Encrypt = new ValidateEncrypt();
 router.post("/login", async (req, res) => {
   const { userName, password } = req.body;
   const user = await tbUser.findOne({
+    attributes: [
+      "id",
+      "userName",
+      "password",
+      "role",
+      "firstName",
+      "lastName",
+      "email",
+      "empCode",
+      "position",
+    ],
     where: { userName: Encrypt.EncodeKey(userName.toLowerCase()) },
   });
 
@@ -58,6 +69,16 @@ router.get("/auth", (req, res) => {
 router.post("/", validateToken, async (req, res) => {
   try {
     const user = await tbUser.findOne({
+      attributes: [
+        "id",
+        "userName",
+        "password",
+        "firstName",
+        "lastName",
+        "email",
+        "empCode",
+        "position",
+      ],
       where: {
         [Op.or]: [
           { email: Encrypt.EncodeKey(req.body.email.toLowerCase()) },
@@ -118,7 +139,6 @@ router.get("/", validateToken, async (req, res) => {
       "id",
       "userName",
       "password",
-      "role",
       "firstName",
       "lastName",
       "email",
@@ -150,7 +170,6 @@ router.get("/byId/:id", validateToken, async (req, res) => {
         "id",
         "userName",
         "password",
-        "role",
         "firstName",
         "lastName",
         "email",
@@ -172,6 +191,17 @@ router.get("/permission/:username", validateToken, async (req, res) => {
   if (req.params.username !== "undefined") {
     const username = req.params.username;
     const listUser = await tbUser.findOne({
+      attributes: [
+        "id",
+        "userName",
+        "password",
+        "role",
+        "firstName",
+        "lastName",
+        "email",
+        "empCode",
+        "position",
+      ],
       where: { userName: Encrypt.EncodeKey(username.toLocaleLowerCase()) },
     });
     const valueData = Encrypt.decryptAllData(listUser);
@@ -184,9 +214,30 @@ router.get("/permission/:username", validateToken, async (req, res) => {
 
 router.put("/", validateToken, async (req, res) => {
   req.body.id = Encrypt.DecodeKey(req.body.id);
-  const user = await tbUser.findOne({ where: { id: req.body.id } });
+  const user = await tbUser.findOne({ 
+    attributes: [
+      "id",
+      "userName",
+      "password",
+      "firstName",
+      "lastName",
+      "email",
+      "empCode",
+      "position",
+    ],
+    where: { id: req.body.id } });
 
   const userCheck = await tbUser.findOne({
+    attributes: [
+      "id",
+      "userName",
+      "password",
+      "firstName",
+      "lastName",
+      "email",
+      "empCode",
+      "position",
+    ],
     where: {
       [Op.or]: [
         { userName: Encrypt.EncodeKey(req.body.userName.toLowerCase()) },
@@ -291,6 +342,16 @@ router.delete("/:userId", validateToken, async (req, res) => {
 router.get("/getemail/:email", async (req, res) => {
   const email = Encrypt.EncodeKey(req.params.email.toLocaleLowerCase());
   const user = await tbUser.findOne({
+    attributes: [
+      "id",
+      "userName",
+      "password",
+      "firstName",
+      "lastName",
+      "email",
+      "empCode",
+      "position",
+    ],
     where: { email: email, IsDeleted: false },
   });
 

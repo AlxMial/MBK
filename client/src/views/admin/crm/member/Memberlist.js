@@ -179,34 +179,42 @@ export default function MemberList() {
 
   const fetchPermission = async () => {
     dispatch(fetchLoading());
-    const role = await GetPermissionByUserName();
-    if (role.data.data.filter((e) => e.id === 10).length > 0) {
-      setTypePermission("1");
-      axios.get("members/Show").then((response) => {
-        dispatch(fetchSuccess());
-        if (response.data.error) {
-          console.log(response.data.error);
-        } else {
-          setListUser(response.data.tbMember);
-          setListSerch(response.data.tbMember);
-        }
-      });
-    } else if (role.data.data.filter((e) => e.id === 1).length > 0) {
-      setTypePermission("3");
-      console.log("shiow")
-      axios.get("members").then((response) => {
-        dispatch(fetchSuccess());
-        if (response.data.error) {
-          console.log(response.data.error);
-        } else {
-          setListUser(response.data.tbMember);
-          setListSerch(response.data.tbMember);
-        }
-      });
-    } else {
+    axios.get("members").then((response) => {
       dispatch(fetchSuccess());
-      setTypePermission("2");
-    }
+      if (response.data.error) {
+        console.log(response.data.error);
+      } else {
+        setListUser(response.data.tbMember);
+        setListSerch(response.data.tbMember);
+      }
+    });
+    // const role = await GetPermissionByUserName();
+    // if (role.data.data.filter((e) => e.id === 10).length > 0) {
+    //   setTypePermission("1");
+    //   axios.get("members/Show").then((response) => {
+    //     dispatch(fetchSuccess());
+    //     if (response.data.error) {
+    //       console.log(response.data.error);
+    //     } else {
+    //       setListUser(response.data.tbMember);
+    //       setListSerch(response.data.tbMember);
+    //     }
+    //   });
+    // } else if (role.data.data.filter((e) => e.id === 1).length > 0) {
+    //   setTypePermission("3");
+    //   axios.get("members").then((response) => {
+    //     dispatch(fetchSuccess());
+    //     if (response.data.error) {
+    //       console.log(response.data.error);
+    //     } else {
+    //       setListUser(response.data.tbMember);
+    //       setListSerch(response.data.tbMember);
+    //     }
+    //   });
+    // } else {
+    //   dispatch(fetchSuccess());
+    //   setTypePermission("2");
+    // }
   };
 
   useEffect(() => {

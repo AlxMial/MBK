@@ -7,7 +7,7 @@ const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const { tbCancelOrder } = require("../../models");
 const Op = Sequelize.Op;
-const ValidateEncrypt = require("../../../server/services/crypto");
+const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
 router.post("/", validateToken, async (req, res) => {

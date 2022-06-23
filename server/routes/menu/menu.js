@@ -10,7 +10,6 @@ const Encrypt = new ValidateEncrypt();
 router.get("/", validateToken, async (req, res) => {
   const menu = await tbMenu.findAll();
   const menuShow = [];
-  console.log(Encrypt.DecodeKey(req.user.role))
   const listMenu = await tbPermission.findAll({
     where: { role: Encrypt.DecodeKey(req.user.role) },
   });
