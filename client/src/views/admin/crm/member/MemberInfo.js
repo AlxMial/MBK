@@ -289,10 +289,13 @@ export default function MemberInfo() {
   });
 
   async function fetchData() {
+    // const role = await GetPermissionByUserName();
     let response = {};
-    if (sessionStorage.getItem("roleUser") === "1")
-      response = await axios.get(`/members/Show/byId/${id}`);
-    else response = await axios.get(`/members/byId/${id}`);
+    // if (role.data.data.filter((e) => e.id === 10).length > 0)
+    //   response = await axios.get(`/members/Show/byId/${id}`);
+    // else
+    response = await axios.get(`/members/byId/${id}`);
+
     let member = await response.data.tbMember;
     if (member !== null) {
       var provinceId = response.data.tbMember["province"];

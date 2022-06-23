@@ -14,29 +14,81 @@ const config = require("../../services/config.line");
 const { sign } = require("jsonwebtoken");
 
 router.get("/", validateToken, async (req, res) => {
-  const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
+  const listMembers = await tbMember.findAll({ 
+    attributes: [
+      "id",
+      "memberCard",
+      "firstName",
+      "lastName",
+      "phone",
+      "email",
+      "birthDate",
+      "registerDate",
+      "address",
+      "subDistrict",
+      "district",
+      "province",
+      "country",
+      "postcode",
+      "isDeleted",
+      "uid",
+      "isMemberType",
+      "memberPoint",
+      "memberPointExpire",
+      "memberType",
+      "consentDate",
+      "isPolicy1",
+      "isPolicy2",
+    ],
+    where: { isDeleted: false } });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
     Encrypt.encryptValueIdArray(ValuesDecrypt);
-
-    Encrypt.encryptPhoneArray(ValuesDecrypt);
-    Encrypt.encryptEmailArray(ValuesDecrypt);
-
+    if(Encrypt.DecodeKey(req.user.role) === "3") { 
+      Encrypt.encryptPhoneArray(ValuesDecrypt);
+      Encrypt.encryptEmailArray(ValuesDecrypt);
+    }
     res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
   } else res.json({ error: "not found member" });
 });
 
-router.get("/Show", validateToken, async (req, res) => {
-  const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
-  if (listMembers.length > 0) {
-    const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
-    Encrypt.encryptValueIdArray(ValuesDecrypt);
-    res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
-  } else res.json({ error: "not found member" });
-});
+// router.get("/Show", validateToken, async (req, res) => {
+//   const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
+//   if (listMembers.length > 0) {
+//     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
+//     Encrypt.encryptValueIdArray(ValuesDecrypt);
+//     res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
+//   } else res.json({ error: "not found member" });
+// });
 
 router.get("/export", validateToken, async (req, res) => {
-  const listMembers = await tbMember.findAll({ where: { isDeleted: false } });
+  const listMembers = await tbMember.findAll({
+    attributes: [
+      "id",
+      "memberCard",
+      "firstName",
+      "lastName",
+      "phone",
+      "email",
+      "birthDate",
+      "registerDate",
+      "address",
+      "subDistrict",
+      "district",
+      "province",
+      "country",
+      "postcode",
+      "isDeleted",
+      "uid",
+      "isMemberType",
+      "memberPoint",
+      "memberPointExpire",
+      "memberType",
+      "consentDate",
+      "isPolicy1",
+      "isPolicy2",
+    ],
+    where: { isDeleted: false } });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
     Encrypt.encryptValueIdArray(ValuesDecrypt);
@@ -45,15 +97,43 @@ router.get("/export", validateToken, async (req, res) => {
     res.json({ status: false, message: "not found member", tbMember: null });
 });
 
-router.get("/byId/:id", async (req, res) => {
+router.get("/byId/:id",validateToken, async (req, res) => {
   if (req.params.id !== "undefined") {
     const id = Encrypt.DecodeKey(req.params.id);
-    const listMembers = await tbMember.findOne({ where: { id: id } });
+    const listMembers = await tbMember.findOne({ 
+      attributes: [
+        "id",
+        "memberCard",
+        "firstName",
+        "lastName",
+        "phone",
+        "email",
+        "birthDate",
+        "registerDate",
+        "address",
+        "subDistrict",
+        "district",
+        "province",
+        "country",
+        "postcode",
+        "isDeleted",
+        "uid",
+        "isMemberType",
+        "memberPoint",
+        "memberPointExpire",
+        "memberType",
+        "consentDate",
+        "isPolicy1",
+        "isPolicy2",
+      ],
+      where: { id: id } });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
       Encrypt.encryptValueId(listMembers);
-      Encrypt.encryptPhone(listMembers);
-      Encrypt.encryptEmail(listMembers);
+      if(Encrypt.DecodeKey(req.user.role) === "3") { 
+        Encrypt.encryptPhone(listMembers);
+        Encrypt.encryptEmail(listMembers);
+      }
       res.json({ status: true, message: "success", tbMember: listMembers });
     } else {
       res
@@ -68,7 +148,33 @@ router.get("/byId/:id", async (req, res) => {
 router.get("/byEmail/:email", async (req, res) => {
   if (req.params.email !== "undefined") {
     const email = Encrypt.EncodeKey(req.params.email);
-    const listMembers = await tbMember.findOne({ where: { email: email, isDeleted: false } });
+    const listMembers = await tbMember.findOne({ 
+      attributes: [
+        "id",
+        "memberCard",
+        "firstName",
+        "lastName",
+        "phone",
+        "email",
+        "birthDate",
+        "registerDate",
+        "address",
+        "subDistrict",
+        "district",
+        "province",
+        "country",
+        "postcode",
+        "isDeleted",
+        "uid",
+        "isMemberType",
+        "memberPoint",
+        "memberPointExpire",
+        "memberType",
+        "consentDate",
+        "isPolicy1",
+        "isPolicy2",
+      ],
+      where: { email: email, isDeleted: false } });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
       Encrypt.encryptValueId(listMembers);
@@ -86,12 +192,36 @@ router.get("/byEmail/:email", async (req, res) => {
 router.get("/Show/byId/:id", async (req, res) => {
   if (req.params.id !== "undefined") {
     const id = Encrypt.DecodeKey(req.params.id);
-    const listMembers = await tbMember.findOne({ where: { id: id } });
+    const listMembers = await tbMember.findOne({ 
+      attributes: [
+        "id",
+        "memberCard",
+        "firstName",
+        "lastName",
+        "phone",
+        "email",
+        "birthDate",
+        "registerDate",
+        "address",
+        "subDistrict",
+        "district",
+        "province",
+        "country",
+        "postcode",
+        "isDeleted",
+        "uid",
+        "isMemberType",
+        "memberPoint",
+        "memberPointExpire",
+        "memberType",
+        "consentDate",
+        "isPolicy1",
+        "isPolicy2",
+      ],
+      where: { id: id } });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
       Encrypt.encryptValueId(listMembers);
-      // Encrypt.encryptPhone(listMembers);
-      // Encrypt.encryptEmail(listMembers);
       res.json({ status: true, message: "success", tbMember: listMembers });
     } else {
       res

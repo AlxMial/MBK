@@ -54,14 +54,14 @@ export default function Login() {
         } else {
           sessionStorage.removeItem("accessToken");
           if (formik.values.isRemember)
-            sessionStorage.setItem(
+            localStorage.setItem(
               "login",
               JSON.stringify({
                 userName: values.userName,
                 password: values.password,
               })
             );
-          else sessionStorage.removeItem("login");
+          else localStorage.removeItem("login");
 
           addToast("เข้าสู่ระบบสำเร็จ", {
             appearance: "success",
@@ -98,7 +98,7 @@ export default function Login() {
 
   useEffect(() => {
     fetchPermission();
-    var retrievedObject = JSON.parse(sessionStorage.getItem("login"));
+    var retrievedObject = JSON.parse(localStorage.getItem("login"));
     if (retrievedObject !== null) {
       formik.setFieldValue("userName", retrievedObject.userName);
       formik.setFieldValue("password", retrievedObject.password);

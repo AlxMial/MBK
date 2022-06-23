@@ -83,6 +83,14 @@ module.exports = (sequelize, DataTypes) => {
     consentDate: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    isPolicy1: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    }
+    ,isPolicy2: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
     }
   });
 
