@@ -20,10 +20,12 @@ export default function PointHistoryReport() {
   const [listSearch, setListSerch] = useState([]);
   const [listPointCode, setListPointCode] = useState([]);
   const [listPointCodeDt, setListPointCodeDt] = useState([]);
+  const [pointHDId, setPointHDId] = useState(0);
   const { height, width } = useWindowDimensions();
   const [forcePage, setForcePage] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);  
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingPoint, setIsLoadingPoint] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;  
@@ -97,7 +99,7 @@ export default function PointHistoryReport() {
           )
         );
       } else {
-        getDataPoint();
+        getDataPoint_ByCode();
       }     
       setPageNumber(0);
       setForcePage(0);
@@ -227,38 +229,78 @@ export default function PointHistoryReport() {
         }
       });
   };
-
-  const getDataPoint = async () => {
-    await axios.get("report/GetPoint").then((response) => {
-      const inputSerch = formSerch.values.inputSerch;
-        if (response.data.length > 0) {
-          response.data.forEach(e => {
-            const datatype = listPointType.find(l => l.value === e.isUse);
-            if(datatype) {
-              e.status = datatype.status;
-            }
-          });         
-          //setListPointCodeDt(response.data);
-          if(response.data.length > 0){
-            const listModel = response.data.filter(el => inputSerch.toUpperCase().includes(el.code));
-            if(listModel.length === 1) {
-              dataPopUp.values.code = listModel[0].code;
-              dataPopUp.values.pointCodeName = listModel[0].pointCodeName;
-              dataPopUp.values.startDate = listModel[0].startDate;
-              dataPopUp.values.endDate = listModel[0].endDate;
-              dataPopUp.values.memberName = listModel[0].memberName;
-              dataPopUp.values.phone = listModel[0].phone;
-              dataPopUp.values.point = listModel[0].point;
-              dataPopUp.values.isUse = listModel[0].isUse;
-              dataPopUp.values.exchangedate = listModel[0].exchangedate;
-              dataPopUp.values.status = listModel[0].status ;
-              dataPopUp.values.pointType = listModel[0].pointType ;
-              openModal()             
-            }          
-          }
+  // ค้นหาจาก code HD
+  const getDataPoint_ByCode = async () => {
+    const code = formSerch.values.inputSerch.trim().toUpperCase();
+    const c_length = code.length;
+    await axios.get(`report/GetPoint`).then((response) => {
+        if (response.data.tbPointCodeHD.length > 0) {
+          const listtbPointCodeHD = response.data.tbPointCodeHD.filter(e => {
+                const pointCodeSymbol = e.pointCodeSymbol !== null ? e.pointCodeSymbol.toUpperCase() : "";
+                const p_length = pointCodeSymbol.length;
+                if(p_length > c_length) {
+                  if(pointCodeSymbol.includes(code) && e.pointCodeSymbol !== null && e.pointCodeSymbol !== '') {
+                    return true;
+                  }
+                  return false;
+                } else {
+                  if(code.includes(pointCodeSymbol)&& e.pointCodeSymbol !== null && e.pointCodeSymbol !== '') {
+                    return true;
+                  }
+                  return false;
+                }
+            });  
+           if(listtbPointCodeHD.length === 1) {
+            if(!isLoadingPoint) {
+              getDataPointDT(listtbPointCodeHD[0].id);
+            }           
+           }
         }
       });
   };
+  // ค้นหา pointDT จาก id ของ hd
+  const getDataPointDT= async (id) => {  
+    if(id !== pointHDId) {    
+    //setIsLoading(true);
+    setIsLoadingPoint(true);
+    await axios.get(`report/GetPointDT/${id}`).then((response) => {
+         const length = response.data.length;
+        if (length !== undefined && length > 0) {
+        const listPointCodes = response.data[0].tbPointCodeDT;
+          if(listPointCodes !== undefined && listPointCodes.length > 0) {
+            setListPointCodeDt(listPointCodes);
+            setDataDialog(listPointCodes);           
+          }         
+        }
+        setPointHDId(id);
+        setIsLoadingPoint(false);
+        //setIsLoading(false);        
+      });
+    } else {
+      setDataDialog(); 
+    }
+    
+  }
+
+  const setDataDialog= async (data = []) => {
+      const list_pointDT =  data.length > 0 ? data : listPointCodeDt;
+      const code = formSerch.values.inputSerch.trim().toUpperCase();
+      const listtbPointCodeHD = list_pointDT.filter(e => e.code === code);  
+      if(listtbPointCodeHD.length === 1) {              
+        dataPopUp.values.code = listtbPointCodeHD[0].code;
+        dataPopUp.values.pointCodeName = listtbPointCodeHD[0].pointCodeName;
+        dataPopUp.values.startDate = listtbPointCodeHD[0].startDate;
+        dataPopUp.values.endDate = listtbPointCodeHD[0].endDate;
+        dataPopUp.values.memberName = listtbPointCodeHD[0].memberName;
+        dataPopUp.values.phone = listtbPointCodeHD[0].phone;
+        dataPopUp.values.point = listtbPointCodeHD[0].point;
+        dataPopUp.values.isUse = listtbPointCodeHD[0].isUse;
+        dataPopUp.values.exchangedate = listtbPointCodeHD[0].exchangedate;
+        dataPopUp.values.status = listtbPointCodeHD[0].status ;
+        dataPopUp.values.pointType = listtbPointCodeHD[0].pointType ;
+        openModal();
+      }
+  }
 
   useEffect(() => {
     fetchPermission();

@@ -120,43 +120,74 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
     });
   });
 
+// ค้นหา code ก่อน
 router.get("/GetPoint", validateToken, async (req, res) => {
-  tbMember.hasMany(tbMemberPoint, { foreignKey: "id" });
-  tbMemberPoint.belongsTo(tbMember, { foreignKey: "tbMemberId" });
-  tbMemberPoint.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });  
-  tbMemberPoint.findAll({
-    where: { isDeleted: false },
+ const lisltbPointCodeHD = await tbPointCodeHD.findAll({
+    where: {  isDeleted: false }}); 
+    res.json({
+      status: true,
+      message: "success",
+      tbPointCodeHD: lisltbPointCodeHD,
+    });
+});
+
+// ค้นหา code ก่อน
+router.get("/GetPointDT/:id", validateToken, async (req, res) => {
+ // tbMember.hasMany(tbMemberPoint, { foreignKey: "id" });
+  //tbPointCodeHD.hasMany(tbPointCodeDT, { foreignKey: "id" }); 
+  tbMemberPoint.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" }); 
+  tbPointCodeDT.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });
+  //tbMember.hasMany(tbMemberPoint, { foreignKey: "id" });
+  //tbMemberPoint.belongsTo(tbMember, { foreignKey: "tbMemberId" });
+  //tbMemberPoint.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });  
+  const id = req.params.id;
+  let count = 0;
+  tbPointCodeHD.findAll({
+    where: { 
+      isDeleted: false ,
+      id: id
+    },   
     include: [
       {
-        model: tbMember,
+        model: tbMemberPoint,
         where: { isDeleted: false },
-        required: true,
+       // required: true,
       },
       {
-        model: tbPointCodeHD,
+        model: tbPointCodeDT,
         where: { isDeleted: false },
-        required: true,
+        //required: false,
       },
     ],
-  }).then((objs) => {
-    let tutorials = [];
-    objs.forEach((obj) => {
-      const tb_member =  obj.tbMember !== null ? obj.tbMember : null;
-      const tb_pointCodeHD =  obj.tbPointCodeHD !== null ? obj.tbPointCodeHD : null;
-      const fullname = tb_member !== null ? (Encrypt.DecodeKey(tb_member.firstName) + ' ' + Encrypt.DecodeKey(tb_member.lastName)) : "";
-      tutorials.push({
-          code: obj.code !== null ? Encrypt.DecodeKey(obj.code).toUpperCase() : "", 
-          pointCodeName:  tb_pointCodeHD !== null ? tb_pointCodeHD.pointCodeName : "",
-          startDate:  (tb_pointCodeHD !== null) ? tb_pointCodeHD.startDate : "",
-          endDate:   (tb_pointCodeHD !== null) ? tb_pointCodeHD.endDate : "",
-          isUse: obj.campaignType,
-          memberName: obj.campaignType === "1" ? fullname :"",
-          phone   : obj.campaignType === "1" ? (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : "") : "",       
-          point: obj.point,
-          exchangedate: obj.redeemDate,
-        });  
-    });
-    res.json(tutorials);
-  });  
+    }).then((objs) => {
+      if(objs.length === 1) {
+        let tutorials = [];
+        objs.forEach((obj) => {
+          const tb_member =  Encrypt.decodePointCode(obj.tbPointCodeDTs);
+          //Encrypt.encryptValueId(tb_member);
+          // const tb_pointCodeHD =  obj.tbPointCodeHD !== null ? obj.tbPointCodeHD : null;
+          // const fullname = tb_member !== null ? (Encrypt.DecodeKey(tb_member.firstName) + ' ' + Encrypt.DecodeKey(tb_member.lastName)) : "";
+          tutorials.push({
+              //code: obj.code !== null ? Encrypt.DecodeKey(obj.code).toUpperCase() : "", 
+              pointCodeName:  obj.pointCodeName,
+              startDate: obj.startDate,
+              endDate:   obj.endDate ,
+              tbMemberPoint:  obj.tbMemberPoints,
+              tbPointCodeDT:  obj.tbPointCodeDTs,
+              // isUse: obj.campaignType,
+              // memberName: obj.campaignType === "1" ? fullname :"",
+              // phone   : obj.campaignType === "1" ? (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : "") : "",       
+              // point: obj.point,
+              // exchangedate: obj.redeemDate,
+          });  
+        });
+        res.json(tutorials);
+      } else{
+        res.json({
+          status: false,
+          message: "failed"
+        });
+      }
+  }); 
 });
 module.exports = router;
