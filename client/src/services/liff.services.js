@@ -11,6 +11,7 @@ import updateprofile from "views/liff/updateprofile";
 import point from "views/liff/point";
 import coupon from "views/liff/coupon/coupon";
 import infocoupon from "views/liff/coupon/infocoupon";
+import usecouponUC from "views/liff/coupon/usecouponUC";
 import reward from "views/liff/reward/reward";
 
 import rewardRedeem from "views/liff/reward/reward.redeem";
@@ -67,6 +68,7 @@ export const path = {
   orderpaymentdone: "/line/orderpaymentdone/:id",
 
   infocoupon: "/line/infocoupon/:id",
+  usecouponUC: "/line/usecouponUC/:id",
 
 };
 export const routes = [
@@ -106,6 +108,11 @@ export const routes = [
     path: path.infocoupon,
     component: infocoupon,
   },
+  {
+    path: path.usecouponUC,
+    component: usecouponUC,
+  },
+
   {
     path: path.reward,
     component: reward,

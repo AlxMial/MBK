@@ -35,7 +35,7 @@ const Expire = ({ data }) => {
                       <div className="w-full font-bold flex mb-2" style={{ fontSize: "14px", color: "#000000" }}>
                         <div className="flex" style={{ width: "calc(100% - 30px)", alignItems: "center" }}>{e.couponName}</div>
                         <div style={{ width: "30px", textAlign: "right" }}>
-                          <i class="flex fas fa-angle-right" style={{ alignItems: "center", fontSize: "25px" }}></i>
+                          <i className="flex fas fa-angle-right" style={{ alignItems: "center", fontSize: "25px" }}></i>
                         </div>
                       </div>
                       <div className="w-full" style={{ fontSize: "12px", color: "#ddd", }}>

@@ -85,7 +85,7 @@ const MyAward = () => {
         {productItem != null ?
           productItem.map((e, i) => {
             return (
-              <div className="w-full flex mb-2">
+              <div key={i} className="w-full flex mb-2">
                 <div className="flex" style={{ width: "30%", justifyContent: "center" }}>
                   <div style={{ width: "80px", height: "80px" }}>
                     <ImageUC

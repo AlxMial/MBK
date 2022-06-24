@@ -1,9 +1,12 @@
 import React from "react";
 import moment from "moment";
 import ImageUC from "components/Image/index";
+import { path } from "services/liff.services";
+import { useHistory } from "react-router-dom";
 // components
 
 const Canbeused = ({ data }) => {
+  const history = useHistory();
   return (
     <>
       <div className="mt-2 " style={{ padding: "10px" }}>
@@ -24,10 +27,12 @@ const Canbeused = ({ data }) => {
                         ></ImageUC>
                       </div>
                     </div>
-                    <div className="w-full font-bold flex mb-2" style={{ fontSize: "14px", color: "#000000" }}>
+                    <div className="w-full font-bold flex mb-2" style={{ fontSize: "14px", color: "#000000" }} onClick={() => {
+                      history.push(path.infocoupon.replace(":id", e.id))
+                    }}>
                       <div className="flex" style={{ width: "calc(100% - 30px)", alignItems: "center" }}>{e.couponName}</div>
                       <div style={{ width: "30px", textAlign: "right" }}>
-                        <i class="flex fas fa-angle-right" style={{ alignItems: "center", fontSize: "25px" }}></i>
+                        <i className="flex fas fa-angle-right" style={{ alignItems: "center", fontSize: "25px" }}></i>
                       </div>
                     </div>
                     <div className="w-full mb-2" style={{ fontSize: "12px", color: "#ddd" }}>
