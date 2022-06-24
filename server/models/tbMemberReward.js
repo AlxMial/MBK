@@ -4,14 +4,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        tableName: {
+        TableHDId: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        tableId: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
+       
         redeemDate: {
             type: DataTypes.DATE,
             allowNull: false,

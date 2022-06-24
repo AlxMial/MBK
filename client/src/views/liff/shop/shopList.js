@@ -142,24 +142,19 @@ const ShopList = () => {
   //#region รูป Banner
   const fetchDataImgBanner = async () => {
     await axios.get("stock/getImgBanner").then((response) => {
-      // console.log(response);
       if (response.data.ImgBanner) {
         let ImgBanner = response.data.ImgBanner;
         bufferToBase64(ImgBanner);
-      } else {
-        setImgBanner([]);
       }
     });
   };
   const fetchproductCategory = async () => {
     await axios.get("productCategory/getProductCategory").then((response) => {
-      // console.log(response);
       if (response.status) {
-        let tbProductCategory = [{ value: 0, label: "สินค้าตามหมวดหมู" }]
+        let tbProductCategory = [{ value: 0, label: "สินค้าตามหมวดหมู่" }]
         response.data.tbProductCategory.map((e, i) => {
           tbProductCategory.push({ value: e.id, label: e.categoryName })
         })
-        // console.log(tbProductCategory)
         setproductCategory(tbProductCategory)
       }
     });
@@ -168,7 +163,6 @@ const ShopList = () => {
   const bufferToBase64 = async (ImgBanner) => {
     let dataImg = [];
     for (var i = 0; i < ImgBanner.length; i++) {
-      // console.log("id" + ImgBanner[i].id);
       const base64 = await FilesService.buffer64UTF8(ImgBanner[i].image.data);
       ImgBanner[i].image = base64;
       dataImg.push({ url: base64 });
@@ -180,6 +174,7 @@ const ShopList = () => {
 
   //#region
   const fetchDatatbStock = async () => {
+    setIsLoading(true)
     await axios.post("stock/getStock").then((response) => {
       if (response.data.status) {
         let tbStock = response.data.tbStock;
@@ -211,6 +206,8 @@ const ShopList = () => {
         settbStockiewNominal(tbStockiewNominal)
         settbStockiewFlashSale(tbStockiewFlashSale)
       }
+    }).finally(() => {
+      setIsLoading(false)
     });
   };
   //#endregion
@@ -224,9 +221,6 @@ const ShopList = () => {
     fetchDataImgBanner();
     fetchDatatbStock();
     fetchproductCategory()
-
-
-
   }, []);
 
 
@@ -242,14 +236,17 @@ const ShopList = () => {
       <div style={{ height: "100%" }}>
         <div style={{
           height: ((125 - y) + "px"),
-          margin: "auto",
+          margin: "auto"
+          , display: (y > 120 ? "none" : "")
         }}
           className={"wfull animated-SlideShow "}
         >
-          {ImgBanner.length > 0 ? <SlideShow img={ImgBanner} duration={5000} /> : null}
+          {ImgBanner.length > 0 ?
+            <SlideShow img={ImgBanner} duration={5000} />
+            : <div className="animated-img"></div>}
         </div>
         <div
-          className="flex relative flex"
+          className="flex relative flex mt-2"
           style={{ height: "40px", alignItems: "center" }}
         >
           <div className="px-2">สินค้าทั้งหมด</div>
@@ -257,8 +254,9 @@ const ShopList = () => {
           <div className="px-2" style={{ width: "150px" }}>
             {productCategory.length > 0 ?
               <Select
-                className="text-gray-mbk mt-1 text-sm w-full border-none"
+                className="text-gray-mbk  text-sm w-full border-none"
                 isSearchable={false}
+                // style={{ margin: "0" }}
                 id={"category"}
                 name={"category"}
                 // placeholder={lbl}
@@ -290,8 +288,12 @@ const ShopList = () => {
           </div>
         </div>
         <div className="liff-inline" />
-        <div id="scroll" className="product-scroll" style={{
-          width: "90%", margin: "auto", height: "calc(100% - " + (y > 120 ? (165 - 120) : (165 - y)) + "px)", overflow: "scroll",
+        <div id="scroll" className="product-scroll " style={{
+          width: "90%"
+          , margin: "auto"
+          , height: "calc(100% - " + (y > 120 ? (165 - 120) : (165 - y)) + "px)"
+          , overflow: "scroll"
+
         }} onScroll={listenScrollEvent}>
           {/* flash_sale */}
           {isFlashsale ?
@@ -423,15 +425,15 @@ const ShopList = () => {
               </div>
             </div> : null
           }
-          < div className="mt-2">
+          < div className="mt-2 mb-2 mt-2">
             <div
-              className="line-row "
+              className="line-row mb-2 "
             >
               {[...tbStockiewNominal].map((e, i) => {
                 return (
                   <div
                     key={i}
-                    className="line-column mt-2"
+                    className="line-column mt-2 mb-2"
                     onClick={() => {
                       history.push(path.showProducts.replace(":id", e.id));
                     }}

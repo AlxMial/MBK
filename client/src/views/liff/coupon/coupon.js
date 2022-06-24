@@ -17,7 +17,7 @@ const Member = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const { TabPane } = Tabs;
-  const tabsChange = () => {};
+  const tabsChange = () => { };
   const [tbMember, settbMember] = useState({});
   const getMembers = async () => {
     setIsLoading(true);
@@ -27,7 +27,7 @@ const Member = () => {
           settbMember(res.data.tbMember);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }

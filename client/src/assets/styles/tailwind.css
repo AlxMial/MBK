@@ -4174,7 +4174,7 @@ strike {
 }
 
 .line-row {
-  margin: 0 -5px;
+  /* margin: 0 -5px; */
 }
 
 /* Clear floats after the columns */
