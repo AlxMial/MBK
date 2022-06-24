@@ -14,16 +14,16 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
         isUsedCoupon: {
-            type: DataTypes.STRING,
+            type: DataTypes.BOOLEAN,
             allowNull: false,
         },
         deliverStatus: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         trackingNo: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         isDeleted: {
             type: DataTypes.BOOLEAN,

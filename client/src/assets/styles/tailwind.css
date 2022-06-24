@@ -2257,6 +2257,11 @@ select {
   padding-bottom: 2.5rem;
 }
 
+.px-8 {
+  padding-left: 1.75rem;
+  padding-right: 1.75rem;
+}
+
 .px-12 {
   padding-left: 3rem;
   padding-right: 3rem;
@@ -4270,7 +4275,7 @@ input[type="number"] {
 
 
 .policyLink {
-  color:white !important;
+  color: white !important;
 }
 
 /* Overflow Info */

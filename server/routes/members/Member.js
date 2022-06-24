@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbMember, tbPointRegister, tbMemberPoint, tbOtherAddress, tbOrderHD, tbOrderDT, tbStock, tbMemberReward } = require("../../models");
+const { tbMember, tbPointRegister, tbMemberPoint, tbOtherAddress, tbOrderHD, tbOrderDT, tbStock, tbMemberReward, tbRedemptionCoupon, tbCouponCode, tbRedemptionConditionsHD } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
@@ -12,7 +12,7 @@ const Encrypt = new ValidateEncrypt();
 const line = require("@line/bot-sdk");
 const config = require("../../services/config.line");
 const { sign } = require("jsonwebtoken");
-
+// import moment from "moment";
 router.get("/", validateToken, async (req, res) => {
   const listMembers = await tbMember.findAll({
     attributes: [
@@ -742,21 +742,64 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
     OrderHD: OrderHD
   });
 });
+/// คูปอง + ของรางวัลหน้า member 
 router.get("/getMyReward", validateLineToken, async (req, res) => {
 
   let status = true;
   let msg;
   let Member;
-  let coupon;
+  let coupon = [];
   let product;
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
     Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
     if (Member) {
       //Coupon 
-      // let _coupon = await tbMemberReward.findAll({ limit: 2, attributes: ["id", "rewardType", "tableId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"], where: { memberId: Member.id } })
-      let _coupon = [{ name: "test data coupon 1", StartDate: new Date(), EndDate: new Date() }, { name: "test data coupon 2", StartDate: new Date(), EndDate: new Date() }]
-      coupon = _coupon
+      let _coupon = await tbMemberReward.findAll({
+        // limit: 2,
+        attributes: ["id", "rewardType", "TableHDId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"]
+        , where: {
+          memberId: Member.id
+          , rewardType: "Coupon"
+          , isUsedCoupon: false
+        }
+      })
+      if (_coupon) {
+        for (var i = 0; i < _coupon.length; i++) {
+
+          tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+          tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
+
+          const _tbCouponCode = await tbCouponCode.findOne({
+            attributes: ["id"],
+            where: {
+              isDeleted: false,
+              id: _coupon[i].TableHDId
+            },
+            include: [
+              {
+                model: tbRedemptionCoupon,
+                attributes: ["id", "couponName", "isNotExpired", "startDate", "expiredDate"],
+                where: { isDeleted: false },
+              },
+            ],
+          });
+          if (_tbCouponCode) {
+            let _RedemptionCoupon = _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues
+
+
+            if (_RedemptionCoupon.startDate >= new Date() && _RedemptionCoupon.expiredDate <= new Date()) {
+              _coupon[i].dataValues.couponName = _RedemptionCoupon.couponName
+              _coupon[i].dataValues.expiredDate = _RedemptionCoupon.expiredDate
+              if (coupon.length < 2) {
+                coupon.push({ id: Encrypt.EncodeKey(_RedemptionCoupon.id), couponName: _coupon[i].dataValues.couponName, expiredDate: _coupon[i].dataValues.expiredDate })
+              }
+            }
+          }
+        }
+      }
+      // let _coupon = [{ name: "test data coupon 1", StartDate: new Date(), EndDate: new Date() }, { name: "test data coupon 2", StartDate: new Date(), EndDate: new Date() }]
+      // coupon = _coupon
       //Product
       // let _product = await tbMemberReward.findAll({ limit: 2, attributes: ["id", "rewardType", "tableId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"], where: { memberId: Member.id } })
       let _product = [{ name: "test data product 1", StartDate: new Date(), EndDate: new Date() }, { name: "test data product 2", StartDate: new Date(), EndDate: new Date() }]
@@ -775,6 +818,83 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
     product: product
   });
 });
+//หน้า คูปอง 
+router.get("/getMyCoupon", validateLineToken, async (req, res) => {
 
+  let status = true;
+  let msg;
+  let Member;
+  let coupon = [];
+  let product;
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+    if (Member) {
+      //Coupon 
+      let _coupon = await tbMemberReward.findAll({
+        attributes: ["id", "rewardType", "TableHDId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"]
+        , where: {
+          memberId: Member.id
+          , rewardType: "Coupon"
+        }
+      })
+      if (_coupon) {
+        for (var i = 0; i < _coupon.length; i++) {
+
+          tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+          tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
+
+          const _tbCouponCode = await tbCouponCode.findOne({
+            attributes: ["id"],
+            where: {
+              isDeleted: false,
+              id: _coupon[i].TableHDId
+            },
+            include: [
+              {
+                model: tbRedemptionCoupon,
+                attributes: ["id", "redemptionConditionsHDId", "couponName", "isNotExpired", "startDate", "expiredDate"],
+                where: { isDeleted: false },
+              },
+            ],
+          });
+          if (_tbCouponCode) {
+            let _RedemptionCoupon = _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues
+
+            const _tbRedemptionConditionsHD = await tbRedemptionConditionsHD.findOne({
+              attributes: ["points"],
+              where: {
+                isDeleted: false,
+                id: _RedemptionCoupon.redemptionConditionsHDId
+              },
+            })
+
+            let couponName = _RedemptionCoupon.couponName
+            let data = {
+              id: Encrypt.EncodeKey(_RedemptionCoupon.id), couponName: couponName
+              , isUse: !_coupon[i].isUsedCoupon ? (_RedemptionCoupon.expiredDate <= new Date() && _RedemptionCoupon.startDate >= new Date()) ? true : false : false
+              , isUsedCoupon: _coupon[i].isUsedCoupon
+              , points: _tbRedemptionConditionsHD.dataValues.points
+              , expiredDate: _RedemptionCoupon.expiredDate
+            }
+            coupon.push(data)
+          }
+        }
+      }
+
+    }
+
+  } catch (e) {
+    status = false
+    msg = e.message
+  }
+
+  return res.json({
+    status: status,
+    msg: msg,
+    coupon: coupon,
+    product: product
+  });
+});
 
 module.exports = router;

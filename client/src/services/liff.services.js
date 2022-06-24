@@ -10,6 +10,7 @@ import getreward from "views/liff/getreward";
 import updateprofile from "views/liff/updateprofile";
 import point from "views/liff/point";
 import coupon from "views/liff/coupon/coupon";
+import infocoupon from "views/liff/coupon/infocoupon";
 import reward from "views/liff/reward/reward";
 
 import rewardRedeem from "views/liff/reward/reward.redeem";
@@ -22,6 +23,7 @@ import cancelPage from "views/liff/shop/cancel";
 import showProducts from "views/liff/shop/showProducts";
 import showCart from "views/liff/shop/showCart";
 import usecoupon from "views/liff/shop/usecoupon";
+
 
 import makeorder from "views/liff/makeorder/makeorder";
 import makeorderbyid from "views/liff/makeorder/makeorderByID";
@@ -64,6 +66,7 @@ export const path = {
   myorder: "/line/myorder/:id",
   orderpaymentdone: "/line/orderpaymentdone/:id",
 
+  infocoupon: "/line/infocoupon/:id",
 
 };
 export const routes = [
@@ -98,6 +101,10 @@ export const routes = [
   {
     path: path.coupon,
     component: coupon,
+  },
+  {
+    path: path.infocoupon,
+    component: infocoupon,
   },
   {
     path: path.reward,
@@ -222,6 +229,9 @@ export const getMyOrder = (s, e = () => { }, f = () => { }) => {
 };
 export const getMyReward = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMyReward", s, e, f);
+};
+export const getMyCoupon = (s, e = () => { }, f = () => { }) => {
+  httpGet("/members/getMyCoupon", s, e, f);
 };
 
 

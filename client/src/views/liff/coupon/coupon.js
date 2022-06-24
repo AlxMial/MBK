@@ -1,30 +1,27 @@
 import React, { useState, useEffect } from "react";
-import axios from "services/axios";
 import { Tabs } from "antd";
 import Canbeused from "./coupon.canbeused";
 import Expire from "./coupon.expire";
 import { useHistory } from "react-router-dom";
 import {
-  getMember,
+  getMyCoupon
 } from "@services/liff.services";
-import { IsNullOrEmpty } from "@services/default.service";
-import * as Session from "@services/Session.service";
-import moment from "moment";
+
 import Spinner from "components/Loadings/spinner/Spinner";
 // components
 
-const Member = () => {
+const Coupon = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const { TabPane } = Tabs;
   const tabsChange = () => { };
-  const [tbMember, settbMember] = useState({});
-  const getMembers = async () => {
+  const [MyCoupon, setMyCoupon] = useState({ isdata: false, MyCoupon: [] });
+  const GetMyCoupon = async () => {
     setIsLoading(true);
-    getMember(
+    getMyCoupon(
       (res) => {
-        if (res.data.code === 200) {
-          settbMember(res.data.tbMember);
+        if (res.data.status) {
+          setMyCoupon({ isdata: true, MyCoupon: res.data.coupon });
         }
       },
       () => { },
@@ -34,7 +31,7 @@ const Member = () => {
     );
   };
   useEffect(() => {
-    getMembers();
+    GetMyCoupon();
   }, []);
   return (
     <>
@@ -47,14 +44,16 @@ const Member = () => {
         <div style={{ marginTop: "20px" }}>
           <Tabs
             className="Tabs-line noselect"
-            defaultActiveKey="1"
+            defaultActiveKey="2"
             onChange={tabsChange}
           >
             <TabPane tab="คูปองที่สามารถใช้ได้" key="1">
-              <Canbeused />
+              {MyCoupon.isdata ?
+                <Canbeused data={MyCoupon.MyCoupon} />
+                : null}
             </TabPane>
             <TabPane tab="คูปองที่หมดอายุ" key="2">
-              <Expire />
+              <Expire data={MyCoupon.MyCoupon} />
             </TabPane>
           </Tabs>
         </div>
@@ -62,4 +61,4 @@ const Member = () => {
     </>
   );
 };
-export default Member;
+export default Coupon;

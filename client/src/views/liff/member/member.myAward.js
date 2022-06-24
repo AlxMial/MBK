@@ -44,7 +44,7 @@ const MyAward = () => {
           }}>{"ดูทั้งหมด >"}</div>
         </div>
 
-        {couponItem != null ?
+        {couponItem.length > 0 ?
           couponItem.map((e, i) => {
             return (
               <div className="w-full flex mb-2">
@@ -60,13 +60,18 @@ const MyAward = () => {
                   </div>
                 </div>
                 <div className="relative" style={{ width: "70%" }}>
-                  <div> {e.name}</div>
-                  <div className="absolute" style={{ bottom: "0", color: "#ddd" }}> {"ใช้ได้ถึง " + moment(e.EndDate).locale("th").add("years", 543).format("DD MMM YYYY")}</div>
+                  <div className="font-bold"> {e.couponName}</div>
+                  <div className="absolute" style={{ bottom: "0", color: "#ddd" }}> {"ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add("years", 543).format("DD MMM YYYY")}</div>
                 </div>
               </div>
             )
           })
-          : null}
+          : <div className="flex" style={{
+            height: "50px",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "#ddd"
+          }}>ยังไม่มีคูปองที่ใช้งานได้</div>}
 
         <div className="flex relative" style={{ height: "40px", fontSize: "14px" }}>
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
@@ -94,7 +99,7 @@ const MyAward = () => {
                 </div>
                 <div className="relative" style={{ width: "70%" }}>
                   <div> {e.name}</div>
-                  <div className="absolute" style={{ bottom: "0", color: "#ddd" }}> {"ใช้ได้ถึง " + moment(e.EndDate).locale("th").add("years", 543).format("DD MMM YYYY")}</div>
+                  <div className="absolute" style={{ bottom: "0", color: "#ddd" }}> {"ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add("years", 543).format("DD MMM YYYY")}</div>
                 </div>
               </div>
             )
