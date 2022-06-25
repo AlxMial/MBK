@@ -1,6 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const { tbMember, tbPointRegister, tbMemberPoint, tbOtherAddress, tbOrderHD, tbOrderDT, tbStock, tbMemberReward, tbRedemptionCoupon, tbCouponCode, tbRedemptionConditionsHD } = require("../../models");
+const {
+  tbMember,
+  tbPointRegister,
+  tbMemberPoint,
+  tbOtherAddress,
+  tbOrderHD,
+  tbOrderDT,
+  tbStock,
+  tbMemberReward,
+  tbRedemptionCoupon,
+  tbCouponCode,
+  tbRedemptionConditionsHD,
+} = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
@@ -40,7 +52,7 @@ router.get("/", validateToken, async (req, res) => {
       "isPolicy1",
       "isPolicy2",
     ],
-    where: { isDeleted: false }
+    where: { isDeleted: false },
   });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
@@ -89,7 +101,7 @@ router.get("/export", validateToken, async (req, res) => {
       "isPolicy1",
       "isPolicy2",
     ],
-    where: { isDeleted: false }
+    where: { isDeleted: false },
   });
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
@@ -128,7 +140,7 @@ router.get("/byId/:id", validateToken, async (req, res) => {
         "isPolicy1",
         "isPolicy2",
       ],
-      where: { id: id }
+      where: { id: id },
     });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
@@ -177,7 +189,7 @@ router.get("/byEmail/:email", async (req, res) => {
         "isPolicy1",
         "isPolicy2",
       ],
-      where: { email: email, isDeleted: false }
+      where: { email: email, isDeleted: false },
     });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
@@ -222,7 +234,7 @@ router.get("/Show/byId/:id", async (req, res) => {
         "isPolicy1",
         "isPolicy2",
       ],
-      where: { id: id }
+      where: { id: id },
     });
     if (listMembers) {
       Encrypt.decryptAllData(listMembers);
@@ -602,39 +614,58 @@ router.get("/getMemberPointsList", validateLineToken, async (req, res) => {
   });
 });
 
-
 router.get("/getMemberAddress", validateLineToken, async (req, res) => {
   let code = 500;
   const id = Encrypt.DecodeKey(req.user.id);
   // let members;
-  let option = []
+  let option = [];
   try {
     code = 200;
     let member = await tbMember.findOne({
-      attributes: ["id", "firstName", "lastName", "address", "province", "district", "subDistrict", "postcode", "email"],
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "address",
+        "province",
+        "district",
+        "subDistrict",
+        "postcode",
+        "email",
+      ],
       where: { id: id, isDeleted: false },
     });
 
     if (member) {
       member = Encrypt.decryptAllData(member);
       Encrypt.encryptValueId(member);
-      let dataValues = member.dataValues
-      dataValues.isDefault = true
+      let dataValues = member.dataValues;
+      dataValues.isDefault = true;
       option.push(dataValues);
 
       let OtherAddress = await tbOtherAddress.findAll({
-        attributes: ["id", "firstName", "lastName", "address", "province", "district", "subDistrict", "postcode", "email"],
-        where: { memberID: id }
+        attributes: [
+          "id",
+          "firstName",
+          "lastName",
+          "address",
+          "province",
+          "district",
+          "subDistrict",
+          "postcode",
+          "email",
+        ],
+        where: { memberID: id },
       });
       if (OtherAddress) {
         OtherAddress.map((e, i) => {
           let _OtherAddress = Encrypt.decryptAllData(e);
           Encrypt.encryptValueId(_OtherAddress);
 
-          let dataValues = _OtherAddress.dataValues
-          dataValues.isDefault = false
-          option.push(dataValues)
-        })
+          let dataValues = _OtherAddress.dataValues;
+          dataValues.isDefault = false;
+          option.push(dataValues);
+        });
       }
     }
   } catch (e) {
@@ -648,16 +679,16 @@ router.get("/getMemberAddress", validateLineToken, async (req, res) => {
 });
 
 router.post("/addMemberAddress", validateLineToken, async (req, res) => {
-
   const uid = Encrypt.DecodeKey(req.user.uid);
-  let data = req.body
+  let data = req.body;
   let Member;
   let msg;
   try {
-
-    Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+    Member = await tbMember.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
+    });
     if (Member) {
-
       if (
         !Encrypt.IsNullOrEmpty(data.firstName) &&
         !Encrypt.IsNullOrEmpty(data.lastName) &&
@@ -665,86 +696,118 @@ router.post("/addMemberAddress", validateLineToken, async (req, res) => {
         !Encrypt.IsNullOrEmpty(data.email)
       ) {
         data.email = data.email.toLowerCase();
-        data.memberID = Member.id
+        data.memberID = Member.id;
         const ValuesEncrypt = Encrypt.encryptAllData(data);
         const MemberAddress = await tbOtherAddress.create(ValuesEncrypt);
         res.json({ status: true });
-
       } else {
         res.json({ status: false, msg: "Data Empty" });
       }
     } else {
       res.json({ status: false, msg: "Member Empty" });
     }
-
   } catch (e) {
-    msg = e.message
+    msg = e.message;
     res.json({ status: false, msg: msg });
   }
 });
 
 router.get("/getMyOrder", validateLineToken, async (req, res) => {
-
   let status = true;
   let msg;
   let Member;
   let OrderHD;
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
-    Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+    Member = await tbMember.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
+    });
     if (Member) {
-
       const _tbOrderHD = await tbOrderHD.findAll({
         limit: 1,
-        attributes: ["id", "orderNumber", "paymentStatus"], where: { memberId: Member.id }
+        attributes: ["id", "orderNumber", "paymentStatus"],
+        where: { memberId: Member.id },
       });
       if (_tbOrderHD) {
-        let hd = _tbOrderHD[0].dataValues
-        hd.dt = []
+        let hd = _tbOrderHD[0].dataValues;
+        hd.dt = [];
         const OrderDTData = await tbOrderDT.findAll({
           // limit: 2,
-          attributes: ["id", "amount", "price", "discount", "discountType", "stockId", "orderId"],
-          where: { IsDeleted: false, orderId: hd.id }
+          attributes: [
+            "id",
+            "amount",
+            "price",
+            "discount",
+            "discountType",
+            "stockId",
+            "orderId",
+          ],
+          where: { IsDeleted: false, orderId: hd.id },
         });
-        let sumamount = 0
-        let sumprice = 0
+        let sumamount = 0;
+        let sumprice = 0;
         for (var j = 0; j < OrderDTData.length; j++) {
-          let dt = OrderDTData[j].dataValues
-          dt.id = Encrypt.EncodeKey(dt.id)
-          const _tbStockData = await tbStock.findOne({ attributes: ["id", "productName", "discount", "discountType", "price"], where: { id: dt.stockId } });
-          let _tbStock = _tbStockData.dataValues
-          dt.productName = _tbStock.productName
-          let price = (dt.discount > 0 ? (dt.discountType == "THB" ? parseFloat(dt.price) - parseFloat(dt.discount) : parseFloat(dt.price) - ((parseFloat(dt.discount) / 100) * parseFloat(dt.price))) : parseFloat(dt.price))
-          let discount = (dt.discount > 0 ? (dt.discountType == "THB" ? parseFloat(dt.price) - parseFloat(dt.discount) : parseFloat(dt.price) - ((parseFloat(dt.discount) / 100) * parseFloat(dt.price))) : 0)
-          sumamount += dt.amount
-          sumprice += price * dt.amount
+          let dt = OrderDTData[j].dataValues;
+          dt.id = Encrypt.EncodeKey(dt.id);
+          const _tbStockData = await tbStock.findOne({
+            attributes: [
+              "id",
+              "productName",
+              "discount",
+              "discountType",
+              "price",
+            ],
+            where: { id: dt.stockId },
+          });
+          let _tbStock = _tbStockData.dataValues;
+          dt.productName = _tbStock.productName;
+          let price =
+            dt.discount > 0
+              ? dt.discountType == "THB"
+                ? parseFloat(dt.price) - parseFloat(dt.discount)
+                : parseFloat(dt.price) -
+                (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
+              : parseFloat(dt.price);
+          let discount =
+            dt.discount > 0
+              ? dt.discountType == "THB"
+                ? parseFloat(dt.price) - parseFloat(dt.discount)
+                : parseFloat(dt.price) -
+                (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
+              : 0;
+          sumamount += dt.amount;
+          sumprice += price * dt.amount;
           if (j < 2) {
-            hd.dt.push({ id: Encrypt.EncodeKey(dt.stockId), price: parseFloat(dt.price), discount: parseFloat(discount), productName: dt.productName, amount: dt.amount })
+            hd.dt.push({
+              id: Encrypt.EncodeKey(dt.stockId),
+              price: parseFloat(dt.price),
+              discount: parseFloat(discount),
+              productName: dt.productName,
+              amount: dt.amount,
+            });
           }
         }
-        hd.sumamount = sumamount
-        hd.sumprice = sumprice
-        hd.id = Encrypt.EncodeKey(hd.id)
-        OrderHD = hd
+        hd.sumamount = sumamount;
+        hd.sumprice = sumprice;
+        hd.id = Encrypt.EncodeKey(hd.id);
+        OrderHD = hd;
       }
-
-
     }
-
   } catch (e) {
-    status = false
-    msg = e.message
+    status = false;
+    msg = e.message;
   }
 
   return res.json({
     status: status,
     msg: msg,
-    OrderHD: OrderHD
+    OrderHD: OrderHD,
   });
 });
-/// คูปอง + ของรางวัลหน้า member 
-router.get("/getMyReward", validateLineToken, async (req, res) => {
 
+/// คูปอง + ของรางวัลหน้า member
+router.get("/getMyReward", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
   let Member;
@@ -752,47 +815,72 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
   let product;
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
-    Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+    Member = await tbMember.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
+    });
     if (Member) {
-      //Coupon 
+      //Coupon
       let _coupon = await tbMemberReward.findAll({
         // limit: 2,
-        attributes: ["id", "rewardType", "TableHDId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"]
-        , where: {
-          memberId: Member.id
-          , rewardType: "Coupon"
-          , isUsedCoupon: false
-        }
-      })
+        attributes: [
+          "id",
+          "rewardType",
+          "TableHDId",
+          "deliverStatus",
+          "redeemDate",
+          "isUsedCoupon",
+          "trackingNo",
+        ],
+        where: {
+          memberId: Member.id,
+          rewardType: "Coupon",
+          isUsedCoupon: false,
+        },
+      });
       if (_coupon) {
         for (var i = 0; i < _coupon.length; i++) {
-
           tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
-          tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
+          tbCouponCode.belongsTo(tbRedemptionCoupon, {
+            foreignKey: "redemptionCouponId",
+          });
 
           const _tbCouponCode = await tbCouponCode.findOne({
             attributes: ["id"],
             where: {
               isDeleted: false,
-              id: _coupon[i].TableHDId
+              id: _coupon[i].TableHDId,
             },
             include: [
               {
                 model: tbRedemptionCoupon,
-                attributes: ["id", "couponName", "isNotExpired", "startDate", "expiredDate"],
+                attributes: [
+                  "id",
+                  "couponName",
+                  "isNotExpired",
+                  "startDate",
+                  "expiredDate",
+                ],
                 where: { isDeleted: false },
               },
             ],
           });
           if (_tbCouponCode) {
-            let _RedemptionCoupon = _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues
+            let _RedemptionCoupon =
+              _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues;
 
-
-            if (_RedemptionCoupon.startDate >= new Date() && _RedemptionCoupon.expiredDate <= new Date()) {
-              _coupon[i].dataValues.couponName = _RedemptionCoupon.couponName
-              _coupon[i].dataValues.expiredDate = _RedemptionCoupon.expiredDate
+            if (
+              _RedemptionCoupon.startDate >= new Date() &&
+              _RedemptionCoupon.expiredDate <= new Date()
+            ) {
+              _coupon[i].dataValues.couponName = _RedemptionCoupon.couponName;
+              _coupon[i].dataValues.expiredDate = _RedemptionCoupon.expiredDate;
               if (coupon.length < 2) {
-                coupon.push({ id: Encrypt.EncodeKey(_RedemptionCoupon.id), couponName: _coupon[i].dataValues.couponName, expiredDate: _coupon[i].dataValues.expiredDate })
+                coupon.push({
+                  id: Encrypt.EncodeKey(_RedemptionCoupon.id),
+                  couponName: _coupon[i].dataValues.couponName,
+                  expiredDate: _coupon[i].dataValues.expiredDate,
+                });
               }
             }
           }
@@ -802,25 +890,35 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
       // coupon = _coupon
       //Product
       // let _product = await tbMemberReward.findAll({ limit: 2, attributes: ["id", "rewardType", "tableId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"], where: { memberId: Member.id } })
-      let _product = [{ name: "test data product 1", StartDate: new Date(), EndDate: new Date() }, { name: "test data product 2", StartDate: new Date(), EndDate: new Date() }]
-      product = _product
+      let _product = [
+        {
+          name: "test data product 1",
+          StartDate: new Date(),
+          EndDate: new Date(),
+        },
+        {
+          name: "test data product 2",
+          StartDate: new Date(),
+          EndDate: new Date(),
+        },
+      ];
+      product = _product;
     }
-
   } catch (e) {
-    status = false
-    msg = e.message
+    status = false;
+    msg = e.message;
   }
 
   return res.json({
     status: status,
     msg: msg,
     coupon: coupon,
-    product: product
+    product: product,
   });
 });
-//หน้า คูปอง 
-router.get("/getMyCoupon", validateLineToken, async (req, res) => {
 
+//หน้า คูปอง
+router.get("/getMyCoupon", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
   let Member;
@@ -828,49 +926,71 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
   let product;
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
-    Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+    Member = await tbMember.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
+    });
     if (Member) {
-      //Coupon 
+      //Coupon
       let _coupon = await tbMemberReward.findAll({
-        attributes: ["id", "rewardType", "TableHDId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"]
-        , where: {
-          memberId: Member.id
-          , rewardType: "Coupon"
-        }
-      })
+        attributes: [
+          "id",
+          "rewardType",
+          "TableHDId",
+          "deliverStatus",
+          "redeemDate",
+          "isUsedCoupon",
+          "trackingNo",
+        ],
+        where: {
+          memberId: Member.id,
+          rewardType: "Coupon",
+        },
+      });
       if (_coupon) {
         for (var i = 0; i < _coupon.length; i++) {
-
           tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
-          tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
+          tbCouponCode.belongsTo(tbRedemptionCoupon, {
+            foreignKey: "redemptionCouponId",
+          });
 
           const _tbCouponCode = await tbCouponCode.findOne({
             attributes: ["id"],
             where: {
               isDeleted: false,
-              id: _coupon[i].TableHDId
+              id: _coupon[i].TableHDId,
             },
             include: [
               {
                 model: tbRedemptionCoupon,
-                attributes: ["id", "redemptionConditionsHDId", "couponName", "isNotExpired", "startDate", "expiredDate"],
+                attributes: [
+                  "id",
+                  "redemptionConditionsHDId",
+                  "couponName",
+                  "isNotExpired",
+                  "startDate",
+                  "expiredDate",
+                ],
                 where: { isDeleted: false },
               },
             ],
           });
           if (_tbCouponCode) {
-            let _RedemptionCoupon = _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues
+            let _RedemptionCoupon =
+              _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues;
 
-            const _tbRedemptionConditionsHD = await tbRedemptionConditionsHD.findOne({
-              attributes: ["points"],
-              where: {
-                isDeleted: false,
-                id: _RedemptionCoupon.redemptionConditionsHDId
-              },
-            })
+            const _tbRedemptionConditionsHD =
+              await tbRedemptionConditionsHD.findOne({
+                attributes: ["points"],
+                where: {
+                  isDeleted: false,
+                  id: _RedemptionCoupon.redemptionConditionsHDId,
+                },
+              });
 
-            let couponName = _RedemptionCoupon.couponName
+            let couponName = _RedemptionCoupon.couponName;
             let data = {
+
               id: Encrypt.EncodeKey(_RedemptionCoupon.id), couponName: couponName
               , isUse: !_coupon[i].isUsedCoupon ? (_RedemptionCoupon.expiredDate <= new Date() && _RedemptionCoupon.startDate >= new Date()) ? true : false : false
               , isUsedCoupon: _coupon[i].isUsedCoupon
@@ -882,19 +1002,17 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
           }
         }
       }
-
     }
-
   } catch (e) {
-    status = false
-    msg = e.message
+    status = false;
+    msg = e.message;
   }
 
   return res.json({
     status: status,
     msg: msg,
     coupon: coupon,
-    product: product
+    product: product,
   });
 });
 
@@ -940,7 +1058,7 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
         });
         if (_tbCouponCode) {
           let _RedemptionCoupon = _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues
-      
+
           const _tbRedemptionConditionsHD = await tbRedemptionConditionsHD.findOne({
             attributes: ["points"],
             where: {
@@ -974,5 +1092,51 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
   });
 });
 
+
+
+router.post("/checkDuplicate", async (req, res) => {
+  const Member = await tbMember.findOne({
+    attributes: ["id", "email", "phone"],
+    where: {
+      [Op.or]: [
+        { email: Encrypt.EncodeKey(req.body.email.toLowerCase()) },
+        { phone: Encrypt.EncodeKey(req.body.phone) },
+      ],
+      isDeleted: false,
+    },
+  });
+
+  if (Member) {
+    if (Member.email === Encrypt.EncodeKey(req.body.email.toLowerCase())) {
+      return res.json({
+        status: false,
+        isEmail: true,
+        isPhone: false,
+        msg: "unsuccess email",
+      });
+    } else if (Member.phone === Encrypt.EncodeKey(req.body.phone)) {
+      return res.json({
+        status: false,
+        isEmail: false,
+        isPhone: true,
+        msg: "unsuccess phone",
+      });
+    } else {
+      return res.json({
+        status: true,
+        isEmail: false,
+        isPhone: false,
+        msg: "success",
+      });
+    }
+  } else {
+    return res.json({
+      status: true,
+      isEmail: false,
+      isPhone: false,
+      msg: "success",
+    });
+  }
+});
 
 module.exports = router;
