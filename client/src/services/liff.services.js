@@ -240,7 +240,9 @@ export const getMyReward = (s, e = () => { }, f = () => { }) => {
 export const getMyCoupon = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMyCoupon", s, e, f);
 };
-
+export const getCouponByID = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/members/getCouponByID", data, s, e, f);
+};
 
 
 export const getMemberpoints = (s, e = () => { }, f = () => { }) => {

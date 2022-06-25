@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import {
-    getMyCoupon
+    getCouponByID
 } from "@services/liff.services";
 import { path } from "services/liff.services";
 import Spinner from "components/Loadings/spinner/Spinner";
+import QRCode from "react-qr-code";
+import Barcode from "react-barcode";
+import ImageUC from "components/Image/index";
+// import { CopyToClipboard } from "react-copy-to-clipboard";
 // components
 
 const InfoCoupon = () => {
     const history = useHistory();
+    let { id } = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [isSelect, setisSelect] = useState(1);
-    const [MyCoupon, setMyCoupon] = useState({ isdata: false, MyCoupon: [] });
-    const GetMyCoupon = async () => {
+    const [MyCoupon, setMyCoupon] = useState(null);
+    const GetCouponByID = async () => {
         setIsLoading(true);
-        getMyCoupon(
+        getCouponByID(
+            { Id: id },
             (res) => {
                 if (res.data.status) {
-                    setMyCoupon({ isdata: true, MyCoupon: res.data.coupon });
+                    setMyCoupon(res.data.coupon);
                 }
             },
             () => { },
@@ -27,32 +33,70 @@ const InfoCoupon = () => {
         );
     };
     useEffect(() => {
-        GetMyCoupon();
+        GetCouponByID();
     }, []);
     return (
         <>
-            {isLoading ? <Spinner customText={"Loading"} /> : null}
+            {isLoading ? <Spinner customText={"Loading"} /> : null
+            }
             {/* card */}
             <div style={{ height: "calc(50% - 100px)" }}>
-                <div className="w-full absolute" style={{ border: "1px solid", height: "100%" }}>
-                    <div className="mb-4" style={{ height: "100px", border: "1px solid", backgroundColor: "#efefef" }}>
-                        กรุณาแสดงรหัสนี้ให้แก่ร้านค้า เพื่อใช้สิทธิพิเศษของคุณ
-                    </div>
-                    <div className="mb-4" style={{ height: "100px", border: "1px solid" }}>
-                        detail
-                    </div>
-                    <div className="w-full flex mb-4" style={{}}>
-                        <div className={isSelect == 1 ? "font-bold" : ""} style={{ width: "50%", textAlign: "center", textDecoration: isSelect == 1 ? "underline" : "" }}
-                            onClick={() => {
-                                setisSelect(1)
-                            }}>คิวอาร์โค้ด</div>
-                        <div className={isSelect == 2 ? "font-bold" : ""} style={{ width: "50%", textAlign: "center", textDecoration: isSelect == 2 ? "underline" : "" }}
-                            onClick={() => {
-                                setisSelect(2)
-                            }}>บาร์โค้ด</div>
-                    </div>
+                {MyCoupon != null ?
+                    <div className="w-full absolute" style={{ height: "100%" }}>
+                        <div className="mb-4" style={{ height: "100px", backgroundColor: "#efefef" }}>
+                            กรุณาแสดงรหัสนี้ให้แก่ร้านค้า เพื่อใช้สิทธิพิเศษของคุณ
+                        </div>
+                        <div className="mb-4" style={{ height: "100px", }}>
+                            {/* {MyCoupon} */}
+                            <div className="w-full flex px-2">
+                                <div style={{ width: "30%" }}>
+                                    <div style={{ width: "80px", height: "80%" }}>
+                                        <ImageUC
+                                            find={1}
+                                            relatedid={MyCoupon.redemptionCouponId}
+                                            relatedtable={["tbRedemptionCoupon"]}
+                                            alt="tbRedemptionCoupon"
+                                            className=" animated-img"
+                                        ></ImageUC>
+                                    </div>
+                                </div>
+                                <div className=" px-2 relative" style={{ width: "70%" }}>
+                                    <div className="w-full  font-bold"> {MyCoupon.couponName} </div>
+                                    <div className="w-full absolute" style={{ bottom: "0" }}>{"ใช้ " + MyCoupon.points + " คะแนน"} </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="w-full flex mb-4" >
+                            <div className={isSelect == 1 ? "font-bold" : ""} style={{ width: "50%", textAlign: "center", textDecoration: isSelect == 1 ? "underline" : "" }}
+                                onClick={() => {
+                                    setisSelect(1)
+                                }}>คิวอาร์โค้ด</div>
+                            <div className={isSelect == 2 ? "font-bold" : ""} style={{ width: "50%", textAlign: "center", textDecoration: isSelect == 2 ? "underline" : "" }}
+                                onClick={() => {
+                                    setisSelect(2)
+                                }}>บาร์โค้ด</div>
+                        </div>
+                        {isSelect == 1 ?
+                            <div className="w-full  mb-4" >
+                                <div className="w-full flex  mb-2" style={{ margin: "auto", justifyContent: "center" }}>
+                                    <QRCode size={100} value={id} />
 
-                </div>
+                                </div>
+                                <div className="mt-2 text-center">{id}</div>
+                            </div> :
+                            <div className="w-full  mb-4" >
+                                <div className="w-full flex  mb-2" style={{ margin: "auto", justifyContent: "center", width: "80%" }}>
+                                    <Barcode
+                                        value={id}
+                                        displayValue={false}
+                                        width={2}
+                                        height={100}
+                                    />
+                                </div>
+                                <div className="mt-2 text-center">{MyCoupon.codeCoupon}</div>
+                            </div>}
+
+                    </div> : null}
 
 
 
@@ -72,7 +116,7 @@ const InfoCoupon = () => {
                                 justifyContent: "center",
                             }}
                             onClick={() => {
-                                history.goBack()
+                                history.push(path.coupon)
                             }}
                         >
                             {"ปิด"}

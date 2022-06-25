@@ -23,13 +23,24 @@ const Expire = ({ data }) => {
                       <div className="w-full">
                         <div className="relative" style={{ width: "auto", maxWidth: "150px", margin: "auto" }}>
                           <ImageUC
+                            style={{
+                              width: "150px",
+                              height: "100px"
+                            }}
                             find={1}
                             relatedid={e.id}
                             relatedtable={["tbRedemptionCoupon"]}
                             alt="tbRedemptionCoupon"
-                            className=" border-2 border-blueGray-50 animated-img"
+                            className=" animated-img"
                           ></ImageUC>
-                          {/* <div style={{ color: "red", fontSize: "20px", position: "absolute" }}> {e.isUsedCoupon ? "ถูกใช้ไปแล้ว" : "หมดอายุ"}</div> */}
+
+                          <div className="absolute px-2" style={{
+                            top: "10px",
+                            backgroundColor: "#000",
+                            width: "100px",
+                            height: "25px",
+                            color: "#FFFFFF"
+                          }}>{e.isUsedCoupon ? "ถูกใช้ไปแล้ว" : "หมดอายุ"}</div>
                         </div>
                       </div>
                       <div className="w-full font-bold flex mb-2" style={{ fontSize: "14px", color: "#000000" }}>

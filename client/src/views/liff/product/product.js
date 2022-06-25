@@ -10,7 +10,7 @@ import {
 import Spinner from "components/Loadings/spinner/Spinner";
 // components
 
-const Coupon = () => {
+const Product = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [Tabs, setTabs] = useState(1);
@@ -41,7 +41,7 @@ const Coupon = () => {
       {/* card */}
       <div style={{ marginTop: "-50px", position: "absolute", width: "100%" }}>
         <div className="line-text-brown noselect">
-          <div className=" text-xl text-center mt-4">คูปองของฉัน</div>
+          <div className=" text-xl text-center mt-4">ของสมนาคุณของฉัน</div>
         </div>
       </div>
       <div>
@@ -52,29 +52,8 @@ const Coupon = () => {
             borderBottom: "5px solid " + (Tabs == 1 ? "#007a40" : "transparent")
           }} onClick={() => {
             setTabs(1)
-          }}>คูปองที่สามารถใช้ได้</div>
-          <div className="flex" style={{
-            width: "50%", textAlign: "center", justifyContent: "center",
-            alignItems: "center",
-            borderBottom: "5px solid " + (Tabs == 2 ? "#007a40" : "transparent")
-          }} onClick={() => {
-            setTabs(2)
-          }}>คูปองที่หมดอายุ</div>
+          }}>ของสมนา</div>
 
-          {/* <Tabs
-            className="Tabs-line noselect"
-            defaultActiveKey="1"
-            onChange={tabsChange}
-          >
-            <TabPane tab="คูปองที่สามารถใช้ได้" key="1">
-              {MyCoupon.isdata ?
-                <Canbeused data={MyCoupon.MyCoupon} />
-                : null}
-            </TabPane>
-            <TabPane tab="คูปองที่หมดอายุ" key="2">
-              <Expire data={MyCoupon.MyCoupon} />
-            </TabPane>
-          </Tabs> */}
         </div>
         <div className="line-scroll" style={{
           width: "90%", margin: "auto", height: "calc(100vh - 300px)",
@@ -90,4 +69,4 @@ const Coupon = () => {
     </>
   );
 };
-export default Coupon;
+export default Product;

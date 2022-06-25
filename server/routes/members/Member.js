@@ -876,6 +876,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
               , isUsedCoupon: _coupon[i].isUsedCoupon
               , points: _tbRedemptionConditionsHD.dataValues.points
               , expiredDate: _RedemptionCoupon.expiredDate
+              , CouponCodeId: Encrypt.EncodeKey(_coupon[i].TableHDId)
             }
             coupon.push(data)
           }
@@ -896,5 +897,82 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
     product: product
   });
 });
+
+router.post("/getCouponByID", validateLineToken, async (req, res) => {
+
+  let status = true;
+  let msg;
+  let Member;
+  let coupon;
+  let product;
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    const CouponCodeId = Encrypt.DecodeKey(req.body.Id);
+    Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+    if (Member) {
+      //Coupon 
+      let _coupon = await tbMemberReward.findOne({
+        attributes: ["id", "rewardType", "TableHDId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"]
+        , where: {
+          memberId: Member.id
+          , rewardType: "Coupon"
+          , TableHDId: CouponCodeId
+        }
+      })
+      if (_coupon) {
+        let data = _coupon.dataValues
+        tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+        tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
+
+        const _tbCouponCode = await tbCouponCode.findOne({
+          attributes: ["id", "codeCoupon"],
+          where: {
+            isDeleted: false,
+            id: data.TableHDId
+          },
+          include: [
+            {
+              model: tbRedemptionCoupon,
+              attributes: ["id", "couponName", "description", "redemptionConditionsHDId"],
+              where: { isDeleted: false },
+            },
+          ],
+        });
+        if (_tbCouponCode) {
+          let _RedemptionCoupon = _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues
+      
+          const _tbRedemptionConditionsHD = await tbRedemptionConditionsHD.findOne({
+            attributes: ["points"],
+            where: {
+              isDeleted: false,
+              id: _RedemptionCoupon.redemptionConditionsHDId
+            }
+          })
+          let points = 0
+          if (_tbRedemptionConditionsHD) {
+            points = _tbRedemptionConditionsHD.dataValues.points
+          }
+          let codeCoupon = _tbCouponCode.dataValues.codeCoupon
+          let couponName = _RedemptionCoupon.couponName
+          let description = _RedemptionCoupon.description
+          let redemptionCouponId = Encrypt.EncodeKey(_RedemptionCoupon.id)
+          coupon = { id: req.body.Id, redemptionCouponId: redemptionCouponId, couponName: couponName, description: description, points: points, codeCoupon: codeCoupon }
+        }
+      }
+    }
+
+  } catch (e) {
+    status = false
+    msg = e.message
+  }
+
+  return res.json({
+    status: status,
+    msg: msg,
+    coupon: coupon,
+    product: product
+  });
+});
+
 
 module.exports = router;
