@@ -4336,6 +4336,7 @@ input[type="number"] {
     height: 75vh;
     overflow-y: auto;
   }
+
   .Overflow-Banner {
     max-height: 58vh;
     overflow-y: auto;
@@ -4793,6 +4794,17 @@ input[type="number"] {
   border: 1px solid #047738;
 }
 
+.Modal-error {
+  background-color: #fff;
+  padding: 20px;
+  width: 90%;
+  height: 300px;
+  margin: auto;
+  display: flex;
+  margin-top: 50%;
+  border-radius: 20px;
+  border: 1px solid #047738;
+}
 
 .animated-img {
   animation-duration: 2s;

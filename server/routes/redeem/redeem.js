@@ -7,7 +7,8 @@ const {
   tbPointCodeDT,
   tbRedemptionConditionsHD,
   tbRedemptionProduct,
-  tbRedemptionCoupon
+  tbRedemptionCoupon,
+  tbCouponCode, tbMemberReward
 } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
@@ -15,6 +16,7 @@ const Sequelize = require("sequelize");
 const decodeCoupon = require("../../services/decryptCoupon");
 const Op = Sequelize.Op;
 const ValidateEncrypt = require("../../services/crypto");
+const e = require("express");
 const Encrypt = new ValidateEncrypt();
 
 router.post("/lowLevel", async (req, res) => {
@@ -329,5 +331,214 @@ router.post("/getRedemptionconditionshdById", validateLineToken, async (req, res
   });
 });
 
+
+router.post("/useCoupon", validateLineToken, async (req, res) => {
+  let status = true;
+  let msg;
+  let RedemptionConditionsHD;
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    const RedemptionConditionsHDId = Encrypt.DecodeKey(req.body.Id);
+    Member = await tbMember.findOne({
+      attributes: ["id", "memberPoint"],
+      where: { uid: uid },
+    });
+    if (Member) {
+      let memberPoint = Member.memberPoint
+      let _RedemptionConditionsHD = await tbRedemptionConditionsHD.findOne({
+        attributes: [
+          "id",
+          "points",
+          "startDate",
+          "endDate",
+        ],
+        where: {
+          isDeleted: false,
+          id: RedemptionConditionsHDId
+        },
+      });
+
+      if (_RedemptionConditionsHD) {
+        let item = _RedemptionConditionsHD.dataValues
+        //ตรวจสอบเวลา 
+        if (new Date() > item.startDate && new Date() <= item.endDate) {
+          if (memberPoint >= item.points) {
+            const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
+              attributes: ["id"],
+              where: { redemptionConditionsHDId: item.id },
+            });
+            if (_tbRedemptionCoupon) {
+              const RedemptionCouponId = _tbRedemptionCoupon.dataValues.id
+
+              const _tbCouponCode = await tbCouponCode.findAll({
+                limit: 1,
+                attributes: ["id"],
+                where: { redemptionCouponId: RedemptionCouponId, isDeleted: false, isUse: false },
+              });
+              if (_tbCouponCode) {
+                if (_tbCouponCode.length > 0) {
+                  //สามารถใช้คูปองได้
+                  const CouponCode = _tbCouponCode[0].dataValues
+                  // ใช้คูปอง
+                  const data = await tbMemberReward.create({
+                    rewardType: "Coupon"
+                    , TableHDId: CouponCode.id
+                    , redeemDate: new Date()
+                    , isUsedCoupon: false
+                    , isDeleted: false
+                    , memberId: Member.id
+                  });
+                  // update coupon
+                  const dataCouponCode = await tbCouponCode.update(
+                    { isUse: true },
+                    { where: { id: CouponCode.id } })
+                  //update คะแนน
+                  const dataMember = await tbMember.update(
+                    { memberPoint: Member.memberPoint - item.points },
+                    { where: { id: Member.id } })
+
+                } else {
+                  status = false
+                  msg = "ขออภัย คูปองหมด"
+                }
+              } else {
+                status = false
+                msg = "ขออภัย คูปองหมด"
+              }
+
+            }
+          } else {
+            status = false
+            msg = "ขออภัย คะแนนของคุณไม่เพียงพอ"
+          }
+
+        } else {
+          status = false
+          msg = "ขออภัย โค้ดหมดอายุ"
+        }
+
+
+      }
+
+    }
+  } catch (e) {
+    status = false
+    msg = e.message
+  }
+
+  res.json({
+    status: status,
+    message: msg,
+    Redemptionconditionshd: RedemptionConditionsHD,
+  });
+});
+
+
+router.post("/useProduct", validateLineToken, async (req, res) => {
+  let status = true;
+  let msg;
+  let RedemptionConditionsHD;
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    const RedemptionConditionsHDId = Encrypt.DecodeKey(req.body.Id);
+    Member = await tbMember.findOne({
+      attributes: ["id", "memberPoint"],
+      where: { uid: uid },
+    });
+    if (Member) {
+      let memberPoint = Member.memberPoint
+      let _RedemptionConditionsHD = await tbRedemptionConditionsHD.findOne({
+        attributes: [
+          "id",
+          "points",
+          "startDate",
+          "endDate",
+        ],
+        where: {
+          isDeleted: false,
+          id: RedemptionConditionsHDId
+        },
+      });
+
+      if (_RedemptionConditionsHD) {
+        let item = _RedemptionConditionsHD.dataValues
+        //ตรวจสอบเวลา 
+        if (new Date() > item.startDate && new Date() <= item.endDate) {
+          if (memberPoint >= item.points) {
+            const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
+              attributes: ["id", "isNoLimitReward", "rewardCount"],
+              where: { redemptionConditionsHDId: item.id },
+            });
+            if (_tbRedemptionProduct) {
+              const RedemptionProductId = _tbRedemptionProduct.dataValues
+              //ไม่จำกัด
+              if (RedemptionProductId.isNoLimitReward) {
+                //เพิ่มได้
+                // ใช้คูปอง
+                const data = await tbMemberReward.create({
+                  rewardType: "Product"
+                  , TableHDId: RedemptionProductId.id
+                  , redeemDate: new Date()
+                  , isUsedCoupon: false
+                  , isDeleted: false
+                  , memberId: Member.id
+                });
+                //update คะแนน
+                const dataMember = await tbMember.update(
+                  { memberPoint: Member.memberPoint - item.points },
+                  { where: { id: Member.id } })
+              } else {
+                const _tbRedemptionProduct = await tbMemberReward.findAll({
+                  attributes: ["id"],
+                  where: {
+                    rewardType: "Product",
+                    TableHDId: RedemptionProductId.id
+                  },
+                });
+                if (_tbRedemptionProduct.length < RedemptionProductId.rewardCount) {
+                  //เพิ่มได้
+                  // ใช้คูปอง
+                  const data = await tbMemberReward.create({
+                    rewardType: "Product"
+                    , TableHDId: RedemptionProductId.id
+                    , redeemDate: new Date()
+                    , isUsedCoupon: false
+                    , isDeleted: false
+                    , memberId: Member.id
+                    , deliverStatus: "Wait"
+                  });
+                  //update คะแนน
+                  const dataMember = await tbMember.update(
+                    { memberPoint: Member.memberPoint - item.points },
+                    { where: { id: Member.id } })
+                } else {
+                  status = false
+                  msg = "ขออภัย สินค้าหมด"
+                }
+
+              }
+            }
+          } else {
+            status = false
+            msg = "ขออภัย คะแนนของคุณไม่เพียงพอ"
+          }
+
+        } else {
+          status = false
+          msg = "ขออภัย สินค้าหมดอายุ"
+        }
+      }
+    }
+  } catch (e) {
+    status = false
+    msg = e.message
+  }
+
+  res.json({
+    status: status,
+    message: msg,
+    Redemptionconditionshd: RedemptionConditionsHD,
+  });
+});
 
 module.exports = router;

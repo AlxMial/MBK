@@ -281,7 +281,19 @@ export const getRedemptionconditionshd = (s, e = () => { }, f = () => { }) => {
 export const getRedemptionconditionshdById = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/redeem/getRedemptionconditionshdById", data, s, e, f);
 };
-// InfoReward
+
+export const useCoupon = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/redeem/useCoupon", data, s, e, f);
+};
+export const useProduct = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/redeem/useProduct", data, s, e, f);
+};
+export const useGame = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/redeem/useGame", data, s, e, f);
+};
+
+
+
 
 export const getMemberpoints = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMemberPoints", s, e, f);
