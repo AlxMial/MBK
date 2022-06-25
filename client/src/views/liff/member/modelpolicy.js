@@ -24,7 +24,7 @@ const ModelPolicy = ({ isOpen, closemodel }) => {
                                 className="cursor-pointer"
                                 onClick={closemodel}
                             >
-                                <i class="flex fas fa-times" style={{ alignItems: "center" }}></i>
+                                <i className="flex fas fa-times" style={{ alignItems: "center" }}></i>
                             </label>
                         </div>
                     </div>

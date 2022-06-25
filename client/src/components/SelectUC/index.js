@@ -12,6 +12,7 @@ const SelectUC = ({ name, options, value, onChange, isDisabled, bgColor }) => {
       name={name}
       onChange={onChange}
       className={className}
+
       options={options}
       value={value}
       isDisabled={(isDisabled) ? isDisabled : false}

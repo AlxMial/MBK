@@ -45,14 +45,14 @@ const initLine = (callback, setView) => {
 const runApp = (callback, setView) => {
   if (dev) {
     Session.setLiff({
-      uid: "U17068a8797b1f7c44866067f1871826a",
+      uid: "U17068a8797b1f7c44866067f1871826f",
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {
       apiCheckRegister((res) => {
         let lifdata = {
-          uid: "U17068a8797b1f7c44866067f1871826a",
+          uid: "U17068a8797b1f7c44866067f1871826f",
           pictureUrl: null,
         }
         if (res.data.code === 200) {

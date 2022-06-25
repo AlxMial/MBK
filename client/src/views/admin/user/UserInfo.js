@@ -448,7 +448,7 @@ export default function UserInfo() {
                   <div className="w-full">
                     <div className="flex">
                       <div className="w-full lg:w-2/12">
-                        <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase px-4">
+                        <h6 className="text-green-mbk text-sm mt-3 mb-6 font-bold uppercase px-4">
                           Login Information
                         </h6>
                       </div>
@@ -791,7 +791,7 @@ export default function UserInfo() {
                   </div>
 
                   <div className="w-full">
-                    <h6 className="text-blueGray-400 text-sm mt-3 mb-6 font-bold uppercase px-4">
+                    <h6 className="text-green-mbk text-sm mt-3 mb-6 font-bold uppercase px-4">
                       User Information
                     </h6>
                   </div>

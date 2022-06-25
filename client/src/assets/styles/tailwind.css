@@ -4336,6 +4336,10 @@ input[type="number"] {
     height: 75vh;
     overflow-y: auto;
   }
+  .Overflow-Banner {
+    max-height: 58vh;
+    overflow-y: auto;
+  }
 
   .widthDigi {
     width: 120px;
@@ -4363,6 +4367,12 @@ input[type="number"] {
     height: 68vh;
     overflow-y: auto;
   }
+
+  .Overflow-Banner {
+    max-height: 50vh;
+    overflow-y: auto;
+  }
+
 
   .OverflowModal-info {
     max-height: 60vh;
@@ -4846,7 +4856,6 @@ button.bt-quantity.broder-plus {
 
 .Policy {
   /* text-align: justify; */
-
 }
 
 .Policy:after {
@@ -4854,3 +4863,18 @@ button.bt-quantity.broder-plus {
   display: inline-block;
   width: 100%;
 }
+
+#header {
+  position: relative;
+  min-height: 100%;
+}
+
+#header-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+/* #header, #header * {
+  background: rgba(40, 40, 100, 0.25);
+} */
