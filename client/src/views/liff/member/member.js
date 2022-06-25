@@ -227,7 +227,7 @@ const Member = () => {
           </TabPane>
         </Tabs>
         <div className="flex" style={{
-          height: "50px", border: "1px solid", backgroundColor: "#047a40", fontSize: "10px", justifyContent: "center",
+          height: "50px", backgroundColor: "#047a40", fontSize: "10px", justifyContent: "center",
           alignItems: "center"
         }}>
           <div>

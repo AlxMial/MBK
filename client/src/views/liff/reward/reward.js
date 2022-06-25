@@ -13,10 +13,10 @@ const Reward = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ marginTop: "-120px", position: "absolute", width: "100%" }}>
+      <div style={{ marginTop: "-200px", position: "absolute", width: "100%" }}>
         <MyPoint />
 
-        <div className="mt-10">
+        <div className="mt-2">
           <div style={{ width: "90%", margin: "auto" }}>
             <div className="flex h-10">
               <div className="bg-green-mbk" style={{ width: "10px" }}></div>

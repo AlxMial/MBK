@@ -5,6 +5,7 @@ import {
 } from "@services/liff.services";
 import ImageUC from "components/Image/index";
 import Spinner from "components/Loadings/spinner/Spinner";
+import { path } from "services/liff.services";
 // components
 
 const Product = () => {
@@ -48,14 +49,15 @@ const Product = () => {
         </div>
         <div className="line-scroll" style={{
           width: "90%", margin: "auto", height: "calc(100vh - 300px)",
-          // overflow: "scroll"
         }}>
           {MyProduct.length > 0 ?
             <div className="w-full mt-2">
               <div style={{ width: "90%", margin: "auto" }}> </div>
               {[...MyProduct].map((e, i) => {
                 return (
-                  <div key={i} className="flex mb-2">
+                  <div key={i} className="flex mb-2" onClick={() => {
+                    history.push(path.infoproduct.replace(":id", e.productId))
+                  }}>
                     <div style={{ width: "30%" }}>
                       <div style={{ width: "100px", height: "120px" }}>
                         <ImageUC
@@ -92,7 +94,7 @@ const Product = () => {
                   </div>
                 )
               })}
-              
+
             </div> :
             <div className="flex mt-4" style={{
               height: "50px",

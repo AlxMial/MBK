@@ -1098,6 +1098,7 @@ router.get("/getMyProduct", validateLineToken, async (req, res) => {
             /// 1 = เตรียมจัดส่ง 2 = อยู่ระหว่างจัดส่ง 3 = ส่งแล้ว
             const data = {
               id: Encrypt.EncodeKey(_RedemptionProduct.id)
+              , productId: Encrypt.EncodeKey(_product[i].id)
               , productName: productName
               , trackingNo: trackingNo
               , description: description
@@ -1198,7 +1199,70 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
   });
 });
 
+router.post("/getMyProductById", validateLineToken, async (req, res) => {
+  let status = true;
+  let msg;
+  let Member;
+  let ProductItem;
 
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    const productId = Encrypt.DecodeKey(req.body.Id);
+    Member = await tbMember.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
+    });
+    if (Member) {
+      let _product = await tbMemberReward.findOne({
+        attributes: [
+          "id",
+          "rewardType",
+          "TableHDId",
+          "deliverStatus",
+          "redeemDate",
+          "isUsedCoupon",
+          "trackingNo",
+        ],
+        where: {
+          memberId: Member.id,
+          rewardType: "Product",
+          id: productId
+        },
+      });
+      if (_product) {
+        const product = _product.dataValues
+        const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
+          attributes: ["id", "productName", "description"],
+          where: {
+            isDeleted: false,
+            id: product.TableHDId,
+          },
+        });
+        const deliverStatus = product.deliverStatus;
+        if (_tbRedemptionProduct) {
+          const tbRedemptionProduct = _tbRedemptionProduct.dataValues
+          ProductItem = {
+            id: Encrypt.EncodeKey(_tbRedemptionProduct.id),
+            productName: tbRedemptionProduct.productName, description: tbRedemptionProduct.description
+            , trackingNo: product.trackingNo
+            , status: deliverStatus == "Wait" ? 1 : deliverStatus == "InTransit" ? 2 : 3
+          }
+        }
+      }
+    }
+
+
+  } catch (e) {
+    status = false;
+    msg = e.message;
+  }
+
+  return res.json({
+    status: status,
+    msg: msg,
+    Product: ProductItem,
+  });
+});
 
 router.post("/checkDuplicate", async (req, res) => {
   const Member = await tbMember.findOne({
