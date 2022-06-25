@@ -1094,7 +1094,7 @@ router.get("/getMyProduct", validateLineToken, async (req, res) => {
             const productName = _RedemptionProduct.productName;
             const trackingNo = _product[i].trackingNo;
             const deliverStatus = _product[i].deliverStatus;
-            const description = _product[i].description
+            const description = _RedemptionProduct.description
             /// 1 = เตรียมจัดส่ง 2 = อยู่ระหว่างจัดส่ง 3 = ส่งแล้ว
             const data = {
               id: Encrypt.EncodeKey(_RedemptionProduct.id)
@@ -1103,9 +1103,7 @@ router.get("/getMyProduct", validateLineToken, async (req, res) => {
               , description: description
               , status: deliverStatus == "Wait" ? 1 : deliverStatus == "InTransit" ? 2 : 3
             }
-            if (product.length < 2) {
-              product.push(data)
-            }
+            product.push(data)
           }
         }
       }

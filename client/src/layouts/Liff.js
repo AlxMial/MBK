@@ -126,6 +126,7 @@ const LiffAPP = () => {
     pathname.toLowerCase().includes("member") ||
     pathname.toLowerCase().includes("point") ||
     pathname.toLowerCase().includes("/line/coupon") ||
+    pathname.toLowerCase().includes("/line/product") ||
     pathname.toLowerCase().includes("/reward")
   ) {
     bg = "180px";

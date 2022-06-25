@@ -13,6 +13,8 @@ import coupon from "views/liff/coupon/coupon";
 import infocoupon from "views/liff/coupon/infocoupon";
 import usecouponUC from "views/liff/coupon/usecouponUC";
 import reward from "views/liff/reward/reward";
+import product from "views/liff/product/product";
+
 
 import rewardRedeem from "views/liff/reward/reward.redeem";
 import rewardSpin from "views/liff/reward/reward.spin";
@@ -69,6 +71,7 @@ export const path = {
 
   infocoupon: "/line/infocoupon/:id",
   usecouponUC: "/line/usecouponUC/:id",
+  product: "/line/product",
 
 };
 export const routes = [
@@ -112,7 +115,10 @@ export const routes = [
     path: path.usecouponUC,
     component: usecouponUC,
   },
-
+  {
+    path: path.product,
+    component: product
+  },
   {
     path: path.reward,
     component: reward,
@@ -242,6 +248,9 @@ export const getMyCoupon = (s, e = () => { }, f = () => { }) => {
 };
 export const getCouponByID = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/members/getCouponByID", data, s, e, f);
+};
+export const getMyProduct = (s, e = () => { }, f = () => { }) => {
+  httpGet("/members/getMyProduct", s, e, f);
 };
 
 

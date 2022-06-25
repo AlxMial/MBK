@@ -47,7 +47,7 @@ const MyAward = () => {
         {couponItem.length > 0 ?
           couponItem.map((e, i) => {
             return (
-              <div className="w-full flex mb-2">
+              <div key={i} className="w-full flex mb-2">
                 <div className="flex" style={{ width: "30%", justifyContent: "center" }}>
                   <div style={{ width: "80px", height: "80px" }}>
                     <ImageUC
@@ -78,7 +78,7 @@ const MyAward = () => {
             ของสัมนาคุณของฉัน
           </div>
           <div style={{ width: "50%", textAlign: "end", color: "#ddd" }} onClick={() => {
-            history.push(path.myorder.replace(":id", "1"))
+            history.push(path.product)
           }}>{"ดูทั้งหมด >"}</div>
         </div>
 
@@ -102,11 +102,11 @@ const MyAward = () => {
                   <div className="absolute w-full" style={{ bottom: "0", color: "#ddd" }}>
                     <div className="flex relative w-full" style={{ color: e.status < 3 ? "#c7b15e" : "#007a40" }}>
                       {e.status == 1 ?
-                        <i class="flex fas fa-hourglass-end  px-2" style={{ alignItems: "center" }}></i>
+                        <i className="flex fas fa-hourglass-end  px-2" style={{ alignItems: "center" }}></i>
                         : e.status == 2 ?
-                          < i class="flex fas fa-truck px-2" style={{ alignItems: "center" }}></i>
+                          < i className="flex fas fa-truck px-2" style={{ alignItems: "center" }}></i>
                           :
-                          <i class="flex fas fa-check-circle px-2" style={{ alignItems: "center" }}></i>
+                          <i className="flex fas fa-check-circle px-2" style={{ alignItems: "center" }}></i>
                       }
 
                       <div>{e.status == 1 ? "เตรียมจัดส่ง" : e.status == 2 ? "อยู่ระหว่างจัดส่ง" : "ส่งแล้ว"}</div>
@@ -120,7 +120,12 @@ const MyAward = () => {
               </div>
             )
           })
-          : null}
+          : <div className="flex" style={{
+            height: "50px",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "#ddd"
+          }}>ยังไม่มีของสัมนาคุณ</div>}
 
       </div>
     </>
