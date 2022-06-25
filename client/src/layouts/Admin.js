@@ -1,5 +1,5 @@
-import React from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import React,{useEffect} from "react";
+import { Switch, Route, Redirect,useHistory } from "react-router-dom";
 // components
 import AdminNavbar from "components/Navbars/AdminNavbar.js";
 import Sidebar from "components/Sidebar/Sidebar.js";
@@ -27,8 +27,15 @@ import CollectPointsReport from "views/admin/report/CollectPointsReport";
 import CampaignRewardReport from "views/admin/report/CampaignRewardReport";
 import CampaignExchangeHistoryReport from "views/admin/report/CampaignExchangeHistoryReport";
 export default function Admin() {
-
+  let history = useHistory();
   const { height, width } = useWindowDimensions();
+
+  useEffect(() => {
+    history.push(sessionStorage.getItem('linkPage'));
+    //confirmotp();
+  }, []);
+
+
   return (
     <>
       <ContentLoader />

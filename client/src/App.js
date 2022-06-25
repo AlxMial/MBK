@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
-import { ToastProvider } from 'react-toast-notifications';
+import { ToastProvider } from "react-toast-notifications";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "assets/styles/tailwind.css";
 import axios from "services/axios";
@@ -11,27 +11,26 @@ import { AuthContext } from "./services/AuthContext";
 // views without layouts
 import { connect, Provider } from "react-redux";
 import { setLocale } from "react-redux-i18n";
-import useGaTracker from './services/useGaTracker'
+import useGaTracker from "./services/useGaTracker";
 import Liff from "layouts/Liff";
 import configureStore, { history } from "redux/store";
-import { ConnectedRouter } from 'connected-react-router';
+import { ConnectedRouter } from "connected-react-router";
 import { GetPermissionByUserName } from "services/Permission";
 
 export const store = configureStore();
 
-const getPermission = async  () =>{
-
+const getPermission = async () => {
   const role = await GetPermissionByUserName();
-
-  if(!role.data.error)
-  if (role.data.data.filter((e) => e.id === 1).length > 0) {
-    history.push("/admin/members");
-  } else if (role.data.data.filter((e) => e.id === 10).length > 0) {
-    history.push("/admin/users");
-  } else {
-    history.push("/admin/empty");
-  }
-}
+  const session = sessionStorage.getItem('linkPage');
+  if (!role.data.error)
+    if (role.data.data.filter((e) => e.id === 10).length > 0) {
+      history.push((session) ? session :"/admin/users" );
+    } else if (role.data.data.filter((e) => e.id === 1).length > 0) {
+      history.push((session) ? (session === "/admin/users") ? "/admin/members" : session : "/admin/users" );
+    } else {
+      history.push("/admin/empty");
+    }
+};
 
 function App() {
   const [authState, setAuthState] = useState({
@@ -43,23 +42,19 @@ function App() {
 
   useGaTracker();
 
-  useEffect( () => {
-    axios
-      .get("/users/auth")
-      .then((response) => {
-        if (response.data.error) {
-          setAuthState({ ...authState, status: false });
-        } else {
-
-          setAuthState({
-            email: response.data.email,
-            id: response.data.id,
-            status: true,
-          });
-        }
-      });
-      getPermission();
-
+  useEffect(() => {
+    axios.get("/users/auth").then((response) => {
+      if (response.data.error) {
+        setAuthState({ ...authState, status: false });
+      } else {
+        setAuthState({
+          email: response.data.email,
+          id: response.data.id,
+          status: true,
+        });
+      }
+    });
+    getPermission();
   }, []);
 
   return (
@@ -76,10 +71,10 @@ function App() {
               </Switch>
             </ToastProvider>
           </AuthContext.Provider>
-        </div >
+        </div>
       </ConnectedRouter>
     </Provider>
-  )
+  );
 }
 
 const mapStateToProps = (state) => ({

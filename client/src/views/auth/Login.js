@@ -81,6 +81,7 @@ export default function Login() {
             status: true,
           });
           // window.location.replace('/admin/users');
+          sessionStorage.setItem('linkPage',response.data.link);
           history.push(response.data.link);
           //set loading
           setTimeout(() => {

@@ -2,7 +2,7 @@ import React from 'react'
 import './index.scss'
 import useWindowDimensions from "services/useWindowDimensions";
 
-const ProfilePictureUC = ({ onChange, hoverText, id, src, className = '' }) => {
+const ProfilePictureUC = ({ onChange, hoverText, id , src, className = '' }) => {
     const { width } = useWindowDimensions();
     const _imgSrc = src ? src : require('../../assets/img/mbk/no-image.png').default;
     return (

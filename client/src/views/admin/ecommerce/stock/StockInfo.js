@@ -23,6 +23,7 @@ import ButtonUCSaveModal from "components/ButtonUCSaveModal";
 import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 import ModalHeader from "views/admin/ModalHeader";
+import ButtonModalUC from "components/ButtonModalUC";
 
 const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, isImageCoverNull = false }) => {
   Modal.setAppElement("#root");
@@ -85,11 +86,6 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
     newValue,
     actionMeta
   ) => {
-
-    // console.group('Value Changed');
-    // console.log(newValue);
-    // console.log(`action: ${actionMeta.action}`);
-    // console.groupEnd();
     const _categoryValue = productCategoryList && productCategoryList.filter(item => item.value === newValue);
     if (_categoryValue) {
       setCategoryValue(_categoryValue[0]);
@@ -143,7 +139,7 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
           <div className="w-full flex-auto mt-2">
             <form onSubmit={formik.handleSubmit}>
               <ModalHeader title="เพิ่มสินค้า" handleModal={handleModal} />
-              <div className="flex flex-wrap px-24 py-10 justify-center Overflow-info">
+              <div className="flex flex-wrap px-24 py-10 justify-center Overflow-Banner">
                 <div className="w-full lg:w-12/12 px-4 margin-auto-t-b">
                   <div className="flex flex-wrap">
                     {/* รูปสินค้า */}

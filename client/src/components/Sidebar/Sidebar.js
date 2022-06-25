@@ -43,6 +43,10 @@ export default function Sidebar() {
     setMenuList(role.data.data);
   }
 
+  const onSession =(link) =>{
+    sessionStorage.setItem('linkPage',link);
+  } 
+
   useEffect(() => {
     fetchPermission();
   }, []);
@@ -159,8 +163,8 @@ export default function Sidebar() {
             {/* Navigation */}
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
               <li className={"items-center" + ((menuList.filter(e => e.id.toString().includes(10)).length > 0) ? " " : " hidden")}>
-                <Link to="/admin/users" className={linkClassName("/admin/users")}>
-                  <i className={iClassName("/admin/users", 'fas fa-user-friends')}></i>
+                <Link to="/admin/users" onClick={() => (onSession("/admin/users"))}  className={linkClassName("/admin/users")}>
+                  <i  className={iClassName("/admin/users", 'fas fa-user-friends')}></i>
                   จัดการผู้ดูแลระบบ
                 </Link>
               </li>
@@ -169,7 +173,7 @@ export default function Sidebar() {
                 {menuList.filter(m => m.module === "crm").map(item => {
                   return (
                     <li className="items-center" key={item.id}>
-                      <Link to={item.link} className={linkClassName(item.link)}>
+                      <Link to={item.link}  onClick={()=>(onSession(item.link))} className={linkClassName(item.link)}>
                         <i className={iClassName(item.link, item.icon)}></i>
                         {item.label}
                       </Link>
@@ -182,7 +186,7 @@ export default function Sidebar() {
                 {menuList.filter(m => m.module === "ecommerce").map(item => {
                   return (
                     <li className="items-center" key={item.id}>
-                      <Link to={item.link} className={linkClassName(item.link)}>
+                      <Link to={item.link} onClick={()=>(onSession(item.link))} className={linkClassName(item.link)}>
                         <i className={iClassName(item.link, item.icon)}></i>
                         {item.label} 
                       </Link>
@@ -195,7 +199,7 @@ export default function Sidebar() {
                 {menuList.filter(m => m.module === "report").map(item => {
                   return (
                     <li className="items-center" key={item.id}>
-                      <Link to={item.link} className={linkClassName(item.link)}>
+                      <Link to={item.link}  onClick={() =>(onSession(item.link))} className={linkClassName(item.link)}>
                         <i className={iClassName(item.link, item.icon)}></i>
                         {item.label}
                       </Link>
