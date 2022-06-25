@@ -1001,8 +1001,9 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
                   "isNotExpired",
                   "startDate",
                   "expiredDate",
+                  "isDeleted"
                 ],
-                where: { isDeleted: false },
+                // where: { isDeleted: false },
               },
             ],
           });
@@ -1014,7 +1015,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
               await tbRedemptionConditionsHD.findOne({
                 attributes: ["points"],
                 where: {
-                  isDeleted: false,
+                  // isDeleted: false,
                   id: _RedemptionCoupon.redemptionConditionsHDId,
                 },
               });
@@ -1027,6 +1028,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
               , isUsedCoupon: _coupon[i].isUsedCoupon
               , points: _tbRedemptionConditionsHD.dataValues.points
               , expiredDate: _RedemptionCoupon.expiredDate
+              , isDeleted: _RedemptionCoupon.isDeleted
               , CouponCodeId: Encrypt.EncodeKey(_coupon[i].TableHDId)
             }
             coupon.push(data)

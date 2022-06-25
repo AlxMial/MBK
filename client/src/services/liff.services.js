@@ -12,7 +12,10 @@ import point from "views/liff/point";
 import coupon from "views/liff/coupon/coupon";
 import infocoupon from "views/liff/coupon/infocoupon";
 import usecouponUC from "views/liff/coupon/usecouponUC";
+
 import reward from "views/liff/reward/reward";
+import inforeward from "views/liff/reward/inforeward";
+
 
 import product from "views/liff/product/product";
 import infoproduct from "views/liff/product/infoproduct";
@@ -48,7 +51,9 @@ export const path = {
   updateprofile: "/line/updateprofile",
   point: "/line/point",
   coupon: "/line/coupon",
+
   reward: "/line/reward",
+  inforeward: "/line/inforeward/:id",
 
   rewardredeem: "/line/rewardredeem/:id",
   rewardspin: "/line/rewardspin/:id",
@@ -98,6 +103,8 @@ export const routes = [
     path: path.getreward,
     component: getreward,
   },
+
+
   {
     path: path.updateprofile,
     component: updateprofile,
@@ -130,6 +137,10 @@ export const routes = [
   {
     path: path.reward,
     component: reward,
+  },
+  {
+    path: path.inforeward,
+    component: inforeward,
   },
 
   {
@@ -264,6 +275,13 @@ export const getMyProductById = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/members/getMyProductById", data, s, e, f);
 };
 
+export const getRedemptionconditionshd = (s, e = () => { }, f = () => { }) => {
+  httpGet("/redeem/getRedemptionconditionshd", s, e, f);
+};
+export const getRedemptionconditionshdById = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/redeem/getRedemptionconditionshdById", data, s, e, f);
+};
+// InfoReward
 
 export const getMemberpoints = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMemberPoints", s, e, f);

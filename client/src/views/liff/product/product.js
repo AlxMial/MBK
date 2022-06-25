@@ -109,7 +109,8 @@ const Product = () => {
                 }}></i>
                 <div> ยังไม่มีของสมนาคุณ </div>
               </div>
-            </div>}
+            </div>
+          }
 
         </div>
       </div>
