@@ -60,7 +60,7 @@ const MyAward = () => {
                   </div>
                 </div>
                 <div className="relative" style={{ width: "70%" }}>
-                  <div className="font-bold"> {e.couponName}</div>
+                  <div className="font-bold line-clamp-1"> {e.couponName}</div>
                   <div className="absolute" style={{ bottom: "0", color: "#ddd" }}> {"ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add("years", 543).format("DD MMM YYYY")}</div>
                 </div>
               </div>
@@ -91,15 +91,31 @@ const MyAward = () => {
                     <ImageUC
                       find={1}
                       relatedid={e.id}
-                      relatedtable={["stock1"]}
+                      relatedtable={["tbRedemptionProduct"]}
                       alt="flash_sale"
                       className=" border-2 border-blueGray-50 animated-img"
                     ></ImageUC>
                   </div>
                 </div>
                 <div className="relative" style={{ width: "70%" }}>
-                  <div> {e.name}</div>
-                  <div className="absolute" style={{ bottom: "0", color: "#ddd" }}> {"ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add("years", 543).format("DD MMM YYYY")}</div>
+                  <div className="font-bold line-clamp-1"> {e.productName}</div>
+                  <div className="absolute w-full" style={{ bottom: "0", color: "#ddd" }}>
+                    <div className="flex relative w-full" style={{ color: e.status < 3 ? "#c7b15e" : "#007a40" }}>
+                      {e.status == 1 ?
+                        <i class="flex fas fa-hourglass-end  px-2" style={{ alignItems: "center" }}></i>
+                        : e.status == 2 ?
+                          < i class="flex fas fa-truck px-2" style={{ alignItems: "center" }}></i>
+                          :
+                          <i class="flex fas fa-check-circle px-2" style={{ alignItems: "center" }}></i>
+                      }
+
+                      <div>{e.status == 1 ? "เตรียมจัดส่ง" : e.status == 2 ? "อยู่ระหว่างจัดส่ง" : "ส่งแล้ว"}</div>
+                      {e.trackingNo != null ?
+                        <div className="absolute" style={{ right: "0" }}>{e.trackingNo}</div>
+                        : null}
+                    </div>
+
+                  </div>
                 </div>
               </div>
             )

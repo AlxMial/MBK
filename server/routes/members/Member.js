@@ -12,6 +12,7 @@ const {
   tbRedemptionCoupon,
   tbCouponCode,
   tbRedemptionConditionsHD,
+  tbRedemptionProduct
 } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
@@ -806,13 +807,13 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
   });
 });
 
-/// คูปอง + ของรางวัลหน้า member
+/// คูปอง รวม product อย่างละ 2 row
 router.get("/getMyReward", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
   let Member;
   let coupon = [];
-  let product;
+  let product = [];
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
     Member = await tbMember.findOne({
@@ -870,8 +871,8 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
               _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues;
 
             if (
-              _RedemptionCoupon.startDate >= new Date() &&
-              _RedemptionCoupon.expiredDate <= new Date()
+              _RedemptionCoupon.startDate <= new Date() &&
+              _RedemptionCoupon.expiredDate >= new Date()
             ) {
               _coupon[i].dataValues.couponName = _RedemptionCoupon.couponName;
               _coupon[i].dataValues.expiredDate = _RedemptionCoupon.expiredDate;
@@ -886,23 +887,53 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
           }
         }
       }
-      // let _coupon = [{ name: "test data coupon 1", StartDate: new Date(), EndDate: new Date() }, { name: "test data coupon 2", StartDate: new Date(), EndDate: new Date() }]
-      // coupon = _coupon
-      //Product
-      // let _product = await tbMemberReward.findAll({ limit: 2, attributes: ["id", "rewardType", "tableId", "deliverStatus", "redeemDate", "isUsedCoupon", "trackingNo"], where: { memberId: Member.id } })
-      let _product = [
-        {
-          name: "test data product 1",
-          StartDate: new Date(),
-          EndDate: new Date(),
+
+      //product
+      let _product = await tbMemberReward.findAll({
+        attributes: [
+          "id",
+          "rewardType",
+          "TableHDId",
+          "deliverStatus",
+          "redeemDate",
+          "isUsedCoupon",
+          "trackingNo",
+        ],
+        where: {
+          memberId: Member.id,
+          rewardType: "Product",
         },
-        {
-          name: "test data product 2",
-          StartDate: new Date(),
-          EndDate: new Date(),
-        },
-      ];
-      product = _product;
+      });
+      if (_product) {
+        for (var i = 0; i < _product.length; i++) {
+          const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
+            attributes: ["id", "productName"],
+            where: {
+              isDeleted: false,
+              id: _product[i].TableHDId,
+            },
+
+          });
+          if (_tbRedemptionProduct) {
+            const _RedemptionProduct =
+              _tbRedemptionProduct.dataValues;
+
+            const productName = _RedemptionProduct.productName;
+            const trackingNo = _product[i].trackingNo;
+            const deliverStatus = _product[i].deliverStatus;
+            /// 1 = เตรียมจัดส่ง 2 = อยู่ระหว่างจัดส่ง 3 = ส่งแล้ว
+            const data = {
+              id: Encrypt.EncodeKey(_RedemptionProduct.id)
+              , productName: productName
+              , trackingNo: trackingNo
+              , status: deliverStatus == "Wait" ? 1 : deliverStatus == "InTransit" ? 2 : 3
+            }
+            if (product.length < 2) {
+              product.push(data)
+            }
+          }
+        }
+      }
     }
   } catch (e) {
     status = false;
@@ -917,13 +948,13 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
   });
 });
 
-//หน้า คูปอง
+//หน้า Coupon 
 router.get("/getMyCoupon", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
   let Member;
   let coupon = [];
-  let product;
+  // let product;
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
     Member = await tbMember.findOne({
@@ -1002,6 +1033,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
           }
         }
       }
+
     }
   } catch (e) {
     status = false;
@@ -1012,9 +1044,85 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
     status: status,
     msg: msg,
     coupon: coupon,
+    // product: product,
+  });
+});
+
+router.get("/getMyProduct", validateLineToken, async (req, res) => {
+  let status = true;
+  let msg;
+  let Member;
+  let product = [];
+  // let product;
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    Member = await tbMember.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
+    });
+    if (Member) {
+      //Coupon
+      let _product = await tbMemberReward.findAll({
+        attributes: [
+          "id",
+          "rewardType",
+          "TableHDId",
+          "deliverStatus",
+          "redeemDate",
+          "isUsedCoupon",
+          "trackingNo",
+        ],
+        where: {
+          memberId: Member.id,
+          rewardType: "Product",
+        },
+      });
+      if (_product) {
+        for (var i = 0; i < _product.length; i++) {
+          const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
+            attributes: ["id", "productName", "description"],
+            where: {
+              isDeleted: false,
+              id: _product[i].TableHDId,
+            },
+
+          });
+          if (_tbRedemptionProduct) {
+            const _RedemptionProduct =
+              _tbRedemptionProduct.dataValues;
+
+            const productName = _RedemptionProduct.productName;
+            const trackingNo = _product[i].trackingNo;
+            const deliverStatus = _product[i].deliverStatus;
+            const description = _product[i].description
+            /// 1 = เตรียมจัดส่ง 2 = อยู่ระหว่างจัดส่ง 3 = ส่งแล้ว
+            const data = {
+              id: Encrypt.EncodeKey(_RedemptionProduct.id)
+              , productName: productName
+              , trackingNo: trackingNo
+              , description: description
+              , status: deliverStatus == "Wait" ? 1 : deliverStatus == "InTransit" ? 2 : 3
+            }
+            if (product.length < 2) {
+              product.push(data)
+            }
+          }
+        }
+      }
+
+    }
+  } catch (e) {
+    status = false;
+    msg = e.message;
+  }
+
+  return res.json({
+    status: status,
+    msg: msg,
     product: product,
   });
 });
+
 
 router.post("/getCouponByID", validateLineToken, async (req, res) => {
 
