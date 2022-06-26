@@ -23,6 +23,15 @@ export default function CampaignExchangeHistoryReport() {
     { value: "2", type: "E-Commerce", status: "รับคะแนน" },
     { value: "3", type: "Register", status: "รับคะแนน" },
   ];
+
+  const redemptionType = [
+    { value: "1", label: "Standard" },
+    { value: "2", label: "Game" },
+  ];
+  const rewardType = [
+    { value: "1", label: "E-Coupon" },
+    { value: "2", label: "สินค้า" },
+  ];
   const formSerch =  useFormik({
     initialValues:  { 
       inputSerch: "",    
@@ -141,31 +150,20 @@ export default function CampaignExchangeHistoryReport() {
     setIsLoading(false);
   };
 
-  const fetchPermission = async () => {
-    // await axios.get("report/ShowCollectPoints").then((response) => {
-    //     // dispatch(fetchSuccess());        
-    //     const dateNow = new Date();
-    //     dateNow.setHours(0,0,0,0);
-    //     if (response.data.length > 0) {
-    //       response.data.forEach(e => {
-    //         const datatype = listCampaignType.find(l => l.value === e.pointTypeId);
-    //         if(datatype) {
-    //           e.status = datatype.status;
-    //           e.pointType = datatype.type;
-    //           e.startDate = e.pointTypeId === "1" ? e.startDate : "";
-    //           e.endDate = e.pointTypeId === "1" ? e.endDate : "";
-    //         }
-    //       });
-                 
-    //       setListSerch(response.data);
-    //       setListCampaign(response.data);
-    //     }
-    //   });
-  };
+  
 
   useEffect(() => {
-    fetchPermission();
-   
+      axios.get("report/ShowCampaignExchange").then((response) => {
+        if (response.data.length > 0) {
+          response.data.forEach(e => {
+            e.redemptionTypeStr = (e.redemptionType !== "" ? (redemptionType.find(el => el.value === e.redemptionType).label) : ""); 
+            e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : ""); 
+          });
+                  
+          setListSerch(response.data);
+          setListCampaignExchange(response.data);
+        }
+      });   
   }, []);
 
   return (
@@ -446,10 +444,10 @@ export default function CampaignExchangeHistoryReport() {
                           className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
                           <span
-                            title={value.pointCodeName}
+                            title={value.redemptionName}
                             className="text-gray-mbk  hover:text-gray-mbk "
                           >
-                            {value.pointCodeName}
+                            {value.redemptionName}
                           </span>
                           <span className="details">more info here</span>
                         </td>
@@ -457,35 +455,40 @@ export default function CampaignExchangeHistoryReport() {
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          { value.pointTypeId === "1" ? moment(value.startDate).format("DD/MM/YYYY") : ""}
+                          { moment(value.startDate).format("DD/MM/YYYY")}
                           </span>
                         </td>
                         <td                         
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          { value.pointTypeId === "1" ? moment(value.endDate).format("DD/MM/YYYY") : ""}
+                          {moment(value.endDate).format("DD/MM/YYYY")}
                           </span>
                         </td>
                         <td                          
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.pointType}
+                          {value.redemptionTypeStr}
                           </span>
                         </td>
                         <td                         
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.memberName}
+                          {value.rewardTypeStr}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.phone}
+                            {value.memberName}
                           </span>
                         </td>                       
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
+                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                            {value.phone}
+                          </span>
+                        </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
                             {value.code}
@@ -493,28 +496,23 @@ export default function CampaignExchangeHistoryReport() {
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.point}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.status}
+                            {value.points}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {moment(value.exchangedate).format("DD/MM/YYYY")}
+                          {value.status}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {moment(value.exchangedate).format("DD/MM/YYYY")}
+                          {moment(value.redeemDate).format("DD/MM/YYYY")}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {moment(value.exchangedate).format("DD/MM/YYYY")}
+                           {value.deliverStatus}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {moment(value.exchangedate).format("DD/MM/YYYY")}
+                           {value.trackingNo}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {moment(value.exchangedate).format("DD/MM/YYYY")}
+                          ดูที่อยู่
                         </td>
                       </tr>
                     );

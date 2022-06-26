@@ -96,7 +96,6 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
   tbRedemptionCoupon.belongsTo(tbRedemptionConditionsHD, { foreignKey: "redemptionConditionsHDId" });
   tbRedemptionProduct.belongsTo(tbRedemptionConditionsHD, { foreignKey: "redemptionConditionsHDId" });
   tbRedemptionCoupon.belongsTo(tbCouponCode, { foreignKey: "id" });
-  tbRedemptionProduct.belongsTo(tbMemberReward, { foreignKey: "id" });  
   const listMemberReward = await tbMemberReward.findAll({
     where: { isDeleted: false },
   });
@@ -192,6 +191,102 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
     });
     res.json(tutorials);
   }); 
+});
+
+router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
+  tbRedemptionCoupon.belongsTo(tbRedemptionConditionsHD, { foreignKey: "redemptionConditionsHDId" });
+  tbRedemptionProduct.belongsTo(tbRedemptionConditionsHD, { foreignKey: "redemptionConditionsHDId" });
+  tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
+  const listRedemptionProduct = await tbRedemptionProduct.findAll({
+    where: { isDeleted: false },
+    include: [    
+      { 
+        model: tbRedemptionConditionsHD,
+        where: { isDeleted: false},
+        required: false,
+      }
+  ]
+  });
+  const listCouponCode = await tbCouponCode.findAll({
+    where: { isDeleted: false , isUse: true},
+    include: [
+      { 
+        model: tbRedemptionCoupon,
+        where: { isDeleted: false},
+        required: false,
+        include: [
+          { 
+            model: tbRedemptionConditionsHD,
+            where: { isDeleted: false},
+            required: false,
+          }
+        ]
+      },     
+  ]
+  }); 
+  tbMemberReward.belongsTo(tbMember, { foreignKey: "memberId" });
+  tbMemberReward.findAll({
+    where: { isDeleted: false },
+    include: [
+      {
+        model: tbMember,
+        where: { isDeleted: false },
+        required: false,
+      },      
+    ],
+  }).then((objs) => {
+    let tutorials = [];
+    objs.forEach((obj) => {
+      const tb_member =  obj.tbMember !== null ? obj.tbMember : null;
+      let deliverStatus = "", trackingNo = "", code = "", status = false;
+      let redemptionName = "", rewardType = "", redemptionType = "", points = "";
+      const fullname = tb_member !== null ? (Encrypt.DecodeKey(tb_member.firstName) + ' ' + Encrypt.DecodeKey(tb_member.lastName)) : "";
+      if(obj.rewardType === "Coupon") {
+        const lCouponCode = listCouponCode.filter(e => e.id.toString() === obj.TableHDId);
+        if(lCouponCode.length > 0) {
+          const rdCupon = lCouponCode[0].tbRedemptionCoupon;
+          status = (!rdCupon.iscancel && lCouponCode[0].isUse) ? 1 : 0;
+          code = Encrypt.DecodeKey(lCouponCode[0].codeCoupon);
+          if(rdCupon !== null && rdCupon.tbRedemptionConditionsHD !== null) {
+            redemptionName = rdCupon.tbRedemptionConditionsHD.redemptionName;
+            redemptionType = rdCupon.tbRedemptionConditionsHD.redemptionType;
+            rewardType = rdCupon.tbRedemptionConditionsHD.rewardType;
+            points =  rdCupon.tbRedemptionConditionsHD.points;
+          }
+        }
+      } else {
+        const lRedemptionProduct = listRedemptionProduct.filter(e => e.id.toString() === obj.TableHDId);
+        if(lRedemptionProduct.length > 0) {
+          const rwHD = lRedemptionProduct[0].tbRedemptionConditionsHD;
+          deliverStatus = obj.deliverStatus;
+          status =  obj.isUsedCoupon ? 1 : 0;
+          trackingNo = obj.trackingNo;
+          if(rwHD !== null) {
+            redemptionName = rwHD.redemptionName;
+            redemptionType = rwHD.redemptionType;
+            rewardType = rwHD.rewardType;
+            points =  rwHD.points;
+          }
+        }
+      }
+      tutorials.push({
+          code: code,
+          redemptionName: redemptionName,
+          redemptionType: redemptionType,
+          rewardType: rewardType,
+          startDate:  obj.startDate,
+          endDate:  obj.endDate ,
+          memberName: fullname,
+          phone   : (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : ""),   
+          deliverStatus : deliverStatus,
+          trackingNo: trackingNo,
+          points: points,
+          redeemDate: obj.redeemDate,
+          status: status
+        });  
+    });
+    res.json(tutorials);
+  });  
 });
 
 router.get("/exportExcel/:id", validateToken, async (req, res) => {  
