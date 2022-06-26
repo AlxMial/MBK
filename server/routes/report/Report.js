@@ -83,37 +83,54 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
   });  
 });
 
-router.get("/exportExcel/:id", validateToken, async (req, res) => {
-  tbMember.hasMany(tbMemberPoint, { foreignKey: "id" });
-  tbPointCodeDT.belongsTo(tbMember, { foreignKey: "memberId" }); 
-  tbPointCodeDT.belongsTo(tbMemberPoint, { foreignKey: "memberId" });  
+router.get("/exportExcel/:id", validateToken, async (req, res) => {  
+  tbPointCodeDT.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });
+  tbMemberPoint.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });
+  tbMemberPoint.belongsTo(tbMember, { foreignKey: "tbMemberId" });  
     const id = req.params.id;
     tbPointCodeDT.findAll({
          where: { tbPointCodeHDId: id , isDeleted: false},
-         include: [
+         include: [          
           {
-            model: tbMember,
-            where: { isDeleted: false },
-            required: false,
-          },
-          {
-            model: tbMemberPoint,
-            where: { isDeleted: false },
-            required: false,
+            model: tbPointCodeHD,
+            where: { isDeleted: false, id: id  },
+            include: [
+              {
+                model: tbMemberPoint,
+                where: { isDeleted: false, tbPointCodeHDId: id},
+                include: [
+                  {
+                    model: tbMember,
+                    where: { isDeleted: false},
+                  },
+                ]
+              },
+            ]
           },
         ],            
          }).then((objs) => {
       let tutorials = [];
       objs.forEach((obj) => {
-        const tb_member =  obj.tbMember !== null ? obj.tbMember : null;
-        const tb_memberPoint =  obj.tbMemberPoint !== null ? obj.tbMemberPoint : null;
-        const fullname = tb_member !== null ? (Encrypt.DecodeKey(tb_member.firstName) + ' ' + Encrypt.DecodeKey(tb_member.lastName)) : "";
+        let fullname = "";
+        let redeemDate = "";
+        const code = Encrypt.DecodeKey(obj.code).toUpperCase();
+        if(obj.tbPointCodeHD.tbMemberPoints.length > 0) {
+         Encrypt.decodePointCode(obj.tbPointCodeHD.tbMemberPoints);
+         tbMemberPoints = obj.tbPointCodeHD.tbMemberPoints.find(el => el.code.toUpperCase() === code);
+          if(tbMemberPoints !== undefined) {
+            redeemDate = tbMemberPoints.redeemDate;
+              if(tbMemberPoints.tbMember !== undefined) {
+               const memeber = Encrypt.decryptAllData(tbMemberPoints.tbMember);
+               fullname = memeber.firstName + " " + memeber.lastName
+              } 
+          }         
+        }
         tutorials.push({
           code: Encrypt.DecodeKey(obj.code).toUpperCase(),
           isUse: obj.isUse ? "ใช้งาน" : "ยังไม่ได้ใช้งาน",
           isExpire: obj.isExpire ? "หมดอายุ" : "ยังไม่หมดอายุ",
-          memberName: tb_member !== null ? fullname :"",
-          dateUseCode: tb_memberPoint !== null ? tb_memberPoint.redeemDate : "",
+          memberName: fullname,
+          dateUseCode: redeemDate,
         });
       });
       res.json(tutorials);
@@ -169,7 +186,6 @@ router.get("/GetPointDT/:id", validateToken, async (req, res) => {
           });
          
           tutorials.push({
-              //code: obj.code !== null ? Encrypt.DecodeKey(obj.code).toUpperCase() : "", 
               pointCodeName:  obj.pointCodeName,
               startDate: obj.startDate,
               endDate:   obj.endDate ,
@@ -177,11 +193,6 @@ router.get("/GetPointDT/:id", validateToken, async (req, res) => {
               tbPointCodeDT:  Encrypt.decodePointCode(obj.tbPointCodeDTs),
               isType: obj.isType,
               pointCodePoint: obj.pointCodePoint,
-              // isUse: obj.campaignType,
-              // memberName: obj.campaignType === "1" ? fullname :"",
-              // phone   : obj.campaignType === "1" ? (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : "") : "",       
-              // point: obj.point,
-              // exchangedate: obj.redeemDate,
           });  
         });
         res.json(tutorials);
