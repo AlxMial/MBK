@@ -11,7 +11,7 @@ import Select from "react-select";
 import {
     getMemberAddress,
     gettbPayment,
-    gettbLogistic, doSaveOrder,
+    gettbLogistic, doSaveUpdateOrder,
     getOrderHDById
 
 } from "@services/liff.services";
@@ -51,7 +51,7 @@ const MakeOrderById = () => {
         let idlist = [];
         let item;
         if (!fn.IsNullOrEmpty(id)) {
-            getOrderHDById({ Id: id }, async (res) => {
+            getOrderHDById({ Id: id, type: "update" }, async (res) => {
                 if (res.status) {
                     let OrderHD = res.data.OrderHD
                     setOrderHD(OrderHD)
@@ -59,11 +59,11 @@ const MakeOrderById = () => {
                     setisLogistic(OrderHD.logisticId)
                     setdeliveryCost(OrderHD.deliveryCost)
                     settbPromotionDelivery(OrderHD.PromotionDelivery)
-
+                    setisAddress(OrderHD.otherAddressId)
 
                     let shop_orders = OrderHD.dt;
                     shop_orders.map((e, i) => {
-                        idlist.push(e.stockId);
+                        idlist.push(e.id);
                     });
 
                     if (Storage.getusecoupon() == null) {
@@ -84,7 +84,7 @@ const MakeOrderById = () => {
                             // setCartItem(tbStock);
                             let price = 0;
                             tbStock.map((e, i) => {
-                                let quantity = shop_orders.find((o) => o.stockId == e.id).amount;
+                                let quantity = shop_orders.find((o) => o.id == e.id).amount;
                                 e.quantity = quantity;
                                 if (e.priceDiscount > 0) {
                                     price += parseFloat(e.priceDiscount) * parseInt(quantity);
@@ -133,11 +133,11 @@ const MakeOrderById = () => {
             (res) => {
                 if (res.data.code === 200) {
                     let option = res.data.option
-                    option.map((e, i) => {
-                        if (e.isDefault) {
-                            setisAddress(e.id)
-                        }
-                    })
+                    // option.map((e, i) => {
+                    //     if (e.isDefault) {
+                    //         setisAddress(e.id)
+                    //     }
+                    // })
                     getAddress(option)
 
                 }
@@ -195,9 +195,21 @@ const MakeOrderById = () => {
     }
     //สั่งสินค้า 
     const sendOrder = () => {
-        if (OrderHD.paymentStatus == "Wating") {
-            console.log("update")
+        let updatrOrder = {
+            id: id,
+            paymentId: RadioPayment === 1 ? paymentID : null,
+            paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
+            logisticId: isLogistic,
+            isAddress: isAddress
         }
+        console.log({ data: updatrOrder })
+        doSaveUpdateOrder({ data: updatrOrder }, (res) => {
+            if (res.status) {
+                history.push(path.paymentInfo.replace(":id", id))
+            } else {
+
+            }
+        })
     }
 
     useEffect(() => {
@@ -221,62 +233,67 @@ const MakeOrderById = () => {
             </div>
             <div className="overflow-scroll line-scroll" style={{ height: "calc(100% - 200px)" }}>
                 {OrderHD != null ?
-                    <div
-                        className="mt-2 line-scroll"
-                        style={{
-                            maxHeight: "calc(100% - 420px)",
-                            width: "95%",
-                            marginLeft: "auto",
-                            marginRight: "auto",
-                        }}
-                    >
-                        {[...OrderHD.dt].map((e, i) => {
-                            return (
-                                <div key={i}>
-                                    <div className="flex mt-2" style={{ height: "90px " }}>
-                                        <div style={{ width: "30%" }}>
-                                            <ImageUC
-                                                style={{ margin: "auto", height: "90px" }}
-                                                find={1}
-                                                relatedid={e.stock.id}
-                                                relatedtable={["stock1"]}
-                                                alt="flash_sale"
-                                                className="w-32 border-2 border-blueGray-50"
-                                            ></ImageUC>
-                                        </div>
-                                        <div className="px-2" style={{ width: "70%" }}>
-                                            <div className="flex" style={{ height: "60%" }}>
-                                                <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.stock.productName}</div>
+                    <>
+                        <div
+                            className="mt-2 line-scroll"
+                            style={{
+                                maxHeight: "calc(100% - 420px)",
+                                width: "95%",
+                                marginLeft: "auto",
+                                marginRight: "auto",
+                            }}
+                        >
+                            {[...OrderHD.dt].map((e, i) => {
+                                return (
+                                    <div key={i}>
+                                        <div className="flex mt-2" style={{ height: "90px " }}>
+                                            <div style={{ width: "30%" }}>
+                                                <ImageUC
+                                                    style={{ margin: "auto", height: "90px" }}
+                                                    find={1}
+                                                    relatedid={e.id}
+                                                    relatedtable={["stock1"]}
+                                                    alt="flash_sale"
+                                                    className="w-32 border-2 border-blueGray-50"
+                                                ></ImageUC>
                                             </div>
-                                            <div style={{ height: "15%" }}>
-                                                <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{"จำนวน : " + e.amount}</div>
-                                            </div>
-                                            <div style={{ height: "15%" }}>
-                                                <div className="flex relative font-bold" style={{ fontSize: "11px" }} >
-                                                    <div
-                                                        style={{
-                                                            color: e.discount > 0 ? "rgba(0,0,0,.54)" : "",
-                                                            textDecoration:
-                                                                e.discount > 0 ? "line-through" : "none",
-                                                        }}
-                                                    >
-                                                        {"฿ " + fn.formatMoney(e.price)}
-                                                    </div>
-                                                    {e.discount > 0 ? (
-                                                        <div style={{ color: "red", paddingLeft: "10px" }}>
-                                                            {"฿ " + fn.formatMoney(e.discountType === "THB" ? e.discount : e.price - ((e.discount / 100) * e.price))}
-                                                        </div>
-                                                    ) : null}
+                                            <div className="px-2" style={{ width: "70%" }}>
+                                                <div className="flex" style={{ height: "60%" }}>
+                                                    <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
                                                 </div>
-                                            </div>
+                                                <div style={{ height: "15%" }}>
+                                                    <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{"จำนวน : " + e.amount}</div>
+                                                </div>
+                                                <div style={{ height: "15%" }}>
+                                                    <div className="flex relative font-bold" style={{ fontSize: "11px" }} >
+                                                        <div
+                                                            style={{
+                                                                color: e.discount > 0 ? "rgba(0,0,0,.54)" : "",
+                                                                textDecoration:
+                                                                    e.discount > 0 ? "line-through" : "none",
+                                                            }}
+                                                        >
+                                                            {"฿ " + fn.formatMoney(e.price)}
+                                                        </div>
+                                                        {e.discount > 0 ? (
+                                                            <div style={{ color: "red", paddingLeft: "10px" }}>
+                                                                {"฿ " + fn.formatMoney(e.discount)}
+                                                            </div>
+                                                        ) : null}
+                                                    </div>
+                                                </div>
 
+                                            </div>
                                         </div>
+                                        <div className="liff-inline" />
                                     </div>
-                                    <div className="liff-inline" />
-                                </div>
-                            );
-                        })}
-                    </div> : null}
+                                );
+                            })}
+                        </div>
+
+                    </>
+                    :
+                    null}
 
                 <div
                     className="flex relative"
@@ -356,7 +373,7 @@ const MakeOrderById = () => {
                                     value={optionaddress.filter(o => o.value === isAddress)}
                                     options={optionaddress}
 
-                                    formatOptionLabel={({ value, label, address, name, customAbbreviation }) => (
+                                    formatOptionLabel={({ name, address }) => (
                                         <div >
                                             <div className="font-bold">{name}</div>
                                             <div style={{
@@ -375,16 +392,16 @@ const MakeOrderById = () => {
 
                         </div>
                         {OrderHD != null ?
-                            <div className="flex">
-                                {OrderHD.transportStatus != "In Transit" || OrderHD.transportStatus == "Done" || OrderHD.isCancel ?
-                                    <>
-                                        <i className="fas fa-plus-circle flex " style={{ alignItems: "center" }}></i>
-                                        <div className="px-2">เพิ่มที่อยู่</div>
-                                    </> : null}
-                            </div> : null}
+                            OrderHD.transportStatus != "In Transit" || OrderHD.transportStatus == "Done" || OrderHD.isCancel ?
+                                <div className="flex px-2" onClick={() => {
+                                    history.push(path.addAddress)
+                                }}>
+                                    <i className="fas fa-plus-circle flex " style={{ alignItems: "center" }}></i>
+                                    <div className="px-2">เพิ่มที่อยู่</div>
+                                </div> : null : null
+                        }
                     </div>
                 </div>
-
 
                 <div
                     className="w-full  relative mt-2"
@@ -484,12 +501,7 @@ const MakeOrderById = () => {
                                                     className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
 
                                                     isSearchable={false}
-                                                    // id={"category"}
-                                                    // name={"category"}
-
-                                                    value={optionPayment.filter(o =>
-                                                        o.value
-                                                        === paymentID)}
+                                                    value={optionPayment.filter(o => o.value === paymentID)}
 
                                                     options={optionPayment}
 
@@ -556,11 +568,10 @@ const MakeOrderById = () => {
                         <div>
                             <div className="flex relative mb-2">
                                 <div>ยอดรวมสิ้นค้า : </div>
-                                <div className="absolute" style={{ right: "0" }}>
-                                    {usecoupon == null ? "฿ " + fn.formatMoney(sumprice) :
-                                        "฿ " + fn.formatMoney(sumprice)
-                                    }
-                                </div>
+                                {OrderHD != null ?
+                                    <div className="absolute" style={{ right: "0" }}>
+                                        {"฿ " + fn.formatMoney(OrderHD.sumprice)}
+                                    </div> : null}
                             </div>
                             <div className="flex relative mb-2">
                                 <div>รวมการจัดส่ง : </div>
@@ -581,10 +592,6 @@ const MakeOrderById = () => {
                             <div className="flex relative mb-2">
                                 <div>ยอดรวมสินค้า : </div>
                                 <div className="absolute text-green-mbk font-blod " style={{ right: "0", fontSize: "20px" }}>
-                                    {/* {usecoupon == null ? "฿ " + fn.formatMoney(sumprice + deliveryCost) :
-                                        "฿ " + fn.formatMoney(sumprice - usecoupon.discount + deliveryCost)
-                                    } */}
-
                                     {"฿ " + fn.formatMoney(
                                         usecoupon == null ?
                                             //ไม่มีสวนลด
@@ -597,7 +604,7 @@ const MakeOrderById = () => {
                                                         : deliveryCost
                                             ) :
                                             //มีส่วนลด   
-                                            (sumprice < usecoupon.discount ? 0 : sumprice-usecoupon.discount)
+                                            (sumprice < usecoupon.discount ? 0 : sumprice - usecoupon.discount)
                                             + (
                                                 //ไม่โปร
                                                 tbPromotionDelivery == null ? deliveryCost :

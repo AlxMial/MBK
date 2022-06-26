@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         },
-       
+
         redeemDate: {
             type: DataTypes.DATE,
             allowNull: false,
@@ -30,6 +30,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         }
     });
-
+    tbMemberReward.associate = (models) => {
+        tbMemberReward.hasMany(models.tbOrderHD, {
+            foreignKey: "memberRewardId",
+            onDelete: "cascade",
+        });
+    }
     return tbMemberReward;
 };

@@ -88,10 +88,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     }
-    ,isPolicy2: {
+    , isPolicy2: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
-    }
+    },
+
   });
 
   tbMember.associate = (models) => {
