@@ -14,6 +14,8 @@ import Error from "../error"
 
 import CouponSucceed from "./coupon.succeed"
 import ProductSucceed from "./product.succeed"
+import GameSucceed from "./game.succeed"
+import GameUC from "./gameUC"
 // components
 
 const InfoReward = () => {
@@ -22,6 +24,7 @@ const InfoReward = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [modeldata, setmodeldata] = useState({ open: false, title: "", msg: "" });
   const [page, setpage] = useState("main");
+  const [gameData, setgameData] = useState(null);
   // const [page, setpage] = useState("CouponSucceed");
 
   const [Redemptionconditionshd, setRedemptionconditionshd] = useState(null);
@@ -87,8 +90,32 @@ const InfoReward = () => {
       }
     );
   }
+  const openGameUC = () => {
+    setpage("gameUC")
+  }
   const UseGame = () => {
+    console.log("UseGame")
 
+    useGame(
+      { Id: id },
+      (res) => {
+        if (res.status == 200) {
+          if (res.data.status) {
+            setpage("GameSucceed")
+            setgameData(res.data.itemrendom)
+          }
+          else {
+            setmodeldata({ open: true, title: "", msg: res.data.message })
+          }
+        } else {
+          setmodeldata({ open: true, title: "เกิดข้อผิดพลาด", msg: "กรุณาลองใหม่อีกครั้ง" })
+        }
+      },
+      (e) => { setmodeldata({ open: true, title: "เกิดข้อผิดพลาด", msg: "กรุณาลองใหม่อีกครั้ง" }) },
+      () => {
+        setIsLoading(false);
+      }
+    );
   }
 
   useEffect(() => {
@@ -150,7 +177,7 @@ const InfoReward = () => {
                     onClick={() => {
 
                       Redemptionconditionshd.redemptionType == 2 ?
-                        UseGame() :
+                        openGameUC() :
                         Redemptionconditionshd.rewardType == 1 ?
                           UseCoupon() :
                           UseProduct()
@@ -169,6 +196,11 @@ const InfoReward = () => {
         <CouponSucceed /> : null}
       {page == "ProductSucceed" ?
         <ProductSucceed /> : null}
+      {page == "gameUC" ?
+        <GameUC UseGame={UseGame} /> : null}
+      {page == "GameSucceed" ?
+        <GameSucceed data={gameData} /> : null}
+
     </>
   );
 };

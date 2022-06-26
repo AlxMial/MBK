@@ -540,5 +540,163 @@ router.post("/useProduct", validateLineToken, async (req, res) => {
     Redemptionconditionshd: RedemptionConditionsHD,
   });
 });
+router.post("/useGame", validateLineToken, async (req, res) => {
+  let status = true;
+  let msg;
+  let RedemptionList = []
+  let itemrendom;
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+
+    const RedemptionConditionsHDId = Encrypt.DecodeKey(req.body.Id);
+    Member = await tbMember.findOne({
+      attributes: ["id", "memberPoint"],
+      where: { uid: uid },
+    });
+    if (Member) {
+      let memberPoint = Member.memberPoint
+      let _RedemptionConditionsHD = await tbRedemptionConditionsHD.findOne({
+        attributes: [
+          "id",
+          "points",
+          "startDate",
+          "endDate",
+        ],
+        where: {
+          isDeleted: false,
+          id: RedemptionConditionsHDId
+        },
+      });
+
+      if (_RedemptionConditionsHD) {
+        let item = _RedemptionConditionsHD.dataValues
+        //ตรวจสอบเวลา 
+        if (new Date() > item.startDate && new Date() <= item.endDate) {
+          if (memberPoint >= item.points) {
+            //สินค้า
+            const _tbRedemptionProduct = await tbRedemptionProduct.findAll({
+              attributes: ["id", "isNoLimitReward", "rewardCount", "productName", "description"],
+              where: { redemptionConditionsHDId: item.id },
+            });
+            if (_tbRedemptionProduct) {
+              for (var i = 0; i < _tbRedemptionProduct.length; i++) {
+                const item = _tbRedemptionProduct[i].dataValues
+                if (item.isNoLimitReward) {
+                  //ของมีไม่จำกัด
+                  RedemptionList.push({ id: item.Id, type: "Product", Count: "isNoLimitReward" })
+                } else {
+                  const _tbMemberReward = await tbMemberReward.findAll({
+                    attributes: ["id"],
+                    where: {
+                      rewardType: "Product",
+                      TableHDId: item.id
+                    },
+                  });
+                  if (_tbMemberReward.length < item.rewardCount) {
+                    //แลกของเพิ่มได้
+                    RedemptionList.push({
+                      id: item.id
+                      , type: "Product"
+                      , imgId: Encrypt.EncodeKey(item.id)
+                      , name: item.productName
+                      , description: item.description
+                      , Count: item.rewardCount
+                    })
+                  }
+                }
+
+              }
+            }
+            // if (RedemptionProductId.isNoLimitReward) {
+            //คูปอง
+            const _tbRedemptionCoupon = await tbRedemptionCoupon.findAll({
+              attributes: ["id", "couponName", "description"],
+              where: { redemptionConditionsHDId: item.id },
+            });
+            if (_tbRedemptionCoupon) {
+              for (var i = 0; i < _tbRedemptionCoupon.length; i++) {
+                const item = _tbRedemptionCoupon[i].dataValues
+                const _tbCouponCode = await tbCouponCode.findAll({
+                  limit: 1,
+                  attributes: ["id"],
+                  where: { redemptionCouponId: item.id, isDeleted: false, isUse: false },
+                });
+                if (_tbCouponCode.length > 0) {
+                  //มีคูปองใช้งานได้
+                  RedemptionList.push({
+                    id: _tbCouponCode[0].dataValues.id, type: "Coupon"
+                    , imgId: Encrypt.EncodeKey(_tbRedemptionCoupon[i].dataValues.id)
+                    , name: _tbRedemptionCoupon[i].dataValues.couponName
+                    , description: _tbRedemptionCoupon[i].dataValues.description,
+                    Count: 1
+                  })
+                }
+              }
+            }
+
+            //ขอรางวัลยังไม่หมด
+            if (RedemptionList.length > 0) {
+              // สุ่มจาก list
+              itemrendom = RedemptionList[Math.floor(Math.random() * RedemptionList.length)];
+              if (itemrendom.type == "Coupon") {
+                // ใช้คูปอง
+                const data = await tbMemberReward.create({
+                  rewardType: "Coupon"
+                  , TableHDId: item.id
+                  , redeemDate: new Date()
+                  , isUsedCoupon: false
+                  , isDeleted: false
+                  , memberId: Member.id
+                });
+                // update coupon
+                const dataCouponCode = await tbCouponCode.update(
+                  { isUse: true },
+                  { where: { id: item.id } })
+                //update คะแนน
+                const dataMember = await tbMember.update(
+                  { memberPoint: Member.memberPoint - item.points },
+                  { where: { id: Member.id } })
+              } else {
+                const data = await tbMemberReward.create({
+                  rewardType: "Product"
+                  , TableHDId: item.id
+                  , redeemDate: new Date()
+                  , isUsedCoupon: false
+                  , isDeleted: false
+                  , memberId: Member.id
+                  , deliverStatus: "Wait"
+                });
+                //update คะแนน
+                const dataMember = await tbMember.update(
+                  { memberPoint: Member.memberPoint - item.points },
+                  { where: { id: Member.id } })
+              }
+            } else {
+              status = false
+              msg = "ขออภัย ของรางวัลหมด"
+            }
+            itemrendom = { id: itemrendom.imgId, name: itemrendom.name, description: itemrendom.description, type: itemrendom.type }
+          } else {
+            status = false
+            msg = "ขออภัย คะแนนของคุณไม่เพียงพอ"
+          }
+
+        } else {
+          status = false
+          msg = "ขออภัย รางวัลหมดอายุ"
+        }
+      }
+    }
+  } catch (e) {
+    status = false
+    msg = e.message
+  }
+
+  res.json({
+    status: status,
+    message: msg,
+    itemrendom: itemrendom,
+  });
+});
 
 module.exports = router;
