@@ -19,6 +19,8 @@ Modal.setAppElement("#root");
 export default function PointHistoryReport() {
   const [listSearch, setListSerch] = useState([]);
   const [listPointCode, setListPointCode] = useState([]);
+  const [listMemberPoint, setListMemberPoint] = useState([]);
+  const [listPointCodeHD, setListPointCodeHD] = useState([]);
   const [listPointCodeDt, setListPointCodeDt] = useState([]);
   const [pointHDId, setPointHDId] = useState(0);
   const { height, width } = useWindowDimensions();
@@ -36,9 +38,8 @@ export default function PointHistoryReport() {
     { value: "2", label: "ค้นหาจาก Code" },
   ];
   const listPointType = [
-    { value: "1", color: "green", status: "แลกไปแล้ว"},
-    { value: "2", color: "red", status: "ยังไม่ถูกแลก" },
-    { value: "3", color: "red", status: "ยังไม่ถูกแลก" },
+    { value: true, color: "green", status: "แลกไปแล้ว"},
+    { value: false, color: "red", status: "ยังไม่ถูกแลก" },
   ];
   const dataPopUp =  useFormik({
     initialValues: {
@@ -267,9 +268,12 @@ export default function PointHistoryReport() {
          const length = response.data.length;
         if (length !== undefined && length > 0) {
         const listPointCodes = response.data[0].tbPointCodeDT;
+        const listMemberPoint = response.data[0].tbMemberPoint;
           if(listPointCodes !== undefined && listPointCodes.length > 0) {
+            setListPointCodeHD(response.data);
             setListPointCodeDt(listPointCodes);
-            setDataDialog(listPointCodes);           
+            setListMemberPoint(listMemberPoint);
+            setDataDialog(response.data,listPointCodes, listMemberPoint);           
           }         
         }
         setPointHDId(id);
@@ -282,22 +286,25 @@ export default function PointHistoryReport() {
     
   }
 
-  const setDataDialog= async (data = []) => {
-      const list_pointDT =  data.length > 0 ? data : listPointCodeDt;
+  const setDataDialog= async (datahd = [],datadt = [], dataMember = []) => {
+      const list_pointHD =  datahd.length > 0 ? datahd : listPointCodeHD;
+      const list_pointDT =  datadt.length > 0 ? datadt : listPointCodeDt;
+      const list_Memberpoint = dataMember.length > 0 ? dataMember : listMemberPoint;
       const code = formSerch.values.inputSerch.trim().toUpperCase();
-      const listtbPointCodeHD = list_pointDT.filter(e => e.code === code);  
-      if(listtbPointCodeHD.length === 1) {              
-        dataPopUp.values.code = listtbPointCodeHD[0].code;
-        dataPopUp.values.pointCodeName = listtbPointCodeHD[0].pointCodeName;
-        dataPopUp.values.startDate = listtbPointCodeHD[0].startDate;
-        dataPopUp.values.endDate = listtbPointCodeHD[0].endDate;
-        dataPopUp.values.memberName = listtbPointCodeHD[0].memberName;
-        dataPopUp.values.phone = listtbPointCodeHD[0].phone;
-        dataPopUp.values.point = listtbPointCodeHD[0].point;
-        dataPopUp.values.isUse = listtbPointCodeHD[0].isUse;
-        dataPopUp.values.exchangedate = listtbPointCodeHD[0].exchangedate;
-        dataPopUp.values.status = listtbPointCodeHD[0].status ;
-        dataPopUp.values.pointType = listtbPointCodeHD[0].pointType ;
+      const listtbPointCodeDT = list_pointDT.filter(e => e.code === code);  
+      const listMemberpoint = list_Memberpoint.find(e => e.code === code);  
+      if(listtbPointCodeDT.length === 1) {              
+        dataPopUp.values.code = listtbPointCodeDT[0].code;
+        dataPopUp.values.pointCodeName = list_pointHD[0].pointCodeName;
+        dataPopUp.values.startDate = listtbPointCodeDT[0].startDate;
+        dataPopUp.values.endDate = listtbPointCodeDT[0].endDate;
+        dataPopUp.values.memberName = (listMemberpoint !== undefined ? (listMemberpoint.tbMember.firstName + ' ' + listMemberpoint.tbMember.lastName) : "");
+        dataPopUp.values.phone =  (listMemberpoint !== undefined ? listMemberpoint.tbMember.phone : "");
+        dataPopUp.values.point = list_pointHD[0].pointCodePoint;
+        dataPopUp.values.isUse = listtbPointCodeDT[0].isUse;
+        dataPopUp.values.exchangedate = listtbPointCodeDT[0].exchangedate;
+        dataPopUp.values.status = listPointType.find(e => e.value === listtbPointCodeDT[0].isUse).status;
+        dataPopUp.values.pointType = listtbPointCodeDT[0].pointType ;
         openModal();
       }
   }
@@ -554,12 +561,12 @@ export default function PointHistoryReport() {
                                 </div>    
                                 <div className="w-full lg:w-4/12 px-4 margin-auto-t-b ">
                                   <label
-                                    className={ dataPopUp.values.isUse === "1" ? "text-green-mbk text-sm font-bold" :
+                                    className={ dataPopUp.values.isUse === true ? "text-green-mbk text-sm font-bold" :
                                     "text-red-500 text-sm font-bold" }
                                     htmlFor="grid-password"
                                   >
                                    { dataPopUp.values.status} 
-                                   <i className={ dataPopUp.values.isUse === "1" ? "fas fa-check-circle px-1" : 
+                                   <i className={ dataPopUp.values.isUse === true ? "fas fa-check-circle px-1" : 
                                    "fas fa-hourglass-start px-1" }></i>
                                   </label>                                                                
                                 </div>                                
@@ -582,7 +589,7 @@ export default function PointHistoryReport() {
                                     :
                                   </label>                                                                
                                 </div>    
-                                <div className="w-full lg:w-4/12 px-4 margin-auto-t-b">
+                                <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -663,7 +670,7 @@ export default function PointHistoryReport() {
                                     :
                                   </label>                                                                
                                 </div>    
-                                <div className="w-full lg:w-4/12 px-4 margin-auto-t-b">
+                                <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
                                   <label
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
@@ -722,7 +729,8 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                    {dataPopUp.point} คะเเนน
+                                    {dataPopUp.values.point} คะเเนน
+                                    
                                   </label>                                                                
                                 </div>                                
                               </div>   

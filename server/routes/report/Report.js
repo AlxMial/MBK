@@ -133,13 +133,9 @@ router.get("/GetPoint", validateToken, async (req, res) => {
 
 // ค้นหา code ก่อน
 router.get("/GetPointDT/:id", validateToken, async (req, res) => {
- // tbMember.hasMany(tbMemberPoint, { foreignKey: "id" });
-  //tbPointCodeHD.hasMany(tbPointCodeDT, { foreignKey: "id" }); 
-  tbMemberPoint.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" }); 
+  tbMemberPoint.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });
+  tbMemberPoint.belongsTo(tbMember, { foreignKey: "tbMemberId" });  
   tbPointCodeDT.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });
-  //tbMember.hasMany(tbMemberPoint, { foreignKey: "id" });
-  //tbMemberPoint.belongsTo(tbMember, { foreignKey: "tbMemberId" });
-  //tbMemberPoint.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });  
   const id = req.params.id;
   let count = 0;
   tbPointCodeHD.findAll({
@@ -151,7 +147,12 @@ router.get("/GetPointDT/:id", validateToken, async (req, res) => {
       {
         model: tbMemberPoint,
         where: { isDeleted: false },
-       // required: true,
+        include: [
+          {
+            model: tbMember,
+            where: { isDeleted: false },
+          },
+        ]
       },
       {
         model: tbPointCodeDT,
@@ -163,17 +164,19 @@ router.get("/GetPointDT/:id", validateToken, async (req, res) => {
       if(objs.length === 1) {
         let tutorials = [];
         objs.forEach((obj) => {
-          const tb_member =  Encrypt.decodePointCode(obj.tbPointCodeDTs);
-          //Encrypt.encryptValueId(tb_member);
-          // const tb_pointCodeHD =  obj.tbPointCodeHD !== null ? obj.tbPointCodeHD : null;
-          // const fullname = tb_member !== null ? (Encrypt.DecodeKey(tb_member.firstName) + ' ' + Encrypt.DecodeKey(tb_member.lastName)) : "";
+          obj.tbMemberPoints.forEach(el => {
+              el.tbMember = Encrypt.decryptAllData(el.tbMember);
+          });
+         
           tutorials.push({
               //code: obj.code !== null ? Encrypt.DecodeKey(obj.code).toUpperCase() : "", 
               pointCodeName:  obj.pointCodeName,
               startDate: obj.startDate,
               endDate:   obj.endDate ,
-              tbMemberPoint:  obj.tbMemberPoints,
-              tbPointCodeDT:  obj.tbPointCodeDTs,
+              tbMemberPoint:  Encrypt.decodePointCode(obj.tbMemberPoints),
+              tbPointCodeDT:  Encrypt.decodePointCode(obj.tbPointCodeDTs),
+              isType: obj.isType,
+              pointCodePoint: obj.pointCodePoint,
               // isUse: obj.campaignType,
               // memberName: obj.campaignType === "1" ? fullname :"",
               // phone   : obj.campaignType === "1" ? (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : "") : "",       
