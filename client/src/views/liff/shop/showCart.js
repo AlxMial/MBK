@@ -281,13 +281,22 @@ const ShowCart = () => {
             );
           })}
         </div> :
-        <div className="flex" style={{
+        <div className="flex mb-2" style={{
           height: "50px",
           justifyContent: "center",
-          alignItems: "center"
+          alignItems: "center",
+          color: "#ddd"
+
         }}>
-          ยังไม่มีรายการสินค้า
-        </div>}
+          <div>
+            <i className="flex fas fa-box-open mb-2" style={{
+              alignItems: "center", justifyContent: "center",
+              fontSize: "28px"
+            }}></i>
+            <div> ยังไม่มีรายการสินค้า </div>
+          </div>
+        </div>
+      }
 
 
       <div

@@ -26,7 +26,7 @@ const ShowCart = () => {
     await axios.get("redemptions/gettbcouponcodes").then(async (response) => {
       // console.log(response);
       if (response.status) {
-        let data = response.data.tbRedemptionCoupon;
+        let data = response.data.tbredemptioncoupons;
         for (var i = 0; i < data.length; i++) {
           const base64 = await FilesService.buffer64UTF8(data[i].image.data);
           data[i].image = base64
