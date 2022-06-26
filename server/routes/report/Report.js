@@ -1,6 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const { tbMember, tbMemberPoint, tbPointCodeHD, tbPointCodeDT } = require("../../models");
+const { tbMember,
+  tbMemberPoint,
+  tbPointCodeHD, 
+  tbPointCodeDT, 
+  tbRedemptionConditionsHD,
+  tbRedemptionCoupon,
+  tbRedemptionProduct,
+  tbMemberReward,
+  tbCouponCode, } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
@@ -81,6 +89,109 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
     });
     res.json(tutorials);
   });  
+});
+
+
+router.get("/ShowCampaignReward", validateToken, async (req, res) => {
+  tbRedemptionCoupon.belongsTo(tbRedemptionConditionsHD, { foreignKey: "redemptionConditionsHDId" });
+  tbRedemptionProduct.belongsTo(tbRedemptionConditionsHD, { foreignKey: "redemptionConditionsHDId" });
+  tbRedemptionCoupon.belongsTo(tbCouponCode, { foreignKey: "id" });
+  tbRedemptionProduct.belongsTo(tbMemberReward, { foreignKey: "id" });  
+  const listMemberReward = await tbMemberReward.findAll({
+    where: { isDeleted: false },
+  });
+ 
+  tbRedemptionConditionsHD.findAll({
+    where: { isDeleted: false }, 
+    attributes: {
+      include: [
+        [
+          Sequelize.literal(`(
+              SELECT SUM(couponCount)
+              FROM tbredemptioncoupons tc
+              WHERE
+              tc.redemptionConditionsHDId = tbRedemptionConditionsHD.id AND
+              tc.isDeleted = 0
+          )`),
+          "couponsCount",
+        ],
+        [
+          Sequelize.literal(`(
+              SELECT SUM(rewardCount)
+              FROM tbredemptionproducts tp
+              WHERE
+              tp.redemptionConditionsHDId = tbRedemptionConditionsHD.id AND
+              tp.isDeleted = 0
+          )`),
+          "productCount",
+        ],
+      ],
+    },
+    include: [
+      {
+        model: tbRedemptionProduct,
+        where: { isDeleted: false },
+        required: false,
+      },
+      {
+        model: tbRedemptionCoupon,
+        where: { isDeleted: false},
+        required: false,
+        include: [
+          {
+            model: tbCouponCode,
+            where: { isDeleted: false , isUse: true},
+            required: false,           
+          },          
+        ]
+      },
+    ]
+  }).then((objs) => {
+    let tutorials = [];    
+    objs.forEach((obj) => {
+      let expiredDate = "";
+      let exchangedTotal = 0;
+      const rewardTotal = ((obj.dataValues.couponsCount !== null ? parseInt(obj.dataValues.couponsCount, 10) : 0)  + 
+                        (obj.dataValues.productCount !== null ? parseInt(obj.dataValues.productCount, 10) :0));
+      if(obj.tbRedemptionProducts.length > 0) {
+        obj.tbRedemptionProducts.forEach(e => {
+               const m_reward = listMemberReward.find(el => el.TableHDId === e.id.toString());
+                if(m_reward !== undefined) {
+                  exchangedTotal +=  parseInt(e.rewardCount, 10);
+                }
+        });         
+      }
+      if(obj.tbRedemptionCoupons.length > 0) {
+        obj.tbRedemptionCoupons.forEach(e => {
+             if(e.tbCouponCodes.length > 0) {
+              e.tbCouponCodes.forEach(ele => {
+                const m_Coupon = listMemberReward.find(el => el.TableHDId === ele.id.toString());
+                if(m_Coupon !== undefined) {
+                  exchangedTotal +=  parseInt(e.couponCount, 10);
+                  expiredDate = e.expiredDate !== null ? e.expiredDate :"";
+                }
+              });
+             }
+               
+        });         
+      }
+      tutorials.push({
+          redemptionName:  obj.redemptionName,
+          redemptionType:  obj.redemptionType,
+          rewardType: obj.rewardType ,  
+          points:  obj.points,
+          startDate: obj.startDate,
+          endDate: obj.endDate,
+          expiredDate: expiredDate,            
+          point: obj.point,
+          exchangedate: obj.redeemDate,
+          rewardTotal: rewardTotal,
+          exchangedTotal: exchangedTotal,
+          toTal: (rewardTotal - exchangedTotal),
+        });  
+    });
+    res.json(tutorials);
+  }); 
 });
 
 router.get("/exportExcel/:id", validateToken, async (req, res) => {  
