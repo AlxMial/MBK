@@ -48,7 +48,7 @@ const GameUC = ({UseGame}) => {
                                 className="flex bg-gold-mbk text-white text-center text-lg  font-bold "
                                 style={{
                                     margin: "auto",
-                                    height: "45px",
+                                    height: "40px",
                                     borderRadius: "20px",
                                     padding: "5px",
                                     alignItems: "center",
@@ -69,7 +69,7 @@ const GameUC = ({UseGame}) => {
                                 className="flex bg-green-mbk text-white text-center text-lg  font-bold "
                                 style={{
                                     margin: "auto",
-                                    height: "45px",
+                                    height: "40px",
                                     borderRadius: "20px",
                                     padding: "5px",
                                     alignItems: "center",

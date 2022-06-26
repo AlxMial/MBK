@@ -96,7 +96,7 @@ const MyOrder = () => {
                         className="flex bg-green-mbk text-white text-center text-lg  font-bold "
                         style={{
                             margin: "auto",
-                            height: "45px",
+                            height: "40px",
                             borderRadius: "10px",
                             padding: "5px",
                             alignItems: "center",

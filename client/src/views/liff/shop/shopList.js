@@ -29,6 +29,7 @@ const ShopList = () => {
   );
   const [tbStock, settbStock] = useState([]);//ทั้งหมด 
 
+  const [selectMenu, setselectmenu] = useState(1);//ทั้งหมด 
 
   const [tbStockiewNominal, settbStockiewNominal] = useState([]);//แสดงตาม category
   const [tbStockiewFlashSale, settbStockiewFlashSale] = useState([]);//แสดงตาม category
@@ -36,6 +37,13 @@ const ShopList = () => {
   const pad = (n) => {
     return (n < 10 ? "0" : "") + n;
   };
+
+  const setselectMenu = (e) => {
+    setselectmenu(e)
+    setcategoryview(category, e)
+
+
+  }
 
   const Counter = ({ time }) => {
     const [count, setCount] = useState("");
@@ -74,12 +82,22 @@ const ShopList = () => {
       }
     }, [delay]);
   };
-  const setcategoryview = (id, data) => {
+  const setcategoryview = (id, e) => {
     setcategory(id)
     if (id === 0) {
       let tbStockiewNominal = []
       let tbStockiewFlashSale = []
-      tbStock.filter(e => {
+      let dataTemp = tbStock
+      if (e == 2) {
+        dataTemp = dataTemp.filter(e => {
+          if (e.IsBestSeller) {
+            return e
+          }
+        })
+      }
+
+      dataTemp.filter(e => {
+
         if (!e.isFlashSale) {
           tbStockiewNominal.push(e)
         }
@@ -104,7 +122,16 @@ const ShopList = () => {
       settbStockiewNominal(tbStockiewNominal)
       settbStockiewFlashSale(tbStockiewFlashSale)
     } else {
-      let tbStockview = tbStock.filter((e, i) => {
+      let dataTemp = tbStock
+      if (e == 2) {
+        dataTemp = dataTemp.filter(e => {
+          if (e.IsBestSeller) {
+            return e
+          }
+        })
+      }
+
+      let tbStockview = dataTemp.filter((e, i) => {
         if (e.productCategoryId === id) {
           return e
         }
@@ -249,8 +276,12 @@ const ShopList = () => {
           className="flex relative flex mt-2"
           style={{ height: "40px", alignItems: "center" }}
         >
-          <div className="px-2">สินค้าทั้งหมด</div>
-          <div className="px-2">สิ้นค้าขายดี</div>
+          <div className="px-2" style={{ textDecoration: selectMenu == 1 ? "underline" : "", textUnderlineOffset: "5px" }} onClick={() => {
+            setselectMenu(1)
+          }}>สินค้าทั้งหมด</div>
+          <div className="px-2" style={{ textDecoration: selectMenu == 2 ? "underline" : "", textUnderlineOffset: "5px" }} onClick={() => {
+            setselectMenu(2)
+          }}>สิ้นค้าขายดี</div>
           <div className="px-2" style={{ width: "150px" }}>
             {productCategory.length > 0 ?
               <Select
@@ -261,7 +292,7 @@ const ShopList = () => {
                 name={"category"}
                 // placeholder={lbl}
                 onChange={(e) => {
-                  setcategoryview(e.value);
+                  setcategoryview(e.value, selectMenu);
                 }}
                 value={productCategory.filter(option =>
                   option.value
@@ -365,7 +396,7 @@ const ShopList = () => {
                               {e.IsBestSeller ?
                                 <img
                                   style={{
-                                    width: "25px", height: "25px", top: "0",
+                                    width: "40px", height: "40px", top: "0",
                                     right: "0"
                                   }}
                                   src={require("assets/img/mbk/icon_hot.png").default

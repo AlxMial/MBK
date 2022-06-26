@@ -628,10 +628,10 @@ const MakeOrderById = () => {
                 <div className="absolute w-full flex" style={{ bottom: "0" }}>
                     <div style={{ width: "50%", padding: "10px" }}>
                         <div
-                            className="flex bg-green-mbk text-white text-center text-lg  font-bold "
+                            className="flex bg-green-mbk text-white text-center text-base  font-bold "
                             style={{
                                 margin: "auto",
-                                height: "45px",
+                                height: "40px",
                                 borderRadius: "10px",
                                 padding: "5px",
                                 alignItems: "center",
@@ -646,10 +646,10 @@ const MakeOrderById = () => {
                     </div>
                     <div style={{ width: "50%", padding: "10px" }}>
                         <div
-                            className="flex bg-gold-mbk text-white text-center text-lg  font-bold "
+                            className="flex bg-gold-mbk text-white text-center text-base  font-bold "
                             style={{
                                 margin: "auto",
-                                height: "45px",
+                                height: "40px",
                                 borderRadius: "10px",
                                 padding: "5px",
                                 alignItems: "center",

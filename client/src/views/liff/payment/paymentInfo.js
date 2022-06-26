@@ -251,7 +251,7 @@ const PaymentInfo = () => {
                         <div className="flex">
                             <div style={{ width: "50%" }}>
                                 <div
-                                    className="flex bg-green-mbk text-white text-center text-lg  font-bold "
+                                    className="flex bg-green-mbk text-white text-center text-base  font-bold "
                                     style={{
                                         margin: "auto",
                                         borderRadius: "5px",
@@ -269,7 +269,7 @@ const PaymentInfo = () => {
                             </div>
                             <div style={{ width: "50%" }}>
                                 <div
-                                    className="flex bg-gold-mbk  text-white text-center text-lg  font-bold "
+                                    className="flex bg-gold-mbk  text-white text-center text-base  font-bold "
                                     style={{
                                         margin: "auto",
                                         borderRadius: "5px",

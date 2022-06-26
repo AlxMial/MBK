@@ -318,10 +318,10 @@ const ShowProducts = () => {
             <div className=" w-full flex">
               <div style={{ width: "50%", padding: "10px" }}>
                 <div
-                  className="bg-green-mbk text-white text-center text-lg  font-bold "
+                  className="bg-green-mbk text-white text-center text-base  font-bold "
                   style={{
                     margin: "auto",
-                    height: "45px",
+                    height: "40px",
                     borderRadius: "10px",
                     padding: "5px",
                     display: "flex",
@@ -335,10 +335,10 @@ const ShowProducts = () => {
               </div>
               <div style={{ width: "50%", padding: "10px" }}>
                 <div
-                  className="bg-gold-mbk flex text-white text-center text-lg  font-bold "
+                  className="bg-gold-mbk flex text-white text-center text-base  font-bold "
                   style={{
                     margin: "auto",
-                    height: "45px",
+                    height: "40px",
                     borderRadius: "10px",
                     padding: "5px",
                     alignItems: "center",
