@@ -6,6 +6,8 @@ const {
   tbRedemptionProduct,
   tbImage,
   tbCouponCode,
+  tbMember,
+  tbMemberReward
 } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
@@ -648,88 +650,82 @@ router.post("/CloneCoupon", async (req, res) => {
 
 router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
 
-  tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
-  tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
-
+  let status = true
+  let msg = ""
+  let RedemptionCoupon = []
   try {
-    let item = []
-    let item2 = []
-    const _tbRedemptionCoupon = await tbCouponCode.findAll({
-      where: { isDeleted: !1, isUse: !1 },
-      attributes: ['redemptionCouponId'],
-      include: [
-        {
-          model: tbRedemptionCoupon,
-          attributes: ['id', 'discount', "isNotExpired", "startDate", "expiredDate", "couponName"],
-          where: {
-            isDeleted: !1,
-            id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
-          },
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    const Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+
+    if (Member) {
+
+      const _tbMemberReward = await tbMemberReward.findAll({
+        where: {
+          isDeleted: !1,
+          rewardType: "Coupon",
+          memberId: Member.id,
+          isUsedCoupon: !1
         },
-      ],
-    });
+        attributes: ['TableHDId'],
+      });
+      if (_tbMemberReward) {
+        for (var i = 0; i < _tbMemberReward.length; i++) {
+          tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+          tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
 
-    if (_tbRedemptionCoupon.length > 0) {
-      // let RedemptionCoupon = []
-      _tbRedemptionCoupon.map((e, i) => {
-        let dup = []
-        item.filter(f => {
-          if (f.id == Encrypt.EncodeKey(e.tbRedemptionCoupon.id)) { dup.push(e) }
-        })
-        if (dup.length == 0) {
-
-          item.push({
-            id: Encrypt.EncodeKey(e.tbRedemptionCoupon.id),
-            discount: e.tbRedemptionCoupon.discount,
-            isNotExpired: e.tbRedemptionCoupon.isNotExpired,
-            startDate: e.tbRedemptionCoupon.startDate,
-            expiredDate: e.tbRedemptionCoupon.expiredDate,
-            couponName: e.tbRedemptionCoupon.couponName
-          })
-        }
-      })
-
-      for (var i = 0; i < item.length; i++) {
-        let sdate = new Date(new Date(item[i].startDate).toISOString().split("T")[0])
-        let edate = new Date(new Date(item[i].expiredDate).toISOString().split("T")[0])
-        let today = new Date(new Date().toISOString().split("T")[0])
-        if ((today >= sdate && today <= edate) || (today >= sdate && item[i].isNotExpired)) {
-
-          const _tbImage = await tbImage.findAll({
-            attributes: ['image'],
-            where: {
-              isDeleted: false,
-              relatedId: Encrypt.DecodeKey(item[i].id),
-              relatedTable: "tbRedemptionCoupon",
-            },
+          let _tbCouponCode = await tbCouponCode.findOne({
+            where: { isDeleted: !1, id: _tbMemberReward[i].TableHDId },
+            attributes: ["id", 'redemptionCouponId'],
+            include: [
+              {
+                model: tbRedemptionCoupon,
+                attributes: ['id', 'discount', "isNotExpired", "startDate", "expiredDate", "couponName"],
+                where: {
+                  isDeleted: !1,
+                  id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
+                },
+              },
+            ],
           });
-          let data = item[i]
-          if (_tbImage.length > 0) {
-            data.image = _tbImage[0].image
+
+          if (_tbCouponCode) {
+
+            const _tbImage = await tbImage.findOne({
+              attributes: ['image'],
+              where: {
+                isDeleted: false,
+                relatedId: Encrypt.DecodeKey(_tbCouponCode.tbRedemptionCoupon.id),
+                relatedTable: "tbRedemptionCoupon",
+              },
+            });
+            _tbCouponCode.dataValues.image = _tbImage.image
+            RedemptionCoupon.push({
+              id: Encrypt.EncodeKey(_tbCouponCode.dataValues.id)
+              , image: _tbCouponCode.dataValues.image
+              , couponName: _tbCouponCode.tbRedemptionCoupon.couponName
+              , discount: _tbCouponCode.tbRedemptionCoupon.discount
+              , expiredDate: _tbCouponCode.tbRedemptionCoupon.expiredDate == null ? "-" : _tbCouponCode.tbRedemptionCoupon.expiredDate
+            })
+
           }
 
-          item2.push(item[i])
         }
       }
 
-      res.json({
-        status: true,
-        message: "success",
-        tbRedemptionCoupon: item2,
-      });
-    } else
-      res.json({
-        status: false,
-        message: "not found user",
-        tbredemptioncoupons: null,
-      });
+    }
   } catch (e) {
     res.json({
       status: false,
       message: e.message,
-      tbredemptioncoupons: null,
+      RedemptionCoupon: RedemptionCoupon,
     });
   }
+
+  return res.json({
+    status: status,
+    msg: msg,
+    tbredemptioncoupons: RedemptionCoupon
+  });
 });
 //#endregion line liff
 

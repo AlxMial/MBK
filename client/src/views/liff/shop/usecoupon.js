@@ -26,7 +26,7 @@ const ShowCart = () => {
     await axios.get("redemptions/gettbcouponcodes").then(async (response) => {
       // console.log(response);
       if (response.status) {
-        let data = response.data.tbRedemptionCoupon;
+        let data = response.data.tbredemptioncoupons;
         for (var i = 0; i < data.length; i++) {
           const base64 = await FilesService.buffer64UTF8(data[i].image.data);
           data[i].image = base64
@@ -171,18 +171,13 @@ const ShowCart = () => {
               className="flex bg-green-mbk text-white text-center text-lg  font-bold "
               style={{
                 margin: "auto",
-                height: "45px",
+                height: "40px",
                 borderRadius: "10px",
                 padding: "5px",
                 alignItems: "center",
                 justifyContent: "center",
               }}
               onClick={() => {
-                // if (id == "cart") {
-                //   history.push(path.showCart);
-                // } else {
-                //   history.push(path.makeorder.replace(":id", "byorder"));
-                // }
                 history.goBack()
               }}
             >

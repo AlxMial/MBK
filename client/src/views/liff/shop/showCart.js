@@ -281,13 +281,22 @@ const ShowCart = () => {
             );
           })}
         </div> :
-        <div className="flex" style={{
+        <div className="flex mb-2" style={{
           height: "50px",
           justifyContent: "center",
-          alignItems: "center"
+          alignItems: "center",
+          color: "#ddd"
+
         }}>
-          ยังไม่มีรายการสินค้า
-        </div>}
+          <div>
+            <i className="flex fas fa-box-open mb-2" style={{
+              alignItems: "center", justifyContent: "center",
+              fontSize: "28px"
+            }}></i>
+            <div> ยังไม่มีรายการสินค้า </div>
+          </div>
+        </div>
+      }
 
 
       <div
@@ -348,16 +357,16 @@ const ShowCart = () => {
           className="px-2 "
           style={{ width: "60%", left: "0px", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}
         >
-          <div className="text-lg">รวมทั้งหมด</div>
-          <div className="text-xl mt-2">{"฿" + fn.formatMoney(sumprice)}</div>
+          <div className="text-lg ">รวมทั้งหมด</div>
+          <div className="text-xl mt-2 text-green-mbk">{"฿" + fn.formatMoney(sumprice)}</div>
         </div>
         <div className="px-2 " style={{ width: "40%" }}>
           <div className="w-full" style={{ padding: "10px" }}>
             <div
-              className="flex bg-lemon-mbk text-white text-center text-lg  font-bold "
+              className="flex bg-lemon-mbk text-white text-center text-base  font-bold "
               style={{
                 margin: "auto",
-                height: "45px",
+                height: "40px",
                 borderRadius: "20px",
                 alignItems: "center",
                 justifyContent: "center",
@@ -378,10 +387,10 @@ const ShowCart = () => {
       <div className="absolute w-full flex" style={{ bottom: "0" }}>
         <div style={{ width: "100%", padding: "10px" }}>
           <div
-            className="flex bg-green-mbk text-white text-center text-lg  font-bold "
+            className="flex bg-green-mbk text-white text-center text-base  font-bold "
             style={{
               margin: "auto",
-              height: "45px",
+              height: "40px",
               borderRadius: "10px",
               padding: "5px",
               alignItems: "center",

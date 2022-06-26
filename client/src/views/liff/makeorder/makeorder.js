@@ -284,7 +284,7 @@ const MakeOrder = () => {
                                         <div className="flex" style={{ height: "60%" }}>
                                             <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
                                         </div>
-                                        <div className="font-bold"style={{ height: "15%" }}>
+                                        <div className="font-bold" style={{ height: "15%" }}>
                                             <div className="flex  relative" style={{ fontSize: "11px" }} >
                                                 <div
                                                     style={{
@@ -303,7 +303,7 @@ const MakeOrder = () => {
                                             </div>
                                         </div>
                                         <div style={{ height: "15%" }}>
-                                            <div  style={{ width: "80%", fontSize: "11px" }}>{"จำนวน : " + e.quantity}</div>
+                                            <div style={{ width: "80%", fontSize: "11px" }}>{"จำนวน : " + e.quantity}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -645,14 +645,15 @@ const MakeOrder = () => {
                 <div className="absolute w-full flex" style={{ bottom: "0" }}>
                     <div style={{ width: "50%", padding: "10px" }}>
                         <div
-                            className="flex bg-green-mbk text-white text-center text-lg  font-bold "
+                            className="flex bg-green-mbk text-white text-center text-base  font-bold "
                             style={{
                                 margin: "auto",
-                                height: "45px",
+                                height: "40px",
                                 borderRadius: "10px",
                                 padding: "5px",
                                 alignItems: "center",
                                 justifyContent: "center",
+
                             }}
                             onClick={() => {
                                 history.goBack()
@@ -663,10 +664,10 @@ const MakeOrder = () => {
                     </div>
                     <div style={{ width: "50%", padding: "10px" }}>
                         <div
-                            className="flex bg-gold-mbk text-white text-center text-lg  font-bold "
+                            className="flex bg-gold-mbk text-white text-center text-base  font-bold "
                             style={{
                                 margin: "auto",
-                                height: "45px",
+                                height: "40px",
                                 borderRadius: "10px",
                                 padding: "5px",
                                 alignItems: "center",
