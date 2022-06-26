@@ -58,6 +58,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    transetionId: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      default: null
+    }
   });
   tbOrderHD.associate = (models) => {
     tbOrderHD.hasMany(models.tbOrderDT, {
@@ -72,6 +77,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: "orderId",
       onDelete: "cascade",
     });
+
   };
   return tbOrderHD;
 };

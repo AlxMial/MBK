@@ -96,7 +96,21 @@ const Prepare = () => {
                             )
                         })}
                     </div>
-                    : null}
+                    : <div className="flex mb-2" style={{
+                        height: "100%",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        color: "#ddd"
+
+                    }}>
+                        <div >
+                            <i className="flex fas fa-box-open mb-2" style={{
+                                alignItems: "center", justifyContent: "center",
+                                fontSize: "28px"
+                            }}></i>
+                            <div> ยังไม่คำสั่งซื้อที่กำลังเตรียมสินค้า </div>
+                        </div>
+                    </div>}
             </div>
         </>
     );

@@ -642,6 +642,7 @@ router.get("/getMemberAddress", validateLineToken, async (req, res) => {
       Encrypt.encryptValueId(member);
       let dataValues = member.dataValues;
       dataValues.isDefault = true;
+      dataValues.id = Encrypt.EncodeKey("memberId")
       option.push(dataValues);
 
       let OtherAddress = await tbOtherAddress.findAll({

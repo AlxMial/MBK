@@ -451,7 +451,7 @@ const AddAddress = () => {
                                 type="button"
                                 style={{ width: "50%" }}
                                 onClick={() => {
-                                    history.push(path.member);
+                                    history.goBack()
                                 }}
                             >
                                 {"ยกเลิก"}

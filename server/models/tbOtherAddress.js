@@ -52,6 +52,13 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BOOLEAN,
             allowNull: true,
         },
+
     });
+    tbOtherAddress.associate = (models) => {
+        tbOtherAddress.hasMany(models.tbOrderHD, {
+            foreignKey: "otherAddressId",
+            onDelete: "cascade",
+        });
+    }
     return tbOtherAddress;
 };

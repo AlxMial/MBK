@@ -2,19 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
-// import Modal from "react-modal";
-// import ModalHeader from 'views/admin/ModalHeader';
-// import ProfilePictureUC from 'components/ProfilePictureUC';
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import Select from "react-select";
 import moment from "moment";
 import {
-
     getOrderHDById,
     cancelOrder
-
 } from "@services/liff.services";
 import Modal from "react-modal";
 import ModalHeader from 'views/admin/ModalHeader';
@@ -25,16 +20,9 @@ const OrderPaymentDone = () => {
     const history = useHistory();
     const { addToast } = useToasts();
     const [isLoading, setIsLoading] = useState(false);
-
-    const [deliveryCost, setdeliveryCost] = useState(0);
-
     const [OrderHD, setOrderHD] = useState(null);
-
     const [discount, setdiscount] = useState(null);
-
-    const [sumprice, setsumprice] = useState(0);
     const [remark, setremark] = useState("");
-
     const [isOpenmodelimg, setisOpenmodelimg] = useState(false);
 
     const [isOpenmodel, setisOpenmodel] = useState(false);
@@ -45,49 +33,17 @@ const OrderPaymentDone = () => {
     { value: "อื่นๆ", label: "อื่นๆ" }]
     const [Cancelvalue, setCancelvalue] = useState("ต้องการเปลี่ยนแปลงที่อยู่ในการจัดส่งสินค้า");
     const getProducts = async () => {
-        let idlist = [];
-        let item;
         if (!fn.IsNullOrEmpty(id)) {
             getOrderHDById({ Id: id }, (res) => {
                 if (res.status) {
                     let OrderHD = res.data.OrderHD
                     setOrderHD(OrderHD)
-                    let _sumprice = 0
-                    OrderHD.dt.map((e, i) => {
-                        if (e.discount > 0) {
-                            if (e.discountType == "THB") {
-                                _sumprice += (e.price - e.discount) * e.amount
-                            } else {
-                                _sumprice += (e.price - ((e.discount / 100) * e.price)) * e.amount
-                            }
-                        } else {
-                            _sumprice += e.price * e.amount
-                        }
-                    })
-                    if (_sumprice > OrderHD.PromotionDelivery.buy) {
-                        if (OrderHD.deliveryCost < OrderHD.PromotionDelivery.deliveryCost) {
-                            setdeliveryCost(0)
-                        } else {
-                            setdeliveryCost(OrderHD.deliveryCost - OrderHD.PromotionDelivery.deliveryCost)
-                        }
-
-                    } else {
-                        setdeliveryCost(OrderHD.deliveryCost)
-                    }
-
                     if (!fn.IsNullOrEmpty(OrderHD.couponCodeId)) {
                         setdiscount(OrderHD.RedemptionCoupon.tbRedemptionCoupon.discount)
                     }
-
-
-                    setsumprice(_sumprice)
-
                 }
             }, () => { }, () => { setIsLoading(false) })
         }
-
-
-
     };
 
     const Cancelorder = () => {
@@ -101,9 +57,6 @@ const OrderPaymentDone = () => {
         }, () => {
             setIsLoading(false)
         })
-    }
-    const openImage = () => {
-
     }
     useEffect(() => {
         getProducts();
@@ -256,25 +209,28 @@ const OrderPaymentDone = () => {
                                     width: "95%",
                                     marginLeft: "auto",
                                     marginRight: "auto",
+                                    color: "#ddd"
                                 }}>
-                                    <div className="" style={{ width: "100px", color: "#ddd" }}>เวลาสั่งซื้อ  </div>
-                                    <div style={{ width: "calc(100% - 100px)", textAlign: "end", color: "var(--mq-txt-color, rgb(170, 170, 170))", fontSize: "13px" }}>
-                                        {OrderHD.orderDate}
+                                    <div className="" style={{ width: "100px" }}>เวลาสั่งซื้อ  </div>
+                                    <div style={{ width: "calc(100% - 100px)", textAlign: "end", fontSize: "13px" }}>
+                                        {moment(OrderHD.orderDate).add(543, "years").format("DD MMM yyyy")}
                                     </div>
                                 </div>
                                 <div className="flex mt-2 " style={{
                                     width: "95%",
                                     marginLeft: "auto",
-                                    marginRight: "auto",
+                                    marginRight: "auto"
+                                    , color: "#ddd"
                                 }}>
-                                    <div className="" style={{ width: "100px", color: "#ddd" }}>เวลาชำระเงิน  </div>
-                                    <div style={{ width: "calc(100% - 100px)", textAlign: "end", color: "var(--mq-txt-color, rgb(170, 170, 170))", fontSize: "13px" }}>
-                                        {OrderHD.paymentDate}
+                                    <div className="" style={{ width: "100px" }}>เวลาชำระเงิน  </div>
+                                    <div style={{ width: "calc(100% - 100px)", textAlign: "end", fontSize: "13px" }}>
+                                        {moment(OrderHD.paymentDate).add(543, "years").format("DD MMM yyyy")}
                                     </div>
                                 </div>
                             </div>
 
                             : null}
+
                         <div
                             className="mt-2 line-scroll"
                             style={{
@@ -292,7 +248,7 @@ const OrderPaymentDone = () => {
                                                 <ImageUC
                                                     style={{ margin: "auto", height: "90px" }}
                                                     find={1}
-                                                    relatedid={e.stock.id}
+                                                    relatedid={e.id}
                                                     relatedtable={["stock1"]}
                                                     alt="flash_sale"
                                                     className="w-32 border-2 border-blueGray-50  animated-img"
@@ -300,7 +256,7 @@ const OrderPaymentDone = () => {
                                             </div>
                                             <div className="px-2" style={{ width: "70%" }}>
                                                 <div className="flex" style={{ height: "60%" }}>
-                                                    <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.stock.productName}</div>
+                                                    <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
                                                 </div>
                                                 <div style={{ height: "15%" }}>
                                                     <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{"จำนวน : " + e.amount}</div>
@@ -318,7 +274,7 @@ const OrderPaymentDone = () => {
                                                         </div>
                                                         {e.discount > 0 ? (
                                                             <div style={{ color: "red", paddingLeft: "10px" }}>
-                                                                {"฿ " + fn.formatMoney(e.discountType === "THB" ? e.discount : e.price - ((e.discount / 100) * e.price))}
+                                                                {"฿ " + fn.formatMoney(e.discount)}
                                                             </div>
                                                         ) : null}
                                                     </div>
@@ -334,124 +290,129 @@ const OrderPaymentDone = () => {
                     </> : null
                 }
 
+                {OrderHD != null ?
+                    <>
+                        <div
+                            className="w-full  relative mt-2"
+                            style={{
 
-                <div
-                    className="w-full  relative mt-2"
-                    style={{
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
 
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-
-                    <div style={{ width: "90%", margin: "auto" }}>
-                        <div>
-                            <div className="flex relative mb-2">
-                                <div>ยอดรวมสิ้นค้า : </div>
-                                <div className="absolute" style={{ right: "0" }}>
-                                    {discount == null ? "฿ " + fn.formatMoney(sumprice) :
-                                        "฿ " + fn.formatMoney(sumprice)
-                                    }
-                                </div>
-                            </div>
-                            <div className="flex relative mb-2">
-                                <div>รวมการจัดส่ง : </div>
-                                <div className="absolute" style={{ right: "0" }}>
-                                    {"฿ " + fn.formatMoney(deliveryCost)}
-
-                                </div>
-                            </div>
-                            <div className="flex relative mb-2">
-                                <div>ส่วนลด : </div>
-                                {discount != null ?
-                                    <div className="absolute text-gold-mbk" style={{ right: "0" }}>
-                                        {"-฿ " + fn.formatMoney(discount)}
-                                    </div> : <div className="absolute" style={{ right: "0" }}>
-                                        {"฿ " + fn.formatMoney(0)}
-                                    </div>}
-                            </div>
-                            <div className="flex relative mb-2">
-                                <div>ยอดรวมสินค้า : </div>
-                                <div className="absolute text-green-mbk font-blod " style={{ right: "0", fontSize: "20px" }}>
-                                    {"฿ " + fn.formatMoney(
-                                        (sumprice - discount + deliveryCost)
-                                    )}
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-
-                <div className="w-full  relative mt-2" style={{ alignItems: "center", justifyContent: "center", }} >
-                    {OrderHD != null ?
-                        OrderHD.transportStatus == "Prepare" || OrderHD.transportStatus == "In Transit" ?
-                            <><div style={{ width: "90%", margin: "auto" }}>
+                            <div style={{ width: "90%", margin: "auto" }}>
                                 <div>
-                                    <div className="flex relative mb-2 text-gold-mbk ">
-                                        <div><i className="fas fa-truck"></i> </div>
-                                        <div className=" px-2 ">{OrderHD.transportStatus == "Prepare" ? "เตรียมสินค้า" : OrderHD.transportStatus == "In Transit" ? "อยู่ระหว่างการจัดส่ง" : ""} </div>
+                                    <div className="flex relative mb-2">
+                                        <div>ยอดรวมสิ้นค้า : </div>
+                                        <div className="absolute" style={{ right: "0" }}>
+                                            {"฿ " + fn.formatMoney(OrderHD.sumprice)}
+                                        </div>
                                     </div>
+                                    <div className="flex relative mb-2">
+                                        <div>รวมการจัดส่ง : </div>
+                                        <div className="absolute" style={{ right: "0" }}>
+                                            {"฿ " + fn.formatMoney(OrderHD.deliveryCost)}
 
+                                        </div>
+                                    </div>
+                                    <div className="flex relative mb-2">
+                                        <div>ส่วนลด : </div>
+                                        {discount != null ?
+                                            <div className="absolute text-gold-mbk" style={{ right: "0" }}>
+                                                {"-฿ " + fn.formatMoney(OrderHD.discount)}
+                                            </div> : <div className="absolute" style={{ right: "0" }}>
+                                                {"฿ " + fn.formatMoney(0)}
+                                            </div>}
+                                    </div>
+                                    <div className="flex relative mb-2">
+                                        <div>ยอดรวมสินค้า : </div>
+                                        <div className="absolute text-green-mbk font-blod " style={{ right: "0", fontSize: "20px" }}>
+                                            {"฿ " + fn.formatMoney(OrderHD.total)}
+
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                                <div className="liff-inline" />
-                            </>
-                            : null
-                        :
-                        null}
-                </div>
 
 
-                <div className="w-full  relative mt-2" style={{ alignItems: "center", justifyContent: "center", }} >
-                    <div className="flex">
-                        <div style={{ width: "50%", padding: "10px" }}>
-                            <div
-                                className="flex  text-center text-lg  font-bold "
-                                style={{
-                                    margin: "auto",
-                                    height: "45px",
-                                    borderRadius: "10px",
-                                    padding: "5px",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    backgroundColor: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "red" : "") : "") : ""),
-                                    border: ("1px solid " + (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "red" : "#ddd") : "#ddd") : "#ddd")),
-                                    color: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "#FFFFFF" : "#ddd") : "#ddd") : "#ddd"),
-                                }}
-                                onClick={() => {
-                                    if (OrderHD.transportStatus == "Prepare" && OrderHD.tbCancelOrder == null) {
+                        </div>
 
-                                        setisOpenmodel(true)
-                                    }
-                                }}
-                            >
-                                <i className="fas fa-backspace"></i>
-                                <div className="px-2">ยกเลิกคำสั่งซื้อ</div>
+                        <div className="w-full  relative mt-2" style={{ alignItems: "center", justifyContent: "center", }} >
+                            {OrderHD != null ?
+                                OrderHD.transportStatus == "Prepare" || OrderHD.transportStatus == "In Transit" ?
+                                    <><div style={{ width: "90%", margin: "auto" }}>
+                                        <div>
+                                            <div className="flex relative mb-2 text-gold-mbk ">
+                                                <div>
+                                                    {OrderHD.transportStatus == "Prepare" ?
+                                                        <i class="fas fa-shopping-bag"></i>
+                                                        :
+                                                        <i className="fas fa-truck"></i>}
+                                                </div>
+                                                <div className=" px-2 ">{OrderHD.transportStatus == "Prepare" ? "เตรียมสินค้า" : OrderHD.transportStatus == "In Transit" ? "อยู่ระหว่างการจัดส่ง" : ""} </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                        <div className="liff-inline" />
+                                    </>
+                                    : null
+                                :
+                                null}
+                        </div>
+                        <div className="w-full  relative mt-2" style={{ alignItems: "center", justifyContent: "center", }} >
+                            <div className="flex">
+                                <div style={{ width: "50%", padding: "10px" }}>
+                                    <div
+                                        className="flex  text-center text-lg  font-bold "
+                                        style={{
+                                            margin: "auto",
+                                            height: "45px",
+                                            borderRadius: "10px",
+                                            padding: "5px",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            backgroundColor: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "red" : "") : "") : ""),
+                                            border: ("1px solid " + (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "red" : "#ddd") : "#ddd") : "#ddd")),
+                                            color: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "#FFFFFF" : "#ddd") : "#ddd") : "#ddd"),
+                                        }}
+                                        onClick={() => {
+                                            if (OrderHD.transportStatus == "Prepare" && OrderHD.tbCancelOrder == null) {
+
+                                                setisOpenmodel(true)
+                                            }
+                                        }}
+                                    >
+                                        <i className="fas fa-backspace"></i>
+                                        <div className="px-2">ยกเลิกคำสั่งซื้อ</div>
+                                    </div>
+                                </div>
+                                <div style={{ width: "50%", padding: "10px" }}>
+                                    <div
+                                        className="flex  text-gold-mbk outline-gold-mbk text-center text-lg  font-bold "
+                                        style={{
+                                            margin: "auto",
+                                            height: "45px",
+                                            borderRadius: "10px",
+                                            padding: "5px",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                        }}
+                                        onClick={() => {
+                                            history.goBack()
+                                        }}
+                                    >
+                                        {"แนบสลิปโอนเงิน"}
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div style={{ width: "50%", padding: "10px" }}>
-                            <div
-                                className="flex  text-gold-mbk outline-gold-mbk text-center text-lg  font-bold "
-                                style={{
-                                    margin: "auto",
-                                    height: "45px",
-                                    borderRadius: "10px",
-                                    padding: "5px",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                }}
-                                onClick={() => {
-                                    history.goBack()
-                                }}
-                            >
-                                {"แนบสลิปโอนเงิน"}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </>
+                    : null}
+
+
+
 
                 <div className="absolute w-full flex" style={{ bottom: "0" }}>
                     <div style={{ width: "100%", padding: "10px" }}>

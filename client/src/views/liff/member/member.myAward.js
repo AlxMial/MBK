@@ -66,12 +66,21 @@ const MyAward = () => {
               </div>
             )
           })
-          : <div className="flex" style={{
+          : <div className="flex mb-2" style={{
             height: "50px",
             justifyContent: "center",
             alignItems: "center",
             color: "#ddd"
-          }}>ยังไม่มีคูปองที่ใช้งานได้</div>}
+
+          }}>
+            <div>
+              <i className="flex fas fa-box-open mb-2" style={{
+                alignItems: "center", justifyContent: "center",
+                fontSize: "28px"
+              }}></i>
+              <div> ยังไม่มีคูปองที่ใช้งานได้ </div>
+            </div>
+          </div>}
 
         <div className="flex relative" style={{ height: "40px", fontSize: "14px" }}>
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
@@ -125,7 +134,15 @@ const MyAward = () => {
             justifyContent: "center",
             alignItems: "center",
             color: "#ddd"
-          }}>ยังไม่มีของสัมนาคุณ</div>}
+          }}>
+            <div>
+              <i className="flex fas fa-box-open mb-2" style={{
+                alignItems: "center", justifyContent: "center",
+                fontSize: "28px"
+              }}></i>
+              <div> ยังไม่มีของสัมนาคุณ </div>
+            </div>
+          </div>}
 
       </div>
     </>

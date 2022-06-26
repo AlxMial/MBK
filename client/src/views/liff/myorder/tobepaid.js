@@ -32,7 +32,7 @@ const Tobepaid = () => {
                 <div className="flex  mt-2" style={{ color: "var(--mq-txt-color, rgb(255, 168, 52))" }}>
                     <i className="fas fa-exclamation-circle" style={{ width: "22px", height: "22px" }}></i>
                     <div className=" px-2 text-xs ">
-                        <p style={{ marginBottom: "0" }}>หลังจากกดสั่งสินค้าหากไม่ได้ชำระเงินภายใน 48 ชั่วโมง</p>
+                        <p style={{ marginBottom: "0" }}>หลังจากกดสั่งสินค้าหากไม่ได้ชำระเงินภายใน 48 ชั่วโมง สินค้าจะถูกยกเลิกทันที</p>
                     </div>
                 </div>
                 {OrderHD.length > 0 ?
@@ -102,7 +102,23 @@ const Tobepaid = () => {
                             )
                         })}
                     </div>
-                    : null}
+                    :
+                    <div className="flex mb-2" style={{
+                        height: "100%",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        color: "#ddd"
+
+                    }}>
+                        <div>
+                            <i className="flex fas fa-box-open mb-2" style={{
+                                alignItems: "center", justifyContent: "center",
+                                fontSize: "28px"
+                            }}></i>
+                            <div> ยังไม่คำสั่งซื้อที่ต้องชำระ </div>
+                        </div>
+                    </div>
+                }
             </div>
         </>
     );

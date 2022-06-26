@@ -292,9 +292,6 @@ export const useGame = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/redeem/useGame", data, s, e, f);
 };
 
-
-
-
 export const getMemberpoints = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMemberPoints", s, e, f);
 };
@@ -317,6 +314,10 @@ export const gettbLogistic = (s, e = () => { }, f = () => { }) => {
 export const doSaveOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/doSaveOrder", data, s, e, f);
 };
+export const doSaveUpdateOrder = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/order/orderHD/doSaveUpdateOrder", data, s, e, f);
+};
+
 //PaymentStatus ,TransportStatus 
 export const getOrderHD = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/getOrderHD", data, s, e, f);

@@ -164,6 +164,43 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         orderId: orderId
     });
 });
+router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
+    let status = true;
+    let msg;
+
+    let Member;
+
+    try {
+        let { data } = req.body
+        const uid = Encrypt.DecodeKey(req.user.uid);
+        Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+        if (Member) {
+
+            const updtbOrderHD = await tbOrderHD.update(
+                {
+                    logisticId: Encrypt.DecodeKey(data.logisticId),
+                    paymentId: Encrypt.DecodeKey(data.paymentId),
+                    paymentType: data.paymentType ,
+                    otherAddressId :Encrypt.DecodeKey(data. isAddress)=="memberId" ?null :Encrypt.DecodeKey(data. isAddress)
+
+                },
+                { where: { id: Encrypt.DecodeKey(data.id) } })
+
+        } else {
+            status = false
+            msg = "auth"
+        }
+    } catch (e) {
+        status = false
+        msg = e.message
+    }
+    return res.json({
+        status: status,
+        msg: msg,
+        // orderId: orderId
+    });
+});
+
 router.post("/getOrderHD", validateLineToken, async (req, res) => {
 
     let status = true;
@@ -322,6 +359,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                     }
                 }
             }
+
+            //มีสินค้า
             if (OrderHDData) {
                 for (var i = 0; i < OrderHDData.length; i++) {
                     let hd = OrderHDData[i].dataValues
@@ -538,12 +577,14 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
     let status = true;
     let msg;
     let Member;
-    let { Id } = req.body
+    let { Id, type } = req.body
     let OrderHDData;
     let OrderHD;
     try {
         const uid = Encrypt.DecodeKey(req.user.uid);
         Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+        let sumprice = 0
+        let total = 0
         if (Member) {
 
             OrderHDData = await tbOrderHD.findOne({
@@ -559,7 +600,10 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     , "paymentId"
                     , "couponCodeId"
                     , "orderDate"
-                    , "paymentDate"],
+                    , "paymentDate"
+                    , "memberRewardId"
+                    , "otherAddressId"
+                ],
                 where: {
                     IsDeleted: false, id: Encrypt.DecodeKey(Id),
                 }
@@ -583,18 +627,40 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     let _tbStock = _tbStockData.dataValues
                     _tbStock.id = Encrypt.EncodeKey(_tbStock.id)
                     dt.stock = _tbStock
-                    hd.dt.push(dt)
+                    // hd.dt.push(dt)
+                    dt.discount = parseFloat(dt.discount)
+                    dt.discount = dt.discount > 0 ? (dt.discountType == "THB" ? dt.price - dt.discount : dt.price - ((dt.discount / 100) * dt.price)) : 0
+                    sumprice += dt.discount > 0 ? dt.discount * dt.amount : dt.price * dt.amount
+                    hd.dt.push({
+                        id: _tbStock.id,
+                        productName: _tbStock.productName,
+                        amount: dt.amount,
+                        price: dt.price,
+                        discount: dt.discount
+                    })
                 }
-
+                //ค่าจัดส่ง
+                let deliveryCost = 0
                 const _tbLogistic = await tbLogistic.findOne({
-                    attributes: ["id", "logisticType", "deliveryName", "description", "deliveryCost"],
+                    attributes: ["id", "deliveryCost"],
                     where: { isDeleted: false, isShow: true, id: hd.logisticId },
                 });
+                if (_tbLogistic) {
+                    deliveryCost = _tbLogistic.deliveryCost
+                }
                 //โปรโมชั่นขนส่ง
                 const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
-                    attributes: ["id", "promotionName", "buy", "deliveryCost", "deliveryCost"],
+                    attributes: ["id", "buy", "deliveryCost"],
                     where: { isDeleted: false, isInactive: true },
                 });
+                if (_tbPromotionDelivery) {
+                    //เข้าเงือนไขส่วนลดโปร
+                    if (sumprice >= _tbPromotionDelivery.buy) {
+                        deliveryCost = deliveryCost < _tbPromotionDelivery.deliveryCost ? 0 : deliveryCost - _tbPromotionDelivery.deliveryCost
+                    }
+                }
+
+
                 // couponCodeId
                 if (hd.couponCodeId != null) {
                     tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
@@ -620,10 +686,10 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     attributes: ["id", "cancelStatus", "cancelType", "cancelDetail", "description", "createdAt"],
                     where: { isDeleted: false, orderId: hd.id },
                 });
-
+                let tbCancelOrderData = null
                 if (_tbCancelOrder) {
                     _tbCancelOrder.dataValues.id = Encrypt.EncodeKey(_tbCancelOrder.id)
-                    hd.tbCancelOrder = _tbCancelOrder
+                    tbCancelOrderData = _tbCancelOrder
                 }
 
 
@@ -631,20 +697,40 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     attributes: ["id", "returnStatus", "returnType", "returnDetail", "description", "createdAt"],
                     where: { isDeleted: false, orderId: hd.id },
                 });
-
+                let tbReturnOrderData = null
                 if (_tbReturnOrder) {
                     _tbReturnOrder.dataValues.id = Encrypt.EncodeKey(_tbReturnOrder.id)
-                    hd.tbReturnOrder = _tbReturnOrder
+                    tbReturnOrderData = _tbReturnOrder
                 }
 
 
                 hd.id = Encrypt.EncodeKey(hd.id)
-                hd.paymentId = Encrypt.EncodeKey(hd.paymentId)
-                hd.logisticId = Encrypt.EncodeKey(hd.logisticId)
-                hd.deliveryCost = _tbLogistic.dataValues.deliveryCost
-                hd.PromotionDelivery = _tbPromotionDelivery.dataValues
-                OrderHD = hd
+                hd.sumprice = sumprice
+                hd.deliveryCost = deliveryCost
+                hd.total = sumprice + deliveryCost
+                OrderHD = {
+                    id: hd.id
+                    , dt: hd.dt
+                    , sumprice: hd.sumprice
+                    , deliveryCost: hd.deliveryCost
+                    , total: hd.total
+                    , orderNumber: hd.orderNumber
+                    , paymentStatus: hd.paymentStatus
+                    , transportStatus: hd.transportStatus
+                    , isCancel: hd.isCancel
+                    , isReturn: hd.isReturn
+                    , orderDate: hd.orderDate
+                    , paymentDate: hd.paymentDate
+                    , tbCancelOrder: tbCancelOrderData
+                    , tbReturnOrder: tbReturnOrderData
+                    , paymentType: type == "update" ? hd.paymentType : null
+                    , logisticId: type == "update" ? Encrypt.EncodeKey(hd.logisticId) : null
+                    , paymentId: type == "update" ? Encrypt.EncodeKey(hd.paymentId) : null
 
+                    , memberRewardId: type == "update" ? hd.memberRewardId == null ? null : Encrypt.EncodeKey(hd.memberRewardId) : null
+                    , otherAddressId: type == "update" ? hd.otherAddressId == null ? Encrypt.EncodeKey("memberId") : Encrypt.EncodeKey(hd.otherAddressId) : null
+
+                }
             }
 
         }

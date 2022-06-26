@@ -39,8 +39,8 @@ const MyOrder = () => {
         {OrderHD != null ?
           <div style={{ height: "calc(100% - 40px)" }}>
             <div className="flex" style={{ height: "30px" }}>
-              <div className="font-bold">หมายเลขคำสั่งซื้อ : </div>
-              <div className="px-2 line-clamp-1">{OrderHD.orderNumber} </div>
+              <div className="font-bold" style={{ width: "115px" }}>หมายเลขคำสั่งซื้อ : </div>
+              <div className="px-2 line-clamp-1" >{OrderHD.orderNumber} </div>
             </div>
 
             {OrderHD.dt.map((e, i) => {
@@ -58,7 +58,7 @@ const MyOrder = () => {
                     </div>
                   </div>
                   <div style={{ width: "70%" }}>
-                    <div className="font-bold line-clamp-1">
+                    <div className="font-bold line-clamp-1" >
                       {e.productName}
                     </div>
                     <div className="flex">
@@ -91,7 +91,24 @@ const MyOrder = () => {
               <div style={{ width: "50%", color: "#ddd" }}>{"รวม " + OrderHD.sumamount + " ชิ้น"}</div>
               <div className="font-bold" style={{ width: "50%", textAlign: "end", color: "#047738" }}>{"฿ " + fn.formatMoney(OrderHD.sumprice) + " บาท"} </div>
             </div>
-          </div> : null}
+          </div> :
+
+          <div className="flex mb-2" style={{
+            height: "50px",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "#ddd"
+
+          }}>
+            <div>
+              <i className="flex fas fa-box-open mb-2" style={{
+                alignItems: "center", justifyContent: "center",
+                fontSize: "28px"
+              }}></i>
+              <div> ยังไม่คำสั่งชื้อ </div>
+            </div>
+          </div>
+        }
       </div>
     </>
   );
