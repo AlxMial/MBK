@@ -22,6 +22,14 @@ export default function CampaignRewardReport() {
     { value: "2", type: "E-Commerce", status: "รับคะแนน" },
     { value: "3", type: "Register", status: "รับคะแนน" },
   ];
+  const redemptionType = [
+    { value: "1", label: "Standard" },
+    { value: "2", label: "Game" },
+  ];
+  const rewardType = [
+    { value: "1", label: "E-Coupon" },
+    { value: "2", label: "สินค้า" },
+  ];
   const formSerch =  useFormik({
     initialValues:  { 
       inputSerch: "",    
@@ -46,22 +54,17 @@ export default function CampaignRewardReport() {
             if(x.startDate !== '' && x.endDate !== '') {             
               isDate = true;
             }            
-            if((inputSerch !== "" ? (x.pointCodeName.toLowerCase().includes(inputSerch) ||
-            (x.memberName === null ? "" : x.memberName)
-            .toLowerCase()
-            .includes(inputSerch) ||
-            x.point.toString().includes(inputSerch) ||
-            (x.pointType === null ? "" : x.pointType)
-            .toString()
-            .includes(inputSerch) ||
-            x.status.toLowerCase().toString().includes(inputSerch) ||
-            (x.code === null ? "" : x.code)
-            .toLowerCase()
-            .includes(inputSerch)
+            if((inputSerch !== "" ? (x.redemptionName.toLowerCase().includes(inputSerch) ||
+            (x.redemptionTypeStr === null ? "" : x.redemptionTypeStr).toLowerCase().includes(inputSerch) ||
+            x.points.toString().includes(inputSerch) ||
+            (x.rewardTypeStr === null ? "" : x.rewardTypeStr).toString().toLowerCase().includes(inputSerch) ||
+            x.rewardTotal.toString().includes(inputSerch) ||
+            x.exchangedTotal.toString().includes(inputSerch) ||
+            x.toTal.toString().includes(inputSerch)
            ) : true) &&
 
             ((startDate !== null && endDate !== null) ? (isDate ? ((startDate <= _startDate  && startDate <= _endDate &&
-            endDate >= _startDate && endDate >= _endDate)) : false) : true)) {
+              endDate >= _startDate && endDate >= _endDate)) : false) : true)) {
                 return true;
             }
             return false;
@@ -103,28 +106,28 @@ export default function CampaignRewardReport() {
     const TitleColumns = [
       "ลำดับที่",
       "แคมเปญ",
+      "คะแนน",
       "วันที่เริ่มต้น",
       "วันที่สิ้นสุด",
-      "ประเภท",
-      "ชื่อลูกค้า",
-      "เบอร์โทรศัพท์",
-      "Code",
-      "คะแนน",
-      "สถานะ",
-      "วันที่แลก"
+      "วันที่หมดอายุ",
+      "ประเภทแคมเปญ",
+      "ประเภทรางวัล",
+      "จำนวนรางวัล",
+      "แลกแล้ว",
+      "คงเหลือ"
     ];
     const columns = [
       "listNo",      
-      "pointCodeName",
+      "redemptionName",
+      "points",
       "startDate",
       "endDate",
-      "pointType",
-      "memberName",
-      "phone",
-      "code",
-      "point",
-      "status",
-      "exchangedate",
+      "expiredDate",
+      "redemptionTypeStr",
+      "rewardTypeStr",
+      "rewardTotal",
+      "exchangedTotal",
+      "toTal",
     ];
     let count = 0;
     listCampaign.forEach(el => { 
@@ -141,30 +144,21 @@ export default function CampaignRewardReport() {
     setIsLoading(false);
   };
 
-  const fetchPermission = async () => {
-    // await axios.get("report/ShowCollectPoints").then((response) => {
-    //     // dispatch(fetchSuccess());        
-    //     const dateNow = new Date();
-    //     dateNow.setHours(0,0,0,0);
-    //     if (response.data.length > 0) {
-    //       response.data.forEach(e => {
-    //         const datatype = listCampaignType.find(l => l.value === e.pointTypeId);
-    //         if(datatype) {
-    //           e.status = datatype.status;
-    //           e.pointType = datatype.type;
-    //           e.startDate = e.pointTypeId === "1" ? e.startDate : "";
-    //           e.endDate = e.pointTypeId === "1" ? e.endDate : "";
-    //         }
-    //       });
-                 
-    //       setListSerch(response.data);
-    //       setListCampaign(response.data);
-    //     }
-    //   });
-  };
-
   useEffect(() => {
-    fetchPermission();
+    axios.get("report/ShowCampaignReward").then((response) => {
+      if (response.data.error) {
+      } else {
+        if (response.data !== null) {
+          response.data.forEach(e => {
+            e.redemptionTypeStr = redemptionType.find(el => el.value === e.redemptionType).label; 
+            e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : "");             
+          });
+
+          setListCampaign(response.data);
+          setListSerch(response.data);
+        }
+      }
+    });
    
   }, []);
 
@@ -418,10 +412,10 @@ export default function CampaignRewardReport() {
                           className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
                           <span
-                            title={value.pointCodeName}
+                            title={value.redemptionName}
                             className="text-gray-mbk  hover:text-gray-mbk "
                           >
-                            {value.pointCodeName}
+                            {value.redemptionName}
                           </span>
                           <span className="details">more info here</span>
                         </td>
@@ -429,52 +423,52 @@ export default function CampaignRewardReport() {
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          { value.pointTypeId === "1" ? moment(value.startDate).format("DD/MM/YYYY") : ""}
+                          { value.points}
                           </span>
                         </td>
                         <td                         
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          { value.pointTypeId === "1" ? moment(value.endDate).format("DD/MM/YYYY") : ""}
+                          { moment(value.startDate).format("DD/MM/YYYY")}
                           </span>
                         </td>
                         <td                          
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.pointType}
+                          { moment(value.endDate).format("DD/MM/YYYY")}
                           </span>
                         </td>
                         <td                         
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.memberName}
+                          { value.expiredDate !== "" ?  moment(value.expiredDate).format("DD/MM/YYYY") : ""}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.phone}
+                            {value.redemptionTypeStr}
                           </span>
                         </td>                       
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.code}
+                            {value.rewardTypeStr}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.point}
+                            {value.rewardTotal}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.status}
+                            {value.exchangedTotal}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {moment(value.exchangedate).format("DD/MM/YYYY")}
+                          {value.toTal}
                         </td>
                       </tr>
                     );
