@@ -187,6 +187,22 @@ const OrderPaymentDone = () => {
                             </>
                             : null
                         }
+                        {
+                            OrderHD.paymentStatus == "Wating" ?
+                                <>
+                                    <div className="flex mt-2 " style={{
+                                        width: "95%",
+                                        marginLeft: "auto",
+                                        marginRight: "auto",
+                                    }}>
+                                        <div className="flex" style={{ width: "calc(100% - 90px)", color: "red" }}>
+                                            <i className="flex fas fa-receipt" style={{ alignItems: "center" }}></i>
+                                            <div className="px-2">รอตรวจสอบ</div>
+                                        </div>
+                                    </div>
+                                </>
+                                : null
+                        }
 
 
                         <div className="flex mt-2 " style={{
@@ -340,7 +356,7 @@ const OrderPaymentDone = () => {
 
                         <div className="w-full  relative mt-2" style={{ alignItems: "center", justifyContent: "center", }} >
                             {OrderHD != null ?
-                                OrderHD.transportStatus == "Prepare" || OrderHD.transportStatus == "In Transit" ?
+                                OrderHD.paymentStatus != "Wating" && (OrderHD.transportStatus == "Prepare" || OrderHD.transportStatus == "In Transit") ?
                                     <><div style={{ width: "90%", margin: "auto" }}>
                                         <div>
                                             <div className="flex relative mb-2 text-gold-mbk ">
@@ -350,7 +366,11 @@ const OrderPaymentDone = () => {
                                                         :
                                                         <i className="fas fa-truck"></i>}
                                                 </div>
-                                                <div className=" px-2 ">{OrderHD.transportStatus == "Prepare" ? "เตรียมสินค้า" : OrderHD.transportStatus == "In Transit" ? "อยู่ระหว่างการจัดส่ง" : ""} </div>
+                                                <div className=" px-2 ">{
+
+                                                    OrderHD.transportStatus == "Prepare" ?
+                                                        "เตรียมสินค้า"
+                                                        : OrderHD.transportStatus == "In Transit" ? "อยู่ระหว่างการจัดส่ง" : ""} </div>
                                             </div>
 
                                         </div>
@@ -363,16 +383,11 @@ const OrderPaymentDone = () => {
                         </div>
                         <div className="w-full  relative mt-2" style={{ alignItems: "center", justifyContent: "center", }} >
                             <div className="flex">
-                                <div style={{ width: "50%", padding: "10px" }}>
+                                <div style={{ width: "100%", padding: "10px" }}>
                                     <div
-                                        className="flex  text-center text-lg  font-bold "
+                                        className="flex  text-center text-lg  font-bold bt-line"
                                         style={{
-                                            margin: "auto",
-                                            height: "45px",
-                                            borderRadius: "10px",
-                                            padding: "5px",
-                                            alignItems: "center",
-                                            justifyContent: "center",
+
                                             backgroundColor: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "red" : "") : "") : ""),
                                             border: ("1px solid " + (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "red" : "#ddd") : "#ddd") : "#ddd")),
                                             color: (OrderHD != null ? (OrderHD.transportStatus == "Prepare" ? (OrderHD.tbCancelOrder == null ? "#FFFFFF" : "#ddd") : "#ddd") : "#ddd"),
@@ -388,7 +403,7 @@ const OrderPaymentDone = () => {
                                         <div className="px-2">ยกเลิกคำสั่งซื้อ</div>
                                     </div>
                                 </div>
-                                <div style={{ width: "50%", padding: "10px" }}>
+                                {/* <div style={{ width: "50%", padding: "10px" }}>
                                     <div
                                         className="flex  text-gold-mbk outline-gold-mbk text-center text-lg  font-bold "
                                         style={{
@@ -405,7 +420,7 @@ const OrderPaymentDone = () => {
                                     >
                                         {"แนบสลิปโอนเงิน"}
                                     </div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </>
@@ -417,15 +432,7 @@ const OrderPaymentDone = () => {
                 <div className="absolute w-full flex" style={{ bottom: "0" }}>
                     <div style={{ width: "100%", padding: "10px" }}>
                         <div
-                            className="flex bg-green-mbk text-white text-center text-base  font-bold "
-                            style={{
-                                margin: "auto",
-                                height: "40px",
-                                borderRadius: "10px",
-                                padding: "5px",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
+                            className="flex bg-green-mbk text-white text-center text-base  font-bold bt-line"
                             onClick={() => {
                                 history.goBack()
                             }}

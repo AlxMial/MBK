@@ -269,7 +269,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
 
             if (PaymentStatus == "Wating" && TransportStatus == "Prepare" && !isCancel && !isReturn) {
                 ///ที่ต้องชำระ
-                OrderHDData = await tbOrderHD.findAll({
+                let _OrderHDData = await tbOrderHD.findAll({
                     attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
                     where: {
                         isCancel: isCancel,
@@ -279,6 +279,26 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                         isReturn: isReturn
                     }
                 });
+                for (var i = 0; i < _OrderHDData.length; i++) {
+                    let hd = _OrderHDData[i].dataValues
+
+                    let _tbImage = await tbImage.findOne({
+                        where: {
+                            isDeleted: false,
+                            relatedId: hd.id,
+                            relatedTable: "tbOrderHD"
+                        }
+                    })
+                    if (_tbImage) {
+                        hd.isPaySlip = true
+                    } else {
+                        hd.isPaySlip = false
+                    }
+                    _OrderHDData[i].dataValues = hd
+                    OrderHDData.push(_OrderHDData[i])
+                }
+
+
             } else if (PaymentStatus == "Done" && TransportStatus == "Prepare") {
                 //เตรียมสินค้า
                 let _OrderHDData = await tbOrderHD.findAll({
@@ -505,7 +525,15 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                     hd.amount = amount
                     hd.price = price
                     hd.id = Encrypt.EncodeKey(hd.id)
-                    OrderHD.push({ id: hd.id, orderNumber: hd.orderNumber, amount: hd.amount, price: hd.price, returnStatus: hd.returnStatus, dt: hd.dt })
+                    OrderHD.push({
+                        id: hd.id
+                        , orderNumber: hd.orderNumber
+                        , amount: hd.amount
+                        , price: hd.price
+                        , returnStatus: hd.returnStatus
+                        , dt: hd.dt
+                        , isPaySlip: hd.isPaySlip == null ? null : hd.isPaySlip
+                    })
                 }
             }
 

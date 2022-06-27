@@ -87,21 +87,9 @@ const MyOrder = () => {
 
                 </div>
             </div>
-
-
-
             <div className="absolute w-full flex" style={{ bottom: "0" }}>
                 <div className=" w-full" style={{ padding: "10px" }}>
-                    <div
-                        className="flex bg-green-mbk text-white text-center text-lg  font-bold "
-                        style={{
-                            margin: "auto",
-                            height: "40px",
-                            borderRadius: "10px",
-                            padding: "5px",
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
+                    <div className="flex bg-green-mbk text-white text-center text-lg  font-bold bt-line"
                         onClick={() => {
                             history.push(path.shopList)
                         }}

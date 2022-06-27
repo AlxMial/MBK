@@ -41,9 +41,20 @@ const Tobepaid = () => {
                             return (
                                 <div key={i}>
                                     <div className="w-full">
-                                        <div className="w-full flex mb-2" style={{ fontSize: "12px" }}>
+                                        <div className="w-full flex mb-2 relative" style={{ fontSize: "12px" }}>
                                             <div className="font-bold">หมายเลขคำสั่งซื้อ : </div>
                                             <div >{e.orderNumber} </div>
+                                            {e.isPaySlip ?
+                                                <div className="absolute" style={{
+                                                    right: "0",
+                                                    color: "#FFF",
+                                                    border: "1px solid",
+                                                    padding: "0 5px",
+                                                    borderRadius: "10px",
+                                                    background: "red",
+                                                }}>{"รอการตรวจสอบ"} </div>
+                                                : null
+                                            }
                                         </div>
                                         {[...e.dt].length > 0 ?
                                             [...e.dt].map((dt, j) => {
@@ -84,7 +95,9 @@ const Tobepaid = () => {
                                         <div className="w-full flex mb-2" style={{ fontSize: "12px", justifyContent: "end", color: "#ddd" }}>
                                             <div className="font-bold"
                                                 onClick={() => {
-                                                    history.push(path.makeorderbyid.replace(":id", e.id))
+                                                    !e.isPaySlip ?
+                                                        history.push(path.makeorderbyid.replace(":id", e.id))
+                                                        : history.push(path.orderpaymentdone.replace(":id", e.id))
                                                 }}>
                                                 {"ดูรายละเอียดคำสั่งซื้อ >"}
                                             </div>
