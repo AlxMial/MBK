@@ -40,11 +40,7 @@ const ShowCart = () => {
     console.log(" id " + id)
     console.log(e)
     if (id === "cart") {
-      let shop_orders = Storage.get_cart()
-      shop_orders.usecoupon = e
-      Storage.upd_cart(shop_orders);
-
-      // history.push(path.showCart);
+      Storage.addconpon_cart(e);
     } else if (id === "byorder") {
       let item = Storage.getbyorder()
       item.usecoupon = e

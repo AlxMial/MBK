@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { path } from "services/liff.services";
@@ -8,6 +8,8 @@ import * as fn from "services/default.service";
 import FilesService from "../../../services/files";
 import Select from "react-select";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
+import * as Storage from "@services/Storage.service";
+import * as Session from "@services/Session.service";
 import {
   get_shopcart
 } from "@services/liff.services";
@@ -241,7 +243,7 @@ const ShopList = () => {
   }
 
   const Get_shopcart = () => {
-    get_shopcart((res) => {
+    get_shopcart({ uid: Session.getLiff().uid }, (res) => {
       if (res.data.status) {
         if (res.data.shop_orders) {
           setcartNumberBadge(res.data.shop_orders.length)
@@ -312,6 +314,7 @@ const ShopList = () => {
             className="px-2 absolute flex"
             style={{ right: "0" }}
             onClick={() => {
+              Storage.removeconpon_cart()
               history.push(path.showCart);
             }}
           >

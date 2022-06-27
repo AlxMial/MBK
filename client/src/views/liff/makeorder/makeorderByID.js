@@ -16,7 +16,6 @@ import {
 
 } from "@services/liff.services";
 import { Radio } from "antd";
-
 import api_province from "../../../assets/data/api_province.json";
 import api_amphure from "../../../assets/data/api_amphure.json";
 import api_tombon from "../../../assets/data/api_tombon.json";
@@ -67,16 +66,17 @@ const MakeOrderById = () => {
                     });
 
                     if (Storage.getusecoupon() == null) {
-                        if (!fn.IsNullOrEmpty(OrderHD.couponCodeId)) {
-                            setusecoupon(OrderHD.couponCodeId)
+                        if (!fn.IsNullOrEmpty(OrderHD.coupon)) {
+                            setusecoupon(OrderHD.coupon)
+                            Storage.setusecoupon(OrderHD.coupon)
                         } else {
                             setusecoupon(null)
                         }
                     } else {
                         let usecoupon = Storage.getusecoupon()
-                        if (usecoupon.id === id) {
-                            setusecoupon(usecoupon.usecoupon)
-                        }
+                        // if (usecoupon.id === id) {
+                        setusecoupon(usecoupon)
+                        // }
                     }
                     await axios.post("stock/getStock", { id: idlist }).then((response) => {
                         if (response.data.status) {
@@ -116,16 +116,17 @@ const MakeOrderById = () => {
         setdeliveryCost(cost)
     }
     const Cancelcoupon = () => {
-        if (id == "cart") {
-            let item = Storage.get_cart()
-            item.usecoupon = null
-            Storage.upd_cart(item);
-        } else {
-            let item = Storage.getbyorder()
-            item.usecoupon = null
-            Storage.updbyorder(item)
-        }
-        getProducts()
+        // if (id == "cart") {
+        //     let item = Storage.get_cart()
+        //     item.usecoupon = null
+        //     Storage.upd_cart(item);
+        // } else {
+        //     let item = Storage.getbyorder()
+        //     item.usecoupon = null
+        //     Storage.updbyorder(item)
+        // }
+        // Storage.getusecoupon(null)
+        // getProducts()
     }
 
     const getMemberaddress = async () => {
@@ -217,6 +218,7 @@ const MakeOrderById = () => {
         getMemberaddress()
         gettbpayment()
         getTbLogistic()
+
     }, []);
 
 
@@ -325,14 +327,18 @@ const MakeOrderById = () => {
                             <div style={{ color: usecoupon != null ? "red" : "var(--mq-txt-color, rgb(192, 192, 192))" }}
                                 onClick={() => {
                                     if (OrderHD.paymentStatus != "Done" && !OrderHD.isCancel) {
-                                        history.push(path.usecoupon.replace(":id", id))
+                                        // history.push(path.usecoupon.replace(":id", id))
                                     }
                                 }}
                             >
                                 {usecoupon != null ? ("-฿ " + fn.formatMoney(usecoupon.discount)) : "ใช้ส่วนลด >"}
                             </div>
                             <div className="px-2">
-                                {usecoupon != null && OrderHD.paymentStatus != "Done" && !OrderHD.isCancel ? <i className="fas fa-times-circle" style={{ color: "red" }} onClick={Cancelcoupon}></i> : null}
+                                {usecoupon != null && OrderHD.paymentStatus != "Done" && !OrderHD.isCancel ? 
+                                // <i className="fas fa-times-circle" style={{ color: "red" }}
+                                //  onClick={Cancelcoupon}></i> 
+                                null
+                                 : null}
                             </div>
                         </div> : null}
 

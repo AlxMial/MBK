@@ -93,77 +93,81 @@ router.delete("/:id", validateToken, async (req, res) => {
 
 //#region line liff
 
-router.post("/getStock", validateLineToken, async (req, res) => {
-  let id = req.body.id;
-  let status = true;
-  let _tbStock = [];
-  let msg = null;
-  let data;
-  try {
-    tbStock.hasMany(tbImage, { foreignKey: "id" });
-    tbImage.belongsTo(tbStock, { foreignKey: "relatedId" });
+router.post("/getStock"
+  // , validateLineToken // ดูได้โดยไม่ต้อง login
+  , async (req, res) => {
+    let id = req.body.id;
+    let status = true;
+    let _tbStock = [];
+    let msg = null;
+    let data;
+    try {
+      tbStock.hasMany(tbImage, { foreignKey: "id" });
+      tbImage.belongsTo(tbStock, { foreignKey: "relatedId" });
 
-    if (Encrypt.IsNullOrEmpty(id)) {
-      data = await tbStock.findAll({
-        where: { isDeleted: false, isInactive: true },
-      });
-    } else {
-      let Id = [];
-      id.filter((e) => {
-        Id.push(Encrypt.DecodeKey(e));
-      });
-      data = await tbStock.findAll({
-        where: { isDeleted: false, isInactive: true, id: Id },
-      });
-    }
-    if (data != null) {
-      data.filter((e) => {
-        _tbStock.push({
-          id: Encrypt.EncodeKey(e.id),
-          productName: e.productName,
-          price: e.price,
-          discount: e.discount,
-          discountType: e.discountType,
-          productCount: e.productCount,
-          weight: e.weight,
-          description: e.description,
-          descriptionPromotion: e.descriptionPromotion,
-          isFlashSale: e.isFlashSale,
-          startDateCampaign: e.startDateCampaign,
-          endDateCampaign: e.endDateCampaign,
-          startTimeCampaign: e.startTimeCampaign,
-          endTimeCampaign: e.endTimeCampaign,
-          IsBestSeller: e.IsBestSeller,
-          productCategoryId:e.productCategoryId,
-          percent:
-            e.discount > 0
-              ? e.discountType.toLowerCase().includes("percent")
-                ? e.discount
-                : (e.discount / e.price) * 100
-              : 0,
-          priceDiscount:
-            e.discount > 0
-              ? e.discountType.toLowerCase().includes("thb")
-                ? e.price - e.discount
-                : e.price - (e.discount / 100) * e.price
-              : 0,
+      if (Encrypt.IsNullOrEmpty(id)) {
+        data = await tbStock.findAll({
+          where: { isDeleted: false, isInactive: true },
         });
-      });
+      } else {
+        let Id = [];
+        id.filter((e) => {
+          Id.push(Encrypt.DecodeKey(e));
+        });
+        data = await tbStock.findAll({
+          where: { isDeleted: false, isInactive: true, id: Id },
+        });
+      }
+      if (data != null) {
+        data.filter((e) => {
+          _tbStock.push({
+            id: Encrypt.EncodeKey(e.id),
+            productName: e.productName,
+            price: e.price,
+            discount: e.discount,
+            discountType: e.discountType,
+            productCount: e.productCount,
+            weight: e.weight,
+            description: e.description,
+            descriptionPromotion: e.descriptionPromotion,
+            isFlashSale: e.isFlashSale,
+            startDateCampaign: e.startDateCampaign,
+            endDateCampaign: e.endDateCampaign,
+            startTimeCampaign: e.startTimeCampaign,
+            endTimeCampaign: e.endTimeCampaign,
+            IsBestSeller: e.IsBestSeller,
+            productCategoryId: e.productCategoryId,
+            percent:
+              e.discount > 0
+                ? e.discountType.toLowerCase().includes("percent")
+                  ? e.discount
+                  : (e.discount / e.price) * 100
+                : 0,
+            priceDiscount:
+              e.discount > 0
+                ? e.discountType.toLowerCase().includes("thb")
+                  ? e.price - e.discount
+                  : e.price - (e.discount / 100) * e.price
+                : 0,
+          });
+        });
+      }
+    } catch (e) {
+      status = false;
+      msg = e.message;
     }
-  } catch (e) {
-    status = false;
-    msg = e.message;
-  }
 
-  res.json({
-    status: status,
-    message: "success",
-    msg: msg,
-    tbStock: _tbStock,
+    res.json({
+      status: status,
+      message: "success",
+      msg: msg,
+      tbStock: _tbStock,
+    });
   });
-});
 // รูป Banner
-router.get("/getImgBanner", validateLineToken, async (req, res) => {
+router.get("/getImgBanner"
+// , validateLineToken
+, async (req, res) => {
   let status = !0,
     msg,
     data = [],
@@ -232,7 +236,9 @@ router.get("/getImgBanner", validateLineToken, async (req, res) => {
     ImgBanner: data,
   });
 });
-router.post("/getImg", validateLineToken, async (req, res) => {
+router.post("/getImg"
+// , validateLineToken
+, async (req, res) => {
   let status = true;
   let msg = null;
   let data = [];

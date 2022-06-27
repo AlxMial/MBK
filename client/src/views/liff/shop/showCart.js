@@ -4,6 +4,7 @@ import Spinner from "components/Loadings/spinner/Spinner";
 import axios from "services/axios";
 import { path } from "services/liff.services";
 import * as Storage from "@services/Storage.service";
+import * as Session from "@services/Session.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
@@ -24,23 +25,17 @@ const ShowCart = () => {
   const getProducts = async () => {
 
     let id = [];
-    // let cart = Storage.get_cart()
-    get_shopcart(async (res) => {
+    get_shopcart({ uid: Session.getLiff().uid }, async (res) => {
       if (res.data.status) {
         if (res.data.shop_orders.length > 0) {
           let cart = res.data.shop_orders
           if (!fn.IsNullOrEmpty(cart)) {
-            // let shop_orders = cart.shop_orders;
             cart.filter((e) => {
               id.push(e.id);
               return e
             });
             if (id.length > 0) {
-              if (!fn.IsNullOrEmpty(cart.usecoupon)) {
-                setusecoupon(cart.usecoupon)
-              } else {
-                setusecoupon(null)
-              }
+              setusecoupon(Storage.getconpon_cart())
               setIsLoading(true)
               await axios.post("stock/getStock", { id: id }).then((response) => {
                 if (response.data.status) {
@@ -66,7 +61,6 @@ const ShowCart = () => {
                   setCartItem([]);
                   setsumprice(0);
                 }
-
               }).finally((e) => {
                 setIsLoading(false)
               });
@@ -93,7 +87,7 @@ const ShowCart = () => {
   }
   //ลบ
   const deleteCart = () => {
-    upd_shopcart({ id: deleteValue, quantity: null, type: "del" }, (res) => {
+    upd_shopcart({ id: deleteValue, quantity: null, type: "del", uid: Session.getLiff().uid }, (res) => {
       if (res.data.status) {
         getProducts();
         setconfirmDelete(false);
@@ -105,14 +99,14 @@ const ShowCart = () => {
 
   //upd quantity
   const spinButton = (e, id) => {
-    get_shopcart(async (res) => {
+    get_shopcart({ uid: Session.getLiff().uid }, async (res) => {
       if (res.data.status) {
         if (e === "plus") {
-          upd_shopcart({ id: id, quantity: 1, type: "plus" }, (res) => {
+          upd_shopcart({ id: id, quantity: 1, type: "plus", uid: Session.getLiff().uid }, (res) => {
             getProducts();
           })
         } else {
-          upd_shopcart({ id: id, quantity: 1, type: "minus" }, (res) => {
+          upd_shopcart({ id: id, quantity: 1, type: "minus", uid: Session.getLiff().uid }, (res) => {
             getProducts();
           })
         }
@@ -362,7 +356,11 @@ const ShowCart = () => {
           style={{ width: "60%", left: "0px", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}
         >
           <div className="text-lg ">รวมทั้งหมด</div>
-          <div className="text-xl mt-2 text-green-mbk">{"฿" + fn.formatMoney(sumprice)}</div>
+          <div className="text-xl mt-2 text-green-mbk">{"฿" + fn.formatMoney(
+            usecoupon == null ? sumprice :
+
+              usecoupon.discount > sumprice ? 0 : sumprice - usecoupon.discount
+          )}</div>
         </div>
         <div className="px-2 " style={{ width: "40%" }}>
           <div className="w-full" style={{ padding: "10px" }}>
@@ -378,7 +376,11 @@ const ShowCart = () => {
               }}
               onClick={() => {
                 if (CartItem.length > 0) {
-                  history.push(path.makeorder.replace(":id", "cart"))
+                  if (sessionStorage.getItem("accessToken") == null) {
+                    history.push(path.register);
+                  } else {
+                    history.push(path.makeorder.replace(":id", "cart"))
+                  }
                 }
               }}
             >
