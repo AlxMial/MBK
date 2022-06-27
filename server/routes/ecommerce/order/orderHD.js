@@ -683,6 +683,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     , "paymentDate"
                     , "memberRewardId"
                     , "otherAddressId"
+                    , "paymentType"
                 ],
                 where: {
                     IsDeleted: false, id: Encrypt.DecodeKey(Id),
@@ -803,7 +804,8 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     , paymentDate: hd.paymentDate
                     , tbCancelOrder: tbCancelOrderData
                     , tbReturnOrder: tbReturnOrderData
-                    , paymentType: type == "update" ? hd.paymentType : null
+                    , paymentType: hd.paymentType
+                    // , paymentType: type == "update" ? hd.paymentType : null
                     , logisticId: type == "update" ? Encrypt.EncodeKey(hd.logisticId) : null
                     , paymentId: type == "update" ? Encrypt.EncodeKey(hd.paymentId) : null
 

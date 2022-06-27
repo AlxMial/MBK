@@ -250,7 +250,7 @@ const OrderPaymentDone = () => {
                         <div
                             className="mt-2 line-scroll"
                             style={{
-                                maxHeight: "calc(100% - 420px)",
+                                // maxHeight: "calc(100% - 420px)",
                                 width: "95%",
                                 marginLeft: "auto",
                                 marginRight: "auto",
@@ -423,8 +423,21 @@ const OrderPaymentDone = () => {
                                 </div> */}
                             </div>
                         </div>
+                        {OrderHD.paymentType == "Money Transfer" ?
+                            <div style={{ width: "90%", margin: "auto" }}>
+                                <ImageUC
+                                    // style={{ height: "15px", width: "15px" }}
+                                    find={1}
+                                    relatedid={OrderHD.id}
+                                    relatedtable={["tbOrderHD"]}
+                                    alt=""
+                                    className=" animated-img "
+                                ></ImageUC>
+                            </div>
+                            : null}
                     </>
-                    : null}
+                    :
+                    null}
 
 
 
