@@ -147,6 +147,7 @@ const ShowProducts = () => {
                 alignItems: "center",
               }}
               onClick={() => {
+                Storage.removeconpon_cart()
                 history.push(path.showCart);
               }}
             >

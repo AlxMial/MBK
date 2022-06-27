@@ -8,6 +8,7 @@ import * as fn from "services/default.service";
 import FilesService from "../../../services/files";
 import Select from "react-select";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
+import * as Storage from "@services/Storage.service";
 import {
   get_shopcart
 } from "@services/liff.services";
@@ -312,6 +313,7 @@ const ShopList = () => {
             className="px-2 absolute flex"
             style={{ right: "0" }}
             onClick={() => {
+              Storage.removeconpon_cart()
               history.push(path.showCart);
             }}
           >

@@ -82,6 +82,21 @@ export const set_add_to_cart = (obj) => {
     }
   }
 };
+
+export const addconpon_cart = (obj) => {
+  sessionStorage.setItem("conpon_cart", JSON.stringify(obj));
+}
+export const getconpon_cart = () => {
+  let cart = sessionStorage.getItem("conpon_cart");
+  cart = IsNullOrEmpty(cart) ? null : JSON.parse(cart);
+  return cart;
+}
+export const removeconpon_cart = () => {
+  sessionStorage.removeItem("conpon_cart");
+};
+
+
+
 export const get_cart = () => {
   let cart = sessionStorage.getItem("cart");
   cart = IsNullOrEmpty(cart) ? "" : JSON.parse(cart);
@@ -117,7 +132,7 @@ export const setusecoupon = (obj) => {
   localStorage.setItem("usecoupon", JSON.stringify(obj));
 };
 
-export const getusecoupon = () => {
+export const getusecoupon = (id) => {
   let obj = localStorage.getItem("usecoupon");
   obj = IsNullOrEmpty(obj) ? null : JSON.parse(obj);
   return obj;

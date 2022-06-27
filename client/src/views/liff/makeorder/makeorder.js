@@ -55,10 +55,12 @@ const MakeOrder = () => {
                 shop_orders.map((e, i) => {
                     idlist.push(e.id);
                 });
-                if (!fn.IsNullOrEmpty(item.usecoupon)) {
-                    setusecoupon(item.usecoupon)
+
+                if (id == "cart") {
+                    setusecoupon(Storage.getconpon_cart())
                 } else {
-                    setusecoupon(null)
+                    let item = Storage.getbyorder()
+                    setusecoupon(item.usecoupon)
                 }
 
                 await axios.post("stock/getStock", { id: idlist }).then((response) => {
@@ -114,9 +116,7 @@ const MakeOrder = () => {
     }
     const Cancelcoupon = () => {
         if (id == "cart") {
-            let item = Storage.get_cart()
-            item.usecoupon = null
-            Storage.upd_cart(item);
+            Storage.removeconpon_cart()
         } else {
             let item = Storage.getbyorder()
             item.usecoupon = null
@@ -217,7 +217,8 @@ const MakeOrder = () => {
                         stockNumber: shop_orders.length,
                         paymentStatus: "Wating",
                         transportStatus: "Prepare",
-                        isAddress: isAddress
+                        isAddress: isAddress,
+                        usecouponid: usecoupon.id
                     },
                     orderdt: dt
                 }
@@ -225,10 +226,9 @@ const MakeOrder = () => {
 
                 doSaveOrder(order, (res) => {
                     if (res.status) {
-                        // console.log()
                         // ลบข้อมูล
                         if (id == "cart") {
-                            // item = Storage.remove_cart()
+                            item = Storage.remove_cart()
                         }
                         else {
                             item = Storage.remove_byorder()
@@ -556,17 +556,9 @@ const MakeOrder = () => {
                                         {optionPayment.length > 0 ?
                                             <Select
                                                 className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
-
                                                 isSearchable={false}
-                                                // id={"category"}
-                                                // name={"category"}
-
-                                                value={optionPayment.filter(o =>
-                                                    o.value
-                                                    === paymentID)}
-
+                                                value={optionPayment.filter(o => o.value === paymentID)}
                                                 options={optionPayment}
-
                                                 formatOptionLabel={({ bankName, accountNumber, bankBranchName }) => (
                                                     <div >
                                                         <div className="font-bold">{bankName}</div>
@@ -575,14 +567,11 @@ const MakeOrder = () => {
 
                                                     </div>
                                                 )}
-
                                                 onChange={(e) => {
                                                     setpaymentID(e.id)
                                                 }}
-
                                             />
                                             : null}
-
                                     </div>
                                 </div>
                             </Radio>

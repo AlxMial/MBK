@@ -22,6 +22,7 @@ const { tbOrderHD
     , tbCartHD
     , tbCartDT
     , tbImage
+    , tbMemberReward
 } = require("../../../models");
 const e = require("express");
 // const tbReturnOrder = require("../../../models/tbReturnOrder");
@@ -161,6 +162,13 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         orderhd.logisticId = Encrypt.DecodeKey(orderhd.logisticId)
         orderhd.otherAddressId = Encrypt.DecodeKey(orderhd.isAddress) == "memberId" ? null : Encrypt.DecodeKey(orderhd.isAddress)
 
+        if (orderhd.usecouponid != null) {
+
+            const _tbMemberReward = await tbMemberReward.findOne({ attributes: ["id"], where: { TableHDId: Encrypt.DecodeKey(orderhd.usecouponid) } });
+            orderhd.memberRewardId = _tbMemberReward.id
+        }
+
+
         const _tbOrderHD = await tbOrderHD.create(orderhd);
 
         if (_tbOrderHD) {
@@ -171,6 +179,13 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
 
                 const _tbOrderDT = await tbOrderDT.create(orderdt[i]);
             }
+        }
+
+        if (orderhd.usecouponid != null) {
+            await tbMemberReward.update({
+                isUsedCoupon: true
+            },
+                { where: { id: orderhd.memberRewardId } })
         }
 
         //ลบข้อมูลในตระกร้า
@@ -684,6 +699,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     , "memberRewardId"
                     , "otherAddressId"
                     , "paymentType"
+
                 ],
                 where: {
                     IsDeleted: false, id: Encrypt.DecodeKey(Id),
@@ -784,6 +800,55 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                     tbReturnOrderData = _tbReturnOrder
                 }
 
+                let RedemptionCoupon;
+                if (type == "update" && hd.memberRewardId != null) {
+                    const _tbMemberReward = await tbMemberReward.findOne({
+                        where: {
+                            id: hd.memberRewardId,
+                        },
+                        attributes: ['TableHDId'],
+                    });
+                    if (_tbMemberReward) {
+                        tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+                        tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
+
+                        let _tbCouponCode = await tbCouponCode.findOne({
+                            where: { isDeleted: !1, id: _tbMemberReward.TableHDId },
+                            attributes: ["id", 'redemptionCouponId'],
+                            include: [
+                                {
+                                    model: tbRedemptionCoupon,
+                                    attributes: ['id', 'discount', "isNotExpired", "startDate", "expiredDate", "couponName"],
+                                    where: {
+                                        isDeleted: !1,
+                                        id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
+                                    },
+                                },
+                            ],
+                        });
+
+                        if (_tbCouponCode) {
+
+                            const _tbImage = await tbImage.findOne({
+                                attributes: ['image'],
+                                where: {
+                                    isDeleted: false,
+                                    relatedId: Encrypt.DecodeKey(_tbCouponCode.tbRedemptionCoupon.id),
+                                    relatedTable: "tbRedemptionCoupon",
+                                },
+                            });
+                            _tbCouponCode.dataValues.image = _tbImage.image
+                            RedemptionCoupon = {
+                                id: Encrypt.EncodeKey(_tbCouponCode.dataValues.id)
+                                , image: _tbCouponCode.dataValues.image
+                                , couponName: _tbCouponCode.tbRedemptionCoupon.couponName
+                                , discount: _tbCouponCode.tbRedemptionCoupon.discount
+                                , expiredDate: _tbCouponCode.tbRedemptionCoupon.expiredDate == null ? "-" : _tbCouponCode.tbRedemptionCoupon.expiredDate
+                            }
+
+                        }
+                    }
+                }
 
                 hd.id = Encrypt.EncodeKey(hd.id)
                 hd.sumprice = sumprice
@@ -811,6 +876,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
 
                     , memberRewardId: type == "update" ? hd.memberRewardId == null ? null : Encrypt.EncodeKey(hd.memberRewardId) : null
                     , otherAddressId: type == "update" ? hd.otherAddressId == null ? Encrypt.EncodeKey("memberId") : Encrypt.EncodeKey(hd.otherAddressId) : null
+                    ,coupon: type == "update" ? hd.memberRewardId == null ? null :RedemptionCoupon: null
 
                 }
             }

@@ -7,6 +7,7 @@ import ImageUC from "components/Image/index";
 import {
     getOrderHD
 } from "@services/liff.services";
+import * as Storage from "@services/Storage.service";
 
 const Tobepaid = () => {
     const history = useHistory();
@@ -21,6 +22,10 @@ const Tobepaid = () => {
         }, () => { }, () => { setIsLoading(false) })
     }
 
+    const makeorderbyid = (id) => {
+        history.push(path.makeorderbyid.replace(":id", id))
+        Storage.setusecoupon(null)
+    }
     useEffect(() => {
         GetOrderHD()
     }, []);
@@ -96,7 +101,7 @@ const Tobepaid = () => {
                                             <div className="font-bold"
                                                 onClick={() => {
                                                     !e.isPaySlip ?
-                                                        history.push(path.makeorderbyid.replace(":id", e.id))
+                                                        makeorderbyid(e.id)
                                                         : history.push(path.orderpaymentdone.replace(":id", e.id))
                                                 }}>
                                                 {"ดูรายละเอียดคำสั่งซื้อ >"}
