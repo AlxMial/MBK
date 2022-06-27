@@ -614,7 +614,7 @@ export default function CampaignExchangeHistoryReport() {
                           <ReactTooltip globalEventOff="click" />
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          <i className="fa fa-clone mr-2 cursor-pointer" > ดูคัดลอก </i>
+                          <i className="fa fa-clone mr-2 cursor-pointer" > คัดลอก </i>
                         </td>
                       </tr>
                     );
