@@ -5,6 +5,7 @@ import { path } from "services/liff.services";
 import axios from "services/axios";
 import { IsNullOrEmpty } from "services/default.service";
 import * as Storage from "@services/Storage.service";
+import * as Session from "@services/Session.service";
 import * as fn from "@services/default.service";
 import FilesService from "../../../services/files";
 import SlideShow from "./SlideShow";
@@ -35,7 +36,7 @@ const ShowProducts = () => {
   const add_to_cart = () => {
     if (spin > 0) {
 
-      upd_shopcart({ id: id, quantity: spin, type: "add" }, (res) => {
+      upd_shopcart({ id: id, quantity: spin, type: "add", uid: Session.getLiff().uid }, (res) => {
 
         if (res.data.status) {
           if (res.data.shop_orders) {
@@ -62,7 +63,7 @@ const ShowProducts = () => {
 
   };
   const Get_shopcart = () => {
-    get_shopcart((res) => {
+    get_shopcart({ uid: Session.getLiff().uid }, (res) => {
       if (res.data.status) {
         if (res.data.shop_orders) {
           setcartNumberBadge(res.data.shop_orders.length)
@@ -328,7 +329,16 @@ const ShowProducts = () => {
                     alignItems: "center",
                     justifyContent: "center",
                   }}
-                  onClick={btbuy}
+                  onClick={
+                    () => {
+                      if (sessionStorage.getItem("accessToken") == null) {
+                        history.push(path.register);
+                      } else {
+                        btbuy()
+                      }
+                    }
+
+                  }
                 >
                   {"ซื้อสินค้า"}
                 </div>

@@ -5,6 +5,7 @@ import { useToasts } from "react-toast-notifications";
 import axios from "services/axios";
 import { path } from "services/liff.services";
 import * as Storage from "@services/Storage.service";
+import * as Session from "@services/Session.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import Select from "react-select";
@@ -90,7 +91,7 @@ const MakeOrder = () => {
             }
         }
         if (id === "cart") {
-            get_shopcart(async (res) => {
+            get_shopcart({ uid: Session.getLiff().uid }, async (res) => {
                 if (res.data.status) {
                     if (res.data.shop_orders.length > 0) {
                         item.shop_orders = []
@@ -242,7 +243,7 @@ const MakeOrder = () => {
             }
             if (id == "cart") {
                 // item = Storage.get_cart()
-                get_shopcart(async (res) => {
+                get_shopcart({ uid: Session.getLiff().uid }, async (res) => {
                     if (res.data.status) {
                         if (res.data.shop_orders.length > 0) {
                             item.shop_orders = []

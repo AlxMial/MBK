@@ -66,7 +66,9 @@ router.delete("/:id", validateToken, async (req, res) => {
 });
 
 //#region line liff
-router.get("/getProductCategory", validateLineToken, async (req, res) => {
+router.get("/getProductCategory"
+// , validateLineToken
+, async (req, res) => {
     const data = await tbProductCategory.findAll({
         where: { isDeleted: false },
     });

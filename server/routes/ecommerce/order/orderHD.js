@@ -876,7 +876,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
 
                     , memberRewardId: type == "update" ? hd.memberRewardId == null ? null : Encrypt.EncodeKey(hd.memberRewardId) : null
                     , otherAddressId: type == "update" ? hd.otherAddressId == null ? Encrypt.EncodeKey("memberId") : Encrypt.EncodeKey(hd.otherAddressId) : null
-                    ,coupon: type == "update" ? hd.memberRewardId == null ? null :RedemptionCoupon: null
+                    , coupon: type == "update" ? hd.memberRewardId == null ? null : RedemptionCoupon : null
 
                 }
             }
@@ -895,118 +895,123 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
     });
 });
 
-router.post("/upd_shopcart", validateLineToken, async (req, res) => {
-    let status = true;
-    let msg;
-    const uid = Encrypt.DecodeKey(req.user.uid);
-    const { id, quantity, type } = req.body
-    let shop_orders = []
-    try {
-        const _tbCartHD = await tbCartHD.findOne({ attributes: ["id"], where: { uid: uid } });
-        if (_tbCartHD) {
-            // มีตระกร้า
-            const _tbCartDT = await tbCartDT.findOne({ attributes: ["id", "amount"], where: { strockId: Encrypt.DecodeKey(id) } });
-            if (_tbCartDT) {
-                //ดึงจำนวนคงเหลือ 
-                const _tbStock = await tbStock.findOne({ attributes: ["id", "productCount"], where: { id: Encrypt.DecodeKey(id) } });
-                if (_tbStock) {
-                    const addamount = quantity //จำนวนที่เพิ่ม
-                    const oldamount = _tbCartDT.amount // จำนวนในตระกร้า
-                    const productCount = _tbStock.productCount // จำนวนสินค้า
-                    if (type == "add" || type == "plus") {
+router.post("/upd_shopcart"
+    // , validateLineToken
+    , async (req, res) => {
+        let status = true;
+        let msg;
+        // const uid = Encrypt.DecodeKey(req.user.uid);
+        const { id, quantity, type, uid } = req.body
+        let shop_orders = []
+        try {
+            const _tbCartHD = await tbCartHD.findOne({ attributes: ["id"], where: { uid: uid } });
+            if (_tbCartHD) {
+                // มีตระกร้า
+                const _tbCartDT = await tbCartDT.findOne({ attributes: ["id", "amount"], where: { strockId: Encrypt.DecodeKey(id) } });
+                if (_tbCartDT) {
+                    //ดึงจำนวนคงเหลือ 
+                    const _tbStock = await tbStock.findOne({ attributes: ["id", "productCount"], where: { id: Encrypt.DecodeKey(id) } });
+                    if (_tbStock) {
+                        const addamount = quantity //จำนวนที่เพิ่ม
+                        const oldamount = _tbCartDT.amount // จำนวนในตระกร้า
+                        const productCount = _tbStock.productCount // จำนวนสินค้า
+                        if (type == "add" || type == "plus") {
 
-                        if ((oldamount + addamount) <= productCount) {
-                            ///upd จำนวน 
-                            const dataupd = await tbCartDT.update({
-                                amount: _tbCartDT.amount + quantity
-                            }, { where: { strockId: Encrypt.DecodeKey(id) } })
-                        } else {
-                            status = false;
-                            msg = "ไม่สามารถเพิ่มจำนวนสินค้านี้ได้ เนื่องจากคุณเพิ่มสินค้านี้ไว้ในรถเข็นแล้ว " + oldamount + " ชิ้น";
-                        }
-                    } else if (type == "minus") {
-                        // ในตระกร้ามากกว่า 1 
-                        if (oldamount > 1) {
-                            const dataupd = await tbCartDT.update({
-                                amount: _tbCartDT.amount - quantity
-                            }, { where: { strockId: Encrypt.DecodeKey(id) } })
-                        } else {
+                            if ((oldamount + addamount) <= productCount) {
+                                ///upd จำนวน 
+                                const dataupd = await tbCartDT.update({
+                                    amount: _tbCartDT.amount + quantity
+                                }, { where: { strockId: Encrypt.DecodeKey(id) } })
+                            } else {
+                                status = false;
+                                msg = "ไม่สามารถเพิ่มจำนวนสินค้านี้ได้ เนื่องจากคุณเพิ่มสินค้านี้ไว้ในรถเข็นแล้ว " + oldamount + " ชิ้น";
+                            }
+                        } else if (type == "minus") {
+                            // ในตระกร้ามากกว่า 1 
+                            if (oldamount > 1) {
+                                const dataupd = await tbCartDT.update({
+                                    amount: _tbCartDT.amount - quantity
+                                }, { where: { strockId: Encrypt.DecodeKey(id) } })
+                            } else {
+                                const dataupd = await tbCartDT.destroy({
+                                    where: {
+                                        strockId: Encrypt.DecodeKey(id),
+                                    }
+                                })
+                            }
+                        } else if (type == "del") {
                             const dataupd = await tbCartDT.destroy({
                                 where: {
                                     strockId: Encrypt.DecodeKey(id),
                                 }
                             })
                         }
-                    } else if (type == "del") {
-                        const dataupd = await tbCartDT.destroy({
-                            where: {
-                                strockId: Encrypt.DecodeKey(id),
-                            }
-                        })
                     }
+
+                } else {
+                    //ไม่มีให้เพิ่ม
+                    const addtbCartDT = await tbCartDT.create({ carthdId: _tbCartHD.id, strockId: Encrypt.DecodeKey(id), amount: quantity })
                 }
 
             } else {
                 //ไม่มีให้เพิ่ม
-                const addtbCartDT = await tbCartDT.create({ carthdId: _tbCartHD.id, strockId: Encrypt.DecodeKey(id), amount: quantity })
+                const addtbCartHD = await tbCartHD.create({ uid: uid })
+                if (addtbCartHD) {
+                    const addtbCartDT = await tbCartDT.create({ carthdId: addtbCartHD.id, strockId: Encrypt.DecodeKey(id), amount: quantity })
+                }
             }
 
-        } else {
-            //ไม่มีให้เพิ่ม
-            const addtbCartHD = await tbCartHD.create({ uid: uid })
-            if (addtbCartHD) {
-                const addtbCartDT = await tbCartDT.create({ carthdId: addtbCartHD.id, strockId: Encrypt.DecodeKey(id), amount: quantity })
+
+
+
+            const _tbCartHDData = await tbCartHD.findOne({ attributes: ["id"], where: { uid: uid } });
+            if (_tbCartHDData) {
+                const _tbCartDT = await tbCartDT.findAll({ attributes: ["strockId", "amount"], where: { carthdId: _tbCartHDData.id } });
+                _tbCartDT.map((e, i) => {
+                    shop_orders.push({ id: Encrypt.EncodeKey(e.strockId), quantity: e.amount })
+                })
+
             }
+
+        } catch (e) {
+            status = false
+            msg = e.message
         }
-
-
-
-
-        const _tbCartHDData = await tbCartHD.findOne({ attributes: ["id"], where: { uid: uid } });
-        if (_tbCartHDData) {
-            const _tbCartDT = await tbCartDT.findAll({ attributes: ["strockId", "amount"], where: { carthdId: _tbCartHDData.id } });
-            _tbCartDT.map((e, i) => {
-                shop_orders.push({ id: Encrypt.EncodeKey(e.strockId), quantity: e.amount })
-            })
-
-        }
-
-    } catch (e) {
-        status = false
-        msg = e.message
-    }
-    return res.json({
-        status: status,
-        msg: msg,
-        shop_orders: shop_orders
+        return res.json({
+            status: status,
+            msg: msg,
+            shop_orders: shop_orders
+        });
     });
-});
-router.get("/get_shopcart", validateLineToken, async (req, res) => {
-    let status = true;
-    let msg;
-    const uid = Encrypt.DecodeKey(req.user.uid);
-    let shop_orders = []
-    try {
+router.post("/get_shopcart"
+    // , validateLineToken
+    , async (req, res) => {
+        let status = true;
+        let msg;
+        // const uid = Encrypt.DecodeKey(req.user.uid);
+        const { uid } = req.body
+        let shop_orders = []
+        try {
 
-        const _tbCartHD = await tbCartHD.findOne({ attributes: ["id"], where: { uid: uid } });
-        if (_tbCartHD) {
-            const _tbCartDT = await tbCartDT.findAll({ attributes: ["strockId", "amount"], where: { carthdId: _tbCartHD.id } });
-            _tbCartDT.map((e, i) => {
-                shop_orders.push({ id: Encrypt.EncodeKey(e.strockId), quantity: e.amount })
-            })
+            const _tbCartHD = await tbCartHD.findOne({ attributes: ["id"], where: { uid: uid } });
+            if (_tbCartHD) {
+                const _tbCartDT = await tbCartDT.findAll({ attributes: ["strockId", "amount"], where: { carthdId: _tbCartHD.id } });
+                _tbCartDT.map((e, i) => {
+                    shop_orders.push({ id: Encrypt.EncodeKey(e.strockId), quantity: e.amount })
+                })
 
+            }
+
+        } catch (e) {
+            status = false
+            msg = e.message
         }
-
-    } catch (e) {
-        status = false
-        msg = e.message
-    }
-    return res.json({
-        status: status,
-        msg: msg,
-        shop_orders: shop_orders
+        return res.json({
+            status: status,
+            msg: msg,
+            shop_orders: shop_orders
+        });
     });
-});
 
 //#endregion line liff
 module.exports = router;

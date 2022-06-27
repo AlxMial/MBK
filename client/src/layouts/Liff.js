@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import * as Session from "@services/Session.service";
-import * as Storage from "@services/Storage.service";
+// import * as Storage from "@services/Storage.service";
 import { useHistory } from "react-router-dom";
 import liff from "@line/liff";
 import { IsNullOrEmpty } from "@services/default.service";
@@ -24,15 +24,15 @@ const getRoutes = () => {
   });
 };
 
-const initLine = (callback, setView) => {
+const initLine = (callback, setView, pathname) => {
   if (dev) {
-    runApp(callback, setView);
+    runApp(callback, setView, pathname);
   } else {
     liff.init(
       { liffId: "1657238460-3deq6ard" },
       () => {
         if (liff.isLoggedIn()) {
-          runApp(callback, setView);
+          runApp(callback, setView, pathname);
         } else {
           setView();
           liff.login();
@@ -42,17 +42,17 @@ const initLine = (callback, setView) => {
     );
   }
 };
-const runApp = (callback, setView) => {
+const runApp = (callback, setView, pathname) => {
   if (dev) {
     Session.setLiff({
-      uid: "U6e9bc5a2de9790dd21597c5012928a4c",
+      uid: "U6e9bc5a2de9790dd21597c5012928a4c00000",
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {
       apiCheckRegister((res) => {
         let lifdata = {
-          uid: "U6e9bc5a2de9790dd21597c5012928a4c",
+          uid: "U6e9bc5a2de9790dd21597c5012928a4c00000",
           pictureUrl: null,
         }
         if (res.data.code === 200) {
@@ -141,13 +141,18 @@ const LiffAPP = () => {
   } else if (pathname.toLowerCase().includes("shoplist")) {
     bg = "0px";
   }
+
   if (!view) {
     initLine(
       (e) => {
         let checkRegister = Session.getcheckRegister();
         if (checkRegister.isRegister !== true) {
-          if (!pathname.includes("register")) {
-            history.push(path.register);
+          if (pathname.includes("shoplist") || pathname.includes("showProducts") || pathname.includes("showCart")) {
+
+          } else {
+            if (!pathname.includes("register")) {
+              history.push(path.register);
+            }
           }
         } else {
           if (pathname.includes("register")) {
@@ -157,7 +162,8 @@ const LiffAPP = () => {
       },
       () => {
         setview(true);
-      }
+      },
+      pathname
     );
   }
 

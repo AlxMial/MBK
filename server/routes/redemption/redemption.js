@@ -648,7 +648,9 @@ router.post("/CloneCoupon", async (req, res) => {
 
 //#region line liff
 
-router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
+router.get("/gettbcouponcodes"
+, validateLineToken
+, async (req, res) => {
 
   let status = true
   let msg = ""

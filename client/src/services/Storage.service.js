@@ -76,6 +76,7 @@ export const set_add_to_cart = (obj) => {
         if (e.id === obj.id) {
           e.quantity = e.quantity + obj.quantity;
         }
+        return e
       });
       let data = { shop_orders: old_shop_orders };
       sessionStorage.setItem("cart", JSON.stringify(data));
