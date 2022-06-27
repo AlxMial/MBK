@@ -4737,15 +4737,26 @@ input[type="number"] {
 
 .select-address .css-1s2u09g-control,
 .select-address .css-1pahdxg-control,
-.select-address .css-1insrsq-control {
+.select-address .css-1insrsq-control,
+.select-Logistic .css-1s2u09g-control,
+.select-Logistic .css-1pahdxg-control,
+.select-Logistic .css-1insrsq-control
+ {
   border-color: transparent;
   height: auto;
   max-height: unset !important;
 }
 
-.select-address .css-1pahdxg-control {
+.select-address .css-1pahdxg-control,
+.select-Logistic .css-1pahdxg-control {
   border-color: none;
   box-shadow: none;
+}
+.select-address {
+  height: 100px;
+}
+.select-Logistic {
+  height: 90px;
 }
 
 .select-remark .css-1s2u09g-control,
@@ -4887,6 +4898,4 @@ button.bt-quantity.broder-plus {
   left: 0;
 }
 
-/* #header, #header * {
-  background: rgba(40, 40, 100, 0.25);
-} */
+

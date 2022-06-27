@@ -81,13 +81,32 @@ const PaymentInfo = () => {
                             {OrderHD != null ?
                                 <div className="w-full  relative">
 
-                                    <div className="w-full font-bold" style={{ fontSize: "13px" }}>{OrderHD.Payment.bankName}</div>
-                                    <div className="w-full " style={{ fontSize: "13px", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"สาขา : " + OrderHD.Payment.bankBranchName}</div>
+                                    <div className="flex w-full font-bold" style={{ fontSize: "14px" }}>
+                                        <div style={{ width: "15px" }}>
+                                            <ImageUC
+                                                style={{ height: "15px", width: "15px" }}
+                                                find={1}
+                                                relatedid={OrderHD.Payment.id}
+                                                relatedtable={["payment"]}
+                                                alt=""
+                                                className=" animated-img "
+                                            ></ImageUC>
+                                        </div>
+                                        <div className="px-2" style={{ width: "calc(100% - 15px )" }}>{OrderHD.Payment.bankName}</div>
+
+                                    </div>
+                                    <div className="w-full " style={{ fontSize: "14px", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"สาขา : " + OrderHD.Payment.bankBranchName}</div>
                                     <div className="w-full flex" style={{ fontSize: "20px" }}>
-                                        <div className="flex " style={{ width: "70%", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>
+                                        <div className="flex " style={{ fontSize: "14px", width: "70%", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>
                                             เลขบัญชี : <div className="text-green-mbk px-2 font-bold " >{OrderHD.Payment.accountNumber}</div>
                                         </div>
-                                        <CopyToClipboard text={OrderHD.Payment.accountNumber}>
+                                        <CopyToClipboard text={OrderHD.Payment.accountNumber}
+                                            onCopy={() => {
+                                                addToast("คัดลอกเรียบร้อยแล้ว", {
+                                                    appearance: "success",
+                                                    autoDismiss: true,
+                                                });
+                                            }}>
                                             <div style={{ width: "30%", textAlign: "end", color: "var(--mq-txt-color, rgb(170, 170, 170))", fontSize: "13px" }}>
                                                 คัดลอก
                                             </div>
@@ -110,7 +129,7 @@ const PaymentInfo = () => {
                     >
                         <div className="w-full " style={{ width: "90%", margin: "auto" }}>
 
-                            <div style={{ width: "80%", border: "1px solid ", margin: "auto" }}>
+                            <div style={{ width: "80%", margin: "auto" }}>
                                 <div className="mb-2">
                                     <div className="mb-2">
                                         <div style={{ width: "150px", height: "150px", border: "1px solid ", margin: "auto" }}>

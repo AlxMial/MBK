@@ -405,6 +405,7 @@ const MakeOrder = () => {
                             {optionaddress.length > 0 ?
                                 <Select
                                     className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
+                                    styles={{ height: "100px" }}
                                     isSearchable={false}
                                     id={"category"}
                                     name={"category"}
@@ -427,10 +428,18 @@ const MakeOrder = () => {
                                     }}
 
                                 />
-                                : null}
+                                :
+                                <div className="animated-img" style={{
+                                    height: "100px",
+                                    borderRadius: "20px"
+                                }}></div>
+
+                            }
 
                         </div>
-                        <div className="flex">
+                        <div className="flex" onClick={() => {
+                            history.push(path.addAddress)
+                        }}>
                             <i className="fas fa-plus-circle flex " style={{ alignItems: "center" }}></i>
                             <div className="px-2">เพิ่มที่อยู่</div>
                         </div>
@@ -460,7 +469,7 @@ const MakeOrder = () => {
 
                             {optionLogistic.length > 0 ?
                                 <Select
-                                    className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
+                                    className="text-gray-mbk mt-1 text-sm w-full border-none select-Logistic "
                                     isSearchable={false}
                                     value={optionLogistic.filter(o => o.value === isLogistic)}
                                     options={optionLogistic}
@@ -487,7 +496,10 @@ const MakeOrder = () => {
                                     }}
 
                                 />
-                                : null}
+                                : <div className="animated-img" style={{
+                                    height: "90px",
+                                    borderRadius: "20px"
+                                }}></div>}
 
                         </div>
 
@@ -516,7 +528,20 @@ const MakeOrder = () => {
                             className="w-full radio-lbl-full"
 
                             onChange={(e) => {
-                                setRadio(e.target.value)
+                                if (e.target.value == 2) {
+                                    if (sumprice >= 500) {
+                                        setRadio(e.target.value)
+                                    } else {
+                                        addToast("ยอดรวมสิ้นค้าต้องมากกว่า 500 บาท",
+                                            {
+                                                appearance: "warning",
+                                                autoDismiss: true,
+                                            }
+                                        );
+                                    }
+                                } else {
+                                    setRadio(e.target.value)
+                                }
                             }}
                             value={RadioPayment}
                         >

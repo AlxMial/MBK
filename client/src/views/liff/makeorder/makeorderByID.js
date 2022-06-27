@@ -426,14 +426,16 @@ const MakeOrderById = () => {
                             {optionLogistic.length > 0 && OrderHD != null ?
                                 <Select
                                     isDisabled={OrderHD.transportStatus == "In Transit" || OrderHD.transportStatus == "Done" || OrderHD.isCancel ? true : false}
-                                    className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
+                                    className="text-gray-mbk mt-1 text-sm w-full border-none select-Logistic "
                                     isSearchable={false}
                                     value={optionLogistic.filter(o => o.value === isLogistic)}
                                     options={optionLogistic}
 
                                     formatOptionLabel={({ name, description, deliveryCost }) => (
                                         <div >
-                                            <div className="font-bold">{name}</div>
+                                            <div className="font-bold">
+                                                {name}
+                                            </div>
                                             <div style={{
                                                 width: "100%",
                                                 whiteSpace: "break-spaces",
@@ -483,7 +485,20 @@ const MakeOrderById = () => {
                                 className="w-full radio-lbl-full"
                                 disabled={OrderHD.paymentStatus == "Done" ? true : false}
                                 onChange={(e) => {
-                                    setRadio(e.target.value)
+                                    if (e.target.value == 2) {
+                                        if (OrderHD.sumprice >= 500) {
+                                            setRadio(e.target.value)
+                                        } else {
+                                            addToast("ยอดรวมสิ้นค้าต้องมากกว่า 500 บาท",
+                                                {
+                                                    appearance: "warning",
+                                                    autoDismiss: true,
+                                                }
+                                            );
+                                        }
+                                    } else {
+                                        setRadio(e.target.value)
+                                    }
                                 }}
                                 value={RadioPayment}
                             >
@@ -505,9 +520,16 @@ const MakeOrderById = () => {
 
                                                     options={optionPayment}
 
-                                                    formatOptionLabel={({ bankName, accountNumber, bankBranchName }) => (
+                                                    formatOptionLabel={({ id, bankName, accountNumber, bankBranchName }) => (
                                                         <div >
-                                                            <div className="font-bold">{bankName}</div>
+                                                            <div className="flex font-bold">
+                                                                <div style={{ height: "15px", width: "15px" }} >
+                                                                    {id != null ?
+                                                                        <GetImageUC id={id} />
+                                                                        : null}
+                                                                </div>
+                                                                <div className="px-2"> {bankName} </div>
+                                                            </div>
                                                             <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"เลขบัญชี : " + accountNumber}</div>
                                                             <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"สาขา : " + bankBranchName}</div>
 
@@ -669,5 +691,17 @@ const MakeOrderById = () => {
     );
 };
 
+
+const GetImageUC = ({ id }) => {
+    return <ImageUC
+        style={{ height: "15px", width: "15px" }}
+        find={1}
+        relatedid={id}
+        relatedtable={["payment"]}
+        alt=""
+        className=" animated-img "
+    ></ImageUC>
+
+}
 
 export default MakeOrderById;
