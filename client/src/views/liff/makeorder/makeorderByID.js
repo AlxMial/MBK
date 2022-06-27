@@ -107,13 +107,13 @@ const MakeOrderById = () => {
 
     };
     const setDeliveryCost = (e) => {
-
-        setdeliveryCost(e)
-        setTimeout(() => {
-            // getProducts()
-        }, 1000);
-
-
+        let cost = e
+        if (tbPromotionDelivery) {
+            if ((sumprice + cost) > tbPromotionDelivery.buy) {
+                cost = cost > tbPromotionDelivery.deliveryCost ? cost - tbPromotionDelivery.deliveryCost : 0
+            }
+        }
+        setdeliveryCost(cost)
     }
     const Cancelcoupon = () => {
         if (id == "cart") {
@@ -600,7 +600,7 @@ const MakeOrderById = () => {
                                                 tbPromotionDelivery == null ? deliveryCost :
                                                     //มีโปร
                                                     (sumprice + deliveryCost) > tbPromotionDelivery.buy ?
-                                                        (deliveryCost > tbPromotionDelivery.deliveryCost ? deliveryCost - tbPromotionDelivery.deliveryCost : 0)
+                                                        (deliveryCost > tbPromotionDelivery.deliveryCost ? deliveryCost : 0)
                                                         : deliveryCost
                                             ) :
                                             //มีส่วนลด   
@@ -611,7 +611,7 @@ const MakeOrderById = () => {
                                                     //มีโปร
                                                     (sumprice + deliveryCost) > tbPromotionDelivery.buy ?
 
-                                                        (deliveryCost > tbPromotionDelivery.deliveryCost ? deliveryCost - tbPromotionDelivery.deliveryCost : 0)
+                                                        (deliveryCost > tbPromotionDelivery.deliveryCost ? deliveryCost : 0)
 
                                                         : deliveryCost
                                             )

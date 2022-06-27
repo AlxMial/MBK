@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
-import { useToasts } from "react-toast-notifications";
 import { path } from "services/liff.services";
 import SlideShow from "./SlideShow";
 import axios from "services/axios";
@@ -9,14 +8,15 @@ import * as fn from "services/default.service";
 import FilesService from "../../../services/files";
 import Select from "react-select";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
-
+import {
+  get_shopcart
+} from "@services/liff.services";
 import ImageUC from "components/Image/index";
 const useStyle = styleSelectLine();
 // components
 
 const ShopList = () => {
   const history = useHistory();
-  const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
   const [ImgBanner, setImgBanner] = useState([]);
   const [y, setY] = useState(0);
@@ -24,9 +24,7 @@ const ShopList = () => {
   const [category, setcategory] = useState(0);
   const [productCategory, setproductCategory] = useState([]);
 
-  const [cartNumberBadge, setcartNumberBadge] = useState(
-    fn.getCartNumberBadge()
-  );
+  const [cartNumberBadge, setcartNumberBadge] = useState(null);
   const [tbStock, settbStock] = useState([]);//ทั้งหมด 
 
   const [selectMenu, setselectmenu] = useState(1);//ทั้งหมด 
@@ -41,8 +39,6 @@ const ShopList = () => {
   const setselectMenu = (e) => {
     setselectmenu(e)
     setcategoryview(category, e)
-
-
   }
 
   const Counter = ({ time }) => {
@@ -244,10 +240,20 @@ const ShopList = () => {
     setY(scrollTop)
   }
 
+  const Get_shopcart = () => {
+    get_shopcart((res) => {
+      if (res.data.status) {
+        if (res.data.shop_orders) {
+          setcartNumberBadge(res.data.shop_orders.length)
+        }
+      }
+    })
+  }
   useEffect(() => {
     fetchDataImgBanner();
     fetchDatatbStock();
-    fetchproductCategory()
+    fetchproductCategory();
+    Get_shopcart()
   }, []);
 
 

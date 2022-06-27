@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-// import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 import { path } from "services/liff.services";
 import axios from "services/axios";
@@ -9,18 +8,20 @@ import * as Storage from "@services/Storage.service";
 import * as fn from "@services/default.service";
 import FilesService from "../../../services/files";
 import SlideShow from "./SlideShow";
+import Spinner from "components/Loadings/spinner/Spinner";
+import {
+  upd_shopcart,
+  get_shopcart
+} from "@services/liff.services";
 // components
 
 const ShowProducts = () => {
   const history = useHistory();
   const { id } = useParams();
   const { addToast } = useToasts();
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [Img, setImg] = useState([]);
-  // const [ImgLoading, setImgLoading] = useState(true);
-  const [cartNumberBadge, setcartNumberBadge] = useState(
-    fn.getCartNumberBadge()
-  );
+  const [cartNumberBadge, setcartNumberBadge] = useState(null);
   const [spin, setspin] = useState(1);
   const [tbStock, settbStock] = useState(null);
   const spinButton = (e) => {
@@ -31,74 +32,57 @@ const ShowProducts = () => {
     }
   };
 
-  const NumberBadge = () => {
-    setcartNumberBadge(fn.getCartNumberBadge());
-  };
   const add_to_cart = () => {
     if (spin > 0) {
-      let cart = Storage.get_cart();
 
-      if (fn.IsNullOrEmpty(cart.shop_orders)) {
-        Storage.set_add_to_cart({ id: id, quantity: spin });
-        NumberBadge();
+      upd_shopcart({ id: id, quantity: spin, type: "add" }, (res) => {
 
-        addToast("คุณได้เพิ่มสินค้าลงในรถเข็นเรียบร้อยแล้ว", {
-          appearance: "success",
-          autoDismiss: true,
-        });
-      } else {
-        let item;
-        cart.shop_orders.map((e, i) => {
-          if (e.id === id) {
-            item = e;
-          }
-        });
-        if (fn.IsNullOrEmpty(item)) {
-          Storage.set_add_to_cart({ id: id, quantity: spin });
-          NumberBadge();
-
-          addToast("คุณได้เพิ่มสินค้าลงในรถเข็นเรียบร้อยแล้ว", {
-            appearance: "success",
-            autoDismiss: true,
-          });
-        } else {
-          if (item.quantity + spin > tbStock.productCount) {
-            addToast(
-              "ไม่สามารถเพิ่มจำนวนสินค้านี้ได้ เนื่องจากคุณเพิ่มสินค้านี้ไว้ในรถเข็นแล้ว " +
-              item.quantity +
-              " ชิ้น",
-              {
-                appearance: "warning",
-                autoDismiss: true,
-              }
-            );
-          } else {
-            Storage.set_add_to_cart({ id: id, quantity: spin });
-            NumberBadge();
-
+        if (res.data.status) {
+          if (res.data.shop_orders) {
+            setcartNumberBadge(res.data.shop_orders.length)
             addToast("คุณได้เพิ่มสินค้าลงในรถเข็นเรียบร้อยแล้ว", {
               appearance: "success",
               autoDismiss: true,
             });
+          } else {
+
           }
+        } else {
+          addToast(res.data.msg,
+            {
+              appearance: "warning",
+              autoDismiss: true,
+            }
+          );
+        }
+      })
+    }
+
+
+
+  };
+  const Get_shopcart = () => {
+    get_shopcart((res) => {
+      if (res.data.status) {
+        if (res.data.shop_orders) {
+          setcartNumberBadge(res.data.shop_orders.length)
         }
       }
-    }
-  };
-
+    })
+  }
   const btbuy = () => {
     Storage.setbyorder({ id: id, quantity: spin })
     history.push(path.makeorder.replace(":id", "byorder"))
   };
   const fetchDatatbStock = async () => {
+    setIsLoading(true)
     await axios.post("stock/getStock", { id: [id] }).then((response) => {
       if (response.data.status) {
         let tbStock = response.data.tbStock;
         settbStock(tbStock[0]);
-      } else {
-        settbStock([]);
-        // error
       }
+    }).finally(e => {
+      setIsLoading(false)
     });
   };
 
@@ -134,13 +118,13 @@ const ShowProducts = () => {
   useEffect(() => {
     fetchDatatbStock();
     fetchImg();
+    Get_shopcart();// ดึงจำนวนในตระกร้า
   }, []);
 
   return (
 
     <>
-      {/* {console.log(Imglength)} */}
-      {/* {isLoading ? <Spinner customText={"Loading"} /> : null} */}
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
       {tbStock != null ? (
         <>
           <div className="bg-green-mbk">
@@ -167,9 +151,9 @@ const ShowProducts = () => {
               }}
             >
               <i className="fas fa-shopping-cart relative icon-cart" style={{ color: "#ddd" }}></i>
-              {!IsNullOrEmpty(cartNumberBadge) ? (
+              {!IsNullOrEmpty(cartNumberBadge) && cartNumberBadge > 0 ? (
                 <div className="cart-number-badge" style={{ fontSize: "11px" }}>
-                  {cartNumberBadge}{" "}
+                  {cartNumberBadge}
                 </div>
               ) : null}
             </div>
@@ -272,7 +256,6 @@ const ShowProducts = () => {
                     type="tel"
                     value={spin}
                     onChange={(e) => {
-                      // console.log(e.target.value);
                       let value = e.target.value;
                       if (!fn.IsNullOrEmpty(value)) {
                         value = parseInt(e.target.value);

@@ -11,11 +11,12 @@ import Select from "react-select";
 import {
     getMemberAddress,
     gettbPayment,
-    gettbLogistic, doSaveOrder
+    gettbLogistic,
+    doSaveOrder,
+    get_shopcart
 
 } from "@services/liff.services";
 import { Radio } from "antd";
-
 import api_province from "../../../assets/data/api_province.json";
 import api_amphure from "../../../assets/data/api_amphure.json";
 import api_tombon from "../../../assets/data/api_tombon.json";
@@ -47,62 +48,69 @@ const MakeOrder = () => {
     let { id } = useParams();
     const getProducts = async () => {
         let idlist = [];
-        let item;
+        let item = {};
+        const setData = async () => {
+            if (!fn.IsNullOrEmpty(item)) {
+                let shop_orders = item.shop_orders;
+                shop_orders.map((e, i) => {
+                    idlist.push(e.id);
+                });
+                if (!fn.IsNullOrEmpty(item.usecoupon)) {
+                    setusecoupon(item.usecoupon)
+                } else {
+                    setusecoupon(null)
+                }
+
+                await axios.post("stock/getStock", { id: idlist }).then((response) => {
+                    if (response.data.status) {
+                        let tbStock = response.data.tbStock;
+                        setCartItem(tbStock);
+                        let price = 0;
+                        tbStock.map((e, i) => {
+                            let quantity = shop_orders.find((o) => o.id == e.id).quantity;
+                            e.quantity = quantity;
+                            if (e.priceDiscount > 0) {
+                                price += parseFloat(e.priceDiscount) * parseInt(quantity);
+                            } else {
+                                price += parseFloat(e.price) * parseInt(quantity);
+                            }
+                        });
+                        // if (!fn.IsNullOrEmpty(item.usecoupon)) {
+                        //     price = price - item.usecoupon.discount
+                        // }
+                        price = price
+                        setsumprice(price < 1 ? 0 : price);
+                    } else {
+                        setCartItem([]);
+                        // error
+                    }
+                });
+            }
+        }
         if (id === "cart") {
-            item = Storage.get_cart()
+            get_shopcart(async (res) => {
+                if (res.data.status) {
+                    if (res.data.shop_orders.length > 0) {
+                        item.shop_orders = []
+                        item.shop_orders = res.data.shop_orders
+                    }
+                }
+                setData()
+            })
         }
         else if (id === "byorder") {
             item = Storage.getbyorder()
+            setData()
         }
 
-        if (!fn.IsNullOrEmpty(item)) {
-            let shop_orders = item.shop_orders;
-            shop_orders.map((e, i) => {
-                idlist.push(e.id);
-            });
-            if (!fn.IsNullOrEmpty(item.usecoupon)) {
-                setusecoupon(item.usecoupon)
-            } else {
-                setusecoupon(null)
-            }
 
-            await axios.post("stock/getStock", { id: idlist }).then((response) => {
-                if (response.data.status) {
-                    let tbStock = response.data.tbStock;
-                    setCartItem(tbStock);
-                    let price = 0;
-                    tbStock.map((e, i) => {
-                        let quantity = shop_orders.find((o) => o.id == e.id).quantity;
-                        e.quantity = quantity;
-                        if (e.priceDiscount > 0) {
-                            price += parseFloat(e.priceDiscount) * parseInt(quantity);
-                        } else {
-                            price += parseFloat(e.price) * parseInt(quantity);
-                        }
-                    });
-                    // if (!fn.IsNullOrEmpty(item.usecoupon)) {
-                    //     price = price - item.usecoupon.discount
-                    // }
-                    price = price
-                    setsumprice(price < 1 ? 0 : price);
-                } else {
-                    setCartItem([]);
-                    // error
-                }
-            });
-        } else {
-
-        }
     };
     const setDeliveryCost = (e) => {
-
         setdeliveryCost(e)
-        console.log(tbPromotionDelivery)
+        // console.log(tbPromotionDelivery)
         setTimeout(() => {
             getProducts()
         }, 1000);
-
-
     }
     const Cancelcoupon = () => {
         if (id == "cart") {
@@ -188,52 +196,67 @@ const MakeOrder = () => {
     //สั่งสินค้า 
     const sendOrder = () => {
         if (!fn.IsNullOrEmpty(CartItem)) {
-            let item;
+            let item = {}
+            const setData = () => {
+                let shop_orders = item.shop_orders;
+                let dt = []
+                CartItem.filter(e => {
+                    dt.push({
+                        stockId: e.id,
+                        amount: e.quantity,
+                        price: e.price,
+                        discount: e.discount,
+                        discountType: e.discountType
+                    })
+                })
+                let order = {
+                    orderhd: {
+                        paymentId: RadioPayment === 1 ? paymentID : null,
+                        paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
+                        logisticId: isLogistic,
+                        stockNumber: shop_orders.length,
+                        paymentStatus: "Wating",
+                        transportStatus: "Prepare",
+                        isAddress: isAddress
+                    },
+                    orderdt: dt
+                }
+                console.log(order)
+
+                doSaveOrder(order, (res) => {
+                    if (res.status) {
+                        // console.log()
+                        // ลบข้อมูล
+                        if (id == "cart") {
+                            // item = Storage.remove_cart()
+                        }
+                        else {
+                            item = Storage.remove_byorder()
+                        }
+
+                        history.push(path.paymentInfo.replace(":id", res.data.orderId))
+                    } else {
+
+                    }
+                })
+            }
             if (id == "cart") {
-                item = Storage.get_cart()
+                // item = Storage.get_cart()
+                get_shopcart(async (res) => {
+                    if (res.data.status) {
+                        if (res.data.shop_orders.length > 0) {
+                            item.shop_orders = []
+                            item.shop_orders = res.data.shop_orders
+                        }
+                    }
+                    setData()
+                })
             }
             else {
                 item = Storage.getbyorder()
-            }
-            let shop_orders = item.shop_orders;
-            let dt = []
-            CartItem.filter(e => {
-                dt.push({
-                    stockId: e.id,
-                    amount: e.quantity,
-                    price: e.price,
-                    discount: e.discount,
-                    discountType: e.discountType
-                })
-            })
-            let order = {
-                orderhd: {
-                    paymentId: RadioPayment === 1 ? paymentID : null,
-                    paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
-                    logisticId: isLogistic,
-                    stockNumber: shop_orders.length,
-                    paymentStatus: "Wating",
-                    transportStatus: "Prepare",
-                },
-                orderdt: dt
+                setData()
             }
 
-            doSaveOrder(order, (res) => {
-                if (res.status) {
-                    // console.log()
-                    // ลบข้อมูล
-                    if (id == "cart") {
-                        item = Storage.remove_cart()
-                    }
-                    else {
-                        item = Storage.remove_byorder()
-                    }
-
-                    history.push(path.paymentInfo.replace(":id", res.data.orderId))
-                } else {
-
-                }
-            })
         }
     }
 

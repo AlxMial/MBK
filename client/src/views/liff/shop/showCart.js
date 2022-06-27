@@ -7,6 +7,10 @@ import * as Storage from "@services/Storage.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
+import {
+  get_shopcart,
+  upd_shopcart
+} from "@services/liff.services";
 // components
 
 const ShowCart = () => {
@@ -20,50 +24,64 @@ const ShowCart = () => {
   const getProducts = async () => {
 
     let id = [];
-    let cart = Storage.get_cart()
-    if (!fn.IsNullOrEmpty(cart)) {
-      let shop_orders = cart.shop_orders;
-      shop_orders.filter((e) => {
-        id.push(e.id);
-        return e
-      });
-      if (id.length > 0) {
-        if (!fn.IsNullOrEmpty(cart.usecoupon)) {
-          setusecoupon(cart.usecoupon)
-        } else {
-          setusecoupon(null)
-        }
-        setIsLoading(true)
-        await axios.post("stock/getStock", { id: id }).then((response) => {
-          if (response.data.status) {
-            let tbStock = response.data.tbStock;
-            setCartItem(tbStock);
-            let price = 0;
-            tbStock.filter((e) => {
-              let quantity = shop_orders.find((o) => o.id === e.id).quantity;
-              e.quantity = quantity;
-              if (e.priceDiscount > 0) {
-                price += parseFloat(e.priceDiscount) * parseInt(quantity);
-              } else {
-                price += parseFloat(e.price) * parseInt(quantity);
-              }
+    // let cart = Storage.get_cart()
+    get_shopcart(async (res) => {
+      if (res.data.status) {
+        if (res.data.shop_orders.length > 0) {
+          let cart = res.data.shop_orders
+          if (!fn.IsNullOrEmpty(cart)) {
+            // let shop_orders = cart.shop_orders;
+            cart.filter((e) => {
+              id.push(e.id);
               return e
             });
-            if (!fn.IsNullOrEmpty(cart.usecoupon)) {
-              price = price - cart.usecoupon.discount
-            }
-            price = price < 1 ? 0 : price
-            setsumprice(price);
-          } else {
-            setCartItem([]);
-            // error
-          }
+            if (id.length > 0) {
+              if (!fn.IsNullOrEmpty(cart.usecoupon)) {
+                setusecoupon(cart.usecoupon)
+              } else {
+                setusecoupon(null)
+              }
+              setIsLoading(true)
+              await axios.post("stock/getStock", { id: id }).then((response) => {
+                if (response.data.status) {
+                  let tbStock = response.data.tbStock;
+                  setCartItem(tbStock);
+                  let price = 0;
+                  tbStock.filter((e) => {
+                    let quantity = cart.find((o) => o.id === e.id).quantity;
+                    e.quantity = quantity;
+                    if (e.priceDiscount > 0) {
+                      price += parseFloat(e.priceDiscount) * parseInt(quantity);
+                    } else {
+                      price += parseFloat(e.price) * parseInt(quantity);
+                    }
+                    return e
+                  });
+                  if (!fn.IsNullOrEmpty(cart.usecoupon)) {
+                    price = price - cart.usecoupon.discount
+                  }
+                  price = price < 1 ? 0 : price
+                  setsumprice(price);
+                } else {
+                  setCartItem([]);
+                  setsumprice(0);
+                }
 
-        }).finally((e) => {
-          setIsLoading(false)
-        });
+              }).finally((e) => {
+                setIsLoading(false)
+              });
+            }
+          }
+        } else {
+          setCartItem([])
+          setsumprice(0);
+        }
+      } else {
+        setCartItem([])
+        setsumprice(0);
       }
-    }
+    })
+
   };
 
   const Cancelcoupon = () => {
@@ -75,44 +93,32 @@ const ShowCart = () => {
   }
   //ลบ
   const deleteCart = () => {
-    let cart = Storage.get_cart();
-    let shop_orders = cart.shop_orders;
-    shop_orders = shop_orders.filter((e) => {
-      if (e.id !== deleteValue) {
-        return e;
-      }
-    });
-    cart.shop_orders = shop_orders;
-    Storage.upd_cart(cart);
-    getProducts();
+    upd_shopcart({ id: deleteValue, quantity: null, type: "del" }, (res) => {
+      if (res.data.status) {
+        getProducts();
+        setconfirmDelete(false);
+      } else {
 
-    setconfirmDelete(false);
+      }
+    })
   };
 
   //upd quantity
   const spinButton = (e, id) => {
-    let cart = Storage.get_cart();
-    let shop_orders = cart.shop_orders;
-
-    if (e === "plus") {
-      shop_orders.filter((e) => {
-        if (e.id === id) {
-          e.quantity = e.quantity + 1
+    get_shopcart(async (res) => {
+      if (res.data.status) {
+        if (e === "plus") {
+          upd_shopcart({ id: id, quantity: 1, type: "plus" }, (res) => {
+            getProducts();
+          })
+        } else {
+          upd_shopcart({ id: id, quantity: 1, type: "minus" }, (res) => {
+            getProducts();
+          })
         }
-        return e
-      })
 
-    } else {
-      shop_orders.filter((e) => {
-        if (e.id === id) {
-          e.quantity = e.quantity - 1
-        }
-        return e
-      })
-    }
-    cart.shop_orders = shop_orders;
-    Storage.upd_cart(cart);
-    getProducts();
+      }
+    })
   };
 
   useEffect(() => {
@@ -297,8 +303,6 @@ const ShowCart = () => {
           </div>
         </div>
       }
-
-
       <div
         className="flex relative"
         style={{

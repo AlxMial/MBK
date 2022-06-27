@@ -318,6 +318,13 @@ export const doSaveUpdateOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/doSaveUpdateOrder", data, s, e, f);
 };
 
+export const upd_shopcart = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/order/orderHD/upd_shopcart", data, s, e, f);
+};
+export const get_shopcart = (s, e = () => { }, f = () => { }) => {
+  httpGet("/order/orderHD/get_shopcart", s, e, f);
+};
+
 //PaymentStatus ,TransportStatus 
 export const getOrderHD = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/getOrderHD", data, s, e, f);
