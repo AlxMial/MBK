@@ -7,8 +7,13 @@ import { useFormik } from "formik";
 import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
 import useWindowDimensions from "services/useWindowDimensions";
+import ReactTooltip from 'react-tooltip';
+import Select from "react-select";
+import ValidateService from "services/validateValue";
+import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 
 export default function CampaignExchangeHistoryReport() {
+  const UseStyleSelect = styleSelect();
   const [listSearch, setListSerch] = useState([]);
 //   const [listCampaign, setListCampaign] = useState([]);
   const [listCampaignExchange, setListCampaignExchange] = useState([]);    
@@ -32,6 +37,11 @@ export default function CampaignExchangeHistoryReport() {
     { value: "1", label: "E-Coupon" },
     { value: "2", label: "สินค้า" },
   ];
+  const dropdown = [
+    { label: "ส่งแล้ว", value: "Done" },
+    { label: "เตรียมส่ง", value: "Wait" },
+    { label: "อยู่ระหว่างจัดส่ง", value: "InTransit" },
+  ];
   const formSerch =  useFormik({
     initialValues:  { 
       inputSerch: "",    
@@ -39,6 +49,7 @@ export default function CampaignExchangeHistoryReport() {
       endDate: null, 
     }
   });
+
   const InputSearch = () => {   
       const inputSerch = formSerch.values.inputSerch;
       let startDate = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
@@ -97,6 +108,42 @@ export default function CampaignExchangeHistoryReport() {
     } else if(type === "s_eddate") {     
       formSerch.values.endDate = e;
     }   
+  };
+
+  const showTrackingNo = (e) => {  
+    const index = e;
+    setListCampaignExchange((s) => {
+      const newArr = s.slice();
+      newArr[index].isShowTKNo = true;
+
+      return newArr;
+    });
+  };
+
+  const editTrackingNo = (e, val) => {  
+    const index = e;
+    setListCampaignExchange((s) => {
+      const newArr = s.slice();
+      newArr[index].trackingNo = val.target.value;
+      return newArr;
+    });
+  };
+
+  const editdeliverStatus = (e, val) => {  
+    const index = e;
+    setListCampaignExchange((s) => {
+      const newArr = s.slice();
+      newArr[index].deliverStatus = val;
+      return newArr;
+    });
+  };
+  const saveTrackingNo = (e) => {  
+    const index = e;
+    setListCampaignExchange((s) => {
+      const newArr = s.slice();
+      newArr[index].isShowTKNo = false;
+      return newArr;
+    });
   };
 
  
@@ -425,29 +472,35 @@ export default function CampaignExchangeHistoryReport() {
                     }
                   >
                     ที่อยู่
-                  </th>                          
+                  </th>  
+                  <th
+                    className={
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                    }
+                  >
+                  </th>                        
                 </tr>
               </thead>
               <tbody>
                 {listCampaignExchange
                   .slice(pagesVisited, pagesVisited + usersPerPage)
-                  .map(function (value, key) {
-                    value.listNo = pagesVisited + key + 1;
+                  .map(function (item, key) {
+                    item.listNo = pagesVisited + key + 1;
                     return (
                       <tr key={key}>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
                           <span className="px-4 margin-a">
-                            {value.listNo}
+                            {item.listNo}
                           </span>
                         </td>
                         <td                         
                           className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
                           <span
-                            title={value.redemptionName}
+                            title={item.redemptionName}
                             className="text-gray-mbk  hover:text-gray-mbk "
                           >
-                            {value.redemptionName}
+                            {item.redemptionName}
                           </span>
                           <span className="details">more info here</span>
                         </td>
@@ -455,64 +508,113 @@ export default function CampaignExchangeHistoryReport() {
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          { moment(value.startDate).format("DD/MM/YYYY")}
+                          { moment(item.startDate).format("DD/MM/YYYY")}
                           </span>
                         </td>
                         <td                         
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          {moment(value.endDate).format("DD/MM/YYYY")}
+                          {moment(item.endDate).format("DD/MM/YYYY")}
                           </span>
                         </td>
                         <td                          
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          {value.redemptionTypeStr}
+                          {item.redemptionTypeStr}
                           </span>
                         </td>
                         <td                         
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          {value.rewardTypeStr}
+                          {item.rewardTypeStr}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.memberName}
+                            {item.memberName}
                           </span>
                         </td>                       
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.phone}
+                            {item.phone}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.code}
+                            {item.code}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.points}
+                            {item.points}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {value.status}
+                          {item.status}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {moment(value.redeemDate).format("DD/MM/YYYY")}
+                          {moment(item.redeemDate).format("DD/MM/YYYY")}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                           {value.deliverStatus}
+                           {/* {item.deliverStatus} */}
+                           <div className="relative w-full mt-2 mb-2">
+                            { item.isShowControl ?
+                              <Select
+                                id={key}
+                                name="dropdown"
+                                onChange={(e) => {
+                                  editdeliverStatus(key, e.value);
+                                }}                                
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-32 ease-linear transition-all duration-150"
+                                options={dropdown}
+                                value={
+                                  item.deliverStatus !== ""
+                                    ? ValidateService.defaultValue(
+                                        dropdown,
+                                        item.deliverStatus
+                                      )
+                                    : ""
+                                }
+                                styles={UseStyleSelect}
+                              /> : <div></div>
+                            }
+                            </div>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                           {value.trackingNo}
+                        { (item.isShowControl) ?
+                              item.isShowTKNo ?
+                                <input
+                                    type="text"
+                                    className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-32 ease-linear transition-all duration-150"
+                                    id={key}
+                                    name="lastName"
+                                    maxLength={100}
+                                    onBlur={() => {
+                                      saveTrackingNo(key);
+                                    }}
+                                    onChange = {(e) => {
+                                        editTrackingNo(key, e);
+                                      }}
+                                    value= {item.trackingNo}
+                                    //autoComplete="lastName"
+                                    // disabled={typePermission === "1" ? false : true}
+                                  />
+                                  :
+                                  <div className="w-32 text-right" > {item.trackingNo} <i className="fa fa-pen mr-2" onClick={() => {showTrackingNo(key);}}></i></div>
+                            :   <div></div>
+                            }
+                        </td>
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0  border-r-0 text-sm whitespace-nowrap text-center ">
+                          <i className="fa fa-home  mr-2 text-underline cursor-pointer" data-tip={item.address}> ดูที่อยู่</i>                          
+                          <ReactTooltip globalEventOff="click" />
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          ดูที่อยู่
+                          <i className="fa fa-clone mr-2 cursor-pointer" > ดูคัดลอก </i>
                         </td>
                       </tr>
                     );
