@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
-import axios from "services/axios";
+import FilesService from "services/files";
 import { path } from "services/liff.services";
-import * as Storage from "@services/Storage.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import {
-    getOrder
+    getOrder,
+    doSaveSlip
 } from "@services/liff.services";
 
 
@@ -21,7 +21,7 @@ const PaymentInfo = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [OrderHD, setOrderHD] = useState(null);
     const [isAttachLater, setisAttachLater] = useState(false);
-
+    const [SlipImage, setSlipImage] = useState(null)
     const GetOrder = () => {
         setIsLoading(true)
         getOrder({ orderId: id }, (res) => {
@@ -35,6 +35,48 @@ const PaymentInfo = () => {
         }, () => { }, () => {
             setIsLoading(false)
         })
+    }
+
+    //รูปสลิป 
+    const onChangeslip = async (e) => {
+        const image = document.getElementById("SlipImage");
+        image.src = URL.createObjectURL(e.target.files[0]);
+        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        setSlipImage(base64);
+        addToast("อัพโหลดสลิปเรียบร้อยแล้ว", {
+            appearance: "success",
+            autoDismiss: true,
+        });
+    }
+    const saveSlip = () => {
+        if (SlipImage != null) {
+            doSaveSlip({ data: { id: id, Image: SlipImage } }, (res) => {
+                if (res.status === 200) {
+                    if (res.data.status) {
+                        addToast("บันทึกสลิปเรียบร้อยแล้ว", {
+                            appearance: "success",
+                            autoDismiss: true,
+                        });
+                        history.push(path.myorder.replace(":id", "1"))
+                    } else {
+                        addToast("เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง", {
+                            appearance: "warning",
+                            autoDismiss: true,
+                        });
+                    }
+                } else {
+                    addToast("เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง", {
+                        appearance: "warning",
+                        autoDismiss: true,
+                    });
+                }
+            })
+        } else {
+            addToast("กรุณาอัพโหลดสลิปโอนเงิน", {
+                appearance: "warning",
+                autoDismiss: true,
+            });
+        }
     }
     useEffect(() => {
         GetOrder()
@@ -120,119 +162,102 @@ const PaymentInfo = () => {
 
                     <div className="liff-inline" />
 
-                    <div
-                        className="w-full  relative mt-2"
-                        style={{
-                            alignItems: "center",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <div className="w-full " style={{ width: "90%", margin: "auto" }}>
+                    <div className="line-scroll" style={{
+                        height: "calc(100% - 320px)",
+                    }}>
+                        <div
+                            className="w-full  relative mt-2"
+                            style={{
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <div className="w-full " style={{ width: "90%", margin: "auto" }}>
 
-                            <div style={{ width: "80%", margin: "auto" }}>
-                                <div className="mb-2">
+                                <div style={{ width: "80%", margin: "auto" }}>
                                     <div className="mb-2">
-                                        <div style={{ width: "150px", height: "150px", border: "1px solid ", margin: "auto" }}>
-                                            รูป
-                                        </div>
-                                    </div>
-                                    <div className="flex">
-                                        <div style={{ width: "50%" }}>
-                                            <div
-                                                className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold "
-                                                style={{
-                                                    margin: "auto",
-                                                    borderRadius: "5px",
-                                                    padding: "5px",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    fontSize: "14px", width: "90%"
-                                                }}
-                                                onClick={() => {
-                                                    // history.goBack()
-                                                }}
-                                            >
-                                                {"แชร์ QR"}
+                                        <div className="mb-2">
+                                            <div style={{ width: "150px", height: "150px", border: "1px solid ", margin: "auto" }}>
+                                                รูป
                                             </div>
                                         </div>
-                                        <div style={{ width: "50%" }}>
-                                            <div
-                                                className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold "
-                                                style={{
-                                                    margin: "auto",
-                                                    borderRadius: "10px",
-                                                    padding: "5px",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    fontSize: "14px", width: "90%"
-                                                }}
-                                                onClick={() => {
-                                                    // history.goBack()
-                                                }}
-                                            >
-                                                {"บันทึก QR"}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                        <div className="flex">
+                                            <div className="px-2" style={{ width: "50%" }}>
+                                                <div className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
 
-                            <div className="w-full mb-2">
-                                <div
-                                    className="flex bg-gold-mbk  text-white text-center text-lg  font-bold "
-                                    style={{
-                                        margin: "auto",
-                                        height: "45px",
-                                        borderRadius: "10px",
-                                        padding: "5px",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                    onClick={() => {
-                                        // history.goBack()
-                                    }}
-                                >
-                                    {"แนบสลิปโอนเงิน"}
+                                                    onClick={() => {
+                                                        // history.goBack()
+                                                    }}
+                                                >
+                                                    {"แชร์ QR"}
+                                                </div>
+                                            </div>
+                                            <div className="px-2" style={{ width: "50%" }}>
+                                                <div className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+
+                                                    onClick={() => {
+                                                        // history.goBack()
+                                                    }}
+                                                >
+                                                    {"บันทึก QR"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="w-full mb-2">
+                                    <div
+                                        className="flex bg-gold-mbk  text-white text-center text-lg  font-bold bt-line  "
+                                    >
+
+                                        <label id="getFileLabel" className="w-full" htmlFor="transfer-slip" style={{
+
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            display: "flex",
+
+                                        }}>แนบสลิปโอนเงิน</label>
+                                        <input id="transfer-slip" type="file" onChange={onChangeslip} accept="image/*" style={{ display: "none" }} />
+                                    </div>
+
+
+                                </div>
+                                <div className="w-full">
+                                    <div
+                                        className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                                        onClick={() => {
+                                            setisAttachLater(true)
+                                        }}
+                                    >
+                                        {"แนบทีหลัง"}
+                                    </div>
                                 </div>
                             </div>
-                            <div className="w-full">
-                                <div
-                                    className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold "
-                                    style={{
-                                        margin: "auto",
-                                        height: "45px",
-                                        borderRadius: "10px",
-                                        padding: "5px",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                    onClick={() => {
-                                        setisAttachLater(true)
-                                    }}
-                                >
-                                    {"แนบทีหลัง"}
-                                </div>
-                            </div>
+                        </div>
+
+                        <div
+                            className="w-full  relative mt-2"
+                            style={{
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <img src={SlipImage} id={"SlipImage"}
+                                style={{
+                                    width: "90%",
+                                    margin: "auto"
+                                }} />
                         </div>
                     </div>
 
                     <div className="overflow-scroll line-scroll" style={{ height: "calc(100% - 200px)" }}>
 
-                        <div className="absolute w-full flex" style={{ bottom: "0" }}>
-                            <div style={{ width: "100%", padding: "10px" }}>
+                        <div className="absolute w-full flex" style={{ bottom: "10px" }}>
+                            <div className="w-full px-4">
                                 <div
-                                    className="flex bg-green-mbk text-white text-center text-lg  font-bold "
-                                    style={{
-                                        margin: "auto",
-                                        height: "45px",
-                                        borderRadius: "10px",
-                                        padding: "5px",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                    onClick={() => {
-                                        // history.goBack()
-                                    }}
+                                    className="flex bg-green-mbk text-white text-center text-lg  font-bold bt-line "
+                                    onClick={saveSlip}
                                 >
                                     {"ตกลง"}
                                 </div>
@@ -268,17 +293,8 @@ const PaymentInfo = () => {
 
                     <div className="w-full" style={{ width: "90%", margin: "auto" }}>
                         <div className="flex">
-                            <div style={{ width: "50%" }}>
-                                <div
-                                    className="flex bg-green-mbk text-white text-center text-base  font-bold "
-                                    style={{
-                                        margin: "auto",
-                                        borderRadius: "5px",
-                                        padding: "5px",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontSize: "14px", width: "90%"
-                                    }}
+                            <div className="px-2" style={{ width: "50%" }}>
+                                <div className="flex bg-green-mbk text-white text-center text-base  font-bold bt-line "
                                     onClick={() => {
                                         history.push(path.shopList)
                                     }}
@@ -286,17 +302,8 @@ const PaymentInfo = () => {
                                     {"กลับไปที่ร้านค้า"}
                                 </div>
                             </div>
-                            <div style={{ width: "50%" }}>
-                                <div
-                                    className="flex bg-gold-mbk  text-white text-center text-base  font-bold "
-                                    style={{
-                                        margin: "auto",
-                                        borderRadius: "5px",
-                                        padding: "5px",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        fontSize: "14px", width: "90%"
-                                    }}
+                            <div className="px-2" style={{ width: "50%" }}>
+                                <div className="flex bg-gold-mbk  text-white text-center text-base  font-bold bt-line  "
                                     onClick={() => {
                                         history.push(path.myorder.replace(":id", "1"))
                                     }}

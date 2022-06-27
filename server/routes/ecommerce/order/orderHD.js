@@ -21,6 +21,7 @@ const { tbOrderHD
     , tbReturnOrder
     , tbCartHD
     , tbCartDT
+    , tbImage
 } = require("../../../models");
 const e = require("express");
 // const tbReturnOrder = require("../../../models/tbReturnOrder");
@@ -221,6 +222,36 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         // orderId: orderId
     });
 });
+router.post("/doSaveSlip", validateLineToken, async (req, res) => {
+    let status = true;
+    let msg;
+    let Member;
+    try {
+        let { data } = req.body
+        const uid = Encrypt.DecodeKey(req.user.uid);
+        Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+        if (Member) {
+            const _tbImage = await tbImage.create({
+                createdAt: new Date(),
+                relatedId: Encrypt.DecodeKey(data.id),
+                image: data.Image,
+                isDeleted: false,
+                relatedTable: "tbOrderHD"
+            });
+        } else {
+            status = false
+            msg = "auth"
+        }
+    } catch (e) {
+        status = false
+        msg = e.message
+    }
+    return res.json({
+        status: status,
+        msg: msg,
+    });
+});
+
 
 router.post("/getOrderHD", validateLineToken, async (req, res) => {
 

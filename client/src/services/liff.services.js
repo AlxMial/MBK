@@ -314,6 +314,11 @@ export const gettbLogistic = (s, e = () => { }, f = () => { }) => {
 export const doSaveOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/doSaveOrder", data, s, e, f);
 };
+export const doSaveSlip = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/order/orderHD/doSaveSlip", data, s, e, f);
+};
+
+
 export const doSaveUpdateOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/doSaveUpdateOrder", data, s, e, f);
 };
