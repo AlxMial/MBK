@@ -644,10 +644,13 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
                     }
                 }
 
-                const _tbPayment = await tbPayment.findOne({
+                let _tbPayment = await tbPayment.findOne({
                     attributes: ["id", "accountName", "accountNumber", "bankBranchName", "bankName"],
                     where: { isDeleted: false, id: OrderHDData.dataValues.paymentId },
                 });
+                if (_tbPayment) {
+                    _tbPayment.dataValues.id = Encrypt.EncodeKey(_tbPayment.dataValues.id)
+                }
 
                 OrderHD = { id: Encrypt.EncodeKey(OrderHDData.dataValues.id), price: sumprice, Payment: _tbPayment }
             }

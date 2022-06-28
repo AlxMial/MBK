@@ -15,7 +15,7 @@ import {
 
 // components
 const dev = true;
-
+const UID = "U6e9bc5a2de9790dd21597c5012928a4c"
 const getRoutes = () => {
   return routes.map((prop, key) => {
     return (
@@ -45,14 +45,14 @@ const initLine = (callback, setView, pathname) => {
 const runApp = (callback, setView, pathname) => {
   if (dev) {
     Session.setLiff({
-      uid: "U6e9bc5a2de9790dd21597c5012928a4c00000",
+      uid: UID,
       pictureUrl: null,
     });
     let checkRegister = Session.getcheckRegister();
     if (IsNullOrEmpty(checkRegister)) {
       apiCheckRegister((res) => {
         let lifdata = {
-          uid: "U6e9bc5a2de9790dd21597c5012928a4c00000",
+          uid: UID,
           pictureUrl: null,
         }
         if (res.data.code === 200) {

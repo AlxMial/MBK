@@ -42,10 +42,13 @@ const ImageUC = (prop) => {
       {ImgisLoading ?
         <div  {...other} className={className}></div> :
 
-        <img {...other} className={className.repeat("animated-img", "")} src={Img} onError={({ currentTarget }) => {
+        <img {...other} id={other.relatedid + other.relatedtable} className={className.repeat("animated-img", "")} src={Img} onError={({ currentTarget }) => {
           currentTarget.onerror = null;
           currentTarget.src = require("assets/img/mbk/no-image.png").default
-        }}></img>}
+        }}>
+
+        </img>
+      }
     </div>
   )
 };
