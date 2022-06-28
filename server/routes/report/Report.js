@@ -238,7 +238,7 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
     let tutorials = [];
     objs.forEach((obj) => {
       const tb_member =  obj.tbMember !== null ? obj.tbMember : null;
-      let deliverStatus = "", trackingNo = "", code = "", status = false, isShowControl = false;
+      let deliverStatus = "", trackingNo = "", code = "", status = '', isShowControl = false;
       let redemptionName = "", rewardType = "", redemptionType = "", points = "";
       const fullname = tb_member !== null ? (Encrypt.DecodeKey(tb_member.firstName) + ' ' + Encrypt.DecodeKey(tb_member.lastName)) : "";
       const address =  tb_member !== null ? Encrypt.DecodeKey(tb_member.address) : "";
@@ -272,6 +272,7 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
         }
       }
       tutorials.push({
+          id: obj.id,
           code: code,
           redemptionName: redemptionName,
           redemptionType: redemptionType,
@@ -414,5 +415,22 @@ router.get("/GetPointDT/:id", validateToken, async (req, res) => {
         });
       }
   }); 
+});
+
+router.post("/doSaveUpdateMemberReward", validateToken, async (req, res) => {
+  
+      let data  = req.body     
+      const uptbMemberReward = await tbMemberReward.update(
+        {
+            trackingNo:data.trackingNo,
+            deliverStatus: data.deliverStatus,
+        },
+        { where: { id: data.id }}
+      );
+        res.json({
+        status: true,
+        message: "success",
+        tbStock: uptbMemberReward,
+      });
 });
 module.exports = router;
