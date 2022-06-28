@@ -61,9 +61,10 @@ router.get("/getAllByRelated/:relatedId/:relatedTable", validateToken, async (re
         where: {
             relatedId: relatedId,
             isDeleted: false,
-            relatedTable: {
-                [Op.like]: '%' + relatedTable + '%',
-            }
+            // relatedTable: {
+            //     [Op.like]: '%' + relatedTable + '%',
+            // }
+            relatedTable: relatedTable
         }
     });
     res.json({

@@ -42,31 +42,39 @@ router.get("/byId/:id", validateToken, async (req, res) => {
 });
 
 router.put("/", validateToken, async (req, res) => {
-    const data = await tbPayment.findOne({
-        where: {
-            isDeleted: false,
-            id: {
-                [Op.ne]: req.body.id,
-            }
-        },
-    });
+    let msg = ""
+    let status = true
+    let _tbPayment;
+    try {
+        const data = await tbPayment.findOne({
+            where: {
+                isDeleted: false,
+                id: req.body.id
+            },
+        });
 
-    if (!data) {
-        const dataUpdate = await tbPayment.update(req.body, {
-            where: { id: req.body.id },
-        });
-        res.json({
-            status: true,
-            message: "success",
-            tbPayment: dataUpdate,
-        });
-    } else {
-        res.json({
-            status: false,
-            message: "success",
-            tbPayment: null,
-        });
+        if (data) {
+            // update ได้ 
+            const dataUpdate = await tbPayment.update(req.body, {
+                where: { id: req.body.id },
+            });
+            msg = "success"
+            _tbPayment = dataUpdate
+        } else {
+            status = false
+            tbPayment = null
+            msg = "Payment empty !"
+        }
+    } catch (e) {
+        status = false
+        msg = e.message
     }
+
+    res.json({
+        status: status,
+        message: msg,
+        tbPayment: _tbPayment,
+    });
 });
 
 router.delete("/:id", validateToken, async (req, res) => {

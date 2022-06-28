@@ -166,108 +166,108 @@ router.post("/getStock"
   });
 // รูป Banner
 router.get("/getImgBanner"
-// , validateLineToken
-, async (req, res) => {
-  let status = !0,
-    msg,
-    data = [],
-    func = Encrypt;
+  // , validateLineToken
+  , async (req, res) => {
+    let status = !0,
+      msg,
+      data = [],
+      func = Encrypt;
 
-  try {
-    tbBanner.hasMany(tbImage, { foreignKey: "id" });
-    tbImage.belongsTo(tbBanner, { foreignKey: "relatedId" });
-    const _tbBanner = await tbImage.findAll({
-      where: { isDeleted: !1 },
-      include: [
-        {
-          model: tbBanner,
-          where: {
-            isDeleted: !1,
-            level: { [Op.col]: "tbImage.relatedTable" },
+    try {
+      tbBanner.hasMany(tbImage, { foreignKey: "id" });
+      tbImage.belongsTo(tbBanner, { foreignKey: "relatedId" });
+      const _tbBanner = await tbImage.findAll({
+        where: { isDeleted: !1 },
+        include: [
+          {
+            model: tbBanner,
+            where: {
+              isDeleted: !1,
+              level: { [Op.col]: "tbImage.relatedTable" },
+            },
           },
-        },
-      ],
-    });
+        ],
+      });
 
-    // !func.IsNullOrEmpty(_tbBanner)
-    for await (const i of _tbBanner.map((j) => {
-      // let img = j.image.toString("ascii");
-      // let reduceimg = func.reduce_image_file_size(img);
-      // j.image = reduceimg;
-      return j;
-    })) {
-      let e = i;
-      // let img = e.image.toString("ascii");
-      // let reduceimg = await func.reduce_image_file_size(img);
-      data.push({
-        id: func.EncodeKey(e.id),
-        imageName: e.imageName,
-        relatedId: func.EncodeKey(e.relatedId),
-        relatedTable: e.relatedTable,
-        typeLink: e.tbBanner.typeLink,
-        shopId: func.EncodeKey(e.tbBanner.shopId),
-        stockId: func.EncodeKey(e.tbBanner.stockId),
-        image: e.image,
-      });
+      // !func.IsNullOrEmpty(_tbBanner)
+      for await (const i of _tbBanner.map((j) => {
+        // let img = j.image.toString("ascii");
+        // let reduceimg = func.reduce_image_file_size(img);
+        // j.image = reduceimg;
+        return j;
+      })) {
+        let e = i;
+        // let img = e.image.toString("ascii");
+        // let reduceimg = await func.reduce_image_file_size(img);
+        data.push({
+          id: func.EncodeKey(e.id),
+          imageName: e.imageName,
+          relatedId: func.EncodeKey(e.relatedId),
+          relatedTable: e.relatedTable,
+          typeLink: e.tbBanner.typeLink,
+          shopId: func.EncodeKey(e.tbBanner.shopId),
+          stockId: func.EncodeKey(e.tbBanner.stockId),
+          image: e.image,
+        });
+      }
+      // }
+      // ? _tbBanner.filter((e) => {
+      //   let img =e.image.toString('ascii')
+      //   img = func.reduce_image_file_size(img)
+      //     data.push({
+      //       id: func.EncodeKey(e.id),
+      //       imageName: e.imageName,
+      //       relatedId: func.EncodeKey(e.relatedId),
+      //       relatedTable: e.relatedTable,
+      //       typeLink: e.tbBanner.typeLink,
+      //       shopId: func.EncodeKey(e.tbBanner.shopId),
+      //       stockId: func.EncodeKey(e.tbBanner.stockId),
+      //       image: img,
+      //     });
+      //   })
+      // : (data = []);
+    } catch (e) {
+      status = !1;
+      msg = e.message;
     }
-    // }
-    // ? _tbBanner.filter((e) => {
-    //   let img =e.image.toString('ascii')
-    //   img = func.reduce_image_file_size(img)
-    //     data.push({
-    //       id: func.EncodeKey(e.id),
-    //       imageName: e.imageName,
-    //       relatedId: func.EncodeKey(e.relatedId),
-    //       relatedTable: e.relatedTable,
-    //       typeLink: e.tbBanner.typeLink,
-    //       shopId: func.EncodeKey(e.tbBanner.shopId),
-    //       stockId: func.EncodeKey(e.tbBanner.stockId),
-    //       image: img,
-    //     });
-    //   })
-    // : (data = []);
-  } catch (e) {
-    status = !1;
-    msg = e.message;
-  }
-  res.json({
-    status: status,
-    msg: msg,
-    ImgBanner: data,
+    res.json({
+      status: status,
+      msg: msg,
+      ImgBanner: data,
+    });
   });
-});
 router.post("/getImg"
-// , validateLineToken
-, async (req, res) => {
-  let status = true;
-  let msg = null;
-  let data = [];
-  let id = req.body.id;
-  let relatedTable = req.body.relatedTable;
-  try {
-    const _tbImage = await tbImage.findAll({
-      where: {
-        isDeleted: false,
-        relatedId: Encrypt.DecodeKey(id),
-        relatedTable: relatedTable,
-      },
-    });
-    _tbImage.filter((e) => {
-      data.push({
-        id: Encrypt.EncodeKey(e.id),
-        imageName: e.imageName,
-        image: e.image,
+  // , validateLineToken
+  , async (req, res) => {
+    let status = true;
+    let msg = null;
+    let data = [];
+    let id = req.body.id;
+    let relatedTable = req.body.relatedTable;
+    try {
+      const _tbImage = await tbImage.findAll({
+        where: {
+          isDeleted: false,
+          relatedId: Encrypt.DecodeKey(id),
+          relatedTable: relatedTable,
+        },
       });
+      _tbImage.filter((e) => {
+        data.push({
+          id: Encrypt.EncodeKey(e.id),
+          imageName: e.imageName,
+          image: e.image,
+        });
+      });
+    } catch (e) {
+      status = false;
+      msg = e.message;
+    }
+    res.json({
+      status: status,
+      msg: msg,
+      data: data,
     });
-  } catch (e) {
-    status = false;
-    msg = e.message;
-  }
-  res.json({
-    status: status,
-    msg: msg,
-    data: data,
   });
-});
 //#endregion line liff
 module.exports = router;

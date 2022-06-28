@@ -28,6 +28,7 @@ const Payment = () => {
         updateBy: null,
     }
     const [paymentImage, setPaymentImage] = useState(_defaultImage);
+    const [paymentImageQrCode, setPaymentImageQrCode] = useState(_defaultImage);
 
     const fetchData = async () => {
         dispatch(fetchLoading());
@@ -71,10 +72,21 @@ const Payment = () => {
                 const image = await FilesService.buffer64UTF8(_paymentImage.data.tbImage.image)
                 setPaymentImage({ ..._paymentImage.data.tbImage, image: image });
             }
-            console.log(data[0])
+            // console.log(data[0])
             for (const field in data[0]) {
                 formik.setFieldValue(field, data[0][field], false);
             }
+
+            const _paymentImageQrCode = await axios.get(`image/byRelated/${id}/paymentQrCode`);
+            if (_paymentImageQrCode && _paymentImageQrCode.data.tbImage) {
+                const image = await FilesService.buffer64UTF8(_paymentImageQrCode.data.tbImage.image)
+                setPaymentImageQrCode({ ..._paymentImageQrCode.data.tbImage, image: image });
+            }
+            // console.log(data[0])
+            for (const field in data[0]) {
+                formik.setFieldValue(field, data[0][field], false);
+            }
+
         }
         setOpen(true);
     }
@@ -102,15 +114,35 @@ const Payment = () => {
                 axios.put("payment", values).then(async (res) => {
                     if (res.data.status) {
                         // Save Image ต่อ
-                        if (paymentImage) {
-                            const imageData = { ...paymentImage, relatedId: values.id };
-                            await onSaveImage(imageData, (res) => {
-                                if (res.data.status) {
-                                    afterSave(true);
-                                } else {
-                                    afterSave(false);
-                                }
-                            });
+                        if (paymentImage || paymentImageQrCode) {
+                            const _save = async (imageData) => {
+                                await onSaveImage(imageData, (res) => {
+                                    if (res.data.status) {
+                                        afterSave(true);
+                                    } else {
+                                        afterSave(false);
+                                    }
+                                });
+                            }
+
+                            if (paymentImage) {
+                                const imageData = { ...paymentImage, relatedId: values.id };
+                                await onSaveImage(imageData, (res) => {
+                                    if (res.data.status) {
+                                        if (paymentImageQrCode) {
+                                            const imageData = { ...paymentImageQrCode, relatedId: values.id };
+                                            _save(imageData)
+                                        } else {
+                                            afterSave(true);
+                                        }
+                                    } else {
+                                        afterSave(false);
+                                    }
+                                });
+                            } else {
+                                const imageData = { ...paymentImageQrCode, relatedId: values.id };
+                                _save(imageData)
+                            }
                         } else {
                             afterSave(true);
                         }
@@ -184,7 +216,13 @@ const Payment = () => {
                 formik={formik}
                 paymentImage={paymentImage}
                 setPaymentImage={setPaymentImage}
-                handleModal={() => setOpen(false)} />}
+                handleModal={() => setOpen(false)}
+
+                paymentImageQrCode={paymentImageQrCode}
+                setPaymentImageQrCode={setPaymentImageQrCode}
+
+            />}
+
         </>
     )
 }
