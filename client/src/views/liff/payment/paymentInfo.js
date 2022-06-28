@@ -12,7 +12,7 @@ import {
     doSaveSlip
 } from "@services/liff.services";
 import liff from "@line/liff";
-
+import config from "@services/helpers";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const PaymentInfo = () => {
@@ -196,7 +196,7 @@ const PaymentInfo = () => {
 
                                                         onClick={() => {
                                                             liff.init(
-                                                                { liffId: "1657238460-3deq6ard" },
+                                                                { liffId: config.liffId },
                                                                 () => {
                                                                     if (liff.isLoggedIn()) {
                                                                         liff.shareTargetPicker(
