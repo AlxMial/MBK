@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbPayment } = require("../../models");
+const { tbPayment,tbPromotionStore } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -109,6 +109,36 @@ router.get("/gettbPayment", validateLineToken, async (req, res) => {
     res.json({
         code: code,
         tbPayment: option,
+    });
+
+});
+
+router.get("/getPromotionstores", validateLineToken, async (req, res) => {
+    // let data = []
+    let status = true
+    let promotionStore = []
+    try {
+        const _tbPromotionStore = await tbPromotionStore.findAll({
+            attributes: ["id", "buy", "condition", "discount", "percentDiscount", "percentDiscountAmount"],
+            where: {
+                isDeleted: false, isInactive: true
+            },
+        });
+        if (_tbPromotionStore) {
+            _tbPromotionStore.map((e, i) => {
+                let item = e.dataValues
+                item.id = Encrypt.EncodeKey(item.id)
+                promotionStore.push(item)
+            })
+        }
+
+    } catch (e) {
+        status = false
+    }
+
+    res.json({
+        status: status,
+        promotionStore: promotionStore,
     });
 
 });

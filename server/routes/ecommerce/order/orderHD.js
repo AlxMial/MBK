@@ -158,7 +158,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
 
         Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
         orderhd.memberId = Member.id
-        orderhd.orderDate = new Date()
+        orderhd.orderDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'asia/bangkok', hour12: false }))
         orderhd.paymentId = Encrypt.DecodeKey(orderhd.paymentId)
         orderhd.logisticId = Encrypt.DecodeKey(orderhd.logisticId)
         orderhd.otherAddressId = Encrypt.DecodeKey(orderhd.isAddress) == "memberId" ? null : Encrypt.DecodeKey(orderhd.isAddress)
@@ -178,7 +178,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
                     }
                 },
             });
-            let num=""
+            let num = ""
             data = (data + 1)
             if (data < 10) {
                 num = "000" + data.toString()
@@ -273,8 +273,17 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
                 relatedId: Encrypt.DecodeKey(data.id),
                 image: data.Image,
                 isDeleted: false,
-                relatedTable: "tbOrderHD"
+                relatedTable: "tbOrderHD",
+
             });
+            // อัพถานะการจ่ายเงิน
+            const _tbOrderHD = await tbOrderHD.update({
+                paymentStatus: "In Process"
+            }, {
+                where: {
+                    id: Encrypt.DecodeKey(data.id)
+                }
+            })
         } else {
             status = false
             msg = "auth"
@@ -307,32 +316,43 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             if (PaymentStatus == "Wating" && TransportStatus == "Prepare" && !isCancel && !isReturn) {
                 ///ที่ต้องชำระ
                 let _OrderHDData = await tbOrderHD.findAll({
-                    attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
+                    attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId", "paymentStatus", "orderDate"],
                     where: {
                         isCancel: isCancel,
                         IsDeleted: false, memberId: Member.id,
-                        paymentStatus: PaymentStatus,
+                        paymentStatus: [PaymentStatus, "In Process"],
                         transportStatus: TransportStatus,
                         isReturn: isReturn
                     }
                 });
                 for (var i = 0; i < _OrderHDData.length; i++) {
                     let hd = _OrderHDData[i].dataValues
+                    if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
 
-                    let _tbImage = await tbImage.findOne({
-                        where: {
-                            isDeleted: false,
-                            relatedId: hd.id,
-                            relatedTable: "tbOrderHD"
-                        }
-                    })
-                    if (_tbImage) {
-                        hd.isPaySlip = true
+                        const data = await tbCancelOrder.create({
+                            orderId: hd.id,
+                            cancelStatus: "No refund"
+                            , cancelType: "Auto"
+                            , cancelDetail: "Auto"
+                            , description: "Auto"
+                            , isDeleted: false
+                        });
+                        const _tbOrderHD = await tbOrderHD.update({
+                            isCancel: true
+                        }, {
+                            where: {
+                                id: hd.id
+                            }
+                        })
                     } else {
-                        hd.isPaySlip = false
+                        if (hd.paymentStatus == "In Process") {
+                            hd.isPaySlip = true
+                        } else {
+                            hd.isPaySlip = false
+                        }
+                        _OrderHDData[i].dataValues = hd
+                        OrderHDData.push(_OrderHDData[i])
                     }
-                    _OrderHDData[i].dataValues = hd
-                    OrderHDData.push(_OrderHDData[i])
                 }
 
 

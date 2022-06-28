@@ -311,6 +311,10 @@ export const gettbLogistic = (s, e = () => { }, f = () => { }) => {
   httpGet("/logistic/gettbLogistic", s, e, f);
 };
 
+export const getPromotionstores = (s, e = () => { }, f = () => { }) => {
+  httpGet("/payment/getPromotionstores", s, e, f);
+};
+
 export const doSaveOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/doSaveOrder", data, s, e, f);
 };
