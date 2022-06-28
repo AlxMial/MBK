@@ -6,12 +6,13 @@ import FilesService from "services/files";
 import { path } from "services/liff.services";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
+import { triggerBase64Download } from 'common-base64-downloader-react';
 import {
     getOrder,
     doSaveSlip
 } from "@services/liff.services";
-
-
+import liff from "@line/liff";
+import config from "@services/helpers";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 
 const PaymentInfo = () => {
@@ -173,38 +174,94 @@ const PaymentInfo = () => {
                             }}
                         >
                             <div className="w-full " style={{ width: "90%", margin: "auto" }}>
-
-                                <div style={{ width: "80%", margin: "auto" }}>
-                                    <div className="mb-2">
+                                {OrderHD != null ?
+                                    <div style={{ width: "80%", margin: "auto" }}>
                                         <div className="mb-2">
-                                            <div style={{ width: "150px", height: "150px", border: "1px solid ", margin: "auto" }}>
-                                                รูป
-                                            </div>
-                                        </div>
-                                        <div className="flex">
-                                            <div className="px-2" style={{ width: "50%" }}>
-                                                <div className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
-
-                                                    onClick={() => {
-                                                        // history.goBack()
-                                                    }}
-                                                >
-                                                    {"แชร์ QR"}
+                                            <div className="mb-2">
+                                                <div style={{ width: "150px", height: "150px", margin: "auto" }}>
+                                                    {OrderHD != null ?
+                                                        <ImageUC
+                                                            style={{ height: "150px", width: "150px" }}
+                                                            find={1}
+                                                            relatedid={OrderHD.Payment.id}
+                                                            relatedtable={["paymentQrCode"]}
+                                                            alt=""
+                                                            className=" animated-img "
+                                                        ></ImageUC> : null}
                                                 </div>
                                             </div>
-                                            <div className="px-2" style={{ width: "50%" }}>
-                                                <div className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                                            <div className="flex">
+                                                <div className="px-2" style={{ width: "50%" }}>
+                                                    <div className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
 
-                                                    onClick={() => {
-                                                        // history.goBack()
-                                                    }}
-                                                >
-                                                    {"บันทึก QR"}
+                                                        onClick={() => {
+                                                            liff.init(
+                                                                { liffId: config.liffId },
+                                                                () => {
+                                                                    if (liff.isLoggedIn()) {
+                                                                        liff.shareTargetPicker(
+                                                                            [
+                                                                                {
+                                                                                    type: "image",
+                                                                                    originalContentUrl: "https://undefined.ddns.net/mahboonkrongserver/image/getImgQrCode/" + OrderHD.Payment.id,
+                                                                                    previewImageUrl: "https://undefined.ddns.net/mahboonkrongserver/image/getImgQrCode/" + OrderHD.Payment.id
+                                                                                }
+                                                                            ],
+                                                                            {
+                                                                                isMultiple: true,
+                                                                            }
+                                                                        )
+                                                                            .then(function (res) {
+                                                                                if (res) {
+                                                                                    // succeeded in sending a message through TargetPicker
+                                                                                    console.log(`[${res.status}] Message sent!`)
+                                                                                } else {
+                                                                                    const [majorVer, minorVer] = (liff.getLineVersion() || "").split('.');
+                                                                                    if (parseInt(majorVer) == 10 && parseInt(minorVer) < 11) {
+                                                                                        // LINE 10.3.0 - 10.10.0
+                                                                                        // Old LINE will access here regardless of user's action
+                                                                                        console.log('TargetPicker was opened at least. Whether succeeded to send message is unclear')
+                                                                                    } else {
+                                                                                        // LINE 10.11.0 -
+                                                                                        // sending message canceled
+                                                                                        console.log('TargetPicker was closed!')
+                                                                                    }
+                                                                                }
+                                                                            }).catch(function (error) {
+                                                                                // something went wrong before sending a message
+                                                                                console.log('something wrong happen')
+                                                                                console.log(error)
+                                                                            })
+                                                                    } else {
+
+                                                                        liff.login();
+                                                                    }
+                                                                },
+                                                                (err) => console.error(err)
+                                                            );
+
+
+                                                        }
+                                                        }
+                                                    >
+                                                        {"แชร์ QR"}
+                                                    </div>
+                                                </div>
+                                                <div className="px-2" style={{ width: "50%" }}>
+                                                    <div className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+
+                                                        onClick={() => {
+                                                            const image = document.getElementById(OrderHD.Payment.id + "paymentQrCode");
+
+                                                            triggerBase64Download(image.src, 'paymentQrCode')
+                                                        }}
+                                                    >
+                                                        {"บันทึก QR"}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
+                                    </div> : null}
 
                                 <div className="w-full mb-2">
                                     <div

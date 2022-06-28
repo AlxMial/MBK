@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbPayment } = require("../../models");
+const { tbPayment,tbPromotionStore } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -42,31 +42,39 @@ router.get("/byId/:id", validateToken, async (req, res) => {
 });
 
 router.put("/", validateToken, async (req, res) => {
-    const data = await tbPayment.findOne({
-        where: {
-            isDeleted: false,
-            id: {
-                [Op.ne]: req.body.id,
-            }
-        },
-    });
+    let msg = ""
+    let status = true
+    let _tbPayment;
+    try {
+        const data = await tbPayment.findOne({
+            where: {
+                isDeleted: false,
+                id: req.body.id
+            },
+        });
 
-    if (!data) {
-        const dataUpdate = await tbPayment.update(req.body, {
-            where: { id: req.body.id },
-        });
-        res.json({
-            status: true,
-            message: "success",
-            tbPayment: dataUpdate,
-        });
-    } else {
-        res.json({
-            status: false,
-            message: "success",
-            tbPayment: null,
-        });
+        if (data) {
+            // update ได้ 
+            const dataUpdate = await tbPayment.update(req.body, {
+                where: { id: req.body.id },
+            });
+            msg = "success"
+            _tbPayment = dataUpdate
+        } else {
+            status = false
+            tbPayment = null
+            msg = "Payment empty !"
+        }
+    } catch (e) {
+        status = false
+        msg = e.message
     }
+
+    res.json({
+        status: status,
+        message: msg,
+        tbPayment: _tbPayment,
+    });
 });
 
 router.delete("/:id", validateToken, async (req, res) => {
@@ -101,6 +109,36 @@ router.get("/gettbPayment", validateLineToken, async (req, res) => {
     res.json({
         code: code,
         tbPayment: option,
+    });
+
+});
+
+router.get("/getPromotionstores", validateLineToken, async (req, res) => {
+    // let data = []
+    let status = true
+    let promotionStore = []
+    try {
+        const _tbPromotionStore = await tbPromotionStore.findAll({
+            attributes: ["id", "buy", "condition", "discount", "percentDiscount", "percentDiscountAmount"],
+            where: {
+                isDeleted: false, isInactive: true
+            },
+        });
+        if (_tbPromotionStore) {
+            _tbPromotionStore.map((e, i) => {
+                let item = e.dataValues
+                item.id = Encrypt.EncodeKey(item.id)
+                promotionStore.push(item)
+            })
+        }
+
+    } catch (e) {
+        status = false
+    }
+
+    res.json({
+        status: status,
+        promotionStore: promotionStore,
     });
 
 });

@@ -362,7 +362,7 @@ const OrderPaymentDone = () => {
                                             <div className="flex relative mb-2 text-gold-mbk ">
                                                 <div>
                                                     {OrderHD.transportStatus == "Prepare" ?
-                                                        <i class="fas fa-shopping-bag"></i>
+                                                        <i className="fas fa-shopping-bag"></i>
                                                         :
                                                         <i className="fas fa-truck"></i>}
                                                 </div>

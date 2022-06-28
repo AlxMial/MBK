@@ -50,15 +50,15 @@ const MyOrder = () => {
                     <div className="w-full flex font-bold relative" style={{ fontSize: "12px" }}>
                         <div className="px-1" style={{ width: "16.6%", textAlign: "center", textDecoration: selectMenu === "1" ? "underline" : "" }}
                             onClick={() => { history.push(path.myorder.replace(":id", "1")); setselectMenu("1") }}>ที่ต้องชำระ</div>
-                        <div className="px-1" style={{ width: "17.6%", textAlign: "center", textDecoration: selectMenu === "2" ? "underline" : "" }}
+                        <div className="px-1" style={{ width: "18%", textAlign: "center", textDecoration: selectMenu === "2" ? "underline" : "" }}
                             onClick={() => { history.push(path.myorder.replace(":id", "2")); setselectMenu("2") }}>เตรียมสินค้า</div>
-                        <div className="px-1" style={{ width: "16.6%", textAlign: "center", textDecoration: selectMenu === "3" ? "underline" : "" }}
+                        <div className="px-1" style={{ width: "17%", textAlign: "center", textDecoration: selectMenu === "3" ? "underline" : "" }}
                             onClick={() => { history.push(path.myorder.replace(":id", "3")); setselectMenu("3") }}>ที่ต้องได้รับ</div>
                         <div className="px-1" style={{ width: "16%", textAlign: "center", textDecoration: selectMenu === "4" ? "underline" : "" }}
                             onClick={() => { history.push(path.myorder.replace(":id", "4")); setselectMenu("4") }}>สำเร็จ</div>
-                        <div className="px-1" style={{ width: "16.6%", textAlign: "center", textDecoration: selectMenu === "5" ? "underline" : "" }}
+                        <div className="px-1" style={{ width: "16.2%", textAlign: "center", textDecoration: selectMenu === "5" ? "underline" : "" }}
                             onClick={() => { history.push(path.myorder.replace(":id", "5")); setselectMenu("5") }}>ยกเลิก</div>
-                        <div className="px-1" style={{ width: "16.6%", textAlign: "center", textDecoration: selectMenu === "6" ? "underline" : "" }}
+                        <div className="px-1" style={{ width: "16.2%", textAlign: "center", textDecoration: selectMenu === "6" ? "underline" : "" }}
                             onClick={() => { history.push(path.myorder.replace(":id", "6")); setselectMenu("6") }}>คืนสินค้า</div>
                     </div>
 

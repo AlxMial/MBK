@@ -1,4 +1,5 @@
 const express = require("express");
+const moment = require('moment');
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -157,7 +158,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
 
         Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
         orderhd.memberId = Member.id
-        orderhd.orderDate = new Date()
+        orderhd.orderDate = new Date(new Date().toLocaleString('en-US', { timeZone: 'asia/bangkok', hour12: false }))
         orderhd.paymentId = Encrypt.DecodeKey(orderhd.paymentId)
         orderhd.logisticId = Encrypt.DecodeKey(orderhd.logisticId)
         orderhd.otherAddressId = Encrypt.DecodeKey(orderhd.isAddress) == "memberId" ? null : Encrypt.DecodeKey(orderhd.isAddress)
@@ -168,7 +169,28 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
             orderhd.memberRewardId = _tbMemberReward.id
         }
 
-
+        const genorderNumber = async () => {
+            const today = moment().format("YYYYMMDD")
+            let data = await tbOrderHD.count({
+                where: {
+                    orderNumber: {
+                        [Op.like]: '%' + today + '%',
+                    }
+                },
+            });
+            let num = ""
+            data = (data + 1)
+            if (data < 10) {
+                num = "000" + data.toString()
+            } else if (data < 100) {
+                num = "00" + data.toString()
+            }
+            else if (data < 1000) {
+                num = "0" + data.toString()
+            }
+            return today + "T" + (num)
+        }
+        orderhd.orderNumber = await genorderNumber()
         const _tbOrderHD = await tbOrderHD.create(orderhd);
 
         if (_tbOrderHD) {
@@ -251,8 +273,17 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
                 relatedId: Encrypt.DecodeKey(data.id),
                 image: data.Image,
                 isDeleted: false,
-                relatedTable: "tbOrderHD"
+                relatedTable: "tbOrderHD",
+
             });
+            // อัพถานะการจ่ายเงิน
+            const _tbOrderHD = await tbOrderHD.update({
+                paymentStatus: "In Process"
+            }, {
+                where: {
+                    id: Encrypt.DecodeKey(data.id)
+                }
+            })
         } else {
             status = false
             msg = "auth"
@@ -285,32 +316,43 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             if (PaymentStatus == "Wating" && TransportStatus == "Prepare" && !isCancel && !isReturn) {
                 ///ที่ต้องชำระ
                 let _OrderHDData = await tbOrderHD.findAll({
-                    attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId"],
+                    attributes: ["id", "orderNumber", "logisticId", "paymentId", "stockNumber", "couponCodeId", "paymentStatus", "orderDate"],
                     where: {
                         isCancel: isCancel,
                         IsDeleted: false, memberId: Member.id,
-                        paymentStatus: PaymentStatus,
+                        paymentStatus: [PaymentStatus, "In Process"],
                         transportStatus: TransportStatus,
                         isReturn: isReturn
                     }
                 });
                 for (var i = 0; i < _OrderHDData.length; i++) {
                     let hd = _OrderHDData[i].dataValues
+                    if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
 
-                    let _tbImage = await tbImage.findOne({
-                        where: {
-                            isDeleted: false,
-                            relatedId: hd.id,
-                            relatedTable: "tbOrderHD"
-                        }
-                    })
-                    if (_tbImage) {
-                        hd.isPaySlip = true
+                        const data = await tbCancelOrder.create({
+                            orderId: hd.id,
+                            cancelStatus: "No refund"
+                            , cancelType: "Auto"
+                            , cancelDetail: "Auto"
+                            , description: "Auto"
+                            , isDeleted: false
+                        });
+                        const _tbOrderHD = await tbOrderHD.update({
+                            isCancel: true
+                        }, {
+                            where: {
+                                id: hd.id
+                            }
+                        })
                     } else {
-                        hd.isPaySlip = false
+                        if (hd.paymentStatus == "In Process") {
+                            hd.isPaySlip = true
+                        } else {
+                            hd.isPaySlip = false
+                        }
+                        _OrderHDData[i].dataValues = hd
+                        OrderHDData.push(_OrderHDData[i])
                     }
-                    _OrderHDData[i].dataValues = hd
-                    OrderHDData.push(_OrderHDData[i])
                 }
 
 
@@ -644,10 +686,13 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
                     }
                 }
 
-                const _tbPayment = await tbPayment.findOne({
+                let _tbPayment = await tbPayment.findOne({
                     attributes: ["id", "accountName", "accountNumber", "bankBranchName", "bankName"],
                     where: { isDeleted: false, id: OrderHDData.dataValues.paymentId },
                 });
+                if (_tbPayment) {
+                    _tbPayment.dataValues.id = Encrypt.EncodeKey(_tbPayment.dataValues.id)
+                }
 
                 OrderHD = { id: Encrypt.EncodeKey(OrderHDData.dataValues.id), price: sumprice, Payment: _tbPayment }
             }

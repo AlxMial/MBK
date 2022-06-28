@@ -25,6 +25,7 @@ const ShowCart = () => {
   const getProducts = async () => {
 
     let id = [];
+    setIsLoading(true)
     get_shopcart({ uid: Session.getLiff().uid }, async (res) => {
       if (res.data.status) {
         if (res.data.shop_orders.length > 0) {
@@ -36,7 +37,7 @@ const ShowCart = () => {
             });
             if (id.length > 0) {
               setusecoupon(Storage.getconpon_cart())
-              setIsLoading(true)
+             
               await axios.post("stock/getStock", { id: id }).then((response) => {
                 if (response.data.status) {
                   let tbStock = response.data.tbStock;
@@ -69,10 +70,12 @@ const ShowCart = () => {
         } else {
           setCartItem([])
           setsumprice(0);
+          setIsLoading(false)
         }
       } else {
         setCartItem([])
         setsumprice(0);
+        setIsLoading(false)
       }
     })
 

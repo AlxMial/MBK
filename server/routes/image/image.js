@@ -6,6 +6,8 @@ const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+const ValidateEncrypt = require("../../services/crypto");
+const Encrypt = new ValidateEncrypt();
 
 router.post("/", validateToken, async (req, res) => {
     const data = await tbImage.create(req.body);
@@ -61,9 +63,10 @@ router.get("/getAllByRelated/:relatedId/:relatedTable", validateToken, async (re
         where: {
             relatedId: relatedId,
             isDeleted: false,
-            relatedTable: {
-                [Op.like]: '%' + relatedTable + '%',
-            }
+            // relatedTable: {
+            //     [Op.like]: '%' + relatedTable + '%',
+            // }
+            relatedTable: relatedTable
         }
     });
     res.json({
@@ -116,5 +119,24 @@ router.delete("/:id", validateToken, async (req, res) => {
     tbImage.update(req.body, { where: { id: id } });
     res.json({ status: true, message: "success", tbImage: null });
 });
+
+router.get("/getImgQrCode/:id", async (req, res) => {
+    const id = req.params.id;
+
+    const _tbImage = await tbImage.findOne({
+        where: { isDeleted: !1, relatedId: Encrypt.DecodeKey(id), relatedTable: "paymentQrCode" },
+    });
+    const imgBuffer = Buffer.from(_tbImage.dataValues.image, 'base64').toString('utf8')
+    var im = Buffer(_tbImage.dataValues.image.toString('binary'), 'base64');
+    var base64Data = imgBuffer.replace(/^data:image\/png;base64,/, '');
+
+    var img = Buffer.from(base64Data, 'base64');
+    res.writeHead(200, {
+        'Content-Type': 'image/png',
+        'Content-Length': img.length
+    });
+    res.end(img);
+});
+
 
 module.exports = router;
