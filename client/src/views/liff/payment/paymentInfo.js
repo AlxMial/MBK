@@ -205,6 +205,11 @@ const PaymentInfo = () => {
                                                                                     type: "text",
                                                                                     text: "Hello, World!",
                                                                                 },
+                                                                                {
+                                                                                    "type": "image",
+                                                                                    "originalContentUrl": "https://undefined.ddns.net/mahboonkrongserver/image/getImgQrCode/" + OrderHD.Payment.id,
+                                                                                    "previewImageUrl": "https://undefined.ddns.net/mahboonkrongserver/image/getImgQrCode/" + OrderHD.Payment.id
+                                                                                }
                                                                             ],
                                                                             {
                                                                                 isMultiple: true,

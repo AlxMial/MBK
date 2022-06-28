@@ -15,27 +15,31 @@ app.use(cors());
 
 function authentication(req, res, next) {
     var authheader = req.headers.authorization;
-    if (!authheader) {
-        var err = new Error('You are not authenticated!');
-        res.setHeader('WWW-Authenticate', 'Basic');
-        err.status = 401;
-        return res.status(401).json({ status: 401, message: 'You are not authenticated!' })
+    if (!req.originalUrl.includes("/getImgQrCode/")) {
+        if (!authheader) {
+            var err = new Error('You are not authenticated!');
+            res.setHeader('WWW-Authenticate', 'Basic');
+            err.status = 401;
+            return res.status(401).json({ status: 401, message: 'You are not authenticated!' })
+        }
+        var auth = new Buffer.from(authheader.split(' ')[1],
+            'base64').toString().split(':');
+        var user = auth[0];
+        var pass = auth[1];
+        const encrypt = new ValidateEncrypt();
+        if (user == encrypt.EncodeKey('administrator') && pass == encrypt.EncodeKey('asujimuser')) {
+            // If Authorized user
+            next();
+        } else {
+            var err = new Error('You are not authenticated!');
+            res.setHeader('WWW-Authenticate', 'Basic');
+            err.status = 401;
+            return res.status(401).json({ status: 401, message: 'You are not authenticated!' })
+        }
+    } else {
+        next();
     }
 
-    var auth = new Buffer.from(authheader.split(' ')[1],
-        'base64').toString().split(':');
-    var user = auth[0];
-    var pass = auth[1];
-    const encrypt = new ValidateEncrypt();
-    if (user == encrypt.EncodeKey('administrator') && pass == encrypt.EncodeKey('asujimuser')) {
-        // If Authorized user
-        next();
-    } else {
-        var err = new Error('You are not authenticated!');
-        res.setHeader('WWW-Authenticate', 'Basic');
-        err.status = 401;
-        return res.status(401).json({ status: 401, message: 'You are not authenticated!' })
-    }
 }
 const swaggerDocument = YAML.load('swagger.yaml');
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
