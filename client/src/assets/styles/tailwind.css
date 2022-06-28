@@ -2743,6 +2743,9 @@ select {
   --tw-text-opacity: 1;
   color: rgba(30, 41, 59, var(--tw-text-opacity));
 }
+.text-underline {
+  text-decoration: underline;
+}
 
 .hover\:text-lightBlue-600:hover {
   --tw-text-opacity: 1;

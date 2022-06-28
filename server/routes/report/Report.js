@@ -238,9 +238,10 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
     let tutorials = [];
     objs.forEach((obj) => {
       const tb_member =  obj.tbMember !== null ? obj.tbMember : null;
-      let deliverStatus = "", trackingNo = "", code = "", status = false;
+      let deliverStatus = "", trackingNo = "", code = "", status = false, isShowControl = false;
       let redemptionName = "", rewardType = "", redemptionType = "", points = "";
       const fullname = tb_member !== null ? (Encrypt.DecodeKey(tb_member.firstName) + ' ' + Encrypt.DecodeKey(tb_member.lastName)) : "";
+      const address =  tb_member !== null ? Encrypt.DecodeKey(tb_member.address) : "";
       if(obj.rewardType === "Coupon") {
         const lCouponCode = listCouponCode.filter(e => e.id.toString() === obj.TableHDId);
         if(lCouponCode.length > 0) {
@@ -259,8 +260,9 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
         if(lRedemptionProduct.length > 0) {
           const rwHD = lRedemptionProduct[0].tbRedemptionConditionsHD;
           deliverStatus = obj.deliverStatus;
-          status =  obj.isUsedCoupon ? 1 : 0;
           trackingNo = obj.trackingNo;
+          status =  obj.isUsedCoupon ? 1 : 0;
+          isShowControl = true;
           if(rwHD !== null) {
             redemptionName = rwHD.redemptionName;
             redemptionType = rwHD.redemptionType;
@@ -277,11 +279,14 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
           startDate:  obj.startDate,
           endDate:  obj.endDate ,
           memberName: fullname,
+          address: address,
           phone   : (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : ""),   
           deliverStatus : deliverStatus,
           trackingNo: trackingNo,
           points: points,
           redeemDate: obj.redeemDate,
+          isShowControl: isShowControl,
+          isShowTKNo: false,
           status: status
         });  
     });
