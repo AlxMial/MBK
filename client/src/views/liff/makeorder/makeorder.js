@@ -45,11 +45,16 @@ const MakeOrder = () => {
     const [CartItem, setCartItem] = useState([]);
     const [usecoupon, setusecoupon] = useState(null);
 
+    const [pageID, setpageID] = useState("");
+
+
     const [sumprice, setsumprice] = useState(0);
     let { id } = useParams();
     const getProducts = async () => {
         let idlist = [];
         let item = {};
+        console.log(id)
+        setpageID(id)
         const setData = async () => {
             if (!fn.IsNullOrEmpty(item)) {
                 let shop_orders = item.shop_orders;
@@ -219,12 +224,10 @@ const MakeOrder = () => {
                         paymentStatus: "Wating",
                         transportStatus: "Prepare",
                         isAddress: isAddress,
-                        usecouponid: usecoupon.id
+                        usecouponid: usecoupon == null ? null : usecoupon.id
                     },
                     orderdt: dt
                 }
-                console.log(order)
-
                 doSaveOrder(order, (res) => {
                     if (res.status) {
                         // ลบข้อมูล
@@ -241,8 +244,8 @@ const MakeOrder = () => {
                     }
                 })
             }
-            if (id == "cart") {
-                // item = Storage.get_cart()
+            console.log("_id " + pageID)
+            if (pageID == "cart") {
                 get_shopcart({ uid: Session.getLiff().uid }, async (res) => {
                     if (res.data.status) {
                         if (res.data.shop_orders.length > 0) {
@@ -560,9 +563,16 @@ const MakeOrder = () => {
                                                 isSearchable={false}
                                                 value={optionPayment.filter(o => o.value === paymentID)}
                                                 options={optionPayment}
-                                                formatOptionLabel={({ bankName, accountNumber, bankBranchName }) => (
+                                                formatOptionLabel={({ id, bankName, accountNumber, bankBranchName }) => (
                                                     <div >
-                                                        <div className="font-bold">{bankName}</div>
+                                                        <div className="flex font-bold">
+                                                            <div style={{ height: "15px", width: "15px" }} >
+                                                                {id != null ?
+                                                                    <GetImageUC id={id} />
+                                                                    : null}
+                                                            </div>
+                                                            <div className="px-2"> {bankName} </div>
+                                                        </div>
                                                         <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"เลขบัญชี : " + accountNumber}</div>
                                                         <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"สาขา : " + bankBranchName}</div>
 
@@ -712,6 +722,7 @@ const MakeOrder = () => {
                                 justifyContent: "center",
                             }}
                             onClick={() => {
+                                console.log("sendOrder")
                                 sendOrder()
                             }}
                         >
@@ -724,5 +735,15 @@ const MakeOrder = () => {
     );
 };
 
+const GetImageUC = ({ id }) => {
+    return <ImageUC
+        style={{ height: "15px", width: "15px" }}
+        find={1}
+        relatedid={id}
+        relatedtable={["payment"]}
+        alt=""
+        className=" animated-img "
+    ></ImageUC>
 
+}
 export default MakeOrder;

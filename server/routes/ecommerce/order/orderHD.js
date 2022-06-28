@@ -1,4 +1,5 @@
 const express = require("express");
+const moment = require('moment');
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -168,7 +169,28 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
             orderhd.memberRewardId = _tbMemberReward.id
         }
 
-
+        const genorderNumber = async () => {
+            const today = moment().format("YYYYMMDD")
+            let data = await tbOrderHD.count({
+                where: {
+                    orderNumber: {
+                        [Op.like]: '%' + today + '%',
+                    }
+                },
+            });
+            let num=""
+            data = (data + 1)
+            if (data < 10) {
+                num = "000" + data.toString()
+            } else if (data < 100) {
+                num = "00" + data.toString()
+            }
+            else if (data < 1000) {
+                num = "0" + data.toString()
+            }
+            return today + "T" + (num)
+        }
+        orderhd.orderNumber = await genorderNumber()
         const _tbOrderHD = await tbOrderHD.create(orderhd);
 
         if (_tbOrderHD) {

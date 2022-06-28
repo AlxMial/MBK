@@ -202,13 +202,9 @@ const PaymentInfo = () => {
                                                                         liff.shareTargetPicker(
                                                                             [
                                                                                 {
-                                                                                    type: "text",
-                                                                                    text: "Hello, World!",
-                                                                                },
-                                                                                {
-                                                                                    "type": "image",
-                                                                                    "originalContentUrl": "https://undefined.ddns.net/mahboonkrongserver/image/getImgQrCode/" + OrderHD.Payment.id,
-                                                                                    "previewImageUrl": "https://undefined.ddns.net/mahboonkrongserver/image/getImgQrCode/" + OrderHD.Payment.id
+                                                                                    type: "image",
+                                                                                    originalContentUrl: "https://undefined.ddns.net/mahboonkrongserver/image/getImgQrCode/" + OrderHD.Payment.id,
+                                                                                    previewImageUrl: "https://undefined.ddns.net/mahboonkrongserver/image/getImgQrCode/" + OrderHD.Payment.id
                                                                                 }
                                                                             ],
                                                                             {
@@ -234,6 +230,7 @@ const PaymentInfo = () => {
                                                                             }).catch(function (error) {
                                                                                 // something went wrong before sending a message
                                                                                 console.log('something wrong happen')
+                                                                                console.log(error)
                                                                             })
                                                                     } else {
 
