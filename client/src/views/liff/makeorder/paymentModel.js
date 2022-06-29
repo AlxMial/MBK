@@ -4,7 +4,6 @@ import Select from "react-select";
 import ImageUC from "components/Image/index";
 import { Radio } from "antd";
 import { gettbPayment } from "@services/liff.services";
-import { resetCalls } from "react-ga";
 const PaymentModel = ({
   sumprice,
   setpaymentID,
@@ -112,10 +111,16 @@ const PaymentModel = ({
                             </div>
                             <div className="px-2 font-bold"> {bankName} </div>
                           </div>
-                          <div className="text-liff-gray-mbk" style={{fontWeight:"100"}}>
+                          <div
+                            className="text-liff-gray-mbk"
+                            style={{ fontWeight: "100" }}
+                          >
                             {"เลขบัญชี : " + accountNumber}
                           </div>
-                          <div className="text-liff-gray-mbk" style={{fontWeight:"100"}}>
+                          <div
+                            className="text-liff-gray-mbk"
+                            style={{ fontWeight: "100" }}
+                          >
                             {"สาขา : " + bankBranchName}
                           </div>
                         </div>
@@ -150,9 +155,8 @@ const PaymentModel = ({
                 <div className="font-bold px-2">ผ่านบัตรเครดิต</div>
               </div>
               <div
-                className="flex mt-2"
+                className="w-full flex mt-2"
                 style={{
-                  width: "100%",
                   border: "1px solid var(--mq-txt-color, rgb(170, 170, 170))",
                   borderRadius: "10px",
                   height: "50px",
