@@ -75,23 +75,23 @@ module.exports = (sequelize, DataTypes) => {
   });
   tbStock.associate = (models) => {
     tbStock.hasMany(models.tbBanner, {
-      foreignKey: 'stockId',
+      foreignKey: "stockId",
       onDelete: "cascade",
     });
     tbStock.hasMany(models.tbPointEcommerce, {
-      foreignKey: 'stockId',
+      foreignKey: "stockId",
       onDelete: "cascade",
     });
     tbStock.hasMany(models.tbPromotionStore, {
-      foreignKey: 'stockId',
+      foreignKey: "stockId",
       onDelete: "cascade",
     });
     tbStock.hasMany(models.tbOrderDT, {
-      foreignKey: 'stockId',
+      foreignKey: "stockId",
       onDelete: "cascade",
     });
     tbStock.hasMany(models.tbCartDT, {
-      foreignKey: 'strockId',
+      foreignKey: "strockId",
       onDelete: "cascade",
     });
   };

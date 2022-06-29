@@ -157,7 +157,9 @@ const MakeOrderById = () => {
         className="overflow-scroll line-scroll"
         style={{ height: "calc(100% - 200px)" }}
       >
-        {OrderHD != null ? <DetailModel data={OrderHD.dt} /> : null}
+        {OrderHD != null ? (
+          <DetailModel data={OrderHD.dt} _static={true} />
+        ) : null}
 
         <div
           className="flex relative"

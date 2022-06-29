@@ -16,6 +16,8 @@ import LogisticModel from "./logisticModel";
 import DetailModel from "./detailModel";
 import PaymentModel from "./paymentModel";
 import FooterButton from "./footerButton";
+
+import CouponModel from "./couponModel";
 // components
 
 const MakeOrder = () => {
@@ -28,10 +30,15 @@ const MakeOrder = () => {
   const [promotionstores, setpromotionstores] = useState([]);
   const [paymentID, setpaymentID] = useState(null);
   const [RadioPayment, setRadio] = useState(1);
-  const [CartItem, setCartItem] = useState([]);
+
   const [usecoupon, setusecoupon] = useState(null);
+  const [openCoupon, setopenCoupon] = useState(false); //เปิดCoupon
   const [pageID, setpageID] = useState("");
   const [sumprice, setsumprice] = useState(0);
+
+  const [CartItem, setCartItem] = useState([]); //สินค้าในตระกร้า
+  const [freebies, setfreebies] = useState([]); //ของแถม
+
   let { id } = useParams();
   const getProducts = async () => {
     let idlist = [];
@@ -119,6 +126,7 @@ const MakeOrder = () => {
       const setData = () => {
         let shop_orders = item.shop_orders;
         let dt = [];
+        //สินค้าในตระกร้า
         CartItem.filter((e) => {
           dt.push({
             stockId: e.id,
@@ -173,37 +181,103 @@ const MakeOrder = () => {
     }
   };
   //โปรร้าน
-  const GetPromotionstores = () => {
+  const GetPromotionstores = (getProducts) => {
     getPromotionstores((res) => {
       if (res.data.status) {
-        let Promotionstores = res.data.promotionstores;
+        let Promotionstores = res.data.promotionStore;
         setpromotionstores(Promotionstores);
       }
+      getProducts();
     });
   };
 
   const calctotel = () => {
-    return usecoupon == null
-      ? //ไม่มีสวนลด
-        sumprice +
-          //ไม่โปร
-          (tbPromotionDelivery == null
-            ? deliveryCost
-            : //มีโปร
-            sumprice + deliveryCost > tbPromotionDelivery.buy &&
-              deliveryCost > 0
-            ? tbPromotionDelivery.deliveryCost
-            : deliveryCost)
-      : //มีส่วนลด
-        (sumprice < usecoupon.discount ? 0 : sumprice - usecoupon.discount) +
-          //ไม่โปร
-          (tbPromotionDelivery == null
-            ? deliveryCost
-            : //มีโปร
-            sumprice - usecoupon.discount > tbPromotionDelivery.buy &&
-              deliveryCost > 0
-            ? tbPromotionDelivery.deliveryCost
-            : deliveryCost);
+    //ราคา
+    const totel =
+      usecoupon == null
+        ? sumprice
+        : sumprice < usecoupon.discount
+        ? 0
+        : sumprice - usecoupon.discount;
+    //มีโปรส่ง
+    let _deliveryCost = deliveryCost;
+    if (tbPromotionDelivery != null) {
+      if (totel >= tbPromotionDelivery.buy && deliveryCost > 0) {
+        _deliveryCost = tbPromotionDelivery.deliveryCost;
+      }
+    }
+    // มีโปรร้าน
+    let _prodiscstro = calcprodiscount(totel);
+    let _prodiscount = 0;
+    if (_prodiscstro.type == "discount") {
+      _prodiscount = _prodiscstro.data;
+    }
+    return totel + _deliveryCost - _prodiscount;
+  };
+  const calcprodiscount = (totel) => {
+    let _prodiscount = 0;
+    let data = {};
+    if (promotionstores.length > 0 && totel > 0) {
+      let prodiscountList = promotionstores.find(
+        (e) =>
+          (e.condition == "discount" || e.condition == "%discount") &&
+          e.buy <= totel
+      );
+      if (prodiscountList != null) {
+        let pro = promotionstores.filter((e) => {
+          if (
+            (e.condition == "discount" || e.condition == "%discount") &&
+            e.buy <= totel
+          ) {
+            return e;
+          }
+        });
+
+        pro.map((e, i) => {
+          let discount = 0;
+          if (e.condition == "discount") {
+            discount = e.discount;
+          } else {
+            discount = (e.percentDiscount / 100) * totel;
+            if (discount > e.percentDiscountAmount) {
+              discount = e.percentDiscountAmount;
+            }
+          }
+          if (discount > _prodiscount) {
+            _prodiscount = discount;
+          }
+        });
+        console.log(_prodiscount);
+        data = { type: "discount", data: _prodiscount };
+      } else {
+        //สินค้า
+        console.log("แถมสินค้า");
+        let productList = promotionstores.find((e) => e.condition == "product");
+        console.log(productList);
+        data = { type: "product", data: productList.stockId };
+        if (freebies.length < 1) {
+          getfreebies(productList);
+        }
+      }
+    }
+    return data;
+  };
+
+  const getfreebies = async (productList) => {
+    await axios
+      .post("stock/getStock", { id: [productList.stockId] })
+      .then((response) => {
+        if (response.data.status) {
+          let tbStock = response.data.tbStock;
+          tbStock[0].campaignName = productList.campaignName;
+          setfreebies(tbStock);
+        } else {
+          setfreebies([]);
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
   const calcdeliveryCost = () => {
     return usecoupon == null
@@ -226,159 +300,168 @@ const MakeOrder = () => {
       : deliveryCost;
   };
   useEffect(() => {
-    getProducts();
-    GetPromotionstores();
+    GetPromotionstores(getProducts);
   }, []);
 
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="bg-green-mbk">
-        <div
-          style={{ height: "40px" }}
-          className=" noselect text-lg text-white font-bold text-center "
-        >
-          {"ทำการสั่งซื้อ"}
-        </div>
-      </div>
-      <div
-        className="overflow-scroll line-scroll"
-        style={{ height: "calc(100% - 200px)" }}
-      >
-        <DetailModel data={CartItem} />
-        <div
-          className="flex relative"
-          style={{
-            height: "20px",
-            alignItems: "center",
-            justifyContent: "center",
-            marginTop: "0.5rem",
-          }}
-        >
-          <div className="px-2 absolute" style={{ left: "10px" }}>
-            <img
-              style={{ margin: "auto", width: "22px", height: "22px" }}
-              src={require("assets/img/mbk/icon_sale.png").default}
-              alt="icon_sale"
-              className="w-32 border-2 border-blueGray-50"
-            ></img>
-          </div>
-          <div className="px-2 absolute font-bold" style={{ left: "50px" }}>
-            {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
-          </div>
-          <div className="absolute" style={{ right: "10px" }}>
-            <div className="flex">
-              <div
-                style={{
-                  color:
-                    usecoupon != null
-                      ? "red"
-                      : "var(--mq-txt-color, rgb(192, 192, 192))",
-                }}
-                onClick={() => {
-                  if (CartItem.length > 0) {
-                    history.push(path.usecoupon.replace(":id", id));
-                  }
-                }}
-              >
-                {usecoupon != null
-                  ? "-฿ " + fn.formatMoney(usecoupon.discount)
-                  : "ใช้ส่วนลด >"}
-              </div>
-              <div className="px-2">
-                {usecoupon != null ? (
-                  <i
-                    className="fas fa-times-circle"
-                    style={{ color: "red" }}
-                    onClick={Cancelcoupon}
-                  ></i>
-                ) : null}
-              </div>
+      {!openCoupon ? (
+        <>
+          <div className="bg-green-mbk">
+            <div
+              style={{ height: "40px" }}
+              className=" noselect text-lg text-white font-bold text-center "
+            >
+              {"ทำการสั่งซื้อ"}
             </div>
           </div>
-        </div>
-        <div className="liff-inline" />
-
-        <AddressModel
-          isAddress={isAddress}
-          onChange={(e) => {
-            setisAddress(e.id);
-          }}
-          setisAddress={setisAddress}
-        />
-
-        <LogisticModel
-          isLogistic={isLogistic}
-          onChange={(e) => {
-            setisLogistic(e.id);
-            setDeliveryCost(e.deliveryCost);
-          }}
-          setisLogistic={setisLogistic}
-          setdeliveryCost={setdeliveryCost}
-          settbPromotionDelivery={settbPromotionDelivery}
-        />
-        <PaymentModel
-          sumprice={sumprice}
-          setpaymentID={setpaymentID}
-          RadioPayment={RadioPayment}
-          setRadio={setRadio}
-          paymentID={paymentID}
-          disabled={false}
-        />
-
-        <div
-          className="w-full  relative mt-2"
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <div style={{ width: "90%", margin: "auto" }}>
-            <div>
-              <div className="flex relative mb-2">
-                <div>ยอดรวมสิ้นค้า : </div>
-                <div className="absolute" style={{ right: "0" }}>
-                  {usecoupon == null
-                    ? "฿ " + fn.formatMoney(sumprice)
-                    : "฿ " + fn.formatMoney(sumprice)}
-                </div>
+          <div
+            className="overflow-scroll line-scroll"
+            style={{ height: "calc(100% - 200px)" }}
+          >
+            <DetailModel data={CartItem} freebies={freebies} />
+            <div
+              className="flex relative"
+              style={{
+                height: "20px",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "0.5rem",
+              }}
+            >
+              <div className="px-2 absolute" style={{ left: "10px" }}>
+                <img
+                  style={{ margin: "auto", width: "22px", height: "22px" }}
+                  src={require("assets/img/mbk/icon_sale.png").default}
+                  alt="icon_sale"
+                  className="w-32 border-2 border-blueGray-50"
+                ></img>
               </div>
-              <div className="flex relative mb-2">
-                <div>รวมการจัดส่ง : </div>
-                <div className="absolute" style={{ right: "0" }}>
-                  {"฿ " + fn.formatMoney(calcdeliveryCost())}
-                </div>
+              <div className="px-2 absolute font-bold" style={{ left: "50px" }}>
+                {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
               </div>
-              <div className="flex relative mb-2">
-                <div>ส่วนลด : </div>
-                {usecoupon != null ? (
+              <div className="absolute" style={{ right: "10px" }}>
+                <div className="flex">
                   <div
-                    className="absolute text-gold-mbk"
-                    style={{ right: "0" }}
+                    style={{
+                      color:
+                        usecoupon != null
+                          ? "red"
+                          : "var(--mq-txt-color, rgb(192, 192, 192))",
+                    }}
+                    onClick={() => {
+                      if (CartItem.length > 0) {
+                        // history.push(path.usecoupon.replace(":id", id));
+                        setopenCoupon(true);
+                      }
+                    }}
                   >
-                    {"-฿ " + fn.formatMoney(usecoupon.discount)}
+                    {usecoupon != null
+                      ? "-฿ " + fn.formatMoney(usecoupon.discount)
+                      : "ใช้ส่วนลด >"}
                   </div>
-                ) : (
-                  <div className="absolute" style={{ right: "0" }}>
-                    {"฿ " + fn.formatMoney(0)}
+                  <div className="px-2">
+                    {usecoupon != null ? (
+                      <i
+                        className="fas fa-times-circle"
+                        style={{ color: "red" }}
+                        onClick={Cancelcoupon}
+                      ></i>
+                    ) : null}
                   </div>
-                )}
-              </div>
-              <div className="flex relative mb-2">
-                <div>ยอดรวมสินค้า : </div>
-                <div
-                  className="absolute text-green-mbk font-blod "
-                  style={{ right: "0", fontSize: "20px" }}
-                >
-                  {"฿ " + fn.formatMoney(calctotel())}
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-        <FooterButton sendOrder={sendOrder} />
+            <div className="liff-inline" />
 
-      </div>
+            <AddressModel
+              isAddress={isAddress}
+              onChange={(e) => {
+                setisAddress(e.id);
+              }}
+              setisAddress={setisAddress}
+            />
+
+            <LogisticModel
+              isLogistic={isLogistic}
+              onChange={(e) => {
+                setisLogistic(e.id);
+                setDeliveryCost(e.deliveryCost);
+              }}
+              setisLogistic={setisLogistic}
+              setdeliveryCost={setdeliveryCost}
+              settbPromotionDelivery={settbPromotionDelivery}
+            />
+            <PaymentModel
+              sumprice={sumprice}
+              setpaymentID={setpaymentID}
+              RadioPayment={RadioPayment}
+              setRadio={setRadio}
+              paymentID={paymentID}
+              disabled={false}
+            />
+
+            <div
+              className="w-full  relative mt-2"
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div style={{ width: "90%", margin: "auto" }}>
+                <div>
+                  <div className="flex relative mb-2">
+                    <div>ยอดรวมสิ้นค้า : </div>
+                    <div className="absolute" style={{ right: "0" }}>
+                      {usecoupon == null
+                        ? "฿ " + fn.formatMoney(sumprice)
+                        : "฿ " + fn.formatMoney(sumprice)}
+                    </div>
+                  </div>
+                  <div className="flex relative mb-2">
+                    <div>รวมการจัดส่ง : </div>
+                    <div className="absolute" style={{ right: "0" }}>
+                      {"฿ " + fn.formatMoney(calcdeliveryCost())}
+                    </div>
+                  </div>
+                  <div className="flex relative mb-2">
+                    <div>ส่วนลด : </div>
+                    {usecoupon != null ? (
+                      <div
+                        className="absolute text-gold-mbk"
+                        style={{ right: "0" }}
+                      >
+                        {"-฿ " + fn.formatMoney(usecoupon.discount)}
+                      </div>
+                    ) : (
+                      <div className="absolute" style={{ right: "0" }}>
+                        {"฿ " + fn.formatMoney(0)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex relative mb-2">
+                    <div>ยอดรวมสินค้า : </div>
+                    <div
+                      className="absolute text-green-mbk font-blod "
+                      style={{ right: "0", fontSize: "20px" }}
+                    >
+                      {"฿ " + fn.formatMoney(calctotel())}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <FooterButton sendOrder={sendOrder} />
+          </div>
+        </>
+      ) : (
+        <CouponModel
+          setopenCoupon={setopenCoupon}
+          setusecoupon={setusecoupon}
+          id={id}
+        />
+      )}
     </>
   );
 };
