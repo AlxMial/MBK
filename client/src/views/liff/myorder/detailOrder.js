@@ -274,7 +274,7 @@ const DetailOrder = ({
         style={{ borderRadius: "10px" }}
       >
         <div className="w-full flex flex-wrap">
-          <div className="w-full flex-auto mt-2" style={{ height: "100%" }}>
+          <div className="w-full flex-auto mt-2 h-full">
             <div className="w-full flex-auto relative">
               <div className=" flex justify-between align-middle ">
                 <div

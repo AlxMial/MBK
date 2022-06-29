@@ -4,6 +4,7 @@ import Spinner from "components/Loadings/spinner/Spinner";
 import { path } from "services/liff.services";
 import { getOrderHD } from "@services/liff.services";
 import DetailOrder from "./detailOrder";
+import EmptyOrder from "./emptyOrder";
 const Prepare = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
@@ -32,12 +33,10 @@ const Prepare = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div
-        className="line-scroll"
+        className="line-scroll h-full"
         style={{
           width: "95%",
           margin: "auto",
-          height: "100%",
-          overflow: "scroll",
         }}
       >
         {OrderHD.length > 0 ? (
@@ -48,27 +47,7 @@ const Prepare = () => {
             }}
           />
         ) : (
-          <div
-            className="flex mb-2"
-            style={{
-              height: "100%",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "#ddd",
-            }}
-          >
-            <div>
-              <i
-                className="flex fas fa-box-open mb-2"
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "28px",
-                }}
-              ></i>
-              <div> ยังไม่คำสั่งซื้อที่กำลังเตรียมสินค้า </div>
-            </div>
-          </div>
+          <EmptyOrder text={"ยังไม่คำสั่งซื้อที่กำลังเตรียมสินค้า"} />
         )}
       </div>
     </>
