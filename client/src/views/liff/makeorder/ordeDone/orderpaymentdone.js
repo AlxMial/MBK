@@ -362,7 +362,7 @@ const OrderPaymentDone = () => {
                               ? "เตรียมสินค้า"
                               : OrderHD.transportStatus == "In Transit"
                               ? "อยู่ระหว่างการจัดส่ง"
-                              : ""}{" "}
+                              : ""}
                           </div>
                         </div>
                       </div>

@@ -158,8 +158,11 @@ const MakeOrder = () => {
             } else {
               item = Storage.remove_byorder();
             }
-
-            history.push(path.paymentInfo.replace(":id", res.data.orderId));
+            if (RadioPayment === 1) {
+              history.push(path.paymentInfo.replace(":id", id));
+            } else {
+              console.log("2c2p");
+            }
           } else {
           }
         });

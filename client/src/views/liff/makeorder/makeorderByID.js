@@ -120,7 +120,11 @@ const MakeOrderById = () => {
     };
     doSaveUpdateOrder({ data: updatrOrder }, (res) => {
       if (res.status) {
-        history.push(path.paymentInfo.replace(":id", id));
+        if (RadioPayment === 1) {
+          history.push(path.paymentInfo.replace(":id", id));
+        } else {
+          console.log("2c2p");
+        }
       } else {
       }
     });
