@@ -34,7 +34,7 @@ import usecoupon from "views/liff/shop/usecoupon";
 
 import makeorder from "views/liff/makeorder/makeorder";
 import makeorderbyid from "views/liff/makeorder/makeorderByID";
-import orderpaymentdone from "views/liff/makeorder/orderpaymentdone";
+import orderpaymentdone from "views/liff/makeorder/ordeDone/orderpaymentdone";
 import addAddress from "views/liff/makeorder/addAddress";
 
 //paymentInfo 

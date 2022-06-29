@@ -62,13 +62,11 @@ const LogisticModel = ({ isLogistic, onChange,setisLogistic,setdeliveryCost,sett
                             formatOptionLabel={({ name, description, deliveryCost }) => (
                                 <div >
                                     <div className="font-bold">{name}</div>
-                                    <div className="w-full" style={{
+                                    <div className="w-full text-liff-gray-mbk" style={{
                                         whiteSpace: "break-spaces",
-                                        color: "var(--mq-txt-color, rgb(170, 170, 170))"
                                     }}>{fn.IsNullOrEmpty(description) ? "-" : description}</div>
-                                    <div className="w-full" style={{
+                                    <div className="w-full text-liff-gray-mbk" style={{
                                         whiteSpace: "break-spaces",
-                                        color: "var(--mq-txt-color, rgb(170, 170, 170))"
                                     }}>{deliveryCost == 0 ? "ส่งฟรี" : ("฿ " + fn.formatMoney(deliveryCost))}</div>
 
                                 </div>
