@@ -278,46 +278,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         return today + "T" + num;
       };
       orderhd.orderNumber = await genorderNumber();
-      //ข้อมูลวิธีการจัดส่ง
-      let deliveryCost = 0; //ค่าส่ง
-      let discountDelivery = 0; //โปรค่าส่ง
-      const _tbLogistic = await tbLogistic.findOne({
-        attributes: ["id", "deliveryCost"],
-        where: { id: orderhd.logisticId, isShow: true, isDeleted: false },
-      });
-      if (_tbLogistic) {
-        //มีข้อมูลในระบบ
-        let _deliveryCost = _tbLogistic.deliveryCost;
-        //มีค่าส่ง
-        if (_deliveryCost > 0) {
-          //ตรวสอบโปรส่ง
-          const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
-            attributes: ["buy", "deliveryCost"],
-            where: {
-              isInactive: true,
-              isDeleted: false,
-            },
-          });
-          if (_tbPromotionDelivery) {
-            //มีโปร
-            if (totel >= _tbPromotionDelivery.buy) {
-              //เข้าเงื่อนไขโปร
-              deliveryCost = 0; //ค่าส่ง
-              discountDelivery = _tbPromotionDelivery.deliveryCost; //โปรค่าส่ง
-            } else {
-              deliveryCost = _deliveryCost; //ค่าส่ง
-              discountDelivery = 0; //โปรค่าส่ง
-            }
-          } else {
-            deliveryCost = _deliveryCost; //ค่าส่ง
-            discountDelivery = 0; //โปรค่าส่ง
-          }
-        }
-      } else {
-        //ไม่มีข้อมูลการจัดส่ง
-        status = false;
-        msg = "logistic empty !";
-      }
+
       let DiscountStorePromotion = 0; // โปรร้าน
 
       const _tbPromotionStore = await tbPromotionStore.findAll({
@@ -397,6 +358,47 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         }
       }
 
+      //ข้อมูลวิธีการจัดส่ง
+      let deliveryCost = 0; //ค่าส่ง
+      let discountDelivery = 0; //โปรค่าส่ง
+      const _tbLogistic = await tbLogistic.findOne({
+        attributes: ["id", "deliveryCost"],
+        where: { id: orderhd.logisticId, isShow: true, isDeleted: false },
+      });
+      if (_tbLogistic) {
+        //มีข้อมูลในระบบ
+        let _deliveryCost = _tbLogistic.deliveryCost;
+        //มีค่าส่ง
+        if (_deliveryCost > 0) {
+          //ตรวสอบโปรส่ง
+          const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
+            attributes: ["buy", "deliveryCost"],
+            where: {
+              isInactive: true,
+              isDeleted: false,
+            },
+          });
+          if (_tbPromotionDelivery) {
+            //มีโปร
+            if (totel >= _tbPromotionDelivery.buy) {
+              //เข้าเงื่อนไขโปร
+              deliveryCost = 0; //ค่าส่ง
+              discountDelivery = _tbPromotionDelivery.deliveryCost; //โปรค่าส่ง
+            } else {
+              deliveryCost = _deliveryCost; //ค่าส่ง
+              discountDelivery = 0; //โปรค่าส่ง
+            }
+          } else {
+            deliveryCost = _deliveryCost; //ค่าส่ง
+            discountDelivery = 0; //โปรค่าส่ง
+          }
+        }
+      } else {
+        //ไม่มีข้อมูลการจัดส่ง
+        status = false;
+        msg = "logistic empty !";
+      }
+
       orderhd.deliveryCost = deliveryCost;
       orderhd.discountDelivery = discountDelivery;
       orderhd.discountCoupon = DiscountCoupon;
@@ -450,6 +452,212 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       where: { uid: uid },
     });
     if (Member) {
+      let totel = 0; //ราคารวม
+      let orderdt = data.orderdt;
+      let orderDT = [];
+      for (var i = 0; i < orderdt.length; i++) {
+        //ดึงราคาใหม่ และ จำนวนใหม่
+        let _tbStock = await tbStock.findOne({
+          attributes: [
+            "isFlashSale",
+            "price",
+            "discount",
+            "discountType",
+            "productCount",
+          ],
+          where: {
+            id: Encrypt.DecodeKey(orderdt[i].id),
+            productCount: {
+              [Op.gte]: orderdt[i].amount,
+            },
+          },
+        });
+        if (_tbStock) {
+          //มีสินค้า
+          if (_tbStock.discount > 0) {
+            let _price = 0;
+            if (_tbStock.discountType == "THB") {
+              _price = _tbStock.price - _tbStock.discount;
+            } else {
+              _price =
+                _tbStock.price - (_tbStock.discount / 100) * _tbStock.price;
+            }
+            totel += _price * orderdt[i].amount;
+          } else {
+            totel += _tbStock.price * orderdt[i].amount;
+          }
+          orderDT.push({
+            stockId: Encrypt.DecodeKey(orderdt[i].id),
+            amount: orderdt[i].amount,
+            price: _tbStock.price,
+            discount: _tbStock.discount,
+            discountType: _tbStock.discountType,
+            isFlashSale: _tbStock.isFlashSale,
+          });
+        } else {
+          status = false;
+          msg = "Stock empty !";
+        }
+      }
+
+      let DiscountStorePromotion = 0; // โปรร้าน
+
+      const _tbPromotionStore = await tbPromotionStore.findAll({
+        attributes: [
+          "id",
+          "buy",
+          "condition",
+          "discount",
+          "percentDiscount",
+          "percentDiscountAmount",
+          "stockId",
+          "campaignName",
+        ],
+        where: {
+          isDeleted: false,
+          isInactive: true,
+        },
+      });
+      if (_tbPromotionStore) {
+        let prodiscountList = _tbPromotionStore.find(
+          (e) =>
+            (e.condition == "discount" || e.condition == "%discount") &&
+            e.buy <= totel
+        );
+
+        if (prodiscountList != null) {
+          let pro = _tbPromotionStore.filter((e) => {
+            if (
+              (e.condition == "discount" || e.condition == "%discount") &&
+              e.buy <= totel
+            ) {
+              return e;
+            }
+          });
+
+          pro.map((e, i) => {
+            let discount = 0;
+            if (e.condition == "discount") {
+              discount = e.discount;
+            } else {
+              discount = (e.percentDiscount / 100) * totel;
+              if (discount > e.percentDiscountAmount) {
+                discount = e.percentDiscountAmount;
+              }
+            }
+            if (discount > DiscountStorePromotion) {
+              DiscountStorePromotion = discount;
+            }
+          });
+        } else {
+          //แถมสินค้า
+          let productList = _tbPromotionStore.find(
+            (e) => e.condition == "product"
+          );
+          let _tbStock = await tbStock.findOne({
+            attributes: [
+              "isFlashSale",
+              "price",
+              "discount",
+              "discountType",
+              "productCount",
+            ],
+            where: {
+              id: productList.stockId,
+            },
+          });
+          if (_tbStock) {
+            orderDT.push({
+              stockId: productList.stockId,
+              amount: 1,
+              price: 0,
+              discount: 0,
+              discountType: 0,
+              isFlashSale: false,
+            });
+          }
+        }
+      }
+
+      //ข้อมูลวิธีการจัดส่ง
+      let deliveryCost = 0; //ค่าส่ง
+      let discountDelivery = 0; //โปรค่าส่ง
+      const _tbLogistic = await tbLogistic.findOne({
+        attributes: ["id", "deliveryCost"],
+        where: {
+          id: Encrypt.DecodeKey(data.logisticId),
+          isShow: true,
+          isDeleted: false,
+        },
+      });
+      if (_tbLogistic) {
+        //มีข้อมูลในระบบ
+        let _deliveryCost = _tbLogistic.deliveryCost;
+        //มีค่าส่ง
+        if (_deliveryCost > 0) {
+          //ตรวสอบโปรส่ง
+          const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
+            attributes: ["buy", "deliveryCost"],
+            where: {
+              isInactive: true,
+              isDeleted: false,
+            },
+          });
+          if (_tbPromotionDelivery) {
+            //มีโปร
+            if (totel - DiscountStorePromotion >= _tbPromotionDelivery.buy) {
+              //เข้าเงื่อนไขโปร
+              deliveryCost = 0; //ค่าส่ง
+              discountDelivery = _tbPromotionDelivery.deliveryCost; //โปรค่าส่ง
+            } else {
+              deliveryCost = _deliveryCost; //ค่าส่ง
+              discountDelivery = 0; //โปรค่าส่ง
+            }
+          } else {
+            deliveryCost = _deliveryCost; //ค่าส่ง
+            discountDelivery = 0; //โปรค่าส่ง
+          }
+        }
+      } else {
+        //ไม่มีข้อมูลการจัดส่ง
+        status = false;
+        msg = "logistic empty !";
+      }
+
+      //คูปอง
+      let DiscountCoupon = 0; // ส่วนลดCoupon
+      if (data.usecouponid != null) {
+        const _tbMemberReward = await tbMemberReward.findOne({
+          attributes: ["id", "TableHDId"],
+          where: { TableHDId: Encrypt.DecodeKey(data.usecouponid) },
+        });
+        //มีคูปอง
+        data.memberRewardId = null;
+        if (_tbMemberReward) {
+          data.memberRewardId = _tbMemberReward.id;
+
+          const _tbCouponCode = await tbCouponCode.findOne({
+            attributes: ["redemptionCouponId"],
+            where: { id: _tbMemberReward.TableHDId },
+          });
+          const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
+            attributes: ["discount", "discountType"],
+            where: { id: _tbCouponCode.redemptionCouponId },
+          });
+
+          if (_tbRedemptionCoupon) {
+            if (_tbRedemptionCoupon.discountType == "THB") {
+              DiscountCoupon = _tbRedemptionCoupon.discount;
+            } else {
+              DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * totel;
+            }
+          }
+        } else {
+          status = false;
+          msg = "คูปองไม่สามมารถใช้ได้";
+        }
+      }
+
       const updtbOrderHD = await tbOrderHD.update(
         {
           logisticId: Encrypt.DecodeKey(data.logisticId),
@@ -459,9 +667,29 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             Encrypt.DecodeKey(data.isAddress) == "memberId"
               ? null
               : Encrypt.DecodeKey(data.isAddress),
+          memberRewardId: data.memberRewardId,
+          discountStorePromotion: DiscountStorePromotion,
+          deliveryCost: deliveryCost,
+          discountDelivery: discountDelivery,
+          discountCoupon: DiscountCoupon,
         },
         { where: { id: Encrypt.DecodeKey(data.id) } }
       );
+
+      const dataDel = await tbOrderDT.destroy({
+        where: {
+          orderId: Encrypt.DecodeKey(data.id),
+        },
+      });
+
+      if (orderDT) {
+        for (var i = 0; i < orderDT.length; i++) {
+          orderDT[i].stockId = orderDT[i].stockId;
+          orderDT[i].orderId = Encrypt.DecodeKey(data.id);
+
+          const _tbOrderDT = await tbOrderDT.create(orderDT[i]);
+        }
+      }
     } else {
       status = false;
       msg = "auth";
@@ -527,6 +755,20 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
   let { PaymentStatus, TransportStatus, isCancel, isReturn } = req.body;
   let OrderHDData = [];
   let OrderHD = [];
+  let attributesOrderHD = [
+    "id",
+    "orderNumber",
+    "logisticId",
+    "paymentId",
+    "stockNumber",
+    "couponCodeId",
+    "paymentStatus",
+    "orderDate",
+    "deliveryCost",
+    "discountDelivery",
+    "discountCoupon",
+    "discountStorePromotion",
+  ];
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
     Member = await tbMember.findOne({
@@ -542,16 +784,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
       ) {
         ///ที่ต้องชำระ
         let _OrderHDData = await tbOrderHD.findAll({
-          attributes: [
-            "id",
-            "orderNumber",
-            "logisticId",
-            "paymentId",
-            "stockNumber",
-            "couponCodeId",
-            "paymentStatus",
-            "orderDate",
-          ],
+          attributes: attributesOrderHD,
           where: {
             isCancel: isCancel,
             IsDeleted: false,
@@ -595,14 +828,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
       } else if (PaymentStatus == "Done" && TransportStatus == "Prepare") {
         //เตรียมสินค้า
         let _OrderHDData = await tbOrderHD.findAll({
-          attributes: [
-            "id",
-            "orderNumber",
-            "logisticId",
-            "paymentId",
-            "stockNumber",
-            "couponCodeId",
-          ],
+          attributes: attributesOrderHD,
           where: {
             isCancel: false,
             IsDeleted: false,
@@ -628,14 +854,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
       } else if (PaymentStatus == "Done" && TransportStatus == "In Transit") {
         //ที่ต้องได้รับ
         OrderHDData = await tbOrderHD.findAll({
-          attributes: [
-            "id",
-            "orderNumber",
-            "logisticId",
-            "paymentId",
-            "stockNumber",
-            "couponCodeId",
-          ],
+          attributes: attributesOrderHD,
           where: {
             isCancel: false,
             IsDeleted: false,
@@ -652,14 +871,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
       ) {
         //สำเร็จ
         let _OrderHDData = await tbOrderHD.findAll({
-          attributes: [
-            "id",
-            "orderNumber",
-            "logisticId",
-            "paymentId",
-            "stockNumber",
-            "couponCodeId",
-          ],
+          attributes: attributesOrderHD,
           where: {
             isCancel: false,
             IsDeleted: false,
@@ -707,14 +919,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         if (_tbCancelOrder) {
           for (var i = 0; i < _tbCancelOrder.length; i++) {
             const _tbOrderHD = await tbOrderHD.findOne({
-              attributes: [
-                "id",
-                "orderNumber",
-                "logisticId",
-                "paymentId",
-                "stockNumber",
-                "couponCodeId",
-              ],
+              attributes: attributesOrderHD,
               where: {
                 IsDeleted: false,
                 id: _tbCancelOrder[i].orderId,
@@ -747,14 +952,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         if (_tbReturnOrder) {
           for (var i = 0; i < _tbReturnOrder.length; i++) {
             const _tbOrderHD = await tbOrderHD.findOne({
-              attributes: [
-                "id",
-                "orderNumber",
-                "logisticId",
-                "paymentId",
-                "stockNumber",
-                "couponCodeId",
-              ],
+              attributes: attributesOrderHD,
               where: {
                 IsDeleted: false,
                 id: _tbReturnOrder[i].orderId,
@@ -827,83 +1025,12 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             price += (dt.discount > 0 ? dt.discount : dt.price) * dt.amount;
           }
 
-          const _tbLogistic = await tbLogistic.findOne({
-            attributes: [
-              "id",
-              "logisticType",
-              "deliveryName",
-              "description",
-              "deliveryCost",
-            ],
-            where: {
-              isDeleted: false,
-              id: hd.logisticId,
-            },
-          });
-          let deliveryCost = 0;
-          let Coupondiscount = 0;
-
-          if (hd.couponCodeId != null) {
-            tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
-            tbCouponCode.belongsTo(tbRedemptionCoupon, {
-              foreignKey: "redemptionCouponId",
-            });
-            const _tbRedemptionCoupon = await tbCouponCode.findOne({
-              where: { id: hd.couponCodeId },
-              attributes: ["redemptionCouponId"],
-              include: [
-                {
-                  model: tbRedemptionCoupon,
-                  attributes: [
-                    "id",
-                    "discount",
-                    "isNotExpired",
-                    "startDate",
-                    "expiredDate",
-                    "couponName",
-                  ],
-                  where: {
-                    isDeleted: !1,
-                    id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
-                  },
-                },
-              ],
-            });
-            if (_tbRedemptionCoupon) {
-              Coupondiscount =
-                _tbRedemptionCoupon.dataValues.tbRedemptionCoupon.dataValues
-                  .discount;
-            }
-          }
-          price = Coupondiscount > price ? 0 : price - Coupondiscount;
-
-          if (_tbLogistic) {
-            deliveryCost = _tbLogistic.dataValues.deliveryCost;
-            if (deliveryCost > 0) {
-              const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
-                attributes: [
-                  "id",
-                  "promotionName",
-                  "buy",
-                  "deliveryCost",
-                  "deliveryCost",
-                ],
-                where: { isDeleted: false, isInactive: true },
-              });
-              if (_tbPromotionDelivery) {
-                if (price > _tbPromotionDelivery.buy) {
-                  let promodeliveryCost =
-                    _tbPromotionDelivery.dataValues.deliveryCost;
-                  if (promodeliveryCost > deliveryCost) {
-                    deliveryCost = 0;
-                  } else {
-                    deliveryCost = deliveryCost - promodeliveryCost;
-                  }
-                }
-              }
-            }
-          }
-          price += deliveryCost;
+          price =
+            price +
+            hd.deliveryCost +
+            hd.discountDelivery -
+            hd.discountCoupon -
+            hd.discountStorePromotion;
 
           hd.amount = amount;
           hd.price = price;
@@ -947,7 +1074,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
     });
     if (Member) {
       OrderHDData = await tbOrderHD.findOne({
-        attributes: ["id", "logisticId", "paymentId"],
+        attributes: ["id", "logisticId", "paymentId", "memberRewardId"],
         where: {
           id: Encrypt.DecodeKey(orderId),
           isCancel: false,
@@ -958,7 +1085,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
           isReturn: false,
         },
       });
-      let sumprice = 0;
+      let totel = 0;
       if (OrderHDData) {
         const OrderDTData = await tbOrderDT.findAll({
           attributes: [
@@ -983,55 +1110,172 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
             } else {
               price = dt.price - dt.discount;
             }
-            sumprice = sumprice + price * dt.amount;
+            totel = totel + price * dt.amount;
           } else {
-            sumprice = sumprice + dt.price * dt.amount;
+            totel = totel + dt.price * dt.amount;
           }
         }
         // คูปอง
 
-        // ค่าขนส่ง
-        const _tbLogistic = await tbLogistic.findOne({
+        let DiscountStorePromotion = 0; // โปรร้าน
+
+        const _tbPromotionStore = await tbPromotionStore.findAll({
           attributes: [
             "id",
-            "logisticType",
-            "deliveryName",
-            "description",
-            "deliveryCost",
+            "buy",
+            "condition",
+            "discount",
+            "percentDiscount",
+            "percentDiscountAmount",
+            "stockId",
+            "campaignName",
           ],
           where: {
             isDeleted: false,
-            id: OrderHDData.dataValues.logisticId,
+            isInactive: true,
           },
         });
-        //โปรโมชั่นขนส่ง
-        const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
-          attributes: [
-            "id",
-            "promotionName",
-            "buy",
-            "deliveryCost",
-            "deliveryCost",
-          ],
-          where: { isDeleted: false, isInactive: true },
-        });
-        if (_tbLogistic && _tbPromotionDelivery) {
-          let _tbPromotionDeliveryData = _tbPromotionDelivery.dataValues;
-          let LogisticData = _tbLogistic.dataValues;
+        if (_tbPromotionStore) {
+          let prodiscountList = _tbPromotionStore.find(
+            (e) =>
+              (e.condition == "discount" || e.condition == "%discount") &&
+              e.buy <= totel
+          );
 
-          if (_tbPromotionDeliveryData.buy >= sumprice) {
-            sumprice = sumprice + LogisticData.deliveryCost;
+          if (prodiscountList != null) {
+            let pro = _tbPromotionStore.filter((e) => {
+              if (
+                (e.condition == "discount" || e.condition == "%discount") &&
+                e.buy <= totel
+              ) {
+                return e;
+              }
+            });
+
+            pro.map((e, i) => {
+              let discount = 0;
+              if (e.condition == "discount") {
+                discount = e.discount;
+              } else {
+                discount = (e.percentDiscount / 100) * totel;
+                if (discount > e.percentDiscountAmount) {
+                  discount = e.percentDiscountAmount;
+                }
+              }
+              if (discount > DiscountStorePromotion) {
+                DiscountStorePromotion = discount;
+              }
+            });
           } else {
-            let deliveryCostt = LogisticData.deliveryCost;
-            if (deliveryCostt > _tbPromotionDeliveryData.deliveryCost) {
-              deliveryCost =
-                deliveryCostt - _tbPromotionDeliveryData.deliveryCost;
-            } else {
-              deliveryCostt = 0;
+            //แถมสินค้า
+            let productList = _tbPromotionStore.find(
+              (e) => e.condition == "product"
+            );
+            let _tbStock = await tbStock.findOne({
+              attributes: [
+                "isFlashSale",
+                "price",
+                "discount",
+                "discountType",
+                "productCount",
+              ],
+              where: {
+                id: productList.stockId,
+              },
+            });
+            if (_tbStock) {
+              orderDT.push({
+                stockId: productList.stockId,
+                amount: 1,
+                price: 0,
+                discount: 0,
+                discountType: 0,
+                isFlashSale: false,
+              });
             }
-            sumprice = sumprice + deliveryCostt;
           }
         }
+        totel = totel - DiscountStorePromotion;
+
+        // ค่าขนส่ง
+        //ข้อมูลวิธีการจัดส่ง
+        let deliveryCost = 0; //ค่าส่ง
+        let discountDelivery = 0; //โปรค่าส่ง
+        const _tbLogistic = await tbLogistic.findOne({
+          attributes: ["id", "deliveryCost"],
+          where: {
+            id: OrderHDData.dataValues.logisticId,
+            isShow: true,
+            isDeleted: false,
+          },
+        });
+        if (_tbLogistic) {
+          //มีข้อมูลในระบบ
+          let _deliveryCost = _tbLogistic.deliveryCost;
+          //มีค่าส่ง
+          if (_deliveryCost > 0) {
+            //ตรวสอบโปรส่ง
+            const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
+              attributes: ["buy", "deliveryCost"],
+              where: {
+                isInactive: true,
+                isDeleted: false,
+              },
+            });
+            if (_tbPromotionDelivery) {
+              //มีโปร
+              if (totel - DiscountStorePromotion >= _tbPromotionDelivery.buy) {
+                //เข้าเงื่อนไขโปร
+                deliveryCost = 0; //ค่าส่ง
+                discountDelivery = _tbPromotionDelivery.deliveryCost; //โปรค่าส่ง
+              } else {
+                deliveryCost = _deliveryCost; //ค่าส่ง
+                discountDelivery = 0; //โปรค่าส่ง
+              }
+            } else {
+              deliveryCost = _deliveryCost; //ค่าส่ง
+              discountDelivery = 0; //โปรค่าส่ง
+            }
+          }
+        } else {
+          //ไม่มีข้อมูลการจัดส่ง
+          status = false;
+          msg = "logistic empty !";
+        }
+        totel = totel + deliveryCost + discountDelivery;
+
+        // ส่วนลดCoupon
+        let DiscountCoupon = 0;
+        if (OrderHDData.dataValues.memberRewardId != null) {
+          const _tbMemberReward = await tbMemberReward.findOne({
+            attributes: ["id", "TableHDId"],
+            where: { id: OrderHDData.dataValues.memberRewardId },
+          });
+          //มีคูปอง
+          if (_tbMemberReward) {
+            const _tbCouponCode = await tbCouponCode.findOne({
+              attributes: ["redemptionCouponId"],
+              where: { id: _tbMemberReward.TableHDId },
+            });
+            const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
+              attributes: ["discount", "discountType"],
+              where: { id: _tbCouponCode.redemptionCouponId },
+            });
+
+            if (_tbRedemptionCoupon) {
+              if (_tbRedemptionCoupon.discountType == "THB") {
+                DiscountCoupon = _tbRedemptionCoupon.discount;
+              } else {
+                DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * totel;
+              }
+            }
+          } else {
+            status = false;
+            msg = "คูปองไม่สามมารถใช้ได้";
+          }
+        }
+
+        totel = totel - DiscountCoupon;
 
         let _tbPayment = await tbPayment.findOne({
           attributes: [
@@ -1051,7 +1295,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
 
         OrderHD = {
           id: Encrypt.EncodeKey(OrderHDData.dataValues.id),
-          price: sumprice,
+          price: totel,
           Payment: _tbPayment,
         };
       }
@@ -1102,6 +1346,11 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
           "memberRewardId",
           "otherAddressId",
           "paymentType",
+
+          ["deliveryCost", "hddeliveryCost"],
+          "discountDelivery",
+          "discountCoupon",
+          "discountStorePromotion",
         ],
         where: {
           IsDeleted: false,
@@ -1162,12 +1411,14 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         }
         //ค่าจัดส่ง
         let deliveryCost = 0;
+        let olddeliveryCost = 0;
         const _tbLogistic = await tbLogistic.findOne({
           attributes: ["id", "deliveryCost"],
           where: { isDeleted: false, isShow: true, id: hd.logisticId },
         });
         if (_tbLogistic) {
           deliveryCost = _tbLogistic.deliveryCost;
+          olddeliveryCost = _tbLogistic.deliveryCost;
         }
         //โปรโมชั่นขนส่ง
         const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
@@ -1319,6 +1570,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
           dt: hd.dt,
           sumprice: hd.sumprice,
           deliveryCost: hd.deliveryCost,
+          olddeliveryCost: olddeliveryCost,
           total: hd.total,
           orderNumber: hd.orderNumber,
           paymentStatus: hd.paymentStatus,
@@ -1353,6 +1605,11 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                 ? null
                 : RedemptionCoupon
               : null,
+
+          hddeliveryCost: hd.hddeliveryCost,
+          hddiscountDelivery: hd.discountDelivery,
+          hddiscountCoupon: hd.discountCoupon,
+          hddiscountStorePromotion: hd.discountStorePromotion,
         };
       }
     }

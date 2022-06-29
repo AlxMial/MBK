@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
+import { useToasts } from "react-toast-notifications";
 import axios from "services/axios";
 import { path } from "services/liff.services";
 import * as Storage from "@services/Storage.service";
@@ -22,6 +23,7 @@ import CouponModel from "./couponModel";
 
 const MakeOrder = () => {
   const history = useHistory();
+  const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
   const [isAddress, setisAddress] = useState(null);
   const [isLogistic, setisLogistic] = useState(null);
@@ -43,7 +45,6 @@ const MakeOrder = () => {
   const getProducts = async () => {
     let idlist = [];
     let item = {};
-    console.log(id);
     setpageID(id);
     const setData = async () => {
       if (!fn.IsNullOrEmpty(item)) {
@@ -378,6 +379,10 @@ const MakeOrder = () => {
             <AddressModel
               isAddress={isAddress}
               onChange={(e) => {
+                addToast("เปลียนที่อยู่จัดส่ง", {
+                  appearance: "success",
+                  autoDismiss: true,
+                });
                 setisAddress(e.id);
               }}
               setisAddress={setisAddress}
@@ -386,6 +391,10 @@ const MakeOrder = () => {
             <LogisticModel
               isLogistic={isLogistic}
               onChange={(e) => {
+                addToast("เปลียนช่องทางการขนส่ง", {
+                  appearance: "success",
+                  autoDismiss: true,
+                });
                 setisLogistic(e.id);
                 setDeliveryCost(e.deliveryCost);
               }}
@@ -414,9 +423,7 @@ const MakeOrder = () => {
                   <div className="flex relative mb-2">
                     <div>ยอดรวมสิ้นค้า : </div>
                     <div className="absolute" style={{ right: "0" }}>
-                      {usecoupon == null
-                        ? "฿ " + fn.formatMoney(sumprice)
-                        : "฿ " + fn.formatMoney(sumprice)}
+                      {"฿ " + fn.formatMoney(sumprice)}
                     </div>
                   </div>
                   <div className="flex relative mb-2">

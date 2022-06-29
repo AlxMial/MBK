@@ -40,7 +40,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
       <div
         className="mt-2 line-scroll relative"
         style={{
-          height: "calc(100% - 150px)",
+          height: "calc(100% - 200px)",
           width: "95%",
           marginLeft: "auto",
           marginRight: "auto",
@@ -153,25 +153,24 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
               );
             })
           : null}
-
-        <div className="absolute w-full flex" style={{ bottom: "0px" }}>
-          <div className="w-full" style={{ padding: "10px" }}>
-            <div
-              className="flex bg-green-mbk text-white text-center text-lg  font-bold "
-              style={{
-                margin: "auto",
-                height: "40px",
-                borderRadius: "10px",
-                padding: "5px",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              onClick={() => {
-                setopenCoupon(false);
-              }}
-            >
-              {"กลับไปที่ชำระเงิน"}
-            </div>
+      </div>
+      <div className="absolute w-full flex" style={{ bottom: "0px" }}>
+        <div className="w-full" style={{ padding: "10px" }}>
+          <div
+            className="flex bg-green-mbk text-white text-center text-lg  font-bold "
+            style={{
+              margin: "auto",
+              height: "40px",
+              borderRadius: "10px",
+              padding: "5px",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onClick={() => {
+              setopenCoupon(false);
+            }}
+          >
+            {"กลับไปที่ชำระเงิน"}
           </div>
         </div>
       </div>

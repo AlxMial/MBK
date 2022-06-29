@@ -59,6 +59,10 @@ const PaymentModel = ({
           onChange={(e) => {
             if (e.target.value == 2) {
               if (sumprice >= 500) {
+                addToast("เปลียนช่องทางการชำระเงิน", {
+                  appearance: "success",
+                  autoDismiss: true,
+                });
                 setRadio(e.target.value);
               } else {
                 addToast("ยอดรวมสิ้นค้าต้องมากกว่า 500 บาท", {
@@ -67,6 +71,10 @@ const PaymentModel = ({
                 });
               }
             } else {
+              addToast("เปลียนช่องทางการชำระเงิน", {
+                appearance: "success",
+                autoDismiss: true,
+              });
               setRadio(e.target.value);
             }
           }}
@@ -126,6 +134,10 @@ const PaymentModel = ({
                         </div>
                       )}
                       onChange={(e) => {
+                        addToast("เปลียนธนาคาร", {
+                          appearance: "success",
+                          autoDismiss: true,
+                        });
                         setresetRadio(true);
                         setTimeout(() => {
                           setresetRadio(false);

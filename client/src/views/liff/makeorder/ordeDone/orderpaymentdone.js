@@ -295,17 +295,22 @@ const OrderPaymentDone = () => {
                   <div className="flex relative mb-2">
                     <div>รวมการจัดส่ง : </div>
                     <div className="absolute" style={{ right: "0" }}>
-                      {"฿ " + fn.formatMoney(OrderHD.deliveryCost)}
+                      {"฿ " +
+                        fn.formatMoney(
+                          OrderHD.hddeliveryCost > OrderHD.hddiscountDelivery
+                            ? OrderHD.hddeliveryCost
+                            : OrderHD.hddiscountDelivery
+                        )}
                     </div>
                   </div>
                   <div className="flex relative mb-2">
                     <div>ส่วนลด : </div>
-                    {discount != null ? (
+                    {OrderHD.hddiscountCoupon > 0 ? (
                       <div
                         className="absolute text-gold-mbk"
                         style={{ right: "0" }}
                       >
-                        {"-฿ " + fn.formatMoney(OrderHD.discount)}
+                        {"-฿ " + fn.formatMoney(OrderHD.hddiscountCoupon)}
                       </div>
                     ) : (
                       <div className="absolute" style={{ right: "0" }}>
@@ -319,7 +324,14 @@ const OrderPaymentDone = () => {
                       className="absolute text-green-mbk font-blod "
                       style={{ right: "0", fontSize: "20px" }}
                     >
-                      {"฿ " + fn.formatMoney(OrderHD.total)}
+                      {"฿ " +
+                        fn.formatMoney(
+                          OrderHD.sumprice +
+                            OrderHD.hddeliveryCost +
+                            OrderHD.hddiscountDelivery -
+                            OrderHD.hddiscountCoupon -
+                            OrderHD.hddiscountStorePromotion
+                        )}
                     </div>
                   </div>
                 </div>
