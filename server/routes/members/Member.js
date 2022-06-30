@@ -598,15 +598,21 @@ router.get("/getMemberPoints", validateLineToken, async (req, res) => {
 });
 
 router.get("/getMemberPointsList", validateLineToken, async (req, res) => {
-  let code = 500;
+  let status = true;
+  let msg = ""
   let tbMemberPointList;
-  const id = Encrypt.DecodeKey(req.user.id);
+  // const id = Encrypt.DecodeKey(req.user.id);
   try {
-    code = 200;
+
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    let Member = await tbMember.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
+    });
     let data = await tbMemberPoint.findAll({
       attributes: ["campaignType", "point", "redeemDate"],
       where: {
-        tbMemberId: id,
+        tbMemberId: Member.id,
         isDeleted: false,
       },
       order: [
@@ -616,9 +622,12 @@ router.get("/getMemberPointsList", validateLineToken, async (req, res) => {
     if (data) {
       tbMemberPointList = data;
     }
-  } catch { }
+  } catch (e) {
+    msg = e.message
+    status = false
+  }
   res.json({
-    code: code,
+    status: status,
     tbMemberPoint: tbMemberPointList,
   });
 });
