@@ -56,6 +56,12 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0
     },
+    netTotal: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+
     deliveryCost: {
       type: DataTypes.INTEGER,
       allowNull: false,
