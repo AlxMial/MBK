@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
+// import { useHistory } from "react-router-dom";
 import Select from "react-select";
 import * as fn from "@services/default.service";
 import { gettbLogistic } from "@services/liff.services";
-const LogisticModel = ({ isLogistic, onChange, settbPromotionDelivery }) => {
+const LogisticModel = ({ isLogistic, onChange, settbPromotionDelivery, isdefault, setisLogistic, setdeliveryCost }) => {
   const [optionLogistic, setoptionLogistic] = useState([]);
   const getTbLogistic = async (option) => {
     gettbLogistic((res) => {
@@ -14,6 +14,12 @@ const LogisticModel = ({ isLogistic, onChange, settbPromotionDelivery }) => {
         for (var i = 0; i < option.length; i++) {
           option[i].value = option[i].id;
           option[i].name = `${option[i].deliveryName}`;
+        }
+        if (isdefault) {
+          if (isLogistic == null) {
+            setisLogistic(option[0].value)
+            setdeliveryCost(option[0].deliveryCost)
+          }
         }
         setoptionLogistic(option);
         settbPromotionDelivery(tbPromotionDelivery);

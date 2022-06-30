@@ -94,7 +94,7 @@ const MakeOrderById = () => {
               });
           }
         },
-        () => {},
+        () => { },
         () => {
           setIsLoading(false);
         }
@@ -106,6 +106,10 @@ const MakeOrderById = () => {
   };
   const Cancelcoupon = () => {
     setusecoupon(null);
+    addToast("ยกเลิกคูปองเสร็จสิ้น", {
+      appearance: "success",
+      autoDismiss: true,
+    });
   };
   //สั่งสินค้า
   const sendOrder = () => {
@@ -200,11 +204,13 @@ const MakeOrderById = () => {
       } else {
         //สินค้า
         console.log("แถมสินค้า");
-        let productList = promotionstores.find((e) => e.condition == "product");
+        let productList = promotionstores.find((e) => e.condition == "product" && e.buy <= totel);
         console.log(productList);
-        data = { type: "product", data: productList.stockId };
-        if (freebies.length < 1) {
-          getfreebies(productList);
+        if (productList != null) {
+          data = { type: "product", data: productList.stockId };
+          if (freebies.length < 1) {
+            getfreebies(productList);
+          }
         }
       }
     }
@@ -319,8 +325,8 @@ const MakeOrderById = () => {
                     </div>
                     <div className="px-2">
                       {usecoupon != null &&
-                      OrderHD.paymentStatus != "Done" &&
-                      !OrderHD.isCancel ? (
+                        OrderHD.paymentStatus != "Done" &&
+                        !OrderHD.isCancel ? (
                         <i
                           className="fas fa-times-circle"
                           style={{ color: "red" }}

@@ -38,7 +38,7 @@ const OrderPaymentDone = () => {
             }
           }
         },
-        () => {},
+        () => { },
         () => {
           setIsLoading(false);
         }
@@ -54,7 +54,7 @@ const OrderPaymentDone = () => {
         setisOpenmodel(false);
         getProducts();
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -89,7 +89,7 @@ const OrderPaymentDone = () => {
             {OrderHD.tbReturnOrder != null ? (
               <ReturnDetail OrderHD={OrderHD} />
             ) : null}
-            {OrderHD.paymentStatus == "Wating" ? (
+            {OrderHD.paymentStatus == "In Process" ? (
               <>
                 <div
                   className="flex mt-2 "
@@ -150,7 +150,7 @@ const OrderPaymentDone = () => {
 
             {(OrderHD.paymentStatus === "Done" &&
               OrderHD.transportStatus === "Prepare") ||
-            OrderHD.transportStatus === "In Transit" ? (
+              OrderHD.transportStatus === "In Transit" ? (
               <div>
                 <div
                   className="flex mt-2 "
@@ -327,10 +327,10 @@ const OrderPaymentDone = () => {
                       {"฿ " +
                         fn.formatMoney(
                           OrderHD.sumprice +
-                            OrderHD.hddeliveryCost +
-                            OrderHD.hddiscountDelivery -
-                            OrderHD.hddiscountCoupon -
-                            OrderHD.hddiscountStorePromotion
+                          OrderHD.hddeliveryCost +
+                          OrderHD.hddiscountDelivery -
+                          OrderHD.hddiscountCoupon -
+                          OrderHD.hddiscountStorePromotion
                         )}
                     </div>
                   </div>
@@ -343,9 +343,9 @@ const OrderPaymentDone = () => {
               style={{ alignItems: "center", justifyContent: "center" }}
             >
               {OrderHD != null ? (
-                OrderHD.paymentStatus != "Wating" &&
-                (OrderHD.transportStatus == "Prepare" ||
-                  OrderHD.transportStatus == "In Transit") ? (
+                OrderHD.paymentStatus == "Done" &&
+                  (OrderHD.transportStatus == "Prepare" ||
+                    OrderHD.transportStatus == "In Transit") ? (
                   <>
                     <div style={{ width: "90%", margin: "auto" }}>
                       <div>
@@ -361,8 +361,8 @@ const OrderPaymentDone = () => {
                             {OrderHD.transportStatus == "Prepare"
                               ? "เตรียมสินค้า"
                               : OrderHD.transportStatus == "In Transit"
-                              ? "อยู่ระหว่างการจัดส่ง"
-                              : ""}
+                                ? "อยู่ระหว่างการจัดส่ง"
+                                : ""}
                           </div>
                         </div>
                       </div>
@@ -425,11 +425,12 @@ const OrderPaymentDone = () => {
             {OrderHD.paymentType == "Money Transfer" ? (
               <div style={{ width: "90%", margin: "auto" }}>
                 <ImageUC
+                  style={{ margin: "auto" }}
                   find={1}
                   relatedid={OrderHD.id}
                   relatedtable={["tbOrderHD"]}
                   alt=""
-                  className=" animated-img "
+                  className="animated-img "
                 ></ImageUC>
               </div>
             ) : null}

@@ -243,7 +243,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         });
 
         if (_tbRedemptionCoupon) {
-          if (_tbRedemptionCoupon.discountType == "THB") {
+          if (_tbRedemptionCoupon.discountType == 1) {
             DiscountCoupon = _tbRedemptionCoupon.discount;
           } else {
             DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * totel;
@@ -646,7 +646,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           });
 
           if (_tbRedemptionCoupon) {
-            if (_tbRedemptionCoupon.discountType == "THB") {
+            if (_tbRedemptionCoupon.discountType == 1) {
               DiscountCoupon = _tbRedemptionCoupon.discount;
             } else {
               DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * totel;
@@ -1009,8 +1009,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                 ? _tbStock.discountType == "THB"
                   ? parseFloat(_tbStock.price) - parseFloat(_tbStock.discount)
                   : parseFloat(_tbStock.price) -
-                    (parseFloat(_tbStock.discount) / 100) *
-                      parseFloat(_tbStock.price)
+                  (parseFloat(_tbStock.discount) / 100) *
+                  parseFloat(_tbStock.price)
                 : 0;
             dt.price = parseFloat(_tbStock.price);
             amount += dt.amount;
@@ -1041,6 +1041,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             amount: hd.amount,
             price: hd.price,
             returnStatus: hd.returnStatus,
+            cancelStatus: hd.cancelStatus,
             dt: hd.dt,
             isPaySlip: hd.isPaySlip == null ? null : hd.isPaySlip,
           });
@@ -1058,7 +1059,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
     OrderHD: OrderHD,
   });
 });
-
+//หน้าจอ ชำระเงิน
 router.post("/getOrder", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
@@ -1074,13 +1075,13 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
     });
     if (Member) {
       OrderHDData = await tbOrderHD.findOne({
-        attributes: ["id", "logisticId", "paymentId", "memberRewardId"],
+        attributes: ["id", "logisticId", "paymentId", "memberRewardId", "paymentStatus"],
         where: {
           id: Encrypt.DecodeKey(orderId),
           isCancel: false,
           IsDeleted: false,
           memberId: Member.id,
-          paymentStatus: "Wating",
+          // paymentStatus: "Wating",
           transportStatus: "Prepare",
           isReturn: false,
         },
@@ -1263,7 +1264,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
             });
 
             if (_tbRedemptionCoupon) {
-              if (_tbRedemptionCoupon.discountType == "THB") {
+              if (_tbRedemptionCoupon.discountType == 1) {
                 DiscountCoupon = _tbRedemptionCoupon.discount;
               } else {
                 DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * totel;
@@ -1298,6 +1299,11 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
           price: totel,
           Payment: _tbPayment,
         };
+
+        if (OrderHDData.dataValues.paymentStatus != "Wating") {
+          status = false;
+          msg = OrderHDData.dataValues.paymentStatus == "In Process" ? "รอการตรวจสอบ" : "ชำระเงินเรียบร้อยแล้ว";
+        }
       }
     }
   } catch (e) {

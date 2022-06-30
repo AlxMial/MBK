@@ -38,7 +38,7 @@ const DetailOrder = ({
           setisOpenmodel(false);
           GetOrderHD();
         },
-        () => {},
+        () => { },
         () => {
           setIsLoading(false);
         }
@@ -97,7 +97,7 @@ const DetailOrder = ({
                         background: "red",
                       }}
                     >
-                      {"รอการตรวจสอบ"}{" "}
+                      {"รอการตรวจสอบ"}
                     </div>
                   ) : null}
                   {cancelStatus == true ? (
@@ -115,8 +115,8 @@ const DetailOrder = ({
                       {e.cancelStatus === "Wait"
                         ? "รอดำเนินการ"
                         : e.cancelStatus === "Refund"
-                        ? "คืนเงิน"
-                        : "ไม่คืนเงิน"}
+                          ? "คืนเงิน"
+                          : "ไม่คืนเงิน"}
                     </div>
                   ) : null}
                   {returnStatus == true ? (
@@ -137,68 +137,68 @@ const DetailOrder = ({
                         {e.returnStatus === "Wait"
                           ? "รอดำเนินการ"
                           : e.returnStatus === "Done"
-                          ? "คืนสำเร็จ"
-                          : "การคืนถูกปฏิเสธ"}
+                            ? "คืนสำเร็จ"
+                            : "การคืนถูกปฏิเสธ"}
                       </div>
                     ) : null
                   ) : null}
                 </div>
                 {[...e.dt].length > 0
                   ? [...e.dt].map((dt, j) => {
-                      return (
-                        <div key={j} className="w-full flex mb-2 text-xs">
-                          <div style={{ width: "80px", height: "80px" }}>
-                            <ImageUC
-                              style={{
-                                width: "80px",
-                                height: "80px",
-                              }}
-                              find={1}
-                              relatedid={dt.id}
-                              relatedtable={["stock1"]}
-                              alt="flash_sale"
-                              className=" border-2 border-blueGray-50  animated-img"
-                            ></ImageUC>
+                    return (
+                      <div key={j} className="w-full flex mb-2 text-xs">
+                        <div style={{ width: "80px", height: "80px" }}>
+                          <ImageUC
+                            style={{
+                              width: "80px",
+                              height: "80px",
+                            }}
+                            find={1}
+                            relatedid={dt.id}
+                            relatedtable={["stock1"]}
+                            alt="flash_sale"
+                            className=" border-2 border-blueGray-50  animated-img"
+                          ></ImageUC>
+                        </div>
+                        <div
+                          className=" px-2 relative "
+                          style={{ width: "calc(100% - 80px)" }}
+                        >
+                          <div className="font-bold line-clamp-1">
+                            {dt.productName}
                           </div>
-                          <div
-                            className=" px-2 relative "
-                            style={{ width: "calc(100% - 80px)" }}
-                          >
-                            <div className="font-bold line-clamp-1">
-                              {dt.productName}
-                            </div>
 
-                            <div className="flex text-sm">
+                          <div className="flex text-sm">
+                            <div
+                              className="flex absolute"
+                              style={{ right: "0" }}
+                            >
                               <div
-                                className="flex absolute"
-                                style={{ right: "0" }}
+                                style={{
+                                  textDecoration:
+                                    dt.discount > 0 ? "line-through" : "none",
+                                  color: dt.discount > 0 ? "#ddd" : "#047738",
+                                }}
                               >
+                                {"฿ " + fn.formatMoney(dt.price)}
+                              </div>
+                              {dt.discount > 0 ? (
                                 <div
-                                  style={{
-                                    textDecoration:
-                                      dt.discount > 0 ? "line-through" : "none",
-                                    color: dt.discount > 0 ? "#ddd" : "#047738",
-                                  }}
+                                  className="px-2"
+                                  style={{ color: "red" }}
                                 >
-                                  {"฿ " + fn.formatMoney(dt.price)}
+                                  {"฿ " + fn.formatMoney(dt.discount)}
                                 </div>
-                                {dt.discount > 0 ? (
-                                  <div
-                                    className="px-2"
-                                    style={{ color: "red" }}
-                                  >
-                                    {"฿ " + fn.formatMoney(dt.discount)}
-                                  </div>
-                                ) : null}
-                              </div>
-                              <div className="text-liff-gray-mbk">
-                                {"x" + dt.amount}
-                              </div>
+                              ) : null}
+                            </div>
+                            <div className="text-liff-gray-mbk">
+                              {"x" + dt.amount}
                             </div>
                           </div>
                         </div>
-                      );
-                    })
+                      </div>
+                    );
+                  })
                   : null}
 
                 <div

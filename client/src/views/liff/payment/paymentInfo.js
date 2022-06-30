@@ -12,6 +12,7 @@ import liff from "@line/liff";
 import config from "@services/helpers";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import WaitingPayment from "./waitingPayment";
+import Error from "../error"
 const PaymentInfo = () => {
   let { id } = useParams();
   const history = useHistory();
@@ -20,6 +21,12 @@ const PaymentInfo = () => {
   const [OrderHD, setOrderHD] = useState(null);
   const [isAttachLater, setisAttachLater] = useState(false);
   const [SlipImage, setSlipImage] = useState(null);
+
+  const [modeldata, setmodeldata] = useState({ open: false, title: "", msg: "" });
+
+  const [statuspayment, setstatuspayment] = useState(true);
+  const [status, setstatus] = useState(true);
+
   const GetOrder = () => {
     setIsLoading(true);
     getOrder(
@@ -28,11 +35,18 @@ const PaymentInfo = () => {
         if (res.status) {
           if (res.data.status) {
             setOrderHD(res.data.OrderHD);
+            setstatuspayment(res.data.status)
+          } else {
+            setOrderHD(res.data.OrderHD);
+            setstatuspayment(res.data.status)
+            setmodeldata({ open: true, title: "สถานะคำสั่งซื้อ", msg: res.data.msg })
           }
         } else {
+          setstatus(false)
+          setstatuspayment(false)
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -86,6 +100,7 @@ const PaymentInfo = () => {
 
   return (
     <>
+      <Error data={modeldata} setmodeldata={setmodeldata} />
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="bg-green-mbk">
         <div
@@ -201,7 +216,7 @@ const PaymentInfo = () => {
                 justifyContent: "center",
               }}
             >
-              <div className="w-full " style={{ width: "90%", margin: "auto" }}>
+              <div className="w-full " style={{ width: "90%", margin: "auto", filter: statuspayment ? "" : "grayscale(1)" }}>
                 {OrderHD != null ? (
                   <div style={{ width: "80%", margin: "auto" }}>
                     <div className="mb-2">
@@ -253,10 +268,10 @@ const PaymentInfo = () => {
                                       )
                                       .then(function (res) {
                                         if (res) {
-                                          // succeeded in sending a message through TargetPicker
-                                          console.log(
-                                            `[${res.status}] Message sent!`
-                                          );
+                                          addToast("แชร์ QRCode เรียบร้อยแล้ว", {
+                                            appearance: "success",
+                                            autoDismiss: true,
+                                          });
                                         } else {
                                           const [majorVer, minorVer] = (
                                             liff.getLineVersion() || ""
@@ -328,20 +343,23 @@ const PaymentInfo = () => {
                     >
                       แนบสลิปโอนเงิน
                     </label>
-                    <input
-                      id="transfer-slip"
-                      type="file"
-                      onChange={onChangeslip}
-                      accept="image/*"
-                      style={{ display: "none" }}
-                    />
+                    {statuspayment ?
+                      <input
+                        id="transfer-slip"
+                        type="file"
+                        onChange={onChangeslip}
+                        accept="image/*"
+                        style={{ display: "none" }}
+                      /> : null}
                   </div>
                 </div>
                 <div className="w-full">
                   <div
                     className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
                     onClick={() => {
-                      setisAttachLater(true);
+                      if (statuspayment) {
+                        setisAttachLater(true);
+                      }
                     }}
                   >
                     {"แนบทีหลัง"}
@@ -376,9 +394,15 @@ const PaymentInfo = () => {
               <div className="w-full px-4">
                 <div
                   className="flex bg-green-mbk text-white text-center text-lg  font-bold bt-line "
-                  onClick={saveSlip}
+                  onClick={() => {
+                    if (statuspayment) {
+                      saveSlip()
+                    } else {
+                      history.push(path.myorder.replace(":id", "1"));
+                    }
+                  }}
                 >
-                  {"ตกลง"}
+                  {statuspayment ? "ตกลง" : "ดูคำสั่งซื้อของฉัน"}
                 </div>
               </div>
             </div>

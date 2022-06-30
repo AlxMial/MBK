@@ -159,7 +159,7 @@ const MakeOrder = () => {
               item = Storage.remove_byorder();
             }
             if (RadioPayment === 1) {
-              history.push(path.paymentInfo.replace(":id", id));
+              history.push(path.paymentInfo.replace(":id", res.data.orderId));
             } else {
               console.log("2c2p");
             }
@@ -167,7 +167,6 @@ const MakeOrder = () => {
           }
         });
       };
-      console.log("_id " + pageID);
       if (pageID == "cart") {
         get_shopcart({ uid: Session.getLiff().uid }, async (res) => {
           if (res.data.status) {
@@ -201,8 +200,8 @@ const MakeOrder = () => {
       usecoupon == null
         ? sumprice
         : sumprice < usecoupon.discount
-        ? 0
-        : sumprice - usecoupon.discount;
+          ? 0
+          : sumprice - usecoupon.discount;
     //มีโปรส่ง
     let _deliveryCost = deliveryCost;
     if (tbPromotionDelivery != null) {
@@ -256,11 +255,13 @@ const MakeOrder = () => {
       } else {
         //สินค้า
         console.log("แถมสินค้า");
-        let productList = promotionstores.find((e) => e.condition == "product");
+        let productList = promotionstores.find((e) => e.condition == "product" && e.buy <= totel);
         console.log(productList);
-        data = { type: "product", data: productList.stockId };
-        if (freebies.length < 1) {
-          getfreebies(productList);
+        if (productList != null) {
+          data = { type: "product", data: productList.stockId };
+          if (freebies.length < 1) {
+            getfreebies(productList);
+          }
         }
       }
     }
@@ -286,22 +287,22 @@ const MakeOrder = () => {
   const calcdeliveryCost = () => {
     return usecoupon == null
       ? //ไม่มีสวนลด
-        //ไม่โปร
-        tbPromotionDelivery == null
+      //ไม่โปร
+      tbPromotionDelivery == null
         ? deliveryCost
         : //มีโปร
         sumprice + deliveryCost > tbPromotionDelivery.buy && deliveryCost > 0
-        ? tbPromotionDelivery.deliveryCost
-        : deliveryCost
+          ? tbPromotionDelivery.deliveryCost
+          : deliveryCost
       : //มีส่วนลด
       //ไม่โปร
       tbPromotionDelivery == null
-      ? deliveryCost
-      : //มีโปร
-      sumprice - usecoupon.discount > tbPromotionDelivery.buy &&
-        deliveryCost > 0
-      ? tbPromotionDelivery.deliveryCost
-      : deliveryCost;
+        ? deliveryCost
+        : //มีโปร
+        sumprice - usecoupon.discount > tbPromotionDelivery.buy &&
+          deliveryCost > 0
+          ? tbPromotionDelivery.deliveryCost
+          : deliveryCost;
   };
   useEffect(() => {
     GetPromotionstores(getProducts);
@@ -404,6 +405,7 @@ const MakeOrder = () => {
               setisLogistic={setisLogistic}
               setdeliveryCost={setdeliveryCost}
               settbPromotionDelivery={settbPromotionDelivery}
+              isdefault={true}
             />
             <PaymentModel
               sumprice={sumprice}
