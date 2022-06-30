@@ -645,7 +645,7 @@ export default function CampaignExchangeHistoryReport() {
                                     // disabled={typePermission === "1" ? false : true}
                                   />
                                   :
-                                  <div className="w-32 flex text-right"> <div className="TextWordWarp-150 w-32" >{item.trackingNo}</div> <i className="fa fa-pen mr-2" onClick={() => {showTrackingNo(item.listNo);}}></i></div>
+                                  <div className="w-32 flex text-right"> <div className="TextWordWarp-150 w-32 mr-3 " title={item.trackingNo}>{item.trackingNo}</div> <i className="fa fa-pen mr-2" onClick={() => {showTrackingNo(item.listNo);}}></i></div>
                             :   <div></div>
                             }
                         </td>
