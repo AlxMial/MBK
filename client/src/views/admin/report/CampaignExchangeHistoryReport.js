@@ -17,7 +17,6 @@ export default function CampaignExchangeHistoryReport() {
   const { addToast } = useToasts();
   const UseStyleSelect = styleSelect();
   const [listSearch, setListSerch] = useState([]);
-//   const [listCampaign, setListCampaign] = useState([]);
   const [listCampaignExchange, setListCampaignExchange] = useState([]);    
   const { width } = useWindowDimensions();
   const [forcePage, setForcePage] = useState(0);
@@ -25,12 +24,6 @@ export default function CampaignExchangeHistoryReport() {
   const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;  
-  const listCampaignType = [
-    { value: "1", type: "Code", status: "แลกคะแนน"},
-    { value: "2", type: "E-Commerce", status: "รับคะแนน" },
-    { value: "3", type: "Register", status: "รับคะแนน" },
-  ];
-
   const redemptionType = [
     { value: "1", label: "Standard" },
     { value: "2", label: "Game" },
@@ -72,18 +65,18 @@ export default function CampaignExchangeHistoryReport() {
             if(x.startDate !== '' && x.endDate !== '') {             
               isDate = true;
             }            
-            if((inputSerch !== "" ? (x.pointCodeName.toLowerCase().includes(inputSerch) ||
-            (x.memberName === null ? "" : x.memberName)
-            .toLowerCase()
-            .includes(inputSerch) ||
-            x.point.toString().includes(inputSerch) ||
-            (x.pointType === null ? "" : x.pointType)
-            .toString()
-            .includes(inputSerch) ||
-            x.status.toLowerCase().toString().includes(inputSerch) ||
-            (x.code === null ? "" : x.code)
-            .toLowerCase()
-            .includes(inputSerch)
+            if((inputSerch !== "" ? 
+            (Search(x.redemptionName, inputSerch) ||
+            Search(x.redemptionTypeStr, inputSerch) ||
+            Search(x.rewardTypeStr, inputSerch) ||
+            Search(x.memberName, inputSerch) ||
+            Search(x.phone, inputSerch) ||
+            Search(x.code, inputSerch) ||
+            Search(x.points, inputSerch) ||
+            Search(x.statusStr, inputSerch) ||
+            Search(x.deliverStatusStr, inputSerch) ||
+            Search(x.trackingNo, inputSerch) ||
+            Search(x.address, inputSerch)
            ) : true) &&
 
             ((startDate !== null && endDate !== null) ? (isDate ? ((startDate <= _startDate  && startDate <= _endDate &&
@@ -98,6 +91,14 @@ export default function CampaignExchangeHistoryReport() {
       setForcePage(0);
     }
   };
+
+  const Search = (val, inputSerch) =>  {
+    let status = false;
+    if(val !== '' && val !== null) {
+      status =  val.toString().toLowerCase().includes(inputSerch);
+    }
+    return status;
+  }
 
   const convertToDate = (e) => {    
    const date = new Date(e);
@@ -117,7 +118,7 @@ export default function CampaignExchangeHistoryReport() {
   };
 
   const showTrackingNo = (e) => {  
-    const index = e;
+    const index = e - 1;
     setListCampaignExchange((s) => {
       const newArr = s.slice();
       newArr[index].isShowTKNo = true;
@@ -127,7 +128,7 @@ export default function CampaignExchangeHistoryReport() {
   };
 
   const editTrackingNo = (e, val) => {  
-    const index = e;
+    const index = e - 1;
     setListCampaignExchange((s) => {
       const newArr = s.slice();
       newArr[index].trackingNo = val.target.value;
@@ -136,7 +137,7 @@ export default function CampaignExchangeHistoryReport() {
   };
 
   const editdeliverStatus = (e, val) => {  
-    const index = e;
+    const index = e - 1;
     setListCampaignExchange((s) => {
       const newArr = s.slice();
       newArr[index].deliverStatus = val;
@@ -145,7 +146,7 @@ export default function CampaignExchangeHistoryReport() {
     });
   };
   const saveTrackingNo = (e) => {  
-    const index = e;
+    const index = e - 1;
     setListCampaignExchange((s) => {
       const newArr = s.slice();
       newArr[index].isShowTKNo = false;
@@ -165,7 +166,7 @@ export default function CampaignExchangeHistoryReport() {
     axios.post('report/doSaveUpdateMemberReward', newItem).then(res => {
       if (res.data.status) {
       } else {        
-        addToast("บันทึกข้อมูลหมวดหมู่สินค้าไม่สำเร็จ", {
+        addToast("บันทึกข้อมูลไม่สำเร็จ", {
           appearance: "warning",
           autoDismiss: true,
         });
@@ -189,26 +190,34 @@ export default function CampaignExchangeHistoryReport() {
       "แคมเปญ",
       "วันที่เริ่มต้น",
       "วันที่สิ้นสุด",
-      "ประเภท",
+      "ประเภทแคมเปญ",
+      "ประเภทรางวัล",
       "ชื่อลูกค้า",
       "เบอร์โทรศัพท์",
       "Code",
       "คะแนน",
       "สถานะ",
-      "วันที่แลก"
+      "วันที่แลก",
+      "สถานะการส่ง",
+      "หมายเหตุเลขพัสดุ",
+      "ที่อยู"
     ];
     const columns = [
       "listNo",      
-      "pointCodeName",
+      "redemptionName",
       "startDate",
       "endDate",
-      "pointType",
+      "redemptionTypeStr",
+      "rewardTypeStr",
       "memberName",
       "phone",
       "code",
-      "point",
-      "status",
-      "exchangedate",
+      "points",
+      "statusStr",
+      "redeemDate",
+      "deliverStatusStr",
+      "trackingNo",
+      "address"
     ];
     let count = 0;
     listCampaignExchange.forEach(el => { 
@@ -234,6 +243,8 @@ export default function CampaignExchangeHistoryReport() {
             e.redemptionTypeStr = (e.redemptionType !== "" ? (redemptionType.find(el => el.value === e.redemptionType).label) : ""); 
             e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : ""); 
             e.statusStr =  ((e.status !== '' &&  e.status !== undefined) ? rewardStatus.find(el => el.value === e.status.toString()).label : ""); 
+            e.deliverStatusStr = e.deliverStatus !=='' ? dropdown.find(el => el.value === e.deliverStatus).label : "";
+      
           });
                   
           setListSerch(response.data);
@@ -537,14 +548,14 @@ export default function CampaignExchangeHistoryReport() {
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          { moment(item.startDate).format("DD/MM/YYYY")}
+                          { item.startDate !== "" ? moment(item.startDate).format("DD/MM/YYYY") : ""}
                           </span>
                         </td>
                         <td                         
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          {moment(item.endDate).format("DD/MM/YYYY")}
+                          {item.endDate !== "" ? moment(item.endDate).format("DD/MM/YYYY") : ""}
                           </span>
                         </td>
                         <td                          
@@ -581,7 +592,7 @@ export default function CampaignExchangeHistoryReport() {
                             {item.points}
                           </span>
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
+                        <td className =  { (item.status === 1 ? "text-green-500 " : "text-red-700 ") + "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "}>
                           {item.statusStr}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
@@ -595,7 +606,7 @@ export default function CampaignExchangeHistoryReport() {
                                 id={key}
                                 name="dropdown"
                                 onChange={(e) => {
-                                  editdeliverStatus(key, e.value);
+                                  editdeliverStatus(item.listNo, e.value);
                                 }}                                
                                 menuPortalTarget={document.body}
                                 menuPosition="fixed"
@@ -624,17 +635,17 @@ export default function CampaignExchangeHistoryReport() {
                                     name="lastName"
                                     maxLength={100}
                                     onBlur={() => {
-                                      saveTrackingNo(key);
+                                      saveTrackingNo(item.listNo);
                                     }}
                                     onChange = {(e) => {
-                                        editTrackingNo(key, e);
+                                        editTrackingNo(item.listNo, e);
                                       }}
                                     value= {item.trackingNo}
                                     //autoComplete="lastName"
                                     // disabled={typePermission === "1" ? false : true}
                                   />
                                   :
-                                  <div className="w-32 flex text-right"> <div className="TextWordWarp-150 w-32" >{item.trackingNo}</div> <i className="fa fa-pen mr-2" onClick={() => {showTrackingNo(key);}}></i></div>
+                                  <div className="w-32 flex text-right"> <div className="TextWordWarp-150 w-32" >{item.trackingNo}</div> <i className="fa fa-pen mr-2" onClick={() => {showTrackingNo(item.listNo);}}></i></div>
                             :   <div></div>
                             }
                         </td>

@@ -242,6 +242,8 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
       let redemptionName = "", rewardType = "", redemptionType = "", points = "";
       const fullname = tb_member !== null ? (Encrypt.DecodeKey(tb_member.firstName) + ' ' + Encrypt.DecodeKey(tb_member.lastName)) : "";
       const address =  tb_member !== null ? Encrypt.DecodeKey(tb_member.address) : "";
+      let startDate = "";
+      let endDate = "";
       if(obj.rewardType === "Coupon") {
         const lCouponCode = listCouponCode.filter(e => e.id.toString() === obj.TableHDId);
         if(lCouponCode.length > 0) {
@@ -253,6 +255,8 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
             redemptionType = rdCupon.tbRedemptionConditionsHD.redemptionType;
             rewardType = rdCupon.tbRedemptionConditionsHD.rewardType;
             points =  rdCupon.tbRedemptionConditionsHD.points;
+            startDate = rdCupon.tbRedemptionConditionsHD.startDate;
+            endDate = rdCupon.tbRedemptionConditionsHD.endDate;
           }
         }
       } else {
@@ -268,17 +272,19 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
             redemptionType = rwHD.redemptionType;
             rewardType = rwHD.rewardType;
             points =  rwHD.points;
+            startDate = rwHD.startDate;
+            endDate = rwHD.endDate;
           }
         }
       }
       tutorials.push({
-          id: obj.id,
+          id: Encrypt.EncodeKey(obj.id),
           code: code,
           redemptionName: redemptionName,
           redemptionType: redemptionType,
           rewardType: rewardType,
-          startDate:  obj.startDate,
-          endDate:  obj.endDate ,
+          startDate:  startDate,
+          endDate:  endDate ,
           memberName: fullname,
           address: address,
           phone   : (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : ""),   
@@ -425,7 +431,7 @@ router.post("/doSaveUpdateMemberReward", validateToken, async (req, res) => {
             trackingNo:data.trackingNo,
             deliverStatus: data.deliverStatus,
         },
-        { where: { id: data.id }}
+        { where: { id:  Encrypt.DecodeKey(data.id)}}
       );
         res.json({
         status: true,
