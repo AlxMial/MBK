@@ -215,6 +215,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
           discount: _tbStock.discount,
           discountType: _tbStock.discountType,
           isFlashSale: _tbStock.isFlashSale,
+          isFree: false
         });
       } else {
         status = false;
@@ -353,6 +354,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
               discount: 0,
               discountType: 0,
               isFlashSale: false,
+              isFree: true
             });
           }
         }
@@ -493,6 +495,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             discount: _tbStock.discount,
             discountType: _tbStock.discountType,
             isFlashSale: _tbStock.isFlashSale,
+            isFree: false
           });
         } else {
           status = false;
@@ -574,6 +577,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
               discount: 0,
               discountType: 0,
               isFlashSale: false,
+              isFree: true
             });
           }
         }
