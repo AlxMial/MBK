@@ -192,7 +192,7 @@ const ShopList = () => {
       if (response.status) {
         let tbProductCategory = [{ value: 0, label: "สินค้าตามหมวดหมู่" }];
         response.data.tbProductCategory.map((e, i) => {
-          tbProductCategory.push({ value: e.id, label: e.categoryName });
+          tbProductCategory.push({ value: e.id, label: e.name });
         });
         setproductCategory(tbProductCategory);
       }
@@ -204,7 +204,12 @@ const ShopList = () => {
     for (var i = 0; i < ImgBanner.length; i++) {
       const base64 = await FilesService.buffer64UTF8(ImgBanner[i].image.data);
       ImgBanner[i].image = base64;
-      dataImg.push({ url: base64 });
+      dataImg.push({
+        url: base64,
+        typeLink: ImgBanner[i].typeLink,
+        stockId: ImgBanner[i].stockId,
+        productCategoryId: ImgBanner[i].productCategoryId
+      });
     }
     setImgBanner(dataImg);
   };
@@ -235,13 +240,13 @@ const ShopList = () => {
               if (today >= startDateCampaign && today <= endDateCampaign) {
                 let startTimeCampaign = new Date(
                   new Date().toISOString().split("T")[0] +
-                    " " +
-                    e.startTimeCampaign
+                  " " +
+                  e.startTimeCampaign
                 );
                 let endTimeCampaign = new Date(
                   new Date().toISOString().split("T")[0] +
-                    " " +
-                    e.endTimeCampaign
+                  " " +
+                  e.endTimeCampaign
                 );
                 today = new Date();
                 if (today > startTimeCampaign && today < endTimeCampaign) {
@@ -304,7 +309,7 @@ const ShopList = () => {
           className={"wfull animated-SlideShow "}
         >
           {ImgBanner.length > 0 && IsImgBanner ? (
-            <SlideShow img={ImgBanner} duration={5000} />
+            <SlideShow img={ImgBanner} duration={5000} setcategoryview={setcategoryview} selectMenu={selectMenu} />
           ) : !IsImgBanner ? (
             <div
               className="flex w-full text-green-mbk font-bold"

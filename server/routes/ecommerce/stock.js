@@ -136,7 +136,7 @@ router.post("/getStock"
             startTimeCampaign: e.startTimeCampaign,
             endTimeCampaign: e.endTimeCampaign,
             IsBestSeller: e.IsBestSeller,
-            productCategoryId: e.productCategoryId,
+            productCategoryId: Encrypt.EncodeKey(e.productCategoryId),
             percent:
               e.discount > 0
                 ? e.discountType.toLowerCase().includes("percent")
@@ -177,55 +177,34 @@ router.get("/getImgBanner"
       tbBanner.hasMany(tbImage, { foreignKey: "id" });
       tbImage.belongsTo(tbBanner, { foreignKey: "relatedId" });
       const _tbBanner = await tbImage.findAll({
-        where: { isDeleted: !1 },
+        where: { isDeleted: !1, relatedTable: { [Op.like]: "%banner%" } },
         include: [
           {
             model: tbBanner,
+            attributes: ["id", "typeLink", "productCategoryId", "stockId"],
             where: {
               isDeleted: !1,
-              level: { [Op.col]: "tbImage.relatedTable" },
+              // level: { [Op.col]: "tbImage.relatedTable" },
             },
           },
         ],
       });
 
-      // !func.IsNullOrEmpty(_tbBanner)
       for await (const i of _tbBanner.map((j) => {
-        // let img = j.image.toString("ascii");
-        // let reduceimg = func.reduce_image_file_size(img);
-        // j.image = reduceimg;
         return j;
       })) {
         let e = i;
-        // let img = e.image.toString("ascii");
-        // let reduceimg = await func.reduce_image_file_size(img);
         data.push({
           id: func.EncodeKey(e.id),
           imageName: e.imageName,
           relatedId: func.EncodeKey(e.relatedId),
           relatedTable: e.relatedTable,
           typeLink: e.tbBanner.typeLink,
-          shopId: func.EncodeKey(e.tbBanner.shopId),
+          productCategoryId: func.EncodeKey(e.tbBanner.productCategoryId),
           stockId: func.EncodeKey(e.tbBanner.stockId),
           image: e.image,
         });
       }
-      // }
-      // ? _tbBanner.filter((e) => {
-      //   let img =e.image.toString('ascii')
-      //   img = func.reduce_image_file_size(img)
-      //     data.push({
-      //       id: func.EncodeKey(e.id),
-      //       imageName: e.imageName,
-      //       relatedId: func.EncodeKey(e.relatedId),
-      //       relatedTable: e.relatedTable,
-      //       typeLink: e.tbBanner.typeLink,
-      //       shopId: func.EncodeKey(e.tbBanner.shopId),
-      //       stockId: func.EncodeKey(e.tbBanner.stockId),
-      //       image: img,
-      //     });
-      //   })
-      // : (data = []);
     } catch (e) {
       status = !1;
       msg = e.message;

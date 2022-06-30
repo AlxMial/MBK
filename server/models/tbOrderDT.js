@@ -8,6 +8,17 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
     },
+    isFlashSale: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: false
+    },
+    isFree: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: false
+    },
+
     isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: true,

@@ -51,6 +51,11 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: false
     },
 
+    points: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
     deliveryCost: {
       type: DataTypes.INTEGER,
       allowNull: false,

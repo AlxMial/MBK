@@ -1,9 +1,12 @@
 import React from "react";
 import { Slide } from "react-slideshow-image";
+import { useHistory } from "react-router-dom";
+import { path } from "services/liff.services";
 import "react-slideshow-image/dist/styles.css";
 
 
 const SlideShow = (prop) => {
+  const history = useHistory();
   const { img, duration, ...other } = prop;
   const properties = {
     duration: duration,
@@ -27,7 +30,19 @@ const SlideShow = (prop) => {
                   src={e.url}
                   alt="..."
                   className="w-15 h-15  border-2 border-blueGray-50 "
-                ></img>
+                  onClick={() => {
+                    if (e.typeLink != null) {
+                      if (!e.typeLink) {
+                        history.push(path.showProducts.replace(":id", e.stockId));
+
+                      } else {
+                        prop.setcategoryview (e.productCategoryId, prop.selectMenu)
+                      }
+                    }
+                  }}
+                >
+
+                </img>
               </div>
             );
           })}

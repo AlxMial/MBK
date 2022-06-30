@@ -7,6 +7,8 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+const ValidateEncrypt = require("../../services/crypto");
+const Encrypt = new ValidateEncrypt();
 
 router.post("/", validateToken, async (req, res) => {
     const data = await tbProductCategory.create(req.body);
@@ -67,17 +69,34 @@ router.delete("/:id", validateToken, async (req, res) => {
 
 //#region line liff
 router.get("/getProductCategory"
-// , validateLineToken
-, async (req, res) => {
-    const data = await tbProductCategory.findAll({
-        where: { isDeleted: false },
+    // , validateLineToken
+    , async (req, res) => {
+        let status = true
+        let msg = ""
+        let ProductCategory = []
+
+        try {
+            const _tbProductCategory = await tbProductCategory.findAll({
+                attributes: ["id", "categoryName"],
+                where: { isDeleted: false },
+            });
+
+            _tbProductCategory.map((e, i) => {
+                ProductCategory.push({
+                    id: Encrypt.EncodeKey(e.id),
+                    name: e.categoryName
+                })
+            })
+        } catch (e) {
+            status = false
+            msg = e.message
+        }
+        res.json({
+            status: status,
+            msg: msg,
+            tbProductCategory: ProductCategory,
+        });
     });
-    res.json({
-        status: true,
-        message: "success",
-        tbProductCategory: data,
-    });
-});
 //#endregion line liff
 
 module.exports = router;
