@@ -14,7 +14,7 @@ const Point = () => {
     setIsLoading(true);
     getMemberPointsList(
       (res) => {
-        if (res.data.code === 200) {
+        if (res.data.status) {
           setDataPoints(res.data.tbMemberPoint);
         }
       },
