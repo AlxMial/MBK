@@ -16,6 +16,7 @@ import {
   validationSchema,
   DatePickerContainer,
   monthMap,
+  RadioUC,
 } from "./profile";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
@@ -51,9 +52,15 @@ const Register = () => {
   const [samePhone, setSamePhone] = useState(false);
   const [page, setpage] = useState("register");
   const [enableButton, setEnableButton] = useState(true);
+  const [scroll,setScroll] = useState("");
   const useStyle = styleSelect();
 
   const optionsYear = [];
+
+  const optionsCustomer = [
+    { label: "เคย", value: "1" },
+    { label: "ไม่เคย", value: "2" },
+  ];
 
   const address = async () => {
     const province = await Address.getProvince();
@@ -92,6 +99,9 @@ const Register = () => {
     consentDate: new Date(),
     isPolicy1: false,
     isPolicy2: false,
+    isCustomer:1,
+    eating:""
+
   });
 
   const [policy, setpolicy] = useState({
@@ -213,6 +223,14 @@ const Register = () => {
     _errors[name] = false;
     setErrors(_errors);
   };
+
+  const handleChangeRadio = (e) => {
+    const { value } = e.target;
+    setData((prevState) => ({
+      ...prevState,
+      ["isCustomer"]: value,
+    }));
+  }
   const policyChange = (e) => {
     const { name } = e.target;
     if (name === "policy1") Data.isPolicy1 = e.target.checked;
@@ -248,20 +266,11 @@ const Register = () => {
     else setOptionDay(optionsDay31);
   };
 
-  const setScrollToEnd = () => {
-    const element = document.getElementById("element");
+  const setScrollToEnd = (element) => {
     if (element !== null) {
-      let lastScrollTop = 0;
-      element.onscroll = (e) => {
-        if (element.scrollTop < lastScrollTop) {
-          // upscroll
-          return;
-        }
-        lastScrollTop = element.scrollTop <= 0 ? 0 : element.scrollTop;
-        if (element.scrollTop + element.offsetHeight >= element.scrollHeight) {
-          setEnableButton(false);
-        }
-      };
+      if (element.currentTarget.scrollTop > 3000) {
+        setEnableButton(false);
+      }
     }
   };
 
@@ -270,7 +279,6 @@ const Register = () => {
     SenderOTP();
     setOptionYear();
     selectOptionDay();
-
     //confirmotp();
   }, []);
 
@@ -693,6 +701,21 @@ const Register = () => {
                 value={Data.postcode}
                 error={errors.postcode}
               />
+              <RadioUC
+                name="isCustomer"
+                lbl="เคยเป็นลูกค้าหรือทานข้าวมาบุญครองหรือไม่ ?"
+                valid={true}
+                onChange={handleChangeRadio}
+                options={optionsCustomer}
+                Active={Data.isCustomer}
+              />
+              <InputUC
+                name="eating"
+                lbl=""
+                type="description"
+                onChange={handleChange}
+                value={Data.eating}
+              />
 
               <div className="relative  px-4  flex-grow flex-1 flex mt-5">
                 <button
@@ -732,7 +755,7 @@ const Register = () => {
               overflowY: "auto",
               marginBottom: "1rem",
             }}
-            id="element"
+            onScroll={setScrollToEnd}
             className="heightPolicy"
           >
             <div className="text-center mt-2 mb-1">
@@ -740,25 +763,25 @@ const Register = () => {
                 ข้อกำหนดและเงื่อนไข
               </span>
             </div>
-              <strong>
-                <span data-contrast="none">
-                  ข้อกำหนดและเงื่อนไข : สำหรับสมาชิกข้าวมาบุญครอง
-                </span>
-              </strong>
-              <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
-                &nbsp;
-              </span>
- 
-              <p></p>
+            <strong>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;ข้าพเจ้ามีความประสงค์จะขอรับหมายเลขสมาชิกและเป็นสมาชิก
-                โดยรับทราบ ตกลง และยอมรับข้อกำหนดและเงื่อนไข ดังต่อไปนี้
+                ข้อกำหนดและเงื่อนไข : สำหรับสมาชิกข้าวมาบุญครอง
               </span>
-              <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
-                &nbsp;
-              </span>
-              <p></p>
+            </strong>
+            <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
+              &nbsp;
+            </span>
+
+            <p></p>
+            <span data-contrast="none">
+              &nbsp; &nbsp; &nbsp; &nbsp;
+              &nbsp;ข้าพเจ้ามีความประสงค์จะขอรับหมายเลขสมาชิกและเป็นสมาชิก
+              โดยรับทราบ ตกลง และยอมรับข้อกำหนดและเงื่อนไข ดังต่อไปนี้
+            </span>
+            <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
+              &nbsp;
+            </span>
+            <p></p>
             <ol>
               <li
                 data-leveltext="%1."
@@ -770,9 +793,8 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;1. ข้าพเจ้าตกลงให้ บริษัท พี อาร์ จี คอร์ปอเรชั่น จำกัด (มหาชน)
-                  (เรียกว่า &ldquo;
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1. ข้าพเจ้าตกลงให้ บริษัท พี
+                  อาร์ จี คอร์ปอเรชั่น จำกัด (มหาชน) (เรียกว่า &ldquo;
                 </span>
                 <strong>
                   <span data-contrast="none">บริษัท</span>
@@ -802,8 +824,8 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;2. ข้าพเจ้ารับทราบว่าการเก็บรวบรวม ใช้ เปิดเผย
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.
+                  ข้าพเจ้ารับทราบว่าการเก็บรวบรวม ใช้ เปิดเผย
                   หรือโอนข้อมูลส่วนบุคคลของข้าพเจ้าไปต่างประเทศจะเป็นไปตามนโยบายความเป็นส่วนตัว
                 </span>
                 <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
@@ -822,8 +844,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="auto">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;3. ข้าพเจ้ารับทราบว่า
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3. ข้าพเจ้ารับทราบว่า
                   คะแนนจากการเป็นสมาชิกแต่ละคะแนนมีอายุตามที่บริษัทกำหนดไว้ในเงื่อนไขของแต่ละโปรโมชั่น
                   (
                 </span>
@@ -853,8 +874,8 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;4. ในกรณีที่มีข้อโต้แย้งเกี่ยวกับคะแนนจากการเป็นสมาชิก
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;4.
+                  ในกรณีที่มีข้อโต้แย้งเกี่ยวกับคะแนนจากการเป็นสมาชิก
                   ข้าพเจ้าตกลงและยอมรับให้บริษัทมีอำนาจในการตรวจสอบและระงับข้อโต้แย้ง
                   โดยการตัดสินของบริษัทถือเป็นที่สุด
                 </span>
@@ -874,8 +895,8 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;5. ข้าพเจ้ายอมรับว่าสิทธิประโยชน์ที่ทางบริษัทเสนอให้แก่สมาชิกแต่ละรายอาจแตกต่างกัน
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;5.
+                  ข้าพเจ้ายอมรับว่าสิทธิประโยชน์ที่ทางบริษัทเสนอให้แก่สมาชิกแต่ละรายอาจแตกต่างกัน
                   ขึ้นอยู่กับประวัติการซื้อสินค้าของสมาชิกแต่ละราย
                   รายการโปรโมชั่นสินค้าแต่ละประเภท
                   และ/หรือนโยบายทางการตลาดของบริษัท
@@ -896,8 +917,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;6. ข้าพเจ้าตกลงและยอมรับว่า
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;6. ข้าพเจ้าตกลงและยอมรับว่า
                   หากข้าพเจ้าคืนสินค้าที่ซื้อจากร้านค้าที่ร่วมโครงการกับบริษัทแล้ว
                   ข้าพเจ้าต้องคืนคะแนนสะสมที่ได้รับและรวมทั้งของรางวัลที่แลกรับจากคะแนนสะสมไปแล้ว
                   หรือคืนเป็นเงินสดตามมูลค่าของของรางวัล
@@ -918,8 +938,8 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;7. ข้าพเจ้าตกลงและยอมรับว่าบริษัทมีสิทธิ์ปฏิเสธการให้บริการแพลตฟอร์มและการสมัครนี้
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;7.
+                  ข้าพเจ้าตกลงและยอมรับว่าบริษัทมีสิทธิ์ปฏิเสธการให้บริการแพลตฟอร์มและการสมัครนี้
                   หรือสามารถยกเลิกการเป็นสมาชิกได้โดยไม่จำเป็นต้องระบุสาเหตุการปฏิเสธ/ยกเลิกดังกล่าว
                 </span>
                 <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
@@ -938,8 +958,8 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;8. ข้าพเจ้ายอมรับและผูกพันตามข้อกำหนดและเงื่อนไขของการเป็นสมาชิกที่บริษัทกำหนดไว้ขณะลงทะเบียนใช้บริการแพลตฟอร์มและรวมทั้งการเปลี่ยนแปลงแก้ไขที่อาจมีขึ้นในภายหน้า
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;8.
+                  ข้าพเจ้ายอมรับและผูกพันตามข้อกำหนดและเงื่อนไขของการเป็นสมาชิกที่บริษัทกำหนดไว้ขณะลงทะเบียนใช้บริการแพลตฟอร์มและรวมทั้งการเปลี่ยนแปลงแก้ไขที่อาจมีขึ้นในภายหน้า
                   โดยบริษัทมิต้องแจ้งให้ทราบล่วงหน้า
                 </span>
                 <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
@@ -958,8 +978,8 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;9. ข้าพเจ้าตกลงและยอมรับว่าบริษัทมีสิทธิ์เด็ดขาดฝ่ายเดียวในการเปลี่ยนแปลงเงื่อนไขการเป็นสมาชิก/ของกำนัลที่จัดให้แลกและสิทธิพิเศษต่าง
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;9.
+                  ข้าพเจ้าตกลงและยอมรับว่าบริษัทมีสิทธิ์เด็ดขาดฝ่ายเดียวในการเปลี่ยนแปลงเงื่อนไขการเป็นสมาชิก/ของกำนัลที่จัดให้แลกและสิทธิพิเศษต่าง
                   ๆ โดยมิต้องแจ้งให้ทราบล่วงหน้า
                 </span>
                 <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
@@ -978,8 +998,8 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;10. กรณีที่มีปัญหาขัดแย้งจากการเป็นสมาชิก
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;10.
+                  กรณีที่มีปัญหาขัดแย้งจากการเป็นสมาชิก
                   คำชี้ขาดของบริษัทถือเป็นที่สิ้นสุด
                 </span>
                 <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
@@ -998,8 +1018,8 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;11. บริษัทฯ ขอสงวนสิทธิ์ในการยกเลิกการเป็นสมาชิก
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;11. บริษัทฯ
+                  ขอสงวนสิทธิ์ในการยกเลิกการเป็นสมาชิก
                   หรือเปลี่ยนแปลงเงื่อนไขสิทธิประโยชน์โดยไม่ต้องแจ้งให้ทราบล่วงหน้า
                 </span>
                 <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
@@ -1018,8 +1038,8 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;12. หากคุณไม่ประสงค์ที่จะรับการติดต่อสื่อสารทางการตลาดจากบริษัท
+                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;12.
+                  หากคุณไม่ประสงค์ที่จะรับการติดต่อสื่อสารทางการตลาดจากบริษัท
                   และ/หรือ บริษัทในกลุ่มอ็มบีเค และ/หรือ บริษัทในเครือ และ/หรือ
                   บริษัทที่เป็นพันธมิตรทางการค้ากับบริษัท โปรดติดต่อบริษัทมาที่{" "}
                 </span>
@@ -1366,8 +1386,9 @@ const Register = () => {
               </li>
             </ol>
             <p>
-              <span data-contrast="none">&nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;2.1    </span>
+              <span data-contrast="none">
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.1    
+              </span>
               <span data-contrast="none">
                 ผู้ขอใช้บริการสามารถสมัครสมาชิกได้โดยจะต้องทำการให้รายละเอียดข้อมูลตามที่บริษัทกำหนด
                 รวมทั้งได้รับอนุมัติจากบริษัทให้เป็นสมาชิก
@@ -1378,8 +1399,9 @@ const Register = () => {
               </span>
             </p>
             <p>
-              <span data-contrast="none">&nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;2.2    </span>
+              <span data-contrast="none">
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.2    
+              </span>
               <span data-contrast="none">
                 ผู้สมัครตกลงและยอมรับตามข้อกำหนดและเงื่อนไขต่าง ๆ
                 ของการเป็นสมาชิกที่ใช้บังคับ ณ
@@ -1390,8 +1412,9 @@ const Register = () => {
               </span>
             </p>
             <p>
-              <span data-contrast="none">&nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;2.3    </span>
+              <span data-contrast="none">
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.3    
+              </span>
               <span data-contrast="none">
                 ผู้สมัครรับรองว่าบรรดาข้อมูลที่ได้ให้ไว้แก่บริษัทในการลงทะเบียนเป็นสมาชิกถูกต้องครบถ้วน
                 โดยเฉพาะอย่างยิ่งรับรองว่าเบอร์โทรศัพท์มือถือ หรือ
@@ -1402,8 +1425,9 @@ const Register = () => {
               </span>
             </p>
             <p>
-              <span data-contrast="none">&nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;2.4   </span>
+              <span data-contrast="none">
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.4  {" "}
+              </span>
               <span data-contrast="none">
                 ผู้สมัครเป็นสมาชิกต้องไม่เป็นผู้เยาว์และมีอายุตั้งแต่{" "}
               </span>
@@ -1421,8 +1445,9 @@ const Register = () => {
               </span>
             </p>
             <p>
-              <span data-contrast="none">&nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;2.5 </span>
+              <span data-contrast="none">
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.5{" "}
+              </span>
               <span data-contrast="none">
                 บริษัทขอสงวนสิทธิในการยกเลิกการเป็นสมาชิก
                 หรือเปลี่ยนแปลงเงื่อนไขสิทธิประโยชน์โดยไม่ต้องแจ้งให้ทราบล่วงหน้า
@@ -1445,8 +1470,9 @@ const Register = () => {
               </span>
             </p>
             <p>
-              <span data-contrast="none">&nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;3.1    </span>
+              <span data-contrast="none">
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3.1    
+              </span>
               <span data-contrast="none">
                 ผู้ขอใช้บริการสามารถลงทะเบียนเข้าใช้งานแพลตฟอร์มได้โดยจะต้องทำการให้รายละเอียดข้อมูลตามที่บริษัทกำหนด
                 รวมทั้งได้รับอนุมัติจากบริษัทให้เป็นสมาชิก
@@ -1467,8 +1493,9 @@ const Register = () => {
               </span>
             </p>
             <p>
-              <span data-contrast="none">&nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;3.2    </span>
+              <span data-contrast="none">
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3.2    
+              </span>
               <span data-contrast="none">
                 สมาชิกรับรองว่าบรรดาข้อมูลที่ได้ให้ไว้แก่บริษัทในการลงทะเบียนเข้าใช้แพลตฟอร์มนี้ถูกต้องครบถ้วน
                 โดยเฉพาะอย่างยิ่งรับรองว่าเบอร์โทรศัพท์มือถือหรืออีเมลส่วนตัวยังใช้งานอยู่ในขณะที่ได้ให้ข้อมูลดังกล่าว
@@ -1488,16 +1515,18 @@ const Register = () => {
               </li>
             </ol>
             <p>
-              <span data-contrast="none">&nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;4.1   </span>
+              <span data-contrast="none">
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;4.1  {" "}
+              </span>
               <span data-contrast="none">
                 สมาชิกสามารถทำการปรับเปลี่ยนผ่านทางแพลตฟอร์ม
               </span>{" "}
               &nbsp;
               <br />
               <br />
-              <span data-contrast="none">&nbsp; &nbsp; &nbsp; &nbsp;
-                &nbsp;4.2   </span>
+              <span data-contrast="none">
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;4.2  {" "}
+              </span>
               <span data-contrast="none">
                 สมาชิกรับรองว่า หากมีการเปลี่ยนแปลงข้อมูลส่วนตัวของสมาชิก
                 สมาชิกจะปรับปรุงข้อมูลส่วนตัวของสมาชิกให้ทันสมัยอยู่ตลอดเวลา

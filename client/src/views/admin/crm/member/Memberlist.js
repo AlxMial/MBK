@@ -127,6 +127,7 @@ export default function MemberList() {
       "รหัสสมาชิก",
       "ชื่อ",
       "นามสกุล",
+      "เพศ",
       "เบอร์โทร",
       "อีเมล",
       "ที่อยู่",
@@ -137,11 +138,17 @@ export default function MemberList() {
       "ตำบล",
       "รหัสไปรษณีย์",
       "คะแนนสมาชิก",
+      "ยอมรับ Consent เพื่อการติดต่อสื่อสาร",
+      "ยอมรับ Consent เพื่อวิเคราะห์ข้อมูล",
+      "หมายเหตุ",
+      "เคยเป็นลูกค้าข้าวมาบุญครอง",
+      "ปัจจุบันทานข้าวแบรนด์",
     ];
     const columns = [
       "memberCard",
       "firstName",
       "lastName",
+      "sex",
       "phone",
       "email",
       "address",
@@ -152,6 +159,12 @@ export default function MemberList() {
       "subDistrict",
       "postcode",
       "memberPoint",
+      "isPolicy1",
+      "isPolicy2",
+      "description",
+      "isCustomer",
+      "eating",
+      "description"
     ];
     for (var i = 0; i < member.data.tbMember.length; i++) {
       member.data.tbMember[i]["province"] = await Address.getAddressName(

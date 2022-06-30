@@ -4,6 +4,9 @@ import Select from "react-select";
 import * as Yup from "yup";
 import styled from "styled-components";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
+import "antd/dist/antd.css";
+import { Radio } from "antd";
+
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 const EmailRegExp = /^[A-Za-z0-9_.@]+$/;
@@ -64,18 +67,18 @@ export const InputUC = ({
   return (
     <>
       <div className="mb-4">
-        <div className="noselect flex text-green-mbk font-bold text-sm ">
+        <div className={"noselect flex text-green-mbk font-bold text-sm "  + ((type === "description") ? ' hidden' : ' ') }>
           {lbl}{" "}
-          {valid == true ? (
+          {valid === true ? (
             <span className="ml-1" style={{ color: "red" }}>
               {" *"}
             </span>
           ) : null}
         </div>
-        {type == "text" ? (
+        {type === "text" || type === "description"? (
           <input
             disabled={disabled ? true : false}
-            type={type}
+            type={(type === "description") ? 'text' : type }
             className="border-0 px-2 pt-2 placeholder-blueGray-300 text-gray-mbk bg-white text-sm w-full "
             style={{ borderBottom: "1px solid #d6d6d6" }}
             id={name}
@@ -105,6 +108,42 @@ export const InputUC = ({
             ref={refs}
           />
         )}
+        {error == true ? (
+          <div className="text-sm py-2 px-2 text-red-500">
+            {validationSchema.fields[name].tests[0].OPTIONS.message}
+          </div>
+        ) : null}
+      </div>
+    </>
+  );
+};
+export const RadioUC = ({
+  name,
+  lbl,
+  error,
+  valid,
+  options,
+  onChange,
+  Active
+}) => {
+  return (
+    <>
+      <div className="mb-2">
+        <div className="noselect flex text-green-mbk font-bold text-sm ">
+          {lbl}{" "}
+          {valid === true ? (
+            <span className="ml-1" style={{ color: "red" }}>
+              {" *"} 
+            </span>
+          ) : null}
+        </div>
+        {
+          <Radio.Group
+            options={options}
+            onChange={onChange}
+            value={Active.toString()}
+          />
+        }
         {error == true ? (
           <div className="text-sm py-2 px-2 text-red-500">
             {validationSchema.fields[name].tests[0].OPTIONS.message}

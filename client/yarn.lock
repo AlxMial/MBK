@@ -15118,10 +15118,10 @@
     "remove-trailing-separator" "^1.0.1"
     "replace-ext" "^1.0.0"
 
-"vite@^2.9.10":
-  "integrity" "sha512-TwZRuSMYjpTurLqXspct+HZE7ONiW9d+wSWgvADGxhDPPyoIcNywY+RX4ng+QpK30DCa1l/oZgi2PLZDibhzbQ=="
-  "resolved" "https://registry.npmjs.org/vite/-/vite-2.9.10.tgz"
-  "version" "2.9.10"
+"vite@^2.9.13":
+  "integrity" "sha512-AsOBAaT0AD7Mhe8DuK+/kE4aWYFMx/i0ZNi98hJclxb4e0OhQcZYUrvLjIaQ8e59Ui7txcvKMiJC1yftqpQoDw=="
+  "resolved" "https://registry.npmjs.org/vite/-/vite-2.9.13.tgz"
+  "version" "2.9.13"
   dependencies:
     "esbuild" "^0.14.27"
     "postcss" "^8.4.13"

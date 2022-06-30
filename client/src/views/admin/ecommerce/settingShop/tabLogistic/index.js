@@ -85,7 +85,7 @@ const Logistic = () => {
             deliveryCost: '',
             deliveryCostName: '',
             description: '',
-            isShow: false,
+            isShow: "1",
             isShowName: '',
             isDeleted: false,
             addBy: "",

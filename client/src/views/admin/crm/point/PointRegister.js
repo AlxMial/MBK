@@ -55,6 +55,7 @@ export default function PointRegister({ setModified, setData }) {
     }),
     onSubmit: (values) => {
       if (isNew) {
+        values.pointRegisterScore = parseInt(values.pointRegisterScore);
         formik.values.addBy = sessionStorage.getItem("user");
         axios.post("pointRegister", values).then((res) => {
           if (res.data.status) {
@@ -70,6 +71,7 @@ export default function PointRegister({ setModified, setData }) {
         });
       } else {
         formik.values.updateBy = sessionStorage.getItem("user");
+        values.pointRegisterScore = parseInt(values.pointRegisterScore);
         axios.put("pointRegister", values).then((res) => {
           if (res.data.status) {
             formik.values.id = res.data.tbPointRegister.id;

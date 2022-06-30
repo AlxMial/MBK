@@ -2,7 +2,7 @@ class ValidateService {
   onHandleNumberChange = (e) => {
     const re = /^[0-9\b]+$/;
     // if value is not blank, then test the regex
-    if ((e === "" || re.test(e)) ) {
+    if (e === "" || re.test(e)) {
       return e;
     } else {
       return "";
@@ -12,8 +12,7 @@ class ValidateService {
   onHandlePhoneChange = (e) => {
     const re = /^[0-9\b]+$/;
     // if value is not blank, then test the regex
-    if (e === "" || re.test(e) || e.includes('x'))
-      return e;
+    if (e === "" || re.test(e) || e.includes("x")) return e;
     else return "";
 
     // if ((e === "" || re.test(e)) && e.indexOf('x') === -1 ) {
@@ -51,22 +50,28 @@ class ValidateService {
   };
 
   defaultValue = (options, value) => {
-    if ((value === undefined || value === null || value.toString() === "") && options[0] !== undefined) {
+    if (
+      (value === undefined || value === null || value.toString() === "") &&
+      options[0] !== undefined
+    ) {
       value = options[0].value;
     }
-  
-    return options
-      ? options.find((option) => option.value.toString() === value.toString())
-      : "";
+    if (options.length > 0)
+      return options
+        ? options.find((option) => option.value.toString() === value.toString())
+        : "";
+    else return "";
   };
 
   defaultValueText = (options, value) => {
-    if ((value === undefined || value === null || value.toString() === "") && options[0] !== undefined) {
+    if (
+      (value === undefined || value === null || value.toString() === "") &&
+      options[0] !== undefined
+    ) {
       value = options[0].value;
     }
     return options
-      ? (value = options.filter((x) => x.value === value.toString())[0]
-      .label)
+      ? (value = options.filter((x) => x.value === value.toString())[0].label)
       : "";
   };
 
@@ -74,7 +79,7 @@ class ValidateService {
     var date = new Date(dateTime);
     date.setHours(0, 0, 0, 0);
     return date;
-  }
+  };
 }
 
 export default new ValidateService();

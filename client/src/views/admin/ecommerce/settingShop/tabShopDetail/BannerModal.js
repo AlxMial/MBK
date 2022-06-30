@@ -37,9 +37,11 @@ const BannerModal = ({
     modalData ? modalData.productCategoryId : ""
   ); // หมวดหมู่
   const [stockId, setStockId] = useState(modalData ? modalData.stockId : ""); // สินค้า
-  const [dropdown, setDropdown] = useState([{
-    dropDown: [],
-  }]);
+  const [dropdown, setDropdown] = useState([
+    {
+      dropDown: [],
+    },
+  ]);
   //   const [dropdownId, setDropdownId] = useState(null);
   const [showErr, setShowErr] = useState(false);
 
@@ -64,7 +66,7 @@ const BannerModal = ({
     },
   ];
 
-  const [arr, setArr] = useState(inputArr);
+  const [arr, setArr] = useState([]);
 
   const addInput = () => {
     if (arr.length < 6) {
@@ -97,11 +99,10 @@ const BannerModal = ({
     const rows = [...arr];
     const rowsDownload = [...arr];
     rows.splice(index, 1);
-    rowsDownload.slice(index,1);
+    rowsDownload.slice(index, 1);
     setArr(rows);
     setDropdown(rowsDownload);
   };
-
 
   const fetchData = async () => {
     const _stockResponse = await axios.get("stock");
@@ -127,6 +128,48 @@ const BannerModal = ({
       );
     }
     // setDefaultValue();
+
+    if (modalData.length !== undefined) {
+      modalData.map((e, i) => {
+        setArr((s) => {
+          return [
+            ...s,
+            {
+              type: "text",
+              value: e.value,
+              picture: e.picture,
+              option: e.option,
+              categoryId: e.categoryId,
+              id: e.id,
+            },
+          ];
+        });
+
+        setDropdown((s) => {
+          return [
+            ...s,
+            {
+              dropDown: [],
+            },
+          ];
+        });
+
+        onOptionFetch(
+          e.option,
+          i,
+          stock.map((item) => ({
+            label: item.productName,
+            value: item.id,
+          })),
+          productCategory.map((item) => ({
+            label: item.categoryName,
+            value: item.id,
+          }))
+        );
+      });
+    } else {
+      setArr(inputArr);
+    }
   };
 
   const onOptionChange = (value, index) => {
@@ -149,47 +192,69 @@ const BannerModal = ({
         productCategoryList && productCategoryList.length > 0
           ? productCategoryList[0].value
           : "";
-          setDropdown((s) => {
-            const newArr = s.slice();
-            newArr[index].dropDown = productCategoryList;
-            return newArr;
-          });
-    
-          setArr((s) => {
-            const newArr = s.slice();
-            newArr[index].categoryId = _cateDefault;
-            return newArr;
-          });
+      setDropdown((s) => {
+        const newArr = s.slice();
+        newArr[index].dropDown = productCategoryList;
+        return newArr;
+      });
+
+      setArr((s) => {
+        const newArr = s.slice();
+        newArr[index].categoryId = _cateDefault;
+        return newArr;
+      });
     } else {
-        setDropdown((s) => {
-            const newArr = s.slice();
-            newArr[index].dropDown = [];
-            return newArr;
-          });
-    
-          setArr((s) => {
-            const newArr = s.slice();
-            newArr[index].categoryId ="";
-            return newArr;
-          });
+      setDropdown((s) => {
+        const newArr = s.slice();
+        newArr[index].dropDown = [];
+        return newArr;
+      });
+
+      setArr((s) => {
+        const newArr = s.slice();
+        newArr[index].categoryId = "";
+        return newArr;
+      });
     }
   };
 
-//   const setDefaultValue = () => {
-//     if (typeLink) {
-//       if (stockList && stockList.length > 0) {
-//         const _stockDefault = stockList[0].value;
-//         setStockId(stockId ? stockId : _stockDefault);
-//         setProductCategoryId(null);
-//       }
-//     } else if (productCategoryList && productCategoryList.length > 0) {
-//       const _cateDefault = productCategoryList[0].value;
-//       setProductCategoryId(
-//         productCategoryId ? productCategoryId : _cateDefault
-//       );
-//       setStockId(null);
-//     }
-//   };
+  const onOptionFetch = (value, index, stock, productCategory) => {
+    if (value === 2) {
+      setDropdown((s) => {
+        const newArr = s.slice();
+        newArr[index].dropDown = stock;
+        return newArr;
+      });
+    } else if (value === 1) {
+      setDropdown((s) => {
+        const newArr = s.slice();
+        newArr[index].dropDown = productCategory;
+        return newArr;
+      });
+    } else {
+      setDropdown((s) => {
+        const newArr = s.slice();
+        newArr[index].dropDown = [];
+        return newArr;
+      });
+    }
+  };
+
+  //   const setDefaultValue = () => {
+  //     if (typeLink) {
+  //       if (stockList && stockList.length > 0) {
+  //         const _stockDefault = stockList[0].value;
+  //         setStockId(stockId ? stockId : _stockDefault);
+  //         setProductCategoryId(null);
+  //       }
+  //     } else if (productCategoryList && productCategoryList.length > 0) {
+  //       const _cateDefault = productCategoryList[0].value;
+  //       setProductCategoryId(
+  //         productCategoryId ? productCategoryId : _cateDefault
+  //       );
+  //       setStockId(null);
+  //     }
+  //   };
   useEffect(() => {
     setTypeLink(0);
     // setDefaultValue();
@@ -216,12 +281,12 @@ const BannerModal = ({
     onOptionChange(e.target.value, index);
   };
 
-  const handleChangeDropdown = (value,index) => {
+  const handleChangeDropdown = (value, index) => {
     setArr((s) => {
-        const newArr = s.slice();
-        newArr[index].categoryId =value;
-        return newArr;
-      });
+      const newArr = s.slice();
+      newArr[index].categoryId = value;
+      return newArr;
+    });
     // setDropdownId(value);
     // if (typeLink) {
     // //   setStockId(value);
@@ -273,7 +338,12 @@ const BannerModal = ({
                     </div>
                     <div className="w-full lg:w-10/12 px-4 margin-auto-t-b">
                       <div className="w-full text-right">
-                        <label onClick={() => {handleRemove(i);}} className="text-blueGray-600 text-sm  font-bold mb-2 cursor-pointer">
+                        <label
+                          onClick={() => {
+                            handleRemove(i);
+                          }}
+                          className="text-blueGray-600 text-sm  font-bold mb-2 cursor-pointer"
+                        >
                           <i className="fas fa-trash"></i>
                         </label>
                       </div>
@@ -298,7 +368,7 @@ const BannerModal = ({
                           id={i}
                           name="dropdown"
                           onChange={(e) => {
-                            handleChangeDropdown(e.value,i);
+                            handleChangeDropdown(e.value, i);
                           }}
                           placeholder=""
                           isDisabled={item.option === 0 ? true : false}

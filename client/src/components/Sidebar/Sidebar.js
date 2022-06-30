@@ -13,62 +13,69 @@ export default function Sidebar() {
   const [isEcommerce, setIsEcommerce] = useState(false);
   const [isReport, setIsReport] = useState(false);
   const [typePermission, setTypePermission] = useState("");
-  const [menuList,setMenuList] = useState([]);
-  const [showMenu,setShowMenu] = useState("");
+  const [menuList, setMenuList] = useState([]);
+  const [showMenu, setShowMenu] = useState("");
   let history = useHistory();
   const ClickCRM = () => {
     setIsCRM(!isCRM);
-  }
+  };
 
   const ClickEcommerce = () => {
     setIsEcommerce(!isEcommerce);
-  }
+  };
 
   const ClickReport = () => {
     setIsReport(!isReport);
-  }
+  };
 
   const fetchPermission = async () => {
     const role = await GetPermissionByUserName();
-    if(role.data.data.length > 0)
-    {
-      if(role.data.data.filter(e => e.id === 1).length > 0){
-        setTypePermission("3")
-      } else  if(role.data.data.filter(e => e.id === 10).length > 0) {
-        setTypePermission("1")
-      } else {
-        setTypePermission("2")
+    if (role !== undefined) {
+      if (role.data.data.length > 0) {
+        if (role.data.data.filter((e) => e.id === 1).length > 0) {
+          setTypePermission("3");
+        } else if (role.data.data.filter((e) => e.id === 10).length > 0) {
+          setTypePermission("1");
+        } else {
+          setTypePermission("2");
+        }
       }
+      setMenuList(role.data.data);
     }
-    setMenuList(role.data.data);
-  }
+  };
 
-  const onSession =(link) =>{
-    sessionStorage.setItem('linkPage',link);
-  } 
+  const onSession = (link) => {
+    sessionStorage.setItem("linkPage", link);
+  };
 
   useEffect(() => {
     fetchPermission();
   }, []);
 
   const linkClassName = (href) => {
-    const isAdmin = href.includes('users') ? 'px-2' : 'pl-11';
-    return "text-sm uppercase py-3 font-bold block " + isAdmin +
+    const isAdmin = href.includes("users") ? "px-2" : "pl-11";
+    return (
+      "text-sm uppercase py-3 font-bold block " +
+      isAdmin +
       (window.location.href.indexOf(href) !== -1
         ? " text-gold-mbk hover:text-gold-mbk"
         : width < 765
-          ? " text-blueGray-700 hover:text-gold-mbk"
-          : " text-white hover:text-gold-mbk")
-  }
+        ? " text-blueGray-700 hover:text-gold-mbk"
+        : " text-white hover:text-gold-mbk")
+    );
+  };
 
   const iClassName = (href, icon) => {
-    return icon + " mr-2 text-sm " +
+    return (
+      icon +
+      " mr-2 text-sm " +
       (window.location.href.indexOf(href) !== -1
         ? "opacity-75"
         : width < 765
-          ? " text-blueGray-700"
-          : " text-white")
-  }
+        ? " text-blueGray-700"
+        : " text-white")
+    );
+  };
 
   // const menuList = [
   //   { id: 1, module: 'crm', link: '/admin/members', label: 'จัดการสมาชิก', icon: 'fas fa-users-cog' },
@@ -97,7 +104,13 @@ export default function Sidebar() {
           {/* Brand */}
           <Link
             className="md:block text-left md:pb-2 text-white mr-0 inline-block whitespace-nowrap text-xl uppercase font-bold p-4 px-0"
-            to={ (typePermission === "2") ? "/admin/empty" : (typePermission === "3") ? "/admin/members" : "/admin/users"}
+            to={
+              typePermission === "2"
+                ? "/admin/empty"
+                : typePermission === "3"
+                ? "/admin/members"
+                : "/admin/users"
+            }
           >
             <div className="pc">
               <img
@@ -162,50 +175,113 @@ export default function Sidebar() {
             </h6>
             {/* Navigation */}
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-              <li className={"items-center" + ((menuList.filter(e => e.id.toString().includes(10)).length > 0) ? " " : " hidden")}>
-                <Link to="/admin/users" onClick={() => (onSession("/admin/users"))}  className={linkClassName("/admin/users")}>
-                  <i  className={iClassName("/admin/users", 'fas fa-user-friends')}></i>
+              <li
+                className={
+                  "items-center" +
+                  (menuList.filter((e) => e.id.toString().includes(10)).length > 0
+                    ? " "
+                    : " hidden")
+                }
+              >
+                <Link
+                  to="/admin/users"
+                  onClick={() => onSession("/admin/users")}
+                  className={linkClassName("/admin/users")}
+                >
+                  <i
+                    className={iClassName(
+                      "/admin/users",
+                      "fas fa-user-friends"
+                    )}
+                  ></i>
                   จัดการผู้ดูแลระบบ
                 </Link>
               </li>
-              <ModuleButton onClick={() => ClickCRM()} label='CRM' icon='fas fa-cog' typePermission={typePermission} />
-              <ul className={"py-2 space-y-2" + ((isCRM) ? " block" : " hidden") + ((typePermission === "2") ? " hidden" : " ")}>
-                {menuList.filter(m => m.module === "crm").map(item => {
-                  return (
-                    <li className="items-center" key={item.id}>
-                      <Link to={item.link}  onClick={()=>(onSession(item.link))} className={linkClassName(item.link)}>
-                        <i className={iClassName(item.link, item.icon)}></i>
-                        {item.label}
-                      </Link>
-                    </li>
-                  );
-                })}
+              <ModuleButton
+                onClick={() => ClickCRM()}
+                label="CRM"
+                icon="fas fa-cog"
+                typePermission={typePermission}
+              />
+              <ul
+                className={
+                  "py-2 space-y-2" +
+                  (isCRM ? " block" : " hidden") +
+                  (typePermission === "2" ? " hidden" : " ")
+                }
+              >
+                {menuList
+                  .filter((m) => m.module === "crm")
+                  .map((item) => {
+                    return (
+                      <li className="items-center" key={item.id}>
+                        <Link
+                          to={item.link}
+                          onClick={() => onSession(item.link)}
+                          className={linkClassName(item.link)}
+                        >
+                          <i className={iClassName(item.link, item.icon)}></i>
+                          {item.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
               </ul>
-              <ModuleButton onClick={() => ClickEcommerce()} label='E-Commerce' icon='fas fa-shopping-cart' typePermission={typePermission} />
-              <ul className={"py-2 space-y-2 " + ((isEcommerce) ? " block" : " hidden")}>
-                {menuList.filter(m => m.module === "ecommerce").map(item => {
-                  return (
-                    <li className="items-center" key={item.id}>
-                      <Link to={item.link} onClick={()=>(onSession(item.link))} className={linkClassName(item.link)}>
-                        <i className={iClassName(item.link, item.icon)}></i>
-                        {item.label} 
-                      </Link>
-                    </li>
-                  );
-                })}
+              <ModuleButton
+                onClick={() => ClickEcommerce()}
+                label="E-Commerce"
+                icon="fas fa-shopping-cart"
+                typePermission={typePermission}
+              />
+              <ul
+                className={
+                  "py-2 space-y-2 " + (isEcommerce ? " block" : " hidden")
+                }
+              >
+                {menuList
+                  .filter((m) => m.module === "ecommerce")
+                  .map((item) => {
+                    return (
+                      <li className="items-center" key={item.id}>
+                        <Link
+                          to={item.link}
+                          onClick={() => onSession(item.link)}
+                          className={linkClassName(item.link)}
+                        >
+                          <i className={iClassName(item.link, item.icon)}></i>
+                          {item.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
               </ul>
-              <ModuleButton onClick={() => ClickReport()} label='Report' icon='fas fa-file' typePermission={typePermission} />
-              <ul className={"py-2 space-y-2 " + ((isReport) ? " block" : " hidden")}>
-                {menuList.filter(m => m.module === "report").map(item => {
-                  return (
-                    <li className="items-center" key={item.id}>
-                      <Link to={item.link}  onClick={() =>(onSession(item.link))} className={linkClassName(item.link)}>
-                        <i className={iClassName(item.link, item.icon)}></i>
-                        {item.label}
-                      </Link>
-                    </li>
-                  );
-                })}
+              <ModuleButton
+                onClick={() => ClickReport()}
+                label="Report"
+                icon="fas fa-file"
+                typePermission={typePermission}
+              />
+              <ul
+                className={
+                  "py-2 space-y-2 " + (isReport ? " block" : " hidden")
+                }
+              >
+                {menuList
+                  .filter((m) => m.module === "report")
+                  .map((item) => {
+                    return (
+                      <li className="items-center" key={item.id}>
+                        <Link
+                          to={item.link}
+                          onClick={() => onSession(item.link)}
+                          className={linkClassName(item.link)}
+                        >
+                          <i className={iClassName(item.link, item.icon)}></i>
+                          {item.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
               </ul>
             </ul>
           </div>

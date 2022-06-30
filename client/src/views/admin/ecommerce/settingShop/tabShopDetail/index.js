@@ -47,32 +47,53 @@ const ShopDetail = () => {
         formik.setFieldValue(columns, shop[columns], false);
       }
 
-    //   const _shopImage = await axios.get(`image/byRelated/${shop.id}/shop`);
-    //   if (_shopImage && _shopImage.data.tbImage) {
-    //     const image = await FilesService.buffer64UTF8(
-    //       _shopImage.data.tbImage.image
-    //     );
-    //     setShopImage({ ..._shopImage.data.tbImage, image: image });
-    //   }
+      const _shopImage = await axios.get(`image/byRelated/${shop.id}/shop`);
+      if (_shopImage && _shopImage.data.tbImage) {
+        if (_shopImage.data.tbImage.image !== null) {
+          const image = await FilesService.buffer64UTF8(
+            _shopImage.data.tbImage.image
+          );
+          setShopImage({ ..._shopImage.data.tbImage, image: image });
+        } else {
+          setShopImage(_shopImage);
+        }
+      }
 
-    //   const resBanner = await axios.get(`banner/byShopId/${shop.id}`);
-    //   if (resBanner.data.tbBanner && resBanner.data.tbBanner.length > 0) {
-    //     resBanner.data.tbBanner.forEach(async (e) => {
-    //       const resImg = await axios.get(`image/byRelated/${e.id}/${e.level}`);
-    //       let image = null;
-    //       if (resImg.data.tbImage) {
-    //         image = await FilesService.buffer64UTF8(resImg.data.tbImage.image);
-    //       }
-    //       e.name = e.level;
-    //       if (image) {
-    //         formik.setFieldValue(
-    //           `${e.level}`,
-    //           resImg.data.tbImage.imageName ?? "Image selected",
-    //           false
-    //         );
-    //       }
-    //     });
-    //   }
+      const resBanner = await axios.get(`banner/byShopId/${shop.id}`);
+      if (resBanner.data.tbBanner && resBanner.data.tbBanner.length > 0) {
+        let Banner = [];
+        await resBanner.data.tbBanner.forEach(async (e) => {
+          const resImg = await axios.get(
+            `image/byRelated/${e.id}/banner${e.id}`
+          );
+          let image = null;
+          if (resImg.data.tbImage) {
+            image = await FilesService.buffer64UTF8(resImg.data.tbImage.image);
+          }
+          e.name = e.level;
+          if (image) {
+            Banner.push({
+              categoryId: e.stockId === null ? e.productCategoryId : e.stockId,
+              id: e.id,
+              option: e.typeLink === false ? 2 : e.typeLink === true ? 1 : 0,
+              picture: image,
+              type: "text",
+              value: "",
+            });
+          } else {
+            Banner.push({
+              categoryId: e.stockId === null ? e.productCategoryId : e.stockId,
+              id: e.id,
+              option: e.typeLink === false ? 2 : e.typeLink === true ? 1 : 0,
+              picture: "",
+              type: "text",
+              value: "",
+            });
+          }
+          setDataBanner(Banner);
+          setModalData(Banner);
+        });
+      }
     }
     dispatch(fetchSuccess());
   }
@@ -94,6 +115,7 @@ const ShopDetail = () => {
 
   const handleSubmitModal = (data) => {
     setDataBanner(data.arr);
+    setModalData(data.arr);
     setOpen(false);
   };
 
@@ -214,8 +236,13 @@ const ShopDetail = () => {
   const saveBanner = async (id) => {
     let success = true;
 
-    dataBanner.map(async (e,i) => {
+    dataBanner.map(async (e, i) => {
       success = await saveBanners(e, id, i);
+    });
+
+    addToast("บันทึกข้อมูลสำเร็จ", {
+      appearance: "success",
+      autoDismiss: true,
     });
 
     // if (banner1) {
@@ -240,32 +267,37 @@ const ShopDetail = () => {
   };
 
   const saveBanners = async (data, id, i) => {
-    data.updateBy = sessionStorage.getItem("user");
-    data.productCategoryId = (data.option === 2 ) ? data.categoryId :  (data.option ===  0 ) ? null :  0;
-    data.stockId = (data.option === 1 ) ? data.categoryId :  (data.option ===  0 ) ? null : 0;
-    data.typeLink = (data.option === 1 ) ? 0 : (data.option === 2 ) ? 1 : null;
-    data.shopId = id;
-    data.level = i;
-    data.isDeleted = false;
+    let SaveBanner = {
+      typeLink: data.option === 2 ? 0 : data.option === 1 ? 1 : null,
+      level: i,
+      productCategoryId: data.option === 1 ? data.categoryId : null,
+      stockId: data.option === 2 ? data.categoryId : null,
+      shopId: id,
+      addBy: data.id ? null : sessionStorage.getItem("user"),
+      updateBy: data.id ? sessionStorage.getItem("user") : null,
+      id: null,
+    };
+
     dispatch(fetchLoading());
     if (data.id) {
-      axios.put("banner", data).then(async (res) => {
+      SaveBanner.id = data.id;
+      axios.put("banner", SaveBanner).then(async (res) => {
         if (res.data.status) {
           const success = await saveBannerImage(data, data.id);
           return success;
         } else {
-          dispatch(fetchSuccess());
+          // dispatch(fetchSuccess());
           return false;
         }
       });
     } else {
       data.addBy = sessionStorage.getItem("user");
-      axios.post("banner", data).then(async (res) => {
+      axios.post("banner", SaveBanner).then(async (res) => {
         if (res.data.status) {
           const success = await saveBannerImage(data, res.data.tbBanner.id);
           return success;
         } else {
-          dispatch(fetchSuccess());
+          // dispatch(fetchSuccess());
           return false;
         }
       });
@@ -275,11 +307,19 @@ const ShopDetail = () => {
 
   const saveBannerImage = async (data, id) => {
     // Save Image Banner
-    dispatch(fetchLoading());
-    if (data.image) {
-      data.image.relatedId = id;
-      data.image.isDeleted = false;
-      await onSaveImage(data.image, (res) => {
+    let image = {
+      relatedId: id,
+      relatedTable: "banner" + id,
+      isDeleted: false,
+      image: data.picture,
+    };
+    // dispatch(fetchLoading());
+    if (data.picture.length > 0) {
+      await onSaveImage(image, (res) => {
+        // addToast("บันทึกข้อมูลสำเร็จ", {
+        //   appearance: "success",
+        //   autoDismiss: true,
+        // });
         dispatch(fetchSuccess());
         return true;
       });

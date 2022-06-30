@@ -34,7 +34,6 @@ export default function Login() {
       password: Yup.string().required("* กรุณากรอกข้อมูล Password"),
     }),
     onSubmit: (values) => {
-
       const data = { userName: values.userName, password: values.password };
       axios.post("/users/login", data).then(async (response) => {
         if (response.data.error) {
@@ -45,7 +44,7 @@ export default function Login() {
               autoDismiss: true,
             }
           );
-        } else if (width < 1180 && response.data.role === "1") {
+        } else if (width < 1180) {
           /*ปรับการ Login Mobile ให้ตรวจสอบเฉพาะ Admin*/
           addToast(
             "ไม่สามารถทำการเข้าสู่ระบบได้ ต้องใช้งานผ่านระบบ Computer เท่านั้น",
@@ -80,7 +79,7 @@ export default function Login() {
             id: response.data.id,
             status: true,
           });
-          // window.location.replace('/admin/users');
+          //window.location.replace('/admin/users');
           sessionStorage.setItem('linkPage',response.data.link);
           history.push(response.data.link);
           //set loading

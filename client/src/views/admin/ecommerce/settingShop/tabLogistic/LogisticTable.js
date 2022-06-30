@@ -69,13 +69,16 @@ const LogisticTable = ({ listLogistic, openModal, saveLogisticSuccess, saveLogis
                                 ชื่อการจัดส่ง
                             </th>
                             <th className={thClass} >
-                                ประเภทการจัดส่ง
+                                ผู้ใช้บริการส่งสินค้า
+                            </th>
+                            <th className={thClass} >
+                                รายละเอียด
                             </th>
                             <th className={thClass} >
                                 ค่าจัดส่ง
                             </th>
                             <th className={thClass} >
-                                แสดงผลต่อลูกค้า
+                                จัดการ
                             </th>
                         </tr>
                     </thead>
@@ -84,7 +87,7 @@ const LogisticTable = ({ listLogistic, openModal, saveLogisticSuccess, saveLogis
                             .slice(pagesVisited, pagesVisited + usersPerPage)
                             .map(function (value, key) {
                                 return (
-                                    <tr key={key} className="cursor-pointer">
+                                    <tr key={key}>
                                         <td className={tdClass + ' text-center'} onClick={() => {
                                             openModal(value.id);
                                         }}>
@@ -114,8 +117,7 @@ const LogisticTable = ({ listLogistic, openModal, saveLogisticSuccess, saveLogis
                                             </span>
                                         </td>
                                         <td className={tdClass + " cursor-pointer"} >
-                                            <span className={tdSpan}>
-                                                {/* {value.isShowName} */}
+                                            {/* <span className={tdSpan}>
                                                 <SelectUC
                                                     name="showToEmp"
                                                     onChange={(e) => {
@@ -127,7 +129,22 @@ const LogisticTable = ({ listLogistic, openModal, saveLogisticSuccess, saveLogis
                                                         value.isShow
                                                     )}
                                                 />
-                                            </span>
+                                            </span> */}
+                                        </td>
+                                        <td className={tdClass} >
+                                            {/* <span className={tdSpan}>
+                                                <SelectUC
+                                                    name="showToEmp"
+                                                    onChange={(e) => {
+                                                        handleChangeShowToEmp(value, e.value);
+                                                    }}
+                                                    options={showList}
+                                                    value={ValidateService.defaultValue(
+                                                        showList,
+                                                        value.isShow
+                                                    )}
+                                                />
+                                            </span> */}
                                         </td>
                                     </tr>
                                 );

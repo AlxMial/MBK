@@ -55,7 +55,7 @@ const Payment = () => {
                 listSearch.filter(
                     (x) =>
                         x.accountName.toLowerCase().includes(e) ||
-                        x.accountNumber.toLowerCase().includes(e) ||
+                        x.accountNumber.toString().toLowerCase().includes(e) ||
                         x.bankName.toLowerCase().toString().includes(e) ||
                         x.bankBranchName.toLowerCase().includes(e)
                 )
@@ -63,14 +63,24 @@ const Payment = () => {
         }
     };
 
+    const openModalNew = async () => {
+        formik.resetForm();
+        setPaymentImage(_defaultImage);
+        setPaymentImageQrCode(_defaultImage);
+        setOpen(true);
+    }
+
     const openModal = async (id) => {
         // formik.resetForm();
         const data = listPayment.filter((x) => x.id === id);
         if (data && data.length > 0) {
             const _paymentImage = await axios.get(`image/byRelated/${id}/payment`);
             if (_paymentImage && _paymentImage.data.tbImage) {
-                const image = await FilesService.buffer64UTF8(_paymentImage.data.tbImage.image)
-                setPaymentImage({ ..._paymentImage.data.tbImage, image: image });
+                if(_paymentImage.data.tbImage.image !== null)
+                {
+                    const image = await FilesService.buffer64UTF8(_paymentImage.data.tbImage.image)
+                    setPaymentImage({ ..._paymentImage.data.tbImage, image: (image ?? null) });
+                } else  setPaymentImage(_defaultImage);
             }
             // console.log(data[0])
             for (const field in data[0]) {
@@ -79,9 +89,13 @@ const Payment = () => {
 
             const _paymentImageQrCode = await axios.get(`image/byRelated/${id}/paymentQrCode`);
             if (_paymentImageQrCode && _paymentImageQrCode.data.tbImage) {
-                const image = await FilesService.buffer64UTF8(_paymentImageQrCode.data.tbImage.image)
-                setPaymentImageQrCode({ ..._paymentImageQrCode.data.tbImage, image: image });
-            }
+                if(_paymentImageQrCode.data.tbImage.image !== null)
+                {
+                    const image = await FilesService.buffer64UTF8(_paymentImageQrCode.data.tbImage.image)
+                    setPaymentImageQrCode({ ..._paymentImageQrCode.data.tbImage, image:  (image ?? null)  });
+                } else { setPaymentImageQrCode(_defaultImage); console.log(_paymentImageQrCode.data.tbImage.image) }
+            } else { setPaymentImageQrCode(_defaultImage);  }
+          
             // console.log(data[0])
             for (const field in data[0]) {
                 formik.setFieldValue(field, data[0][field], false);
@@ -203,7 +217,7 @@ const Payment = () => {
                                 <InputSearchUC onChange={(e) => InputSearch(e.target.value)} />
                             </div>
                             <div className={"w-full lg:w-6/12 text-right block"} >
-                                <ButtonModalUC onClick={() => openModal()}
+                                <ButtonModalUC onClick={() => openModalNew()}
                                     label='เพิ่มช่องทางการชำระเงิน' />
                             </div>
                         </div>
@@ -217,7 +231,6 @@ const Payment = () => {
                 paymentImage={paymentImage}
                 setPaymentImage={setPaymentImage}
                 handleModal={() => setOpen(false)}
-
                 paymentImageQrCode={paymentImageQrCode}
                 setPaymentImageQrCode={setPaymentImageQrCode}
 

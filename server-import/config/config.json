@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "monty",
-    "password": "undefined@090421",
+    "username": "jerry",
+    "password": "jerrypassword",
     "database": "mbk_temp",
-    "host": "undefined.ddns.net",
+    "host": "hopeagro.co.th",
     "port":"3306",
     "dialect": "mysql",
     "pool" : {
@@ -11,7 +11,11 @@
       "min": 0,
       "acquire": 30000,
       "idle": 10000
-    }
+    },
+    "dialectOptions": {
+      "useUTC": false 
+    },
+    "timezone": "+07:00"
   },
   "test": {
     "username": "monty",

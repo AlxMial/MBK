@@ -8,6 +8,7 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 router.post("/", validateToken, async (req, res) => {
+    console.log(req.body)
     const data = await tbBanner.create(req.body);
     res.json({
         status: true,

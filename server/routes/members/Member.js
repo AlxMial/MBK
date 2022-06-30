@@ -82,6 +82,7 @@ router.get("/export", validateToken, async (req, res) => {
       "memberCard",
       "firstName",
       "lastName",
+      "sex",
       "phone",
       "email",
       "birthDate",
@@ -101,6 +102,9 @@ router.get("/export", validateToken, async (req, res) => {
       "consentDate",
       "isPolicy1",
       "isPolicy2",
+      "isCustomer",
+      "eating",
+      "description"
     ],
     where: { isDeleted: false },
   });
