@@ -796,33 +796,42 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         });
         for (var i = 0; i < _OrderHDData.length; i++) {
           let hd = _OrderHDData[i].dataValues;
-          if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
-            const data = await tbCancelOrder.create({
-              orderId: hd.id,
-              cancelStatus: "No refund",
-              cancelType: "Auto",
-              cancelDetail: "Auto",
-              description: "Auto",
-              isDeleted: false,
-            });
-            const _tbOrderHD = await tbOrderHD.update(
-              {
-                isCancel: true,
-              },
-              {
-                where: {
-                  id: hd.id,
+          const _tbCancelOrder = await tbCancelOrder.findOne({
+            attributes: ["id", "orderId"],
+            where: {
+              IsDeleted: false,
+              orderId: _OrderHDData[i].id,
+            },
+          });
+          if (_tbCancelOrder == null) {
+            if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
+              const data = await tbCancelOrder.create({
+                orderId: hd.id,
+                cancelStatus: "No refund",
+                cancelType: "Auto",
+                cancelDetail: "Auto",
+                description: "Auto",
+                isDeleted: false,
+              });
+              const _tbOrderHD = await tbOrderHD.update(
+                {
+                  isCancel: true,
                 },
-              }
-            );
-          } else {
-            if (hd.paymentStatus == "In Process") {
-              hd.isPaySlip = true;
+                {
+                  where: {
+                    id: hd.id,
+                  },
+                }
+              );
             } else {
-              hd.isPaySlip = false;
+              if (hd.paymentStatus == "In Process") {
+                hd.isPaySlip = true;
+              } else {
+                hd.isPaySlip = false;
+              }
+              _OrderHDData[i].dataValues = hd;
+              OrderHDData.push(_OrderHDData[i]);
             }
-            _OrderHDData[i].dataValues = hd;
-            OrderHDData.push(_OrderHDData[i]);
           }
         }
       } else if (PaymentStatus == "Done" && TransportStatus == "Prepare") {
