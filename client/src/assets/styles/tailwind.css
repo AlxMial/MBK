@@ -2636,6 +2636,11 @@ select {
   color: #334155;
 }
 
+.text-liff-gray-mbk {
+  --tw-text-opacity: 1;
+  color: var(--mq-txt-color, rgb(170, 170, 170));
+}
+
 .text-green-mbk {
   --tw-text-opacity: 1;
   color: #047738;
@@ -4756,7 +4761,7 @@ input[type="number"] {
 }
 
 .select-address {
-  height: 100px;
+  height: 80px;
 }
 
 .select-Logistic {

@@ -34,7 +34,7 @@ import usecoupon from "views/liff/shop/usecoupon";
 
 import makeorder from "views/liff/makeorder/makeorder";
 import makeorderbyid from "views/liff/makeorder/makeorderByID";
-import orderpaymentdone from "views/liff/makeorder/orderpaymentdone";
+import orderpaymentdone from "views/liff/makeorder/ordeDone/orderpaymentdone";
 import addAddress from "views/liff/makeorder/addAddress";
 
 //paymentInfo 
@@ -309,6 +309,10 @@ export const gettbPayment = (s, e = () => { }, f = () => { }) => {
 };
 export const gettbLogistic = (s, e = () => { }, f = () => { }) => {
   httpGet("/logistic/gettbLogistic", s, e, f);
+};
+
+export const getPromotionstores = (s, e = () => { }, f = () => { }) => {
+  httpGet("/payment/getPromotionstores", s, e, f);
 };
 
 export const doSaveOrder = (data, s, e = () => { }, f = () => { }) => {

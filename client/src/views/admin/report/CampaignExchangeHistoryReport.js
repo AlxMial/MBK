@@ -9,10 +9,12 @@ import Spinner from "components/Loadings/spinner/Spinner";
 import useWindowDimensions from "services/useWindowDimensions";
 import ReactTooltip from 'react-tooltip';
 import Select from "react-select";
+import { useToasts } from "react-toast-notifications";
 import ValidateService from "services/validateValue";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 
 export default function CampaignExchangeHistoryReport() {
+  const { addToast } = useToasts();
   const UseStyleSelect = styleSelect();
   const [listSearch, setListSerch] = useState([]);
 //   const [listCampaign, setListCampaign] = useState([]);
@@ -36,6 +38,10 @@ export default function CampaignExchangeHistoryReport() {
   const rewardType = [
     { value: "1", label: "E-Coupon" },
     { value: "2", label: "สินค้า" },
+  ];
+  const rewardStatus = [
+    { value: "0", label: "เรียกคืน" },
+    { value: "1", label: "แลกแล้ว" },
   ];
   const dropdown = [
     { label: "ส่งแล้ว", value: "Done" },
@@ -134,6 +140,7 @@ export default function CampaignExchangeHistoryReport() {
     setListCampaignExchange((s) => {
       const newArr = s.slice();
       newArr[index].deliverStatus = val;
+      updateMemberReward(newArr[index]);
       return newArr;
     });
   };
@@ -142,9 +149,30 @@ export default function CampaignExchangeHistoryReport() {
     setListCampaignExchange((s) => {
       const newArr = s.slice();
       newArr[index].isShowTKNo = false;
+      updateMemberReward(newArr[index]);
       return newArr;
     });
   };
+  const updateMemberReward = (e) => {
+    setIsLoading(true);
+    const newItem = {
+      id: e.id,
+      deliverStatus: e.deliverStatus,
+      trackingNo: e.trackingNo,
+      addBy: sessionStorage.getItem('user'),
+      updateBy: sessionStorage.getItem('user'),
+    }
+    axios.post('report/doSaveUpdateMemberReward', newItem).then(res => {
+      if (res.data.status) {
+      } else {        
+        addToast("บันทึกข้อมูลหมวดหมู่สินค้าไม่สำเร็จ", {
+          appearance: "warning",
+          autoDismiss: true,
+        });
+      }
+      setIsLoading(false);
+    });
+  }
 
  
   const pageCount = Math.ceil(listCampaignExchange.length / usersPerPage);
@@ -205,6 +233,7 @@ export default function CampaignExchangeHistoryReport() {
           response.data.forEach(e => {
             e.redemptionTypeStr = (e.redemptionType !== "" ? (redemptionType.find(el => el.value === e.redemptionType).label) : ""); 
             e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : ""); 
+            e.statusStr =  ((e.status !== '' &&  e.status !== undefined) ? rewardStatus.find(el => el.value === e.status.toString()).label : ""); 
           });
                   
           setListSerch(response.data);
@@ -553,7 +582,7 @@ export default function CampaignExchangeHistoryReport() {
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {item.status}
+                          {item.statusStr}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           {moment(item.redeemDate).format("DD/MM/YYYY")}
@@ -605,7 +634,7 @@ export default function CampaignExchangeHistoryReport() {
                                     // disabled={typePermission === "1" ? false : true}
                                   />
                                   :
-                                  <div className="w-32 text-right" > {item.trackingNo} <i className="fa fa-pen mr-2" onClick={() => {showTrackingNo(key);}}></i></div>
+                                  <div className="w-32 flex text-right"> <div className="TextWordWarp-150 w-32" >{item.trackingNo}</div> <i className="fa fa-pen mr-2" onClick={() => {showTrackingNo(key);}}></i></div>
                             :   <div></div>
                             }
                         </td>

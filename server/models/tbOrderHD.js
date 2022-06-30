@@ -50,6 +50,28 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: false
     },
+
+    deliveryCost: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    discountDelivery: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    discountCoupon: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+    discountStorePromotion: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
+    },
+
     addBy: {
       type: DataTypes.STRING,
       allowNull: true,

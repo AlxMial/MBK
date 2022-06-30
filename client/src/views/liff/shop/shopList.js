@@ -10,9 +10,7 @@ import Select from "react-select";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
 import * as Storage from "@services/Storage.service";
 import * as Session from "@services/Session.service";
-import {
-  get_shopcart
-} from "@services/liff.services";
+import { get_shopcart } from "@services/liff.services";
 import ImageUC from "components/Image/index";
 const useStyle = styleSelectLine();
 // components
@@ -21,27 +19,29 @@ const ShopList = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [ImgBanner, setImgBanner] = useState([]);
+  const [IsImgBanner, setIsImgBanner] = useState(true);
+
   const [y, setY] = useState(0);
 
   const [category, setcategory] = useState(0);
   const [productCategory, setproductCategory] = useState([]);
 
   const [cartNumberBadge, setcartNumberBadge] = useState(null);
-  const [tbStock, settbStock] = useState([]);//ทั้งหมด 
+  const [tbStock, settbStock] = useState([]); //ทั้งหมด
 
-  const [selectMenu, setselectmenu] = useState(1);//ทั้งหมด 
+  const [selectMenu, setselectmenu] = useState(1); //ทั้งหมด
 
-  const [tbStockiewNominal, settbStockiewNominal] = useState([]);//แสดงตาม category
-  const [tbStockiewFlashSale, settbStockiewFlashSale] = useState([]);//แสดงตาม category
+  const [tbStockiewNominal, settbStockiewNominal] = useState([]); //แสดงตาม category
+  const [tbStockiewFlashSale, settbStockiewFlashSale] = useState([]); //แสดงตาม category
 
   const pad = (n) => {
     return (n < 10 ? "0" : "") + n;
   };
 
   const setselectMenu = (e) => {
-    setselectmenu(e)
-    setcategoryview(category, e)
-  }
+    setselectmenu(e);
+    setcategoryview(category, e);
+  };
 
   const Counter = ({ time }) => {
     const [count, setCount] = useState("");
@@ -81,106 +81,120 @@ const ShopList = () => {
     }, [delay]);
   };
   const setcategoryview = (id, e) => {
-    setcategory(id)
+    setcategory(id);
     if (id === 0) {
-      let tbStockiewNominal = []
-      let tbStockiewFlashSale = []
-      let dataTemp = tbStock
+      let tbStockiewNominal = [];
+      let tbStockiewFlashSale = [];
+      let dataTemp = tbStock;
       if (e == 2) {
-        dataTemp = dataTemp.filter(e => {
+        dataTemp = dataTemp.filter((e) => {
           if (e.IsBestSeller) {
-            return e
+            return e;
           }
-        })
+        });
       }
 
-      dataTemp.filter(e => {
-
+      dataTemp.filter((e) => {
         if (!e.isFlashSale) {
-          tbStockiewNominal.push(e)
-        }
-        else {
-          let startDateCampaign = new Date(new Date(e.startDateCampaign).toISOString().split("T")[0])
-          let endDateCampaign = new Date(new Date(e.endDateCampaign).toISOString().split("T")[0])
-          let today = new Date(new Date().toISOString().split("T")[0])
+          tbStockiewNominal.push(e);
+        } else {
+          let startDateCampaign = new Date(
+            new Date(e.startDateCampaign).toISOString().split("T")[0]
+          );
+          let endDateCampaign = new Date(
+            new Date(e.endDateCampaign).toISOString().split("T")[0]
+          );
+          let today = new Date(new Date().toISOString().split("T")[0]);
           if (today >= startDateCampaign && today <= endDateCampaign) {
-            let startTimeCampaign = new Date(new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign)
-            let endTimeCampaign = new Date(new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign)
-            today = new Date()
+            let startTimeCampaign = new Date(
+              new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign
+            );
+            let endTimeCampaign = new Date(
+              new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign
+            );
+            today = new Date();
             if (today > startTimeCampaign && today < endTimeCampaign) {
-              tbStockiewFlashSale.push(e)
+              tbStockiewFlashSale.push(e);
             } else {
-              tbStockiewNominal.push(e)
+              tbStockiewNominal.push(e);
             }
           } else {
-            tbStockiewNominal.push(e)
+            tbStockiewNominal.push(e);
           }
         }
-      })
-      settbStockiewNominal(tbStockiewNominal)
-      settbStockiewFlashSale(tbStockiewFlashSale)
+      });
+      settbStockiewNominal(tbStockiewNominal);
+      settbStockiewFlashSale(tbStockiewFlashSale);
     } else {
-      let dataTemp = tbStock
+      let dataTemp = tbStock;
       if (e == 2) {
-        dataTemp = dataTemp.filter(e => {
+        dataTemp = dataTemp.filter((e) => {
           if (e.IsBestSeller) {
-            return e
+            return e;
           }
-        })
+        });
       }
 
       let tbStockview = dataTemp.filter((e, i) => {
         if (e.productCategoryId === id) {
-          return e
+          return e;
         }
-      })
+      });
 
-      let tbStockiewNominal = []
-      let tbStockiewFlashSale = []
-      tbStockview.filter(e => {
+      let tbStockiewNominal = [];
+      let tbStockiewFlashSale = [];
+      tbStockview.filter((e) => {
         if (!e.isFlashSale) {
-          tbStockiewNominal.push(e)
-        }
-        else {
-          let startDateCampaign = new Date(new Date(e.startDateCampaign).toISOString().split("T")[0])
-          let endDateCampaign = new Date(new Date(e.endDateCampaign).toISOString().split("T")[0])
-          let today = new Date(new Date().toISOString().split("T")[0])
+          tbStockiewNominal.push(e);
+        } else {
+          let startDateCampaign = new Date(
+            new Date(e.startDateCampaign).toISOString().split("T")[0]
+          );
+          let endDateCampaign = new Date(
+            new Date(e.endDateCampaign).toISOString().split("T")[0]
+          );
+          let today = new Date(new Date().toISOString().split("T")[0]);
           if (today >= startDateCampaign && today <= endDateCampaign) {
-            let startTimeCampaign = new Date(new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign)
-            let endTimeCampaign = new Date(new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign)
-            today = new Date()
+            let startTimeCampaign = new Date(
+              new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign
+            );
+            let endTimeCampaign = new Date(
+              new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign
+            );
+            today = new Date();
             if (today > startTimeCampaign && today < endTimeCampaign) {
-              tbStockiewFlashSale.push(e)
+              tbStockiewFlashSale.push(e);
             } else {
-              tbStockiewNominal.push(e)
+              tbStockiewNominal.push(e);
             }
           } else {
-            tbStockiewNominal.push(e)
+            tbStockiewNominal.push(e);
           }
         }
-      })
-      settbStockiewNominal(tbStockiewNominal)
-      settbStockiewFlashSale(tbStockiewFlashSale)
+      });
+      settbStockiewNominal(tbStockiewNominal);
+      settbStockiewFlashSale(tbStockiewFlashSale);
     }
-
-  }
+  };
   //#region รูป Banner
   const fetchDataImgBanner = async () => {
     await axios.get("stock/getImgBanner").then((response) => {
-      if (response.data.ImgBanner) {
+      if (response.data.ImgBanner.length > 0) {
         let ImgBanner = response.data.ImgBanner;
         bufferToBase64(ImgBanner);
+      } else {
+        setIsImgBanner(false);
       }
     });
   };
   const fetchproductCategory = async () => {
     await axios.get("productCategory/getProductCategory").then((response) => {
       if (response.status) {
-        let tbProductCategory = [{ value: 0, label: "สินค้าตามหมวดหมู่" }]
+        let tbProductCategory = [{ value: 0, label: "สินค้าตามหมวดหมู่" }];
         response.data.tbProductCategory.map((e, i) => {
-          tbProductCategory.push({ value: e.id, label: e.categoryName })
-        })
-        setproductCategory(tbProductCategory)
+          tbProductCategory.push({ value: e.id, label: e.categoryName });
+        });
+        setproductCategory(tbProductCategory);
       }
     });
   };
@@ -193,105 +207,150 @@ const ShopList = () => {
       dataImg.push({ url: base64 });
     }
     setImgBanner(dataImg);
-
   };
   //#endregion รูป Banner
 
   //#region
   const fetchDatatbStock = async () => {
-    setIsLoading(true)
-    await axios.post("stock/getStock").then((response) => {
-      if (response.data.status) {
-        let tbStock = response.data.tbStock;
-        settbStock(tbStock);
-        let tbStockiewNominal = []
-        let tbStockiewFlashSale = []
-        tbStock.filter(e => {
-          if (!e.isFlashSale) {
-            tbStockiewNominal.push(e)
-          }
-          else {
-            let startDateCampaign = new Date(new Date(e.startDateCampaign).toISOString().split("T")[0])
-            let endDateCampaign = new Date(new Date(e.endDateCampaign).toISOString().split("T")[0])
-            let today = new Date(new Date().toISOString().split("T")[0])
-            if (today >= startDateCampaign && today <= endDateCampaign) {
-              let startTimeCampaign = new Date(new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign)
-              let endTimeCampaign = new Date(new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign)
-              today = new Date()
-              if (today > startTimeCampaign && today < endTimeCampaign) {
-                tbStockiewFlashSale.push(e)
-              } else {
-                tbStockiewNominal.push(e)
-              }
+    setIsLoading(true);
+    await axios
+      .post("stock/getStock")
+      .then((response) => {
+        if (response.data.status) {
+          let tbStock = response.data.tbStock;
+          settbStock(tbStock);
+          let tbStockiewNominal = [];
+          let tbStockiewFlashSale = [];
+          tbStock.filter((e) => {
+            if (!e.isFlashSale) {
+              tbStockiewNominal.push(e);
             } else {
-              tbStockiewNominal.push(e)
+              let startDateCampaign = new Date(
+                new Date(e.startDateCampaign).toISOString().split("T")[0]
+              );
+              let endDateCampaign = new Date(
+                new Date(e.endDateCampaign).toISOString().split("T")[0]
+              );
+              let today = new Date(new Date().toISOString().split("T")[0]);
+              if (today >= startDateCampaign && today <= endDateCampaign) {
+                let startTimeCampaign = new Date(
+                  new Date().toISOString().split("T")[0] +
+                    " " +
+                    e.startTimeCampaign
+                );
+                let endTimeCampaign = new Date(
+                  new Date().toISOString().split("T")[0] +
+                    " " +
+                    e.endTimeCampaign
+                );
+                today = new Date();
+                if (today > startTimeCampaign && today < endTimeCampaign) {
+                  tbStockiewFlashSale.push(e);
+                } else {
+                  tbStockiewNominal.push(e);
+                }
+              } else {
+                tbStockiewNominal.push(e);
+              }
             }
-          }
-        })
-        settbStockiewNominal(tbStockiewNominal)
-        settbStockiewFlashSale(tbStockiewFlashSale)
-      }
-    }).finally(() => {
-      setIsLoading(false)
-    });
+          });
+          settbStockiewNominal(tbStockiewNominal);
+          settbStockiewFlashSale(tbStockiewFlashSale);
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
   //#endregion
 
   const listenScrollEvent = (e) => {
-    const scrollTop = e.currentTarget.scrollTop
-    setY(scrollTop)
-  }
+    const scrollTop = e.currentTarget.scrollTop;
+    setY(scrollTop);
+  };
 
   const Get_shopcart = () => {
     get_shopcart({ uid: Session.getLiff().uid }, (res) => {
       if (res.data.status) {
         if (res.data.shop_orders) {
-          setcartNumberBadge(res.data.shop_orders.length)
+          setcartNumberBadge(res.data.shop_orders.length);
         }
       }
-    })
-  }
+    });
+  };
   useEffect(() => {
     fetchDataImgBanner();
     fetchDatatbStock();
     fetchproductCategory();
-    Get_shopcart()
+    Get_shopcart();
   }, []);
 
-
-  let isFlashsale = false
+  let isFlashsale = false;
   tbStockiewFlashSale.map((e, i) => {
     if (e.isFlashSale) {
-      isFlashsale = true
+      isFlashsale = true;
     }
-  })
+  });
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div style={{ height: "100%" }}>
-        <div style={{
-          height: ((125 - y) + "px"),
-          margin: "auto"
-          , display: (y > 120 ? "none" : "")
-        }}
+        <div
+          style={{
+            height: 125 - y + "px",
+            margin: "auto",
+            display: y > 120 ? "none" : "",
+          }}
           className={"wfull animated-SlideShow "}
         >
-          {ImgBanner.length > 0 ?
+          {ImgBanner.length > 0 && IsImgBanner ? (
             <SlideShow img={ImgBanner} duration={5000} />
-            : <div className="animated-img"></div>}
+          ) : !IsImgBanner ? (
+            <div
+              className="flex w-full text-green-mbk font-bold"
+              style={{
+                height: "100%",
+                backgroundColor: "#ddd",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {"ไม่มีแบนเนอร์"}
+            </div>
+          ) : (
+            <div className="animated-img"></div>
+          )}
         </div>
         <div
           className="flex relative flex mt-2"
           style={{ height: "40px", alignItems: "center" }}
         >
-          <div className="px-2" style={{ textDecoration: selectMenu == 1 ? "underline" : "", textUnderlineOffset: "5px" }} onClick={() => {
-            setselectMenu(1)
-          }}>สินค้าทั้งหมด</div>
-          <div className="px-2" style={{ textDecoration: selectMenu == 2 ? "underline" : "", textUnderlineOffset: "5px" }} onClick={() => {
-            setselectMenu(2)
-          }}>สิ้นค้าขายดี</div>
+          <div
+            className="px-2"
+            style={{
+              textDecoration: selectMenu == 1 ? "underline" : "",
+              textUnderlineOffset: "5px",
+            }}
+            onClick={() => {
+              setselectMenu(1);
+            }}
+          >
+            สินค้าทั้งหมด
+          </div>
+          <div
+            className="px-2"
+            style={{
+              textDecoration: selectMenu == 2 ? "underline" : "",
+              textUnderlineOffset: "5px",
+            }}
+            onClick={() => {
+              setselectMenu(2);
+            }}
+          >
+            สิ้นค้าขายดี
+          </div>
           <div className="px-2" style={{ width: "150px" }}>
-            {productCategory.length > 0 ?
+            {productCategory.length > 0 ? (
               <Select
                 className="text-gray-mbk  text-sm w-full border-none"
                 isSearchable={false}
@@ -302,41 +361,47 @@ const ShopList = () => {
                 onChange={(e) => {
                   setcategoryview(e.value, selectMenu);
                 }}
-                value={productCategory.filter(option =>
-                  option.value
-                  === category)}
+                value={productCategory.filter(
+                  (option) => option.value === category
+                )}
                 options={productCategory}
                 styles={useStyle}
               />
-              : null}
+            ) : null}
           </div>
           <div
             className="px-2 absolute flex"
             style={{ right: "0" }}
             onClick={() => {
-              Storage.removeconpon_cart()
+              Storage.removeconpon_cart();
               history.push(path.showCart);
             }}
           >
-            <i className="fas fa-shopping-cart relative icon-cart" style={{ color: "#ddd" }}></i>
+            <i
+              className="fas fa-shopping-cart relative icon-cart"
+              style={{ color: "#ddd" }}
+            ></i>
             {!fn.IsNullOrEmpty(cartNumberBadge) ? (
-              cartNumberBadge > 0 ?
-                <div className="cart-number-badge">
-                  {cartNumberBadge}
-                </div> : null
+              cartNumberBadge > 0 ? (
+                <div className="cart-number-badge">{cartNumberBadge}</div>
+              ) : null
             ) : null}
           </div>
         </div>
         <div className="liff-inline" />
-        <div id="scroll" className="product-scroll " style={{
-          width: "90%"
-          , margin: "auto"
-          , height: "calc(100% - " + (y > 120 ? (165 - 120) : (165 - y)) + "px)"
-          , overflow: "scroll"
-
-        }} onScroll={listenScrollEvent}>
+        <div
+          id="scroll"
+          className="product-scroll "
+          style={{
+            width: "90%",
+            margin: "auto",
+            height: "calc(100% - " + (y > 120 ? 165 - 120 : 165 - y) + "px)",
+            overflow: "scroll",
+          }}
+          onScroll={listenScrollEvent}
+        >
           {/* flash_sale */}
-          {isFlashsale ?
+          {isFlashsale ? (
             <div className="mt-2">
               <div
                 className="shadow"
@@ -376,7 +441,10 @@ const ShopList = () => {
                               );
                             }}
                           >
-                            <div className="relative" style={{ height: "150px" }}>
+                            <div
+                              className="relative"
+                              style={{ height: "150px" }}
+                            >
                               <div
                                 className="absolute text-white font-bold"
                                 style={{
@@ -390,7 +458,15 @@ const ShopList = () => {
                                   zIndex: "1",
                                 }}
                               >
-                                <Counter time={new Date(e.endDateCampaign).toISOString().split("T")[0] + " " + e.endTimeCampaign} />
+                                <Counter
+                                  time={
+                                    new Date(e.endDateCampaign)
+                                      .toISOString()
+                                      .split("T")[0] +
+                                    " " +
+                                    e.endTimeCampaign
+                                  }
+                                />
                               </div>
 
                               <ImageUC
@@ -402,36 +478,46 @@ const ShopList = () => {
                                 className="w-32 border-2 border-blueGray-50"
                               ></ImageUC>
 
-                              {e.IsBestSeller ?
+                              {e.IsBestSeller ? (
                                 <img
                                   style={{
-                                    width: "40px", height: "40px", top: "0",
-                                    right: "0"
+                                    width: "40px",
+                                    height: "40px",
+                                    top: "0",
+                                    right: "0",
                                   }}
-                                  src={require("assets/img/mbk/icon_hot.png").default
+                                  src={
+                                    require("assets/img/mbk/icon_hot.png")
+                                      .default
                                   }
                                   alt="icon_hot"
                                   className="w-32 border-2 border-blueGray-50 absolute"
                                 ></img>
-                                : null}
+                              ) : null}
                             </div>
 
                             <div className="px-2 py-2">
-                              <div className="line-clamp-2" style={{
-                                fontSize: "11px",
-                                height: "35px"
-                              }}>
+                              <div
+                                className="line-clamp-2"
+                                style={{
+                                  fontSize: "11px",
+                                  height: "35px",
+                                }}
+                              >
                                 {e.productName}
                               </div>
                             </div>
                             <div
                               className="flex relative"
-                              style={{ bottom: "0", left: "10px", fontSize: "10px" }}
+                              style={{
+                                bottom: "0",
+                                left: "10px",
+                                fontSize: "10px",
+                              }}
                             >
                               <div
                                 style={{
-                                  color:
-                                    e.discount > 0 ? "#ddd" : "#000",
+                                  color: e.discount > 0 ? "#ddd" : "#000",
                                   textDecoration:
                                     e.discount > 0 ? "line-through" : "none",
                                 }}
@@ -442,20 +528,23 @@ const ShopList = () => {
                                 <div
                                   style={{ color: "red", paddingLeft: "10px" }}
                                 >
-
                                   {"฿ " + fn.formatMoney(e.priceDiscount)}
                                 </div>
                               ) : null}
                               <div
                                 className="absolute"
-                                style={{ bottom: "0", right: "10px", color: "gray" }}
+                                style={{
+                                  bottom: "0",
+                                  right: "10px",
+                                  color: "gray",
+                                }}
                               >
-                                <i className="fas fa-shopping-cart" style={{ color: "#ddd", fontSize: "10px" }}></i>
+                                <i
+                                  className="fas fa-shopping-cart"
+                                  style={{ color: "#ddd", fontSize: "10px" }}
+                                ></i>
                               </div>
                             </div>
-
-
-
                           </div>
                         );
                       }
@@ -463,12 +552,10 @@ const ShopList = () => {
                   </div>
                 </div>
               </div>
-            </div> : null
-          }
-          < div className="mt-2 mb-2 mt-2">
-            <div
-              className="line-row mb-2 "
-            >
+            </div>
+          ) : null}
+          <div className="mt-2 mb-2 mt-2">
+            <div className="line-row mb-2 ">
               {[...tbStockiewNominal].map((e, i) => {
                 return (
                   <div
@@ -503,24 +590,25 @@ const ShopList = () => {
                               borderRadius: "5px",
                             }}
                           >
-                            <div className=" text-white px-2">
+                            <div className="text-xs text-white px-2">
                               {"SALE -" + fn.formatMoney(e.percent) + "%"}
                             </div>
                           </div>
                         ) : null}
 
-                        {e.IsBestSeller ?
+                        {e.IsBestSeller ? (
                           <img
                             style={{
-                              width: "25px", height: "25px", top: "0",
-                              right: "0"
+                              width: "40px",
+                              height: "40px",
+                              top: "0",
+                              right: "0",
                             }}
-                            src={require("assets/img/mbk/icon_hot.png").default
-                            }
+                            src={require("assets/img/mbk/icon_hot.png").default}
                             alt="icon_hot"
                             className="w-32 border-2 border-blueGray-50 absolute"
                           ></img>
-                          : null}
+                        ) : null}
                       </div>
                       <div
                         className="px-1 py-2 line-scroll line-clamp-2"
@@ -529,7 +617,7 @@ const ShopList = () => {
                           lineHeight: "15px",
                           overflow: "auto",
                           marginBottom: "10px",
-                          fontSize: "11px"
+                          fontSize: "11px",
                         }}
                       >
                         {e.productName}
@@ -540,8 +628,7 @@ const ShopList = () => {
                       >
                         <div
                           style={{
-                            color:
-                              e.discount > 0 ? "#ddd" : "#000",
+                            color: e.discount > 0 ? "#ddd" : "#000",
                             textDecoration:
                               e.discount > 0 ? "line-through" : "none",
                           }}
@@ -558,9 +645,11 @@ const ShopList = () => {
                         className="absolute"
                         style={{ bottom: "0", right: "10px", color: "gray" }}
                       >
-                        <i className="fas fa-shopping-cart" style={{ color: "#ddd", fontSize: "10px" }}></i>
+                        <i
+                          className="fas fa-shopping-cart"
+                          style={{ color: "#ddd", fontSize: "10px" }}
+                        ></i>
                       </div>
-
                     </div>
                   </div>
                 );

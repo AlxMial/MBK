@@ -6,708 +6,434 @@ import axios from "services/axios";
 import { path } from "services/liff.services";
 import * as Storage from "@services/Storage.service";
 import * as fn from "@services/default.service";
-import ImageUC from "components/Image/index";
-import Select from "react-select";
 import {
-    getMemberAddress,
-    gettbPayment,
-    gettbLogistic, doSaveUpdateOrder,
-    getOrderHDById
-
+  doSaveUpdateOrder,
+  getOrderHDById,
+  getPromotionstores,
 } from "@services/liff.services";
-import { Radio } from "antd";
-import api_province from "../../../assets/data/api_province.json";
-import api_amphure from "../../../assets/data/api_amphure.json";
-import api_tombon from "../../../assets/data/api_tombon.json";
+import AddressModel from "./addressModel";
+import LogisticModel from "./logisticModel";
+import DetailModel from "./detailModel";
+import PaymentModel from "./paymentModel";
+import FooterButton from "./footerButton";
+import CouponModel from "./couponModel";
 // components
 
 const MakeOrderById = () => {
-    const { id } = useParams();
-    const history = useHistory();
-    const { addToast } = useToasts();
-    const [isLoading, setIsLoading] = useState(false);
+  const { id } = useParams();
+  const history = useHistory();
+  const { addToast } = useToasts();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAddress, setisAddress] = useState(null);
+  const [isLogistic, setisLogistic] = useState(null);
+  const [deliveryCost, setdeliveryCost] = useState(0);
+  const [tbPromotionDelivery, settbPromotionDelivery] = useState(null);
+  const [promotionstores, setpromotionstores] = useState([]);
+  const [paymentID, setpaymentID] = useState(null);
+  const [RadioPayment, setRadio] = useState(1);
+  const [usecoupon, setusecoupon] = useState(null);
+  const [openCoupon, setopenCoupon] = useState(false); //เปิดCoupon
+  const [sumprice, setsumprice] = useState(0);
+  const [OrderHD, setOrderHD] = useState(null);
+  const [freebies, setfreebies] = useState([]); //ของแถม
+  const getProducts = async () => {
+    let idlist = [];
+    if (!fn.IsNullOrEmpty(id)) {
+      getOrderHDById(
+        { Id: id, type: "update" },
+        async (res) => {
+          if (res.status) {
+            let OrderHD = res.data.OrderHD;
+            setOrderHD(OrderHD);
+            setpaymentID(OrderHD.paymentId);
+            setisLogistic(OrderHD.logisticId);
+            setdeliveryCost(OrderHD.olddeliveryCost);
+            setisAddress(OrderHD.otherAddressId);
 
+            let shop_orders = OrderHD.dt;
+            shop_orders.map((e, i) => {
+              idlist.push(e.id);
+            });
 
-    const [optionaddress, setoptionaddress] = useState([]);
-    const [isAddress, setisAddress] = useState(null);
-
-    const [optionLogistic, setoptionLogistic] = useState([]);
-    const [isLogistic, setisLogistic] = useState(null);
-    const [deliveryCost, setdeliveryCost] = useState(0);
-
-    const [tbPromotionDelivery, settbPromotionDelivery] = useState(null);
-
-    const [optionPayment, setPayment] = useState([]);
-    const [paymentID, setpaymentID] = useState(null);
-    const [RadioPayment, setRadio] = useState(1);
-
-    const [OrderHD, setOrderHD] = useState(null);
-
-    const [usecoupon, setusecoupon] = useState(null);
-
-    const [sumprice, setsumprice] = useState(0);
-    const getProducts = async () => {
-        let idlist = [];
-        let item;
-        if (!fn.IsNullOrEmpty(id)) {
-            getOrderHDById({ Id: id, type: "update" }, async (res) => {
-                if (res.status) {
-                    let OrderHD = res.data.OrderHD
-                    setOrderHD(OrderHD)
-                    setpaymentID(OrderHD.paymentId)
-                    setisLogistic(OrderHD.logisticId)
-                    setdeliveryCost(OrderHD.deliveryCost)
-                    settbPromotionDelivery(OrderHD.PromotionDelivery)
-                    setisAddress(OrderHD.otherAddressId)
-
-                    let shop_orders = OrderHD.dt;
-                    shop_orders.map((e, i) => {
-                        idlist.push(e.id);
-                    });
-
-                    if (Storage.getusecoupon() == null) {
-                        if (!fn.IsNullOrEmpty(OrderHD.coupon)) {
-                            setusecoupon(OrderHD.coupon)
-                            Storage.setusecoupon(OrderHD.coupon)
-                        } else {
-                            setusecoupon(null)
-                        }
-                    } else {
-                        let usecoupon = Storage.getusecoupon()
-                        // if (usecoupon.id === id) {
-                        setusecoupon(usecoupon)
-                        // }
-                    }
-                    await axios.post("stock/getStock", { id: idlist }).then((response) => {
-                        if (response.data.status) {
-                            let tbStock = response.data.tbStock;
-                            // setCartItem(tbStock);
-                            let price = 0;
-                            tbStock.map((e, i) => {
-                                let quantity = shop_orders.find((o) => o.id == e.id).amount;
-                                e.quantity = quantity;
-                                if (e.priceDiscount > 0) {
-                                    price += parseFloat(e.priceDiscount) * parseInt(quantity);
-                                } else {
-                                    price += parseFloat(e.price) * parseInt(quantity);
-                                }
-                            });
-
-                            price = price
-                            setsumprice(price < 1 ? 0 : price);
-                        }
-                    });
-
-
-                }
-            }, () => { }, () => { setIsLoading(false) })
-        }
-
-
-
-    };
-    const setDeliveryCost = (e) => {
-        let cost = e
-        if (tbPromotionDelivery) {
-            if ((sumprice + cost) > tbPromotionDelivery.buy) {
-                cost = cost > tbPromotionDelivery.deliveryCost ? cost - tbPromotionDelivery.deliveryCost : 0
-            }
-        }
-        setdeliveryCost(cost)
-    }
-    const Cancelcoupon = () => {
-        // if (id == "cart") {
-        //     let item = Storage.get_cart()
-        //     item.usecoupon = null
-        //     Storage.upd_cart(item);
-        // } else {
-        //     let item = Storage.getbyorder()
-        //     item.usecoupon = null
-        //     Storage.updbyorder(item)
-        // }
-        // Storage.getusecoupon(null)
-        // getProducts()
-    }
-
-    const getMemberaddress = async () => {
-        getMemberAddress(
-            (res) => {
-                if (res.data.code === 200) {
-                    let option = res.data.option
-                    // option.map((e, i) => {
-                    //     if (e.isDefault) {
-                    //         setisAddress(e.id)
-                    //     }
-                    // })
-                    getAddress(option)
-
-                }
-            },
-        );
-    }
-
-    const getAddress = async (option) => {
-        for (var i = 0; i < option.length; i++) {
-            let province = await api_province
-            province = province.find(e => e.value.toString() === option[i].province)
-
-            let district = await api_amphure
-            district = district.find(e => e.value.toString() === option[i].district)
-
-            let subDistrict = await api_tombon
-            subDistrict = subDistrict.find(e => e.value.toString() === option[i].subDistrict)
-
-            option[i].address = `${option[i].address} ต.${subDistrict.label} อ.${district.label} จ.${province.label} ${option[i].postcode} ${option[i].email}`
-            option[i].name = `คุณ${option[i].firstName} ${option[i].lastName}`
-            option[i].value = option[i].id
-        }
-        setoptionaddress(option)
-    }
-    const gettbpayment = async (option) => {
-        gettbPayment(
-            (res) => {
-                if (res.data.code === 200) {
-                    let option = res.data.tbPayment
-                    for (var i = 0; i < option.length; i++) {
-                        option[i].value = option[i].id
-                    }
-                    setPayment(option)
-                }
-            },
-        );
-    }
-
-    const getTbLogistic = async (option) => {
-        gettbLogistic(
-            (res) => {
-                if (res.data.status) {
-                    let option = res.data.tbLogistic
-                    let tbPromotionDelivery = res.data.tbPromotionDelivery
-
-                    for (var i = 0; i < option.length; i++) {
-                        option[i].value = option[i].id
-                        option[i].name = `${option[i].deliveryName}`
-                    }
-                    setoptionLogistic(option)
-                    settbPromotionDelivery(tbPromotionDelivery)
-                }
-            },
-        );
-    }
-    //สั่งสินค้า 
-    const sendOrder = () => {
-        let updatrOrder = {
-            id: id,
-            paymentId: RadioPayment === 1 ? paymentID : null,
-            paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
-            logisticId: isLogistic,
-            isAddress: isAddress
-        }
-        console.log({ data: updatrOrder })
-        doSaveUpdateOrder({ data: updatrOrder }, (res) => {
-            if (res.status) {
-                history.push(path.paymentInfo.replace(":id", id))
+            if (Storage.getusecoupon() == null) {
+              if (!fn.IsNullOrEmpty(OrderHD.coupon)) {
+                setusecoupon(OrderHD.coupon);
+                Storage.setusecoupon(OrderHD.coupon);
+              } else {
+                setusecoupon(null);
+              }
             } else {
-
+              let usecoupon = Storage.getusecoupon();
+              // if (usecoupon.id === id) {
+              setusecoupon(usecoupon);
+              // }
             }
-        })
+            setIsLoading(true);
+            await axios
+              .post("stock/getStock", { id: idlist })
+              .then((response) => {
+                if (response.data.status) {
+                  let tbStock = response.data.tbStock;
+                  let price = 0;
+                  tbStock.map((e, i) => {
+                    let quantity = shop_orders.find((o) => o.id == e.id).amount;
+                    e.quantity = quantity;
+                    if (e.priceDiscount > 0) {
+                      price += parseFloat(e.priceDiscount) * parseInt(quantity);
+                    } else {
+                      price += parseFloat(e.price) * parseInt(quantity);
+                    }
+                  });
+
+                  price = price;
+                  setsumprice(price < 1 ? 0 : price);
+                }
+              })
+              .finally(() => {
+                setIsLoading(false);
+              });
+          }
+        },
+        () => { },
+        () => {
+          setIsLoading(false);
+        }
+      );
+    }
+  };
+  const setDeliveryCost = (e) => {
+    setdeliveryCost(e);
+  };
+  const Cancelcoupon = () => {
+    setusecoupon(null);
+    addToast("ยกเลิกคูปองเสร็จสิ้น", {
+      appearance: "success",
+      autoDismiss: true,
+    });
+  };
+  //สั่งสินค้า
+  const sendOrder = () => {
+    let updatrOrder = {
+      id: id,
+      paymentId: RadioPayment === 1 ? paymentID : null,
+      paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
+      logisticId: isLogistic,
+      isAddress: isAddress,
+      usecouponid: usecoupon == null ? null : usecoupon.id,
+      orderdt: OrderHD.dt,
+    };
+    doSaveUpdateOrder({ data: updatrOrder }, (res) => {
+      if (res.status) {
+        if (RadioPayment === 1) {
+          history.push(path.paymentInfo.replace(":id", id));
+        } else {
+          console.log("2c2p");
+        }
+      } else {
+      }
+    });
+  };
+  //โปรร้าน
+  const GetPromotionstores = (getProducts) => {
+    getPromotionstores((res) => {
+      if (res.data.status) {
+        let Promotionstores = res.data.promotionStore;
+        setpromotionstores(Promotionstores);
+      }
+      getProducts();
+    });
+  };
+  const calctotel = () => {
+    // มีโปรร้าน
+    let total = sumprice;
+    let _prodiscstro = calcprodiscount(sumprice);
+    let _prodiscount = 0;
+    if (_prodiscstro.type == "discount") {
+      _prodiscount = _prodiscstro.data;
+    }
+    total = total - _prodiscount;
+    //มีโปรส่ง
+    let _deliveryCost = deliveryCost;
+    if (tbPromotionDelivery != null) {
+      if (total >= tbPromotionDelivery.buy && deliveryCost > 0) {
+        _deliveryCost = tbPromotionDelivery.deliveryCost;
+      }
+    }
+    total = total + _deliveryCost;
+    if (usecoupon != null) {
+      total = total - usecoupon.discount;
     }
 
-    useEffect(() => {
-        getProducts();
-        getMemberaddress()
-        gettbpayment()
-        getTbLogistic()
+    return total;
+  };
+  const calcprodiscount = (totel) => {
+    let _prodiscount = 0;
+    let data = {};
+    if (promotionstores.length > 0 && totel > 0) {
+      let prodiscountList = promotionstores.find(
+        (e) =>
+          (e.condition == "discount" || e.condition == "%discount") &&
+          e.buy <= totel
+      );
+      if (prodiscountList != null) {
+        let pro = promotionstores.filter((e) => {
+          if (
+            (e.condition == "discount" || e.condition == "%discount") &&
+            e.buy <= totel
+          ) {
+            return e;
+          }
+        });
 
-    }, []);
+        pro.map((e, i) => {
+          let discount = 0;
+          if (e.condition == "discount") {
+            discount = e.discount;
+          } else {
+            discount = (e.percentDiscount / 100) * totel;
+            if (discount > e.percentDiscountAmount) {
+              discount = e.percentDiscountAmount;
+            }
+          }
+          if (discount > _prodiscount) {
+            _prodiscount = discount;
+          }
+        });
+        console.log(_prodiscount);
+        data = { type: "discount", data: _prodiscount };
+      } else {
+        //สินค้า
+        console.log("แถมสินค้า");
+        let productList = promotionstores.find((e) => e.condition == "product" && e.buy <= totel);
+        console.log(productList);
+        if (productList != null) {
+          data = { type: "product", data: productList.stockId };
+          if (freebies.length < 1) {
+            getfreebies(productList);
+          }
+        }
+      }
+    }
+    return data;
+  };
 
+  const getfreebies = async (productList) => {
+    await axios
+      .post("stock/getStock", { id: [productList.stockId] })
+      .then((response) => {
+        if (response.data.status) {
+          let tbStock = response.data.tbStock;
+          tbStock[0].campaignName = productList.campaignName;
+          setfreebies(tbStock);
+        } else {
+          setfreebies([]);
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
+  const calcdeliveryCost = () => {
+    // มีโปรร้าน
+    let total = sumprice;
+    let _prodiscstro = calcprodiscount(sumprice);
+    let _prodiscount = 0;
+    if (_prodiscstro.type == "discount") {
+      _prodiscount = _prodiscstro.data;
+    }
+    total = total - _prodiscount;
 
-    return (
+    let _deliveryCost = deliveryCost;
+    if (tbPromotionDelivery != null && deliveryCost > 0) {
+      if (total >= tbPromotionDelivery.buy) {
+        _deliveryCost = tbPromotionDelivery.deliveryCost;
+      }
+    }
+    return _deliveryCost;
+  };
+  useEffect(() => {
+    GetPromotionstores(getProducts);
+  }, []);
+
+  return (
+    <>
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
+      {!openCoupon ? (
         <>
-            {isLoading ? <Spinner customText={"Loading"} /> : null}
-            <div className="bg-green-mbk">
-                <div
-                    style={{ height: "40px" }}
-                    className=" noselect text-lg text-white font-bold text-center "
-                >
-                    {"ทำการสั่งซื้อ"}
-                </div>
+          <div className="bg-green-mbk">
+            <div
+              style={{ height: "40px" }}
+              className=" noselect text-lg text-white font-bold text-center "
+            >
+              {"ทำการสั่งซื้อ"}
             </div>
-            <div className="overflow-scroll line-scroll" style={{ height: "calc(100% - 200px)" }}>
-                {OrderHD != null ?
-                    <>
-                        <div
-                            className="mt-2 line-scroll"
-                            style={{
-                                maxHeight: "calc(100% - 420px)",
-                                width: "95%",
-                                marginLeft: "auto",
-                                marginRight: "auto",
-                            }}
-                        >
-                            {[...OrderHD.dt].map((e, i) => {
-                                return (
-                                    <div key={i}>
-                                        <div className="flex mt-2" style={{ height: "90px " }}>
-                                            <div style={{ width: "30%" }}>
-                                                <ImageUC
-                                                    style={{ margin: "auto", height: "90px" }}
-                                                    find={1}
-                                                    relatedid={e.id}
-                                                    relatedtable={["stock1"]}
-                                                    alt="flash_sale"
-                                                    className="w-32 border-2 border-blueGray-50"
-                                                ></ImageUC>
-                                            </div>
-                                            <div className="px-2" style={{ width: "70%" }}>
-                                                <div className="flex" style={{ height: "60%" }}>
-                                                    <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
-                                                </div>
-                                                <div style={{ height: "15%" }}>
-                                                    <div className="font-bold" style={{ width: "80%", fontSize: "11px" }}>{"จำนวน : " + e.amount}</div>
-                                                </div>
-                                                <div style={{ height: "15%" }}>
-                                                    <div className="flex relative font-bold" style={{ fontSize: "11px" }} >
-                                                        <div
-                                                            style={{
-                                                                color: e.discount > 0 ? "rgba(0,0,0,.54)" : "",
-                                                                textDecoration:
-                                                                    e.discount > 0 ? "line-through" : "none",
-                                                            }}
-                                                        >
-                                                            {"฿ " + fn.formatMoney(e.price)}
-                                                        </div>
-                                                        {e.discount > 0 ? (
-                                                            <div style={{ color: "red", paddingLeft: "10px" }}>
-                                                                {"฿ " + fn.formatMoney(e.discount)}
-                                                            </div>
-                                                        ) : null}
-                                                    </div>
-                                                </div>
+          </div>
+          <div
+            className="overflow-scroll line-scroll"
+            style={{ height: "calc(100% - 200px)" }}
+          >
+            {OrderHD != null ? (
+              <DetailModel
+                data={OrderHD.dt}
+                freebies={freebies}
+                _static={true}
+              />
+            ) : null}
 
-                                            </div>
-                                        </div>
-                                        <div className="liff-inline" />
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                    </>
-                    :
-                    null}
-
-                <div
-                    className="flex relative"
-                    style={{
-                        height: "20px",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        marginTop: "0.5rem"
-                    }}
-                >
-                    <div className="px-2 absolute" style={{ left: "10px" }}>
-                        <img
-                            style={{ margin: "auto", width: "22px", height: "22px" }}
-                            src={require("assets/img/mbk/icon_sale.png").default
-                            }
-                            alt="icon_sale"
-                            className="w-32 border-2 border-blueGray-50"
-                        ></img>
-                    </div>
-                    <div className="px-2 absolute font-bold" style={{ left: "50px" }}>
-                        {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
-                    </div>
+            <div
+              className="flex relative"
+              style={{
+                height: "20px",
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: "0.5rem",
+              }}
+            >
+              <div className="px-2 absolute" style={{ left: "10px" }}>
+                <img
+                  style={{ margin: "auto", width: "22px", height: "22px" }}
+                  src={require("assets/img/mbk/icon_sale.png").default}
+                  alt="icon_sale"
+                  className="w-32 border-2 border-blueGray-50"
+                ></img>
+              </div>
+              <div className="px-2 absolute font-bold" style={{ left: "50px" }}>
+                {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
+              </div>
+              <div className="absolute" style={{ right: "10px" }}>
+                {OrderHD != null ? (
+                  <div className="flex">
                     <div
-                        className="absolute"
-                        style={{ right: "10px" }}
-
-                    > {OrderHD != null ?
-                        <div className="flex">
-                            <div style={{ color: usecoupon != null ? "red" : "var(--mq-txt-color, rgb(192, 192, 192))" }}
-                                onClick={() => {
-                                    if (OrderHD.paymentStatus != "Done" && !OrderHD.isCancel) {
-                                        // history.push(path.usecoupon.replace(":id", id))
-                                    }
-                                }}
-                            >
-                                {usecoupon != null ? ("-฿ " + fn.formatMoney(usecoupon.discount)) : "ใช้ส่วนลด >"}
-                            </div>
-                            <div className="px-2">
-                                {usecoupon != null && OrderHD.paymentStatus != "Done" && !OrderHD.isCancel ? 
-                                // <i className="fas fa-times-circle" style={{ color: "red" }}
-                                //  onClick={Cancelcoupon}></i> 
-                                null
-                                 : null}
-                            </div>
-                        </div> : null}
-
-                    </div>
-
-
-                </div>
-                <div className="liff-inline" />
-
-                <div
-                    className="w-full  relative mt-2"
-                    style={{
-
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <div className="w-full mb-2">
-                        <div style={{ width: "90%", margin: "auto" }}>
-                            <div className="w-full font-bold">ที่อยู่จัดส่ง</div>
-                        </div>
-                    </div>
-                    <div className="px-5 py-5" style={{
-                        width: "90%", margin: "auto",
-                        border: "1px solid var(--mq-txt-color, rgb(170, 170, 170))",
-                        borderRadius: "10px"
-                    }}>
-                        <div className="mb-2">
-
-                            {optionaddress.length > 0 && OrderHD != null ?
-                                <Select
-                                    isDisabled={OrderHD.transportStatus == "In Transit" || OrderHD.transportStatus == "Done" || OrderHD.isCancel ? true : false}
-                                    className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
-                                    isSearchable={false}
-                                    id={"category"}
-                                    name={"category"}
-
-                                    value={optionaddress.filter(o => o.value === isAddress)}
-                                    options={optionaddress}
-
-                                    formatOptionLabel={({ name, address }) => (
-                                        <div >
-                                            <div className="font-bold">{name}</div>
-                                            <div style={{
-                                                width: "100%",
-                                                whiteSpace: "break-spaces",
-                                                color: "var(--mq-txt-color, rgb(170, 170, 170))"
-                                            }}>{address}</div>
-                                        </div>
-                                    )}
-                                    onChange={(e) => {
-                                        setisAddress(e.id)
-                                    }}
-
-                                />
-                                : null}
-
-                        </div>
-                        {OrderHD != null ?
-                            OrderHD.transportStatus != "In Transit" || OrderHD.transportStatus == "Done" || OrderHD.isCancel ?
-                                <div className="flex px-2" onClick={() => {
-                                    history.push(path.addAddress)
-                                }}>
-                                    <i className="fas fa-plus-circle flex " style={{ alignItems: "center" }}></i>
-                                    <div className="px-2">เพิ่มที่อยู่</div>
-                                </div> : null : null
+                      style={{
+                        color:
+                          usecoupon != null
+                            ? "red"
+                            : "var(--mq-txt-color, rgb(192, 192, 192))",
+                      }}
+                      onClick={() => {
+                        if (
+                          OrderHD.paymentStatus != "Done" &&
+                          !OrderHD.isCancel
+                        ) {
+                          setopenCoupon(true);
                         }
+                      }}
+                    >
+                      {usecoupon != null
+                        ? "-฿ " + fn.formatMoney(usecoupon.discount)
+                        : "ใช้ส่วนลด >"}
                     </div>
-                </div>
-
-                <div
-                    className="w-full  relative mt-2"
-                    style={{
-
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <div className="w-full mb-2">
-                        <div style={{ width: "90%", margin: "auto" }}>
-                            <div className="w-full font-bold">ช่องทางการขนส่ง</div>
-                        </div>
+                    <div className="px-2">
+                      {usecoupon != null &&
+                        OrderHD.paymentStatus != "Done" &&
+                        !OrderHD.isCancel ? (
+                        <i
+                          className="fas fa-times-circle"
+                          style={{ color: "red" }}
+                          onClick={Cancelcoupon}
+                        ></i>
+                      ) : null}
                     </div>
-                    <div className="px-5 py-5" style={{
-                        width: "90%", margin: "auto",
-                        border: "1px solid var(--mq-txt-color, rgb(170, 170, 170))",
-                        borderRadius: "10px"
-                    }}>
-                        <div className="mb-2">
-
-                            {optionLogistic.length > 0 && OrderHD != null ?
-                                <Select
-                                    isDisabled={OrderHD.transportStatus == "In Transit" || OrderHD.transportStatus == "Done" || OrderHD.isCancel ? true : false}
-                                    className="text-gray-mbk mt-1 text-sm w-full border-none select-Logistic "
-                                    isSearchable={false}
-                                    value={optionLogistic.filter(o => o.value === isLogistic)}
-                                    options={optionLogistic}
-
-                                    formatOptionLabel={({ name, description, deliveryCost }) => (
-                                        <div >
-                                            <div className="font-bold">
-                                                {name}
-                                            </div>
-                                            <div style={{
-                                                width: "100%",
-                                                whiteSpace: "break-spaces",
-                                                color: "var(--mq-txt-color, rgb(170, 170, 170))"
-                                            }}>{fn.IsNullOrEmpty(description) ? "-" : description}</div>
-                                            <div style={{
-                                                width: "100%",
-                                                whiteSpace: "break-spaces",
-                                                color: "var(--mq-txt-color, rgb(170, 170, 170))"
-                                            }}>{deliveryCost == 0 ? "ส่งฟรี" : ("฿ " + fn.formatMoney(deliveryCost))}</div>
-
-                                        </div>
-                                    )}
-                                    onChange={(e) => {
-                                        setisLogistic(e.id)
-                                        setDeliveryCost(e.deliveryCost)
-                                    }}
-
-                                />
-                                : null}
-
-                        </div>
-
-                    </div>
-                </div>
-
-                <div
-                    className="w-full  relative mt-2"
-                    style={{
-
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <div className="w-full mb-2">
-                        <div style={{ width: "90%", margin: "auto" }}>
-                            <div className="w-full font-bold">ช่องทางการชำระเงิน</div>
-                        </div>
-                    </div>
-                    <div className="px-5 py-5" style={{
-                        width: "90%", margin: "auto",
-                        border: "1px solid var(--mq-txt-color, rgb(170, 170, 170))",
-                        borderRadius: "10px"
-                    }}>
-                        {OrderHD != null ?
-                            <Radio.Group
-                                className="w-full radio-lbl-full"
-                                disabled={OrderHD.paymentStatus == "Done" ? true : false}
-                                onChange={(e) => {
-                                    if (e.target.value == 2) {
-                                        if (OrderHD.sumprice >= 500) {
-                                            setRadio(e.target.value)
-                                        } else {
-                                            addToast("ยอดรวมสิ้นค้าต้องมากกว่า 500 บาท",
-                                                {
-                                                    appearance: "warning",
-                                                    autoDismiss: true,
-                                                }
-                                            );
-                                        }
-                                    } else {
-                                        setRadio(e.target.value)
-                                    }
-                                }}
-                                value={RadioPayment}
-                            >
-                                <Radio value={1} className="w-full Radio-Payment " >
-                                    <div >
-                                        <div className="flex mb-2">
-                                            <i className="fas fa-landmark flex " style={{ alignItems: "center", color: "rgb(208 175 44)" }}></i>
-                                            <div className="font-bold px-2">โอนผ่านธนาคาร</div>
-                                        </div>
-
-                                        <div className="mb-2" style={{ display: RadioPayment == 2 ? "none" : "" }}>
-                                            {optionPayment.length > 0 ?
-                                                <Select
-                                                    isDisabled={OrderHD.paymentStatus == "Done" || OrderHD.isCancel ? true : false}
-                                                    className="text-gray-mbk mt-1 text-sm w-full border-none select-address "
-
-                                                    isSearchable={false}
-                                                    value={optionPayment.filter(o => o.value === paymentID)}
-
-                                                    options={optionPayment}
-
-                                                    formatOptionLabel={({ id, bankName, accountNumber, bankBranchName }) => (
-                                                        <div >
-                                                            <div className="flex font-bold">
-                                                                <div style={{ height: "15px", width: "15px" }} >
-                                                                    {id != null ?
-                                                                        <GetImageUC id={id} />
-                                                                        : null}
-                                                                </div>
-                                                                <div className="px-2"> {bankName} </div>
-                                                            </div>
-                                                            <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"เลขบัญชี : " + accountNumber}</div>
-                                                            <div style={{ fontWeight: "100", color: "var(--mq-txt-color, rgb(170, 170, 170))" }}>{"สาขา : " + bankBranchName}</div>
-
-                                                        </div>
-                                                    )}
-
-                                                    onChange={(e) => {
-                                                        setpaymentID(e.id)
-                                                    }}
-
-                                                />
-                                                : null}
-
-                                        </div>
-                                    </div>
-                                </Radio>
-
-
-                                <Radio value={2} className="w-full Radio-Payment ">
-                                    <div>
-                                        <div className="flex  ">
-                                            <i className="fas fa-credit-card flex " style={{ alignItems: "center", color: "rgb(208 175 44)" }}></i>
-                                            <div className="font-bold px-2">ผ่านบัตรเครดิต</div>
-                                        </div>
-                                        <div className="flex mt-2" style={{
-                                            width: "100%",
-                                            border: "1px solid var(--mq-txt-color, rgb(170, 170, 170))",
-                                            borderRadius: "10px",
-                                            height: "50px",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            display: RadioPayment == 1 ? "none" : ""
-                                        }}>
-                                            <div className="mb-2 flex">
-                                                <i className="fas fa-plus-circle flex " style={{ alignItems: "center" }}></i>
-                                                <div className="px-2 w-full font-bold">เพิ่มบัตรเครดิต/เดบิต</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Radio>
-
-                            </Radio.Group>
-                            : null}
-
-                    </div>
-                </div>
-
-                <div
-                    className="w-full  relative mt-2"
-                    style={{
-
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-
-                    <div style={{ width: "90%", margin: "auto" }}>
-                        <div>
-                            <div className="flex relative mb-2">
-                                <div>ยอดรวมสิ้นค้า : </div>
-                                {OrderHD != null ?
-                                    <div className="absolute" style={{ right: "0" }}>
-                                        {"฿ " + fn.formatMoney(OrderHD.sumprice)}
-                                    </div> : null}
-                            </div>
-                            <div className="flex relative mb-2">
-                                <div>รวมการจัดส่ง : </div>
-                                <div className="absolute" style={{ right: "0" }}>
-                                    {"฿ " + fn.formatMoney(deliveryCost)}
-
-                                </div>
-                            </div>
-                            <div className="flex relative mb-2">
-                                <div>ส่วนลด : </div>
-                                {usecoupon != null ?
-                                    <div className="absolute text-gold-mbk" style={{ right: "0" }}>
-                                        {"-฿ " + fn.formatMoney(usecoupon.discount)}
-                                    </div> : <div className="absolute" style={{ right: "0" }}>
-                                        {"฿ " + fn.formatMoney(0)}
-                                    </div>}
-                            </div>
-                            <div className="flex relative mb-2">
-                                <div>ยอดรวมสินค้า : </div>
-                                <div className="absolute text-green-mbk font-blod " style={{ right: "0", fontSize: "20px" }}>
-                                    {"฿ " + fn.formatMoney(
-                                        usecoupon == null ?
-                                            //ไม่มีสวนลด
-                                            sumprice + (
-                                                //ไม่โปร
-                                                tbPromotionDelivery == null ? deliveryCost :
-                                                    //มีโปร
-                                                    (sumprice + deliveryCost) > tbPromotionDelivery.buy ?
-                                                        (deliveryCost > tbPromotionDelivery.deliveryCost ? deliveryCost : 0)
-                                                        : deliveryCost
-                                            ) :
-                                            //มีส่วนลด   
-                                            (sumprice < usecoupon.discount ? 0 : sumprice - usecoupon.discount)
-                                            + (
-                                                //ไม่โปร
-                                                tbPromotionDelivery == null ? deliveryCost :
-                                                    //มีโปร
-                                                    (sumprice + deliveryCost) > tbPromotionDelivery.buy ?
-
-                                                        (deliveryCost > tbPromotionDelivery.deliveryCost ? deliveryCost : 0)
-
-                                                        : deliveryCost
-                                            )
-                                    )}
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-
-                <div className="absolute w-full flex" style={{ bottom: "0" }}>
-                    <div style={{ width: "50%", padding: "10px" }}>
-                        <div
-                            className="flex bg-green-mbk text-white text-center text-base  font-bold "
-                            style={{
-                                margin: "auto",
-                                height: "40px",
-                                borderRadius: "10px",
-                                padding: "5px",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                            onClick={() => {
-                                history.goBack()
-                            }}
-                        >
-                            {"กลับไปที่ร้านค้า"}
-                        </div>
-                    </div>
-                    <div style={{ width: "50%", padding: "10px" }}>
-                        <div
-                            className="flex bg-gold-mbk text-white text-center text-base  font-bold "
-                            style={{
-                                margin: "auto",
-                                height: "40px",
-                                borderRadius: "10px",
-                                padding: "5px",
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                            onClick={() => {
-
-                                sendOrder()
-                            }}
-                        >
-                            {"สั่งสินค้า"}
-                        </div>
-                    </div>
-                </div>
+                  </div>
+                ) : null}
+              </div>
             </div>
+            <div className="liff-inline" />
+            <AddressModel
+              isAddress={isAddress}
+              onChange={(e) => {
+                addToast("เปลียนที่อยู่จัดส่ง", {
+                  appearance: "success",
+                  autoDismiss: true,
+                });
+                setisAddress(e.id);
+              }}
+              setisAddress={setisAddress}
+            />
+            <LogisticModel
+              isLogistic={isLogistic}
+              onChange={(e) => {
+                addToast("เปลียนช่องทางการขนส่ง", {
+                  appearance: "success",
+                  autoDismiss: true,
+                });
+                setisLogistic(e.id);
+                setDeliveryCost(e.deliveryCost);
+              }}
+              settbPromotionDelivery={settbPromotionDelivery}
+            />
+            {OrderHD != null ? (
+              <PaymentModel
+                sumprice={sumprice}
+                setpaymentID={setpaymentID}
+                RadioPayment={RadioPayment}
+                setRadio={setRadio}
+                paymentID={paymentID}
+                disabled={OrderHD.paymentStatus == "Done" ? true : false}
+              />
+            ) : null}
+
+            <div
+              className="w-full  relative mt-2"
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div style={{ width: "90%", margin: "auto" }}>
+                <div>
+                  <div className="flex relative mb-2">
+                    <div>ยอดรวมสิ้นค้า : </div>
+                    {OrderHD != null ? (
+                      <div className="absolute" style={{ right: "0" }}>
+                        {"฿ " + fn.formatMoney(OrderHD.sumprice)}
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="flex relative mb-2">
+                    <div>รวมการจัดส่ง : </div>
+                    <div className="absolute" style={{ right: "0" }}>
+                      {"฿ " + fn.formatMoney(calcdeliveryCost())}
+                    </div>
+                  </div>
+                  <div className="flex relative mb-2">
+                    <div>ส่วนลด : </div>
+                    {usecoupon != null ? (
+                      <div
+                        className="absolute text-gold-mbk"
+                        style={{ right: "0" }}
+                      >
+                        {"-฿ " + fn.formatMoney(usecoupon.discount)}
+                      </div>
+                    ) : (
+                      <div className="absolute" style={{ right: "0" }}>
+                        {"฿ " + fn.formatMoney(0)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex relative mb-2">
+                    <div>ยอดรวมสินค้า : </div>
+                    <div
+                      className="absolute text-green-mbk font-blod "
+                      style={{ right: "0", fontSize: "20px" }}
+                    >
+                      {"฿ " + fn.formatMoney(calctotel())}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <FooterButton sendOrder={sendOrder} />
+          </div>
         </>
-    );
+      ) : (
+        <CouponModel
+          setopenCoupon={setopenCoupon}
+          setusecoupon={setusecoupon}
+          id={id}
+        />
+      )}
+    </>
+  );
 };
-
-
-const GetImageUC = ({ id }) => {
-    return <ImageUC
-        style={{ height: "15px", width: "15px" }}
-        find={1}
-        relatedid={id}
-        relatedtable={["payment"]}
-        alt=""
-        className=" animated-img "
-    ></ImageUC>
-
-}
-
 export default MakeOrderById;
