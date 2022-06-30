@@ -6,6 +6,7 @@ import {
 import ImageUC from "components/Image/index";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { path } from "services/liff.services";
+import EmptyOrder from "../emptyOrder";
 // components
 
 const Product = () => {
@@ -96,20 +97,8 @@ const Product = () => {
               })}
 
             </div> :
-            <div className="flex mt-4" style={{
-              height: "50px",
-              justifyContent: "center",
-              alignItems: "center",
-              color: "#ddd"
-            }}>
-              <div>
-                <i className="flex fas fa-box-open mb-2" style={{
-                  alignItems: "center", justifyContent: "center",
-                  fontSize: "28px"
-                }}></i>
-                <div> ยังไม่มีของสมนาคุณ </div>
-              </div>
-            </div>
+            <EmptyOrder text={"ยังไม่มีของสมนาคุณ"} />
+
           }
 
         </div>

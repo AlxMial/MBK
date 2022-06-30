@@ -7,6 +7,7 @@ import {
 } from "@services/liff.services";
 import Spinner from "components/Loadings/spinner/Spinner";
 import ImageUC from "components/Image/index";
+import EmptyOrder from "../emptyOrder";
 // components
 
 const MyOrder = () => {
@@ -32,7 +33,7 @@ const MyOrder = () => {
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
             คำสั่งชื้อของฉัน
           </div>
-          <div style={{ width: "50%", textAlign: "end", color: "#ddd" }} onClick={() => {
+          <div className="text-liff-gray-mbk" style={{ width: "50%", textAlign: "end" }} onClick={() => {
             history.push(path.myorder.replace(":id", "1"))
           }}>{"ดูทั้งหมด >"}</div>
         </div>
@@ -62,7 +63,7 @@ const MyOrder = () => {
                       {e.productName}
                     </div>
                     <div className="flex">
-                      <div style={{ width: "30%", color: "#ddd" }}> {"x" + e.amount}</div>
+                      <div className="text-liff-gray-mbk" style={{ width: "30%" }}> {"x" + e.amount}</div>
                       <div style={{ width: "70%", justifyContent: "end" }} className="flex" >
                         <div className="" style={{
                           textDecoration:
@@ -78,7 +79,7 @@ const MyOrder = () => {
                 </div>
               )
             })}
-            <div className="w-full flex mb-2" style={{ fontSize: "12px", justifyContent: "end", color: "#ddd" }}>
+            <div className="w-full flex mb-2 text-liff-gray-mbk" style={{ fontSize: "12px", justifyContent: "end" }}>
               <div className="font-bold"
                 onClick={() => {
                   history.push(OrderHD.paymentStatus == "Wating" ? path.makeorderbyid.replace(":id", OrderHD.id) : path.orderpaymentdone.replace(":id", OrderHD.id))
@@ -88,26 +89,11 @@ const MyOrder = () => {
             </div>
 
             <div className="flex" >
-              <div style={{ width: "50%", color: "#ddd" }}>{"รวม " + OrderHD.sumamount + " ชิ้น"}</div>
+              <div className="text-liff-gray-mbk" style={{ width: "50%" }}>{"รวม " + OrderHD.sumamount + " ชิ้น"}</div>
               <div className="font-bold" style={{ width: "50%", textAlign: "end", color: "#047738" }}>{"฿ " + fn.formatMoney(OrderHD.sumprice) + " บาท"} </div>
             </div>
           </div> :
-
-          <div className="flex mb-2" style={{
-            height: "50px",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "#ddd"
-
-          }}>
-            <div>
-              <i className="flex fas fa-box-open mb-2" style={{
-                alignItems: "center", justifyContent: "center",
-                fontSize: "28px"
-              }}></i>
-              <div> ยังไม่คำสั่งชื้อ </div>
-            </div>
-          </div>
+          <EmptyOrder text={"ยังไม่คำสั่งชื้อ"} />
         }
       </div>
     </>

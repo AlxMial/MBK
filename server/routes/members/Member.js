@@ -604,10 +604,14 @@ router.get("/getMemberPointsList", validateLineToken, async (req, res) => {
   try {
     code = 200;
     let data = await tbMemberPoint.findAll({
+      attributes: ["campaignType", "point", "redeemDate"],
       where: {
         tbMemberId: id,
         isDeleted: false,
       },
+      order: [
+        ['redeemDate', 'DESC'],
+      ],
     });
     if (data) {
       tbMemberPointList = data;

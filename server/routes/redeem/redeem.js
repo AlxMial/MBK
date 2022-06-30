@@ -372,7 +372,7 @@ router.post("/useCoupon", validateLineToken, async (req, res) => {
 
               const _tbCouponCode = await tbCouponCode.findAll({
                 limit: 1,
-                attributes: ["id"],
+                attributes: ["id", "codeCoupon"],
                 where: { redemptionCouponId: RedemptionCouponId, isDeleted: false, isUse: false },
               });
               if (_tbCouponCode) {
@@ -397,6 +397,16 @@ router.post("/useCoupon", validateLineToken, async (req, res) => {
                     { memberPoint: Member.memberPoint - item.points },
                     { where: { id: Member.id } })
 
+                  const _tbMemberPoint = await tbMemberPoint.create({
+                    campaignType: 4
+                    , code: CouponCode.codeCoupon
+                    , point: -item.points
+                    , redeemDate: new Date()
+                    , tbMemberId: Member.id
+                    , isDeleted: false
+
+                  });
+
                 } else {
                   status = false
                   msg = "ขออภัย คูปองหมด"
@@ -416,10 +426,7 @@ router.post("/useCoupon", validateLineToken, async (req, res) => {
           status = false
           msg = "ขออภัย โค้ดหมดอายุ"
         }
-
-
       }
-
     }
   } catch (e) {
     status = false
@@ -511,6 +518,17 @@ router.post("/useProduct", validateLineToken, async (req, res) => {
                   const dataMember = await tbMember.update(
                     { memberPoint: Member.memberPoint - item.points },
                     { where: { id: Member.id } })
+
+                  const _tbMemberPoint = await tbMemberPoint.create({
+                    campaignType: 5
+                    , code: RedemptionProductId.id
+                    , point: -item.points
+                    , redeemDate: new Date()
+                    , tbMemberId: Member.id
+                    , isDeleted: false
+
+                  });
+
                 } else {
                   status = false
                   msg = "ขออภัย สินค้าหมด"
@@ -656,6 +674,16 @@ router.post("/useGame", validateLineToken, async (req, res) => {
                 const dataMember = await tbMember.update(
                   { memberPoint: Member.memberPoint - item.points },
                   { where: { id: Member.id } })
+                  
+                  const _tbMemberPoint = await tbMemberPoint.create({
+                    campaignType: 6
+                    , code: item.id
+                    , point: -item.points
+                    , redeemDate: new Date()
+                    , tbMemberId: Member.id
+                    , isDeleted: false
+                  });
+
               } else {
                 const data = await tbMemberReward.create({
                   rewardType: "Product"
@@ -670,6 +698,16 @@ router.post("/useGame", validateLineToken, async (req, res) => {
                 const dataMember = await tbMember.update(
                   { memberPoint: Member.memberPoint - item.points },
                   { where: { id: Member.id } })
+
+                const _tbMemberPoint = await tbMemberPoint.create({
+                  campaignType: 6
+                  , code: item.id
+                  , point: -item.points
+                  , redeemDate: new Date()
+                  , tbMemberId: Member.id
+                  , isDeleted: false
+                });
+
               }
             } else {
               status = false

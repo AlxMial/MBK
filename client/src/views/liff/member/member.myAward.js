@@ -7,6 +7,7 @@ import {
 } from "@services/liff.services";
 import ImageUC from "components/Image/index";
 import moment from "moment";
+import EmptyOrder from "../emptyOrder";
 // components
 
 const MyAward = () => {
@@ -39,7 +40,7 @@ const MyAward = () => {
             คูปองของฉัน
           </div>
 
-          <div style={{ width: "50%", textAlign: "end", color: "#ddd" }} onClick={() => {
+          <div className="text-liff-gray-mbk" style={{ width: "50%", textAlign: "end" }} onClick={() => {
             history.push(path.coupon)
           }}>{"ดูทั้งหมด >"}</div>
         </div>
@@ -61,37 +62,25 @@ const MyAward = () => {
                 </div>
                 <div className="relative" style={{ width: "70%" }}>
                   <div className="font-bold line-clamp-1"> {e.couponName}</div>
-                  <div className="absolute" style={{ bottom: "0", color: "#ddd" }}> {"ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add("years", 543).format("DD MMM YYYY")}</div>
+                  <div className="absolute text-liff-gray-mbk" style={{ bottom: "0" }}>
+                    {"ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add(543, "years").format("DD MMM YYYY")}
+                  </div>
                 </div>
               </div>
             )
           })
-          : <div className="flex mb-2" style={{
-            height: "50px",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "#ddd"
-
-          }}>
-            <div>
-              <i className="flex fas fa-box-open mb-2" style={{
-                alignItems: "center", justifyContent: "center",
-                fontSize: "28px"
-              }}></i>
-              <div> ยังไม่มีคูปองที่ใช้งานได้ </div>
-            </div>
-          </div>}
+          : <EmptyOrder text={"ยังไม่มีคูปองที่ใช้งานได้"} />}
 
         <div className="flex relative" style={{ height: "40px", fontSize: "14px" }}>
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
             ของสัมนาคุณของฉัน
           </div>
-          <div style={{ width: "50%", textAlign: "end", color: "#ddd" }} onClick={() => {
+          <div className="text-liff-gray-mbk" style={{ width: "50%", textAlign: "end" }} onClick={() => {
             history.push(path.product)
           }}>{"ดูทั้งหมด >"}</div>
         </div>
 
-        {productItem != null ?
+        {productItem.length > 0 ?
           productItem.map((e, i) => {
             return (
               <div key={i} className="w-full flex mb-2">
@@ -108,7 +97,7 @@ const MyAward = () => {
                 </div>
                 <div className="relative" style={{ width: "70%" }}>
                   <div className="font-bold line-clamp-1"> {e.productName}</div>
-                  <div className="absolute w-full" style={{ bottom: "0", color: "#ddd" }}>
+                  <div className="absolute w-full text-liff-gray-mbk" style={{ bottom: "0" }}>
                     <div className="flex relative w-full" style={{ color: e.status < 3 ? "#c7b15e" : "#007a40" }}>
                       {e.status == 1 ?
                         <i className="flex fas fa-hourglass-end  px-2" style={{ alignItems: "center" }}></i>
@@ -129,20 +118,8 @@ const MyAward = () => {
               </div>
             )
           })
-          : <div className="flex" style={{
-            height: "50px",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "#ddd"
-          }}>
-            <div>
-              <i className="flex fas fa-box-open mb-2" style={{
-                alignItems: "center", justifyContent: "center",
-                fontSize: "28px"
-              }}></i>
-              <div> ยังไม่มีของสัมนาคุณ </div>
-            </div>
-          </div>}
+          : <EmptyOrder text={"ยังไม่มีของสัมนาคุณ"} />
+        }
 
       </div>
     </>

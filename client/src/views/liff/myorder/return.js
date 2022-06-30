@@ -4,7 +4,7 @@ import Spinner from "components/Loadings/spinner/Spinner";
 import { path } from "services/liff.services";
 import { getOrderHD } from "@services/liff.services";
 import DetailOrder from "./detailOrder";
-import EmptyOrder from "./emptyOrder";
+import EmptyOrder from "../emptyOrder";
 const ReturnOrder = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);

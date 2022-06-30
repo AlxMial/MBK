@@ -18,7 +18,7 @@ const Point = () => {
           setDataPoints(res.data.tbMemberPoint);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -31,7 +31,7 @@ const Point = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div className="absolute" style={{ marginTop: "-120px", width: "100%" }}>
+      <div className="h-full" style={{ marginTop: "-200px", width: "100%" }}>
         <MyPoint />
         <div className="mt-6">
           <div
@@ -66,15 +66,14 @@ const Point = () => {
           </div>
         </div>
 
-        <div className="mt-4 ">
+        <div className="mt-4 h-full ">
           <div
+            className="line-scroll"
             style={{
               width: "90%",
               padding: "10px",
               margin: "auto",
-              borderRadius: "10px",
-              maxHeight: "330px",
-              overflow: "scroll",
+              height: "calc(100% - 375px)",
             }}
           >
             {[...dataPoints].map((e, i) => {
@@ -99,8 +98,11 @@ const Point = () => {
                       {e.campaignType == "1"
                         ? "Code"
                         : e.campaignType == "2"
-                        ? "Ecommerce"
-                        : "Register"}
+                          ? "Ecommerce"
+                          : e.campaignType == "3" ? "Register"
+                            : e.campaignType == "4" ? "แลกคูปอง" :
+                              e.campaignType == "5" ? "แลกของสมนาคุณ"
+                                : "เล่นเกมส์"}
                     </div>
                     <div className="absolute" style={{ right: "0" }}>
                       <div
@@ -111,7 +113,7 @@ const Point = () => {
                       >
                         {("123".includes(e.campaignType.toLowerCase())
                           ? "+"
-                          : "-") + e.point}
+                          : "") + e.point}
                       </div>
                       <div className="text-2xs" style={{ color: "#aaa" }}>
                         {liff_dateToString(e.redeemDate, "DD MMM yyyy HH:mm")}

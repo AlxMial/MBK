@@ -5,7 +5,7 @@ import { path } from "services/liff.services";
 import { getOrderHD } from "@services/liff.services";
 import * as Storage from "@services/Storage.service";
 import DetailOrder from "./detailOrder";
-import EmptyOrder from "./emptyOrder";
+import EmptyOrder from "../emptyOrder";
 const Tobepaid = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);

@@ -12,6 +12,7 @@ import {
   get_shopcart,
   upd_shopcart
 } from "@services/liff.services";
+import EmptyOrder from "../emptyOrder";
 // components
 
 const ShowCart = () => {
@@ -37,7 +38,7 @@ const ShowCart = () => {
             });
             if (id.length > 0) {
               setusecoupon(Storage.getconpon_cart())
-             
+
               await axios.post("stock/getStock", { id: id }).then((response) => {
                 if (response.data.status) {
                   let tbStock = response.data.tbStock;
@@ -284,21 +285,8 @@ const ShowCart = () => {
             );
           })}
         </div> :
-        <div className="flex mb-2" style={{
-          height: "50px",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "#ddd"
+        <EmptyOrder text={"ยังไม่มีรายการสินค้า"} />
 
-        }}>
-          <div>
-            <i className="flex fas fa-box-open mb-2" style={{
-              alignItems: "center", justifyContent: "center",
-              fontSize: "28px"
-            }}></i>
-            <div> ยังไม่มีรายการสินค้า </div>
-          </div>
-        </div>
       }
       <div
         className="flex relative"
