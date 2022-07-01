@@ -12,7 +12,7 @@ const CancelDetail = ({ OrderHD }) => {
         }}
       >
         <div
-          className="flex"
+          className="flex text-sm"
           style={{ width: "calc(100% - 90px)", color: "red" }}
         >
           <i

@@ -89,10 +89,10 @@ const OrderPaymentDone = () => {
             {OrderHD.tbReturnOrder != null ? (
               <ReturnDetail OrderHD={OrderHD} />
             ) : null}
-            {OrderHD.paymentStatus == "In Process" ? (
+            {OrderHD.tbCancelOrder == null && OrderHD.tbReturnOrder == null && OrderHD.paymentStatus == "In Process" ? (
               <>
                 <div
-                  className="flex mt-2 "
+                  className="flex mt-2 text-sm "
                   style={{
                     width: "95%",
                     marginLeft: "auto",
@@ -114,7 +114,7 @@ const OrderPaymentDone = () => {
             ) : null}
 
             <div
-              className="flex mt-2 "
+              className="flex mt-2 text-sm "
               style={{
                 width: "95%",
                 marginLeft: "auto",
@@ -214,7 +214,7 @@ const OrderPaymentDone = () => {
               {[...OrderHD.dt].map((e, i) => {
                 return (
                   <div key={i}>
-                    <div className="flex mt-2" style={{ height: "90px " }}>
+                    <div className="flex mt-2 sm" style={{ height: "90px " }}>
                       <div style={{ width: "30%" }}>
                         <ImageUC
                           style={{ margin: "auto", height: "90px" }}
@@ -226,43 +226,31 @@ const OrderPaymentDone = () => {
                         ></ImageUC>
                       </div>
                       <div className="px-2" style={{ width: "70%" }}>
-                        <div className="flex" style={{ height: "60%" }}>
-                          <div
-                            className="font-bold"
-                            style={{ width: "80%", fontSize: "11px" }}
-                          >
-                            {e.productName}
-                          </div>
+                        <div className="w-full flex" style={{ height: "60%" }}>
+                          {e.productName}
                         </div>
-                        <div style={{ height: "15%" }}>
+
+                        <div className="flex relative font-bold">
                           <div
-                            className="font-bold"
-                            style={{ width: "80%", fontSize: "11px" }}
+                            style={{
+                              color: e.discount > 0 ? "rgba(0,0,0,.54)" : "",
+                              textDecoration:
+                                e.discount > 0 ? "line-through" : "none",
+                            }}
                           >
-                            {"จำนวน : " + e.amount}
+                            {"฿ " + fn.formatMoney(e.price)}
                           </div>
-                        </div>
-                        <div style={{ height: "15%" }}>
-                          <div
-                            className="flex relative font-bold"
-                            style={{ fontSize: "11px" }}
-                          >
+                          {e.discount > 0 ? (
                             <div
-                              style={{
-                                color: e.discount > 0 ? "rgba(0,0,0,.54)" : "",
-                                textDecoration:
-                                  e.discount > 0 ? "line-through" : "none",
-                              }}
+                              style={{ color: "red", paddingLeft: "10px" }}
                             >
-                              {"฿ " + fn.formatMoney(e.price)}
+                              {"฿ " + fn.formatMoney(e.discount)}
                             </div>
-                            {e.discount > 0 ? (
-                              <div
-                                style={{ color: "red", paddingLeft: "10px" }}
-                              >
-                                {"฿ " + fn.formatMoney(e.discount)}
-                              </div>
-                            ) : null}
+                          ) : null}
+                        </div>
+                        <div >
+                          <div style={{ width: "80%" }}>
+                            {"จำนวน : " + e.amount}
                           </div>
                         </div>
                       </div>
@@ -278,63 +266,66 @@ const OrderPaymentDone = () => {
         {OrderHD != null ? (
           <>
             <div
-              className="w-full  relative mt-2"
+              className="w-full  relative mt-2 text-sm"
               style={{
                 alignItems: "center",
                 justifyContent: "center",
               }}
             >
-              <div style={{ width: "90%", margin: "auto" }}>
-                <div>
-                  <div className="flex relative mb-2">
-                    <div>ยอดรวมสิ้นค้า : </div>
-                    <div className="absolute" style={{ right: "0" }}>
-                      {"฿ " + fn.formatMoney(OrderHD.sumprice)}
-                    </div>
-                  </div>
-                  <div className="flex relative mb-2">
-                    <div>รวมการจัดส่ง : </div>
-                    <div className="absolute" style={{ right: "0" }}>
-                      {"฿ " +
-                        fn.formatMoney(
-                          OrderHD.hddeliveryCost > OrderHD.hddiscountDelivery
-                            ? OrderHD.hddeliveryCost
-                            : OrderHD.hddiscountDelivery
-                        )}
-                    </div>
-                  </div>
-                  <div className="flex relative mb-2">
-                    <div>ส่วนลด : </div>
-                    {OrderHD.hddiscountCoupon > 0 ? (
-                      <div
-                        className="absolute text-gold-mbk"
-                        style={{ right: "0" }}
-                      >
-                        {"-฿ " + fn.formatMoney(OrderHD.hddiscountCoupon)}
-                      </div>
-                    ) : (
-                      <div className="absolute" style={{ right: "0" }}>
-                        {"฿ " + fn.formatMoney(0)}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex relative mb-2">
-                    <div>ยอดรวมสินค้า : </div>
-                    <div
-                      className="absolute text-green-mbk font-blod "
-                      style={{ right: "0", fontSize: "20px" }}
-                    >
-                      {"฿ " +
-                        fn.formatMoney(
-                          OrderHD.sumprice +
-                          OrderHD.hddeliveryCost +
-                          OrderHD.hddiscountDelivery -
-                          OrderHD.hddiscountCoupon -
-                          OrderHD.hddiscountStorePromotion
-                        )}
-                    </div>
+
+              <div style={{ width: "95%", margin: "auto" }}>
+
+                <div className="flex relative mb-2 font-bold">
+                  <div>{"ยอดรวมสิ้นค้า (" + OrderHD.stockNumber + " ชิ้น)"}</div>
+                  <div className="absolute" style={{ right: "0" }}>
+                    {"฿ " + fn.formatMoney(OrderHD.sumprice)}
                   </div>
                 </div>
+                <div className="liff-inline" />
+              </div>
+              <div style={{ width: "95%", margin: "auto" }}>
+
+
+                <div className="flex relative mb-2 mt-4 text-sm">
+                  <div>ส่วนลดร้านค้า : </div>
+                  <div className={"absolute " + (OrderHD.hddiscountStorePromotion > 0 ? " text-gold-mbk" : "")}
+                    style={{ right: "0" }}>
+                    {"฿ " + fn.formatMoney(OrderHD.hddiscountStorePromotion)}
+                  </div>
+                </div>
+                <div className="flex relative mb-2 text-sm">
+                  <div>ค่าจัดส่ง : </div>
+                  <div
+                    className={"absolute " + (OrderHD.hddeliveryCost > 0 || OrderHD.hddiscountDelivery > 0 ? "text-gold-mbk" : "")}
+                    style={{ right: "0" }}
+                  >
+                    {(OrderHD.hddeliveryCost > 0 || OrderHD.hddiscountDelivery > 0 ? "-" : "") + "฿ " + fn.formatMoney(OrderHD.hddeliveryCost + OrderHD.hddiscountDelivery)}
+                  </div>
+                </div>
+                <div className="flex relative mb-2 text-sm">
+                  <div>ส่วนลดคูปอง : </div>
+                  <div
+                    className={"absolute " + (OrderHD.hddiscountCoupon > 0 ? "text-gold-mbk" : "")}
+                    style={{ right: "0" }}
+                  >
+                    {(OrderHD.hddiscountCoupon > 0 ? "-" : "") + "฿ " + fn.formatMoney(OrderHD.hddiscountCoupon)}
+                  </div>
+                </div>
+                <div className="flex relative  mt-4">
+                  <div className="flex text-sm" style={{ width: "50%", alignItems: "end" }}>ยอดสุทธิ  : </div>
+                  <i className="flex fas fa-receipt text-gold-mbk text-xl" style={{ alignItems: "center" }}></i>
+                  <div
+                    className="flex text-green-mbk font-blod text-xl"
+                    style={{ right: "0", justifyContent: "end", width: "50%" }}
+                  >
+                    {"฿ " +
+                      fn.formatMoney(OrderHD.netTotal)}
+                  </div>
+                </div>
+                <div className="flex relative mb-2 w-full text-gold-mbk" style={{ justifyContent: "end" }}>
+                  {"+ " + OrderHD.points + " points"}
+                </div>
+
               </div>
             </div>
 

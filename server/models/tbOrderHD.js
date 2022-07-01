@@ -50,7 +50,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
       defaultValue: false
     },
-
     points: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -61,7 +60,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 0
     },
-
     deliveryCost: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -81,6 +79,43 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
+    },
+
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    address: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+    subDistrict: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    district: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    province: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    country: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    postcode: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
 
     addBy: {

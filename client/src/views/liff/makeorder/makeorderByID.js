@@ -36,6 +36,7 @@ const MakeOrderById = () => {
   const [sumprice, setsumprice] = useState(0);
   const [OrderHD, setOrderHD] = useState(null);
   const [freebies, setfreebies] = useState([]); //ของแถม
+  const [amount, setamount] = useState(0);
   const getProducts = async () => {
     let idlist = [];
     if (!fn.IsNullOrEmpty(id)) {
@@ -75,8 +76,10 @@ const MakeOrderById = () => {
                 if (response.data.status) {
                   let tbStock = response.data.tbStock;
                   let price = 0;
+                  let amount = 0;
                   tbStock.map((e, i) => {
                     let quantity = shop_orders.find((o) => o.id == e.id).amount;
+                    amount += quantity
                     e.quantity = quantity;
                     if (e.priceDiscount > 0) {
                       price += parseFloat(e.priceDiscount) * parseInt(quantity);
@@ -87,6 +90,7 @@ const MakeOrderById = () => {
 
                   price = price;
                   setsumprice(price < 1 ? 0 : price);
+                  setamount(amount)
                 }
               })
               .finally(() => {
@@ -383,7 +387,7 @@ const MakeOrderById = () => {
               <div style={{ width: "90%", margin: "auto" }}>
                 <div>
                   <div className="flex relative mb-2">
-                    <div>ยอดรวมสิ้นค้า : </div>
+                    <div>{"ยอดรวมสิ้นค้า (" + amount + " ชิ้น)"} : </div>
                     {OrderHD != null ? (
                       <div className="absolute" style={{ right: "0" }}>
                         {"฿ " + fn.formatMoney(OrderHD.sumprice)}
@@ -391,13 +395,13 @@ const MakeOrderById = () => {
                     ) : null}
                   </div>
                   <div className="flex relative mb-2">
-                    <div>รวมการจัดส่ง : </div>
+                    <div>ค่าจัดส่ง : </div>
                     <div className="absolute" style={{ right: "0" }}>
                       {"฿ " + fn.formatMoney(calcdeliveryCost())}
                     </div>
                   </div>
                   <div className="flex relative mb-2">
-                    <div>ส่วนลด : </div>
+                    <div>ส่วนลดคูปอง : </div>
                     {usecoupon != null ? (
                       <div
                         className="absolute text-gold-mbk"
@@ -412,7 +416,7 @@ const MakeOrderById = () => {
                     )}
                   </div>
                   <div className="flex relative mb-2">
-                    <div>ยอดรวมสินค้า : </div>
+                    <div>ยอดสุทธิ : </div>
                     <div
                       className="absolute text-green-mbk font-blod "
                       style={{ right: "0", fontSize: "20px" }}

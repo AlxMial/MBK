@@ -375,6 +375,8 @@ const getDelivery = async (logisticId, total) => {
           deliveryCost = _deliveryCost; //ค่าส่ง
           discountDelivery = 0; //โปรค่าส่ง
         }
+      } else {
+
       }
     } else {
       //ไม่มีข้อมูลการจัดส่ง
@@ -391,6 +393,92 @@ const getDelivery = async (logisticId, total) => {
     deliveryCost: deliveryCost,
     discountDelivery: discountDelivery
   }
+}
+//คูปอง
+const getDiscountCoupon = async (usecouponid) => {
+  let status = true
+  let msg = ""
+  let DiscountCoupon = 0; // ส่วนลดCoupon
+  let memberRewardId = null
+  try {
+    if (usecouponid != null) {
+      const _tbMemberReward = await tbMemberReward.findOne({
+        attributes: ["id", "TableHDId"],
+        where: { TableHDId: Encrypt.DecodeKey(usecouponid) },
+      });
+      //มีคูปอง
+
+      if (_tbMemberReward) {
+        memberRewardId = _tbMemberReward.id;
+
+        const _tbCouponCode = await tbCouponCode.findOne({
+          attributes: ["redemptionCouponId"],
+          where: { id: _tbMemberReward.TableHDId },
+        });
+        const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
+          attributes: ["discount", "discountType"],
+          where: { id: _tbCouponCode.redemptionCouponId },
+        });
+
+        if (_tbRedemptionCoupon) {
+          if (_tbRedemptionCoupon.discountType == 1) {
+            DiscountCoupon = _tbRedemptionCoupon.discount;
+          } else {
+            DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * totel;
+          }
+        }
+      } else {
+        status = false;
+        msg = "คูปองไม่สามมารถใช้ได้";
+      }
+    }
+  }
+  catch (e) {
+    status = false;
+    msg = e.message;
+  }
+  return { status: status, msg: msg, DiscountCoupon: DiscountCoupon, memberRewardId: memberRewardId }
+}
+const getAddress = async (addressId, memberID) => {
+  let status = true
+  let msg = ""
+  let address;
+  try {
+    let attributes = ["firstName"
+      , "lastName"
+      , "phone"
+      , "address"
+      , "subDistrict"
+      , "district"
+      , "province"
+      , "country"
+      , "postcode"]
+    if (addressId == null) {
+      //ใช้ที่อยู่ member 
+      let Member = await tbMember.findOne({
+        attributes: attributes,
+        where: { id: memberID },
+      });
+      if (Member) {
+        address = Member.dataValues
+      }
+
+    } else {
+      //ใช้ที่อยู่ที่เลิก
+
+      let Member = await tbOtherAddress.findOne({
+        attributes: attributes,
+        where: { memberID: memberID },
+      });
+      if (Member) {
+        address = Member.dataValues
+      }
+    }
+  } catch (e) {
+    status = false
+    msg = "Error Address !"
+  }
+  return { status: status, msg: msg, address: address }
 }
 //เพิ่ม Order เท่านั่น
 router.post("/doSaveOrder", validateLineToken, async (req, res) => {
@@ -435,72 +523,79 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     }
 
     // โปรร้าน
+
     let DiscountStorePromotion = 0;
-    let _getStorePromotion = await getStorePromotion(total)
-    if (_getStorePromotion.status) {
-      if (_getStorePromotion.type == "discount") {
-        DiscountStorePromotion = _getStorePromotion.DiscountStorePromotion
-        total = total - DiscountStorePromotion
-      } else if (_getStorePromotion.type == "product") {
-        let _orderDT = _getStorePromotion.orderDT
-        _orderDT.map((e, i) => {
-          orderDT.push(e)
-        })
+    if (status) {
+      let _getStorePromotion = await getStorePromotion(total)
+      if (_getStorePromotion.status) {
+        if (_getStorePromotion.type == "discount") {
+          DiscountStorePromotion = _getStorePromotion.DiscountStorePromotion
+          total = total - DiscountStorePromotion
+        } else if (_getStorePromotion.type == "product") {
+          let _orderDT = _getStorePromotion.orderDT
+          _orderDT.map((e, i) => {
+            orderDT.push(e)
+          })
+        }
+      } else {
+        status = _getStorePromotion.status;
+        msg = _getStorePromotion.msg;
       }
-    } else {
-      status = _getStorePromotion.status;
-      msg = _getStorePromotion.msg;
     }
 
 
     //ข้อมูลวิธีการจัดส่ง
     let deliveryCost = 0; //ค่าส่ง
     let discountDelivery = 0; //โปรค่าส่ง
-
-    let _getDelivery = await getDelivery(orderhd.logisticId, total)
-    if (_getDelivery.status) {
-      deliveryCost = _getDelivery.deliveryCost; //ค่าส่ง
-      discountDelivery = _getDelivery.discountDelivery; //โปรค่าส่ง
-      total = total + deliveryCost + discountDelivery
-    } else {
-      status = _getDelivery.status;
-      msg = _getDelivery.msg;
-    }
-
-
-    let DiscountCoupon = 0; // ส่วนลดCoupon
-    if (orderhd.usecouponid != null) {
-      const _tbMemberReward = await tbMemberReward.findOne({
-        attributes: ["id", "TableHDId"],
-        where: { TableHDId: Encrypt.DecodeKey(orderhd.usecouponid) },
-      });
-      //มีคูปอง
-      if (_tbMemberReward) {
-        orderhd.memberRewardId = _tbMemberReward.id;
-
-        const _tbCouponCode = await tbCouponCode.findOne({
-          attributes: ["redemptionCouponId"],
-          where: { id: _tbMemberReward.TableHDId },
-        });
-        const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
-          attributes: ["discount", "discountType"],
-          where: { id: _tbCouponCode.redemptionCouponId },
-        });
-
-        if (_tbRedemptionCoupon) {
-          if (_tbRedemptionCoupon.discountType == 1) {
-            DiscountCoupon = _tbRedemptionCoupon.discount;
-          } else {
-            DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * totel;
-          }
-        }
+    if (status) {
+      let _getDelivery = await getDelivery(orderhd.logisticId, total)
+      if (_getDelivery.status) {
+        deliveryCost = _getDelivery.deliveryCost; //ค่าส่ง
+        discountDelivery = _getDelivery.discountDelivery; //โปรค่าส่ง
+        total = total + deliveryCost + discountDelivery
       } else {
-        status = false;
-        msg = "คูปองไม่สามมารถใช้ได้";
+        status = _getDelivery.status;
+        msg = _getDelivery.msg;
       }
     }
 
+    // ส่วนลดCoupon
+    let DiscountCoupon = 0;
+    if (status) {
+      if (orderhd.usecouponid != null) {
+        let _getDiscountCoupon = await getDiscountCoupon(orderhd.usecouponid)
+        if (_getDiscountCoupon.status) {
+          DiscountCoupon = _getDiscountCoupon.DiscountCoupon
+          orderhd.memberRewardId = _getDiscountCoupon.memberRewardId
+        } else {
+          status = _getDiscountCoupon.status;
+          msg = _getDiscountCoupon.msg;
+        }
+      }
+    }
     total = total - DiscountCoupon
+
+    //ที่อยู่ปัจจุบัน
+    if (status) {
+      let _getAddress = await getAddress(orderhd.otherAddressId, Member.id)
+      if (_getAddress.status) {
+        const address = _getAddress.address
+        orderhd.firstName = address.firstName
+        orderhd.lastName = address.lastName
+        orderhd.phone = address.phone
+        orderhd.address = address.firstName
+        orderhd.subDistrict = address.subDistrict
+        orderhd.district = address.district
+        orderhd.province = address.province
+        orderhd.country = address.country
+        orderhd.postcode = address.postcode
+      } else {
+        status = _getAddress.status;
+        msg = _getAddress.msg;
+      }
+    }
+
+
     if (status) {
       //รันรหัสสินค้า
       const genorderNumber = async () => {
@@ -531,22 +626,22 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       orderhd.points = point
       orderhd.netTotal = total
 
-      const _tbOrderHD = await tbOrderHD.create(orderhd);
-
-      if (_tbOrderHD) {
-        orderId = Encrypt.EncodeKey(_tbOrderHD.dataValues.id);
-        for (var i = 0; i < orderDT.length; i++) {
-          orderDT[i].stockId = orderDT[i].stockId;
-          orderDT[i].orderId = _tbOrderHD.dataValues.id;
-
-          const _tbOrderDT = await tbOrderDT.create(orderDT[i]);
+      try {
+        const _tbOrderHD = await tbOrderHD.create(orderhd);
+        if (_tbOrderHD) {
+          orderId = Encrypt.EncodeKey(_tbOrderHD.dataValues.id);
+          for (var i = 0; i < orderDT.length; i++) {
+            orderDT[i].stockId = orderDT[i].stockId;
+            orderDT[i].orderId = _tbOrderHD.dataValues.id;
+            const _tbOrderDT = await tbOrderDT.create(orderDT[i]);
+          }
         }
+        //ลบข้อมูลในตระกร้า
+        const dataDel = await tbCartHD.destroy({ where: { uid: uid } });
+      } catch (e) {
+        status = false
+        msg = e.message
       }
-
-
-
-      //ลบข้อมูลในตระกร้า
-      const dataDel = await tbCartHD.destroy({ where: { uid: uid } });
     }
 
   } catch (e) {
@@ -623,92 +718,107 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       }
 
 
-      //คูปอง
-      let DiscountCoupon = 0; // ส่วนลดCoupon
-      if (data.usecouponid != null) {
-        const _tbMemberReward = await tbMemberReward.findOne({
-          attributes: ["id", "TableHDId"],
-          where: { TableHDId: Encrypt.DecodeKey(data.usecouponid) },
-        });
-        //มีคูปอง
-        data.memberRewardId = null;
-        if (_tbMemberReward) {
-          data.memberRewardId = _tbMemberReward.id;
-
-          const _tbCouponCode = await tbCouponCode.findOne({
-            attributes: ["redemptionCouponId"],
-            where: { id: _tbMemberReward.TableHDId },
-          });
-          const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
-            attributes: ["discount", "discountType"],
-            where: { id: _tbCouponCode.redemptionCouponId },
-          });
-
-          if (_tbRedemptionCoupon) {
-            if (_tbRedemptionCoupon.discountType == 1) {
-              DiscountCoupon = _tbRedemptionCoupon.discount;
-            } else {
-              DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * total;
-            }
+      // ส่วนลดCoupon
+      let DiscountCoupon = 0;
+      if (status) {
+        if (data.usecouponid != null) {
+          let _getDiscountCoupon = await getDiscountCoupon(data.usecouponid)
+          if (_getDiscountCoupon.status) {
+            DiscountCoupon = _getDiscountCoupon.DiscountCoupon
+            data.memberRewardId = _getDiscountCoupon.memberRewardId
+          } else {
+            status = _getDiscountCoupon.status;
+            msg = _getDiscountCoupon.msg;
           }
-        } else {
-          status = false;
-          msg = "คูปองไม่สามมารถใช้ได้";
         }
       }
       total = total - DiscountCoupon
 
-      const updtbOrderHD = await tbOrderHD.update(
-        {
-          logisticId: Encrypt.DecodeKey(data.logisticId),
-          paymentId: Encrypt.DecodeKey(data.paymentId),
-          paymentType: data.paymentType,
-          otherAddressId:
-            Encrypt.DecodeKey(data.isAddress) == "memberId"
-              ? null
-              : Encrypt.DecodeKey(data.isAddress),
-          memberRewardId: data.memberRewardId,
-          discountStorePromotion: DiscountStorePromotion,
-          deliveryCost: deliveryCost,
-          discountDelivery: discountDelivery,
-          discountCoupon: DiscountCoupon,
-          points: point,
-          netTotal: total
-        },
-        { where: { id: Encrypt.DecodeKey(data.id) } }
-      );
+      //ที่อยู่ปัจจุบัน
+      if (status) {
+        let _getAddress = await getAddress(data.otherAddressId, Member.id)
+        if (_getAddress.status) {
+          const address = _getAddress.address
+          data.firstName = address.firstName
+          data.lastName = address.lastName
+          data.phone = address.phone
+          data.address = address.firstName
+          data.subDistrict = address.subDistrict
+          data.district = address.district
+          data.province = address.province
+          data.country = address.country
+          data.postcode = address.postcodeF
+        } else {
+          status = _getAddress.status;
+          msg = _getAddress.msg;
+        }
+      }
 
-      const dataDel = await tbOrderDT.destroy({
-        where: {
-          orderId: Encrypt.DecodeKey(data.id),
-        },
-      });
+      if (status) {
+        try {
+          const updtbOrderHD = await tbOrderHD.update(
+            {
+              logisticId: Encrypt.DecodeKey(data.logisticId),
+              paymentId: Encrypt.DecodeKey(data.paymentId),
+              paymentType: data.paymentType,
+              otherAddressId:
+                Encrypt.DecodeKey(data.isAddress) == "memberId"
+                  ? null
+                  : Encrypt.DecodeKey(data.isAddress),
+              memberRewardId: data.memberRewardId,
 
-      if (orderDT) {
-        for (var i = 0; i < orderDT.length; i++) {
-          orderDT[i].stockId = orderDT[i].stockId;
-          orderDT[i].orderId = Encrypt.DecodeKey(data.id);
+              firstName: data.firstName,
+              lastName: data.lastName,
+              phone: data.phone,
+              address: data.firstName,
+              subDistrict: data.subDistrict,
+              district: data.district,
+              province: data.province,
+              country: data.country,
+              postcode: data.postcode,
 
-          const _tbOrderDT = await tbOrderDT.create(orderDT[i]);
+              discountStorePromotion: DiscountStorePromotion,
+              deliveryCost: deliveryCost,
+              discountDelivery: discountDelivery,
+              discountCoupon: DiscountCoupon,
+              points: point,
+              netTotal: total
+            },
+            { where: { id: Encrypt.DecodeKey(data.id) } }
+          );
+
+          const dataDel = await tbOrderDT.destroy({
+            where: {
+              orderId: Encrypt.DecodeKey(data.id),
+            },
+          });
+
+          if (orderDT) {
+            for (var i = 0; i < orderDT.length; i++) {
+              orderDT[i].stockId = orderDT[i].stockId;
+              orderDT[i].orderId = Encrypt.DecodeKey(data.id);
+
+              const _tbOrderDT = await tbOrderDT.create(orderDT[i]);
+            }
+          }
+        } catch (e) {
+          status = false;
+          msg = e.message;
         }
       }
     } else {
-      status = false;
-      msg = "auth";
+      status = false
+      msg = "member empty !"
     }
   } catch (e) {
-    status = false;
-    msg = e.message;
+    status = false
+    msg = e.message
   }
   return res.json({
     status: status,
     msg: msg,
-    // orderId: orderId
   });
 });
-
-
-
 
 router.post("/doSaveSlip", validateLineToken, async (req, res) => {
   let status = true;
@@ -1363,7 +1473,6 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
       where: { uid: uid },
     });
     let sumprice = 0;
-    let total = 0;
     if (Member) {
       OrderHDData = await tbOrderHD.findOne({
         attributes: [
@@ -1384,10 +1493,13 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
           "otherAddressId",
           "paymentType",
 
+          "stockNumber",
           ["deliveryCost", "hddeliveryCost"],
           "discountDelivery",
           "discountCoupon",
           "discountStorePromotion",
+          "points",
+          "netTotal"
         ],
         where: {
           IsDeleted: false,
@@ -1650,7 +1762,11 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
           hddiscountDelivery: hd.discountDelivery,
           hddiscountCoupon: hd.discountCoupon,
           hddiscountStorePromotion: hd.discountStorePromotion,
+          stockNumber: hd.stockNumber,
+          points: hd.points,
+          netTotal: hd.netTotal
         };
+
       }
     }
   } catch (e) {
