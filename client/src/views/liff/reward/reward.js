@@ -43,17 +43,17 @@ const Reward = () => {
           <div style={{ width: "90%", margin: "auto" }}>
             <div className="flex h-10">
               <div className="bg-green-mbk" style={{ width: "10px" }}></div>
-              <div style={{ padding: "10px" }}>รางวัลที่สามารถแลกได้</div>
+              <div className="text-ms" style={{ padding: "10px" }}>รางวัลที่สามารถแลกได้</div>
             </div>
 
             {Redemptionconditionshd.length > 0 ?
               <div className="w-full line-scroll" style={{ width: "90%", margin: "auto", height: "calc(100vh - 280px)" }}>
                 {[...Redemptionconditionshd].map((e, i) => {
                   return (
-                    <div className="w-full  mb-2" key={i} onClick={() => {
+                    <div className="w-full mb-2" key={i} onClick={() => {
                       history.push(path.inforeward.replace(":id", e.id))
                     }}>
-                      <div className="w-full" style={{ width: "200px", height: "100px", margin: "auto" }}>
+                      <div className="w-ful" style={{ width: "200px", height: "100px", margin: "auto" }}>
                         <ImageUC
                           style={{ width: "200px", height: "100px", }}
                           find={1}
@@ -61,12 +61,15 @@ const Reward = () => {
                           relatedtable={[(e.rewardType == 1 ? "tbRedemptionCoupon" : "tbRedemptionProduct")]}
                           alt="tbRedemptionProduct"
                           className=" animated-img"
-                        ></ImageUC>
-                        {/* <div className="w-full">sdasd </div> */}
+                        />
                       </div>
-                      <div className="w-full font-bold mt-2 mb-2">{e.redemptionName} </div>
-                      <div className="w-full  mb-2" style={{ color: "#ddd" }}>{e.points + " คะแนน"} </div>
-                      <div className="w-full  mb-2" style={{ color: "#ddd" }}>{"ใช้ได้ถึง " + moment(e.endDate).locale("th").add("years", 543).format("DD MMM yyyy")} </div>
+                      <div className="mt-2 text-ms">
+                        <div className="w-full font-bold mb-2 ">{e.redemptionName} </div>
+                        <div className="w-full mb-2 text-liff-gray-mbk">{e.points + " คะแนน"} </div>
+                        <div className="w-full mb-2 text-liff-gray-mbk">
+                          {"ใช้ได้ถึง " + moment(e.endDate).locale("th").add("years", 543).format("DD MMM yyyy")}
+                        </div>
+                      </div>
                     </div>
                   )
                 })}

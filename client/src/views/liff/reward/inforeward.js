@@ -6,12 +6,9 @@ import {
   useProduct,
   useGame
 } from "@services/liff.services";
-import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
-import { path } from "services/liff.services";
 import ImageUC from "components/Image/index";
 import Error from "../error"
-
 import CouponSucceed from "./coupon.succeed"
 import ProductSucceed from "./product.succeed"
 import GameSucceed from "./game.succeed"
@@ -19,14 +16,11 @@ import GameUC from "./gameUC"
 // components
 
 const InfoReward = () => {
-  const history = useHistory();
   let { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [modeldata, setmodeldata] = useState({ open: false, title: "", msg: "" });
   const [page, setpage] = useState("main");
   const [gameData, setgameData] = useState(null);
-  // const [page, setpage] = useState("CouponSucceed");
-
   const [Redemptionconditionshd, setRedemptionconditionshd] = useState(null);
   const GetRedemptionconditionshdById = async () => {
     setIsLoading(true);
@@ -130,7 +124,7 @@ const InfoReward = () => {
         <div style={{ height: "calc(50% - 100px)", backgroundColor: "#007a40" }}>
           {Redemptionconditionshd != null ?
             <>
-              <div className="w-full absolute" style={{ height: "100%" }}>
+              <div className="w-full h-full absolute" >
                 <div className="mb-4" style={{ height: "200px" }}>
                   <div style={{ width: "200px", height: "100px", margin: "auto" }}>
                     <ImageUC
@@ -150,12 +144,12 @@ const InfoReward = () => {
                   boxShadow: "0px -2px 10px 0px #aba6a6"
                 }}>
 
-                  <div className="font-bold mt-4  mb-4 text-center" style={{ fontSize: "25px" }}>{Redemptionconditionshd.redemptionName}</div>
-                  <div className="mb-4" style={{ borderBottom: "1px solid #ddd" }}></div>
-                  <div className="font-bold text-center mb-4" style={{ fontSize: "15px" }}>รายละเอียด</div>
-                  <div className="mb-4" style={{ borderBottom: "1px solid #ddd" }}></div>
-                  <div className="" style={{ fontSize: "15px", minHeight: "150px" }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{Redemptionconditionshd.description}</div>
-                  <div style={{ textAlign: "center", color: "#ddd" }}>{"ใช้ " + Redemptionconditionshd.points + " คะแนน"}</div>
+                  <div className="font-bold mt-4  mb-4 text-center text-xl" >{Redemptionconditionshd.redemptionName}</div>
+                  <div className="liff-inline" />
+                  <div className="font-bold text-center mt-2 mb-4 text-sm">รายละเอียด</div>
+                  <div className="liff-inline" />
+                  <div className="text-sm" style={{ minHeight: "150px" }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{Redemptionconditionshd.description}</div>
+                  <div className="text-sm text-liff-gray-mbk" style={{ textAlign: "center" }}>{"ใช้ " + Redemptionconditionshd.points + " คะแนน"}</div>
                 </div>
               </div>
 

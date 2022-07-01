@@ -660,7 +660,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
                 // ใช้คูปอง
                 const data = await tbMemberReward.create({
                   rewardType: "Coupon"
-                  , TableHDId: item.id
+                  , TableHDId: itemrendom.id
                   , redeemDate: new Date()
                   , isUsedCoupon: false
                   , isDeleted: false
