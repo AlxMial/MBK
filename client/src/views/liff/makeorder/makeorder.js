@@ -195,27 +195,27 @@ const MakeOrder = () => {
   };
 
   const calctotel = () => {
-    //ราคา
-    const totel =
-      usecoupon == null
-        ? sumprice
-        : sumprice < usecoupon.discount
-          ? 0
-          : sumprice - usecoupon.discount;
-    //มีโปรส่ง
-    let _deliveryCost = deliveryCost;
-    if (tbPromotionDelivery != null) {
-      if (totel >= tbPromotionDelivery.buy && deliveryCost > 0) {
-        _deliveryCost = tbPromotionDelivery.deliveryCost;
-      }
-    }
     // มีโปรร้าน
-    let _prodiscstro = calcprodiscount(totel);
+    let total = sumprice;
+    let _prodiscstro = calcprodiscount(sumprice);
     let _prodiscount = 0;
     if (_prodiscstro.type == "discount") {
       _prodiscount = _prodiscstro.data;
     }
-    return totel + _deliveryCost - _prodiscount;
+    total = total - _prodiscount;
+    //มีโปรส่ง
+    let _deliveryCost = deliveryCost;
+    if (tbPromotionDelivery != null) {
+      if (total >= tbPromotionDelivery.buy && deliveryCost > 0) {
+        _deliveryCost = tbPromotionDelivery.deliveryCost;
+      }
+    }
+    total = total + _deliveryCost;
+    if (usecoupon != null) {
+      total = total - usecoupon.discount;
+    }
+
+    return total;
   };
   const calcprodiscount = (totel) => {
     let _prodiscount = 0;

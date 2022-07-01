@@ -396,7 +396,6 @@ router.post("/useCoupon", validateLineToken, async (req, res) => {
                   const dataMember = await tbMember.update(
                     { memberPoint: Member.memberPoint - item.points },
                     { where: { id: Member.id } })
-
                   const _tbMemberPoint = await tbMemberPoint.create({
                     campaignType: 4
                     , code: CouponCode.codeCoupon
@@ -625,7 +624,6 @@ router.post("/useGame", validateLineToken, async (req, res) => {
 
               }
             }
-            // if (RedemptionProductId.isNoLimitReward) {
             //คูปอง
             const _tbRedemptionCoupon = await tbRedemptionCoupon.findAll({
               attributes: ["id", "couponName", "description"],
@@ -636,17 +634,19 @@ router.post("/useGame", validateLineToken, async (req, res) => {
                 const item = _tbRedemptionCoupon[i].dataValues
                 const _tbCouponCode = await tbCouponCode.findAll({
                   limit: 1,
-                  attributes: ["id"],
+                  attributes: ["id", "codeCoupon"],
                   where: { redemptionCouponId: item.id, isDeleted: false, isUse: false },
                 });
                 if (_tbCouponCode.length > 0) {
                   //มีคูปองใช้งานได้
                   RedemptionList.push({
-                    id: _tbCouponCode[0].dataValues.id, type: "Coupon"
+                    id: _tbCouponCode[0].dataValues.id
+                    , codeCoupon: _tbCouponCode[0].dataValues.codeCoupon
+                    , type: "Coupon"
                     , imgId: Encrypt.EncodeKey(_tbRedemptionCoupon[i].dataValues.id)
                     , name: _tbRedemptionCoupon[i].dataValues.couponName
-                    , description: _tbRedemptionCoupon[i].dataValues.description,
-                    Count: 1
+                    , description: _tbRedemptionCoupon[i].dataValues.description
+                    , Count: 1
                   })
                 }
               }
@@ -669,20 +669,20 @@ router.post("/useGame", validateLineToken, async (req, res) => {
                 // update coupon
                 const dataCouponCode = await tbCouponCode.update(
                   { isUse: true },
-                  { where: { id: item.id } })
+                  { where: { id: itemrendom.id } })
                 //update คะแนน
                 const dataMember = await tbMember.update(
                   { memberPoint: Member.memberPoint - item.points },
                   { where: { id: Member.id } })
-                  
-                  const _tbMemberPoint = await tbMemberPoint.create({
-                    campaignType: 6
-                    , code: item.id
-                    , point: -item.points
-                    , redeemDate: new Date()
-                    , tbMemberId: Member.id
-                    , isDeleted: false
-                  });
+
+                const _tbMemberPoint = await tbMemberPoint.create({
+                  campaignType: 6
+                  , code: itemrendom.codeCoupon
+                  , point: -item.points
+                  , redeemDate: new Date()
+                  , tbMemberId: Member.id
+                  , isDeleted: false
+                });
 
               } else {
                 const data = await tbMemberReward.create({
@@ -701,7 +701,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
 
                 const _tbMemberPoint = await tbMemberPoint.create({
                   campaignType: 6
-                  , code: item.id
+                  // , code: item.id
                   , point: -item.points
                   , redeemDate: new Date()
                   , tbMemberId: Member.id

@@ -69,7 +69,11 @@ const MyAward = () => {
               </div>
             )
           })
-          : <EmptyOrder text={"ยังไม่มีคูปองที่ใช้งานได้"} />}
+          :
+          <div style={{ height: "50px" }}>
+            <EmptyOrder text={"ยังไม่มีคูปองที่ใช้งานได้"} />
+          </div>
+        }
 
         <div className="flex relative" style={{ height: "40px", fontSize: "14px" }}>
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
@@ -118,7 +122,10 @@ const MyAward = () => {
               </div>
             )
           })
-          : <EmptyOrder text={"ยังไม่มีของสัมนาคุณ"} />
+          :
+          <div style={{ height: "50px" }}>
+            <EmptyOrder text={"ยังไม่มีของสัมนาคุณ"} />
+          </div>
         }
 
       </div>
