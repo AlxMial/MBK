@@ -150,7 +150,7 @@ const MakeOrder = () => {
           },
           orderdt: dt,
         };
-        doSaveOrder(order, (res) => {
+        doSaveOrder(order, async (res) => {
           if (res.status) {
             // ลบข้อมูล
             if (id == "cart") {
@@ -161,7 +161,20 @@ const MakeOrder = () => {
             if (RadioPayment === 1) {
               history.push(path.paymentInfo.replace(":id", res.data.orderId));
             } else {
-              console.log("2c2p");
+              setIsLoading(true);
+              let twoceetwopee = await axios.post("2c2p/paymentToken");
+              if(twoceetwopee){
+
+  
+                window.open(twoceetwopee.url , '_blank');
+
+                
+                setIsLoading(false);
+                console.log("false 2c2p");
+
+              } else {
+                console.log("false 2c2p");
+              }
             }
           } else {
           }
