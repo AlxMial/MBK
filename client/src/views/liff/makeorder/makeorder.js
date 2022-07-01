@@ -139,7 +139,6 @@ const MakeOrder = () => {
         });
         let order = {
           orderhd: {
-            paymentId: RadioPayment === 1 ? paymentID : null,
             paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
             logisticId: isLogistic,
             stockNumber: shop_orders.length,
@@ -150,6 +149,10 @@ const MakeOrder = () => {
           },
           orderdt: dt,
         };
+        if (RadioPayment === 1) {
+          order.orderhd.paymentId = paymentID
+        }
+
         doSaveOrder(order, async (res) => {
           if (res.status) {
             // ลบข้อมูล
@@ -161,20 +164,7 @@ const MakeOrder = () => {
             if (RadioPayment === 1) {
               history.push(path.paymentInfo.replace(":id", res.data.orderId));
             } else {
-              setIsLoading(true);
-              let twoceetwopee = await axios.post("2c2p/paymentToken");
-              if(twoceetwopee){
-
-  
-                window.open(twoceetwopee.url , '_blank');
-
-                
-                setIsLoading(false);
-                console.log("false 2c2p");
-
-              } else {
-                console.log("false 2c2p");
-              }
+              window.location.href = res.data.url.webPaymentUrl
             }
           } else {
           }

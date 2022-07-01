@@ -1,33 +1,29 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const axios = require('axios').default;
+const {
+    tbOrderHD,
+} = require("../../models");
+const ValidateEncrypt = require("../../services/crypto");
+const Encrypt = new ValidateEncrypt();
 
 router.post("/", async (req, res) => {
+    const data = req.body;
 
-    let secretKey = '0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22'
+    const decoded = jwt.decode(data.payload)
 
-    let payload = {
-        "merchantID": '764764000011180',
-        "invoiceNo": 'xxx456xx-xxx',
-        "description": "item 1",
-        "amount": '299.00',
-        "currencyCode": "THB",
-        "request3DS": "Y",
-        "backendReturnUrl": "http://example.org/backendReturnUrl",
-        "frontendReturnUrl": "http://example.org/frontendReturnUrl"
+    if (decoded.respDesc == "Success") {
+        let invoiceNo = Encrypt.DecodeKey(decoded.invoiceNo)
+        let referenceNo = decoded.referenceNo
+
+        const _tbOrderHD = await tbOrderHD.update({
+            transetionId: referenceNo,
+            paymentDate: new Date(),
+            paymentStatus: "Done"
+        },
+            { where: { id: Encrypt.DecodeKey(invoiceNo.split(",")[0]), orderNumber: invoiceNo.split(",")[1] } });
     }
-
-    //api 2c2p https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken {{payload : "token"}}
-
-    //payload : payload
-
-    //webPaymentUrl window.open
-
-    const token = jwt.sign(payload, secretKey);
-
-    res.json({
-        status: token,
-    });
 });
 
 

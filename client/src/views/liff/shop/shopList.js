@@ -309,7 +309,8 @@ const ShopList = () => {
           className={"wfull animated-SlideShow "}
         >
           {ImgBanner.length > 0 && IsImgBanner ? (
-            <SlideShow img={ImgBanner} duration={5000} setcategoryview={setcategoryview} selectMenu={selectMenu} />
+            <SlideShow img={ImgBanner} duration={5000} setcategoryview={setcategoryview}
+             selectMenu={selectMenu} />
           ) : !IsImgBanner ? (
             <div
               className="flex w-full text-green-mbk font-bold"

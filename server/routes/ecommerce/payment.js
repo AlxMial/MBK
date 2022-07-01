@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbPayment, tbPromotionStore } = require("../../models");
+const { tbPayment, tbPromotionStore, tbOrderHD } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -160,6 +160,37 @@ router.get("/getPromotionstores", validateLineToken, async (req, res) => {
     promotionStore: promotionStore,
   });
 });
+router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
+  // let data = []
+  let status = true;
+  let promotionStore = [];
+  let OrderHD
+  try {
+    let id = Encrypt.DecodeKey(req.body.id)
+    const _tbOrderHD = await tbOrderHD.findOne(
+      {
+        attributes: ["orderNumber", "paymentStatus"],
+        where: {
+          id: Encrypt.DecodeKey(id.split(",")[0]),
+          orderNumber: id.split(",")[1],
+        },
+      }
+    );
+
+    if (_tbOrderHD) {
+      OrderHD = _tbOrderHD
+    }
+  } catch (e) {
+    status = false;
+  }
+
+  res.json({
+    status: status,
+    OrderHD: OrderHD,
+  });
+});
+
+
 //#endregion line liff
 
 module.exports = router;

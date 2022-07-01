@@ -119,20 +119,24 @@ const MakeOrderById = () => {
   const sendOrder = () => {
     let updatrOrder = {
       id: id,
-      paymentId: RadioPayment === 1 ? paymentID : null,
+
       paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
       logisticId: isLogistic,
       isAddress: isAddress,
       usecouponid: usecoupon == null ? null : usecoupon.id,
       orderdt: OrderHD.dt,
     };
+    if (RadioPayment === 1) {
+      updatrOrder.paymentId = paymentID
+    }
+
     doSaveUpdateOrder({ data: updatrOrder }, (res) => {
       if (res.status) {
         if (RadioPayment === 1) {
           history.push(path.paymentInfo.replace(":id", id));
         } else {
-          
-          console.log("2c2p");
+
+          window.location.href = res.data.url.webPaymentUrl
         }
       } else {
       }

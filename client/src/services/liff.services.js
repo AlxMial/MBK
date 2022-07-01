@@ -37,6 +37,7 @@ import makeorderbyid from "views/liff/makeorder/makeorderByID";
 import orderpaymentdone from "views/liff/makeorder/ordeDone/orderpaymentdone";
 import addAddress from "views/liff/makeorder/addAddress";
 
+import paymentsucceed from "views/liff/makeorder/paymentsucceed"
 //paymentInfo 
 import paymentInfo from "views/liff/payment/paymentInfo";
 
@@ -80,7 +81,7 @@ export const path = {
 
   product: "/line/product",
   infoproduct: "/line/infoproduct/:id",
-
+  paymentsucceed :  "/line/paymentsucceed/:id",
 };
 export const routes = [
   {
@@ -133,6 +134,11 @@ export const routes = [
     path: path.infoproduct,
     component: infoproduct
   },
+  {
+    path: path.paymentsucceed,
+    component: paymentsucceed
+  },
+  
 
   {
     path: path.reward,
@@ -307,6 +313,12 @@ export const addMemberAddress = (data, s, e = () => { }, f = () => { }) => {
 export const gettbPayment = (s, e = () => { }, f = () => { }) => {
   httpGet("/payment/gettbPayment", s, e, f);
 };
+export const getPaymentsucceed = (data, s, e = () => { }, f = () => { }) => {
+  httpPost("/payment/getPaymentsucceed ", data, s, e, f);
+};
+
+
+
 export const gettbLogistic = (s, e = () => { }, f = () => { }) => {
   httpGet("/logistic/gettbLogistic", s, e, f);
 };
@@ -351,7 +363,6 @@ export const cancelOrder = (data, s, e = () => { }, f = () => { }) => {
 export const returnOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/returnOrder/returnOrder ", data, s, e, f);
 };
-
 
 
 export const membersDpd = (data, s, e = () => { }, f = () => { }) => {

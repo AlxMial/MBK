@@ -7,6 +7,8 @@ const { validateToken } = require("../../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../../middlewares/LineMiddleware");
 const ValidateEncrypt = require("../../../services/crypto");
 const Encrypt = new ValidateEncrypt();
+const jwt = require('jsonwebtoken');
+const axios = require('axios').default;
 
 const Sequelize = require("sequelize");
 const {
@@ -489,6 +491,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
   let orderId;
   let { orderhd, orderdt } = req.body;
   let orderDT = [];
+  let url2c2p
   try {
     Member = await tbMember.findOne({
       attributes: ["id"],
@@ -502,7 +505,10 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         hour12: false,
       })
     );
-    orderhd.paymentId = Encrypt.DecodeKey(orderhd.paymentId);
+    if (orderhd.paymentId != null) {
+      orderhd.paymentId = Encrypt.DecodeKey(orderhd.paymentId);
+    }
+
     orderhd.logisticId = Encrypt.DecodeKey(orderhd.logisticId);
     orderhd.otherAddressId =
       Encrypt.DecodeKey(orderhd.isAddress) == "memberId"
@@ -638,6 +644,43 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         }
         //ลบข้อมูลในตระกร้า
         const dataDel = await tbCartHD.destroy({ where: { uid: uid } });
+
+        //2c2p
+        if (orderhd.paymentType == "Credit") {
+          // orderId = 6
+          let secretKey = '0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22'
+          let payload = {
+            "merchantID": '764764000011180',
+
+            "invoiceNo": orderId + "-" + orderhd.orderNumber,
+            "description": "item 1",
+            "amount": orderhd.netTotal,
+            "currencyCode": "THB",
+            "request3DS": "Y",
+            "backendReturnUrl": "https://undefined.ddns.net/mahboonkrongserver/2c2p",
+            "frontendReturnUrl": "https://undefined.ddns.net/mahboonkrongserver/line/paymentsucceed/" + Encrypt.EncodeKey((orderId + "," + orderhd.orderNumber)),
+          }
+
+          const token = jwt.sign(payload, secretKey);
+          await axios.post("https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken",
+            { "payload": token })
+            .then(function (res) {
+              // handle success
+              let payload = res.data.payload
+              const decoded = jwt.decode(payload)
+              url2c2p = decoded
+            })
+            .catch(function (error) {
+              // handle error
+              console.log(error);
+            })
+            .then(function () {
+              // always executed
+            });
+        }
+
+
+
       } catch (e) {
         status = false
         msg = e.message
@@ -649,9 +692,10 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     msg = e.message;
   }
   return res.json({
-    status: status,
+    status: false,
     msg: msg,
     orderId: orderId,
+    url: url2c2p
   });
 });
 router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
@@ -1767,6 +1811,8 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
           netTotal: hd.netTotal
         };
 
+
+        // เช็คการจ่ายเงิน
       }
     }
   } catch (e) {

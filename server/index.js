@@ -15,7 +15,11 @@ app.use(cors());
 
 function authentication(req, res, next) {
     var authheader = req.headers.authorization;
-    if (!req.originalUrl.includes("/getImgQrCode/")) {
+    if (req.originalUrl.includes("/getImgQrCode/") || req.originalUrl.includes("/2c2p")) {
+        next();
+    } else {
+
+
         if (!authheader) {
             var err = new Error('You are not authenticated!');
             res.setHeader('WWW-Authenticate', 'Basic');
@@ -36,8 +40,6 @@ function authentication(req, res, next) {
             err.status = 401;
             return res.status(401).json({ status: 401, message: 'You are not authenticated!' })
         }
-    } else {
-        next();
     }
 
 }
