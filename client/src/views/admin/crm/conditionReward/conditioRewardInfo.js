@@ -150,6 +150,18 @@ export default function ConditioRewardInfo() {
           "* จำนวนคะแนนต้องมากกว่า 0",
           (value) => value > 0
         ),
+      startDate:
+        Yup.string().required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก วันที่เริ่มต้น"
+            : "* Please enter Start Date"
+        )
+      ,
+      endDate: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่สิ้นสุด"
+          : "* Please enter End Date"
+      ),
     }),
     onSubmit: (values) => {
       let ImageSave = {};
@@ -384,7 +396,7 @@ export default function ConditioRewardInfo() {
       discountType: "1",
       startDate: new Date(),
       isNotExpired: false,
-      expiredDate: new Date(),
+      expireDate: new Date(),
       couponCount: 0,
       isNoLimitPerDayCount: false,
       usedPerDayCount: 0,
@@ -413,6 +425,21 @@ export default function ConditioRewardInfo() {
           (value) => value > 0
         ),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
+      startDate:
+        Yup.string().required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก วันที่เริ่มต้น"
+            : "* Please enter Start Date"
+        )
+      ,
+      expireDate: Yup.string().when('isNotExpired', {
+        is: false,
+        then: Yup.string().required(Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่สิ้นสุด"
+          : "* Please enter End Date"),
+        otherwise: Yup.string(),
+      })
+
     }),
   });
 
@@ -921,10 +948,11 @@ export default function ConditioRewardInfo() {
                         }}
                         onChange={(e) => {
                           setIsClick({ ...isClick, redemptionStart: false });
+                          // formik.handleChange(e);
                           if (e === null) {
                             formik.setFieldValue(
                               "startDate",
-                              new Date(),
+                              "",
                               false
                             );
                           } else {
@@ -944,6 +972,14 @@ export default function ConditioRewardInfo() {
                             : null
                         }
                       />
+                    </div>
+                    <div className="relative w-full px-4">
+                      {formik.touched.startDate &&
+                        formik.errors.startDate ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formik.errors.startDate}
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                   <div
@@ -966,7 +1002,7 @@ export default function ConditioRewardInfo() {
                         onChange={(e) => {
                           setIsClick({ ...isClick, redemptionEnd: false });
                           if (e === null) {
-                            formik.setFieldValue("endDate", new Date(), false);
+                            formik.setFieldValue("endDate", "", false);
                           } else {
                             formik.setFieldValue(
                               "endDate",
@@ -984,6 +1020,14 @@ export default function ConditioRewardInfo() {
                             : null
                         }
                       />
+                    </div>
+                    <div className="relative w-full px-4">
+                      {formik.touched.endDate &&
+                        formik.errors.endDate ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formik.errors.endDate}
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                   <div className="w-full">&nbsp;</div>
