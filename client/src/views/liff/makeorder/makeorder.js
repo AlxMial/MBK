@@ -153,6 +153,7 @@ const MakeOrder = () => {
             usecouponid: usecoupon == null ? null : usecoupon.id,
           },
           orderdt: dt,
+          cart: id == "cart" ? true : false
         };
         if (RadioPayment === 1) {
           order.orderhd.paymentId = paymentID
@@ -261,7 +262,7 @@ const MakeOrder = () => {
         data = { type: "discount", data: _prodiscount };
       } else {
         //สินค้า
-  
+
         let productList = promotionstores.find((e) => e.condition == "product" && e.buy <= totel);
         // console.log(productList);
         if (productList != null) {
