@@ -78,6 +78,7 @@ const BannerModal = ({
       picture: "",
       option: 0,
       categoryId: "",
+      imageId:"",
       id: "",
     },
   ];
@@ -167,6 +168,7 @@ const BannerModal = ({
               picture: e.picture,
               option: e.option,
               categoryId: e.categoryId,
+              imageId:e.imageId,
               id: e.id,
             },
           ];

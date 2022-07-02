@@ -48,7 +48,9 @@ router.get("/byId/:id", validateToken, async (req, res) => {
 
 router.get("/byShopId/:id", validateToken, async (req, res) => {
     const id = req.params.id;
-    const data = await tbBanner.findAll({ where: { shopId: id,isDeleted:0 } });
+    const data = await tbBanner.findAll({ where: { shopId: id,isDeleted:0 }, order: [
+        ['id', 'ASC'],
+    ], });
     res.json({
         status: true,
         message: "success",

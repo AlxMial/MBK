@@ -152,25 +152,25 @@ const StockInfo = ({
               <ModalHeader title="เพิ่มสินค้า" handleModal={handleModal} />
               <div className="flex flex-wrap px-24 py-10 justify-center Overflow-Banner">
                 <div className="w-full lg:w-12/12 px-4 margin-auto-t-b">
-                  <div className="flex flex-wrap">
-                    {/* อิสขายดี */}
-                    <div className="flex flex-wrap mt-4">
-                      <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                        <LabelUC label="สินค้าขายดี" isRequired={true} />
-                      </div>
-                      <div className="w-full lg:w-6/12 margin-auto-t-b">
-                        <div className="relative w-full px-4">
-                          <Switch
-                            uncheckedIcon={false}
-                            checkedIcon={false}
-                            onChange={(value) => {
-                              formik.setFieldValue("isBestSeller", value);
-                            }}
-                            checked={formik.values.isBestSeller}
-                          />
-                        </div>
+                  {/* อิสขายดี */}
+                  <div className="flex flex-wrap mt-4">
+                    <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
+                      <LabelUC label="สินค้าขายดี" isRequired={true} />
+                    </div>
+                    <div className="w-full lg:w-6/12 margin-auto-t-b">
+                      <div className="relative w-full px-4">
+                        <Switch
+                          uncheckedIcon={false}
+                          checkedIcon={false}
+                          onChange={(value) => {
+                            formik.setFieldValue("isBestSeller", value);
+                          }}
+                          checked={formik.values.isBestSeller}
+                        />
                       </div>
                     </div>
+                  </div>
+                  <div className="flex flex-wrap">
                     {/* รูปสินค้า */}
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
                       <LabelUC label="รูปสินค้า" isRequired={true} />
