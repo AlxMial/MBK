@@ -12,7 +12,8 @@ const SelectUC = ({ name, options, value, onChange, isDisabled, bgColor }) => {
       name={name}
       onChange={onChange}
       className={className}
-
+      menuPortalTarget={document.body}
+      menuPosition="fixed"
       options={options}
       value={value}
       isDisabled={(isDisabled) ? isDisabled : false}

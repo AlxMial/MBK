@@ -222,7 +222,7 @@ const Payment = () => {
                             </div>
                         </div>
                     </div>
-                    <PaymentTable listPayment={listPayment} openModal={openModal} />
+                    <PaymentTable listPayment={listPayment} setListPayment={setListPayment} openModal={openModal} />
                 </div>
             </div>
             {open && <PaymentModal

@@ -213,7 +213,6 @@ const Member = () => {
           className="mt-2"
           style={{ height: "20px", backgroundColor: "#ebebeb" }}
         ></div>
-
         <Tabs
           className="Tabs-line noselect m-0"
           defaultActiveKey="1"

@@ -52,9 +52,8 @@ const Logistic = () => {
                 listSearch.filter(
                     (x) =>
                         x.deliveryName.toLowerCase().includes(e) ||
-                        x.deliveryTypeName.toLowerCase().includes(e) ||
-                        x.deliveryCostName.toLowerCase().toString().includes(e) ||
-                        x.isShowName.toLowerCase().includes(e)
+                        x.logisticType.toLowerCase().includes(e) ||
+                        x.deliveryCost.toString().toLowerCase().includes(e)
                 )
             );
         }
@@ -78,14 +77,14 @@ const Logistic = () => {
     const formikLogistic = useFormik({
         initialValues: {
             id: "",
-            logisticType: 'kerry',
+            logisticType: '1',
             deliveryName: '',
-            deliveryType: 'constant',
+            deliveryType: '1',
             deliveryTypeName: '',
             deliveryCost: '',
             deliveryCostName: '',
             description: '',
-            isShow: "1",
+            isShow: true,
             isShowName: '',
             isDeleted: false,
             addBy: "",
@@ -206,6 +205,7 @@ const Logistic = () => {
                     </div>
                     <LogisticTable
                         listLogistic={listLogistic}
+                        setListLogistic={setListLogistic}
                         openModal={openModalLogistic}
                         saveLogisticSuccess={saveLogisticSuccess}
                         saveLogisticNotSuccess={saveLogisticNotSuccess} />

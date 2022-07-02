@@ -56,11 +56,10 @@ class ValidateService {
     ) {
       value = options[0].value;
     }
-    if (options.length > 0)
+
       return options
         ? options.find((option) => option.value.toString() === value.toString())
         : "";
-    else return "";
   };
 
   defaultValueText = (options, value) => {

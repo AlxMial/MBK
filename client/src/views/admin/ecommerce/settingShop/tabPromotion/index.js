@@ -41,10 +41,10 @@ const Promotion = () => {
             setListPromotion(
                 listSearch.filter(
                     (x) =>
-                        x.accountName.toLowerCase().includes(e) ||
-                        x.accountNumber.toLowerCase().includes(e) ||
-                        x.bankName.toLowerCase().toString().includes(e) ||
-                        x.bankBranchName.toLowerCase().includes(e)
+                        x.campaignName.toLowerCase().includes(e) ||
+                        x.buy.toString().toLowerCase().includes(e) ||
+                        (x.condition === "discount" ? "ส่วนลด" : x.condition === "percentDiscount" ? "% ส่วนลด" : "สินค้าสมนาคุณ").toLowerCase().toString().includes(e) ||
+                        x.description.toLowerCase().includes(e)
                 )
             );
         }
@@ -66,7 +66,7 @@ const Promotion = () => {
             id: "",
             campaignName: "",
             buy: '',
-            condition: 'discount',
+            condition: '1',
             discount: '',
             discountName: '',
             percentDiscount: '',
@@ -141,7 +141,7 @@ const Promotion = () => {
                             </div>
                         </div>
                     </div>
-                    <PromotionTable listPromotion={listPromotion} openModal={openModal} />
+                    <PromotionTable listPromotion={listPromotion} setListPromotion={setListPromotion} openModal={openModal} />
                 </div>
             </div>
             {open && <PromotionModal

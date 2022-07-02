@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import ReactPaginate from "react-paginate";
 import axios from "services/axios";
 
-const PaymentTable = ({ listPayment, openModal }) => {
+const PaymentTable = ({ listPayment , setListPayment , openModal }) => {
   const thClass =
     "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
   const tdClass =
@@ -39,16 +39,24 @@ const PaymentTable = ({ listPayment, openModal }) => {
 }
 
   const deletePayment = () => {
-    let id = null;
-    var filtered = listPayment.filter( function(value, index, arr){
-        if(value.id !== deleteValue)
-        {
-            return value;
-        }
+    // let id = null;
+    // var filtered = listPayment.filter( function(value, index, arr){
+    //     if(value.id !== deleteValue)
+    //     {
+    //         return value;
+    //     }
+    // });
+    // if(id)
+    // listPayment = filtered;
+    // closeModalDeleted();
+    axios.delete(`/payment/${deleteValue}`).then(() => {
+        setListPayment(
+            listPayment.filter((val) => {
+                return val.id !== deleteValue;
+            })
+        );
+      closeModalDeleted();
     });
-    if(id)
-    listPayment = filtered;
-    closeModalDeleted();
     // axios.delete(`/payment/${deleteValue}`).then(() => {
     //   listPayment.filter((val) => {
     //     return val.id !== deleteValue;
