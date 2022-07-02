@@ -144,8 +144,7 @@ const LiffAPP = () => {
       (e) => {
         let checkRegister = Session.getcheckRegister();
         if (checkRegister.isRegister !== true) {
-          if (pathname.toUpperCase().includes("shoplist") || pathname.toUpperCase().includes("showProducts") || pathname.toUpperCase().includes("showCart")) {
-
+          if (pathname.toLowerCase().includes("shoplist") || pathname.toLowerCase().includes("showProducts") || pathname.toLowerCase().includes("showCart")) {
           } else {
             if (!pathname.includes("register")) {
               history.push(path.register);
