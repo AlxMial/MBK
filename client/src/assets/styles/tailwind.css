@@ -4814,6 +4814,21 @@ input[type="number"] {
   border: 1px solid #047738;
 }
 
+
+.Modal-line-cancel {
+  background-color: #fff;
+  padding: 20px;
+  width: 90%;
+  height: 80%;
+  margin: auto;
+  display: flex;
+  margin-top: 10%;
+  margin-bottom: 10%;
+  border-radius: 20px;
+  border: 1px solid #047738;
+}
+
+
 .Modal-error {
   background-color: #fff;
   padding: 20px;

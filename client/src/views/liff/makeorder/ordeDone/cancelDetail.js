@@ -34,11 +34,11 @@ const CancelDetail = ({ OrderHD }) => {
             color: "var(--mq-txt-color, rgb(20, 100, 246))",
           }}
         >
-          {OrderHD.tbCancelOrder.cancelStatus === "Wait"
+          {OrderHD.tbCancelOrder.cancelStatus == 1
             ? "รอดำเนินการ"
-            : OrderHD.tbCancelOrder.cancelStatus === "Refund"
-            ? "คืนเงิน"
-            : "ไม่คืนเงิน"}
+            : OrderHD.tbCancelOrder.cancelStatus == 2
+              ? "คืนเงิน"
+              : "ไม่คืนเงิน"}
         </div>
       </div>
 
@@ -52,11 +52,11 @@ const CancelDetail = ({ OrderHD }) => {
           <i className="flex fas fa-times" style={{ alignItems: "center" }}></i>
           <div className="px-2">
             {"ประเภทการยกเลิก : " +
-              (OrderHD.tbCancelOrder.cancelType === "User"
+              (OrderHD.tbCancelOrder.cancelType == 2
                 ? "ยกเลิกโดยผู้ใช้"
-                : OrderHD.tbCancelOrder.cancelType === "Admin"
-                ? "ผู้ดูแลระบบ"
-                : "ยกเลิกอัตโนมัติ")}
+                : OrderHD.tbCancelOrder.cancelType == 1
+                  ? "ผู้ดูแลระบบ"
+                  : "ยกเลิกอัตโนมัติ")}
           </div>
         </div>
         <div className="w-full flex mb-2 text-liff-gray-mbk">

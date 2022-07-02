@@ -223,10 +223,16 @@ const ShopList = () => {
       .then((response) => {
         if (response.data.status) {
           let tbStock = response.data.tbStock;
+          tbStock = tbStock.filter(e => {
+            if (e.productCount > 0) {
+              return e
+            }
+          })
           settbStock(tbStock);
           let tbStockiewNominal = [];
           let tbStockiewFlashSale = [];
           tbStock.filter((e) => {
+
             if (!e.isFlashSale) {
               tbStockiewNominal.push(e);
             } else {
@@ -299,7 +305,7 @@ const ShopList = () => {
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div style={{ height: "100%" }}>
+      <div className="h-full">
         <div
           style={{
             height: 125 - y + "px",

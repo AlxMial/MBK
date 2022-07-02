@@ -112,9 +112,9 @@ const DetailOrder = ({
                         color: "var(--mq-txt-color, rgb(20, 100, 246))",
                       }}
                     >
-                      {e.cancelStatus === "Wait"
+                      {e.cancelStatus == 1
                         ? "รอดำเนินการ"
-                        : e.cancelStatus === "Refund"
+                        : e.cancelStatus ==2
                           ? "คืนเงิน"
                           : "ไม่คืนเงิน"}
                     </div>

@@ -1020,8 +1020,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
               const data = await tbCancelOrder.create({
                 orderId: hd.id,
-                cancelStatus: "No refund",
-                cancelType: "Auto",
+                cancelStatus: 3,
+                cancelType: 3,
                 cancelDetail: "Auto",
                 description: "Auto",
                 isDeleted: false,
