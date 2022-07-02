@@ -13,9 +13,9 @@ const ReturnOrder = () => {
     setIsLoading(true);
     getOrderHD(
       {
-        PaymentStatus: "Done",
+        PaymentStatus: 3,
         isCancel: false,
-        TransportStatus: "Done",
+        TransportStatus:3,
         isReturn: true,
       },
       (res) => {

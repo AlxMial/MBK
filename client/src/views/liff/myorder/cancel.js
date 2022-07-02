@@ -13,9 +13,9 @@ const Cancel = () => {
     setIsLoading(true);
     getOrderHD(
       {
-        PaymentStatus: "Wating",
+        PaymentStatus: 1,
         isCancel: true,
-        TransportStatus: "Prepare",
+        TransportStatus: 1,
         isReturn: false,
       },
       (res) => {

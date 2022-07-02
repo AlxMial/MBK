@@ -119,8 +119,8 @@ const MakeOrderById = () => {
   const sendOrder = () => {
     let updatrOrder = {
       id: id,
-
-      paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
+      // "Money Transfer" : "Credit" 1,2
+      paymentType: RadioPayment === 1 ? 1 : 2,
       logisticId: isLogistic,
       isAddress: isAddress,
       usecouponid: usecoupon == null ? null : usecoupon.id,
@@ -321,7 +321,7 @@ const MakeOrderById = () => {
                       }}
                       onClick={() => {
                         if (
-                          OrderHD.paymentStatus != "Done" &&
+                          OrderHD.paymentStatus != 3 &&
                           !OrderHD.isCancel
                         ) {
                           setopenCoupon(true);
@@ -334,7 +334,7 @@ const MakeOrderById = () => {
                     </div>
                     <div className="px-2">
                       {usecoupon != null &&
-                        OrderHD.paymentStatus != "Done" &&
+                        OrderHD.paymentStatus != 3 &&
                         !OrderHD.isCancel ? (
                         <i
                           className="fas fa-times-circle"
@@ -378,7 +378,7 @@ const MakeOrderById = () => {
                 RadioPayment={RadioPayment}
                 setRadio={setRadio}
                 paymentID={paymentID}
-                disabled={OrderHD.paymentStatus == "Done" ? true : false}
+                disabled={OrderHD.paymentStatus == 3 ? true : false}
               />
             ) : null}
 

@@ -646,7 +646,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         const dataDel = await tbCartHD.destroy({ where: { uid: uid } });
 
         //2c2p
-        if (orderhd.paymentType == "Credit") {
+        if (orderhd.paymentType == 2) {
           // orderId = 6
           let secretKey = '0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22'
           let payload = {
@@ -886,7 +886,7 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
       // อัพถานะการจ่ายเงิน
       const _tbOrderHDupd = await tbOrderHD.update(
         {
-          paymentStatus: "In Process",
+          paymentStatus: 2,
         },
         {
           where: {
@@ -959,8 +959,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
     });
     if (Member) {
       if (
-        PaymentStatus == "Wating" &&
-        TransportStatus == "Prepare" &&
+        PaymentStatus == 1 &&
+        TransportStatus == 1 &&
         !isCancel &&
         !isReturn
       ) {
@@ -971,7 +971,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             isCancel: isCancel,
             IsDeleted: false,
             memberId: Member.id,
-            paymentStatus: [PaymentStatus, "In Process"],
+            paymentStatus: [PaymentStatus, 2],
             transportStatus: TransportStatus,
             isReturn: isReturn,
           },
@@ -1006,7 +1006,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
                 }
               );
             } else {
-              if (hd.paymentStatus == "In Process") {
+              if (hd.paymentStatus == 2) {
                 hd.isPaySlip = true;
               } else {
                 hd.isPaySlip = false;
@@ -1016,7 +1016,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             }
           }
         }
-      } else if (PaymentStatus == "Done" && TransportStatus == "Prepare") {
+      } else if (PaymentStatus == 3 && TransportStatus == 1) {
         //เตรียมสินค้า
         let _OrderHDData = await tbOrderHD.findAll({
           attributes: attributesOrderHD,
@@ -1042,7 +1042,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             }
           }
         }
-      } else if (PaymentStatus == "Done" && TransportStatus == "In Transit") {
+      } else if (PaymentStatus == 3 && TransportStatus == 2) {
         //ที่ต้องได้รับ
         OrderHDData = await tbOrderHD.findAll({
           attributes: attributesOrderHD,
@@ -1056,8 +1056,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
           },
         });
       } else if (
-        PaymentStatus == "Done" &&
-        TransportStatus == "Done" &&
+        PaymentStatus == 3 &&
+        TransportStatus == 3 &&
         !isReturn
       ) {
         //สำเร็จ
@@ -1094,8 +1094,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
           }
         }
       } else if (
-        PaymentStatus == "Wating" &&
-        TransportStatus == "Prepare" &&
+        PaymentStatus == 1 &&
+        TransportStatus == 1 &&
         isCancel &&
         !isReturn
       ) {
@@ -1125,8 +1125,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
           }
         }
       } else if (
-        PaymentStatus == "Done" &&
-        TransportStatus == "Done" &&
+        PaymentStatus == 3 &&
+        TransportStatus == 3 &&
         !isCancel &&
         isReturn
       ) {
@@ -1276,7 +1276,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
           IsDeleted: false,
           memberId: Member.id,
           // paymentStatus: "Wating",
-          transportStatus: "Prepare",
+          transportStatus: 1,
           isReturn: false,
         },
       });
@@ -1485,9 +1485,9 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
           Payment: _tbPayment,
         };
 
-        if (OrderHDData.dataValues.paymentStatus != "Wating") {
+        if (OrderHDData.dataValues.paymentStatus !=1) {
           status = false;
-          msg = OrderHDData.dataValues.paymentStatus == "In Process" ? "รอการตรวจสอบ" : "ชำระเงินเรียบร้อยแล้ว";
+          msg = OrderHDData.dataValues.paymentStatus == 2 ? "รอการตรวจสอบ" : "ชำระเงินเรียบร้อยแล้ว";
         }
       }
     }

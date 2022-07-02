@@ -14,9 +14,9 @@ const Toreceive = () => {
     setIsLoading(true);
     getOrderHD(
       {
-        PaymentStatus: "Done",
+        PaymentStatus: 3,
         isCancel: false,
-        TransportStatus: "In Transit",
+        TransportStatus: 2,
         isReturn: false,
       },
       (res) => {

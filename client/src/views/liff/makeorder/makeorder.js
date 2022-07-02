@@ -144,11 +144,11 @@ const MakeOrder = () => {
         });
         let order = {
           orderhd: {
-            paymentType: RadioPayment === 1 ? "Money Transfer" : "Credit",
+            paymentType: RadioPayment === 1 ? 1 : 2,
             logisticId: isLogistic,
             stockNumber: shop_orders.length,
-            paymentStatus: "Wating",
-            transportStatus: "Prepare",
+            paymentStatus: 1,
+            transportStatus: 1,
             isAddress: isAddress,
             usecouponid: usecoupon == null ? null : usecoupon.id,
           },
@@ -258,7 +258,6 @@ const MakeOrder = () => {
             _prodiscount = discount;
           }
         });
-        console.log(_prodiscount);
         data = { type: "discount", data: _prodiscount };
       } else {
         //สินค้า

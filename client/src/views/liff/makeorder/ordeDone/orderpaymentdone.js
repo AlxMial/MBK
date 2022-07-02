@@ -89,7 +89,7 @@ const OrderPaymentDone = () => {
             {OrderHD.tbReturnOrder != null ? (
               <ReturnDetail OrderHD={OrderHD} />
             ) : null}
-            {OrderHD.tbCancelOrder == null && OrderHD.tbReturnOrder == null && OrderHD.paymentStatus == "In Process" ? (
+            {OrderHD.tbCancelOrder == null && OrderHD.tbReturnOrder == null && OrderHD.paymentStatus == 2 ? (
               <>
                 <div
                   className="flex mt-2 text-sm "
@@ -148,9 +148,9 @@ const OrderPaymentDone = () => {
               </CopyToClipboard>
             </div>
 
-            {(OrderHD.paymentStatus === "Done" &&
-              OrderHD.transportStatus === "Prepare") ||
-              OrderHD.transportStatus === "In Transit" ? (
+            {(OrderHD.paymentStatus === 3 &&
+              OrderHD.transportStatus ===1) ||
+              OrderHD.transportStatus === 2 ? (
               <div>
                 <div
                   className="flex mt-2 "
@@ -334,24 +334,24 @@ const OrderPaymentDone = () => {
               style={{ alignItems: "center", justifyContent: "center" }}
             >
               {OrderHD != null ? (
-                OrderHD.paymentStatus == "Done" &&
-                  (OrderHD.transportStatus == "Prepare" ||
-                    OrderHD.transportStatus == "In Transit") ? (
+                OrderHD.paymentStatus == 3 &&
+                  (OrderHD.transportStatus == 1 ||
+                    OrderHD.transportStatus == 2) ? (
                   <>
                     <div style={{ width: "90%", margin: "auto" }}>
                       <div>
                         <div className="flex relative mb-2 text-gold-mbk ">
                           <div>
-                            {OrderHD.transportStatus == "Prepare" ? (
+                            {OrderHD.transportStatus ==1 ? (
                               <i className="fas fa-shopping-bag"></i>
                             ) : (
                               <i className="fas fa-truck"></i>
                             )}
                           </div>
                           <div className=" px-2 ">
-                            {OrderHD.transportStatus == "Prepare"
+                            {OrderHD.transportStatus == 1
                               ? "เตรียมสินค้า"
-                              : OrderHD.transportStatus == "In Transit"
+                              : OrderHD.transportStatus == 2
                                 ? "อยู่ระหว่างการจัดส่ง"
                                 : ""}
                           </div>
@@ -374,7 +374,7 @@ const OrderPaymentDone = () => {
                     style={{
                       backgroundColor:
                         OrderHD != null
-                          ? OrderHD.transportStatus == "Prepare"
+                          ? OrderHD.transportStatus ==1
                             ? OrderHD.tbCancelOrder == null
                               ? "red"
                               : ""
@@ -383,7 +383,7 @@ const OrderPaymentDone = () => {
                       border:
                         "1px solid " +
                         (OrderHD != null
-                          ? OrderHD.transportStatus == "Prepare"
+                          ? OrderHD.transportStatus == 1
                             ? OrderHD.tbCancelOrder == null
                               ? "red"
                               : "#ddd"
@@ -391,7 +391,7 @@ const OrderPaymentDone = () => {
                           : "#ddd"),
                       color:
                         OrderHD != null
-                          ? OrderHD.transportStatus == "Prepare"
+                          ? OrderHD.transportStatus == 1
                             ? OrderHD.tbCancelOrder == null
                               ? "#FFFFFF"
                               : "#ddd"
@@ -400,7 +400,7 @@ const OrderPaymentDone = () => {
                     }}
                     onClick={() => {
                       if (
-                        OrderHD.transportStatus == "Prepare" &&
+                        OrderHD.transportStatus == 1 &&
                         OrderHD.tbCancelOrder == null
                       ) {
                         setisOpenmodel(true);
@@ -413,7 +413,8 @@ const OrderPaymentDone = () => {
                 </div>
               </div>
             </div>
-            {OrderHD.paymentType == "Money Transfer" ? (
+            {/* // "Money Transfer" : "Credit" 1,2 */}
+            {OrderHD.paymentType == 1 ? (
               <div style={{ width: "90%", margin: "auto" }}>
                 <ImageUC
                   style={{ margin: "auto" }}

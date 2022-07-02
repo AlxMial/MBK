@@ -82,7 +82,7 @@ const MyOrder = () => {
             <div className="w-full flex mb-2 text-liff-gray-mbk" style={{ fontSize: "12px", justifyContent: "end" }}>
               <div className="font-bold"
                 onClick={() => {
-                  history.push(OrderHD.paymentStatus == "Wating" ? path.makeorderbyid.replace(":id", OrderHD.id) : path.orderpaymentdone.replace(":id", OrderHD.id))
+                  history.push(OrderHD.paymentStatus == 1 ? path.makeorderbyid.replace(":id", OrderHD.id) : path.orderpaymentdone.replace(":id", OrderHD.id))
                 }}>
                 {"ดูรายละเอียดคำสั่งซื้อ >"}
               </div>

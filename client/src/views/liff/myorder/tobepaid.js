@@ -14,8 +14,8 @@ const Tobepaid = () => {
     setIsLoading(true);
     getOrderHD(
       {
-        PaymentStatus: "Wating",
-        TransportStatus: "Prepare",
+        PaymentStatus: 1,
+        TransportStatus: 1,
         isCancel: false,
         isReturn: false,
       },

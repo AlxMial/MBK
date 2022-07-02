@@ -12,7 +12,7 @@ const Prepare = () => {
   const GetOrderHD = () => {
     setIsLoading(true);
     getOrderHD(
-      { PaymentStatus: "Done", isCancel: false, TransportStatus: "Prepare" },
+      { PaymentStatus: 3, isCancel: false, TransportStatus: 1 },
       (res) => {
         if (res.status) {
           setOrderHD(res.data.OrderHD);

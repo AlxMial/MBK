@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
         const _tbOrderHD = await tbOrderHD.update({
             transetionId: referenceNo,
             paymentDate: new Date(),
-            paymentStatus: "Done"
+            paymentStatus: 3
         },
             { where: { id: Encrypt.DecodeKey(invoiceNo.split(",")[0]), orderNumber: invoiceNo.split(",")[1] } });
     }
