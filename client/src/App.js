@@ -21,22 +21,25 @@ export const store = configureStore();
 
 const getPermission = async () => {
   const role = await GetPermissionByUserName();
-  const session = sessionStorage.getItem("linkPage");
-  if (role !== undefined) {
-    if (!role.data.error)
-      if (role.data.data.filter((e) => e.id === 10).length > 0) {
-        history.push(session ? session : "/admin/users");
-      } else if (role.data.data.filter((e) => e.id === 1).length > 0) {
-        history.push(
-          session
-            ? session === "/admin/users"
-              ? "/admin/members"
-              : session
-            : "/admin/users"
-        );
-      } else {
-        history.push("/admin/empty");
-      }
+  // const session = sessionStorage.getItem("linkPage");
+  // console.log(role)
+  const value = window.location.pathname.toString().toLowerCase();
+  if (role === undefined && !value.includes('line')) {
+    history.push("/auth/login");
+    // if (!role.data.error)
+    //   if (role.data.data.filter((e) => e.id === 10).length > 0) {
+    //     history.push(session ? session : "/admin/users");
+    //   } else if (role.data.data.filter((e) => e.id === 1).length > 0) {
+    //     history.push(
+    //       session
+    //         ? session === "/admin/users"
+    //           ? "/admin/members"
+    //           : session
+    //         : "/admin/users"
+    //     );
+    //   } else {
+    //     history.push("/admin/empty");
+    //   }
   }
 };
 

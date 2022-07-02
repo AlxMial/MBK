@@ -11,7 +11,7 @@ router.get("/", validateToken, async (req, res) => {
   const menu = await tbMenu.findAll();
   const menuShow = [];
   const listMenu = await tbPermission.findAll({
-    where: { role: Encrypt.DecodeKey(req.user.role) },
+    where: { role: Encrypt.DecodeKey(req.user.role),isEnable:true },
   });
   try {
     if (menu && listMenu) {

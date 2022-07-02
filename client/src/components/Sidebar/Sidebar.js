@@ -32,10 +32,10 @@ export default function Sidebar() {
     const role = await GetPermissionByUserName();
     if (role !== undefined) {
       if (role.data.data.length > 0) {
-        if (role.data.data.filter((e) => e.id === 1).length > 0) {
+        if (role.data.data.filter((e) => e.id === 10).length > 0) {
+            setTypePermission("1"); 
+        } else if (role.data.data.filter((e) => e.id === 1).length > 0) {
           setTypePermission("3");
-        } else if (role.data.data.filter((e) => e.id === 10).length > 0) {
-          setTypePermission("1");
         } else {
           setTypePermission("2");
         }

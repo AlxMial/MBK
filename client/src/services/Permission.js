@@ -9,7 +9,7 @@ export const GetPermissionByUserName = () => {
         if(!window.location.pathname.includes('line') && !window.location.pathname.includes('auth'))
         {
           if(window.location.pathname !== "/auth/login") { 
-            window.location.replace('/auth/login');
+            // window.location.replace('/auth/login');
           }
         }
         // if(!window.location.pathname.includes('line')) {

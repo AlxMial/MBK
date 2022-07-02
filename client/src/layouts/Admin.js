@@ -31,10 +31,10 @@ export default function Admin() {
   const { height, width } = useWindowDimensions();
 
   useEffect(() => {
-    history.push(sessionStorage.getItem('linkPage'));
+    // console.log(window.location.pathname)
+    history.push(window.location.pathname);
     //confirmotp();
   }, []);
-
 
   return (
     <>
