@@ -27,6 +27,12 @@ class ValidateService {
     return value.toString();
   };
 
+  onHandleNumberValue = (e) => {
+    var value = this.onHandleNumberChange(e.target.value);
+
+    return parseInt(value=="" || value ==null?0 :value).toString();
+  };
+
   onHandleIdentityCard = (e) => {
     const re = /^[0-9\b]+$/;
     let val = "";

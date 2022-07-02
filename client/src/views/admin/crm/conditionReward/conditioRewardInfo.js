@@ -41,7 +41,7 @@ export default function ConditioRewardInfo() {
 
   const rewardType = [
     { value: "1", label: "E-Coupon" },
-    { value: "2", label: "สินค้า" },
+    { value: "2", label: "ของสมนาคุณ" },
   ];
 
   /* Service Function */
@@ -892,17 +892,19 @@ export default function ConditioRewardInfo() {
                     className="w-full lg:w-5/12 margin-auto-t-b"
                   // style={{ width: width < 764 ? "100%" : "39.7%" }}
                   >
+
                     <div className="relative flex px-4">
                       <InputUC
                         name="points"
-                        type="text"
+                        type="number"
                         maxLength={7}
                         onBlur={formik.handleBlur}
                         value={formik.values.points}
+
                         onChange={(e) => {
                           setStateDelay(ValidateService.onHandleNumber(e));
                           formik.values.points =
-                            ValidateService.onHandleNumber(e);
+                            ValidateService.onHandleNumberValue(e);
                         }}
                         min="0"
                       />

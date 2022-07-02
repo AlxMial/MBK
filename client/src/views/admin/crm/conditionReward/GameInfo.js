@@ -119,7 +119,7 @@ const GameInfo = ({
 
   const rewardType = [
     { value: "1", label: "E-Coupon" },
-    { value: "2", label: "สินค้า" },
+    { value: "2", label: "ของสมนาคุณ" },
   ];
 
   useEffect(() => {
@@ -249,7 +249,7 @@ const GameInfo = ({
                 <div className="relative w-full">
                   <LabelUC label="รูปคูปอง" isRequired={true} />
                   {formikCoupon.touched.pictureCoupon &&
-                  formikCoupon.errors.pictureCoupon ? (
+                    formikCoupon.errors.pictureCoupon ? (
                     <div className="text-sm py-2 px-2 text-red-500">&nbsp;</div>
                   ) : null}
                 </div>
@@ -269,7 +269,7 @@ const GameInfo = ({
                   />
 
                   {formikCoupon.touched.pictureCoupon &&
-                  formikCoupon.errors.pictureCoupon ? (
+                    formikCoupon.errors.pictureCoupon ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       {formikCoupon.errors.pictureCoupon}
                     </div>
@@ -287,7 +287,7 @@ const GameInfo = ({
                 <div className="relative w-full">
                   <LabelUC label="ชื่อคูปอง" isRequired={true} />
                   {formikCoupon.touched.couponName &&
-                  formikCoupon.errors.couponName ? (
+                    formikCoupon.errors.couponName ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       &nbsp;
                     </div>
@@ -312,7 +312,7 @@ const GameInfo = ({
                     }}
                   />
                   {formikCoupon.touched.couponName &&
-                  formikCoupon.errors.couponName ? (
+                    formikCoupon.errors.couponName ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       {formikCoupon.errors.couponName}
                     </div>
@@ -330,7 +330,7 @@ const GameInfo = ({
                 <div className="relative w-full">
                   <LabelUC label="ส่วนลด" isRequired={true} />
                   {formikCoupon.touched.discount &&
-                  formikCoupon.errors.discount ? (
+                    formikCoupon.errors.discount ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       &nbsp;
                     </div>
@@ -346,14 +346,14 @@ const GameInfo = ({
                 <div className="relative flex justify-between px-4">
                   <InputUC
                     name="discount"
-                    type="text"
+                    type="number"
                     maxLength={7}
                     onBlur={formikCoupon.handleBlur}
                     value={formikCoupon.values.discount}
                     onChange={(e) => {
                       setDelay(ValidateService.onHandleNumber(e));
                       formikCoupon.values.discount =
-                        ValidateService.onHandleNumber(e);
+                        ValidateService.onHandleNumberValue(e);
                     }}
                     min="0"
                   />
@@ -373,7 +373,7 @@ const GameInfo = ({
                 </div>
                 <div className="w-full px-4">
                   {formikCoupon.touched.discount &&
-                  formikCoupon.errors.discount ? (
+                    formikCoupon.errors.discount ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       {formikCoupon.errors.discount}
                     </div>
@@ -441,9 +441,9 @@ const GameInfo = ({
                     value={
                       !isClick.couponStart
                         ? moment(
-                            new Date(formikCoupon.values.startDate),
-                            "DD/MM/YYYY"
-                          )
+                          new Date(formikCoupon.values.startDate),
+                          "DD/MM/YYYY"
+                        )
                         : null
                     }
                   />
@@ -516,13 +516,13 @@ const GameInfo = ({
                     value={
                       !isClick.expireDate
                         ? moment(
-                            new Date(
-                              formikCoupon.values.expiredDate
-                                ? formikCoupon.values.expiredDate
-                                : new Date()
-                            ),
-                            "DD/MM/YYYY"
-                          )
+                          new Date(
+                            formikCoupon.values.expiredDate
+                              ? formikCoupon.values.expiredDate
+                              : new Date()
+                          ),
+                          "DD/MM/YYYY"
+                        )
                         : null
                     }
                   />
@@ -551,7 +551,7 @@ const GameInfo = ({
               >
                 <LabelUC label="จำนวนคูปอง" isRequired={true} />
                 {formikCoupon.touched.couponCount &&
-                formikCoupon.errors.couponCount ? (
+                  formikCoupon.errors.couponCount ? (
                   <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                 ) : null}
               </div>
@@ -564,7 +564,7 @@ const GameInfo = ({
                 <div className="relative">
                   <InputUC
                     name="couponCount"
-                    type="text"
+                    type="number"
                     maxLength={7}
                     onBlur={formikCoupon.handleBlur}
                     value={formikCoupon.values.couponCount}
@@ -572,12 +572,12 @@ const GameInfo = ({
                       //   formik.handleChange(e);
                       setDelay(ValidateService.onHandleNumber(e));
                       formikCoupon.values.couponCount =
-                        ValidateService.onHandleNumber(e);
+                        ValidateService.onHandleNumberValue(e);
                     }}
                     min="0"
                   />
                   {formikCoupon.touched.couponCount &&
-                  formikCoupon.errors.couponCount ? (
+                    formikCoupon.errors.couponCount ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       {formikCoupon.errors.couponCount}
                     </div>
@@ -603,7 +603,7 @@ const GameInfo = ({
               >
                 <LabelUC label="จำนวนที่ใช้แลกต่อวัน" isRequired={false} />
                 {formikCoupon.touched.couponCount &&
-                formikCoupon.errors.couponCount ? (
+                  formikCoupon.errors.couponCount ? (
                   <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                 ) : null}
               </div>
@@ -616,19 +616,19 @@ const GameInfo = ({
                 <div className="relative">
                   <InputUC
                     name="usedPerDayCount"
-                    type="text"
+                    type="number"
                     maxLength={7}
                     onBlur={formikCoupon.handleBlur}
                     value={formikCoupon.values.usedPerDayCount}
                     onChange={(e) => {
                       setDelay(ValidateService.onHandleNumber(e));
                       formikCoupon.values.usedPerDayCount =
-                        ValidateService.onHandleNumber(e);
+                        ValidateService.onHandleNumberValue(e);
                     }}
                     min="0"
                   />
                   {formikCoupon.touched.couponCount &&
-                  formikCoupon.errors.couponCount ? (
+                    formikCoupon.errors.couponCount ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       &nbsp;
                     </div>
@@ -694,7 +694,7 @@ const GameInfo = ({
                 <div className="relative w-full">
                   <LabelUC label="รูปสินค้าสัมนาคุณ" isRequired={true} />
                   {formikProduct.touched.pictureProduct &&
-                  formikProduct.errors.pictureProduct ? (
+                    formikProduct.errors.pictureProduct ? (
                     <div className="text-sm py-2 px-2 text-red-500">&nbsp;</div>
                   ) : null}
                 </div>
@@ -714,7 +714,7 @@ const GameInfo = ({
                   />
 
                   {formikProduct.touched.pictureProduct &&
-                  formikProduct.errors.pictureProduct ? (
+                    formikProduct.errors.pictureProduct ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       {formikProduct.errors.pictureProduct}
                     </div>
@@ -737,7 +737,7 @@ const GameInfo = ({
                 <div className="relative w-full">
                   <LabelUC label="ชื่อสินค้าสัมนาคุณ" isRequired={true} />
                   {formikProduct.touched.productName &&
-                  formikProduct.errors.productName ? (
+                    formikProduct.errors.productName ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       &nbsp;
                     </div>
@@ -762,7 +762,7 @@ const GameInfo = ({
                     }}
                   />
                   {formikProduct.touched.productName &&
-                  formikProduct.errors.productName ? (
+                    formikProduct.errors.productName ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       {formikProduct.errors.productName}
                     </div>
@@ -774,7 +774,7 @@ const GameInfo = ({
                 className={
                   "w-full " +
                   (formikProduct.touched.productName &&
-                  formikProduct.errors.productName
+                    formikProduct.errors.productName
                     ? " hidden"
                     : "") +
                   (data.rewardType === "1" ? " hidden" : " ")
@@ -791,7 +791,7 @@ const GameInfo = ({
                 <LabelUC label="จำนวนสูงสุด" isRequired={true} />
                 <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                 {formikProduct.touched.couponCount &&
-                formikProduct.errors.couponCount ? (
+                  formikProduct.errors.couponCount ? (
                   <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                 ) : null}
               </div>
@@ -810,12 +810,12 @@ const GameInfo = ({
                     value={
                       !formikProduct.values.isNoLimitReward
                         ? formikProduct.values.rewardCount
-                        : "ไม่จำกัด"
+                        : "number"
                     }
                     onChange={(e) => {
                       setDelay(ValidateService.onHandleNumber(e));
                       formikProduct.values.rewardCount =
-                        ValidateService.onHandleNumber(e);
+                        ValidateService.onHandleNumberValue(e);
                     }}
                     disabled={
                       formikProduct.values.isNoLimitReward ? true : false
@@ -831,7 +831,7 @@ const GameInfo = ({
                 </div>
                 <div className="relative">
                   <CheckBoxUC
-                    text="ไม่มีวันหมดอายุ"
+                    text="ไม่จำกัดจำนวนชิ้น"
                     name="isNoLimitReward"
                     onChange={formikProduct.handleChange}
                     onBlur={formikProduct.handleBlur}
@@ -870,7 +870,7 @@ const GameInfo = ({
               >
                 <div className="relative">
                   {formikProduct.touched.rewardCount &&
-                  formikProduct.errors.rewardCount ? (
+                    formikProduct.errors.rewardCount ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       {formikProduct.errors.rewardCount}
                     </div>

@@ -113,7 +113,7 @@ const StandardCoupon = ({ formik }) => {
             <div className="relative flex justify-between px-4">
               <InputUC
                 name="discount"
-                type="text"
+                type="number"
                 maxLength={7}
                 onBlur={formik.handleBlur}
                 value={formik.values.discount}
@@ -121,7 +121,7 @@ const StandardCoupon = ({ formik }) => {
                   if (formik.values.discountType === "2")
                     if (e.target.value > 100) e.target.value = 100;
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.discount = ValidateService.onHandleNumber(e);
+                  formik.values.discount = ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />
@@ -277,7 +277,7 @@ const StandardCoupon = ({ formik }) => {
             <div className="relative">
               <InputUC
                 name="couponCount"
-                type="text"
+                type="number"
                 disabled={(formik.values.id !== "") ? true : false}
                 maxLength={7}
                 onBlur={formik.handleBlur}
@@ -285,7 +285,7 @@ const StandardCoupon = ({ formik }) => {
                 onChange={(e) => {
                   //   formik.handleChange(e);
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.couponCount = ValidateService.onHandleNumber(e);
+                  formik.values.couponCount = ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />
@@ -309,14 +309,14 @@ const StandardCoupon = ({ formik }) => {
             <div className="relative">
               <InputUC
                 name="usedPerDayCount"
-                type="text"
+                type="number"
                 maxLength={7}
                 onBlur={formik.handleBlur}
                 value={formik.values.usedPerDayCount}
                 onChange={(e) => {
                   setDelay(ValidateService.onHandleNumber(e));
                   formik.values.usedPerDayCount =
-                    ValidateService.onHandleNumber(e);
+                    ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />
