@@ -5,7 +5,7 @@ const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
-const { tbCancelOrder } = require("../../models");
+const { tbCancelOrder, tbOrderDT, tbStock } = require("../../models");
 const Op = Sequelize.Op;
 const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
@@ -122,8 +122,43 @@ router.post("/cancelOrder", validateLineToken, async (req, res) => {
     let status = true
     let msg = ""
     try {
+        //#region add tb Cancel
+        const data = await tbCancelOrder.create({
+            orderId: Encrypt.DecodeKey(orderId)
+            , cancelStatus: 1
+            , cancelType: 2
+            , cancelDetail: cancelDetail
+            , description: description
+            , isDeleted: false
+        });
+        //#region add tb Cancel
 
-        const data = await tbCancelOrder.create({ orderId: Encrypt.DecodeKey(orderId), cancelStatus: "Wait", cancelType: "User", cancelDetail: cancelDetail, description: description, isDeleted: false });
+        //#region update ราคาสินค้า
+        const OrderDTData = await tbOrderDT.findAll({
+            attributes: [
+                "amount",
+                "stockId",
+            ],
+            where: {
+                IsDeleted: false,
+                orderId: Encrypt.DecodeKey(orderId),
+                isFree: false
+            },
+        });
+
+        if (OrderDTData) {
+            for (var i = 0; i < OrderDTData.length; i++) {
+                let _tbStockData = await tbStock.findOne({ attributes: ["productCount"], where: { id: OrderDTData[i].stockId } })
+                if (_tbStockData) {
+                    let _tbStock = await tbStock.update({ productCount: _tbStockData.productCount + OrderDTData[i].amount }, {
+                        where: {
+                            id: OrderDTData[i].stockId,
+                        },
+                    });
+                }
+            }
+        }
+        //#region update ราคาสินค้า
 
     } catch (e) {
         status = false

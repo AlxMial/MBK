@@ -144,8 +144,7 @@ const LiffAPP = () => {
       (e) => {
         let checkRegister = Session.getcheckRegister();
         if (checkRegister.isRegister !== true) {
-          if (pathname.includes("shoplist") || pathname.includes("showProducts") || pathname.includes("showCart")) {
-
+          if (pathname.toLowerCase().includes("shoplist") || pathname.toLowerCase().includes("showProducts") || pathname.toLowerCase().includes("showCart")) {
           } else {
             if (!pathname.includes("register")) {
               history.push(path.register);
@@ -209,13 +208,13 @@ const LiffAPP = () => {
                     src={
                       pathname.includes("point") ||
                         pathname.toLowerCase().includes("/reward")
-                        ? require("assets/img/mbk/Background.jpg").default
+                        ? require("assets/img/mbk/line_head_img.jpg").default
                         : require("assets/img/mbk/line_head_img.jpg").default
                     }
                     alt="line_head_img"
                     style={{
-                      objectFit: "fill",
-                      maxHeight: "220px"
+                      objectFit: "fill"
+                      // maxHeight: "220px"
                     }}
                   ></img>
                 ) : (

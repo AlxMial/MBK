@@ -8,8 +8,16 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 router.post("/", validateToken, async (req, res) => {
-    console.log(req.body)
     const data = await tbBanner.create(req.body);
+    res.json({
+        status: true,
+        message: "success",
+        tbBanner: data,
+    });
+});
+
+router.put("/", validateToken, async (req, res) => {
+    const data = await tbBanner.update(req.body,{ where: { id: req.body.id } });
     res.json({
         status: true,
         message: "success",
@@ -40,7 +48,9 @@ router.get("/byId/:id", validateToken, async (req, res) => {
 
 router.get("/byShopId/:id", validateToken, async (req, res) => {
     const id = req.params.id;
-    const data = await tbBanner.findAll({ where: { shopId: id } });
+    const data = await tbBanner.findAll({ where: { shopId: id,isDeleted:0 }, order: [
+        ['id', 'ASC'],
+    ], });
     res.json({
         status: true,
         message: "success",

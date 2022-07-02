@@ -31,7 +31,7 @@ const Point = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div className="h-full" style={{ marginTop: "-200px", width: "100%" }}>
+      <div className="h-full" style={{ marginTop: "-90px", width: "100%" }}>
         <MyPoint />
         <div className="mt-6">
           <div
@@ -51,7 +51,7 @@ const Point = () => {
               <i className="fas fa-solid fa-pen "></i>
             </div>
             <div className="">{"กรอกโค้ดเพื่อสะสมคะแนน"}</div>
-            <div className="px-2 absolute right-0">
+            <div className="px-4 absolute right-0">
               <i className="fas fa-solid fa-angle-right "></i>
             </div>
           </div>

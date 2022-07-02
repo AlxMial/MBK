@@ -23,7 +23,7 @@ const SucceedOrder = () => {
           setOrderHD(res.data.OrderHD);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -52,6 +52,7 @@ const SucceedOrder = () => {
             }}
             succeedOrder={true}
             GetOrderHD={GetOrderHD}
+            returnStatus={true}
           />
         ) : (
           <EmptyOrder text={"ยังไม่คำสั่งซื้อที่สำเร็จ"} />

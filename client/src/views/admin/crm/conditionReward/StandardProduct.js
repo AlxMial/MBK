@@ -100,7 +100,7 @@ const StandardProduct = ({ formik }) => {
             <div className="relative flex">
               <InputUC
                 name="rewardCount"
-                type="text"
+                type="number"
                 maxLength={7}
                 onBlur={formik.handleBlur}
                 value={
@@ -110,7 +110,7 @@ const StandardProduct = ({ formik }) => {
                 }
                 onChange={(e) => {
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.rewardCount = ValidateService.onHandleNumber(e);
+                  formik.values.rewardCount = ValidateService.onHandleNumberValue(e);
                 }}
                 disabled={formik.values.isNoLimitReward ? true : false}
                 min="0"
@@ -124,7 +124,7 @@ const StandardProduct = ({ formik }) => {
             </div>
             <div className="relative">
               <CheckBoxUC
-                text="ไม่มีวันหมดอายุ"
+                text="ไม่จำกัดจำนวนชิ้น"
                 name="isNoLimitReward"
                 onChange={(e) => {
                   formik.setFieldValue("isNoLimitReward", e.target.checked);
@@ -158,7 +158,7 @@ const StandardProduct = ({ formik }) => {
           <div className="w-full lg:w-1/12 margin-auto-t-b ">&nbsp;</div>
           <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">&nbsp;</div>
           <div className="w-full lg:w-1/12 margin-auto-t-b ">
-            <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
+            <LabelUC label="รายละเอียดของสมนาคุณ" isRequired={false} />
           </div>
           <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
             <div className="relative">

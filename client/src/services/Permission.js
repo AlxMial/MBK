@@ -6,10 +6,10 @@ export const GetPermissionByUserName = () => {
     try{ 
       let tbMenus = await axios.get("menus");
       if(tbMenus.data.error) {
-        if(!window.location.pathname.includes('line'))
+        if(!window.location.pathname.includes('line') && !window.location.pathname.includes('auth'))
         {
           if(window.location.pathname !== "/auth/login") { 
-            window.location.replace('/auth/login');
+            // window.location.replace('/auth/login');
           }
         }
         // if(!window.location.pathname.includes('line')) {

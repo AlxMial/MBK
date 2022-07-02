@@ -72,11 +72,13 @@ const DetailOrder = ({
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div
         className="w-full"
-        style={{ opacity: returnStatus == true ? "0.7" : "1" }}
+
       >
         {[...OrderHD].map((e, i) => {
           return (
-            <div key={i}>
+            <div key={i}
+              style={{ opacity: returnStatus == true ? e.returnStatus != null ? "0.7" : "1" : "1" }}
+            >
               <div className="w-full">
                 <div className="w-full flex mb-2 relative text-xs">
                   <div className="flex" style={{ width: "calc(100% - 120px)" }}>
@@ -112,9 +114,9 @@ const DetailOrder = ({
                         color: "var(--mq-txt-color, rgb(20, 100, 246))",
                       }}
                     >
-                      {e.cancelStatus === "Wait"
+                      {e.cancelStatus == 1
                         ? "รอดำเนินการ"
-                        : e.cancelStatus === "Refund"
+                        : e.cancelStatus == 2
                           ? "คืนเงิน"
                           : "ไม่คืนเงิน"}
                     </div>
@@ -134,9 +136,9 @@ const DetailOrder = ({
                           alignItems: "center",
                         }}
                       >
-                        {e.returnStatus === "Wait"
+                        {e.returnStatus == 1
                           ? "รอดำเนินการ"
-                          : e.returnStatus === "Done"
+                          : e.returnStatus == 2
                             ? "คืนสำเร็จ"
                             : "การคืนถูกปฏิเสธ"}
                       </div>
@@ -239,10 +241,13 @@ const DetailOrder = ({
                       justifyContent: "center",
                       width: "80%",
                       fontSize: "12px",
+                      filter: e.returnStatus != null ? "grayscale(1)" : ""
                     }}
                     onClick={() => {
-                      setisOpenmodel(true);
-                      setReturnOrderID(e.id);
+                      if (e.returnStatus == null) {
+                        setisOpenmodel(true);
+                        setReturnOrderID(e.id);
+                      }
                     }}
                   >
                     <i className="fas fa-reply"></i>

@@ -20,7 +20,7 @@ const StandardCoupon = ({ formik }) => {
   const [isCancel, setIsCancel] = useState(false);
   const [delay, setDelay] = useState();
 
-  const [ disableCountCoupon,setDisableCountCoupon ] = useState(false);
+  const [disableCountCoupon, setDisableCountCoupon] = useState(false);
   const [isClick, setIsClick] = useState({
     couponStart: false,
     couponEnd: false,
@@ -113,7 +113,7 @@ const StandardCoupon = ({ formik }) => {
             <div className="relative flex justify-between px-4">
               <InputUC
                 name="discount"
-                type="text"
+                type="number"
                 maxLength={7}
                 onBlur={formik.handleBlur}
                 value={formik.values.discount}
@@ -121,7 +121,7 @@ const StandardCoupon = ({ formik }) => {
                   if (formik.values.discountType === "2")
                     if (e.target.value > 100) e.target.value = 100;
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.discount = ValidateService.onHandleNumber(e);
+                  formik.values.discount = ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />
@@ -170,7 +170,7 @@ const StandardCoupon = ({ formik }) => {
                 onChange={(e) => {
                   setIsClick({ ...isClick, couponStart: false });
                   if (e === null) {
-                    formik.setFieldValue("startDate", new Date(), false);
+                    formik.setFieldValue("startDate", "", false);
                   } else {
                     formik.setFieldValue(
                       "startDate",
@@ -187,6 +187,16 @@ const StandardCoupon = ({ formik }) => {
               />
               <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
             </div>
+
+            <div className="relative w-full px-4">
+              {formik.touched.startDate &&
+                formik.errors.startDate ? (
+                <div className="text-sm py-2 px-2  text-red-500">
+                  {formik.errors.startDate}
+                </div>
+              ) : null}
+            </div>
+
           </div>
           <div className={"w-full" + (width < 764 ? " block" : " hidden")}>
             &nbsp;
@@ -216,7 +226,7 @@ const StandardCoupon = ({ formik }) => {
                 onChange={(e) => {
                   setIsClick({ ...isClick, expireDate: false });
                   if (e === null) {
-                    formik.setFieldValue("expiredDate", new Date(), false);
+                    formik.setFieldValue("expireDate", "", false);
                   } else {
                     formik.setFieldValue(
                       "expiredDate",
@@ -228,13 +238,13 @@ const StandardCoupon = ({ formik }) => {
                 value={
                   !isClick.expireDate
                     ? moment(
-                        new Date(
-                          formik.values.expiredDate
-                            ? formik.values.expiredDate
-                            : new Date()
-                        ),
-                        "DD/MM/YYYY"
-                      )
+                      new Date(
+                        formik.values.expireDate
+                          ? formik.values.expireDate
+                          : new Date()
+                      ),
+                      "DD/MM/YYYY"
+                    )
                     : null
                 }
               />
@@ -246,6 +256,14 @@ const StandardCoupon = ({ formik }) => {
                 checked={formik.values.isNotExpired}
                 classLabel="mt-2"
               />
+            </div>
+            <div className="relative w-full px-4">
+              {formik.touched.expireDate &&
+                formik.errors.expireDate ? (
+                <div className="text-sm py-2 px-2  text-red-500">
+                  {formik.errors.expireDate}
+                </div>
+              ) : null}
             </div>
           </div>
           <div className="w-full">&nbsp;</div>
@@ -259,7 +277,7 @@ const StandardCoupon = ({ formik }) => {
             <div className="relative">
               <InputUC
                 name="couponCount"
-                type="text"
+                type="number"
                 disabled={(formik.values.id !== "") ? true : false}
                 maxLength={7}
                 onBlur={formik.handleBlur}
@@ -267,7 +285,7 @@ const StandardCoupon = ({ formik }) => {
                 onChange={(e) => {
                   //   formik.handleChange(e);
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.couponCount = ValidateService.onHandleNumber(e);
+                  formik.values.couponCount = ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />
@@ -291,14 +309,14 @@ const StandardCoupon = ({ formik }) => {
             <div className="relative">
               <InputUC
                 name="usedPerDayCount"
-                type="text"
+                type="number"
                 maxLength={7}
                 onBlur={formik.handleBlur}
                 value={formik.values.usedPerDayCount}
                 onChange={(e) => {
                   setDelay(ValidateService.onHandleNumber(e));
                   formik.values.usedPerDayCount =
-                    ValidateService.onHandleNumber(e);
+                    ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />

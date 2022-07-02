@@ -302,32 +302,35 @@ const getStorePromotion = async (total) => {
         });
       } else {
         //แถมสินค้า
-        type = "product"
+
         let productList = _tbPromotionStore.find(
           (e) => e.condition == "product"
         );
-        let _tbStock = await tbStock.findOne({
-          attributes: [
-            "isFlashSale",
-            "price",
-            "discount",
-            "discountType",
-            "productCount",
-          ],
-          where: {
-            id: productList.stockId,
-          },
-        });
-        if (_tbStock) {
-          orderDT.push({
-            stockId: productList.stockId,
-            amount: 1,
-            price: 0,
-            discount: 0,
-            discountType: 0,
-            isFlashSale: false,
-            isFree: true
+        if (productList) {
+          type = "product"
+          let _tbStock = await tbStock.findOne({
+            attributes: [
+              "isFlashSale",
+              "price",
+              "discount",
+              "discountType",
+              "productCount",
+            ],
+            where: {
+              id: productList.stockId,
+            },
           });
+          if (_tbStock) {
+            orderDT.push({
+              stockId: productList.stockId,
+              amount: 1,
+              price: 0,
+              discount: 0,
+              discountType: 0,
+              isFlashSale: false,
+              isFree: true
+            });
+          }
         }
       }
     }
@@ -489,7 +492,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
   const uid = Encrypt.DecodeKey(req.user.uid);
   let Member;
   let orderId;
-  let { orderhd, orderdt } = req.body;
+  let { orderhd, orderdt, cart } = req.body;
   let orderDT = [];
   let url2c2p
   try {
@@ -498,6 +501,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       where: { uid: uid },
     });
 
+    //#region ถอดรหัส 
     orderhd.memberId = Member.id;
     orderhd.orderDate = new Date(
       new Date().toLocaleString("en-US", {
@@ -514,8 +518,9 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       Encrypt.DecodeKey(orderhd.isAddress) == "memberId"
         ? null
         : Encrypt.DecodeKey(orderhd.isAddress);
+    //#endregion ถอดรหัส 
 
-    //สินค้า
+    //#region ข้อมูลสินค้า
     let total = 0; //ราคารวม
     let point = 0
     let _getorderDT = await getorderDT(orderdt)
@@ -527,9 +532,9 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       status = _getorderDT.status;
       msg = _getorderDT.msg;
     }
+    //#endregion ข้อมูลสินค้า
 
-    // โปรร้าน
-
+    //#region โปรร้าน
     let DiscountStorePromotion = 0;
     if (status) {
       let _getStorePromotion = await getStorePromotion(total)
@@ -548,9 +553,9 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         msg = _getStorePromotion.msg;
       }
     }
+    //#endregion โปรร้าน
 
-
-    //ข้อมูลวิธีการจัดส่ง
+    //#region ข้อมูลวิธีการจัดส่ง
     let deliveryCost = 0; //ค่าส่ง
     let discountDelivery = 0; //โปรค่าส่ง
     if (status) {
@@ -564,8 +569,9 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         msg = _getDelivery.msg;
       }
     }
+    //#endregion ข้อมูลวิธีการจัดส่ง
 
-    // ส่วนลดCoupon
+    //#region ส่วนลด Coupon
     let DiscountCoupon = 0;
     if (status) {
       if (orderhd.usecouponid != null) {
@@ -580,8 +586,9 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       }
     }
     total = total - DiscountCoupon
+    //#endregion ส่วนลด Coupon
 
-    //ที่อยู่ปัจจุบัน
+    //#region ที่อยู่ปัจจุบัน
     if (status) {
       let _getAddress = await getAddress(orderhd.otherAddressId, Member.id)
       if (_getAddress.status) {
@@ -600,10 +607,10 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         msg = _getAddress.msg;
       }
     }
-
+    //#endregion ที่อยู่ปัจจุบัน
 
     if (status) {
-      //รันรหัสสินค้า
+      //#region รันรหัสสินค้า
       const genorderNumber = async () => {
         const today = moment().format("YYYYMM");
         let data = await tbOrderHD.count({
@@ -624,6 +631,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         }
         return "LOA-" + today + "-" + num;
       };
+      //#endregion รันรหัสสินค้า
       orderhd.orderNumber = await genorderNumber();
       orderhd.deliveryCost = deliveryCost;
       orderhd.discountDelivery = discountDelivery;
@@ -633,6 +641,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       orderhd.netTotal = total
 
       try {
+        //#region create dt
         const _tbOrderHD = await tbOrderHD.create(orderhd);
         if (_tbOrderHD) {
           orderId = Encrypt.EncodeKey(_tbOrderHD.dataValues.id);
@@ -640,12 +649,31 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
             orderDT[i].stockId = orderDT[i].stockId;
             orderDT[i].orderId = _tbOrderHD.dataValues.id;
             const _tbOrderDT = await tbOrderDT.create(orderDT[i]);
-          }
-        }
-        //ลบข้อมูลในตระกร้า
-        const dataDel = await tbCartHD.destroy({ where: { uid: uid } });
+            //#region อัพ Stock สินค้า
+            if (_tbOrderDT) {
+              let _tbStockData = await tbStock.findOne({ attributes: ["productCount"], where: { id: orderDT[i].stockId } })
+              if (_tbStockData) {
+                let _tbStock = await tbStock.update({ productCount: _tbStockData.productCount - orderDT[i].amount }, {
 
-        //2c2p
+                  where: {
+                    id: orderDT[i].stockId,
+                  },
+                });
+              }
+            }
+            //#endregion อัพ Stock สินค้า
+          }
+
+        }
+        //#endregion create dt
+
+        //#region ลบข้อมูลในตระกร้า
+        if (cart) {
+          const dataDel = await tbCartHD.destroy({ where: { uid: uid } });
+        }
+        //#endregion ลบข้อมูลในตระกร้า
+
+        //#region 2c2p
         if (orderhd.paymentType == 2) {
           // orderId = 6
           let secretKey = '0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22'
@@ -678,8 +706,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
               // always executed
             });
         }
-
-
+        //#endregion 2c2p
 
       } catch (e) {
         status = false
@@ -692,7 +719,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     msg = e.message;
   }
   return res.json({
-    status: false,
+    status: status,
     msg: msg,
     orderId: orderId,
     url: url2c2p
@@ -876,6 +903,7 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
       where: { uid: uid },
     });
     if (Member) {
+      //#region อัพโหลดรูป
       const _tbImage = await tbImage.create({
         createdAt: new Date(),
         relatedId: Encrypt.DecodeKey(data.id),
@@ -883,7 +911,8 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
         isDeleted: false,
         relatedTable: "tbOrderHD",
       });
-      // อัพถานะการจ่ายเงิน
+      //#endregion อัพโหลดรูป
+      //#region อัพถานะการจ่ายเงิน
       const _tbOrderHDupd = await tbOrderHD.update(
         {
           paymentStatus: 2,
@@ -894,7 +923,8 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
           },
         }
       );
-
+      //#endregion อัพถานะการจ่ายเงิน
+      //#region อัพถานะคูปอง
       const _tbOrderHD = await tbOrderHD.findOne(
         {
           attributes: ["memberRewardId", "transportStatus"],
@@ -915,6 +945,7 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
         }
 
       }
+      //#endregion อัพถานะคูปอง
 
     } else {
       status = false;
@@ -989,8 +1020,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
               const data = await tbCancelOrder.create({
                 orderId: hd.id,
-                cancelStatus: "No refund",
-                cancelType: "Auto",
+                cancelStatus: 3,
+                cancelType: 3,
                 cancelDetail: "Auto",
                 description: "Auto",
                 isDeleted: false,
@@ -1080,14 +1111,14 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
               where: {
                 IsDeleted: false,
                 orderId: _OrderHDData[i].id,
-                returnStatus: ["Wait", "Done", "Not Return"],
+                // returnStatus: [1,2, 3],
               },
             });
             if (_tbReturnOrder == null) {
               OrderHDData.push(_OrderHDData[i]);
             } else {
-              if (_tbReturnOrder.dataValues.returnStatus == "Not Return") {
-                _OrderHDData[i].dataValues.returnStatus = "Not Return";
+              if (_tbReturnOrder.dataValues.returnStatus == 3) {
+                _OrderHDData[i].dataValues.returnStatus = _tbReturnOrder.dataValues.returnStatus;
                 OrderHDData.push(_OrderHDData[i]);
               }
             }
@@ -1136,7 +1167,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
           attributes: ["id", "orderId", "returnStatus"],
           where: {
             IsDeleted: false,
-            returnStatus: ["Wait", "Done", "Not Return"],
+            // returnStatus: [1, 2, 3],
           },
         });
 
@@ -1366,18 +1397,20 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
             let productList = _tbPromotionStore.find(
               (e) => e.condition == "product"
             );
-            let _tbStock = await tbStock.findOne({
-              attributes: [
-                "isFlashSale",
-                "price",
-                "discount",
-                "discountType",
-                "productCount",
-              ],
-              where: {
-                id: productList.stockId,
-              },
-            });
+            if (productList) {
+              let _tbStock = await tbStock.findOne({
+                attributes: [
+                  "isFlashSale",
+                  "price",
+                  "discount",
+                  "discountType",
+                  "productCount",
+                ],
+                where: {
+                  id: productList.stockId,
+                },
+              });
+            }
 
           }
         }
@@ -1485,7 +1518,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
           Payment: _tbPayment,
         };
 
-        if (OrderHDData.dataValues.paymentStatus !=1) {
+        if (OrderHDData.dataValues.paymentStatus != 1) {
           status = false;
           msg = OrderHDData.dataValues.paymentStatus == 2 ? "รอการตรวจสอบ" : "ชำระเงินเรียบร้อยแล้ว";
         }
@@ -1827,122 +1860,138 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
   });
 });
 
-router.post(
-  "/upd_shopcart",
-  // , validateLineToken
-  async (req, res) => {
-    let status = true;
-    let msg;
-    // const uid = Encrypt.DecodeKey(req.user.uid);
-    const { id, quantity, type, uid } = req.body;
-    let shop_orders = [];
-    try {
-      const _tbCartHD = await tbCartHD.findOne({
-        attributes: ["id"],
-        where: { uid: uid },
+router.post("/upd_shopcart", async (req, res) => {
+  let status = true;
+  let msg;
+  // const uid = Encrypt.DecodeKey(req.user.uid);
+  const { id, quantity, type, uid } = req.body;
+  let shop_orders = [];
+  try {
+    const _tbCartHD = await tbCartHD.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
+    });
+    if (_tbCartHD) {
+      //#region ข้อมูลมีตระกร้า
+      const _tbCartDT = await tbCartDT.findOne({
+        attributes: ["id", "amount"],
+        where: { strockId: Encrypt.DecodeKey(id) },
       });
-      if (_tbCartHD) {
-        // มีตระกร้า
-        const _tbCartDT = await tbCartDT.findOne({
-          attributes: ["id", "amount"],
-          where: { strockId: Encrypt.DecodeKey(id) },
+      //#endregion ข้อมูลมีตระกร้า
+
+      if (_tbCartDT) {
+        //ดึงจำนวนคงเหลือ
+        const _tbStock = await tbStock.findOne({
+          attributes: ["id", "productCount"],
+          where: { id: Encrypt.DecodeKey(id) },
         });
-        if (_tbCartDT) {
-          //ดึงจำนวนคงเหลือ
-          const _tbStock = await tbStock.findOne({
-            attributes: ["id", "productCount"],
-            where: { id: Encrypt.DecodeKey(id) },
-          });
-          if (_tbStock) {
-            const addamount = quantity; //จำนวนที่เพิ่ม
-            const oldamount = _tbCartDT.amount; // จำนวนในตระกร้า
-            const productCount = _tbStock.productCount; // จำนวนสินค้า
-            if (type == "add" || type == "plus") {
-              if (oldamount + addamount <= productCount) {
-                ///upd จำนวน
-                const dataupd = await tbCartDT.update(
-                  {
-                    amount: _tbCartDT.amount + quantity,
-                  },
-                  { where: { strockId: Encrypt.DecodeKey(id) } }
-                );
-              } else {
-                status = false;
-                msg =
-                  "ไม่สามารถเพิ่มจำนวนสินค้านี้ได้ เนื่องจากคุณเพิ่มสินค้านี้ไว้ในรถเข็นแล้ว " +
-                  oldamount +
-                  " ชิ้น";
-              }
-            } else if (type == "minus") {
-              // ในตระกร้ามากกว่า 1
-              if (oldamount > 1) {
-                const dataupd = await tbCartDT.update(
-                  {
-                    amount: _tbCartDT.amount - quantity,
-                  },
-                  { where: { strockId: Encrypt.DecodeKey(id) } }
-                );
-              } else {
-                const dataupd = await tbCartDT.destroy({
-                  where: {
-                    strockId: Encrypt.DecodeKey(id),
-                  },
-                });
-              }
-            } else if (type == "del") {
+        if (_tbStock) {
+          const addamount = quantity; //จำนวนที่เพิ่ม
+          const oldamount = _tbCartDT.amount; // จำนวนในตระกร้า
+          const productCount = _tbStock.productCount; // จำนวนสินค้า
+          if (type == "add" || type == "plus") {
+            if (oldamount + addamount <= productCount) {
+              ///upd จำนวน
+              const dataupd = await tbCartDT.update(
+                {
+                  amount: _tbCartDT.amount + quantity,
+                },
+                { where: { strockId: Encrypt.DecodeKey(id) } }
+              );
+            } else {
+              status = false;
+              msg =
+                "ไม่สามารถเพิ่มจำนวนสินค้านี้ได้ เนื่องจากคุณเพิ่มสินค้านี้ไว้ในรถเข็นแล้ว " +
+                oldamount +
+                " ชิ้น";
+            }
+          } else if (type == "minus") {
+            // ในตระกร้ามากกว่า 1
+            if (oldamount > 1) {
+              const dataupd = await tbCartDT.update(
+                {
+                  amount: _tbCartDT.amount - quantity,
+                },
+                { where: { strockId: Encrypt.DecodeKey(id) } }
+              );
+            } else {
               const dataupd = await tbCartDT.destroy({
                 where: {
                   strockId: Encrypt.DecodeKey(id),
                 },
               });
             }
+          } else if (type == "del") {
+            const dataupd = await tbCartDT.destroy({
+              where: {
+                strockId: Encrypt.DecodeKey(id),
+              },
+            });
+          } else if (type == "quantity") {
+            if (quantity <= productCount) {
+              ///upd จำนวน
+              const dataupd = await tbCartDT.update(
+                {
+                  amount: quantity,
+                },
+                { where: { strockId: Encrypt.DecodeKey(id) } }
+              );
+            } else {
+              const dataupd = await tbCartDT.update(
+                {
+                  amount: productCount,
+                },
+                { where: { strockId: Encrypt.DecodeKey(id) } }
+              );
+            }
           }
-        } else {
-          //ไม่มีให้เพิ่ม
-          const addtbCartDT = await tbCartDT.create({
-            carthdId: _tbCartHD.id,
-            strockId: Encrypt.DecodeKey(id),
-            amount: quantity,
-          });
         }
       } else {
         //ไม่มีให้เพิ่ม
-        const addtbCartHD = await tbCartHD.create({ uid: uid });
-        if (addtbCartHD) {
-          const addtbCartDT = await tbCartDT.create({
-            carthdId: addtbCartHD.id,
-            strockId: Encrypt.DecodeKey(id),
-            amount: quantity,
-          });
-        }
-      }
-
-      const _tbCartHDData = await tbCartHD.findOne({
-        attributes: ["id"],
-        where: { uid: uid },
-      });
-      if (_tbCartHDData) {
-        const _tbCartDT = await tbCartDT.findAll({
-          attributes: ["strockId", "amount"],
-          where: { carthdId: _tbCartHDData.id },
-        });
-        _tbCartDT.map((e, i) => {
-          shop_orders.push({
-            id: Encrypt.EncodeKey(e.strockId),
-            quantity: e.amount,
-          });
+        const addtbCartDT = await tbCartDT.create({
+          carthdId: _tbCartHD.id,
+          strockId: Encrypt.DecodeKey(id),
+          amount: quantity,
         });
       }
-    } catch (e) {
-      status = false;
-      msg = e.message;
+    } else {
+      //ไม่มีให้เพิ่ม
+      const addtbCartHD = await tbCartHD.create({ uid: uid });
+      if (addtbCartHD) {
+        const addtbCartDT = await tbCartDT.create({
+          carthdId: addtbCartHD.id,
+          strockId: Encrypt.DecodeKey(id),
+          amount: quantity,
+        });
+      }
     }
-    return res.json({
-      status: status,
-      msg: msg,
-      shop_orders: shop_orders,
+
+    const _tbCartHDData = await tbCartHD.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
     });
+    if (_tbCartHDData) {
+      const _tbCartDT = await tbCartDT.findAll({
+        attributes: ["strockId", "amount"],
+        where: { carthdId: _tbCartHDData.id },
+      });
+      _tbCartDT.map((e, i) => {
+        shop_orders.push({
+          id: Encrypt.EncodeKey(e.strockId),
+          quantity: e.amount,
+        });
+      });
+    }
+  } catch (e) {
+    status = false;
+    msg = e.message;
   }
+  return res.json({
+    status: status,
+    msg: msg,
+    shop_orders: shop_orders,
+  });
+}
 );
 router.post(
   "/get_shopcart",

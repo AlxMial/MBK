@@ -135,7 +135,7 @@ router.post("/getStock"
             endDateCampaign: e.endDateCampaign,
             startTimeCampaign: e.startTimeCampaign,
             endTimeCampaign: e.endTimeCampaign,
-            IsBestSeller: e.IsBestSeller,
+            isBestSeller: e.isBestSeller,
             productCategoryId: Encrypt.EncodeKey(e.productCategoryId),
             percent:
               e.discount > 0

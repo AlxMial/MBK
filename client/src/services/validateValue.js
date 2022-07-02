@@ -27,6 +27,12 @@ class ValidateService {
     return value.toString();
   };
 
+  onHandleNumberValue = (e) => {
+    var value = this.onHandleNumberChange(e.target.value);
+
+    return parseInt(value=="" || value ==null?0 :value).toString();
+  };
+
   onHandleIdentityCard = (e) => {
     const re = /^[0-9\b]+$/;
     let val = "";
@@ -56,11 +62,10 @@ class ValidateService {
     ) {
       value = options[0].value;
     }
-    if (options.length > 0)
+
       return options
         ? options.find((option) => option.value.toString() === value.toString())
         : "";
-    else return "";
   };
 
   defaultValueText = (options, value) => {

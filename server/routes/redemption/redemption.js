@@ -180,54 +180,58 @@ router.post("/", validateToken, async (req, res) => {
         coupon = await tbRedemptionCoupon.create(req.body.coupon);
 
         if (coupon && req.body.coupon.couponCount !== "") {
-          const generateCode = await axiosInstance
-            .post("api/coupon/generateCoupon", coupon)
-            .then(async (resGenerate) => {
-              if (resGenerate.data.status) {
-                const qry = `INSERT INTO mbk_database.tbcouponcodes SELECT * FROM mbk_temp.tbcouponcodes where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
-                db.sequelize
-                  .query(qry, null, { raw: true })
-                  .then((result) => {
-                    const deleteqry = `DELETE FROM mbk_temp.tbcouponcodes WHERE mbk_temp.tbcouponcodes.redemptionCouponId IN (select redemptionCouponId from mbk_database.tbcouponcodes)`;
-                    db.sequelize
-                      .query(deleteqry, null, { raw: true })
-                      .then((result) => {
-                        Encrypt.encryptValueId(redemption);
-                        res.json({
-                          status: true,
-                          isError: false,
-                          isRedemptionName: false,
-                          message: "success",
-                          tbRedemptionConditionsHD: redemption,
-                          tbRedemptionCoupon: coupon,
-                          tbRedemptionProduct: product,
+          try {
+            const generateCode = await axiosInstance
+              .post("api/coupon/generateCoupon", coupon)
+              .then(async (resGenerate) => {
+                if (resGenerate.data.status) {
+                  const qry = `INSERT INTO mbk_database.tbcouponcodes SELECT * FROM mbk_temp.tbcouponcodes where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
+                  db.sequelize
+                    .query(qry, null, { raw: true })
+                    .then((result) => {
+                      const deleteqry = `DELETE FROM mbk_temp.tbcouponcodes WHERE mbk_temp.tbcouponcodes.redemptionCouponId IN (select redemptionCouponId from mbk_database.tbcouponcodes)`;
+                      db.sequelize
+                        .query(deleteqry, null, { raw: true })
+                        .then((result) => {
+                          Encrypt.encryptValueId(redemption);
+                          res.json({
+                            status: true,
+                            isError: false,
+                            isRedemptionName: false,
+                            message: "success",
+                            tbRedemptionConditionsHD: redemption,
+                            tbRedemptionCoupon: coupon,
+                            tbRedemptionProduct: product,
+                          });
+                        })
+                        .catch((error) => {
+                          res.json({
+                            status: false,
+                            isError: true,
+                            isRedemptionName: false,
+                            message: "unsuccess",
+                            tbRedemptionConditionsHD: null,
+                            tbRedemptionCoupon: null,
+                            tbRedemptionProduct: null,
+                          });
                         });
-                      })
-                      .catch((error) => {
-                        res.json({
-                          status: false,
-                          isError: true,
-                          isRedemptionName: false,
-                          message: "unsuccess",
-                          tbRedemptionConditionsHD: null,
-                          tbRedemptionCoupon: null,
-                          tbRedemptionProduct: null,
-                        });
+                    })
+                    .catch((error) => {
+                      res.json({
+                        status: false,
+                        isError: true,
+                        isRedemptionName: false,
+                        message: "unsuccess",
+                        tbRedemptionConditionsHD: null,
+                        tbRedemptionCoupon: null,
+                        tbRedemptionProduct: null,
                       });
-                  })
-                  .catch((error) => {
-                    res.json({
-                      status: false,
-                      isError: true,
-                      isRedemptionName: false,
-                      message: "unsuccess",
-                      tbRedemptionConditionsHD: null,
-                      tbRedemptionCoupon: null,
-                      tbRedemptionProduct: null,
                     });
-                  });
-              }
-            });
+                }
+              });
+          } catch (e) {
+            console.log(e)
+          }
         } else {
           Encrypt.encryptValueId(redemption);
           res.json({

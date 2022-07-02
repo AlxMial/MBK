@@ -41,8 +41,18 @@ export default function ConditionRewardList() {
     } else {
       setListRedemption(
         listSearch.filter(
-          (x) =>
-            x.redemptionName.includes(e)
+          (x) => {
+            if (x.redemptionName.includes(e)
+              || moment(x.startDate).format("DD/MM/YYYY").includes(e)
+              || moment(x.endDate).format("DD/MM/YYYY").includes(e)
+              || (x.points).toString().includes(e)
+              || (x.redemptionType == 1 ? "Standard" : "Game").includes(e)
+              ||(new Date(x.endDate) < new Date() ? "หมดอายุ" :
+              x.isActive ? "เปิดการใช้งาน" : "ปิดการใช้งาน").includes(e)
+            ) {
+              return x
+            }
+          }
         )
       );
       setPageNumber(0);
@@ -63,9 +73,9 @@ export default function ConditionRewardList() {
       let tempRedemption = listRedemption.map((Redemption) =>
         Redemption.id.toString() === name
           ? {
-              ...Redemption,
-              isDeleted: checked,
-            }
+            ...Redemption,
+            isDeleted: checked,
+          }
           : Redemption
       );
       setListRedemption(tempRedemption);
@@ -337,7 +347,14 @@ export default function ConditionRewardList() {
                             <Link
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
-                            ></Link>
+                            >
+                              <div className="TextWordWarp-200">
+                                {new Date(value.endDate) < new Date() ? "หมดอายุ" :
+                                  value.isActive ? "เปิดการใช้งาน" : "ปิดการใช้งาน"
+                                }
+                              </div>
+
+                            </Link>
                           </td>
 
                           <td

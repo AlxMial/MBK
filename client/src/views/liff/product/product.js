@@ -34,7 +34,7 @@ const Product = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ marginTop: "-50px", position: "absolute", width: "100%" }}>
+      <div style={{ marginTop: "-90px", position: "absolute", width: "100%" }}>
         <div className="line-text-brown noselect">
           <div className=" text-xl text-center mt-4">ของสมนาคุณของฉัน</div>
         </div>

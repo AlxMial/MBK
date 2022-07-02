@@ -8,6 +8,8 @@ import * as Session from "@services/Session.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
+import AlertModel from "components/ConfirmDialog/alertModel";
+
 import {
   get_shopcart,
   upd_shopcart
@@ -23,6 +25,9 @@ const ShowCart = () => {
   const [CartItem, setCartItem] = useState([]);
   const [usecoupon, setusecoupon] = useState(null);
   const [sumprice, setsumprice] = useState(0);
+
+  const [productCountError, setproductCountError] = useState({ open: false });
+
   const getProducts = async () => {
 
     let id = [];
@@ -40,6 +45,8 @@ const ShowCart = () => {
               setusecoupon(Storage.getconpon_cart())
 
               await axios.post("stock/getStock", { id: id }).then((response) => {
+                let _productCountError = false
+                let productAction = []
                 if (response.data.status) {
                   let tbStock = response.data.tbStock;
                   setCartItem(tbStock);
@@ -52,6 +59,12 @@ const ShowCart = () => {
                     } else {
                       price += parseFloat(e.price) * parseInt(quantity);
                     }
+
+                    if (e.productCount < quantity) {
+                      _productCountError = true
+                      productAction.push({ id: e.id, quantity: e.productCount, type: "quantity", uid: Session.getLiff().uid })
+                    }
+
                     return e
                   });
                   if (!fn.IsNullOrEmpty(cart.usecoupon)) {
@@ -59,6 +72,12 @@ const ShowCart = () => {
                   }
                   price = price < 1 ? 0 : price
                   setsumprice(price);
+
+                  if (_productCountError) {
+                    setproductCountError({ open: _productCountError, action: productAction })
+
+                  }
+
                 } else {
                   setCartItem([]);
                   setsumprice(0);
@@ -119,6 +138,21 @@ const ShowCart = () => {
     })
   };
 
+  const setquantity = (e, id) => {
+    let quantity = e
+    if (e == "") {
+      quantity = 0
+    }
+    get_shopcart({ uid: Session.getLiff().uid }, async (res) => {
+      if (res.data.status) {
+        upd_shopcart({ id: id, quantity: e, type: "quantity", uid: Session.getLiff().uid }, (res) => {
+          getProducts();
+        })
+      }
+    })
+    // }
+  }
+
   useEffect(() => {
     getProducts();
   }, []);
@@ -169,39 +203,32 @@ const ShowCart = () => {
                   </div>
                   <div className="px-2 relative" style={{ width: "70%" }}>
                     <div className="flex" style={{ height: "35px" }}>
-                      <div className="font-bold line-clamp-2" style={{ width: "80%", fontSize: "11px" }}>{e.productName}</div>
+                      <div className="font-bold line-clamp-2 text-sm" style={{ width: "calc(100% - 20px)" }}>{e.productName}</div>
                       <div
                         className="relative"
-                        style={{ width: "20%" }}
+                        style={{ width: "20px" }}
                         onClick={() => {
                           setconfirmDelete(true);
                           setDeleteValue(e.id);
                         }}
                       >
                         <i
-                          className="absolute fas fa-trash opacity-50"
-                          style={{
-                            right: "10px",
-                            fontSize: "22px",
-                            color: "var(--mq-txt-color, rgb(170, 170, 170))",
-                          }}
+                          className="absolute fas fa-trash text-liff-gray-mbk text-base"
                         ></i>
                       </div>
 
                     </div>
 
-
                     <div
-                      className="w-full flex absolute"
+                      className="w-full flex "
                       style={{
                         height: "35px",
                         alignItems: "center",
                         bottom: "0"
                       }}
                     >
-
                       <div style={{ width: "calc(100% - 100px)", height: "15px" }}>
-                        <div className="flex " style={{ fontSize: "11px" }} >
+                        <div className="flex text-sm" >
                           <div
                             style={{
                               color: e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
@@ -218,12 +245,19 @@ const ShowCart = () => {
                           ) : null}
                         </div>
                       </div>
-
-
+                    </div>
+                    <div
+                      className="w-full flex "
+                      style={{
+                        alignItems: "center",
+                        bottom: "0"
+                      }}
+                    >
+                      <div className="text-liff-gray-mbk text-sm" style={{ width: "calc(100% - 90px)" }}>{"สินค้าคงเหลือ " + e.productCount + " ชิ้น"}</div>
                       <div
                         className="flex"
                         style={{
-                          color: "var(--mq-txt-color, rgb(170, 170, 170))",
+                          width: "90px",
                           alignItems: "center",
                           right: "0px",
                         }}
@@ -255,7 +289,13 @@ const ShowCart = () => {
                             if (fn.IsNullOrEmpty(value)) {
                               value = 0;
                             }
-
+                            if (value == 0) {
+                              setconfirmDelete(true);
+                              setDeleteValue(e.id);
+                            }
+                          }}
+                          onChange={(even) => {
+                            setquantity(even.target.value, e.id)
                           }}
                         />
                         <button
@@ -275,8 +315,6 @@ const ShowCart = () => {
                           <i className="flex fas fa-plus" style={{ justifyContent: "center" }}></i>
                         </button>
                       </div>
-
-
                     </div>
                   </div>
                 </div>
@@ -409,9 +447,28 @@ const ShowCart = () => {
             message={"สินค้า"}
             hideModal={() => {
               setconfirmDelete(false);
+              setquantity(1, deleteValue)
             }}
             confirmModal={() => {
               deleteCart(deleteValue);
+            }}
+          />
+        )
+      }
+
+      {
+        productCountError.open && (
+          <AlertModel
+            className={" liff-Dialog "}
+            showModal={productCountError.open}
+            message={"จำนวนสินค้ามีการเปลียนแปลง"}
+            confirmModal={() => {
+
+              productCountError.action.map((e, i) => {
+                upd_shopcart(e)
+              })
+              setproductCountError({ open: false });
+              getProducts()
             }}
           />
         )

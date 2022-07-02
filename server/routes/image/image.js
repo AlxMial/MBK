@@ -59,14 +59,15 @@ router.get("/byRelated/:relatedId/:relatedTable", validateToken, async (req, res
 router.get("/getAllByRelated/:relatedId/:relatedTable", validateToken, async (req, res) => {
     const relatedId = req.params.relatedId;
     const relatedTable = req.params.relatedTable;
+
     const data = await tbImage.findAll({
         where: {
             relatedId: relatedId,
             isDeleted: false,
-            // relatedTable: {
-            //     [Op.like]: '%' + relatedTable + '%',
-            // }
-            relatedTable: relatedTable
+            relatedTable: {
+                [Op.like]:  relatedTable + '%',
+            }
+            // relatedTable: relatedTable
         }
     });
     res.json({

@@ -44,25 +44,27 @@ export default function PointEcommerce() {
   const [langSymbo, setlangSymbo] = useState("");
   const [startDateCode, setStartDateCode] = useState("");
   const [endDateCode, setEndDateCode] = useState("");
-  const [listProduct , setListProduct] = useState([]);
+  const [listProduct, setListProduct] = useState([]);
   const { addToast } = useToasts();
   const changePage = ({ selected }) => {
     setPageNumber(selected);
   };
   const dispatch = useDispatch();
   const UseStyleSelect = styleSelect();
-  
+  const [delay, setDelay] = useState("");
 
   /* Method Condition */
   const options = [
-    { label: "Active", value: "1" },
-    { label: "Inactive", value: "2" },
+    { label: "เปิดการใช้งาน", value: true },
+    { label: "ปิดการใช้งาน", value: false },
   ];
 
   const optionsSale = [
     { label: "ยอดซื้อ", value: "1" },
     { label: "สินค้าจากคลัง", value: "2" },
   ];
+
+  const nonSelect = [];
 
   function openModal(id) {
     if (id) {
@@ -106,12 +108,13 @@ export default function PointEcommerce() {
     initialValues: {
       id: "",
       campaignName: "",
-      type: "",
+      type: "1",
       purchaseAmount: "",
       productAmount: "",
       point: "",
       startDate: new Date(),
       endDate: new Date(),
+      isActive: true,
       isDeleted: false,
     },
     validationSchema: Yup.object({
@@ -152,7 +155,7 @@ export default function PointEcommerce() {
           } else {
             if (res.data.ispointEcommerceName) {
               addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญ E-Commerce เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
                 {
                   appearance: "warning",
                   autoDismiss: true,
@@ -175,7 +178,7 @@ export default function PointEcommerce() {
           } else {
             if (res.data.ispointEcommerceName) {
               addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญ E-Commerce เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
                 {
                   appearance: "warning",
                   autoDismiss: true,
@@ -188,6 +191,19 @@ export default function PointEcommerce() {
     },
   });
 
+  /*พิมพ์เบอร์โทรศัพท์*/
+  const onHandleNumber = (e) => {
+    if (
+      ValidateService.onHandleNumberChange(e.target.value) !== "" ||
+      e.target.value === ""
+    ) {
+      setDelay(e.target.value);
+      console.log();
+      formik.values.purchaseAmount = e.target.value;
+      formik.values.productAmount = e.target.value;
+    }
+  };
+
   const fetchData = async () => {
     axios.get("pointEcommerce").then((response) => {
       if (response.data.error) {
@@ -198,17 +214,17 @@ export default function PointEcommerce() {
   };
 
   const fetchProduct = async () => {
-      dispatch(fetchLoading());
-      await axios.get("stock").then((response) => {
-          if (!response.data.error && response.data.tbStock) {
-              let _stockData = response.data.tbStock;
-              _stockData = _stockData.map(stock => {
-                  return { value: stock.id, label: stock.productName };
-              });
-              setListProduct(_stockData)
-          }
-          dispatch(fetchSuccess());
-      });
+    dispatch(fetchLoading());
+    await axios.get("stock").then((response) => {
+      if (!response.data.error && response.data.tbStock) {
+        let _stockData = response.data.tbStock;
+        _stockData = _stockData.map((stock) => {
+          return { value: stock.id, label: stock.productName };
+        });
+        setListProduct(_stockData);
+      }
+      dispatch(fetchSuccess());
+    });
   };
 
   useEffect(() => {
@@ -266,7 +282,7 @@ export default function PointEcommerce() {
                               <div className="relative w-full mb-3">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>เพิ่มเงื่อนไขคะแนนสะสม</label>
+                                    <label>เพิ่มแคมเปญ E-Commerce</label>
                                   </div>
                                 </div>
                               </div>
@@ -318,13 +334,17 @@ export default function PointEcommerce() {
                                     htmlFor="grid-password"
                                   ></label>
                                 </div>
-                                <div className={"w-full lg:w-11/12 px-4 mt-2 mb-2 "}>
+                                <div
+                                  className={
+                                    "w-full lg:w-11/12 px-4 mt-2 mb-2 "
+                                  }
+                                >
                                   <Radio.Group
                                     options={optionsSale}
                                     onChange={(e) => {
                                       setIsSale(e.target.value);
                                       formik.setFieldValue(
-                                        "isSale",
+                                        "type",
                                         e.target.value
                                       );
                                     }}
@@ -345,14 +365,22 @@ export default function PointEcommerce() {
                                 <div className="w-full lg:w-11/12 px-4 margin-auto-t-b flex">
                                   <input
                                     type="text"
-                                    className="border-0 px-2 text-left py-2 w-full placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
-                                    id="pointEcommerceSymbol"
-                                    name="pointEcommerceSymbol"
-                                    maxLength={100}
-                                    onChange={formik.handleChange}
+                                    className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                                    id="productAmount"
+                                    name="productAmount"
+                                    maxLength={5}
+                                    onChange={(event) => {
+                                      setlangSymbo(
+                                        ValidateService.onHandleNumber(event)
+                                      );
+                                      formik.values.productAmount =
+                                        ValidateService.onHandleNumber(event);
+                                    }}
                                     onBlur={formik.handleBlur}
-                                    value={formik.values.pointEcommerceSymbol}
-                                    autoComplete="pointEcommerceSymbol"
+                                    autoComplete="productAmount"
+                                    value={
+                                      formik.values.productAmount
+                                    }
                                   />
                                   <span
                                     className="text-blueGray-600 text-sm font-bold pl-2 margin-auto "
@@ -393,20 +421,40 @@ export default function PointEcommerce() {
                                       formik.values.pointEcommerceLengthSymbol
                                     }
                                   /> */}
-                                  <Select 
-                                      name="productId"
-                               
-                                      onChange={(value) => {
-                                        formik.setFieldValue("productId", value.value);
-                                      }}
-                                      menuPortalTarget={document.body}
-                                      menuPosition="fixed"
-                                      options={listProduct}
-                                      value={ValidateService.defaultValue(
-                                        listProduct,
-                                        formik.values.redemptionType
-                                      )}
-                                      styles={UseStyleSelect}
+                                  <Select
+                                    name="productId"
+                                    onChange={(value) => {
+                                      formik.setFieldValue(
+                                        "productId",
+                                        value.value
+                                      );
+                                    }}
+                                    menuPortalTarget={document.body}
+                                    menuPosition="fixed"
+                                    placeholder=""
+                                    options={
+                                      formik.values.type === "1"
+                                        ? nonSelect
+                                        : listProduct
+                                    }
+                                    value={
+                                      formik.values.type === "1"
+                                        ? null
+                                        : ValidateService.defaultValue(
+                                            listProduct,
+                                            formik.values.redemptionType
+                                          )
+                                    }
+                                    isDisabled={
+                                      formik.values.type === "1" ? true : false
+                                    }
+                                    className={"w-full "}
+                                    styles={
+                                      UseStyleSelect +
+                                      (formik.values.type === "1"
+                                        ? " background-color: #f2f2f2 !important; color: #334155 !important;"
+                                        : " ")
+                                    }
                                   />
                                   <span
                                     className="text-blueGray-600 text-sm font-bold px-4 margin-auto "
@@ -656,7 +704,7 @@ export default function PointEcommerce() {
                                         e.target.value
                                       );
                                     }}
-                                    value={Active}
+                                    value={formik.values.isActive}
                                   />
                                 </div>
                               </div>
@@ -790,7 +838,7 @@ export default function PointEcommerce() {
               </tbody>
             </table>
           </div>
-          <div className="py-4">
+          <div className="py-4 px-4">
             <ReactPaginate
               previousLabel={" < "}
               nextLabel={" > "}

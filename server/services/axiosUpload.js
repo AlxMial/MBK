@@ -4,7 +4,9 @@ const password = 'NFgrWHk2bTE1UURGZ0M0WXVwOVpxQT09'
 const token = Buffer.from(`${username}:${password}`, 'utf8').toString('base64')
 
 const axiosInstance = axios.create({
-  baseURL: `http://localhost:3002/mahboonkrongimport/`,
+  // baseURL: `http://localhost:3002/mahboonkrongimport/`,
+  // baseURL: `https://hopeagro.co.th/mahboonkrongimport/`,
+  baseURL: `https://undefined.ddns.net/mahboonkrongimport/`,
 });
 
 axiosInstance.interceptors.request.use(

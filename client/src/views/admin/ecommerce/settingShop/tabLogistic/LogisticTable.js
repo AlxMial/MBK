@@ -4,9 +4,11 @@ import ReactPaginate from "react-paginate";
 import ValidateService from "services/validateValue";
 import axios from "services/axios";
 import { fetchLoading } from "redux/actions/common";
+import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 
 const LogisticTable = ({
   listLogistic,
+  setListLogistic,
   openModal,
   saveLogisticSuccess,
   saveLogisticNotSuccess,
@@ -16,7 +18,6 @@ const LogisticTable = ({
   const tdClass =
     "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
   const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
-
   const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
@@ -24,20 +25,59 @@ const LogisticTable = ({
     listLogistic ? listLogistic.length : 0 / usersPerPage
   );
 
+  const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
+  const [deleteValue, setDeleteValue] = useState("");
+
   const changePage = ({ selected }) => {
     setPageNumber(selected);
   };
 
   const logisticTypeList = [
-    { label: "Kerry Express", value: "kerry" },
-    { label: "Flash Express", value: "flash" },
-    { label: "ไปรษณีย์ไทย", value: "post" },
+    { label: "Kerry Express", value: "1" },
+    // { label: "Flash Express", value: "flash" },
+    { label: "ไปรษณีย์ไทย", value: "2" },
   ];
 
   const showList = [
     { label: "แสดง", value: true },
     { label: "ไม่แสดง", value: false },
   ];
+
+  /* Modal */
+  function openModalSubject(id) {
+    setDeleteValue(id);
+    setIsOpenSubject(true);
+  }
+
+  function closeModalSubject() {
+    setIsOpenSubject(false);
+  }
+
+  const deleteLogistic = () => {
+
+        // var filtered = listLogistic.filter( function(value, index, arr){
+        //     if(value.id !== deleteValue)
+        //     {
+        //         return value;
+        //     }
+        // });
+        // listLogistic = filtered;
+        // setListLogistic(
+        //     listLogistic.filter((val) => {
+        //         return val.id !== deleteValue;
+        //     })
+        // );
+        // closeModalSubject();
+        axios.delete(`/logistic/${deleteValue}`).then(() => {
+            setListLogistic(
+                listLogistic.filter((val) => {
+                    return val.id !== deleteValue;
+                })
+            );
+          closeModalSubject();
+        });
+      
+  };
 
   const handleChangeShowToEmp = (value, newValue) => {
     value.isShow = newValue;
@@ -75,8 +115,8 @@ const LogisticTable = ({
               <th className={thClass}>ชื่อการจัดส่ง</th>
               <th className={thClass}>ผู้ใช้บริการส่งสินค้า</th>
               <th className={thClass}>รายละเอียด</th>
-              <th className={thClass}>ค่าจัดส่ง</th>
-              <th className={thClass}>จัดการ</th>
+              <th className={thClass + " text-center"}>ค่าจัดส่ง</th>
+              <th className={thClass + " text-center"}>จัดการ</th>
             </tr>
           </thead>
           <tbody>
@@ -122,8 +162,10 @@ const LogisticTable = ({
                       onClick={() => {
                         openModal(value.id);
                       }}
-                    ></td>
-                    <td className={tdClass + " cursor-pointer"}>
+                    >
+                      <span className={tdSpan}>{value.description}</span>
+                    </td>
+                    <td className={tdClass + " cursor-pointer text-center"}>
                       <span className={tdSpan}>
                         {value.deliveryCost === 0
                           ? "ฟรี"
@@ -143,7 +185,16 @@ const LogisticTable = ({
                                                 />
                                             </span> */}
                     </td>
-                    <td className={tdClass}>
+                    <td className={tdClass + " text-center"}>
+                      <i
+                        className={
+                          "fas fa-trash cursor-pointer" +
+                          (" text-red-500")
+                        }
+                        onClick={(e) => {
+                           openModalSubject(value.id);
+                        }}
+                      ></i>
                       {/* <span className={tdSpan}>
                                                 <SelectUC
                                                     name="showToEmp"
@@ -163,6 +214,16 @@ const LogisticTable = ({
               })}
           </tbody>
         </table>
+        <ConfirmDialog
+          showModal={modalIsOpenSubject}
+          message={"กำหนดช่องทางการส่งของ"}
+          hideModal={() => {
+            closeModalSubject();
+          }}
+          confirmModal={() => {
+            deleteLogistic();
+          }}
+        />
       </div>
       <div className="px-4">
         <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">

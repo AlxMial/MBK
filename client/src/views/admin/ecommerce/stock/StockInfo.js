@@ -12,9 +12,9 @@ import {
   customStyles,
   customStylesMobile,
 } from "assets/styles/theme/ReactModal";
-import ProfilePictureUC from 'components/ProfilePictureUC';
+import ProfilePictureUC from "components/ProfilePictureUC";
 import InputUC from "components/InputUC";
-import SelectUC from 'components/SelectUC';
+import SelectUC from "components/SelectUC";
 import ValidateService from "services/validateValue";
 import TextAreaUC from "components/InputUC/TextAreaUC";
 import Switch from "react-switch";
@@ -24,14 +24,21 @@ import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 import ModalHeader from "views/admin/ModalHeader";
 import ButtonModalUC from "components/ButtonModalUC";
-
-const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, isImageCoverNull = false }) => {
+import { styleSelect } from "assets/styles/theme/ReactSelect.js";
+const StockInfo = ({
+  handleModal,
+  formik,
+  open,
+  handleChangeImage,
+  stockImage,
+  isImageCoverNull = false,
+}) => {
   Modal.setAppElement("#root");
-
+  const useStyleCreate = styleSelect();
   const discountList = [
-    { value: 'THB', label: 'บาท' },
-    { value: 'percent', label: '%' },
-  ]
+    { value: "THB", label: "บาท" },
+    { value: "percent", label: "%" },
+  ];
 
   const inactiveList = [
     { label: "เปิดการใช้งาน", value: true },
@@ -52,29 +59,33 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
   }, []);
 
   const fetchData = async () => {
-    const res = await axios.get('productCategory');
+    const res = await axios.get("productCategory");
     const productCategory = await res.data.tbProductCategory;
     if (productCategory) {
       // console.log('setProductCategoryList', productCategory);
-      setProductCategoryList(productCategory.map(item => ({
-        label: item.categoryName,
-        value: item.id,
-      })));
+      setProductCategoryList(
+        productCategory.map((item) => ({
+          label: item.categoryName,
+          value: item.id,
+        }))
+      );
     }
-  }
+  };
 
   useEffect(() => {
     // default
     if (productCategoryList && productCategoryList.length > 0) {
       if (!formik.values.productCategoryId) {
         setCategoryValue(productCategoryList[0]);
-        console.log('setDefault', productCategoryList[0]);
-        formik.setFieldValue('productCategoryId', productCategoryList[0].value);
+        formik.setFieldValue("productCategoryId", productCategoryList[0].value);
       } else {
-        setCategoryValue(productCategoryList.find(item => item.value === formik.values.productCategoryId));
+        setCategoryValue(
+          productCategoryList.find(
+            (item) => item.value === formik.values.productCategoryId
+          )
+        );
       }
     }
-
   }, [productCategoryList]);
 
   const createOption = (label) => ({
@@ -82,16 +93,15 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
     value: label.toLowerCase().replace(/\W/g, ""),
   });
 
-  const handleChange = (
-    newValue,
-    actionMeta
-  ) => {
-    const _categoryValue = productCategoryList && productCategoryList.filter(item => item.value === newValue);
+  const handleChange = (newValue, actionMeta) => {
+    const _categoryValue =
+      productCategoryList &&
+      productCategoryList.filter((item) => item.value === newValue);
     if (_categoryValue) {
       setCategoryValue(_categoryValue[0]);
     }
-    console.log(newValue.value)
-    formik.setFieldValue('productCategoryId', newValue.value, false);
+    console.log(newValue.value);
+    formik.setFieldValue("productCategoryId", newValue.value, false);
   };
 
   const handleCreate = (inputValue) => {
@@ -101,20 +111,20 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
     setTimeout(() => {
       const newOption = createOption(inputValue);
       const newItem = {
-        id: '',
+        id: "",
         categoryName: inputValue,
         isDeleted: false,
-        addBy: sessionStorage.getItem('user'),
-        updateBy: sessionStorage.getItem('user'),
-      }
-      axios.post('productCategory', newItem).then(res => {
+        addBy: sessionStorage.getItem("user"),
+        updateBy: sessionStorage.getItem("user"),
+      };
+      axios.post("productCategory", newItem).then((res) => {
         if (res.data.status) {
           console.groupEnd();
           setProductCategoryList([...productCategoryList, newOption]);
           setIsLoadingSelect(false);
-          console.log('newOption', newOption);
+          console.log("newOption", newOption);
           setCategoryValue(newOption);
-          formik.setFieldValue('productCategoryId', newOption.value, false);
+          formik.setFieldValue("productCategoryId", newOption.value, false);
         } else {
           setIsLoadingSelect(false);
           addToast("บันทึกข้อมูลหมวดหมู่สินค้าไม่สำเร็จ", {
@@ -141,6 +151,24 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
               <ModalHeader title="เพิ่มสินค้า" handleModal={handleModal} />
               <div className="flex flex-wrap px-24 py-10 justify-center Overflow-Banner">
                 <div className="w-full lg:w-12/12 px-4 margin-auto-t-b">
+                  {/* อิสขายดี */}
+                  <div className="flex flex-wrap mt-4">
+                    <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
+                      <LabelUC label="สินค้าขายดี" isRequired={true} />
+                    </div>
+                    <div className="w-full lg:w-6/12 margin-auto-t-b">
+                      <div className="relative w-full px-4">
+                        <Switch
+                          uncheckedIcon={false}
+                          checkedIcon={false}
+                          onChange={(value) => {
+                            formik.setFieldValue("isBestSeller", value);
+                          }}
+                          checked={formik.values.isBestSeller}
+                        />
+                      </div>
+                    </div>
+                  </div>
                   <div className="flex flex-wrap">
                     {/* รูปสินค้า */}
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
@@ -150,19 +178,28 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                       <div className="relative w-full px-4 flex">
                         {stockImage.map((item, i) => {
                           return (
-                            <div key={i + 1} className='flex justify-center flex-col'>
+                            <div
+                              key={i + 1}
+                              className="flex justify-center flex-col"
+                            >
                               <ProfilePictureUC
-                                className='pr-4'
+                                className="pr-4"
                                 id={i + 1}
-                                hoverText='เลือกรูปสินค้า'
+                                hoverText="เลือกรูปสินค้า"
                                 src={item.image}
-                                onChange={handleChangeImage} />
+                                onChange={handleChangeImage}
+                              />
                               <LabelUC
-                                moreClassName='text-center mt-2 pr-4'
-                                label={i == 0 ? 'รูปปกสินค้า' : ('รูปสินค้า ' + (i + 1))}
-                                isRequired={i === 0} />
+                                moreClassName="text-center mt-2 pr-4"
+                                label={
+                                  i == 0
+                                    ? "รูปปกสินค้า"
+                                    : "รูปสินค้า " + (i + 1)
+                                }
+                                isRequired={i === 0}
+                              />
                             </div>
-                          )
+                          );
                         })}
                       </div>
                       {isImageCoverNull && (
@@ -181,17 +218,18 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                     <div className="w-full lg:w-8/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
-                          name='productName'
+                          name="productName"
                           maxLength={100}
                           onBlur={formik.handleBlur}
                           value={formik.values.productName}
                           onChange={(e) => {
                             formik.handleChange(e);
-                          }} />
+                          }}
+                        />
                       </div>
                       <div className="relative w-full px-4">
                         {formik.touched.productName &&
-                          formik.errors.productName ? (
+                        formik.errors.productName ? (
                           <div className="text-sm py-2 px-2  text-red-500">
                             {formik.errors.productName}
                           </div>
@@ -209,7 +247,9 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                         <CreatableSelect
                           isClearable
                           className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                          styles={useStyle}
+                          styles={useStyleCreate}
+                          menuPortalTarget={document.body}
+                          menuPosition="fixed"
                           isLoading={isLoadingSelect}
                           options={productCategoryList}
                           onChange={handleChange}
@@ -220,7 +260,7 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                       </div>
                       <div className="relative w-full px-4">
                         {formik.touched.productCategoryId &&
-                          formik.errors.productCategoryId ? (
+                        formik.errors.productCategoryId ? (
                           <div className="text-sm py-2 px-2  text-red-500">
                             {formik.errors.productCategoryId}
                           </div>
@@ -236,18 +276,18 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                       <div className="relative w-full px-4">
                         <InputUC
                           type="number"
-                          name='price'
+                          name="price"
                           maxLength={10}
                           onBlur={formik.handleBlur}
                           value={formik.values.price}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
                             formik.handleChange(e);
-                          }} />
+                          }}
+                        />
                       </div>
                       <div className="relative w-full px-4">
-                        {formik.touched.price &&
-                          formik.errors.price ? (
+                        {formik.touched.price && formik.errors.price ? (
                           <div className="text-sm py-2 px-2  text-red-500">
                             {formik.errors.price}
                           </div>
@@ -263,14 +303,15 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                       <div className="relative w-full px-4">
                         <InputUC
                           type="number"
-                          name='discount'
+                          name="discount"
                           maxLength={10}
                           onBlur={formik.handleBlur}
                           value={formik.values.discount}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
                             formik.handleChange(e);
-                          }} />
+                          }}
+                        />
                       </div>
                     </div>
                     <div className="w-full lg:w-1/12 pl-4 margin-auto-t-b ">
@@ -297,14 +338,15 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                       <div className="relative w-full px-4">
                         <InputUC
                           type="number"
-                          name='productCount'
+                          name="productCount"
                           maxLength={10}
                           onBlur={formik.handleBlur}
                           value={formik.values.productCount}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
                             formik.handleChange(e);
-                          }} />
+                          }}
+                        />
                       </div>
                     </div>
                     <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
@@ -320,14 +362,15 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                       <div className="relative w-full px-4">
                         <InputUC
                           type="number"
-                          name='weight'
+                          name="weight"
                           maxLength={10}
                           onBlur={formik.handleBlur}
                           value={formik.values.weight}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
                             formik.handleChange(e);
-                          }} />
+                          }}
+                        />
                       </div>
                     </div>
                     <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
@@ -343,13 +386,14 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                       <div className="relative w-full px-4">
                         <TextAreaUC
                           rows={3}
-                          name='description'
+                          name="description"
                           onBlur={formik.handleBlur}
                           value={formik.values.description}
                           maxLength={255}
                           onChange={(e) => {
                             formik.handleChange(e);
-                          }} />
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
@@ -362,12 +406,13 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                       <div className="relative w-full px-4">
                         <TextAreaUC
                           rows={3}
-                          name='descriptionPromotion'
+                          name="descriptionPromotion"
                           onBlur={formik.handleBlur}
                           value={formik.values.descriptionPromotion}
                           onChange={(e) => {
                             formik.handleChange(e);
-                          }} />
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
@@ -382,9 +427,14 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                           uncheckedIcon={false}
                           checkedIcon={false}
                           onChange={(value) => {
+                            formik.setFieldValue('startDateCampaign',"");
+                            formik.setFieldValue('endDateCampaign',"");
+                            formik.setFieldValue('startTimeCampaign',"");
+                            formik.setFieldValue('endTimeCampaign',"");
                             formik.setFieldValue("isFlashSale", value);
                           }}
-                          checked={formik.values.isFlashSale} />
+                          checked={formik.values.isFlashSale}
+                        />
                       </div>
                     </div>
                   </div>
@@ -396,6 +446,7 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <DatePickerUC
+                          disabled={!formik.values.isFlashSale}
                           onChange={(e) => {
                             formik.setFieldValue(
                               "startDateCampaign",
@@ -406,20 +457,21 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                           value={
                             formik.values.startDateCampaign
                               ? moment(
-                                new Date(formik.values.startDateCampaign),
-                                "DD/MM/YYYY"
-                              )
+                                  new Date(formik.values.startDateCampaign),
+                                  "DD/MM/YYYY"
+                                )
                               : null
                           }
                         />
                       </div>
                     </div>
                     <div className="w-full lg:w-1/12 px-4 margin-auto-t-b">
-                      <LabelUC label="ถึง" moreClassName=' text-center' />
+                      <LabelUC label="ถึง" moreClassName=" text-center" />
                     </div>
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <DatePickerUC
+                          disabled={!formik.values.isFlashSale}
                           onChange={(e) => {
                             formik.setFieldValue(
                               "endDateCampaign",
@@ -430,9 +482,9 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                           value={
                             formik.values.endDateCampaign
                               ? moment(
-                                new Date(formik.values.endDateCampaign),
-                                "DD/MM/YYYY"
-                              )
+                                  new Date(formik.values.endDateCampaign),
+                                  "DD/MM/YYYY"
+                                )
                               : null
                           }
                         />
@@ -447,32 +499,36 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
+                          disabled={!formik.values.isFlashSale}
                           type="time"
-                          name='startTimeCampaign'
+                          name="startTimeCampaign"
                           maxLength={10}
                           onBlur={formik.handleBlur}
                           value={formik.values.startTimeCampaign}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
                             formik.handleChange(e);
-                          }} />
+                          }}
+                        />
                       </div>
                     </div>
                     <div className="w-full lg:w-1/12 px-4 margin-auto-t-b">
-                      <LabelUC label="ถึง" moreClassName=' text-center' />
+                      <LabelUC label="ถึง" moreClassName=" text-center" />
                     </div>
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
+                          disabled={!formik.values.isFlashSale}
                           type="time"
-                          name='endTimeCampaign'
+                          name="endTimeCampaign"
                           maxLength={10}
                           onBlur={formik.handleBlur}
                           value={formik.values.endTimeCampaign}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
                             formik.handleChange(e);
-                          }} />
+                          }}
+                        />
                       </div>
                     </div>
                   </div>
@@ -485,10 +541,7 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
                         <Radio.Group
                           options={inactiveList}
                           onChange={(e) => {
-                            formik.setFieldValue(
-                              "isInactive",
-                              e.target.value
-                            );
+                            formik.setFieldValue("isInactive", e.target.value);
                           }}
                           value={formik.values.isInactive}
                         />
@@ -504,6 +557,6 @@ const StockInfo = ({ handleModal, formik, open, handleChangeImage, stockImage, i
       </Modal>
     </>
   );
-}
+};
 
 export default StockInfo;

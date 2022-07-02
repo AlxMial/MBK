@@ -88,7 +88,7 @@ const ShopList = () => {
       let dataTemp = tbStock;
       if (e == 2) {
         dataTemp = dataTemp.filter((e) => {
-          if (e.IsBestSeller) {
+          if (e.isBestSeller) {
             return e;
           }
         });
@@ -129,7 +129,7 @@ const ShopList = () => {
       let dataTemp = tbStock;
       if (e == 2) {
         dataTemp = dataTemp.filter((e) => {
-          if (e.IsBestSeller) {
+          if (e.isBestSeller) {
             return e;
           }
         });
@@ -223,10 +223,16 @@ const ShopList = () => {
       .then((response) => {
         if (response.data.status) {
           let tbStock = response.data.tbStock;
+          tbStock = tbStock.filter(e => {
+            if (e.productCount > 0) {
+              return e
+            }
+          })
           settbStock(tbStock);
           let tbStockiewNominal = [];
           let tbStockiewFlashSale = [];
           tbStock.filter((e) => {
+
             if (!e.isFlashSale) {
               tbStockiewNominal.push(e);
             } else {
@@ -299,7 +305,7 @@ const ShopList = () => {
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div style={{ height: "100%" }}>
+      <div className="h-full">
         <div
           style={{
             height: 125 - y + "px",
@@ -310,7 +316,7 @@ const ShopList = () => {
         >
           {ImgBanner.length > 0 && IsImgBanner ? (
             <SlideShow img={ImgBanner} duration={5000} setcategoryview={setcategoryview}
-             selectMenu={selectMenu} />
+              selectMenu={selectMenu} />
           ) : !IsImgBanner ? (
             <div
               className="flex w-full text-green-mbk font-bold"
@@ -484,7 +490,7 @@ const ShopList = () => {
                                 className="w-32 border-2 border-blueGray-50"
                               ></ImageUC>
 
-                              {e.IsBestSeller ? (
+                              {e.isBestSeller ? (
                                 <img
                                   style={{
                                     width: "40px",
@@ -567,12 +573,13 @@ const ShopList = () => {
                   <div
                     key={i}
                     className="line-column mt-2 mb-2"
+                    // style={{filter :"g" e.productCount <1}}
                     onClick={() => {
                       history.push(path.showProducts.replace(":id", e.id));
                     }}
                   >
-                    <div className="line-card relative">
-                      <div className="relative" style={{}}>
+                    <div className="line-card relative" >
+                      <div className="relative" >
                         <ImageUC
                           style={{
                             margin: "auto",
@@ -602,7 +609,7 @@ const ShopList = () => {
                           </div>
                         ) : null}
 
-                        {e.IsBestSeller ? (
+                        {e.isBestSeller ? (
                           <img
                             style={{
                               width: "40px",

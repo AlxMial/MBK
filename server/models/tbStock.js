@@ -36,10 +36,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: false,
     },
-    IsBestSeller: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-    },
     startDateCampaign: {
       type: DataTypes.DATE,
       allowNull: true,
@@ -72,6 +68,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    isBestSeller: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    }
   });
   tbStock.associate = (models) => {
     tbStock.hasMany(models.tbBanner, {

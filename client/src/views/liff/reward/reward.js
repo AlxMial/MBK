@@ -36,7 +36,7 @@ const Reward = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ marginTop: "-200px", position: "absolute", width: "100%" }}>
+      <div style={{ marginTop: "-80px", position: "absolute", width: "100%" }}>
         <MyPoint />
 
         <div className="mt-2">

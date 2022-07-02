@@ -22,12 +22,12 @@ const LogisticModal = ({ open, formik, handleModal }) => {
   const { width } = useWindowDimensions();
 
   const logisticTypeList = [
-    { label: "Kerry Express", value: "kerry" },
+    { label: "Kerry Express", value: "1" },
     // { label: "Flash Express", value: 'flash' },
-    { label: "ไปรษณีย์ไทย", value: "post" },
+    { label: "ไปรษณีย์ไทย", value: "2" },
   ];
 
-  const optionsDelivery = [{ label: "ค่าจัดส่งคงที่", value: "constant" }];
+  const optionsDelivery = [{ label: "ค่าจัดส่งคงที่", value: "1" }];
   /* Method Condition */
   const optionsActive = [
     { label: "เปิดการใช้งาน", value: "1" },
@@ -197,7 +197,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                         onChange={(e) => {
                           formik.setFieldValue("isShow", e.target.value);
                         }}
-                        value={formik.values.isShow}
+                        value={(formik.values.isShow === true) ? "1" : "0"}
                       />
                     </div>
                   </div>

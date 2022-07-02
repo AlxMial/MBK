@@ -31,11 +31,11 @@ const CancelModel = ({
     <div>
       <Modal
         isOpen={isOpenmodel}
-        className="Modal-line"
+        className="Modal-line-cancel"
         style={{ borderRadius: "10px" }}
       >
         <div className="w-full flex flex-wrap">
-          <div className="w-full flex-auto mt-2">
+          <div className="h-full w-full flex-auto mt-2 relative ">
             <ModalHeader
               title="ยกเลิกสินค้า"
               handleModal={() => {
@@ -69,11 +69,12 @@ const CancelModel = ({
               />
             </div>
             <div
-              className="mb-2 text-green-mbk"
+              className="mb-2 text-green-mbk line-scroll"
               style={{
                 backgroundColor: "#f7f6f6",
                 padding: "10px",
                 borderRadius: "10px",
+                height: "calc(100% - 360px)"
               }}
             >
               <div className="font-bold">
@@ -100,13 +101,14 @@ const CancelModel = ({
                 </div>
               </div>
             </div>
-            <div>
-              <div
-                className="flex outline-gold-mbk text-gold-mbk text-center text-lg  font-bold bt-line"
-                onClick={Cancelorder}
-              >
-                {"ตกลง"}
-              </div>
+
+            <div
+              className="w-full flex outline-gold-mbk text-gold-mbk text-center text-lg  font-bold bt-line absolute"
+              style={{ bottom: "0" }}
+              onClick={Cancelorder}
+            >
+              <div style={{ width: "80%" }}>{"ตกลง"}</div>
+
             </div>
           </div>
         </div>

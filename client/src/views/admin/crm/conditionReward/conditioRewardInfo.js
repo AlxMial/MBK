@@ -27,17 +27,21 @@ import FilesService from "../../../../services/files";
 import GameList from "./GameList";
 import TextAreaUC from "components/InputUC/TextAreaUC";
 import ImportCoupon from "./ImportCoupon";
-
+import { Radio } from "antd";
 export default function ConditioRewardInfo() {
   /* Option Select */
   const redemptionType = [
     { value: "1", label: "Standard" },
     { value: "2", label: "Game" },
   ];
+  const options = [
+    { label: "เปิดการใช้งาน", value: true },
+    { label: "ปิดการใช้งาน", value: false },
+  ];
 
   const rewardType = [
     { value: "1", label: "E-Coupon" },
-    { value: "2", label: "สินค้า" },
+    { value: "2", label: "ของสมนาคุณ" },
   ];
 
   /* Service Function */
@@ -146,6 +150,18 @@ export default function ConditioRewardInfo() {
           "* จำนวนคะแนนต้องมากกว่า 0",
           (value) => value > 0
         ),
+      startDate:
+        Yup.string().required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก วันที่เริ่มต้น"
+            : "* Please enter Start Date"
+        )
+      ,
+      endDate: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่สิ้นสุด"
+          : "* Please enter End Date"
+      ),
     }),
     onSubmit: (values) => {
       let ImageSave = {};
@@ -159,6 +175,7 @@ export default function ConditioRewardInfo() {
               setIsNew(false);
               formik.values.id = res.data.tbRedemptionConditionsHD.id;
               history.push(
+                 
                 `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
               );
               dispatch(fetchSuccess());
@@ -246,7 +263,7 @@ export default function ConditioRewardInfo() {
                 formik.values.id = res.data.tbRedemptionConditionsHD.id;
                 formikCoupon.setFieldValue(
                   "pictureCoupon",
-                  formikCouponImport.values.pictureCoupon
+                  (isImport) ?  formikCouponImport.values.pictureCoupon :  formikCoupon.values.pictureCoupon
                 );
                 if (isImport) {
                   for (var columns in res.data.tbRedemptionCoupon) {
@@ -263,56 +280,63 @@ export default function ConditioRewardInfo() {
                       ? res.data.tbRedemptionCoupon.id
                       : res.data.tbRedemptionProduct.id,
                 };
-                await onSaveImage(ImageSave, async (res) => {});
-                if (formik.values.rewardType === "1") {
-                  formikCoupon.values.id = res.data.tbRedemptionCoupon.id;
-                  if (isImport) {
-                    formData.append("id", res.data.tbRedemptionCoupon.id);
-                    formData.append("addBy", sessionStorage.getItem("user"));
-                    await axiosUpload
-                      .post("api/coupon/uploadCoupon", formData)
-                      .then(async (resExcel) => {
-                        if (resExcel.data.status) {
-                          await axios
-                            .post("/uploadExcel/coupon",{couponId:res.data.tbRedemptionCoupon.id})
-                            .then((resUpload) => {
-                              console.log(resUpload)
-                              dispatch(fetchSuccess());
-                              addToast(
-                                Storage.GetLanguage() === "th"
-                                  ? "บันทึกข้อมูลสำเร็จ"
-                                  : "Save data successfully",
-                                { appearance: "success", autoDismiss: true }
-                              );
-                            });
-                        } else {
-                          dispatch(fetchSuccess());
-                          addToast(
-                            Storage.GetLanguage() === "th"
-                              ? "บันทึกข้อมูลไม่สำเร็จ"
-                              : "Unsuccessfully",
-                            { appearance: "error", autoDismiss: true }
-                          );
-                        }
-                      });
-                  } else {
+                await onSaveImage(ImageSave, async (resImages) => {
+                  if (formik.values.rewardType === "1") {
+                    formikCoupon.values.id = res.data.tbRedemptionCoupon.id;
+                    if (isImport) {
+                      formData.append("id", res.data.tbRedemptionCoupon.id);
+                      formData.append("addBy", sessionStorage.getItem("user"));
+                      await axiosUpload
+                        .post("api/coupon/uploadCoupon", formData)
+                        .then(async (resExcel) => {
+                          if (resExcel.data.status) {
+                            await axios
+                              .post("/uploadExcel/coupon", { couponId: res.data.tbRedemptionCoupon.id })
+                              .then((resUpload) => {
+                                dispatch(fetchSuccess());
+                                addToast(
+                                  Storage.GetLanguage() === "th"
+                                    ? "บันทึกข้อมูลสำเร็จ"
+                                    : "Save data successfully",
+                                  { appearance: "success", autoDismiss: true }
+                                );
+                              });
+                          } else {
+                            dispatch(fetchSuccess());
+                            addToast(
+                              Storage.GetLanguage() === "th"
+                                ? "บันทึกข้อมูลไม่สำเร็จ"
+                                : "Unsuccessfully",
+                              { appearance: "error", autoDismiss: true }
+                            );
+                          }
+                        });
+                    } else {
+                      addToast(
+                        Storage.GetLanguage() === "th"
+                          ? "บันทึกข้อมูลสำเร็จ"
+                          : "Save data successfully",
+                        { appearance: "success", autoDismiss: true }
+                      );
+                      dispatch(fetchSuccess());
+                    }
+                  } else if (formik.values.rewardType === "2") {
+                    formikProduct.values.id = res.data.tbRedemptionProduct.id;
                     dispatch(fetchSuccess());
+                    addToast(
+                      Storage.GetLanguage() === "th"
+                        ? "บันทึกข้อมูลสำเร็จ"
+                        : "Save data successfully",
+                      { appearance: "success", autoDismiss: true }
+                    );
                   }
-                } else if (formik.values.rewardType === "2") {
-                  formikProduct.values.id = res.data.tbRedemptionProduct.id;
                   dispatch(fetchSuccess());
-                  addToast(
-                    Storage.GetLanguage() === "th"
-                      ? "บันทึกข้อมูลสำเร็จ"
-                      : "Save data successfully",
-                    { appearance: "success", autoDismiss: true }
+                  history.push(
+                    `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
                   );
-                }
-
-                history.push(
-                  `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
-                );
-                setIsImport(false);
+                  // window.location.href( `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`);
+                  setIsImport(false);
+                });
               } else {
                 dispatch(fetchSuccess());
                 addToast(
@@ -338,7 +362,7 @@ export default function ConditioRewardInfo() {
                       ? formikCoupon.values.id
                       : formikProduct.values.id,
                 };
-                await onSaveImage(ImageSave, async (res) => {});
+                await onSaveImage(ImageSave, async (res) => { });
                 addToast(
                   Storage.GetLanguage() === "th"
                     ? "บันทึกข้อมูลสำเร็จ"
@@ -372,7 +396,7 @@ export default function ConditioRewardInfo() {
       discountType: "1",
       startDate: new Date(),
       isNotExpired: false,
-      expiredDate: new Date(),
+      expireDate: new Date(),
       couponCount: 0,
       isNoLimitPerDayCount: false,
       usedPerDayCount: 0,
@@ -380,7 +404,7 @@ export default function ConditioRewardInfo() {
       isSelect: false,
       isCancel: false,
       isDeleted: false,
-      isImport:false,
+      isImport: false,
       addBy: "",
       updateBy: "",
     },
@@ -401,6 +425,21 @@ export default function ConditioRewardInfo() {
           (value) => value > 0
         ),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
+      startDate:
+        Yup.string().required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก วันที่เริ่มต้น"
+            : "* Please enter Start Date"
+        )
+      ,
+      expireDate: Yup.string().when('isNotExpired', {
+        is: false,
+        then: Yup.string().required(Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่สิ้นสุด"
+          : "* Please enter End Date"),
+        otherwise: Yup.string(),
+      })
+
     }),
   });
 
@@ -422,7 +461,7 @@ export default function ConditioRewardInfo() {
       isSelect: false,
       isCancel: false,
       isDeleted: false,
-      isImport:true,
+      isImport: true,
       addBy: "",
       updateBy: "",
     },
@@ -468,6 +507,7 @@ export default function ConditioRewardInfo() {
 
   async function fetchData() {
     dispatch(fetchLoading());
+
     let response = await axios
       .get(`/redemptions/byId/${id}`)
       .then((response) => {
@@ -551,12 +591,14 @@ export default function ConditioRewardInfo() {
               if (response.data.tbImage !== null) {
                 if (
                   response.data.tbRedemptionConditionsHD["rewardType"] === "1"
-                ) {
+                ) {                  
                   formikCoupon.setFieldValue(
                     "pictureCoupon",
                     FilesService.buffer64UTF8(response.data.tbImage["image"])
                   );
                   setImageCoupon({ ...imageCoupon, ...response.data.tbImage });
+
+            
                 } else {
                   formikProduct.setFieldValue(
                     "pictureProduct",
@@ -574,6 +616,7 @@ export default function ConditioRewardInfo() {
             formik.setFieldValue("redemptionType", "1");
             formik.setFieldValue("rewardType", "1");
             formikCoupon.setFieldValue("discountType", "1");
+            formik.setFieldValue("isActive", true);
           }
           dispatch(fetchSuccess());
         }
@@ -752,7 +795,7 @@ export default function ConditioRewardInfo() {
                       />
 
                       {formik.touched.redemptionName &&
-                      formik.errors.redemptionName ? (
+                        formik.errors.redemptionName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           &nbsp;
                         </div>
@@ -773,7 +816,7 @@ export default function ConditioRewardInfo() {
                     </div>
                     <div className="relative w-full px-4">
                       {formik.touched.redemptionName &&
-                      formik.errors.redemptionName ? (
+                        formik.errors.redemptionName ? (
                         <div className="text-sm py-2 px-2  text-red-500">
                           {formik.errors.redemptionName}
                         </div>
@@ -858,19 +901,21 @@ export default function ConditioRewardInfo() {
                   </div>
                   <div
                     className="w-full lg:w-5/12 margin-auto-t-b"
-                    // style={{ width: width < 764 ? "100%" : "39.7%" }}
+                  // style={{ width: width < 764 ? "100%" : "39.7%" }}
                   >
+
                     <div className="relative flex px-4">
                       <InputUC
                         name="points"
-                        type="text"
+                        type="number"
                         maxLength={7}
                         onBlur={formik.handleBlur}
                         value={formik.values.points}
+
                         onChange={(e) => {
                           setStateDelay(ValidateService.onHandleNumber(e));
                           formik.values.points =
-                            ValidateService.onHandleNumber(e);
+                            ValidateService.onHandleNumberValue(e);
                         }}
                         min="0"
                       />
@@ -904,10 +949,11 @@ export default function ConditioRewardInfo() {
                         }}
                         onChange={(e) => {
                           setIsClick({ ...isClick, redemptionStart: false });
+                          // formik.handleChange(e);
                           if (e === null) {
                             formik.setFieldValue(
                               "startDate",
-                              new Date(),
+                              "",
                               false
                             );
                           } else {
@@ -921,12 +967,20 @@ export default function ConditioRewardInfo() {
                         value={
                           !isClick.redemptionStart
                             ? moment(
-                                new Date(formik.values.startDate),
-                                "DD/MM/YYYY"
-                              )
+                              new Date(formik.values.startDate),
+                              "DD/MM/YYYY"
+                            )
                             : null
                         }
                       />
+                    </div>
+                    <div className="relative w-full px-4">
+                      {formik.touched.startDate &&
+                        formik.errors.startDate ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formik.errors.startDate}
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                   <div
@@ -949,7 +1003,7 @@ export default function ConditioRewardInfo() {
                         onChange={(e) => {
                           setIsClick({ ...isClick, redemptionEnd: false });
                           if (e === null) {
-                            formik.setFieldValue("endDate", new Date(), false);
+                            formik.setFieldValue("endDate", "", false);
                           } else {
                             formik.setFieldValue(
                               "endDate",
@@ -961,18 +1015,28 @@ export default function ConditioRewardInfo() {
                         value={
                           !isClick.redemptionEnd
                             ? moment(
-                                new Date(formik.values.endDate),
-                                "DD/MM/YYYY"
-                              )
+                              new Date(formik.values.endDate),
+                              "DD/MM/YYYY"
+                            )
                             : null
                         }
                       />
+                    </div>
+                    <div className="relative w-full px-4">
+                      {formik.touched.endDate &&
+                        formik.errors.endDate ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          {formik.errors.endDate}
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                   <div className="w-full">&nbsp;</div>
                   <div className="w-full lg:w-1/12 margin-auto-t-b ">
                     <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
                   </div>
+
+
                   <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                     <div className="relative">
                       <TextAreaUC
@@ -985,6 +1049,18 @@ export default function ConditioRewardInfo() {
                       />
                     </div>
                   </div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                  </div>
+                  <div className="w-full lg:w-11/12 px-4 margin-auto-t-b ">
+                    <Radio.Group
+                      options={options}
+                      onChange={(e) => {
+                        formik.setFieldValue("isActive", e.target.value);
+                      }}
+                      value={formik.values.isActive}
+                    />
+                  </div>
+
                   <div className="w-full">&nbsp;</div>
                   <span className="text-lg  text-green-mbk margin-auto font-bold">
                     <div className="w-full mb-2">

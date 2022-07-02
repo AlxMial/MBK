@@ -11,18 +11,19 @@ import {
 import { IsNullOrEmpty, liff_dateToString } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import * as Session from "@services/Session.service";
-import ModelPolicy from "./modelpolicy"
+import ModelPolicy from "./modelpolicy";
+
+
 // components
 
 const Member = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const { TabPane } = Tabs;
-  const tabsChange = () => { };
+  const tabsChange = () => {};
   const [tbMember, settbMember] = useState({});
   const [Memberpoints, setMemberpoints] = useState({});
   const [isOpenPolicy, setisOpenPolicy] = useState(false);
-
 
   const getMembers = async () => {
     setIsLoading(true);
@@ -33,7 +34,7 @@ const Member = () => {
           getMemberpoints({ id: res.data.tbMember.id });
         }
       },
-      () => { },
+      () => {},
       () => {
         setIsLoading(false);
       }
@@ -47,7 +48,7 @@ const Member = () => {
           setMemberpoints(res.data);
         }
       },
-      () => { },
+      () => {},
       () => {
         setIsLoading(false);
       }
@@ -61,23 +62,27 @@ const Member = () => {
     <>
       {/* card */}
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="noselect absolute w-full" style={{ marginTop: "-50px" }}>
+      <div className="noselect absolute w-full" style={{ marginTop: "-99px" }}>
         <div
-          className=" flex margin-a"
+          className=" flex margin-a shadow-2xl"
           style={{
-            width: "90%",
+            width: "95%",
             padding: "20px",
-            height: "180px",
+            height: "55vw",
             borderRadius: "10px",
-            backgroundImage: `url(${IsNullOrEmpty(tbMember)
-              ? null
-              : require(tbMember.memberType === "1"
-                ? "assets/img/mbk/Green.png"
-                : tbMember.memberType === "2"
-                  ? "assets/img/mbk/Silver.png"
-                  : "assets/img/mbk/Gold.png").default
-              })`,
-            backgroundSize: "cover",
+            backgroundColor:"#007A40",
+            border:"2px solid white",
+            backgroundImage: `url(${
+              IsNullOrEmpty(tbMember)
+                ? null
+                : require(tbMember.memberType === "1"
+                    ? "assets/img/mbk/Green.png"
+                    : tbMember.memberType === "2"
+                    ? "assets/img/mbk/Silver.png"
+                    : "assets/img/mbk/Gold.png").default
+            })`,
+            // backgroundSize: "cover",
+            // objectFit: "cover",
           }}
         >
           <div className="relative liff-member">
@@ -102,14 +107,14 @@ const Member = () => {
                       tbMember.memberType === "1"
                         ? "#cbe8ba"
                         : tbMember.memberType === "2"
-                          ? "#ebebeb"
-                          : "#f3eac1",
+                        ? "#ebebeb"
+                        : "#f3eac1",
                     color:
                       tbMember.memberType === "1"
                         ? "#047738"
                         : tbMember.memberType === "2"
-                          ? "#929292"
-                          : "#d0af2c",
+                        ? "#929292"
+                        : "#d0af2c",
                     borderRadius: "20px",
                     padding: "2px 10px",
                   }}
@@ -117,8 +122,8 @@ const Member = () => {
                   {tbMember.memberType === "1"
                     ? "GREEN MEMBER"
                     : tbMember.memberType === "2"
-                      ? "SLIVER MEMBER"
-                      : "GOLD MEMBER"}
+                    ? "SLIVER MEMBER"
+                    : "GOLD MEMBER"}
                 </div>
                 <div className="text-white font-bold text-xs mt-2">
                   {tbMember.firstName + " " + tbMember.lastName}
@@ -174,7 +179,7 @@ const Member = () => {
                 <span className=" text-2xs text-white ">
                   {
                     "จะหมดอายุ : " +
-                    liff_dateToString(Memberpoints.enddate, "DD/MM/yyyy")
+                      liff_dateToString(Memberpoints.enddate, "DD/MM/yyyy")
                     // (IsNullOrEmpty(Memberpoints.enddate)
                     //   ? "-"
                     //   : moment(Memberpoints.enddate.split("T")[0])
@@ -188,12 +193,12 @@ const Member = () => {
         </div>
         <div className="mt-2">
           <div
-            className="bg-green-mbk flex text-white font-bold text-xs relative margin-a"
+            className="bg-green-mbk flex text-white font-bold text-xs relative margin-a shadow-2xl"
             style={{
-              width: "90%",
+              width: "95%",
               padding: "10px",
               height: "40px",
-              marginTop: "15px",
+              marginTop: "-2px",
               borderRadius: "10px",
             }}
             onClick={() => {
@@ -204,16 +209,15 @@ const Member = () => {
               <i className="fas fa-solid fa-pen "></i>
             </div>
             <div className="">{"กรอกโค้ดเพื่อสะสมคะแนน"}</div>
-            <div className="px-2 absolute right-0">
+            <div className="px-4 absolute right-0">
               <i className="fas fa-solid fa-angle-right "></i>
             </div>
           </div>
         </div>
         <div
           className="mt-2"
-          style={{ height: "20px", backgroundColor: "#ebebeb" }}
+          style={{ height: "10px", backgroundColor: "#ebebeb" }}
         ></div>
-
         <Tabs
           className="Tabs-line noselect m-0"
           defaultActiveKey="1"
@@ -226,26 +230,61 @@ const Member = () => {
             <MyOrder />
           </TabPane>
         </Tabs>
-        <div className="flex" style={{
-          height: "50px", backgroundColor: "#047a40", fontSize: "10px", justifyContent: "center",
-          alignItems: "center"
-        }}>
+        <div
+          className="flex"
+          style={{
+            height: "50px",
+            backgroundColor: "#047a40",
+            fontSize: "10px",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <div>
-            <div style={{ color: "#FFF", textAlign: "center" }}>©2022 Mahboonkrong Rice, All Rights Reserved.</div>
-            <div className="flex" style={{ color: "#FFF", textAlign: "center", justifyContent: "center" }}>
-              <div style={{ textDecoration: "underline" }} onClick={() => {
+            <div style={{ color: "#FFF", textAlign: "center" }}>
+              ©2022 Mahboonkrong Rice, All Rights Reserved.
+            </div>
+            <div
+              className="flex"
+              style={{
+                color: "#FFF",
+                textAlign: "center",
+                justifyContent: "center",
+              }}
+            >
+              {/* <div className="text-underline" onClick={() => {
                 setIsLoading(true);
                 window.location.href = 'https://www.prg.co.th/th/privacy_policy'
-              }} >นโยบายความเป็นส่วนตัว</div>
+              }} >นโยบายความเป็นส่วนตัว</div> */}
+
+              <a
+                className="text-underline"
+                style={{color:"white"}}
+                href="https://www.prg.co.th/th/privacy_policy"
+                target="_blank"
+              >
+                นโยบายความเป็นส่วนตัว
+              </a>
               <div className="px-2">•</div>
-              <div style={{ textDecoration: "underline" }} onClick={() => { setisOpenPolicy(true) }}>ข้อกำหนดและเงื่อนไข</div>
+              <div
+                className="text-underline"
+                onClick={() => {
+                  setisOpenPolicy(true);
+                }}
+              >
+                ข้อกำหนดและเงื่อนไข
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <ModelPolicy isOpen={isOpenPolicy} closemodel={() => { setisOpenPolicy(false) }} />
-
+      <ModelPolicy
+        isOpen={isOpenPolicy}
+        closemodel={() => {
+          setisOpenPolicy(false);
+        }}
+      />
     </>
   );
 };
