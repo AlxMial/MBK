@@ -526,8 +526,7 @@ const Updateprofile = () => {
               className="relative  px-4  flex-grow flex-1 flex mt-5 text-sm"
               style={{ color: "red" }}
             >
-              หมายเหตุ หากลูกค้าต้องการแก้ข้อมูลเพิ่มเติม สามาติดต่อได้ที่
-              02-xxx-xxxx
+              หมายเหตุ หากท่านต้องการแก้ไขข้อมูลเพิ่มเติม โปรดติดต่อเจ้าหน้าที่แจ้งความประสงค์ทางช่องแชท
             </div>
 
             <div className="relative  px-4  flex-grow flex-1 flex mt-5">
