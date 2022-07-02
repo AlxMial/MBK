@@ -27,12 +27,16 @@ import FilesService from "../../../../services/files";
 import GameList from "./GameList";
 import TextAreaUC from "components/InputUC/TextAreaUC";
 import ImportCoupon from "./ImportCoupon";
-
+import { Radio } from "antd";
 export default function ConditioRewardInfo() {
   /* Option Select */
   const redemptionType = [
     { value: "1", label: "Standard" },
     { value: "2", label: "Game" },
+  ];
+  const options = [
+    { label: "เปิดการใช้งาน", value: true },
+    { label: "ปิดการใช้งาน", value: false },
   ];
 
   const rewardType = [
@@ -263,7 +267,7 @@ export default function ConditioRewardInfo() {
                       ? res.data.tbRedemptionCoupon.id
                       : res.data.tbRedemptionProduct.id,
                 };
-                await onSaveImage(ImageSave, async (res) => {});
+                await onSaveImage(ImageSave, async (res) => { });
                 if (formik.values.rewardType === "1") {
                   formikCoupon.values.id = res.data.tbRedemptionCoupon.id;
                   if (isImport) {
@@ -274,7 +278,7 @@ export default function ConditioRewardInfo() {
                       .then(async (resExcel) => {
                         if (resExcel.data.status) {
                           await axios
-                            .post("/uploadExcel/coupon",{couponId:res.data.tbRedemptionCoupon.id})
+                            .post("/uploadExcel/coupon", { couponId: res.data.tbRedemptionCoupon.id })
                             .then((resUpload) => {
                               console.log(resUpload)
                               dispatch(fetchSuccess());
@@ -338,7 +342,7 @@ export default function ConditioRewardInfo() {
                       ? formikCoupon.values.id
                       : formikProduct.values.id,
                 };
-                await onSaveImage(ImageSave, async (res) => {});
+                await onSaveImage(ImageSave, async (res) => { });
                 addToast(
                   Storage.GetLanguage() === "th"
                     ? "บันทึกข้อมูลสำเร็จ"
@@ -380,7 +384,7 @@ export default function ConditioRewardInfo() {
       isSelect: false,
       isCancel: false,
       isDeleted: false,
-      isImport:false,
+      isImport: false,
       addBy: "",
       updateBy: "",
     },
@@ -422,7 +426,7 @@ export default function ConditioRewardInfo() {
       isSelect: false,
       isCancel: false,
       isDeleted: false,
-      isImport:true,
+      isImport: true,
       addBy: "",
       updateBy: "",
     },
@@ -596,6 +600,7 @@ export default function ConditioRewardInfo() {
     formikProduct.setFieldValue("productName", "รหัสในตำนาน");
     formikProduct.setFieldValue("rewardCount", 10);
     formikProduct.setFieldValue("isDeleted", false);
+    formikProduct.setFieldValue("isActive", true);
   };
 
   useEffect(() => {
@@ -752,7 +757,7 @@ export default function ConditioRewardInfo() {
                       />
 
                       {formik.touched.redemptionName &&
-                      formik.errors.redemptionName ? (
+                        formik.errors.redemptionName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           &nbsp;
                         </div>
@@ -773,7 +778,7 @@ export default function ConditioRewardInfo() {
                     </div>
                     <div className="relative w-full px-4">
                       {formik.touched.redemptionName &&
-                      formik.errors.redemptionName ? (
+                        formik.errors.redemptionName ? (
                         <div className="text-sm py-2 px-2  text-red-500">
                           {formik.errors.redemptionName}
                         </div>
@@ -858,7 +863,7 @@ export default function ConditioRewardInfo() {
                   </div>
                   <div
                     className="w-full lg:w-5/12 margin-auto-t-b"
-                    // style={{ width: width < 764 ? "100%" : "39.7%" }}
+                  // style={{ width: width < 764 ? "100%" : "39.7%" }}
                   >
                     <div className="relative flex px-4">
                       <InputUC
@@ -921,9 +926,9 @@ export default function ConditioRewardInfo() {
                         value={
                           !isClick.redemptionStart
                             ? moment(
-                                new Date(formik.values.startDate),
-                                "DD/MM/YYYY"
-                              )
+                              new Date(formik.values.startDate),
+                              "DD/MM/YYYY"
+                            )
                             : null
                         }
                       />
@@ -961,9 +966,9 @@ export default function ConditioRewardInfo() {
                         value={
                           !isClick.redemptionEnd
                             ? moment(
-                                new Date(formik.values.endDate),
-                                "DD/MM/YYYY"
-                              )
+                              new Date(formik.values.endDate),
+                              "DD/MM/YYYY"
+                            )
                             : null
                         }
                       />
@@ -973,6 +978,8 @@ export default function ConditioRewardInfo() {
                   <div className="w-full lg:w-1/12 margin-auto-t-b ">
                     <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
                   </div>
+
+
                   <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                     <div className="relative">
                       <TextAreaUC
@@ -985,6 +992,18 @@ export default function ConditioRewardInfo() {
                       />
                     </div>
                   </div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                  </div>
+                  <div className="w-full lg:w-11/12 px-4 margin-auto-t-b ">
+                    <Radio.Group
+                      options={options}
+                      onChange={(e) => {
+                        formik.setFieldValue("isActive", e.target.value);
+                      }}
+                      value={formik.values.isActive}
+                    />
+                  </div>
+
                   <div className="w-full">&nbsp;</div>
                   <span className="text-lg  text-green-mbk margin-auto font-bold">
                     <div className="w-full mb-2">
