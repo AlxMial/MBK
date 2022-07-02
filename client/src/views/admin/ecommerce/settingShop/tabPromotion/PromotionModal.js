@@ -23,9 +23,9 @@ const PromotionModal = ({ open, formik, handleModal }) => {
     const [stockList, setStockList] = React.useState([]);
 
     const conditionType = [
-        { label: "ส่วนลด", value: 'discount' },
-        { label: "%ส่วนลด", value: 'percentDiscount' },
-        { label: "สินค้าสมนาคุณ", value: 'product' },
+        { label: "ส่วนลด", value: '1' },
+        { label: "% ส่วนลด", value: '2' },
+        { label: "สินค้าสมนาคุณ", value: '3' },
     ];
 
     // const stockList = [
@@ -49,6 +49,10 @@ const PromotionModal = ({ open, formik, handleModal }) => {
             if (!formik.values.stockId && stockList && stockList.length > 0) {
                 formik.setFieldValue('stockId', stockList[0].value);
             }
+            if(formik.values.stockId === "" &&  _stockResponse.data.tbStock.length > 0)
+            {
+                formik.setFieldValue('stockId', _stockResponse.data.tbStock[0].id);
+            }
         }
     }, []);
 
@@ -64,7 +68,7 @@ const PromotionModal = ({ open, formik, handleModal }) => {
                 <div className="flex flex-wrap">
                     <div className="w-full flex-auto mt-2">
                         <ModalHeader title={"เพิ่มโปรโมชั่นหน้าร้าน"} handleModal={handleModal} />
-                        <div className="flex flex-wrap px-24 py-10 justify-center Overflow-info">
+                        <div className="flex flex-wrap justify-center">
                             <div className="w-full lg:w-12/12 px-4 margin-auto-t-b ">
                                 <div className="flex flex-wrap justify-center">
                                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">

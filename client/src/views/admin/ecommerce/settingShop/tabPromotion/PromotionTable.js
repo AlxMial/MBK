@@ -1,7 +1,9 @@
+import ConfirmDialog from 'components/ConfirmDialog/ConfirmDialog';
 import React, { useState } from 'react'
 import ReactPaginate from "react-paginate";
+import axios from "services/axios";
 
-const PromotionTable = ({ listPromotion, openModal }) => {
+const PromotionTable = ({ listPromotion, setListPromotion,openModal }) => {
     const thClass = "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
     const tdClass = "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
     const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
@@ -10,15 +12,37 @@ const PromotionTable = ({ listPromotion, openModal }) => {
     const usersPerPage = 10;
     const pagesVisited = pageNumber * usersPerPage;
     const pageCount = Math.ceil(listPromotion.length / usersPerPage);
-
+    const [deleteValue, setDeleteValue] = useState("");
+    const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
     const changePage = ({ selected }) => {
         setPageNumber(selected);
     };
 
+    const deletePromotion = () => {
+        axios.delete(`/promotionStore/${deleteValue}`).then(() => {
+            setListPromotion(
+                listPromotion.filter((val) => {
+                    return val.id !== deleteValue;
+                })
+            );
+          closeModalSubject();
+        });
+    };
+
+      /* Modal */
+  function openModalSubject(id) {
+    setDeleteValue(id);
+    setIsOpenSubject(true);
+  }
+
+  function closeModalSubject() {
+    setIsOpenSubject(false);
+  }
+
     const conditionType = [
-        { label: "ส่วนลด", value: 'discount' },
-        { label: "%ส่วนลด", value: 'percentDiscount' },
-        { label: "สินค้าสมนาคุณ", value: 'product' },
+        { label: "ส่วนลด", value: '1' },
+        { label: "% ส่วนลด", value: '2' },
+        { label: "สินค้าสมนาคุณ", value: '3' },
     ];
 
     return (
@@ -43,6 +67,9 @@ const PromotionTable = ({ listPromotion, openModal }) => {
                             <th className={thClass} >
                                 รายละเอียด
                             </th>
+                            <th className={thClass + "  text-center"} >
+                                จัดการ
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,40 +77,68 @@ const PromotionTable = ({ listPromotion, openModal }) => {
                             .slice(pagesVisited, pagesVisited + usersPerPage)
                             .map(function (value, key) {
                                 return (
-                                    <tr key={key} className="cursor-pointer"
-                                        onClick={() => {
+                                    <tr key={key} className="cursor-pointer">
+                                        <td className={tdClass + ' text-center'} onClick={() => {
                                             openModal(value.id);
                                         }}>
-                                        <td className={tdClass + ' text-center'}>
-                                            <span className="px-4 margin-a">
+                                            <span className="px-4 margin-a"> 
                                                 {pagesVisited + key + 1}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }} >
                                             <span className={tdSpan}>
                                                 {value.campaignName}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }} >
                                             <span className={tdSpan}>
                                                 {value.buy}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }} >
                                             <span className={tdSpan}>
                                                 {conditionType.filter(d => d.value === value.condition)[0].label}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} >
+                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
                                             <span className={tdSpan}>
                                                 {value.description}
                                             </span>
+                                        </td>
+                                        <td className={tdClass + " cursor-pointer text-center" } >
+                                            <i
+                                                className={
+                                                "fas fa-trash cursor-pointer" +
+                                                (" text-red-500")
+                                                }
+                                                onClick={(e) => {
+                                                openModalSubject(value.id);
+                                                }}
+                                            ></i>
                                         </td>
                                     </tr>
                                 );
                             })}
                     </tbody>
                 </table>
+                <ConfirmDialog
+                    showModal={modalIsOpenSubject}
+                    message={"กำหนดช่องทางการส่งของ"}
+                    hideModal={() => {
+                        closeModalSubject();
+                    }}
+                    confirmModal={() => {
+                        deletePromotion();
+                    }}
+                    />
             </div>
             <div className="px-4">
                 <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">

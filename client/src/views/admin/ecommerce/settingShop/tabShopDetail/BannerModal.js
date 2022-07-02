@@ -21,6 +21,7 @@ const BannerModal = ({
   name,
   modalData,
   handleSubmitModal,
+  setRemoveBanner,
 }) => {
   Modal.setAppElement("#root");
   const useStyle = customStyles();
@@ -38,6 +39,21 @@ const BannerModal = ({
   ); // หมวดหมู่
   const [stockId, setStockId] = useState(modalData ? modalData.stockId : ""); // สินค้า
   const [dropdown, setDropdown] = useState([
+    {
+      dropDown: [],
+    },
+    {
+      dropDown: [],
+    },
+    {
+      dropDown: [],
+    },
+    {
+      dropDown: [],
+    },
+    {
+      dropDown: [],
+    },
     {
       dropDown: [],
     },
@@ -84,20 +100,31 @@ const BannerModal = ({
         ];
       });
 
-      setDropdown((s) => {
-        return [
-          ...s,
-          {
-            dropDown: [],
-          },
-        ];
-      });
+      // setDropdown((s) => {
+      //   return [
+      //     ...s,
+      //     {
+      //       dropDown: [],
+      //     },
+      //   ];
+      // });
     }
   };
 
   const handleRemove = (index) => {
+    if (arr[index].id !== undefined) {
+      setRemoveBanner((s) => {
+        return [
+          ...s,
+          {
+            id: arr[index].id,
+          },
+        ];
+      });
+    }
+
     const rows = [...arr];
-    const rowsDownload = [...arr];
+    const rowsDownload = [...dropdown];
     rows.splice(index, 1);
     rowsDownload.slice(index, 1);
     setArr(rows);
@@ -130,7 +157,7 @@ const BannerModal = ({
     // setDefaultValue();
 
     if (modalData.length !== undefined) {
-      modalData.map((e, i) => {
+      await modalData.map((e, i) => {
         setArr((s) => {
           return [
             ...s,
@@ -145,14 +172,14 @@ const BannerModal = ({
           ];
         });
 
-        setDropdown((s) => {
-          return [
-            ...s,
-            {
-              dropDown: [],
-            },
-          ];
-        });
+        // setDropdown((s) => {
+        //   return [
+        //     ...s,
+        //     {
+        //       dropDown: [],
+        //     },
+        //   ];
+        // });
 
         onOptionFetch(
           e.option,

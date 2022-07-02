@@ -36,12 +36,12 @@ const ShopDetail = () => {
   const [modalData, setModalData] = useState({});
   const [shopImage, setShopImage] = useState(_defaultImage);
   const [dataBanner, setDataBanner] = useState([]);
+  const [ removeBanner ,setRemoveBanner] = useState([]);
 
   async function fetchData() {
     dispatch(fetchLoading());
     const response = await axios.get("shop");
     const shop = await response.data.tbShop;
-
     if (shop) {
       for (const columns in shop) {
         formik.setFieldValue(columns, shop[columns], false);
@@ -92,10 +92,14 @@ const ShopDetail = () => {
           }
           setDataBanner(Banner);
           setModalData(Banner);
+          dispatch(fetchSuccess());
         });
+      } else {
+        dispatch(fetchSuccess());
       }
+    } else {
+      dispatch(fetchSuccess());
     }
-    dispatch(fetchSuccess());
   }
 
   useEffect(() => {
@@ -240,6 +244,10 @@ const ShopDetail = () => {
       success = await saveBanners(e, id, i);
     });
 
+    removeBanner.map(async (e, i) => {
+      success = await removeBanners(e.id);
+    });
+
     addToast("บันทึกข้อมูลสำเร็จ", {
       appearance: "success",
       autoDismiss: true,
@@ -266,6 +274,12 @@ const ShopDetail = () => {
     return success;
   };
 
+  const removeBanners = async (data) => {
+    axios.delete(`/banner/${data}`).then(() => {
+      return true;
+    });
+  }
+
   const saveBanners = async (data, id, i) => {
     let SaveBanner = {
       typeLink: data.option === 2 ? 0 : data.option === 1 ? 1 : null,
@@ -276,6 +290,7 @@ const ShopDetail = () => {
       addBy: data.id ? null : sessionStorage.getItem("user"),
       updateBy: data.id ? sessionStorage.getItem("user") : null,
       id: null,
+      isDeleted: 0
     };
 
     dispatch(fetchLoading());
@@ -468,6 +483,7 @@ const ShopDetail = () => {
           modalData={modalData}
           handleSubmitModal={handleSubmitModal}
           handleModal={() => setOpen(false)}
+          setRemoveBanner={setRemoveBanner}
         />
       )}
     </>

@@ -144,6 +144,7 @@ router.get("/", validateToken, async (req, res) => {
       "email",
       "empCode",
       "position",
+      "role",
     ],
     where: { isDeleted: false },
   });
