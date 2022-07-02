@@ -273,7 +273,7 @@ export default function PointHistoryReport() {
             setListPointCodeHD(response.data);
             setListPointCodeDt(listPointCodes);
             setListMemberPoint(listMemberPoint);
-            setDataDialog(response.data,listPointCodes, listMemberPoint);           
+            setDataDialog(response.data, listPointCodes, listMemberPoint);           
           }         
         }
         setPointHDId(id);
@@ -302,7 +302,7 @@ export default function PointHistoryReport() {
         dataPopUp.values.phone =  (listMemberpoint !== undefined ? listMemberpoint.tbMember.phone : "");
         dataPopUp.values.point = list_pointHD[0].pointCodePoint;
         dataPopUp.values.isUse = listtbPointCodeDT[0].isUse;
-        dataPopUp.values.exchangedate = listtbPointCodeDT[0].exchangedate;
+        dataPopUp.values.exchangedate =  (listMemberpoint !== undefined ? listMemberpoint.redeemDate : "");
         dataPopUp.values.status = listPointType.find(e => e.value === listtbPointCodeDT[0].isUse).status;
         dataPopUp.values.pointType = listtbPointCodeDT[0].pointType ;
         openModal();
@@ -354,15 +354,11 @@ export default function PointHistoryReport() {
                   type="text"
                   placeholder="Search here..."
                   className="border-0 pl-12 w-63 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded-xl text-sm shadow outline-none focus:outline-none focus:ring"
-                  // onChange={(e) => {
-                  //   setDataSearch(e, "s_input")
-                  // }}
                   onChange={(e) => {
                     setDataSearch(e, "s_input")
                   }}
                 />
-              </div>
-              
+              </div>              
             <div className="w-full lg:w-4/12 px-4  margin-auto-t-b">
             <div className="relative w-full">
                 <SelectUC
@@ -482,12 +478,12 @@ export default function PointHistoryReport() {
             </div>
           </div>
           <Modal
-                  isOpen={modalIsOpen}
-                  onAfterOpen={afterOpenModal}
-                  onRequestClose={closeModal}
-                  style={width <= 1180 ? useStyleMobile : useStyle}
-                  contentLabel="Example Modal"
-                  shouldCloseOnOverlayClick={false}
+              isOpen={modalIsOpen}
+              onAfterOpen={afterOpenModal}
+              onRequestClose={closeModal}
+              style={width <= 1180 ? useStyleMobile : useStyle}
+              contentLabel="Example Modal"
+              shouldCloseOnOverlayClick={false}
                 >
                   <div className="flex flex-wrap">
                     <div className="w-full ">
@@ -785,7 +781,7 @@ export default function PointHistoryReport() {
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                   แคมเปญ
+                    แคมเปญ
                   </th>
                   <th
                     className={

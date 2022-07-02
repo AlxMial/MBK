@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import axios from "services/axios";
 import ReactPaginate from "react-paginate";
 import { exportExcel } from "services/exportExcel";
@@ -12,6 +12,7 @@ import Select from "react-select";
 import { useToasts } from "react-toast-notifications";
 import ValidateService from "services/validateValue";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 export default function CampaignExchangeHistoryReport() {
   const { addToast } = useToasts();
@@ -641,8 +642,6 @@ export default function CampaignExchangeHistoryReport() {
                                         editTrackingNo(item.listNo, e);
                                       }}
                                     value= {item.trackingNo}
-                                    //autoComplete="lastName"
-                                    // disabled={typePermission === "1" ? false : true}
                                   />
                                   :
                                   <div className="w-32 flex text-right"> <div className="TextWordWarp-150 w-32 mr-3 " title={item.trackingNo}>{item.trackingNo}</div> <i className="fa fa-pen mr-2" onClick={() => {showTrackingNo(item.listNo);}}></i></div>
@@ -650,11 +649,37 @@ export default function CampaignExchangeHistoryReport() {
                             }
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0  border-r-0 text-sm whitespace-nowrap text-center ">
-                          <i className="fa fa-home  mr-2 text-underline cursor-pointer" data-tip={item.address}> ดูที่อยู่</i>                          
+                          <div className="flex">
+                            <i className="fa fa-home  text-right text-underline cursor-pointer" data-tip={item.address}></i>
+                            <div className="text-underline  cursor-pointer"  data-tip={item.address}
+                                  style={{
+                                    width: "40px",
+                                    textAlign: "end",
+                                  }}
+                                > ดูที่อยู่ </div>       
+                          </div>                                           
                           <ReactTooltip globalEventOff="click" />
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          <i className="fa fa-clone mr-2 cursor-pointer" > คัดลอก </i>
+                          <CopyToClipboard
+                                text={item.address}
+                                onCopy={() => {
+                                  addToast("คัดลอกเรียบร้อยแล้ว", {
+                                    appearance: "success",
+                                    autoDismiss: true,
+                                  });
+                                }}
+                              >
+                                <div
+                                  className="mr-2 text-underline  cursor-pointer"
+                                  style={{
+                                    width: "50px",
+                                    textAlign: "end",
+                                  }}
+                                >
+                                  คัดลอก
+                                </div>
+                            </CopyToClipboard>
                         </td>
                       </tr>
                     );
