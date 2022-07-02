@@ -8,6 +8,8 @@ import * as Session from "@services/Session.service";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
+import AlertModel from "components/ConfirmDialog/alertModel";
+
 import {
   get_shopcart,
   upd_shopcart
@@ -23,6 +25,9 @@ const ShowCart = () => {
   const [CartItem, setCartItem] = useState([]);
   const [usecoupon, setusecoupon] = useState(null);
   const [sumprice, setsumprice] = useState(0);
+
+  const [productCountError, setproductCountError] = useState({ open: false });
+
   const getProducts = async () => {
 
     let id = [];
@@ -40,6 +45,8 @@ const ShowCart = () => {
               setusecoupon(Storage.getconpon_cart())
 
               await axios.post("stock/getStock", { id: id }).then((response) => {
+                let _productCountError = false
+                let productAction = []
                 if (response.data.status) {
                   let tbStock = response.data.tbStock;
                   setCartItem(tbStock);
@@ -52,6 +59,12 @@ const ShowCart = () => {
                     } else {
                       price += parseFloat(e.price) * parseInt(quantity);
                     }
+
+                    if (e.productCount < quantity) {
+                      _productCountError = true
+                      productAction.push({ id: e.id, quantity: e.productCount, type: "quantity", uid: Session.getLiff().uid })
+                    }
+
                     return e
                   });
                   if (!fn.IsNullOrEmpty(cart.usecoupon)) {
@@ -59,6 +72,12 @@ const ShowCart = () => {
                   }
                   price = price < 1 ? 0 : price
                   setsumprice(price);
+
+                  if (_productCountError) {
+                    setproductCountError({ open: _productCountError, action: productAction })
+
+                  }
+
                 } else {
                   setCartItem([]);
                   setsumprice(0);
@@ -432,6 +451,24 @@ const ShowCart = () => {
             }}
             confirmModal={() => {
               deleteCart(deleteValue);
+            }}
+          />
+        )
+      }
+
+      {
+        productCountError.open && (
+          <AlertModel
+            className={" liff-Dialog "}
+            showModal={productCountError.open}
+            message={"จำนวนสินค้ามีการเปลียนแปลง"}
+            confirmModal={() => {
+
+              productCountError.action.map((e, i) => {
+                upd_shopcart(e)
+              })
+              setproductCountError({ open: false });
+              getProducts()
             }}
           />
         )

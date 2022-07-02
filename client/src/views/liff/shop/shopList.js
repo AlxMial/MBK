@@ -310,7 +310,7 @@ const ShopList = () => {
         >
           {ImgBanner.length > 0 && IsImgBanner ? (
             <SlideShow img={ImgBanner} duration={5000} setcategoryview={setcategoryview}
-             selectMenu={selectMenu} />
+              selectMenu={selectMenu} />
           ) : !IsImgBanner ? (
             <div
               className="flex w-full text-green-mbk font-bold"
@@ -567,12 +567,13 @@ const ShopList = () => {
                   <div
                     key={i}
                     className="line-column mt-2 mb-2"
+                    // style={{filter :"g" e.productCount <1}}
                     onClick={() => {
                       history.push(path.showProducts.replace(":id", e.id));
                     }}
                   >
-                    <div className="line-card relative">
-                      <div className="relative" style={{}}>
+                    <div className="line-card relative" >
+                      <div className="relative" >
                         <ImageUC
                           style={{
                             margin: "auto",

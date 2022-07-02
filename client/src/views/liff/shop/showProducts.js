@@ -25,11 +25,16 @@ const ShowProducts = () => {
   const [cartNumberBadge, setcartNumberBadge] = useState(null);
   const [spin, setspin] = useState(1);
   const [tbStock, settbStock] = useState(null);
+
+  const [productCount, setproductCount] = useState(0);
+
   const spinButton = (e) => {
     if (e === "plus") {
       setspin(spin + 1);
     } else {
-      setspin(spin - 1);
+      if (spin != 0) {
+        setspin(spin - 1);
+      }
     }
   };
 
@@ -80,6 +85,10 @@ const ShowProducts = () => {
     await axios.post("stock/getStock", { id: [id] }).then((response) => {
       if (response.data.status) {
         let tbStock = response.data.tbStock;
+        setproductCount(tbStock[0].productCount)
+        if (tbStock[0].productCount < 1) {
+          setspin(0)
+        }
         settbStock(tbStock[0]);
       }
     }).finally(e => {
@@ -137,103 +146,89 @@ const ShowProducts = () => {
             </div>
           </div>
 
-          <div
-            className="flex relative mt-2 "
-            style={{ height: "35px", alignItems: "center" }}
-          >
-            <div
-              className="px-2 absolute flex"
-              style={{
-                right: "0",
-                alignItems: "center",
-              }}
-              onClick={() => {
-                Storage.removeconpon_cart()
-                history.push(path.showCart);
-              }}
-            >
-              <i className="fas fa-shopping-cart relative icon-cart" style={{ color: "#ddd" }}></i>
-              {!IsNullOrEmpty(cartNumberBadge) && cartNumberBadge > 0 ? (
-                <div className="cart-number-badge" style={{ fontSize: "11px" }}>
-                  {cartNumberBadge}
-                </div>
-              ) : null}
-            </div>
-          </div>
-
-
-
-          {/* products */}
-          <div className="mt-2" style={{ width: "95%", margin: "auto", height: "200px", }}>
-            <div style={{
-              maxWidth: "200px",
-              height: "200px",
-              margin: "auto"
-            }}>
-              {Img.length > 0 ?
-                <SlideShow img={Img} duration={60000} />
-                : null}
-
-            </div>
-
-          </div>
-
-          <div className="text-base" style={{ width: "95%", margin: "auto" }}>
-            <div className="font-bold mt-2 " >
-              {tbStock.productName}
-            </div>
-
-            <div className="font-bold mt-2 " >
-              ราคาสินค้า
-            </div>
-            <div
-              className="flex mt-2"
-              style={{
-                color: tbStock.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
-              }}
-
-            >
-              <div
+          <div className="line-scroll" style={{ height: "calc(100% - 245px)" }}>
+            <div className="flex relative mt-2 " style={{ height: "35px", alignItems: "center" }}>
+              <div className="px-2 absolute flex"
                 style={{
-                  color: tbStock.discount > 0 ? "#ddd" : "#047738",
-                  textDecoration:
-                    tbStock.discount > 0 ? "line-through" : "none",
+                  right: "0",
+                  alignItems: "center",
+                }}
+                onClick={() => {
+                  Storage.removeconpon_cart()
+                  history.push(path.showCart);
                 }}
               >
-                {"฿ " + fn.formatMoney(tbStock.price)}
+                <i className="fas fa-shopping-cart relative icon-cart" style={{ color: "#ddd" }}></i>
+                {!IsNullOrEmpty(cartNumberBadge) && cartNumberBadge > 0 ? (
+                  <div className="cart-number-badge" style={{ fontSize: "11px" }}>
+                    {cartNumberBadge}
+                  </div>
+                ) : null}
               </div>
-              {tbStock.discount > 0 ? (
-                <div style={{ color: "red", paddingLeft: "10px" }}>
-                  {"฿ " + fn.formatMoney(tbStock.priceDiscount)}
-                </div>
-              ) : null}
-              {tbStock.discount > 0 ? (
-                <div
-                  className="absolute text-white text-xs"
-                  style={{
-                    borderRadius: "5px",
-                    padding: "0 10px",
-                    right: "10px",
-                    background: "red",
-                  }}
-                >
-                  {"SALE -" + fn.formatMoney(tbStock.percent) + "%"}
-                </div>
-              ) : null}
+            </div>
+            {/* products */}
+            <div className="mt-2" style={{ width: "95%", margin: "auto", height: "200px", }}>
+              <div style={{
+                maxWidth: "200px",
+                height: "200px",
+                margin: "auto"
+              }}>
+                {Img.length > 0 ?
+                  <SlideShow img={Img} duration={60000} />
+                  : null}
+
+              </div>
+
             </div>
 
+            <div className="text-base" style={{ width: "95%", margin: "auto" }}>
+              <div className="font-bold mt-2 " >
+                {tbStock.productName}
+              </div>
+
+              <div className="font-bold mt-2 " >
+                ราคาสินค้า
+              </div>
+              <div className="flex mt-2 relative"
+                style={{
+                  color: tbStock.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
+                }}
+              >
+                <div
+                  style={{
+                    color: tbStock.discount > 0 ? "#ddd" : "#047738",
+                    textDecoration:
+                      tbStock.discount > 0 ? "line-through" : "none",
+                  }}
+                >
+                  {"฿ " + fn.formatMoney(tbStock.price)}
+                </div>
+                {tbStock.discount > 0 ? (
+                  <div style={{ color: "red", paddingLeft: "10px" }}>
+                    {"฿ " + fn.formatMoney(tbStock.priceDiscount)}
+                  </div>
+                ) : null}
+                {tbStock.discount > 0 ? (
+                  <div className="absolute text-white text-xs"
+                    style={{
+                      borderRadius: "5px",
+                      padding: "0 10px",
+                      right: "10px",
+                      background: "red",
+                    }}
+                  >
+                    {"SALE -" + fn.formatMoney(tbStock.percent) + "%"}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="liff-inline" />
+            <div style={{ width: "95%", margin: "auto" }}>
+              <div className="mt-2 font-bold text-base"> รายละเอียดสินค้า </div>
+              <div className="mt-2 ">&emsp;&emsp;{tbStock.description} </div>
+            </div>
           </div>
-
-
-
-
-
-          <div className="liff-inline" />
-          <div style={{ width: "95%", margin: "auto" }}>
-            <div className="mt-2 font-bold text-base"> รายละเอียดสินค้า </div>
-            <div className="mt-2 ">&emsp;&emsp;{tbStock.description} </div>
-          </div>
-
 
           <div className="absolute w-full" style={{ bottom: "0" }}>
             <div className="liff-inline" />
@@ -249,7 +244,7 @@ const ShowProducts = () => {
                     disabled={spin === 1 ? true : false}
                     className="bt-quantity broder-minus"
                     style={{
-                      color: spin === 1 ? "#ddd" : "#000",
+                      color: spin <= 1 ? "#ddd" : "#000",
                     }}
                     onClick={() => {
                       if (spin !== 1) {
@@ -300,17 +295,22 @@ const ShowProducts = () => {
                   </button>
 
                   <div className=" px-2 absolute" style={{ right: "10px", color: "#ddd" }}>
-                    {"มีสินค้าทั้งหมด " + tbStock.productCount + " ชิ้น"}
+                    {productCount > 0 ? "มีสินค้าทั้งหมด " + tbStock.productCount + " ชิ้น" : "สินค้าหมด"}
                   </div>
                 </div>
               </div>
             </div>
             <div className="liff-inline" />
-            <div className=" w-full flex">
+            <div className=" w-full flex" style={{ filter: productCount > 0 ? "" : "grayscale(1)" }} >
               <div style={{ width: "50%", padding: "10px" }}>
                 <div
                   className="bg-green-mbk flex text-white text-center text-base font-bold bt-line"
-                  onClick={add_to_cart}
+                  onClick={() => {
+                    if (productCount > 0) {
+                      add_to_cart()
+                    }
+                  }
+                  }
                 >
                   {"เพิ่มไปยังรถเข็น"}
                 </div>
@@ -320,10 +320,12 @@ const ShowProducts = () => {
                   className="bg-gold-mbk flex text-white text-center text-base  font-bold bt-line"
                   onClick={
                     () => {
-                      if (sessionStorage.getItem("accessToken") == null) {
-                        history.push(path.register);
-                      } else {
-                        btbuy()
+                      if (productCount > 0) {
+                        if (sessionStorage.getItem("accessToken") == null) {
+                          history.push(path.register);
+                        } else {
+                          btbuy()
+                        }
                       }
                     }
 
