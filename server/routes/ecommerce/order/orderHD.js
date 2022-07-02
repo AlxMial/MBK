@@ -1111,14 +1111,14 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
               where: {
                 IsDeleted: false,
                 orderId: _OrderHDData[i].id,
-                returnStatus: ["Wait", "Done", "Not Return"],
+                // returnStatus: [1,2, 3],
               },
             });
             if (_tbReturnOrder == null) {
               OrderHDData.push(_OrderHDData[i]);
             } else {
-              if (_tbReturnOrder.dataValues.returnStatus == "Not Return") {
-                _OrderHDData[i].dataValues.returnStatus = "Not Return";
+              if (_tbReturnOrder.dataValues.returnStatus == 3) {
+                _OrderHDData[i].dataValues.returnStatus = _tbReturnOrder.dataValues.returnStatus;
                 OrderHDData.push(_OrderHDData[i]);
               }
             }
@@ -1167,7 +1167,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
           attributes: ["id", "orderId", "returnStatus"],
           where: {
             IsDeleted: false,
-            returnStatus: ["Wait", "Done", "Not Return"],
+            // returnStatus: [1, 2, 3],
           },
         });
 

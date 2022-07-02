@@ -8,7 +8,7 @@ const ReturnDetail = ({ OrderHD }) => {
   return (
     <>
       <div
-        className="flex mt-2 text-sm  "
+        className="flex mt-2 text-sm relative"
         style={{
           width: "95%",
           marginLeft: "auto",
@@ -17,7 +17,7 @@ const ReturnDetail = ({ OrderHD }) => {
       >
         <div
           className="flex"
-          style={{ width: "calc(100% - 90px)", color: "red" }}
+          style={{ width: "calc(100% - 125px)", color: "red" }}
         >
           <i
             className="flex fas fa-long-arrow-alt-left"
@@ -27,22 +27,24 @@ const ReturnDetail = ({ OrderHD }) => {
         </div>
 
         <div
-          className="flex"
+          className="flex absolute"
           style={{
-            width: "90px",
+            width: "auto",
             backgroundColor: "#ebebeb",
             borderRadius: "10px",
             textAlign: "center",
             color: "var(--mq-txt-color, rgb(20, 100, 246))",
             justifyContent: "center",
             alignItems: "center",
+            padding: "0 10px",
+            right: "10px"
           }}
         >
-          {OrderHD.tbReturnOrder.returnStatus === "Wait"
+          {OrderHD.tbReturnOrder.returnStatus == 1
             ? "รอดำเนินการ"
-            : OrderHD.tbReturnOrder.returnStatus === "Done"
-            ? "คืนสำเร็จ"
-            : "การคืนถูกปฏิเสธ"}
+            : OrderHD.tbReturnOrder.returnStatus == 2
+              ? "คืนสำเร็จ"
+              : "การคืนถูกปฏิเสธ"}
         </div>
       </div>
 

@@ -6,7 +6,7 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-const { tbReturnOrder ,tbImage } = require("../../models");
+const { tbReturnOrder, tbImage } = require("../../models");
 const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
@@ -106,20 +106,19 @@ router.delete("/:id", validateToken, async (req, res) => {
 
 //#region line liff
 router.post("/returnOrder", validateLineToken, async (req, res) => {
-    // const data = await tbReturnOrder.create(req.body);
-    // res.json({
-    //     status: true,
-    //     message: "success",
-    //     tbReturnOrder: data,
-    // });
 
     let { orderId, returnDetail, description, returnImage } = req.body;
     let status = true
     let msg = ""
     try {
-        // const uid = Encrypt.DecodeKey(req.user.uid);
-        // const Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
-        const data = await tbReturnOrder.create({ orderId: Encrypt.DecodeKey(orderId), returnStatus: "Wait", returnType: "User", returnDetail: returnDetail, description: description, isDeleted: false });
+        const data = await tbReturnOrder.create({
+            orderId: Encrypt.DecodeKey(orderId)
+            , returnStatus: 1
+            , returnType: 1
+            , returnDetail: returnDetail
+            , description: description
+            , isDeleted: false
+        });
         if (data) {
             const _tbImage = await tbImage.create({
                 createdAt: new Date(),
