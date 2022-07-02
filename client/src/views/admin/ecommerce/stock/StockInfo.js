@@ -24,7 +24,7 @@ import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 import ModalHeader from "views/admin/ModalHeader";
 import ButtonModalUC from "components/ButtonModalUC";
-
+import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 const StockInfo = ({
   handleModal,
   formik,
@@ -34,7 +34,7 @@ const StockInfo = ({
   isImageCoverNull = false,
 }) => {
   Modal.setAppElement("#root");
-
+  const useStyleCreate = styleSelect();
   const discountList = [
     { value: "THB", label: "บาท" },
     { value: "percent", label: "%" },
@@ -77,7 +77,6 @@ const StockInfo = ({
     if (productCategoryList && productCategoryList.length > 0) {
       if (!formik.values.productCategoryId) {
         setCategoryValue(productCategoryList[0]);
-        console.log("setDefault", productCategoryList[0]);
         formik.setFieldValue("productCategoryId", productCategoryList[0].value);
       } else {
         setCategoryValue(
@@ -248,7 +247,9 @@ const StockInfo = ({
                         <CreatableSelect
                           isClearable
                           className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                          styles={useStyle}
+                          styles={useStyleCreate}
+                          menuPortalTarget={document.body}
+                          menuPosition="fixed"
                           isLoading={isLoadingSelect}
                           options={productCategoryList}
                           onChange={handleChange}
@@ -426,6 +427,10 @@ const StockInfo = ({
                           uncheckedIcon={false}
                           checkedIcon={false}
                           onChange={(value) => {
+                            formik.setFieldValue('startDateCampaign',"");
+                            formik.setFieldValue('endDateCampaign',"");
+                            formik.setFieldValue('startTimeCampaign',"");
+                            formik.setFieldValue('endTimeCampaign',"");
                             formik.setFieldValue("isFlashSale", value);
                           }}
                           checked={formik.values.isFlashSale}
@@ -441,6 +446,7 @@ const StockInfo = ({
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <DatePickerUC
+                          disabled={!formik.values.isFlashSale}
                           onChange={(e) => {
                             formik.setFieldValue(
                               "startDateCampaign",
@@ -465,6 +471,7 @@ const StockInfo = ({
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <DatePickerUC
+                          disabled={!formik.values.isFlashSale}
                           onChange={(e) => {
                             formik.setFieldValue(
                               "endDateCampaign",
@@ -492,6 +499,7 @@ const StockInfo = ({
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
+                          disabled={!formik.values.isFlashSale}
                           type="time"
                           name="startTimeCampaign"
                           maxLength={10}
@@ -510,6 +518,7 @@ const StockInfo = ({
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
+                          disabled={!formik.values.isFlashSale}
                           type="time"
                           name="endTimeCampaign"
                           maxLength={10}

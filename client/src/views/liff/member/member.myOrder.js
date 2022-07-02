@@ -28,14 +28,14 @@ const MyOrder = () => {
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="mt-2 " style={{ padding: "0 10px", height: "calc(100vh - 490px)" }}>
+      <div className="mt-2 " style={{ padding: "0 10px", height: "calc(100vh - 445px)" }}>
         <div className="flex relative" style={{ height: "40px", fontSize: "14px" }}>
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
             คำสั่งชื้อของฉัน
           </div>
-          <div className="text-liff-gray-mbk" style={{ width: "50%", textAlign: "end" }} onClick={() => {
+          <div className="text-liff-gray-mbk text-xs" style={{ width: "50%", textAlign: "end" }} onClick={() => {
             history.push(path.myorder.replace(":id", "1"))
-          }}>{"ดูทั้งหมด >"}</div>
+          }}>{"ทั้งหมด >"}</div>
         </div>
         {OrderHD != null ?
           <div className="line-scroll" style={{ height: "calc(100% - 40px)" }}>
@@ -47,7 +47,7 @@ const MyOrder = () => {
             {OrderHD.dt.map((e, i) => {
               return (
                 <div key={i} className="flex" style={{ height: "auto" }}>
-                  <div className="flex" style={{ width: "30%", justifyContent: "center" }}>
+                  <div className="flex" style={{ width: "26%", justifyContent: "center" }}>
                     <div style={{ width: "80px", height: "80px" }}>
                       <ImageUC
                         find={1}
@@ -63,7 +63,7 @@ const MyOrder = () => {
                       {e.productName}
                     </div>
                     <div className="flex">
-                      <div className="text-liff-gray-mbk" style={{ width: "30%" }}> {"x" + e.amount}</div>
+                      <div className="text-liff-gray-mbk" style={{ width: "26%" }}> {"x" + e.amount}</div>
                       <div style={{ width: "70%", justifyContent: "end" }} className="flex" >
                         <div className="" style={{
                           textDecoration:

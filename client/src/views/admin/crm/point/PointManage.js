@@ -126,9 +126,9 @@ export default function PointManage() {
         <TabPane id="tbRegister" tab="Register" key="1">
           <PointRegister setModified={setModified} setData={setData} />
         </TabPane>
-        {/* <TabPane tab="E-Commerce" key="2">
+        <TabPane tab="E-Commerce" key="2">
           <PointEcommerce />
-        </TabPane> */}
+        </TabPane>
         <TabPane
           tab="Code"
           id="tabCode"

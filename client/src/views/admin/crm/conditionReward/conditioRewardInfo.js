@@ -591,8 +591,7 @@ export default function ConditioRewardInfo() {
               if (response.data.tbImage !== null) {
                 if (
                   response.data.tbRedemptionConditionsHD["rewardType"] === "1"
-                ) {
-                  console.log('img')
+                ) {                  
                   formikCoupon.setFieldValue(
                     "pictureCoupon",
                     FilesService.buffer64UTF8(response.data.tbImage["image"])

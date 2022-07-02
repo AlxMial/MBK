@@ -3728,11 +3728,6 @@ input[type="tel"]:disabled {
   background-color: #f2f2f2;
 }
 
-.disableInput:disabled {
-  background-color: #f2f2f2 !important;
-  color: #334155 !important;
-}
-
 /* Datepicker */
 .ant-picker {
   --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
@@ -4552,6 +4547,10 @@ input[type="number"] {
   .liff-Reward-height {
     height: 70%;
   }
+  .liff-footer{
+    height: calc(100vh - 474px);
+
+  }
 }
 
 @media only screen and (max-width: 413px) {
@@ -4567,6 +4566,22 @@ input[type="number"] {
   .liff-Reward-height {
     height: 70%;
   }
+  /* .liff-footer{
+    height: calc(100vh - 532px);
+    /* position: fixed;
+    bottom: 0;
+    width: 100%; 
+  } */
+}
+
+
+@media only screen and (max-width: 412px) {
+  .liff-footer{
+    height: calc(100vh - 424px);
+    /* position: fixed;
+    bottom: 0;
+    width: 100%; */
+  }
 }
 
 @media only screen and (max-width: 394px) {
@@ -4581,6 +4596,9 @@ input[type="number"] {
   .heightPolicy {
     height: 55vh;
   }
+  .liff-footer{
+    height: calc(100vh - 463px);
+  }
 }
 
 @media only screen and (max-width: 391px) {
@@ -4590,6 +4608,10 @@ input[type="number"] {
 
   .liff-Reward-height {
     height: 70%;
+  }
+
+  .liff-footer{
+    height: calc(100vh - 461px);
   }
 }
 
@@ -4609,6 +4631,10 @@ input[type="number"] {
 
   .heightPolicy {
     height: 45vh;
+  }
+
+  .liff-footer{
+    height: calc(100vh - 453px);
   }
 }
 
@@ -4630,6 +4656,10 @@ input[type="number"] {
   .liff-Reward-height {
     height: 70%;
   }
+
+  .liff-footer{
+    height: calc(100vh - 445px);
+  }
 }
 
 @media only screen and (max-width: 320px) {
@@ -4641,6 +4671,11 @@ input[type="number"] {
   .liff-Reward-height {
     height: 70%;
   }
+  .liff-footer{
+    height:  calc(100vh - 423px);
+  }
+
+ 
 }
 
 @media only screen and (max-width: 280px) {
@@ -4930,3 +4965,13 @@ button.bt-quantity.broder-plus {
   justify-content: center;
   font-size: 16px;
 }
+
+.ant-tabs-tab-btn{
+  font-weight: normal !important;
+}
+
+/* a{
+  color:white !important;
+} */
+
+
