@@ -233,12 +233,12 @@ const Member = () => {
           <div>
             <div style={{ color: "#FFF", textAlign: "center" }}>©2022 Mahboonkrong Rice, All Rights Reserved.</div>
             <div className="flex" style={{ color: "#FFF", textAlign: "center", justifyContent: "center" }}>
-              <div style={{ textDecoration: "underline" }} onClick={() => {
+              <div className="text-underline" onClick={() => {
                 setIsLoading(true);
                 window.location.href = 'https://www.prg.co.th/th/privacy_policy'
               }} >นโยบายความเป็นส่วนตัว</div>
               <div className="px-2">•</div>
-              <div style={{ textDecoration: "underline" }} onClick={() => { setisOpenPolicy(true) }}>ข้อกำหนดและเงื่อนไข</div>
+              <div className="text-underline" onClick={() => { setisOpenPolicy(true) }}>ข้อกำหนดและเงื่อนไข</div>
             </div>
           </div>
         </div>

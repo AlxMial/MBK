@@ -49,16 +49,15 @@ const ReturnDetail = ({ OrderHD }) => {
       </div>
 
       <div
-        className=" mt-2 py-2 px-2 text-liff-gray-mbk"
+        className="w-full mt-2 py-2 px-2 text-liff-gray-mbk"
         style={{
-          width: "100%",
           backgroundColor: "#ffe9e2",
         }}
       >
-        <div className="w-full flex">
+        <div className="w-full flex mb-2">
           <i className="flex fas fa-clock" style={{ alignItems: "center" }}></i>
           <div className="px-2">
-            {"วันที่ยกเลิก : " +
+            {"วันที่คืนสินค้า : " +
               moment(OrderHD.tbReturnOrder.createdAt).format("DD-MM-YYYY")}
           </div>
         </div>
@@ -70,9 +69,8 @@ const ReturnDetail = ({ OrderHD }) => {
           <div className="px-2 flex">
             {"รูปภาพ  : "}
             <div
-              className="px-2"
+              className="px-2 text-underline"
               style={{
-                textDecoration: "underline",
                 color: "blue",
               }}
               onClick={() => {
