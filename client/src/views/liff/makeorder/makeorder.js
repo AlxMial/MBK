@@ -100,7 +100,12 @@ const MakeOrder = () => {
       });
     } else if (id === "byorder") {
       item = Storage.getbyorder();
-      setData();
+      if (fn.IsNullOrEmpty(item)) {
+        // console.log("IsNullOrEmpty")
+        history.push(path.shopList)
+      } else {
+        setData();
+      }
     }
   };
   const setDeliveryCost = (e) => {
@@ -257,10 +262,11 @@ const MakeOrder = () => {
         data = { type: "discount", data: _prodiscount };
       } else {
         //สินค้า
-        console.log("แถมสินค้า");
+  
         let productList = promotionstores.find((e) => e.condition == "product" && e.buy <= totel);
-        console.log(productList);
+        // console.log(productList);
         if (productList != null) {
+          console.log("แถมสินค้า");
           data = { type: "product", data: productList.stockId };
           if (freebies.length < 1) {
             getfreebies(productList);

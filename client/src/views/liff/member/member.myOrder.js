@@ -28,7 +28,7 @@ const MyOrder = () => {
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="mt-2 " style={{ padding: "10px", height: "calc(100vh - 490px)" }}>
+      <div className="mt-2 " style={{ padding: "0 10px", height: "calc(100vh - 490px)" }}>
         <div className="flex relative" style={{ height: "40px", fontSize: "14px" }}>
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
             คำสั่งชื้อของฉัน
@@ -38,7 +38,7 @@ const MyOrder = () => {
           }}>{"ดูทั้งหมด >"}</div>
         </div>
         {OrderHD != null ?
-          <div style={{ height: "calc(100% - 40px)" }}>
+          <div className="line-scroll" style={{ height: "calc(100% - 40px)" }}>
             <div className="flex" style={{ height: "30px" }}>
               <div className="font-bold" style={{ width: "115px" }}>หมายเลขคำสั่งซื้อ : </div>
               <div className="px-2 line-clamp-1" >{OrderHD.orderNumber} </div>
