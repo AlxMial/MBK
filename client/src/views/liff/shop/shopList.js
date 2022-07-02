@@ -88,7 +88,7 @@ const ShopList = () => {
       let dataTemp = tbStock;
       if (e == 2) {
         dataTemp = dataTemp.filter((e) => {
-          if (e.IsBestSeller) {
+          if (e.isBestSeller) {
             return e;
           }
         });
@@ -129,7 +129,7 @@ const ShopList = () => {
       let dataTemp = tbStock;
       if (e == 2) {
         dataTemp = dataTemp.filter((e) => {
-          if (e.IsBestSeller) {
+          if (e.isBestSeller) {
             return e;
           }
         });
@@ -490,7 +490,7 @@ const ShopList = () => {
                                 className="w-32 border-2 border-blueGray-50"
                               ></ImageUC>
 
-                              {e.IsBestSeller ? (
+                              {e.isBestSeller ? (
                                 <img
                                   style={{
                                     width: "40px",
@@ -609,7 +609,7 @@ const ShopList = () => {
                           </div>
                         ) : null}
 
-                        {e.IsBestSeller ? (
+                        {e.isBestSeller ? (
                           <img
                             style={{
                               width: "40px",

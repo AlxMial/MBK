@@ -578,6 +578,7 @@ export default function ConditioRewardInfo() {
             formik.setFieldValue("redemptionType", "1");
             formik.setFieldValue("rewardType", "1");
             formikCoupon.setFieldValue("discountType", "1");
+            formik.setFieldValue("isActive", true);
           }
           dispatch(fetchSuccess());
         }
@@ -600,7 +601,6 @@ export default function ConditioRewardInfo() {
     formikProduct.setFieldValue("productName", "รหัสในตำนาน");
     formikProduct.setFieldValue("rewardCount", 10);
     formikProduct.setFieldValue("isDeleted", false);
-    formikProduct.setFieldValue("isActive", true);
   };
 
   useEffect(() => {

@@ -41,8 +41,18 @@ export default function ConditionRewardList() {
     } else {
       setListRedemption(
         listSearch.filter(
-          (x) =>
-            x.redemptionName.includes(e)
+          (x) => {
+            if (x.redemptionName.includes(e)
+              || moment(x.startDate).format("DD/MM/YYYY").includes(e)
+              || moment(x.endDate).format("DD/MM/YYYY").includes(e)
+              || (x.points).toString().includes(e)
+              || (x.redemptionType == 1 ? "Standard" : "Game").includes(e)
+              ||(new Date(x.endDate) < new Date() ? "หมดอายุ" :
+              x.isActive ? "เปิดการใช้งาน" : "ปิดการใช้งาน").includes(e)
+            ) {
+              return x
+            }
+          }
         )
       );
       setPageNumber(0);
