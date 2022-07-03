@@ -10,7 +10,7 @@ import useWindowDimensions from "services/useWindowDimensions";
 // components
 
 const MyAward = () => {
-  const { width,height } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -26,7 +26,7 @@ const MyAward = () => {
           setproductItem(res.data.product);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -41,12 +41,12 @@ const MyAward = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div
-        className="mt-2 line-scroll liff-footer" 
+        className="mt-2 line-scroll liff-footer"
         style={{ padding: "10px" }}
       >
         <div
           className="flex relative"
-          style={{ height: "40px", fontSize: "14px" }}
+          style={{ height: "40px", fontSize: "13px" }}
         >
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
             คูปองของฉัน
@@ -67,29 +67,29 @@ const MyAward = () => {
           couponItem.map((e, i) => {
             return (
               <div key={i}>
-                <div  className="w-full flex mb-6">
+                <div className="w-full flex mb-2">
                   <div
-                    className="flex"
-                    style={{ width: "30%", justifyContent: "center" }}
+                    className="flex mr-4"
+                    style={{ justifyContent: "center" }}
                   >
-                    <div style={{ width: "80px", height: "80px" }}>
+                    <div style={{ width: "120px", height: "70px" }}>
                       <ImageUC
                         find={1}
                         relatedid={e.id}
-                        relatedtable={["stock1"]}
+                        relatedtable={["tbRedemptionCoupon"]}
                         alt="flash_sale"
                         className=" border-2 border-blueGray-50 animated-img"
+                        imgclassname=" w-full h-full object-cover"
                       ></ImageUC>
                     </div>
                   </div>
-                  <div className="relative" style={{ width: "70%" }}>
-                    <div className="font-bold line-clamp-1">
+                  <div className="flex flex-col pt-2 justify-between" >
+                    <div className="font-bold line-clamp-1 text-12">
                       {" "}
                       {e.couponName}
                     </div>
                     <div
-                      className="absolute text-liff-gray-mbk"
-                      style={{ bottom: "0" }}
+                      className="text-liff-gray-mbk text-12"
                     >
                       {"ใช้ได้ถึง " +
                         moment(e.expiredDate)
@@ -111,7 +111,7 @@ const MyAward = () => {
 
         <div
           className="flex relative"
-          style={{ height: "40px", fontSize: "14px" }}
+          style={{ height: "40px", fontSize: "12px" }}
         >
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
             ของสัมนาคุณของฉัน
@@ -127,11 +127,11 @@ const MyAward = () => {
           </div>
         </div>
 
-        {productItem.length > 0  ? (
+        {productItem.length > 0 ? (
           productItem.map((e, i) => {
             return (
-              <>
-                <div key={i} className="w-full flex">
+              <div key={i}>
+                <div className="w-full flex">
                   <div
                     className="flex"
                     style={{ width: "30%", justifyContent: "center" }}
@@ -147,7 +147,7 @@ const MyAward = () => {
                     </div>
                   </div>
                   <div className="relative" style={{ width: "70%" }}>
-                    <div className="font-bold line-clamp-1">
+                    <div className="font-bold line-clamp-1 text-12">
                       {" "}
                       {e.productName}
                     </div>
@@ -156,7 +156,7 @@ const MyAward = () => {
                       style={{ bottom: "0" }}
                     >
                       <div
-                        className="flex relative w-full"
+                        className="flex relative w-full text-12"
                         style={{ color: e.status < 3 ? "#c7b15e" : "#007a40" }}
                       >
                         {e.status == 1 ? (
@@ -180,8 +180,8 @@ const MyAward = () => {
                           {e.status == 1
                             ? "เตรียมจัดส่ง"
                             : e.status == 2
-                            ? "อยู่ระหว่างจัดส่ง"
-                            : "ส่งแล้ว"}
+                              ? "อยู่ระหว่างจัดส่ง"
+                              : "ส่งแล้ว"}
                         </div>
                         {e.trackingNo != null ? (
                           <div className="absolute" style={{ right: "0" }}>
@@ -192,8 +192,8 @@ const MyAward = () => {
                     </div>
                   </div>
                 </div>
-                {i === 0  && productItem.length > 1 ? <div className="liff-inline mb-2" /> : null}
-              </>
+                {i === 0 && productItem.length > 1 ? <div className="liff-inline mb-2" /> : null}
+              </div>
             );
           })
         ) : (
