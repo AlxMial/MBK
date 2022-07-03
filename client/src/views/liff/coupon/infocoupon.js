@@ -84,7 +84,7 @@ const InfoCoupon = () => {
                                 history.push(path.usecouponUC.replace(":id", id))
                             }}
                         >
-                            {"ใช้คูปอง"}
+                            {"แลกคูปอง"}
                         </div>
                     </div>
 

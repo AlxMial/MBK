@@ -86,21 +86,24 @@ const Product = () => {
                         <div className="font-bold line-clamp-1 text-12"> {e.productName} </div>
                         <div className="text-xs pl-2">รายละเอียด </div>
                         <div className="line-clamp-2 text-xs  pl-2" style={{ wordBreak: "break-all" }}>{e.description} </div>
-                        <div className="absolute w-full text-xs  pl-2" style={{ bottom: "0", color: "#ddd" }}>
-                          <div className="flex relative w-full " style={{ color: e.status < 3 ? "#c7b15e" : "#007a40" }}>
-                            {e.status == 1 ?
-                              <i className="flex fas fa-hourglass-end  mr-2" style={{ alignItems: "center" }}></i>
-                              : e.status == 2 ?
-                                < i className="flex fas fa-truck mr-2" style={{ alignItems: "center" }}></i>
-                                :
-                                <i className="flex fas fa-check-circle mr-2" style={{ alignItems: "center" }}></i>
-                            }
+                        <div className="absolute w-full text-xs  px-2" style={{ bottom: "0", color: "#ddd" }}>
+                          <div className="flex relative w-full justify-between" style={{ color: e.status < 3 ? "#c7b15e" : "#007a40" }}>
+                            <div className="footer-l flex">
+                              {e.status == 1 ?
+                                <i className="flex fas fa-hourglass-end  mr-2" style={{ alignItems: "center" }}></i>
+                                : e.status == 2 ?
+                                  < i className="flex fas fa-truck mr-2" style={{ alignItems: "center" }}></i>
+                                  :
+                                  <i className="flex fas fa-check-circle mr-2" style={{ alignItems: "center" }}></i>
+                              }
 
-                            <div>{e.status == 1 ? "เตรียมจัดส่ง" : e.status == 2 ? "อยู่ระหว่างจัดส่ง" : "ส่งแล้ว"}</div>
-                            {e.trackingNo != null ?
-                              <div className="absolute" style={{ right: "0" }}>{e.trackingNo}</div>
-                              : null}
-
+                              <div>{e.status == 1 ? "เตรียมจัดส่ง" : e.status == 2 ? "อยู่ระหว่างจัดส่ง" : "ส่งแล้ว"}</div>
+                            </div>
+                            <div className="footer-r">
+                              {e.trackingNo != null ?
+                                <div className="">{e.trackingNo}</div>
+                                : null}
+                            </div>
                           </div>
                         </div>
                       </div>
