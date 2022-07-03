@@ -80,16 +80,16 @@ export default function PointHistoryReport() {
             (x) => {
               const _startDate = convertToDate(x.startDate);
               const _endDate = convertToDate(x.endDate);
-              if((inputSerch !== "" ? (x.pointCodeName.toLowerCase().includes(inputSerch) ||
-              (x.pointCodeSymbol === null ? "" : x.pointCodeSymbol)
-                .toLowerCase()
-                .includes(inputSerch) ||
-              x.pointCodePoint.toString().includes(inputSerch) ||
-              (x.pointCodeQuantityCode === null ? "" : x.pointCodeQuantityCode)
-                .toString()
-                .includes(inputSerch) ||
-              x.status.toLowerCase().toString().includes(inputSerch) ||
-              x.useCount.toString().includes(inputSerch)) : true) &&
+              if((inputSerch !== "" ? 
+              (
+              Search(x.pointCodeName, inputSerch) ||
+              Search(x.pointCodeSymbol ,inputSerch) ||
+              Search(x.pointCodePoint, inputSerch) ||
+              Search(x.pointCodeQuantityCode, inputSerch) ||
+              Search(x.status, inputSerch) ||
+              Search(x.useCount, inputSerch) ||
+              Search(x.remain, inputSerch)
+              ) : true) &&
   
               ((startDate !== null && endDate !== null) ? (startDate <= _startDate  && startDate <= _endDate &&
                 endDate >= _startDate && endDate >= _endDate) : true)) {
@@ -99,13 +99,22 @@ export default function PointHistoryReport() {
             }            
           )
         );
-      } else {
-        getDataPoint_ByCode();
-      }     
+      } 
+      // else {
+      //   getDataPoint_ByCode();
+      // }     
       setPageNumber(0);
       setForcePage(0);
     }
   };
+
+  const Search = (val, inputSerch) =>  {
+    let status = false;
+    if(val !== '' && val !== null && val !== undefined) {
+      status =  val.toString().toLowerCase().includes(inputSerch);
+    }
+    return status;
+  }
 
   const convertToDate = (e) => {    
    const date = new Date(e);
@@ -116,17 +125,18 @@ export default function PointHistoryReport() {
   const setDataSearch = (e, type) => {    
     if (type === "s_input") {
       formSerch.values.inputSerch = e.target.value.toLowerCase();
-      InputSearch(); 
-    } else if(type === "s_type") {     
-      // formSerch.values.serchType = e;
-      // if(e === "2") {
-      //   getDataPoint();
-      // }
+      InputSearch();
+    } else if(type === "b_input") {
+      if(formSerch.values.serchType === '2') {
+        getDataPoint_ByCode(); 
+      }      
+    } else if(type === "s_type") {
+      formSerch.values.serchType = e; 
     } else if(type === "s_stdate") {    
       formSerch.values.startDate = e; 
     } else if(type === "s_eddate") {     
       formSerch.values.endDate = e;
-    }   
+    } 
   };
 
   async function openModal(id) {   
@@ -262,7 +272,7 @@ export default function PointHistoryReport() {
   // ค้นหา pointDT จาก id ของ hd
   const getDataPointDT= async (id) => {  
     if(id !== pointHDId) {    
-    //setIsLoading(true);
+    setIsLoading(true);
     setIsLoadingPoint(true);
     await axios.get(`report/GetPointDT/${id}`).then((response) => {
          const length = response.data.length;
@@ -278,7 +288,7 @@ export default function PointHistoryReport() {
         }
         setPointHDId(id);
         setIsLoadingPoint(false);
-        //setIsLoading(false);        
+        setIsLoading(false);        
       });
     } else {
       setDataDialog(); 
@@ -356,6 +366,9 @@ export default function PointHistoryReport() {
                   className="border-0 pl-12 w-63 placeholder-blueGray-300 text-blueGray-600 relative bg-white rounded-xl text-sm shadow outline-none focus:outline-none focus:ring"
                   onChange={(e) => {
                     setDataSearch(e, "s_input")
+                  }} 
+                  onBlur={(e) => {
+                    setDataSearch(e,"b_input");
                   }}
                 />
               </div>              

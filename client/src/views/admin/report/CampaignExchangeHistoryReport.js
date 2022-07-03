@@ -95,7 +95,7 @@ export default function CampaignExchangeHistoryReport() {
 
   const Search = (val, inputSerch) =>  {
     let status = false;
-    if(val !== '' && val !== null) {
+    if(val !== '' && val !== null && val !== undefined) {
       status =  val.toString().toLowerCase().includes(inputSerch);
     }
     return status;

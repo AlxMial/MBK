@@ -50,7 +50,7 @@ const ImageUC = (prop) => {
         <img
           {...other}
           id={other.relatedid + other.relatedtable}
-          className={className.repeat("animated-img", "") + (other.imgclassname ? other.imgclassname : "")}
+          className={"object-cover " + className.repeat("animated-img", "") + (other.imgclassname ? (" " + other.imgclassname) : "")}
           src={Img}
           onError={({ currentTarget }) => {
             currentTarget.onerror = null;

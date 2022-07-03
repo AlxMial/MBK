@@ -736,7 +736,9 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
   let Member;
-  let OrderHD;
+  let OrderHD = [];
+  let sumamount = 0;
+  let sumprice = 0;
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
     Member = await tbMember.findOne({
@@ -745,73 +747,76 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
     });
     if (Member) {
       const _tbOrderHD = await tbOrderHD.findAll({
-        limit: 1,
+        limit: 5,
         attributes: ["id", "orderNumber", "paymentStatus"],
         where: { memberId: Member.id },
       });
-      if (_tbOrderHD) {
-        let hd = _tbOrderHD[0].dataValues;
-        hd.dt = [];
-        const OrderDTData = await tbOrderDT.findAll({
-          // limit: 2,
-          attributes: [
-            "id",
-            "amount",
-            "price",
-            "discount",
-            "discountType",
-            "stockId",
-            "orderId",
-          ],
-          where: { IsDeleted: false, orderId: hd.id },
-        });
-        let sumamount = 0;
-        let sumprice = 0;
-        for (var j = 0; j < OrderDTData.length; j++) {
-          let dt = OrderDTData[j].dataValues;
-          dt.id = Encrypt.EncodeKey(dt.id);
-          const _tbStockData = await tbStock.findOne({
+      if (_tbOrderHD && _tbOrderHD.length > 0) {
+
+        for (let i = 0; i < _tbOrderHD.length; i++) {
+          let hd = _tbOrderHD[i].dataValues;
+          hd.dt = [];
+          const OrderDTData = await tbOrderDT.findAll({
+            // limit: 2,
             attributes: [
               "id",
-              "productName",
+              "amount",
+              "price",
               "discount",
               "discountType",
-              "price",
+              "stockId",
+              "orderId",
             ],
-            where: { id: dt.stockId },
+            where: { IsDeleted: false, orderId: hd.id },
           });
-          let _tbStock = _tbStockData.dataValues;
-          dt.productName = _tbStock.productName;
-          let price =
-            dt.discount > 0
-              ? dt.discountType == "THB"
-                ? parseFloat(dt.price) - parseFloat(dt.discount)
-                : parseFloat(dt.price) -
-                (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
-              : parseFloat(dt.price);
-          let discount =
-            dt.discount > 0
-              ? dt.discountType == "THB"
-                ? parseFloat(dt.price) - parseFloat(dt.discount)
-                : parseFloat(dt.price) -
-                (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
-              : 0;
-          sumamount += dt.amount;
-          sumprice += price * dt.amount;
-          if (j < 2) {
-            hd.dt.push({
-              id: Encrypt.EncodeKey(dt.stockId),
-              price: parseFloat(dt.price),
-              discount: parseFloat(discount),
-              productName: dt.productName,
-              amount: dt.amount,
+
+          for (var j = 0; j < OrderDTData.length; j++) {
+            let dt = OrderDTData[j].dataValues;
+            dt.id = Encrypt.EncodeKey(dt.id);
+            const _tbStockData = await tbStock.findOne({
+              attributes: [
+                "id",
+                "productName",
+                "discount",
+                "discountType",
+                "price",
+              ],
+              where: { id: dt.stockId },
             });
+            let _tbStock = _tbStockData.dataValues;
+            dt.productName = _tbStock.productName;
+            let price =
+              dt.discount > 0
+                ? dt.discountType == "THB"
+                  ? parseFloat(dt.price) - parseFloat(dt.discount)
+                  : parseFloat(dt.price) -
+                  (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
+                : parseFloat(dt.price);
+            let discount =
+              dt.discount > 0
+                ? dt.discountType == "THB"
+                  ? parseFloat(dt.price) - parseFloat(dt.discount)
+                  : parseFloat(dt.price) -
+                  (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
+                : 0;
+            sumamount += dt.amount;
+            sumprice += price * dt.amount;
+            if (j < 2) {
+              hd.dt.push({
+                id: Encrypt.EncodeKey(dt.stockId),
+                price: parseFloat(dt.price),
+                discount: parseFloat(discount),
+                productName: dt.productName,
+                amount: dt.amount,
+              });
+            }
           }
+          hd.sumamount = sumamount;
+          hd.sumprice = sumprice;
+          hd.id = Encrypt.EncodeKey(hd.id);
+          OrderHD.push(hd);
         }
-        hd.sumamount = sumamount;
-        hd.sumprice = sumprice;
-        hd.id = Encrypt.EncodeKey(hd.id);
-        OrderHD = hd;
+
       }
     }
   } catch (e) {
@@ -823,11 +828,13 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
     status: status,
     msg: msg,
     OrderHD: OrderHD,
+    sumamount: sumamount,
+    sumprice: sumprice,
   });
 });
 
 /// คูปอง รวม product อย่างละ 2 row
-router.get("/getMyReward",validateLineToken, async (req, res) => {
+router.get("/getMyReward", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
   let Member;

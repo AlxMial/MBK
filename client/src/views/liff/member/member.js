@@ -69,7 +69,7 @@ const Member = () => {
           style={{
             width: "90%",
             padding: "20px",
-            height: "48vw",
+            height: "180px",
             borderRadius: "15px",
             backgroundColor: "#007A40",
             border: "2px solid white",
@@ -148,7 +148,7 @@ const Member = () => {
               {"รหัสสมาชิก : " + tbMember.memberCard}
             </div>
           </div>
-          <div className="relative" style={{ width: "50%", height: "100%" }}>
+          <div className="relative" style={{ width: "40%", height: "100%" }}>
             <div
               className="absolute right-0"
               onClick={() => {
@@ -174,7 +174,7 @@ const Member = () => {
               <div className="text-right mt-2 "></div>
               <div className="text-right mt-2">
                 <span className=" text-2xs text-white ">
-                  {Memberpoints.memberpoints + " คะแนน  "}
+                  {/*Memberpoints.memberpoints*/0 + " คะแนน  "}
                 </span>
               </div>
               <div className="text-right ">
