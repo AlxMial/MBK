@@ -15,7 +15,7 @@ import FilesService from "../../../../services/files";
 import ValidateService from "services/validateValue";
 import SelectUC from "components/SelectUC";
 
-const ImportCoupon = ({ formik,setFile }) => {
+const ImportCoupon = ({ formik, setFile }) => {
   const { width } = useWindowDimensions();
   const [isCancel, setIsCancel] = useState(false);
   const [delay, setDelay] = useState();
@@ -36,7 +36,7 @@ const ImportCoupon = ({ formik,setFile }) => {
   const selectFile = (e) => {
     if (
       e.target.files[0].type ===
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
       e.target.files[0].type === "application/vnd.ms-excel"
     ) {
       setErrorExcel(false);
@@ -130,7 +130,7 @@ const ImportCoupon = ({ formik,setFile }) => {
             ) : (
               <div>&nbsp;</div>
             )}
-           
+
           </div>
 
           <div className="w-full lg:w-1/12 margin-auto-t-b">
@@ -179,7 +179,7 @@ const ImportCoupon = ({ formik,setFile }) => {
                 value={formik.values.discount}
                 onChange={(e) => {
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.discount = ValidateService.onHandleNumber(e);
+                  formik.values.discount = ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />
@@ -225,21 +225,44 @@ const ImportCoupon = ({ formik,setFile }) => {
                 onChange={(e) => {
                   setIsClick({ ...isClick, couponStart: false });
                   if (e === null) {
-                    formik.setFieldValue("startDate", new Date(), false);
+                    formik.setFieldValue("startDate", "", false);
+                    formik.setFieldValue(
+                      "expireDate",
+                      "",
+                      false
+                    );
                   } else {
+                    formik.handleChange({ target: { name: 'startDate', value: e } });
                     formik.setFieldValue(
                       "startDate",
                       moment(e).toDate(),
                       false
                     );
+                    if (formik.values.expireDate != null) {
+                      if (moment(e).toDate() >= formik.values.expireDate) {
+                        formik.setFieldValue(
+                          "expireDate",
+                          moment(e).add(1, "days").toDate(),
+                          false
+                        );
+                      }
+                    }
                   }
                 }}
                 value={
                   !isClick.couponStart
-                    ? moment(new Date(formik.values.startDate), "DD/MM/YYYY")
+                    ? formik.values.startDate == "" ? null : moment(new Date(formik.values.startDate), "DD/MM/YYYY")
                     : null
                 }
               />
+              <div className="relative w-full px-4">
+                {formik.touched.startDate &&
+                  formik.errors.startDate ? (
+                  <div className="text-sm py-2 px-2  text-red-500">
+                    {formik.errors.startDate}
+                  </div>
+                ) : null}
+              </div>
               <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
             </div>
           </div>
@@ -271,10 +294,11 @@ const ImportCoupon = ({ formik,setFile }) => {
                 onChange={(e) => {
                   setIsClick({ ...isClick, expireDate: false });
                   if (e === null) {
-                    formik.setFieldValue("expiredDate", new Date(), false);
+                    formik.setFieldValue("expireDate", "", false);
                   } else {
+                    formik.handleChange({ target: { name: 'expireDate', value: e } });
                     formik.setFieldValue(
-                      "expiredDate",
+                      "expireDate",
                       moment(e).toDate(),
                       false
                     );
@@ -282,14 +306,14 @@ const ImportCoupon = ({ formik,setFile }) => {
                 }}
                 value={
                   !isClick.expireDate
-                    ? moment(
-                        new Date(
-                          formik.values.expiredDate
-                            ? formik.values.expiredDate
-                            : new Date()
-                        ),
-                        "DD/MM/YYYY"
-                      )
+                    ? formik.values.expireDate == "" || formik.values.expireDate == undefined ? null : moment(
+                      new Date(
+                        formik.values.expireDate
+                          ? formik.values.expireDate
+                          : new Date()
+                      ),
+                      "DD/MM/YYYY"
+                    )
                     : null
                 }
               />
@@ -299,8 +323,16 @@ const ImportCoupon = ({ formik,setFile }) => {
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 checked={formik.values.isNotExpired}
-                classLabel="mt-2"
+                classLabel="mt-2 w-full"
               />
+              <div className="relative w-full px-4">
+                {formik.touched.expireDate &&
+                  formik.errors.expireDate ? (
+                  <div className="text-sm py-2 px-2  text-red-500">
+                    {formik.errors.expireDate}
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
           <div className="w-full">&nbsp;</div>
@@ -318,7 +350,7 @@ const ImportCoupon = ({ formik,setFile }) => {
                 maxLength={7}
                 onBlur={formik.handleBlur}
                 value={formik.values.couponCount}
-                onChange={(e) => {}}
+                onChange={(e) => { }}
                 min="0"
                 disabled={true}
               />
@@ -327,7 +359,7 @@ const ImportCoupon = ({ formik,setFile }) => {
           <div className={"w-full" + (width < 764 ? " block" : " hidden")}>
             &nbsp;
           </div>
-          <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+          {/* <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
             <LabelUC label="จำนวนที่ใช้แลกต่อวัน" isRequired={false} />
             {formik.touched.couponCount && formik.errors.couponCount ? (
               <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
@@ -344,7 +376,7 @@ const ImportCoupon = ({ formik,setFile }) => {
                 onChange={(e) => {
                   setDelay(ValidateService.onHandleNumber(e));
                   formik.values.usedPerDayCount =
-                    ValidateService.onHandleNumber(e);
+                    ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />
@@ -352,7 +384,7 @@ const ImportCoupon = ({ formik,setFile }) => {
                 <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
               ) : null}
             </div>
-          </div>
+          </div> */}
 
           <div className="w-full">&nbsp;</div>
           <div className="w-full lg:w-1/12 margin-auto-t-b ">

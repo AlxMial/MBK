@@ -28,6 +28,7 @@ import GameList from "./GameList";
 import TextAreaUC from "components/InputUC/TextAreaUC";
 import ImportCoupon from "./ImportCoupon";
 import { Radio } from "antd";
+import CheckBoxUC from "components/CheckBoxUC";
 export default function ConditioRewardInfo() {
   /* Option Select */
   const redemptionType = [
@@ -125,9 +126,10 @@ export default function ConditioRewardInfo() {
       redemptionType: "",
       rewardType: "",
       points: 0,
+      isNotExpired: false,
       rewardGameAmount: 0,
       startDate: new Date(),
-      endDate: new Date(),
+      endDate: moment(new Date()).add(1, "days").toDate(),
       description: "",
       isDeleted: false,
       addBy: "",
@@ -157,11 +159,13 @@ export default function ConditioRewardInfo() {
             : "* Please enter Start Date"
         )
       ,
-      endDate: Yup.string().required(
-        Storage.GetLanguage() === "th"
+      endDate: Yup.string().when('isNotExpired', {
+        is: false,
+        then: Yup.string().required(Storage.GetLanguage() === "th"
           ? "* กรุณากรอก วันที่สิ้นสุด"
-          : "* Please enter End Date"
-      ),
+          : "* Please enter End Date"),
+        otherwise: Yup.string(),
+      })
     }),
     onSubmit: (values) => {
       let ImageSave = {};
@@ -396,7 +400,7 @@ export default function ConditioRewardInfo() {
       discountType: "1",
       startDate: new Date(),
       isNotExpired: false,
-      expireDate: new Date(),
+      expireDate: moment(new Date()).add(1, "days").toDate(),
       couponCount: 0,
       isNoLimitPerDayCount: false,
       usedPerDayCount: 0,
@@ -453,7 +457,7 @@ export default function ConditioRewardInfo() {
       discountType: "1",
       startDate: new Date(),
       isNotExpired: false,
-      expiredDate: new Date(),
+      expireDate: moment(new Date()).add(1, "days").toDate(),
       couponCount: "",
       isNoLimitPerDayCount: false,
       usedPerDayCount: 0,
@@ -476,6 +480,21 @@ export default function ConditioRewardInfo() {
         ),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
       fileName: Yup.string().required("* กรุณาเลือก ไฟล์"),
+      startDate:
+        Yup.string().required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก วันที่เริ่มต้น"
+            : "* Please enter Start Date"
+        )
+      ,
+      expireDate: Yup.string().when('isNotExpired', {
+        is: false,
+        then: Yup.string().required(Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่สิ้นสุด"
+          : "* Please enter End Date"),
+        otherwise: Yup.string(),
+      })
+
     }),
   });
 
@@ -937,6 +956,7 @@ export default function ConditioRewardInfo() {
                   <div className="w-full">&nbsp;</div>
                   <div className="w-full lg:w-1/12 margin-auto-t-b ">
                     <LabelUC label="วันที่เริ่มต้น" isRequired={true} />
+                    <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                   </div>
                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                     <div className="relative">
@@ -946,10 +966,10 @@ export default function ConditioRewardInfo() {
                         }}
                         onBlur={(e) => {
                           setIsClick({ ...isClick, redemptionStart: false });
+
                         }}
                         onChange={(e) => {
                           setIsClick({ ...isClick, redemptionStart: false });
-                          // formik.handleChange(e);
                           if (e === null) {
                             formik.setFieldValue(
                               "startDate",
@@ -962,18 +982,10 @@ export default function ConditioRewardInfo() {
                               false
                             );
                           } else {
-                            formik.setFieldValue(
-                              "startDate",
-                              moment(e).toDate(),
-                              false
-                            );
+                            formik.handleChange({ target: { name: 'startDate', value: moment(e).toDate() } });
                             if (formik.values.endDate != null) {
                               if (moment(e).toDate() >= formik.values.endDate) {
-                                formik.setFieldValue(
-                                  "endDate",
-                                  moment(e).add('days', 1).toDate(),
-                                  false
-                                );
+                                formik.handleChange({ target: { name: 'endDate', value: moment(e).add(1, "days").toDate() } });
                               }
                             }
 
@@ -988,6 +1000,7 @@ export default function ConditioRewardInfo() {
                             : null
                         }
                       />
+                      <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                     </div>
                     <div className="relative w-full px-4">
                       {formik.touched.startDate &&
@@ -1005,12 +1018,26 @@ export default function ConditioRewardInfo() {
                   </div>
                   <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
                     <LabelUC label="สิ้นสุด" isRequired={true} />
+                    <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                   </div>
                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                     <div className="relative">
                       <DatePickerUC
+                        placeholder={
+                          formik.values.isNotExpired
+                            ? "ไม่มีวันหมดอายุ"
+                            : "เลือกวันที่"
+                        }
+                        disabledValue={
+                          formik.values.isNotExpired ? true : false
+                        }
                         onClick={(e) => {
-                          setIsClick({ ...isClick, redemptionEnd: true });
+                          setIsClick({
+                            ...isClick,
+                            expireDate: formik.values.isNotExpired
+                              ? false
+                              : true,
+                          });
                         }}
                         onBlur={(e) => {
                           setIsClick({ ...isClick, redemptionEnd: false });
@@ -1020,6 +1047,7 @@ export default function ConditioRewardInfo() {
                           if (e === null) {
                             formik.setFieldValue("endDate", "", false);
                           } else {
+                            formik.handleChange({ target: { name: 'endDate', value: e } });
                             formik.setFieldValue(
                               "endDate",
                               moment(e).toDate(),
@@ -1042,15 +1070,24 @@ export default function ConditioRewardInfo() {
                           }
                         }}
                       />
+                      <CheckBoxUC
+                        text="ไม่มีวันหมดอายุ"
+                        name="isNotExpired"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        checked={formik.values.isNotExpired}
+                        classLabel="mt-2 w-full"
+                      />
+                      <div className="relative w-full px-4">
+                        {formik.touched.endDate &&
+                          formik.errors.endDate ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            {formik.errors.endDate}
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
-                    <div className="relative w-full px-4">
-                      {formik.touched.endDate &&
-                        formik.errors.endDate ? (
-                        <div className="text-sm py-2 px-2  text-red-500">
-                          {formik.errors.endDate}
-                        </div>
-                      ) : null}
-                    </div>
+
                   </div>
                   <div className="w-full">&nbsp;</div>
                   <div className="w-full lg:w-1/12 margin-auto-t-b ">

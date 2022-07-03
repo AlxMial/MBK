@@ -17,6 +17,7 @@ import CheckBoxUC from "components/CheckBoxUC";
 import TextAreaUC from "components/InputUC/TextAreaUC";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import * as Storage from "../../../../services/Storage.service";
 
 const GameInfo = ({
   open,
@@ -42,7 +43,7 @@ const GameInfo = ({
       discountType: "1",
       startDate: new Date(),
       isNotExpired: false,
-      expiredDate: new Date(),
+      expireDate: moment(new Date()).add(1, "days").toDate(),
       couponCount: 0,
       isNoLimitPerDayCount: false,
       usedPerDayCount: 0,
@@ -70,6 +71,20 @@ const GameInfo = ({
           (value) => value > 0
         ),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
+      startDate:
+        Yup.string().required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก วันที่เริ่มต้น"
+            : "* Please enter Start Date"
+        )
+      ,
+      expireDate: Yup.string().when('isNotExpired', {
+        is: false,
+        then: Yup.string().required(Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่สิ้นสุด"
+          : "* Please enter End Date"),
+        otherwise: Yup.string(),
+      })
     }),
     onSubmit: (values) => {
       if (formikCoupon.isValid) {
@@ -425,22 +440,10 @@ const GameInfo = ({
                     onChange={(e) => {
                       setIsClick({ ...isClick, couponStart: false });
                       if (e === null) {
-                        formikCoupon.setFieldValue(
-                          "startDate",
-                          "",
-                          false
-                        );
-                        formikCoupon.setFieldValue(
-                          "expireDate",
-                          "",
-                          false
-                        );
+                        formikCoupon.handleChange({ target: { name: 'startDate', value: "" } });
+                        formikCoupon.handleChange({ target: { name: 'expireDate', value: "" } });
                       } else {
-                        formikCoupon.setFieldValue(
-                          "startDate",
-                          moment(e).toDate(),
-                          false
-                        );
+                        formikCoupon.handleChange({ target: { name: 'startDate', value: moment(e).toDate() } });
                         if (formikCoupon.values.expireDate != null) {
                           if (moment(e).toDate() >= formikCoupon.values.expireDate) {
                             formikCoupon.setFieldValue(
@@ -454,7 +457,7 @@ const GameInfo = ({
                     }}
                     value={
                       !isClick.couponStart
-                        ? formikCoupon.values.startDate == "" ? null :moment(
+                        ? formikCoupon.values.startDate == "" ? null : moment(
                           new Date(formikCoupon.values.startDate),
                           "DD/MM/YYYY"
                         )
@@ -462,6 +465,14 @@ const GameInfo = ({
                     }
                   />
                   <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
+                  <div className="relative w-full px-4">
+                    {formikCoupon.touched.startDate &&
+                      formikCoupon.errors.startDate ? (
+                      <div className="text-sm py-2 px-2  text-red-500">
+                        {formikCoupon.errors.startDate}
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </div>
               <div
@@ -516,7 +527,7 @@ const GameInfo = ({
                       if (e === null) {
                         formikCoupon.setFieldValue(
                           "expireDate",
-                         "",
+                          "",
                           false
                         );
                       } else {
@@ -530,14 +541,14 @@ const GameInfo = ({
                     value={
                       !isClick.expireDate
                         ? formikCoupon.values.expireDate == ""
-                        || formikCoupon.values.expireDate ==undefined ? null : moment(
-                          new Date(
-                            formikCoupon.values.expireDate
-                              ? formikCoupon.values.expireDate
-                              : new Date()
-                          ),
-                          "DD/MM/YYYY"
-                        )
+                          || formikCoupon.values.expireDate == undefined ? null : moment(
+                            new Date(
+                              formikCoupon.values.expireDate
+                                ? formikCoupon.values.expireDate
+                                : new Date()
+                            ),
+                            "DD/MM/YYYY"
+                          )
                         : null
                     }
                     disabledDate={(current) => {
@@ -555,6 +566,14 @@ const GameInfo = ({
                     checked={formikCoupon.values.isNotExpired}
                     classLabel="mt-2"
                   />
+                  <div className="relative w-full px-4">
+                    {formikCoupon.touched.expireDate &&
+                      formikCoupon.errors.expireDate ? (
+                      <div className="text-sm py-2 px-2  text-red-500">
+                        {formikCoupon.errors.expireDate}
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </div>
               <div

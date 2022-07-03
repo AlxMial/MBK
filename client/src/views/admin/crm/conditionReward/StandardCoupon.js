@@ -173,6 +173,7 @@ const StandardCoupon = ({ formik }) => {
                     formik.setFieldValue("startDate", "", false);
 
                     if (!formik.values.isNotExpired) {
+                      formik.setFieldValue("expireDate", "", false);
                       formik.setFieldValue(
                         "expireDate",
                         "",
@@ -181,6 +182,7 @@ const StandardCoupon = ({ formik }) => {
                     }
 
                   } else {
+                    formik.handleChange({ target: { name: 'startDate', value: e } });
                     formik.setFieldValue(
                       "startDate",
                       moment(e).toDate(),
@@ -250,8 +252,9 @@ const StandardCoupon = ({ formik }) => {
                   if (e === null) {
                     formik.setFieldValue("expireDate", "", false);
                   } else {
+                    formik.handleChange({ target: { name: 'expireDate', value: e } });
                     formik.setFieldValue(
-                      "expiredDate",
+                      "expireDate",
                       moment(e).toDate(),
                       false
                     );
