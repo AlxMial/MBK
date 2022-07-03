@@ -1,62 +1,60 @@
 const express = require("express");
 const router = express.Router();
-const { tbPointEcommerceHD } = require("../../models");
-const bcrypt = require("bcrypt");
-const { sign } = require("jsonwebtoken");
+const { tbPointEcommerce } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
 router.post("/",validateToken, async (req, res) => {
-  const pointEcommerceHD = await tbPointEcommerceHD.findOne({
+  const pointEcommerceHD = await tbPointEcommerce.findOne({
     where: {
-      pointEcommerceName: req.body.pointEcommerceName,
+      campaignName: req.body.campaignName,
       isDeleted: false,
     },
   });
   if (!pointEcommerceHD) {
-    const postCode = await tbPointEcommerceHD.create(req.body);
+    const postCode = await tbPointEcommerce.create(req.body);
     res.json({
       status: true,
-      isPointEcommerceName: false,
+      isCampaignName: false,
       message: "success",
-      tbPointEcommerceHD: postCode,
+      tbPointEcommerce: postCode,
     });
   } else {
     res.json({
       status: false,
-      isPointEcommerceName: true,
+      isCampaignName: true,
       message: "success",
-      tbPointEcommerceHD: null,
+      tbPointEcommerce: null,
     });
   }
 });
 
 router.get("/", validateToken, async (req, res) => {
-  const listPointEcommerce = await tbPointEcommerceHD.findAll({
+  const listPointEcommerce = await tbPointEcommerce.findAll({
     where: { isDeleted: false },
   });
   res.json({
     status: true,
     message: "success",
-    tbPointEcommerceHD: listPointEcommerce,
+    tbPointEcommerce: listPointEcommerce,
   });
 });
 
 router.get("/byId/:id",validateToken, async (req, res) => {
   const id = req.params.id;
-  const listPointEcommerce = await tbPointEcommerceHD.findOne({ where: { id: id } });
+  const listPointEcommerce = await tbPointEcommerce.findOne({ where: { id: id } });
   res.json({
     status: true,
     message: "success",
-    tbPointEcommerceHD: listPointEcommerce,
+    tbPointEcommerce: listPointEcommerce,
   });
 });
 
 router.put("/",validateToken, async (req, res) => {
-  const pointEcommerceHD = await tbPointEcommerceHD.findOne({
+  const pointEcommerceHD = await tbPointEcommerce.findOne({
     where: {
-      pointEcommerceName: req.body.pointEcommerceName,
+      campaignName: req.body.campaignName,
       isDeleted: false,
       id: {
         [Op.ne] : req.body.id,
@@ -65,20 +63,20 @@ router.put("/",validateToken, async (req, res) => {
   });
 
   if (!pointEcommerceHD) {
-    const listPointEcommerce = await tbPointEcommerceHD.update(req.body, {
+    const listPointEcommerce = await tbPointEcommerce.update(req.body, {
       where: { id: req.body.id },
     });
     res.json({
       status: true,
       message: "success",
-      tbPointEcommerceHD: listPointEcommerce,
+      tbPointEcommerce: listPointEcommerce,
     });
   } else {
     res.json({
       status: false,
-      isPointEcommerceName: true,
+      isCampaignName: true,
       message: "success",
-      tbPointEcommerceHD: null,
+      tbPointEcommerce: null,
     });
   }
 });
@@ -86,8 +84,8 @@ router.put("/",validateToken, async (req, res) => {
 router.delete("/:pointEcommerceId",validateToken, async (req, res) => {
   const pointEcommerceId = req.params.pointEcommerceId;
   req.body.isDeleted = true;
-  tbPointEcommerceHD.update(req.body, { where: { id: pointEcommerceId } });
-  res.json({ status: true, message: "success", tbPointEcommerceHD: null });
+  tbPointEcommerce.update(req.body, { where: { id: pointEcommerceId } });
+  res.json({ status: true, message: "success", tbPointEcommerce: null });
 });
 
 module.exports = router;

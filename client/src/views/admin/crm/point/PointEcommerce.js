@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useParams, Link } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "services/axios";
@@ -23,6 +22,9 @@ import { useDispatch } from "react-redux";
 import { fetchLoading, fetchSuccess } from "redux/actions/common";
 import Select from "react-select";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
+import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
+import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
+
 export default function PointEcommerce() {
   /* Set useState */
   const [Active, setActive] = useState("1");
@@ -42,17 +44,22 @@ export default function PointEcommerce() {
   const [errorEndDate, setErrorEndDate] = useState(false);
   const [errorDate, setErrorDate] = useState(false);
   const [langSymbo, setlangSymbo] = useState("");
+  const [errorPoint, setErrorPoint] = useState(false);
+  const [errorUnitProduct, setErrorUnitProduct] = useState(false);
+  const [errorPrice, setErrorPrice] = useState(false);
   const [startDateCode, setStartDateCode] = useState("");
   const [endDateCode, setEndDateCode] = useState("");
   const [listProduct, setListProduct] = useState([]);
+  const [isChange, setIsChange] = useState(false);
   const { addToast } = useToasts();
   const changePage = ({ selected }) => {
     setPageNumber(selected);
   };
   const dispatch = useDispatch();
   const UseStyleSelect = styleSelect();
-  const [delay, setDelay] = useState("");
-
+  const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
+  const [deleteValue, setDeleteValue] = useState("");
+  const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
   /* Method Condition */
   const options = [
     { label: "เปิดการใช้งาน", value: true },
@@ -66,13 +73,36 @@ export default function PointEcommerce() {
 
   const nonSelect = [];
 
-  function openModal(id) {
-    if (id) {
+  function openModal(value) {
+    if (value) {
       setIsNew(false);
+      if (value) {
+        formik.setFieldValue("id", value.id);
+        formik.setFieldValue("campaignName", value.campaignName);
+        formik.setFieldValue("type", value.type);
+        if (value.type === "2") {
+          formik.setFieldValue("productAmount", value.productAmount);
+          formik.setFieldValue("stockId", value.stockId);
+          formik.setFieldValue("purchaseAmount", "");
+        } else {
+          formik.setFieldValue("productAmount", "");
+          formik.setFieldValue("stockId", "");
+          formik.setFieldValue("purchaseAmount", value.purchaseAmount);
+        }
+  
+        formik.setFieldValue("type", value.type);
+        setStartDateCode(moment(new Date(value.startDate), "DD/MM/YYYY"));
+        setEndDateCode(moment(new Date(value.endDate), "DD/MM/YYYY"));
+        formik.setFieldValue("points", value.points);
+        formik.setFieldValue("isActive", value.isActive);
+      }
     } else {
+      setErrorPoint(false);
+      setErrorPrice(false);
+      setErrorUnitProduct(false);
       setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
       setEndDateCode(moment(new Date(), "DD/MM/YYYY"));
-      // formik.resetForm();
+      formik.resetForm();
       setIsNew(true);
     }
     setIsOpen(true);
@@ -83,8 +113,66 @@ export default function PointEcommerce() {
   }
 
   function closeModal() {
-    setIsOpen(false);
+    if (isChange) {
+      openModalEdit();
+    } else {
+      setIsOpen(false);
+    }
   }
+
+  /* Modal */
+  function openModalSubject(id) {
+    setDeleteValue(id);
+    setIsOpenSubject(true);
+  }
+
+  function closeModalSubject() {
+    setIsOpenSubject(false);
+  }
+
+  
+  function openModalEdit() {
+    setIsOpenEdit(true);
+  }
+
+  function closeModalEdit() {
+    setIsOpenEdit(false);
+  }
+
+  const onEditValue = async () => {
+    closeModalEdit();
+    formik.handleSubmit();
+  };
+
+  const onReturn = () => {
+    setIsChange(false);
+    closeModalEdit();
+    setIsOpen(false);
+  };
+
+  const deleteEcommerce = () => {
+    // var filtered = listLogistic.filter( function(value, index, arr){
+    //     if(value.id !== deleteValue)
+    //     {
+    //         return value;
+    //     }
+    // });
+    // listLogistic = filtered;
+    // setListLogistic(
+    //     listLogistic.filter((val) => {
+    //         return val.id !== deleteValue;
+    //     })
+    // );
+    // closeModalSubject();
+    axios.delete(`/pointEcommerce/${deleteValue}`).then(() => {
+      setListEcommerce(
+        listEcommerce.filter((val) => {
+          return val.id !== deleteValue;
+        })
+      );
+      closeModalSubject();
+    });
+  };
 
   const InputSearch = (e) => {
     e = e.toLowerCase();
@@ -94,10 +182,20 @@ export default function PointEcommerce() {
       setListEcommerce(
         listSearch.filter(
           (x) =>
-            x.firstName.includes(e) ||
-            x.lastName.includes(e) ||
-            x.email.includes(e) ||
-            x.phone.includes(e)
+            x.campaignName.toLowerCase().includes(e) ||
+            setStatus(x).toString().toLowerCase().includes(e) ||
+            setStateCollect(x).toString().toLowerCase().includes(e) ||
+            x.points.toString().toLowerCase().includes(e) ||
+            moment(x.startDate)
+              .format("DD/MM/YYYY")
+              .toString()
+              .toLowerCase()
+              .includes(e) ||
+            moment(x.endDate)
+              .format("DD/MM/YYYY")
+              .toString()
+              .toLowerCase()
+              .includes(e)
         )
       );
     }
@@ -109,9 +207,10 @@ export default function PointEcommerce() {
       id: "",
       campaignName: "",
       type: "1",
-      purchaseAmount: "",
+      purchaseAmount: "0",
       productAmount: "",
-      point: "",
+      points: "0",
+      stockId: "",
       startDate: new Date(),
       endDate: new Date(),
       isActive: true,
@@ -123,12 +222,11 @@ export default function PointEcommerce() {
           ? "* กรุณากรอก ชื่อแคมเปญ"
           : "* Please enter your Member Card"
       ),
-      point: Yup.string().required(
+      points: Yup.string().required(
         Storage.GetLanguage() === "th"
           ? "* กรุณากรอก จำนวนคะแนน"
           : "* Please enter your point"
       ),
-
       startDate: Yup.string().required(
         Storage.GetLanguage() === "th"
           ? "* กรุณากรอก วันที่สมัคร"
@@ -141,76 +239,122 @@ export default function PointEcommerce() {
       ),
     }),
     onSubmit: (values) => {
-      if (isNew) {
-        axios.post("pointEcommerce", values).then((res) => {
-          if (res.data.status) {
-            formik.values.id = res.data.tbPointEcommerce.id;
-            fetchData();
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            if (res.data.ispointEcommerceName) {
-              addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญ E-Commerce เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
-              );
-            }
-          }
-        });
+      dispatch(fetchLoading());
+      var isError = false;
+
+      if (values.stockId === "") values.stockId = null;
+
+      if (values.type === "1") {
+        if (values.purchaseAmount === "") isError = true;
+        else if (parseInt(values.purchaseAmount) <= 0) isError = true;
+        if (isError) setErrorPrice(true);
       } else {
-        axios.put("pointEcommerce", values).then((res) => {
-          if (res.data.status) {
-            formik.values.id = res.data.tbPointEcommerce.id;
-            fetchData();
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            if (res.data.ispointEcommerceName) {
-              addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญ E-Commerce เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
-              );
-            }
-          }
-        });
+        if (values.productAmount === "") isError = true;
+        else if (parseInt(values.productAmount) <= 0) isError = true;
+        if (isError) setErrorUnitProduct(true);
       }
+
+      if (values.points === "" || parseInt(values.points) <= 0) {
+        isError = true;
+        setErrorPoint(true);
+      } else {
+        setErrorPoint(false);
+      }
+
+      if (!isError && !errorEndDate && !errorStartDate) {
+        if (isNew) {
+          axios.post("pointEcommerce", values).then((res) => {
+            if (res.data.status) {
+              formik.values.id = res.data.tbPointEcommerce.id;
+              closeModal();
+              fetchData();
+              setIsChange(false);
+              setErrorPoint(false);
+              setErrorPrice(false);
+              setErrorUnitProduct(false);
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
+            } else {
+              if (res.data.isCampaignName) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญ E-Commerce ซ้ำกับในระบบ",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
+            }
+            dispatch(fetchSuccess());
+          });
+        } else {
+          axios.put("pointEcommerce", values).then((res) => {
+            if (res.data.status) {
+              formik.values.id = res.data.tbPointEcommerce.id;
+              fetchData();
+              setErrorPoint(false);
+              setErrorPrice(false);
+              setIsChange(false);
+              setErrorUnitProduct(false);
+              addToast(
+                Storage.GetLanguage() === "th"
+                  ? "บันทึกข้อมูลสำเร็จ"
+                  : "Save data successfully",
+                { appearance: "success", autoDismiss: true }
+              );
+            } else {
+              if (res.data.isCampaignName) {
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อแคมเปญ E-Commerce ซ้ำกับในระบบ",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
+            }
+            dispatch(fetchSuccess());
+          });
+        }
+      } else dispatch(fetchSuccess());
     },
   });
-
-  /*พิมพ์เบอร์โทรศัพท์*/
-  const onHandleNumber = (e) => {
-    if (
-      ValidateService.onHandleNumberChange(e.target.value) !== "" ||
-      e.target.value === ""
-    ) {
-      setDelay(e.target.value);
-      console.log();
-      formik.values.purchaseAmount = e.target.value;
-      formik.values.productAmount = e.target.value;
-    }
-  };
 
   const fetchData = async () => {
     axios.get("pointEcommerce").then((response) => {
       if (response.data.error) {
       } else {
+        setListEcommerce(response.data.tbPointEcommerce);
         setListSerch(response.data.tbPointEcommerce);
       }
     });
+  };
+
+  const setStatus = (dateValue) => {
+    if (new Date(dateValue.endDate) < new Date()) return "Expire";
+    else if (dateValue.isActive) return "Active";
+    else return "Inactive";
+  };
+
+  const setStateCollect = (dataValue) => {
+    if (dataValue.type === "2") {
+      if (
+        listProduct.filter(function (x) {
+          return x.value === dataValue.stockId;
+        }).length > 0
+      ) {
+        return (
+          "สินค้า : " +
+          listProduct.filter(function (x) {
+            return x.value === dataValue.stockId;
+          })[0].label
+        );
+      } else return "สินค้า";
+    } else return "ยอดซื้อ : " + dataValue.purchaseAmount + " บาท";
   };
 
   const fetchProduct = async () => {
@@ -221,6 +365,7 @@ export default function PointEcommerce() {
         _stockData = _stockData.map((stock) => {
           return { value: stock.id, label: stock.productName };
         });
+
         setListProduct(_stockData);
       }
       dispatch(fetchSuccess());
@@ -230,6 +375,7 @@ export default function PointEcommerce() {
   useEffect(() => {
     /* Default Value for Testing */
     fetchProduct();
+    fetchData();
   }, []);
 
   return (
@@ -303,23 +449,32 @@ export default function PointEcommerce() {
                                   <span className="text-sm ml-2 text-red-500">
                                     *
                                   </span>
+                                  {formik.touched.campaignName &&
+                                  formik.errors.campaignName ? (
+                                    <div className="text-sm pt-2 px-2 text-red-500">
+                                      &nbsp;
+                                    </div>
+                                  ) : null}
                                 </div>
                                 <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full  text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
-                                    id="pointEcommerceName"
-                                    name="pointEcommerceName"
+                                    id="campaignName"
+                                    name="campaignName"
                                     maxLength={100}
-                                    onChange={formik.handleChange}
+                                    onChange={(e) => {
+                                      formik.handleChange(e);
+                                      setIsChange(true);
+                                    }}
                                     onBlur={formik.handleBlur}
-                                    value={formik.values.pointEcommerceName}
-                                    autoComplete="pointEcommerceName"
+                                    value={formik.values.campaignName}
+                                    autoComplete="campaignName"
                                   />
-                                  {formik.touched.pointEcommerceName &&
-                                  formik.errors.pointEcommerceName ? (
+                                  {formik.touched.campaignName &&
+                                  formik.errors.campaignName ? (
                                     <div className="text-sm pt-2 px-2 text-red-500">
-                                      {formik.errors.pointEcommerceName}
+                                      {formik.errors.campaignName}
                                     </div>
                                   ) : null}
                                 </div>
@@ -342,13 +497,38 @@ export default function PointEcommerce() {
                                   <Radio.Group
                                     options={optionsSale}
                                     onChange={(e) => {
+                                      setIsChange(true);
                                       setIsSale(e.target.value);
+                                      if (e.target.value === "2") {
+                                        formik.setFieldValue(
+                                          "purchaseAmount",
+                                          ""
+                                        );
+                                        if (listProduct.length > 0)
+                                          formik.setFieldValue(
+                                            "stockId",
+                                            listProduct[0].value
+                                          );
+                                        formik.setFieldValue(
+                                          "productAmount",
+                                          "0"
+                                        );
+                                      } else {
+                                        formik.setFieldValue(
+                                          "purchaseAmount",
+                                          "0"
+                                        );
+                                        formik.setFieldValue(
+                                          "productAmount",
+                                          ""
+                                        );
+                                      }
                                       formik.setFieldValue(
                                         "type",
                                         e.target.value
                                       );
                                     }}
-                                    value={sale}
+                                    value={formik.values.type}
                                   />
                                 </div>
                                 <div
@@ -366,21 +546,23 @@ export default function PointEcommerce() {
                                   <input
                                     type="text"
                                     className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
-                                    id="productAmount"
-                                    name="productAmount"
+                                    id="purchaseAmount"
+                                    name="purchaseAmount"
                                     maxLength={5}
+                                    disabled={
+                                      formik.values.type === "2" ? true : false
+                                    }
                                     onChange={(event) => {
+                                      setIsChange(true);
                                       setlangSymbo(
                                         ValidateService.onHandleNumber(event)
                                       );
-                                      formik.values.productAmount =
+                                      formik.values.purchaseAmount =
                                         ValidateService.onHandleNumber(event);
                                     }}
                                     onBlur={formik.handleBlur}
-                                    autoComplete="productAmount"
-                                    value={
-                                      formik.values.productAmount
-                                    }
+                                    autoComplete="purchaseAmount"
+                                    value={formik.values.purchaseAmount}
                                   />
                                   <span
                                     className="text-blueGray-600 text-sm font-bold pl-2 margin-auto "
@@ -388,6 +570,30 @@ export default function PointEcommerce() {
                                   >
                                     บาท
                                   </span>
+                                </div>
+                                <div
+                                  className={
+                                    "w-full lg:w-1/12 margin-auto-t-b" +
+                                    (width < 1024 ? " px-4" : " ")
+                                  }
+                                >
+                                  <label
+                                    className="text-blueGray-600 text-sm font-bold "
+                                    htmlFor="grid-password"
+                                  >
+                                    {errorPrice ? (
+                                      <div className="text-sm pt-2 px-2 text-red-500">
+                                        &nbsp;
+                                      </div>
+                                    ) : null}
+                                  </label>
+                                </div>
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b flex">
+                                  {errorPrice ? (
+                                    <div className="text-sm pt-2 px-2 text-red-500">
+                                      * ยอดซื้อ ต้องมากกว่า 0
+                                    </div>
+                                  ) : null}
                                 </div>
                                 <div className={"w-full mb-4"}></div>
                                 <div
@@ -402,30 +608,12 @@ export default function PointEcommerce() {
                                   ></label>
                                 </div>
                                 <div className="w-full lg:w-11/12 px-4 margin-auto-t-b flex">
-                                  {/* <input
-                                    type="text"
-                                    className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-6-7/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
-                                    id="pointEcommerceLengthSymbol"
-                                    name="pointEcommerceLengthSymbol"
-                                    maxLength={100}
-                                    onChange={(event) => {
-                                      setlangSymbo(
-                                        ValidateService.onHandleNumber(event)
-                                      );
-                                      formik.values.pointEcommerceLengthSymbol =
-                                        ValidateService.onHandleNumber(event);
-                                    }}
-                                    onBlur={formik.handleBlur}
-                                    autoComplete="pointEcommerceLengthSymbol"
-                                    value={
-                                      formik.values.pointEcommerceLengthSymbol
-                                    }
-                                  /> */}
                                   <Select
-                                    name="productId"
+                                    name="stockId"
                                     onChange={(value) => {
+                                      setIsChange(true);
                                       formik.setFieldValue(
-                                        "productId",
+                                        "stockId",
                                         value.value
                                       );
                                     }}
@@ -442,19 +630,14 @@ export default function PointEcommerce() {
                                         ? null
                                         : ValidateService.defaultValue(
                                             listProduct,
-                                            formik.values.redemptionType
+                                            formik.values.stockId
                                           )
                                     }
                                     isDisabled={
                                       formik.values.type === "1" ? true : false
                                     }
-                                    className={"w-full "}
-                                    styles={
-                                      UseStyleSelect +
-                                      (formik.values.type === "1"
-                                        ? " background-color: #f2f2f2 !important; color: #334155 !important;"
-                                        : " ")
-                                    }
+                                    className={"w-full"}
+                                    styles={UseStyleSelect}
                                   />
                                   <span
                                     className="text-blueGray-600 text-sm font-bold px-4 margin-auto "
@@ -462,6 +645,7 @@ export default function PointEcommerce() {
                                   >
                                     จำนวน
                                   </span>
+
                                   <div
                                     className={
                                       "w-full mb-4" +
@@ -471,27 +655,57 @@ export default function PointEcommerce() {
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-3-3/12 text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
-                                    id="pointEcommerceLengthSymbol"
-                                    name="pointEcommerceLengthSymbol"
-                                    maxLength={100}
+                                    id="productAmount"
+                                    name="productAmount"
+                                    maxLength={5}
+                                    disabled={
+                                      formik.values.type === "1" ? true : false
+                                    }
                                     onChange={(event) => {
+                                      setIsChange(true);
                                       setlangSymbo(
                                         ValidateService.onHandleNumber(event)
                                       );
-                                      formik.values.pointEcommerceLengthSymbol =
+                                      formik.values.productAmount =
                                         ValidateService.onHandleNumber(event);
                                     }}
                                     onBlur={formik.handleBlur}
-                                    autoComplete="pointEcommerceLengthSymbol"
-                                    value={
-                                      formik.values.pointEcommerceLengthSymbol
-                                    }
+                                    autoComplete="productAmount"
+                                    value={formik.values.productAmount}
                                   />
                                   <span
                                     className="text-blueGray-600 text-sm font-bold pl-2 margin-auto "
                                     htmlFor="grid-password"
                                   >
                                     ชิ้น
+                                  </span>
+                                </div>
+                                <div
+                                  className={
+                                    "w-full lg:w-1/12 margin-auto-t-b" +
+                                    (width < 1024 ? " px-4" : " ")
+                                  }
+                                >
+                                  <label
+                                    className="text-blueGray-600 text-sm font-bold "
+                                    htmlFor="grid-password"
+                                  ></label>
+                                </div>
+                                <div className="w-full lg:w-11/12 px-4 margin-auto-t-b flex">
+                                  <span
+                                    className="text-blueGray-600 text-sm font-bold px-4 margin-auto "
+                                    style={{ width: "76%" }}
+                                    htmlFor="grid-password"
+                                  ></span>
+                                  <span
+                                    className="text-blueGray-600 text-sm  margin-auto "
+                                    htmlFor="grid-password"
+                                  >
+                                    {errorUnitProduct ? (
+                                      <div className="text-sm pt-2 px-2 text-red-500">
+                                        * จำนวนชิ้นต้องมากกว่า 0
+                                      </div>
+                                    ) : null}
                                   </span>
                                 </div>
                                 <div className={"w-full mb-4"}></div>
@@ -510,31 +724,41 @@ export default function PointEcommerce() {
                                   <span className="text-sm ml-2 text-red-500">
                                     *
                                   </span>
+                                  {formik.touched.points &&
+                                  formik.errors.points ? (
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      &nbsp;
+                                    </div>
+                                  ) : null}
                                 </div>
                                 <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <input
                                     type="text"
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
-                                    id="pointEcommerceQuantityCode"
-                                    name="pointEcommerceQuantityCode"
-                                    maxLength={100}
+                                    id="points"
+                                    name="points"
+                                    maxLength={5}
                                     onChange={(event) => {
+                                      setIsChange(true);
                                       setlangSymbo(
                                         ValidateService.onHandleNumber(event)
                                       );
-                                      formik.values.pointEcommerceQuantityCode =
+                                      formik.values.points =
                                         ValidateService.onHandleNumber(event);
                                     }}
                                     onBlur={formik.handleBlur}
-                                    autoComplete="pointEcommerceQuantityCode"
-                                    value={
-                                      formik.values.pointEcommerceQuantityCode
-                                    }
+                                    autoComplete="points"
+                                    value={formik.values.points}
                                   />
-                                  {formik.touched.pointEcommerceQuantityCode &&
-                                  formik.errors.pointEcommerceQuantityCode ? (
+                                  {formik.touched.points &&
+                                  formik.errors.points ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
-                                      {formik.errors.pointEcommerceQuantityCode}
+                                      {formik.errors.points}
+                                    </div>
+                                  ) : null}
+                                  {errorPoint ? (
+                                    <div className="text-sm pt-2 px-2 text-red-500">
+                                      * จำนวนคะแนนต้องมากกว่า 0
                                     </div>
                                   ) : null}
                                 </div>
@@ -554,6 +778,11 @@ export default function PointEcommerce() {
                                   <span className="text-sm ml-2 text-red-500">
                                     *
                                   </span>
+                                  {errorStartDate || errorEndDate ? (
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      &nbsp;
+                                    </div>
+                                  ) : null}
                                 </div>
                                 <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <div className="relative">
@@ -576,6 +805,7 @@ export default function PointEcommerce() {
                                           paddingRight: "0.5rem",
                                         }}
                                         onChange={(e) => {
+                                          setIsChange(true);
                                           if (e === null) {
                                             formik.setFieldValue(
                                               "startDate",
@@ -609,10 +839,13 @@ export default function PointEcommerce() {
                                         // )}
                                       />
                                     </ConfigProvider>
-                                    {formik.touched.startDate &&
-                                    formik.errors.startDate ? (
+                                    {errorStartDate || errorEndDate ? (
                                       <div className="text-sm py-2 px-2 text-red-500">
-                                        {formik.errors.startDate}
+                                        {errorStartDate ? (
+                                          "* วันที่เริ่มต้น ไม่เป็นค่าว่าง"
+                                        ) : (
+                                          <>&nbsp;</>
+                                        )}
                                       </div>
                                     ) : null}
                                   </div>
@@ -637,6 +870,11 @@ export default function PointEcommerce() {
                                   <span className="text-sm ml-2 text-red-500">
                                     *
                                   </span>
+                                  {errorEndDate || errorStartDate ? (
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      &nbsp;
+                                    </div>
+                                  ) : null}
                                 </div>
 
                                 <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
@@ -659,6 +897,7 @@ export default function PointEcommerce() {
                                         paddingRight: "0.5rem",
                                       }}
                                       onChange={(e) => {
+                                        setIsChange(true);
                                         if (e === null) {
                                           setErrorEndDate(true);
                                           formik.setFieldValue(
@@ -681,10 +920,13 @@ export default function PointEcommerce() {
                                       // )}
                                     />
                                   </ConfigProvider>
-                                  {formik.touched.endDate &&
-                                  formik.errors.endDate ? (
+                                  {errorEndDate || errorStartDate ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
-                                      {formik.errors.endDate}
+                                      {errorEndDate ? (
+                                        "* วันที่สิ้นสุด ไม่เป็นค่าว่าง"
+                                      ) : (
+                                        <>&nbsp;</>
+                                      )}
                                     </div>
                                   ) : null}
                                 </div>
@@ -698,6 +940,7 @@ export default function PointEcommerce() {
                                   <Radio.Group
                                     options={options}
                                     onChange={(e) => {
+                                      setIsChange(true);
                                       setActive(e.target.value);
                                       formik.setFieldValue(
                                         "isActive",
@@ -756,14 +999,14 @@ export default function PointEcommerce() {
                   </th>
                   <th
                     className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                     }
                   >
                     ชื่อแคมเปญ
                   </th>
                   <th
                     className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                     }
                   >
                     การสะสมแต้ม
@@ -794,13 +1037,6 @@ export default function PointEcommerce() {
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    วันที่สมัคร
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
                     สถานะ
                   </th>
                   <th
@@ -821,22 +1057,80 @@ export default function PointEcommerce() {
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
                           <span className="px-4 margin-a">{key + 1}</span>
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"></td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"></td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"></td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"></td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "></td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "></td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          0
+                        <td
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
+                          onClick={() => openModal(value)}
+                        >
+                          {value.campaignName}
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center"></td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center"></td>
+                        <td
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
+                          onClick={() => openModal(value)}
+                        >
+                          {setStateCollect(value)}
+                        </td>
+                        <td
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                          onClick={() => openModal(value)}
+                        >
+                          {value.points}
+                        </td>
+                        <td
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                          onClick={() => openModal(value)}
+                        >
+                          {moment(value.startDate).format("DD/MM/YYYY")}
+                        </td>
+                        <td
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "
+                          onClick={() => openModal(value)}
+                        >
+                          {moment(value.endDate).format("DD/MM/YYYY")}
+                        </td>
+                        <td
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center"
+                          onClick={() => openModal(value)}
+                        >
+                          {setStatus(value)}
+                        </td>
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
+                          <i
+                            className={
+                              "fas fa-trash cursor-pointer" + " text-red-500"
+                            }
+                            onClick={(e) => {
+                              openModalSubject(value.id);
+                            }}
+                          ></i>
+                        </td>
                       </tr>
                     );
                   })}
               </tbody>
             </table>
+            <ConfirmDialog
+              showModal={modalIsOpenSubject}
+              message={"E-Commerce"}
+              hideModal={() => {
+                closeModalSubject();
+              }}
+              confirmModal={() => {
+                deleteEcommerce();
+              }}
+            />
+            <ConfirmEdit
+              showModal={modalIsOpenEdit}
+              message={"แคมเปญ"}
+              hideModal={() => {
+                closeModalEdit();
+              }}
+              confirmModal={() => {
+                onEditValue();
+              }}
+              returnModal={() => {
+                onReturn();
+              }}
+            />
           </div>
           <div className="py-4 px-4">
             <ReactPaginate

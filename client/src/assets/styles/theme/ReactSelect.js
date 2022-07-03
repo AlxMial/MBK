@@ -7,7 +7,8 @@ export const styleSelect = (bgColor) => ({
     "&:hover": {
       borderColor: state.isFocused ? brandColor : base.borderColor,
     },
-    backgroundColor: bgColor ? bgColor : "none",
+    backgroundColor:state.isDisabled ? "#F2F2F2" : "" ,
+    // backgroundColor: bgColor ? bgColor : "none",
   }),
 
   option: (provided, state) => ({
