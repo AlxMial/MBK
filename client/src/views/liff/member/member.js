@@ -104,6 +104,7 @@ const Member = () => {
                   className="mt-2 font-bold text-green-mbk text-12"
                   style={{
                     // fontSize: "0.7rem",
+                    minWidth: "120px",
                     backgroundColor:
                       tbMember.memberType === "1"
                         ? "#cbe8ba"
