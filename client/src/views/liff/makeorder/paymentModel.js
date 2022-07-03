@@ -59,10 +59,10 @@ const PaymentModel = ({
           onChange={(e) => {
             if (e.target.value == 2) {
               if (sumprice >= 500) {
-                addToast("เปลียนช่องทางการชำระเงิน", {
-                  appearance: "success",
-                  autoDismiss: true,
-                });
+                // addToast("เปลียนช่องทางการชำระเงิน", {
+                //   appearance: "success",
+                //   autoDismiss: true,
+                // });
                 setRadio(e.target.value);
               } else {
                 addToast("ยอดรวมสินค้าต้องมากกว่า 500 บาท", {
@@ -71,10 +71,10 @@ const PaymentModel = ({
                 });
               }
             } else {
-              addToast("เปลียนช่องทางการชำระเงิน", {
-                appearance: "success",
-                autoDismiss: true,
-              });
+              // addToast("เปลียนช่องทางการชำระเงิน", {
+              //   appearance: "success",
+              //   autoDismiss: true,
+              // });
               setRadio(e.target.value);
             }
           }}
@@ -166,7 +166,7 @@ const PaymentModel = ({
                 ></i>
                 <div className="font-bold px-2">ผ่านบัตรเครดิต</div>
               </div>
-              <div
+              {/* <div
                 className="w-full flex mt-2"
                 style={{
                   border: "1px solid var(--mq-txt-color, rgb(170, 170, 170))",
@@ -186,7 +186,7 @@ const PaymentModel = ({
                     เพิ่มบัตรเครดิต/เดบิต
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </Radio>
         </Radio.Group>

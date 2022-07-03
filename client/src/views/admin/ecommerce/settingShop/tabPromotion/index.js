@@ -16,6 +16,10 @@ const Promotion = () => {
     const [listPromotion, setListPromotion] = useState([]);
     const [listSearch, setListSearch] = useState([]);
     const [open, setOpen] = useState(false);
+    const [errorDiscout,setErrorDiscout] = useState(false);
+    const [errorPercentDiscount,setErrorPercentDiscount] = useState(false);
+    const [errorPercentDiscountAmount,setErrorPercentDiscountAmount] = useState(false);
+    const [errorStockId,setErrorStockId] = useState(false);
 
     const fetchData = async () => {
         dispatch(fetchLoading());
@@ -81,12 +85,59 @@ const Promotion = () => {
         validationSchema: yup.object({
             campaignName: yup.string().required("* กรุณากรอก ชื่อแคมเปญ"),
             condition: yup.string().required("* กรุณากรอก เงื่อนไข"),
-            discount: yup.string().required("* กรุณากรอก ส่วนลด"),
-            percentDiscount: yup.string().required("* กรุณากรอก %ส่วนลด"),
-            percentDiscountAmount: yup.string().required("* กรุณากรอก ส่วนลดสูงสุด"),
-            stockId: yup.string().required("* กรุณากรอก สินค้าจากคลัง"),
+            buy: yup.string().required("* กรุณากรอก ซื้อครบ"),
+            // discount: yup.string().required("* กรุณากรอก ส่วนลด"),
+            // percentDiscount: yup.string().required("* กรุณากรอก %ส่วนลด"),
+            // percentDiscountAmount: yup.string().required("* กรุณากรอก ส่วนลดสูงสุด"),
+            // stockId: yup.string().required("* กรุณากรอก สินค้าจากคลัง"),
         }),
         onSubmit: (values) => {
+            var isError = false;
+            setErrorDiscout(false);
+            setErrorPercentDiscount(false);
+            setErrorPercentDiscountAmount(false);
+            setErrorStockId(false);
+            if(values.condition === "1") {
+                if(values.discount === "")
+                {
+                    setErrorDiscout(true);
+                    isError=true;
+                } else if (parseInt(values.discount) <= 0 ) {
+                    setErrorDiscout(true);
+                    isError=true;
+                }
+            } else if (values.condition === "2") {
+                if(values.percentDiscount === "")
+                {
+                    setErrorPercentDiscount(true);
+                    isError=true;
+                } else if (parseInt(values.percentDiscount) <= 0 ) {
+                    setErrorPercentDiscount(true);
+                    isError=true;
+                }
+
+                if(values.percentDiscountAmount === "")
+                {
+                    setErrorPercentDiscountAmount(true);
+                    isError=true;
+                } else if (parseInt(values.percentDiscountAmount) <= 0 ) {
+                    isError=true;
+                    setErrorPercentDiscountAmount(true);
+                }
+            } else {
+
+                if(values.stockId === "")
+                {
+                    setErrorStockId(true);
+                    isError=true;
+                }
+            }
+
+            if(!isError)
+            {
+                console.log(true)
+
+            } else dispatch(fetchSuccess());
             dispatch(fetchLoading());
             values.updateBy = sessionStorage.getItem('user');
             if (values.id) {
@@ -145,6 +196,14 @@ const Promotion = () => {
                 </div>
             </div>
             {open && <PromotionModal
+                errorDiscout={errorDiscout}
+                errorPercentDiscount={errorPercentDiscount}
+                errorPercentDiscountAmount={errorPercentDiscountAmount}
+                errorStockId={errorStockId}
+                setErrorDiscout={setErrorDiscout}
+                setErrorPercentDiscount={setErrorPercentDiscount}
+                setErrorPercentDiscountAmount={setErrorPercentDiscountAmount}
+                setErrorStockId={setErrorStockId}
                 open={open}
                 formik={formik}
                 handleModal={() => setOpen(false)} />}

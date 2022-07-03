@@ -276,7 +276,6 @@ export default function UserInfo() {
   async function fetchData() {
     let response = await axios.get(`/users/byId/${id}`);
     let user = await response.data.tbUser;
-
     formik.resetForm();
     setValueConfirm("");
     validateConfirm("");
@@ -284,6 +283,9 @@ export default function UserInfo() {
       for (var columns in response.data.tbUser) {
         if (columns !== "password") {
           formik.setFieldValue(columns, response.data.tbUser[columns], false);
+        }
+        if(columns === "role") {
+          console.log(response.data);
         }
       }
       setIsNew(false);

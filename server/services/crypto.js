@@ -34,6 +34,7 @@ class ValidateEncrypt {
         return "";
       }
       let buff = new Buffer.from(id, "base64");
+      // console.log(buff)
       id = buff.toString("ascii");
       return this.decrypt(id);
     }catch{
