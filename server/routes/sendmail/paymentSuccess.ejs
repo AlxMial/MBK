@@ -90,13 +90,13 @@
               line-height: 1.3;
             "
           >
-            สวัสดี คุณ {{memberName}} ,
+            สวัสดี คุณ <%= memberName %> ,
           </p>
           <p style="color: #535658">
             เราได้รับการชำระเงินของใบสั่<wbr />งซื้อหมายเลข
-            <strong style="color: #da004d; line-height: 1.3">{{orderNumber}}</strong>
-            เป็นจำนวนเงิน <strong>฿ {{orderprice}}</strong> เมื่อวันที่
-            <strong>{{orderDate}}</strong> แล้ว
+            <strong style="color: #da004d; line-height: 1.3"><%= orderNumber %></strong>
+            เป็นจำนวนเงิน <strong>฿ <%= orderPrice %></strong> เมื่อวันที่
+            <strong><%= orderDate %></strong> แล้ว
           </p>
           <p style="color: #535658">
 

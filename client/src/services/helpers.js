@@ -1,6 +1,6 @@
 const config = {
     dev: false,
-    UID: "U94c7f41ca2ce579cce371b13134d5c6d",
+    UID: "Ufc56a9d0ab0ce8707a9fcdafd56433ad",
     // liffId: "1657238460-3deq6ard",
     liffId: "1657238460-gz9m6Wkn",
     // otp
