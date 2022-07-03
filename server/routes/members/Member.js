@@ -903,6 +903,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
               if (coupon.length < 2) {
                 coupon.push({
                   id: Encrypt.EncodeKey(_RedemptionCoupon.id),
+                  couponId: Encrypt.EncodeKey(_coupon[i].TableHDId),
                   couponName: _coupon[i].dataValues.couponName,
                   expiredDate: _coupon[i].dataValues.expiredDate,
                 });
@@ -948,6 +949,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
             /// 1 = เตรียมจัดส่ง 2 = อยู่ระหว่างจัดส่ง 3 = ส่งแล้ว
             const data = {
               id: Encrypt.EncodeKey(_RedemptionProduct.id)
+              , productId: Encrypt.EncodeKey(_product[i].id)
               , productName: productName
               , trackingNo: trackingNo
               , status: deliverStatus == "Wait" ? 1 : deliverStatus == "InTransit" ? 2 : 3

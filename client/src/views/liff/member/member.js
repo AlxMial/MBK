@@ -226,10 +226,10 @@ const Member = () => {
           defaultActiveKey="1"
           onChange={tabsChange}
         >
-          <TabPane tab="รางวัลของฉัน" key="1" className="font-bold" style={{ fontSize: '14px' }}>
+          <TabPane tab="รางวัลของฉัน" key="1" className="tab-my-award">
             <MyAward />
           </TabPane>
-          <TabPane tab="คำสั่งชื้อของฉัน" key="2" className="font-bold" style={{ fontSize: '14px' }}>
+          <TabPane tab="คำสั่งชื้อของฉัน" key="2" className="tab-my-order">
             <MyOrder />
           </TabPane>
         </Tabs>

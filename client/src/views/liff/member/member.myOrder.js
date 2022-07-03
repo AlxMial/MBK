@@ -43,7 +43,7 @@ const MyOrder = () => {
             {OrderHD.map((hd, index) => {
               return (
                 <div key={index}>
-                  <div className="liff-inline mb-2" style={{ height: '10px', backgroundColor: '#ebebeb' }} />
+                  {index > 0 && <div className="liff-inline mb-2" style={{ height: '5px', backgroundColor: '#ebebeb' }} />}
                   <div className="flex" style={{ height: "30px" }}>
                     <div className="font-bold  text-12" style={{ width: "115px" }}>หมายเลขคำสั่งซื้อ : </div>
                     <div className="px-2 line-clamp-1  text-12" >{hd.orderNumber} </div>
@@ -86,15 +86,15 @@ const MyOrder = () => {
                   <div className="w-full flex mb-2 text-liff-gray-mbk" style={{ fontSize: "12px", justifyContent: "end" }}>
                     <div className="font-bold  text-12"
                       onClick={() => {
-                        history.push(OrderHD.paymentStatus == 1 ? path.makeorderbyid.replace(":id", OrderHD.id) : path.orderpaymentdone.replace(":id", OrderHD.id))
+                        history.push(OrderHD.paymentStatus == 1 ? path.makeorderbyid.replace(":id", hd.id) : path.orderpaymentdone.replace(":id", hd.id))
                       }}>
                       {"ดูรายละเอียดคำสั่งซื้อ >"}
                     </div>
                   </div>
 
                   <div className="flex" >
-                    <div className="text-liff-gray-mbk text-12" style={{ width: "50%" }}>{"รวม " + hd.sumamount + " ชิ้น"}</div>
-                    <div className="font-bold text-12" style={{ width: "50%", textAlign: "end", color: "#047738" }}>
+                    <div className="text-sm font-bold" style={{ width: "50%" }}>{"ยอดรวมสินค้า (" + hd.sumamount + " ชิ้น)"}</div>
+                    <div className="font-bold text-sm" style={{ width: "50%", textAlign: "end", color: "#047738" }}>
                       {"฿ " + fn.formatMoney(hd.sumprice) + " บาท"} </div>
                   </div>
                 </div>
