@@ -36,10 +36,14 @@ const GameList = ({ id, setListGame, listGame }) => {
     } else {
       setListGame(
         listSearch.filter((x) => {
-          if (x.data.rewardType === "1") {
-            x.data.couponName.toLowerCase().includes(e);
-          } else if (x.data.rewardType === "2") {
-            x.data.productName.toLowerCase().includes(e);
+          if (x.rewardType === "1") {
+            if (x.couponName.toLowerCase().includes(e)) {
+              return x
+            }
+          } else if (x.rewardType === "2") {
+            if (x.productName.toLowerCase().includes(e)) {
+              return x
+            }
           }
         })
       );
@@ -103,7 +107,7 @@ const GameList = ({ id, setListGame, listGame }) => {
     setOpen(false);
   };
 
-  const handleChange = (e,key) => {
+  const handleChange = (e, key) => {
     const { checked } = e.target;
     setListGame((s) => {
       const newArr = s.slice();
@@ -172,7 +176,7 @@ const GameList = ({ id, setListGame, listGame }) => {
                     <div className="flex flex-wrap" id="save">
                       <span
                         id="save"
-                        onClick={() => {}}
+                        onClick={() => { }}
                         className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
                       >
                         <i className="fas fa-save mr-2"></i>
@@ -183,7 +187,7 @@ const GameList = ({ id, setListGame, listGame }) => {
                   <li>
                     <div className="flex flex-wrap" id="back">
                       <span
-                        onClick={() => {}}
+                        onClick={() => { }}
                         id="back"
                         className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
                       >
@@ -228,10 +232,10 @@ const GameList = ({ id, setListGame, listGame }) => {
                   .map((value, key) => {
                     return (
                       <tr key={key}>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 " style={{paddingLeft:'25px'}}>
-               
-                            <CheckBoxUC onChange={(e) => { handleChange(e,key) }} checked={value.isSelect} name="isSelect"/>
-    
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 " style={{ paddingLeft: '25px' }}>
+
+                          <CheckBoxUC onChange={(e) => { handleChange(e, key) }} checked={value.isSelect} name="isSelect" />
+
                         </td>
                         <td
                           onClick={() => {

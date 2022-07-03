@@ -4,7 +4,7 @@ import locale from "antd/lib/locale/th_TH";
 import { DatePicker, ConfigProvider } from "antd";
 import "antd/dist/antd.css";
 
-const DatePickerUC = ({  value, onChange,onClick,onBlur,disabled,placeholder,disabledValue,suffixIcon }) => {
+const DatePickerUC = ({ value, onChange, onClick, onBlur, disabled, placeholder, disabledValue, suffixIcon, ...orter }) => {
   return (
     <ConfigProvider locale={locale}>
       <DatePicker
@@ -30,6 +30,7 @@ const DatePickerUC = ({  value, onChange,onClick,onBlur,disabled,placeholder,dis
         }}
         value={(disabledValue) ? null : value}
         onChange={onChange}
+        {...orter}
       />
     </ConfigProvider>
   );

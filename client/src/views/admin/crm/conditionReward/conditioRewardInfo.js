@@ -175,7 +175,7 @@ export default function ConditioRewardInfo() {
               setIsNew(false);
               formik.values.id = res.data.tbRedemptionConditionsHD.id;
               history.push(
-                 
+
                 `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
               );
               dispatch(fetchSuccess());
@@ -263,7 +263,7 @@ export default function ConditioRewardInfo() {
                 formik.values.id = res.data.tbRedemptionConditionsHD.id;
                 formikCoupon.setFieldValue(
                   "pictureCoupon",
-                  (isImport) ?  formikCouponImport.values.pictureCoupon :  formikCoupon.values.pictureCoupon
+                  (isImport) ? formikCouponImport.values.pictureCoupon : formikCoupon.values.pictureCoupon
                 );
                 if (isImport) {
                   for (var columns in res.data.tbRedemptionCoupon) {
@@ -591,14 +591,14 @@ export default function ConditioRewardInfo() {
               if (response.data.tbImage !== null) {
                 if (
                   response.data.tbRedemptionConditionsHD["rewardType"] === "1"
-                ) {                  
+                ) {
                   formikCoupon.setFieldValue(
                     "pictureCoupon",
                     FilesService.buffer64UTF8(response.data.tbImage["image"])
                   );
                   setImageCoupon({ ...imageCoupon, ...response.data.tbImage });
 
-            
+
                 } else {
                   formikProduct.setFieldValue(
                     "pictureProduct",
@@ -956,17 +956,32 @@ export default function ConditioRewardInfo() {
                               "",
                               false
                             );
+                            formik.setFieldValue(
+                              "endDate",
+                              "",
+                              false
+                            );
                           } else {
                             formik.setFieldValue(
                               "startDate",
                               moment(e).toDate(),
                               false
                             );
+                            if (formik.values.endDate != null) {
+                              if (moment(e).toDate() >= formik.values.endDate) {
+                                formik.setFieldValue(
+                                  "endDate",
+                                  moment(e).add('days', 1).toDate(),
+                                  false
+                                );
+                              }
+                            }
+
                           }
                         }}
                         value={
                           !isClick.redemptionStart
-                            ? moment(
+                            ? formik.values.startDate == "" ? null : moment(
                               new Date(formik.values.startDate),
                               "DD/MM/YYYY"
                             )
@@ -1014,12 +1029,18 @@ export default function ConditioRewardInfo() {
                         }}
                         value={
                           !isClick.redemptionEnd
-                            ? moment(
+                            ? formik.values.endDate == "" ? null : moment(
                               new Date(formik.values.endDate),
                               "DD/MM/YYYY"
                             )
                             : null
                         }
+                        disabledDate={(current) => {
+                          if (formik.values.startDate != null) {
+                            let day = formik.values.startDate
+                            return current && current <= moment(new Date(day)).endOf('day');
+                          }
+                        }}
                       />
                     </div>
                     <div className="relative w-full px-4">

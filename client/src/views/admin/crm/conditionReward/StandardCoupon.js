@@ -171,19 +171,41 @@ const StandardCoupon = ({ formik }) => {
                   setIsClick({ ...isClick, couponStart: false });
                   if (e === null) {
                     formik.setFieldValue("startDate", "", false);
+
+                    if (!formik.values.isNotExpired) {
+                      formik.setFieldValue(
+                        "expireDate",
+                        "",
+                        false
+                      );
+                    }
+
                   } else {
                     formik.setFieldValue(
                       "startDate",
                       moment(e).toDate(),
                       false
                     );
+                    if (formik.values.expireDate != null) {
+                      if (moment(e).toDate() >= formik.values.expireDate) {
+                        formik.setFieldValue(
+                          "expireDate",
+                          moment(e).add('days', 1).toDate(),
+                          false
+                        );
+                      }
+                    }
+
                   }
                 }}
                 value={
                   !isClick.couponStart
-                    ? moment(new Date(formik.values.startDate), "DD/MM/YYYY")
+                    ? formik.values.startDate == "" ? null : moment(new Date(formik.values.startDate), "DD/MM/YYYY")
                     : null
                 }
+
+
+
               />
               <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
             </div>
@@ -237,7 +259,7 @@ const StandardCoupon = ({ formik }) => {
                 }}
                 value={
                   !isClick.expireDate
-                    ? moment(
+                    ? formik.values.expireDate == "" ? null : moment(
                       new Date(
                         formik.values.expireDate
                           ? formik.values.expireDate
@@ -247,6 +269,12 @@ const StandardCoupon = ({ formik }) => {
                     )
                     : null
                 }
+                disabledDate={(current) => {
+                  if (formik.values.startDate != null) {
+                    let day = formik.values.startDate
+                    return current && current <= moment(new Date(day)).endOf('day');
+                  }
+                }}
               />
               <CheckBoxUC
                 text="ไม่มีวันหมดอายุ"

@@ -427,7 +427,12 @@ const GameInfo = ({
                       if (e === null) {
                         formikCoupon.setFieldValue(
                           "startDate",
-                          new Date(),
+                          "",
+                          false
+                        );
+                        formikCoupon.setFieldValue(
+                          "expireDate",
+                          "",
                           false
                         );
                       } else {
@@ -436,11 +441,20 @@ const GameInfo = ({
                           moment(e).toDate(),
                           false
                         );
+                        if (formikCoupon.values.expireDate != null) {
+                          if (moment(e).toDate() >= formikCoupon.values.expireDate) {
+                            formikCoupon.setFieldValue(
+                              "expireDate",
+                              moment(e).add('days', 1).toDate(),
+                              false
+                            );
+                          }
+                        }
                       }
                     }}
                     value={
                       !isClick.couponStart
-                        ? moment(
+                        ? formikCoupon.values.startDate == "" ? null :moment(
                           new Date(formikCoupon.values.startDate),
                           "DD/MM/YYYY"
                         )
@@ -501,13 +515,13 @@ const GameInfo = ({
                       setIsClick({ ...isClick, expireDate: false });
                       if (e === null) {
                         formikCoupon.setFieldValue(
-                          "expiredDate",
-                          new Date(),
+                          "expireDate",
+                         "",
                           false
                         );
                       } else {
                         formikCoupon.setFieldValue(
-                          "expiredDate",
+                          "expireDate",
                           moment(e).toDate(),
                           false
                         );
@@ -515,16 +529,23 @@ const GameInfo = ({
                     }}
                     value={
                       !isClick.expireDate
-                        ? moment(
+                        ? formikCoupon.values.expireDate == ""
+                        || formikCoupon.values.expireDate ==undefined ? null : moment(
                           new Date(
-                            formikCoupon.values.expiredDate
-                              ? formikCoupon.values.expiredDate
+                            formikCoupon.values.expireDate
+                              ? formikCoupon.values.expireDate
                               : new Date()
                           ),
                           "DD/MM/YYYY"
                         )
                         : null
                     }
+                    disabledDate={(current) => {
+                      if (formikCoupon.values.startDate != null) {
+                        let day = formikCoupon.values.startDate
+                        return current && current <= moment(new Date(day)).endOf('day');
+                      }
+                    }}
                   />
                   <CheckBoxUC
                     text="ไม่มีวันหมดอายุ"
