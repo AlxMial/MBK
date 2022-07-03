@@ -2,6 +2,7 @@ const express = require("express");
 const moment = require("moment");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const { tb2c2p } = require("../../../models");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../../middlewares/LineMiddleware");
@@ -772,23 +773,25 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
           let secretKey = '0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22'
           let payload = {
             "merchantID": '764764000011180',
-
             "invoiceNo": orderId + "-" + orderhd.orderNumber,
             "description": "item 1",
             "amount": orderhd.netTotal,
             "currencyCode": "THB",
             "request3DS": "Y",
-            "backendReturnUrl": "https://undefined.ddns.net/mahboonkrongserver/2c2p",
-            "frontendReturnUrl": "https://undefined.ddns.net/mahboonkrongserver/line/paymentsucceed/" + Encrypt.EncodeKey((orderId + "," + orderhd.orderNumber)),
+            "paymentChannel": ["CC"],
+            "backendReturnUrl": "",
+            "frontendReturnUrl": "https://mbk.hopeagro.co.th/line/paymentsucceed/" + Encrypt.EncodeKey((orderId + "," + orderhd.orderNumber)),
           }
 
           const token = jwt.sign(payload, secretKey);
+
           await axios.post("https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken",
             { "payload": token })
-            .then(function (res) {
+            .then(async function (res) {
               // handle success
               let payload = res.data.payload
               const decoded = jwt.decode(payload)
+              const _2c2p = await tb2c2p.create({payload:payload,uid:uid,orderId: orderId + "," + orderhd.orderNumber});
               url2c2p = decoded
             })
             .catch(function (error) {

@@ -322,7 +322,7 @@ const ShopList = () => {
       <div className="h-full">
         <div
           style={{
-            height: 125 - y + "px",
+            height: 150 - y + "px",
             margin: "auto",
             display: y > 120 ? "none" : "",
           }}
@@ -373,7 +373,7 @@ const ShopList = () => {
               setselectMenu(2);
             }}
           >
-            สิ้นค้าขายดี
+            สินค้าขายดี
           </div>
           <div className="px-2" style={{ width: "150px" }}>
             {productCategory.length > 0 ? (
@@ -422,7 +422,7 @@ const ShopList = () => {
             style={{
               width: "90%",
               margin: "auto",
-              height: "calc(100% - " + (y > 120 ? 165 - 120 : 165 - y) + "px)",
+              height: "calc(100% - " + (y > 120 ? 58 : 210 - y) + "px)",
               overflow: "scroll",
             }}
             onScroll={listenScrollEvent}
@@ -461,7 +461,8 @@ const ShopList = () => {
                             <div
                               key={i}
                               className="px-2 relative"
-                              style={{ minWidth: "170px", width: "200px" }}
+                              // style={{ minWidth: "170px", width: "200px" }}
+                              style={{ maxWidth: "170px" }}
                               onClick={() => {
                                 history.push(
                                   path.showProducts.replace(":id", e.id)

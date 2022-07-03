@@ -39,21 +39,30 @@ const Coupon = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ marginTop: "-50px", position: "absolute", width: "100%" }}>
+      {/* <div style={{ marginTop: "-50px", position: "absolute", width: "100%" }}>
         <div className="line-text-brown noselect">
           <div className=" text-xl text-center mt-4">คูปองของฉัน</div>
         </div>
+        
+      </div> */}
+      <div className="bg-green-mbk">
+        <div
+          style={{ height: "40px" }}
+          className=" noselect text-lg text-white font-bold text-center "
+        >
+          คูปองของฉัน
+        </div>
       </div>
       <div>
-        <div className="flex w-full" style={{ marginTop: "55px", height: "50px", fontSize: "18px" }}>
-          <div className="flex" style={{
+        <div className="flex w-full" style={{ height: "50px", fontSize: "14px" }}>
+          <div className={"flex" + (Tabs == 1 ? " font-bold" : "")} style={{
             width: "50%", textAlign: "center", justifyContent: "center",
             alignItems: "center",
             borderBottom: "5px solid " + (Tabs == 1 ? "#007a40" : "transparent")
           }} onClick={() => {
             setTabs(1)
           }}>คูปองที่สามารถใช้ได้</div>
-          <div className="flex" style={{
+          <div className={"flex" + (Tabs == 2 ? " font-bold" : "")} style={{
             width: "50%", textAlign: "center", justifyContent: "center",
             alignItems: "center",
             borderBottom: "5px solid " + (Tabs == 2 ? "#007a40" : "transparent")
@@ -77,7 +86,7 @@ const Coupon = () => {
           </Tabs> */}
         </div>
         <div className="line-scroll" style={{
-          width: "90%", margin: "auto", height: "calc(100vh - 300px)",
+          width: "90%", margin: "auto", height: "calc(100vh - 190px)",
           // overflow: "scroll"
         }}>
           {MyCoupon.isdata ?

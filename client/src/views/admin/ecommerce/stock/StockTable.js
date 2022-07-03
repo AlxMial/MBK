@@ -73,6 +73,12 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                             <th className={thClass} >
                                 สถานะ
                             </th>
+                            <th className={thClass + " text-center"} >
+                                สินค้าขายดี
+                            </th>
+                            <th className={thClass + " text-center"} >
+                                FLASH SALE
+                            </th>
                             <th className={thClass} >
                                 สถานะการแสดง
                             </th>
@@ -144,6 +150,16 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                                     value.productCount - value.buy <= 0 ? "text-red-700" : "text-orange-500")}>
                                                 {value.status}
                                             </span>
+                                        </td>
+                                        <td className={tdClass + " cursor-pointer text-center "} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
+                                             <input type="checkbox" className='rounded text-green-mbk' checked={value.isBestSeller}/>
+                                        </td>
+                                        <td className={tdClass + " cursor-pointer text-center "} onClick={() => {
+                                            openModal(value.id);
+                                        }}>
+                                            <input type="checkbox" className='rounded text-green-mbk' checked={value.isFlashSale}/>
                                         </td>
                                         <td className={tdClass + " cursor-pointer"} onClick={() => {
                                             openModal(value.id);

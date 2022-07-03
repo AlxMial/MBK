@@ -22,6 +22,7 @@ const MyAward = () => {
     getMyReward(
       (res) => {
         if (res.status) {
+          // console.log('res.data.product', res.data.product)
           setcouponItem(res.data.coupon);
           setproductItem(res.data.product);
         }
@@ -67,7 +68,9 @@ const MyAward = () => {
           couponItem.map((e, i) => {
             return (
               <div key={i}>
-                <div className="w-full flex mb-2">
+                <div className="w-full flex mb-2" onClick={() => {
+                  history.push(path.infocoupon.replace(":id", e.couponId))
+                }}>
                   <div
                     className="flex mr-4"
                     style={{ justifyContent: "center" }}
@@ -108,13 +111,13 @@ const MyAward = () => {
             <EmptyOrder text={"ยังไม่มีคูปองที่ใช้งานได้"} />
           </div>
         )}
-
+        <div className="liff-inline mb-2" />
         <div
           className="flex relative"
           style={{ height: "40px", fontSize: "12px" }}
         >
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
-            ของสัมนาคุณของฉัน
+            ของสมนาคุณของฉัน
           </div>
           <div
             className="text-liff-gray-mbk text-xs"
@@ -131,7 +134,9 @@ const MyAward = () => {
           productItem.map((e, i) => {
             return (
               <div key={i}>
-                <div className="w-full flex">
+                <div className="w-full flex" onClick={() => {
+                  history.push(path.infoproduct.replace(":id", e.productId))
+                }}>
                   <div
                     className="flex"
                     style={{ width: "30%", justifyContent: "center" }}
@@ -198,7 +203,7 @@ const MyAward = () => {
           })
         ) : (
           <div style={{ height: "50px" }}>
-            <EmptyOrder text={"ยังไม่มีของสัมนาคุณ"} />
+            <EmptyOrder text={"ยังไม่มีของสมนาคุณ"} />
           </div>
         )}
       </div>

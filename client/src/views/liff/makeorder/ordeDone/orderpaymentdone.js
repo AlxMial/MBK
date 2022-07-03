@@ -149,7 +149,7 @@ const OrderPaymentDone = () => {
             </div>
 
             {(OrderHD.paymentStatus === 3 &&
-              OrderHD.transportStatus ===1) ||
+              OrderHD.transportStatus === 1) ||
               OrderHD.transportStatus === 2 ? (
               <div>
                 <div
@@ -276,7 +276,7 @@ const OrderPaymentDone = () => {
               <div style={{ width: "95%", margin: "auto" }}>
 
                 <div className="flex relative mb-2 font-bold">
-                  <div>{"ยอดรวมสิ้นค้า (" + OrderHD.stockNumber + " ชิ้น)"}</div>
+                  <div>{"ยอดรวมสินค้า (" + OrderHD.stockNumber + " ชิ้น)"}</div>
                   <div className="absolute" style={{ right: "0" }}>
                     {"฿ " + fn.formatMoney(OrderHD.sumprice)}
                   </div>
@@ -342,7 +342,7 @@ const OrderPaymentDone = () => {
                       <div>
                         <div className="flex relative mb-2 text-gold-mbk ">
                           <div>
-                            {OrderHD.transportStatus ==1 ? (
+                            {OrderHD.transportStatus == 1 ? (
                               <i className="fas fa-shopping-bag"></i>
                             ) : (
                               <i className="fas fa-truck"></i>
@@ -374,7 +374,7 @@ const OrderPaymentDone = () => {
                     style={{
                       backgroundColor:
                         OrderHD != null
-                          ? OrderHD.transportStatus ==1
+                          ? OrderHD.transportStatus == 1
                             ? OrderHD.tbCancelOrder == null
                               ? "red"
                               : ""

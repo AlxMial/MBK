@@ -176,6 +176,7 @@ router.get("/byId/:id", validateToken, async (req, res) => {
         "email",
         "empCode",
         "position",
+        "role"
       ],
       where: { id: id },
     });

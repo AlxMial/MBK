@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
+import * as Session from "@services/Session.service";
+
 // components
 import {
   getPaymentsucceed,
@@ -9,9 +11,9 @@ const Paymentsucceed = () => {
   const { id } = useParams();
   const [OrderHD, setOrderHD] = useState(null); //ทั้งหมด
   const fetchDataOreder = () => {
-    getPaymentsucceed({ id: id }, (res) => {
+    getPaymentsucceed({ id: id,uid: Session.getLiff().uid }, (res) => {
       if (res.data.status) {
-        setOrderHD(res.data.OrderHD)
+        setOrderHD(res.data)
       }
     });
   }
@@ -36,7 +38,7 @@ const Paymentsucceed = () => {
               {"orderNumber : " + OrderHD.orderNumber}
             </div>
             <div>
-              {"paymentStatus : " + OrderHD.paymentStatus}
+              {"paymentStatus : " + (OrderHD.status) ? 'ชำระเงินสำเร็จ' : 'ชำระเงินไม่สำเร็จ' }
             </div>
           </>
           : null}

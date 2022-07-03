@@ -14,16 +14,12 @@ const MyOrder = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [OrderHD, setOrderHD] = useState([]);
-  const [sumValue, setsumValue] = useState({});
   const GetMyOrder = () => {
     setIsLoading(true)
     getMyOrder((res) => {
       console.log('res', res.data)
       if (res.status) {
         setOrderHD(res.data.OrderHD)
-        setsumValue(
-          { sumAmount: res.data.sumamount, sumPrice: res.data.sumprice }
-        )
       }
     }, () => { }, () => { setIsLoading(false) })
   }
@@ -33,9 +29,9 @@ const MyOrder = () => {
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="mt-2  liff-footer line-scroll" style={{ padding: "0 10px" }}>
-        <div className="flex relative" style={{ height: "40px", fontSize: "14px" }}>
-          <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
+      <div className="mt-2  liff-footer line-scroll" style={{ padding: "10px" }}>
+        <div className="flex relative " style={{ height: "40px", fontSize: "14px" }}>
+          <div className="text-green-mbk font-bold text-12" style={{ width: "50%" }}>
             คำสั่งชื้อของฉัน
           </div>
           <div className="text-liff-gray-mbk text-xs" style={{ width: "50%", textAlign: "end" }} onClick={() => {
@@ -47,9 +43,10 @@ const MyOrder = () => {
             {OrderHD.map((hd, index) => {
               return (
                 <div key={index}>
+                  {index > 0 && <div className="liff-inline mb-2" style={{ height: '5px', backgroundColor: '#ebebeb' }} />}
                   <div className="flex" style={{ height: "30px" }}>
-                    <div className="font-bold" style={{ width: "115px" }}>หมายเลขคำสั่งซื้อ : </div>
-                    <div className="px-2 line-clamp-1" >{hd.orderNumber} </div>
+                    <div className="font-bold  text-12" style={{ width: "115px" }}>หมายเลขคำสั่งซื้อ : </div>
+                    <div className="px-2 line-clamp-1  text-12" >{hd.orderNumber} </div>
                   </div>
                   {hd.dt.map((e, i) => {
                     return (
@@ -66,19 +63,19 @@ const MyOrder = () => {
                           </div>
                         </div>
                         <div style={{ width: "70%" }}>
-                          <div className="font-bold line-clamp-1" >
+                          <div className="font-bold line-clamp-1  text-12" >
                             {e.productName}
                           </div>
                           <div className="flex">
                             <div className="text-liff-gray-mbk" style={{ width: "26%" }}> {"x" + e.amount}</div>
                             <div style={{ width: "70%", justifyContent: "end" }} className="flex" >
-                              <div className="" style={{
+                              <div className=" text-12" style={{
                                 textDecoration:
                                   e.discount > 0 ? "line-through" : "none",
                                 color: e.discount > 0 ? "#ddd" : "#047738"
                               }}> {"฿ " + fn.formatMoney(e.price)}</div>
                               {e.discount > 0 ?
-                                <div className="" style={{ color: "red", marginLeft: "5px" }}> {"฿ " + fn.formatMoney(e.discount)}</div> : null}
+                                <div className=" text-12" style={{ color: "red", marginLeft: "5px" }}> {"฿ " + fn.formatMoney(e.discount)}</div> : null}
                             </div>
                           </div>
                         </div>
@@ -86,24 +83,23 @@ const MyOrder = () => {
                       </div>
                     )
                   })}
+                  <div className="w-full flex mb-2 text-liff-gray-mbk" style={{ fontSize: "12px", justifyContent: "end" }}>
+                    <div className="font-bold  text-12"
+                      onClick={() => {
+                        history.push(OrderHD.paymentStatus == 1 ? path.makeorderbyid.replace(":id", hd.id) : path.orderpaymentdone.replace(":id", hd.id))
+                      }}>
+                      {"ดูรายละเอียดคำสั่งซื้อ >"}
+                    </div>
+                  </div>
+
+                  <div className="flex" >
+                    <div className="text-sm font-bold" style={{ width: "50%" }}>{"ยอดรวมสินค้า (" + hd.sumamount + " ชิ้น)"}</div>
+                    <div className="font-bold text-sm" style={{ width: "50%", textAlign: "end", color: "#047738" }}>
+                      {"฿ " + fn.formatMoney(hd.sumprice) + " บาท"} </div>
+                  </div>
                 </div>
               )
             })}
-
-            <div className="w-full flex mb-2 text-liff-gray-mbk" style={{ fontSize: "12px", justifyContent: "end" }}>
-              <div className="font-bold"
-                onClick={() => {
-                  history.push(OrderHD.paymentStatus == 1 ? path.makeorderbyid.replace(":id", OrderHD.id) : path.orderpaymentdone.replace(":id", OrderHD.id))
-                }}>
-                {"ดูรายละเอียดคำสั่งซื้อ >"}
-              </div>
-            </div>
-
-            <div className="flex" >
-              <div className="text-liff-gray-mbk" style={{ width: "50%" }}>{"รวม " + sumValue.sumAmount + " ชิ้น"}</div>
-              <div className="font-bold" style={{ width: "50%", textAlign: "end", color: "#047738" }}>
-                {"฿ " + fn.formatMoney(sumValue.sumPrice) + " บาท"} </div>
-            </div>
           </div> :
           <EmptyOrder text={"ยังไม่คำสั่งชื้อ"} />
         }

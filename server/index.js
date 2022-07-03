@@ -49,7 +49,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 const paymentRouter = require('./routes/2c2p/index');
 app.use("/mahboonkrongserver/2c2p", paymentRouter);
 
-app.use(authentication)
+// app.use(authentication)
 const db = require('./models');
 // // Routers
 // Menu
