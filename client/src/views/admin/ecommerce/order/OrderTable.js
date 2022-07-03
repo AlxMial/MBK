@@ -24,22 +24,58 @@ const OrderTable = ({ orderList, openModal }) => {
     };
 
     const getStatus = (value) => {
-        if (value.isCancel) {
-            return { text: 'ยกเลิกคำสั่งซื้อ', color: ' text-red-500 ' };
-        } else if (value.isReturn) {
-            return { text: 'คืนสินค้า', color: ' text-red-500 ' };
-        } else if (value.transportStatus && value.transportStatus === 'done')
-            return { text: 'ส่งแล้ว', color: ' text-green-500 ' };
-        else if (value.transportStatus && value.transportStatus === 'inTransit')
-            return { text: 'กำลังส่ง', color: ' text-orange-500 ' };
-        else if (value.transportStatus && value.transportStatus === 'prepare')
-            return { text: 'เตรียมส่ง', color: ' text-lightBlue-600 ' };
-        else if (value.paymentStatus && value.paymentStatus === 'done')
-            return { text: 'ชำระเงินแล้ว', color: ' text-lightBlue-500 ' };
-        else if (value.paymentStatus && value.paymentStatus === 'wait')
+
+        if (value.paymentStatus == 1 && !value.isCancel) {
             return { text: 'รอการชำระเงิน', color: ' text-yellow-500 ' };
-        else
+        } else if (value.paymentStatus == 2 && !value.isCancel) {
+            return { text: 'รอตรวจสอบ', color: ' text-yellow-500 ' };
+        } else if (value.paymentStatus == 3 && value.transportStatus == 1 && !value.isCancel) {
+            return { text: 'เตรียมส่ง', color: ' text-lightBlue-600 ' };
+        } else if (value.paymentStatus == 3 && value.transportStatus == 2 && !value.isCancel) {
+            return { text: 'กำลังส่ง', color: ' text-orange-500 ' };
+        } else if (value.paymentStatus == 3 && value.transportStatus == 3 && !value.isCancel) {
+            return { text: 'ส่งแล้ว', color: ' text-green-500  ' };
+        } else if (value.isCancel) {
+            return { text: 'ยกเลิกคำสั่งซื้อ', color: ' text-red-500   ' };
+        } else if (value.isReturn) {
+            return { text: 'คืนสินค้า', color: ' text-red-500   ' };
+        } else {
             return { text: '', color: ' text-gray-mbk ' };
+        }
+
+    }
+
+    const getStatuspayment = (v) => {
+        switch (v) {
+            case "1":
+                return { text: 'รอการชำระเงิน', color: ' text-yellow-500 ' }
+            case "2":
+                return { text: 'รอตรวจสอบ', color: ' text-lightBlue-500 ' }
+            default:
+                return { text: 'ชำระเงินแล้ว', color: ' text-green-500 ' }
+        }
+    }
+    const getStatustransportStatus = (v) => {
+        if (v.paymentStatus == 3) {
+            if (v.isReturn) {
+                return { text: 'คืนสินค้า', color: ' text-red-500 ' }
+            }
+            else if (v.transportStatus == 1) {
+                return { text: 'เตรียมส่ง', color: ' text-yellow-500 ' }
+            } else if (v.transportStatus == 2) {
+                return { text: 'อยู่ระหว่างจัดส่ง', color: ' text-lightBlue-500 ' }
+            } else {
+                return { text: 'ส่งแล้ว', color: ' text-green-500 ' }
+            }
+
+        } else {
+            if (v.isCancel) {
+                return { text: 'ยกเลิกคำสั่งซื้อ', color: ' text-red-500 ' }
+            } else {
+                return { text: ' ', color: ' ' }
+
+            }
+        }
     }
 
     const onClickAttachment = async (image) => {
@@ -50,7 +86,7 @@ const OrderTable = ({ orderList, openModal }) => {
         }
     }
 
-    const _thList = ['ลำดับที่', 'เลขที่ใบสั่งซื้อ', 'วันที่สั่งซื้อ', 'ผู้สั่งซื้อ', 'ยอดสุทธิ', 'สถานะ', 'ไฟล์แนบ'];
+    const _thList = ['ลำดับที่', 'เลขที่ใบสั่งซื้อ', 'วันที่สั่งซื้อ', 'ผู้สั่งซื้อ', 'ยอดสุทธิ', 'สถานะการชำระ', 'ไฟล์แนบ', "สถานะการจัดส่ง", "สาเหตุที่ยกเลิก/คืน", "รายละเอียด", "หมายเหตุ"];
 
     return (
         <>
@@ -102,15 +138,35 @@ const OrderTable = ({ orderList, openModal }) => {
                                             </span>
                                         </td>
                                         <td className={tdClass} >
-                                            <span className={getStatus(value).color}>
-                                                {getStatus(value).text}
+                                            <span className={getStatuspayment(value.paymentStatus).color}>
+                                                {getStatuspayment(value.paymentStatus).text}
                                             </span>
                                         </td>
-                                        <td className={tdClass + (value.imageName ? ' cursor-pointer ' : '')} onClick={() => {
+                                        <td className={tdClass + (value.image ? ' cursor-pointer ' : '')} onClick={() => {
                                             onClickAttachment(value.image);
                                         }} >
-                                            <span className={(value.imageName ? ' text-blue-700' : tdSpan)}>
-                                                {value.imageName ?? 'ไม่มีไฟล์แนบ'}
+                                            <span className={(value.image ? (value.imageName ?? ' text-blue-700') : tdSpan)}>
+                                                {value.image ? (value.imageName ?? 'สลิปโอนเงิน') : "ไม่มีไฟล์แนบ"}
+                                            </span>
+                                        </td>
+                                        <td className={tdClass} >
+                                            <span className={getStatustransportStatus(value).color}>
+                                                {getStatustransportStatus(value).text}
+                                            </span>
+                                        </td>
+                                        <td className={tdClass} >
+                                            <span >
+                                                {value.cancelDetail}
+                                            </span>
+                                        </td>
+                                        <td className={tdClass} >
+                                            <span >
+                                                {value.returnDetail}
+                                            </span>
+                                        </td>
+                                        <td className={tdClass} >
+                                            <span >
+                                                {value.remark}
                                             </span>
                                         </td>
 

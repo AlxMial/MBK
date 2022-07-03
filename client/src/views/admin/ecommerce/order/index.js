@@ -105,7 +105,7 @@ const Order = () => {
                 }));
             }
 
-            const _orderImage = await axios.get(`image/byRelated/${id}/order`);
+            const _orderImage = await axios.get(`image/byRelated/${id}/tbOrderHD`);
             if (_orderImage && _orderImage.data.tbImage) {
                 const image = FilesService.buffer64UTF8(_orderImage.data.tbImage.image)
                 setOrderImage(image);
@@ -129,12 +129,15 @@ const Order = () => {
 
                 const res = await axios.get("order/orderHD/ById/" + orderHD.id);
                 if (!res.data.error && res.data.tbOrderHD) {
-                    console.log(res.data.tbOrderHD);
+                    // console.log(res.data.tbOrderHD);
                     const _dataHD = res.data.tbOrderHD;
-                    _dataHD.transportStatus = transportStatus;
-                    if (isChangeOrderNumber) {
-                        _dataHD.orderNumber = orderNumber;
-                    }
+
+                    _dataHD.transportStatus = orderHD.transportStatus;
+                    _dataHD.paymentStatus = orderHD.paymentStatus;
+
+                    // if (isChangeOrderNumber) {
+                    //     _dataHD.orderNumber = orderNumber;
+                    // }
                     _dataHD.isCancel = isCancel;
                     await axios.put("order/orderHD", _dataHD).then(async (res) => {
                         if (res.data.error) {
@@ -221,7 +224,8 @@ const Order = () => {
                 setCancelReason={setCancelReason}
                 transportStatus={transportStatus}
                 setTransportStatus={setTransportStatus}
-                handleModal={handleModal} />}
+                handleModal={handleModal}
+                setOrderHD={setOrderHD} />}
         </>
     )
 }

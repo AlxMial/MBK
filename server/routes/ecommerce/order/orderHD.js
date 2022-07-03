@@ -47,6 +47,7 @@ router.post("/", validateToken, async (req, res) => {
 
 router.get("/", validateToken, async (req, res) => {
   const data = await tbOrderHD.findAll({
+    limit: 3,
     where: { isDeleted: false },
     attributes: {
       include: [
@@ -63,7 +64,7 @@ router.get("/", validateToken, async (req, res) => {
           Sequelize.literal(`(
                         select image from tbimages t
                             where relatedId = tbOrderHD.id
-                            and relatedTable = 'order'
+                            and relatedTable = 'tbOrderHD'
                             and isDeleted = 0
                     )`),
           "image",
@@ -72,7 +73,7 @@ router.get("/", validateToken, async (req, res) => {
           Sequelize.literal(`(
                         select imageName from tbimages t
                             where relatedId = tbOrderHD.id
-                            and relatedTable = 'order'
+                            and relatedTable = 'tbOrderHD'
                             and isDeleted = 0
                     )`),
           "imageName",

@@ -29,7 +29,7 @@ const OrderDetail = ({
     handleExport, transportStatus, setTransportStatus,
     isChangeOrderNumber,
     setIsChangeOrderNumber, orderNumber, setOrderNumber,
-    isCancel, setIsCancel, cancelReason, setCancelReason }) => {
+    isCancel, setIsCancel, cancelReason, setCancelReason, setOrderHD }) => {
     Modal.setAppElement("#root");
     const dispatch = useDispatch();
     const useStyle = customStyles({ width: '70vw' });
@@ -85,24 +85,8 @@ const OrderDetail = ({
         }
     }, [openExport, dataExport]);
 
-    // const createPDF = async () => {
-    //     const subDistrict = await Address.getAddressName("subDistrict", memberData.subDistrict);
-    //     const district = await Address.getAddressName("district", memberData.district);
-    //     const _province = await Address.getAddressName("province", memberData.province);
 
-    //     setDataExport({
-    //         name: orderHD.memberName,
-    //         orderNumber: orderHD.orderNumber,
-    //         address: (subDistrict ? ('ตำบล/แขวง ' + subDistrict) : '')
-    //             + ' ' + (district ? ('อำเภอ/เขต ' + district) : '')
-    //             + ' ' + (_province ? ('จังหวัด ' + _province) : '')
-    //             + ' ' + memberData.postcode
-    //             + ' ' + memberData.country,
-    //         phone: memberData.phone,
-    //         email: memberData.email,
-    //     });
-    //     setOpenExport(true);
-    // };
+    console.log(orderHD)
 
     return (
         <Modal
@@ -140,11 +124,13 @@ const OrderDetail = ({
                                 </div>
                                 <div className="w-full mt-4">
                                     <LabelUC label='การชำระเงิน' moreClassName='border-b py-2' />
-                                    <Payment props={propsPayment} />
+                                    <Payment props={propsPayment}
+                                        setOrderHD={setOrderHD} />
                                 </div>
                                 <div className="w-full mt-4">
                                     <LabelUC label='การจัดส่ง' moreClassName='border-b py-2' />
-                                    <Logistic props={propsLogistic} />
+                                    <Logistic props={propsLogistic}
+                                        setOrderHD={setOrderHD} />
                                 </div>
                             </div>
                         </div>

@@ -7,7 +7,7 @@ import InputUC from 'components/InputUC';
 import CheckBoxUC from "components/CheckBoxUC";
 import TextAreaUC from 'components/InputUC/TextAreaUC';
 
-const Logistic = ({ props }) => {
+const Logistic = ({ props, setOrderHD }) => {
     const { orderHD, orderDT, memberData,
         isChangeOrderNumber, isCanEdit,
         setIsChangeOrderNumber, orderNumber,
@@ -37,9 +37,9 @@ const Logistic = ({ props }) => {
     ];
 
     const options = [
-        { value: 'prepare', label: 'เตรียมส่ง' },
-        { value: 'inTransit', label: 'กำลังส่ง' },
-        { value: 'done', label: 'ส่งแล้ว' },
+        { value: 1, label: 'เตรียมส่ง' },
+        { value: 2, label: 'กำลังส่ง' },
+        { value: 3, label: 'ส่งแล้ว' },
     ];
 
     useEffect(async () => {
@@ -69,15 +69,16 @@ const Logistic = ({ props }) => {
                         <SelectUC
                             name="transportType"
                             onChange={(value) => {
-                                setTransportStatus(value.value);
+                                // setTransportStatus(value.value);
+                                setOrderHD(p => { return { ...p, transportStatus: value.value } })
                             }}
                             options={options}
                             value={ValidateService.defaultValue(
                                 options,
-                                transportStatus
+                                orderHD.transportStatus
                             )}
-                            isDisabled={!isCanEdit}
-                            bgColor={getStatus(transportStatus).bg}
+                            isDisabled={orderHD.paymentStatus != 3 ? true : false}
+                        // bgColor={getStatus(transportStatus).bg}
                         />
                     </div>
                 </div>

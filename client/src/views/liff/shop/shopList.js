@@ -34,21 +34,30 @@ const ShopList = () => {
   const [tbStockiewNominal, settbStockiewNominal] = useState([]); //แสดงตาม category
   const [tbStockiewFlashSale, settbStockiewFlashSale] = useState([]); //แสดงตาม category
 
+  const [isLoadingData, setisLoadingData] = useState(false); //แสดงตาม category
+
   const pad = (n) => {
     return (n < 10 ? "0" : "") + n;
   };
 
   const setselectMenu = (e) => {
+
     setselectmenu(e);
     setcategoryview(category, e);
   };
 
-  const Counter = ({ time }) => {
+  const Counter = ({ startTimeCampaign, endTimeCampaign }) => {
     const [count, setCount] = useState("");
 
     useInterval(() => {
       const current_date = new Date().getTime();
-      let seconds_left = (new Date(time).getTime() - current_date) / 1000;
+      let _endTimeCampaign = new Date(
+        new Date().toISOString().split("T")[0] +
+        " " +
+        endTimeCampaign
+      );
+
+      let seconds_left = (new Date(_endTimeCampaign).getTime() - current_date) / 1000;
 
       let hours = pad(parseInt(seconds_left / 3600));
       seconds_left = seconds_left % 3600;
@@ -82,99 +91,104 @@ const ShopList = () => {
   };
   const setcategoryview = (id, e) => {
     setcategory(id);
-    if (id === 0) {
-      let tbStockiewNominal = [];
-      let tbStockiewFlashSale = [];
-      let dataTemp = tbStock;
-      if (e == 2) {
-        dataTemp = dataTemp.filter((e) => {
-          if (e.isBestSeller) {
-            return e;
-          }
-        });
-      }
+    setisLoadingData(true)
+    setTimeout(() => {
+      if (id === 0) {
+        let tbStockiewNominal = [];
+        let tbStockiewFlashSale = [];
+        let dataTemp = tbStock;
+        if (e == 2) {
+          dataTemp = dataTemp.filter((e) => {
+            if (e.isBestSeller) {
+              return e;
+            }
+          });
+        }
 
-      dataTemp.filter((e) => {
-        if (!e.isFlashSale) {
-          tbStockiewNominal.push(e);
-        } else {
-          let startDateCampaign = new Date(
-            new Date(e.startDateCampaign).toISOString().split("T")[0]
-          );
-          let endDateCampaign = new Date(
-            new Date(e.endDateCampaign).toISOString().split("T")[0]
-          );
-          let today = new Date(new Date().toISOString().split("T")[0]);
-          if (today >= startDateCampaign && today <= endDateCampaign) {
-            let startTimeCampaign = new Date(
-              new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign
+        dataTemp.filter((e) => {
+          if (!e.isFlashSale) {
+            tbStockiewNominal.push(e);
+          } else {
+            let startDateCampaign = new Date(
+              new Date(e.startDateCampaign).toISOString().split("T")[0]
             );
-            let endTimeCampaign = new Date(
-              new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign
+            let endDateCampaign = new Date(
+              new Date(e.endDateCampaign).toISOString().split("T")[0]
             );
-            today = new Date();
-            if (today > startTimeCampaign && today < endTimeCampaign) {
-              tbStockiewFlashSale.push(e);
+            let today = new Date(new Date().toISOString().split("T")[0]);
+            if (today >= startDateCampaign && today <= endDateCampaign) {
+              let startTimeCampaign = new Date(
+                new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign
+              );
+              let endTimeCampaign = new Date(
+                new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign
+              );
+              today = new Date();
+              if (today > startTimeCampaign && today < endTimeCampaign) {
+                tbStockiewFlashSale.push(e);
+              } else {
+                tbStockiewNominal.push(e);
+              }
             } else {
               tbStockiewNominal.push(e);
             }
-          } else {
-            tbStockiewNominal.push(e);
           }
+        });
+        settbStockiewNominal(tbStockiewNominal);
+        settbStockiewFlashSale(tbStockiewFlashSale);
+        setisLoadingData(false)
+      } else {
+        let dataTemp = tbStock;
+        if (e == 2) {
+          dataTemp = dataTemp.filter((e) => {
+            if (e.isBestSeller) {
+              return e;
+            }
+          });
         }
-      });
-      settbStockiewNominal(tbStockiewNominal);
-      settbStockiewFlashSale(tbStockiewFlashSale);
-    } else {
-      let dataTemp = tbStock;
-      if (e == 2) {
-        dataTemp = dataTemp.filter((e) => {
-          if (e.isBestSeller) {
+
+        let tbStockview = dataTemp.filter((e, i) => {
+          if (e.productCategoryId === id) {
             return e;
           }
         });
-      }
 
-      let tbStockview = dataTemp.filter((e, i) => {
-        if (e.productCategoryId === id) {
-          return e;
-        }
-      });
-
-      let tbStockiewNominal = [];
-      let tbStockiewFlashSale = [];
-      tbStockview.filter((e) => {
-        if (!e.isFlashSale) {
-          tbStockiewNominal.push(e);
-        } else {
-          let startDateCampaign = new Date(
-            new Date(e.startDateCampaign).toISOString().split("T")[0]
-          );
-          let endDateCampaign = new Date(
-            new Date(e.endDateCampaign).toISOString().split("T")[0]
-          );
-          let today = new Date(new Date().toISOString().split("T")[0]);
-          if (today >= startDateCampaign && today <= endDateCampaign) {
-            let startTimeCampaign = new Date(
-              new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign
+        let tbStockiewNominal = [];
+        let tbStockiewFlashSale = [];
+        tbStockview.filter((e) => {
+          if (!e.isFlashSale) {
+            tbStockiewNominal.push(e);
+          } else {
+            let startDateCampaign = new Date(
+              new Date(e.startDateCampaign).toISOString().split("T")[0]
             );
-            let endTimeCampaign = new Date(
-              new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign
+            let endDateCampaign = new Date(
+              new Date(e.endDateCampaign).toISOString().split("T")[0]
             );
-            today = new Date();
-            if (today > startTimeCampaign && today < endTimeCampaign) {
-              tbStockiewFlashSale.push(e);
+            let today = new Date(new Date().toISOString().split("T")[0]);
+            if (today >= startDateCampaign && today <= endDateCampaign) {
+              let startTimeCampaign = new Date(
+                new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign
+              );
+              let endTimeCampaign = new Date(
+                new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign
+              );
+              today = new Date();
+              if (today > startTimeCampaign && today < endTimeCampaign) {
+                tbStockiewFlashSale.push(e);
+              } else {
+                tbStockiewNominal.push(e);
+              }
             } else {
               tbStockiewNominal.push(e);
             }
-          } else {
-            tbStockiewNominal.push(e);
           }
-        }
-      });
-      settbStockiewNominal(tbStockiewNominal);
-      settbStockiewFlashSale(tbStockiewFlashSale);
-    }
+        });
+        settbStockiewNominal(tbStockiewNominal);
+        settbStockiewFlashSale(tbStockiewFlashSale);
+        setisLoadingData(false)
+      }
+    }, 100);
   };
   //#region รูป Banner
   const fetchDataImgBanner = async () => {
@@ -401,275 +415,272 @@ const ShopList = () => {
           </div>
         </div>
         <div className="liff-inline" />
-        <div
-          id="scroll"
-          className="product-scroll "
-          style={{
-            width: "90%",
-            margin: "auto",
-            height: "calc(100% - " + (y > 120 ? 165 - 120 : 165 - y) + "px)",
-            overflow: "scroll",
-          }}
-          onScroll={listenScrollEvent}
-        >
-          {/* flash_sale */}
-          {isFlashsale ? (
-            <div className="mt-2">
-              <div
-                className="shadow"
-                style={{
-                  border: "1px solid #FFF",
-                  borderRadius: "10px",
-                  width: "100%",
-                }}
-              >
-                <div className="mt-2 px-2 py-2">
-                  <div>
-                    <img
-                      src={require("assets/img/mbk/flash_sale.png").default}
-                      alt="flash_sale"
-                      className="border-2 border-blueGray-50 "
-                      style={{ width: "100px" }}
-                    ></img>
-                  </div>
-                  <div
-                    className="flex mt-2 line-scroll "
-                    style={{
-                      overflowX: "auto",
-                      width: "100%",
-                      maxWidth: "340px",
-                    }}
-                  >
-                    {[...tbStockiewFlashSale].map((e, i) => {
-                      if (e.isFlashSale) {
-                        return (
-                          <div
-                            key={i}
-                            className="px-2 relative"
-                            style={{ minWidth: "170px", width: "200px" }}
-                            onClick={() => {
-                              history.push(
-                                path.showProducts.replace(":id", e.id)
-                              );
-                            }}
-                          >
+        {isLoadingData ? null :
+          <div
+            id="scroll"
+            className="product-scroll "
+            style={{
+              width: "90%",
+              margin: "auto",
+              height: "calc(100% - " + (y > 120 ? 165 - 120 : 165 - y) + "px)",
+              overflow: "scroll",
+            }}
+            onScroll={listenScrollEvent}
+          >
+            {/* flash_sale */}
+            {isFlashsale ? (
+              <div className="mt-2">
+                <div
+                  className="shadow"
+                  style={{
+                    border: "1px solid #FFF",
+                    borderRadius: "10px",
+                    width: "100%",
+                  }}
+                >
+                  <div className="mt-2 px-2 py-2">
+                    <div>
+                      <img
+                        src={require("assets/img/mbk/flash_sale.png").default}
+                        alt="flash_sale"
+                        className="border-2 border-blueGray-50 "
+                        style={{ width: "100px" }}
+                      ></img>
+                    </div>
+                    <div
+                      className="flex mt-2 line-scroll "
+                      style={{
+                        overflowX: "auto",
+                        width: "100%",
+                        maxWidth: "340px",
+                      }}
+                    >
+                      {[...tbStockiewFlashSale].map((e, i) => {
+                        if (e.isFlashSale) {
+                          return (
                             <div
-                              className="relative"
-                              style={{ height: "150px" }}
-                            >
-                              <div
-                                className="absolute text-white font-bold"
-                                style={{
-                                  backgroundColor: "rgb(213 183 65 / 59%)",
-                                  width: "100%",
-                                  bottom: "0",
-                                  height: "30px",
-                                  borderRadius: "10px 0 10px 0",
-                                  padding: "5px",
-                                  textAlign: "center",
-                                  zIndex: "1",
-                                }}
-                              >
-                                <Counter
-                                  time={
-                                    new Date(e.endDateCampaign)
-                                      .toISOString()
-                                      .split("T")[0] +
-                                    " " +
-                                    e.endTimeCampaign
-                                  }
-                                />
-                              </div>
-
-                              <ImageUC
-                                style={{ margin: "auto", minHeight: "120px" }}
-                                find={1}
-                                relatedid={e.id}
-                                relatedtable={["stock1"]}
-                                alt="flash_sale"
-                                className="w-32 border-2 border-blueGray-50"
-                              ></ImageUC>
-
-                              {e.isBestSeller ? (
-                                <img
-                                  style={{
-                                    width: "40px",
-                                    height: "40px",
-                                    top: "0",
-                                    right: "0",
-                                  }}
-                                  src={
-                                    require("assets/img/mbk/icon_hot.png")
-                                      .default
-                                  }
-                                  alt="icon_hot"
-                                  className="w-32 border-2 border-blueGray-50 absolute"
-                                ></img>
-                              ) : null}
-                            </div>
-
-                            <div className="px-2 py-2">
-                              <div
-                                className="line-clamp-2"
-                                style={{
-                                  fontSize: "11px",
-                                  height: "35px",
-                                }}
-                              >
-                                {e.productName}
-                              </div>
-                            </div>
-                            <div
-                              className="flex relative"
-                              style={{
-                                bottom: "0",
-                                left: "10px",
-                                fontSize: "10px",
+                              key={i}
+                              className="px-2 relative"
+                              style={{ minWidth: "170px", width: "200px" }}
+                              onClick={() => {
+                                history.push(
+                                  path.showProducts.replace(":id", e.id)
+                                );
                               }}
                             >
                               <div
-                                style={{
-                                  color: e.discount > 0 ? "#ddd" : "#000",
-                                  textDecoration:
-                                    e.discount > 0 ? "line-through" : "none",
-                                }}
+                                className="relative"
+                                style={{ height: "150px" }}
                               >
-                                {"฿ " + fn.formatMoney(e.price)}
-                              </div>
-                              {e.discount > 0 ? (
                                 <div
-                                  style={{ color: "red", paddingLeft: "10px" }}
+                                  className="absolute text-white font-bold"
+                                  style={{
+                                    backgroundColor: "rgb(213 183 65 / 59%)",
+                                    width: "100%",
+                                    bottom: "0",
+                                    height: "30px",
+                                    borderRadius: "10px 0 10px 0",
+                                    padding: "5px",
+                                    textAlign: "center",
+                                    zIndex: "1",
+                                  }}
                                 >
-                                  {"฿ " + fn.formatMoney(e.priceDiscount)}
+                                  <Counter
+                                    startTimeCampaign={e.startTimeCampaign}
+                                    endTimeCampaign={e.endTimeCampaign}
+                                  />
                                 </div>
-                              ) : null}
+
+                                <ImageUC
+                                  style={{ margin: "auto", minHeight: "120px" }}
+                                  find={1}
+                                  relatedid={e.id}
+                                  relatedtable={["stock1"]}
+                                  alt="flash_sale"
+                                  className="w-32 border-2 border-blueGray-50"
+                                ></ImageUC>
+
+                                {e.isBestSeller ? (
+                                  <img
+                                    style={{
+                                      width: "40px",
+                                      height: "40px",
+                                      top: "0",
+                                      right: "0",
+                                    }}
+                                    src={
+                                      require("assets/img/mbk/icon_hot.png")
+                                        .default
+                                    }
+                                    alt="icon_hot"
+                                    className="w-32 border-2 border-blueGray-50 absolute"
+                                  ></img>
+                                ) : null}
+                              </div>
+
+                              <div className="px-2 py-2">
+                                <div
+                                  className="line-clamp-2"
+                                  style={{
+                                    fontSize: "11px",
+                                    height: "35px",
+                                  }}
+                                >
+                                  {e.productName}
+                                </div>
+                              </div>
                               <div
-                                className="absolute"
+                                className="flex relative"
                                 style={{
                                   bottom: "0",
-                                  right: "10px",
-                                  color: "gray",
+                                  left: "10px",
+                                  fontSize: "10px",
                                 }}
                               >
-                                <i
-                                  className="fas fa-shopping-cart"
-                                  style={{ color: "#ddd", fontSize: "10px" }}
-                                ></i>
+                                <div
+                                  style={{
+                                    color: e.discount > 0 ? "#ddd" : "#000",
+                                    textDecoration:
+                                      e.discount > 0 ? "line-through" : "none",
+                                  }}
+                                >
+                                  {"฿ " + fn.formatMoney(e.price)}
+                                </div>
+                                {e.discount > 0 ? (
+                                  <div
+                                    style={{ color: "red", paddingLeft: "10px" }}
+                                  >
+                                    {"฿ " + fn.formatMoney(e.priceDiscount)}
+                                  </div>
+                                ) : null}
+                                <div
+                                  className="absolute"
+                                  style={{
+                                    bottom: "0",
+                                    right: "10px",
+                                    color: "gray",
+                                  }}
+                                >
+                                  <i
+                                    className="fas fa-shopping-cart"
+                                    style={{ color: "#ddd", fontSize: "10px" }}
+                                  ></i>
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        );
-                      }
-                    })}
+                          );
+                        }
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ) : null}
-          <div className="mt-2 mb-2 mt-2">
-            <div className="line-row mb-2 ">
-              {[...tbStockiewNominal].map((e, i) => {
-                return (
-                  <div
-                    key={i}
-                    className="line-column mt-2 mb-2"
-                    // style={{filter :"g" e.productCount <1}}
-                    onClick={() => {
-                      history.push(path.showProducts.replace(":id", e.id));
-                    }}
-                  >
-                    <div className="line-card relative" >
-                      <div className="relative" >
-                        <ImageUC
-                          style={{
-                            margin: "auto",
-                            minHeight: "120px",
-                            maxHeight: "120px",
-                          }}
-                          find={1}
-                          relatedid={e.id}
-                          relatedtable={["stock1"]}
-                          alt="flash_sale"
-                          className="w-32 border-2 border-blueGray-50 animated-img"
-                        ></ImageUC>
-
-                        {e.discount > 0 ? (
-                          <div
-                            className="absolute"
+            ) : null}
+            <div className="mt-2 mb-2 mt-2">
+              <div className="line-row mb-2 ">
+                {[...tbStockiewNominal].map((e, i) => {
+                  return (
+                    <div
+                      key={i}
+                      className="line-column mt-2 mb-2"
+                      // style={{filter :"g" e.productCount <1}}
+                      onClick={() => {
+                        history.push(path.showProducts.replace(":id", e.id));
+                      }}
+                    >
+                      <div className="line-card relative" >
+                        <div className="relative" >
+                          <ImageUC
                             style={{
-                              bottom: "0",
-                              left: "0px",
-                              backgroundColor: "red",
-                              borderRadius: "5px",
+                              margin: "auto",
+                              minHeight: "120px",
+                              maxHeight: "120px",
                             }}
-                          >
-                            <div className="text-xs text-white px-2">
-                              {"SALE -" + fn.formatMoney(e.percent) + "%"}
+                            find={1}
+                            relatedid={e.id}
+                            relatedtable={["stock1"]}
+                            alt="flash_sale"
+                            className="w-32 border-2 border-blueGray-50 animated-img"
+                          ></ImageUC>
+
+                          {e.discount > 0 ? (
+                            <div
+                              className="absolute"
+                              style={{
+                                bottom: "0",
+                                left: "0px",
+                                backgroundColor: "red",
+                                borderRadius: "5px",
+                              }}
+                            >
+                              <div className="text-xs text-white px-2">
+                                {"SALE -" + fn.formatMoney(e.percent) + "%"}
+                              </div>
                             </div>
-                          </div>
-                        ) : null}
+                          ) : null}
 
-                        {e.isBestSeller ? (
-                          <img
-                            style={{
-                              width: "40px",
-                              height: "40px",
-                              top: "0",
-                              right: "0",
-                            }}
-                            src={require("assets/img/mbk/icon_hot.png").default}
-                            alt="icon_hot"
-                            className="w-32 border-2 border-blueGray-50 absolute"
-                          ></img>
-                        ) : null}
-                      </div>
-                      <div
-                        className="px-1 py-2 line-scroll line-clamp-2"
-                        style={{
-                          height: "40px",
-                          lineHeight: "15px",
-                          overflow: "auto",
-                          marginBottom: "10px",
-                          fontSize: "11px",
-                        }}
-                      >
-                        {e.productName}
-                      </div>
-                      <div
-                        className="flex mb-1 "
-                        style={{ bottom: "0", left: "10px", fontSize: "10px" }}
-                      >
+                          {e.isBestSeller ? (
+                            <img
+                              style={{
+                                width: "40px",
+                                height: "40px",
+                                top: "0",
+                                right: "0",
+                              }}
+                              src={require("assets/img/mbk/icon_hot.png").default}
+                              alt="icon_hot"
+                              className="w-32 border-2 border-blueGray-50 absolute"
+                            ></img>
+                          ) : null}
+                        </div>
                         <div
+                          className="px-1 py-2 line-scroll line-clamp-2"
                           style={{
-                            color: e.discount > 0 ? "#ddd" : "#000",
-                            textDecoration:
-                              e.discount > 0 ? "line-through" : "none",
+                            height: "40px",
+                            lineHeight: "15px",
+                            overflow: "auto",
+                            marginBottom: "10px",
+                            fontSize: "11px",
                           }}
                         >
-                          {"฿ " + fn.formatMoney(e.price)}
+                          {e.productName}
                         </div>
-                        {e.discount > 0 ? (
-                          <div style={{ color: "red", paddingLeft: "10px" }}>
-                            {"฿ " + fn.formatMoney(e.priceDiscount)}
+                        <div
+                          className="flex mb-1 "
+                          style={{ bottom: "0", left: "10px", fontSize: "10px" }}
+                        >
+                          <div
+                            style={{
+                              color: e.discount > 0 ? "#ddd" : "#000",
+                              textDecoration:
+                                e.discount > 0 ? "line-through" : "none",
+                            }}
+                          >
+                            {"฿ " + fn.formatMoney(e.price)}
                           </div>
-                        ) : null}
-                      </div>
-                      <div
-                        className="absolute"
-                        style={{ bottom: "0", right: "10px", color: "gray" }}
-                      >
-                        <i
-                          className="fas fa-shopping-cart"
-                          style={{ color: "#ddd", fontSize: "10px" }}
-                        ></i>
+                          {e.discount > 0 ? (
+                            <div style={{ color: "red", paddingLeft: "10px" }}>
+                              {"฿ " + fn.formatMoney(e.priceDiscount)}
+                            </div>
+                          ) : null}
+                        </div>
+                        <div
+                          className="absolute"
+                          style={{ bottom: "0", right: "10px", color: "gray" }}
+                        >
+                          <i
+                            className="fas fa-shopping-cart"
+                            style={{ color: "#ddd", fontSize: "10px" }}
+                          ></i>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
     </>
   );
