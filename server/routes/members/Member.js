@@ -539,11 +539,11 @@ router.post("/checkRegister", async (req, res) => {
 
 router.get("/getMember", validateLineToken, async (req, res) => {
   let code = 500;
-  const id = Encrypt.DecodeKey(req.user.id);
   let members;
   try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
     let member = await tbMember.findOne({
-      where: { id: id, isDeleted: false },
+      where: { uid: uid, isDeleted: false },
     });
     code = 200;
     if (member) {
