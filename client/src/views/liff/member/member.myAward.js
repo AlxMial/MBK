@@ -33,6 +33,7 @@ const MyAward = () => {
     );
   };
   useEffect(() => {
+
     GetMyReward();
   }, []);
 
@@ -126,7 +127,7 @@ const MyAward = () => {
           </div>
         </div>
 
-        {productItem.length > 0 ? (
+        {productItem.length > 0  ? (
           productItem.map((e, i) => {
             return (
               <>
@@ -191,12 +192,6 @@ const MyAward = () => {
                     </div>
                   </div>
                 </div>
-                {/* <div
-                  className="mb-2 mt-1 w-full"
-                  style={{ borderBottom: i === 0 ? "1px solid #ddd" : "" }}
-                >
-                  &nbsp;
-                </div>{" "} */}
                 {i === 0  && productItem.length > 1 ? <div className="liff-inline mb-2" /> : null}
               </>
             );

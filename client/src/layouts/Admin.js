@@ -52,7 +52,7 @@ export default function Admin() {
           <div
             className={
               " border-body px-4 minHeight " +
-              (width < 1024 ? " pt-4" : " md:px-10 pt-12")
+              (width < 1024 ? " pt-4" : " md:px-10 pt-8")
             }
           >
             <Switch>
