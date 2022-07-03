@@ -65,7 +65,7 @@ const PaymentModel = ({
                 });
                 setRadio(e.target.value);
               } else {
-                addToast("ยอดรวมสิ้นค้าต้องมากกว่า 500 บาท", {
+                addToast("ยอดรวมสินค้าต้องมากกว่า 500 บาท", {
                   appearance: "warning",
                   autoDismiss: true,
                 });

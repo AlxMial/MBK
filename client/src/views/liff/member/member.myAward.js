@@ -114,7 +114,7 @@ const MyAward = () => {
           style={{ height: "40px", fontSize: "12px" }}
         >
           <div className="text-green-mbk font-bold" style={{ width: "50%" }}>
-            ของสัมนาคุณของฉัน
+            ของสมนาคุณของฉัน
           </div>
           <div
             className="text-liff-gray-mbk text-xs"
@@ -198,7 +198,7 @@ const MyAward = () => {
           })
         ) : (
           <div style={{ height: "50px" }}>
-            <EmptyOrder text={"ยังไม่มีของสัมนาคุณ"} />
+            <EmptyOrder text={"ยังไม่มีของสมนาคุณ"} />
           </div>
         )}
       </div>

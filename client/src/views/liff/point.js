@@ -31,7 +31,7 @@ const Point = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div className="h-full" style={{ marginTop: "-90px", width: "100%" }}>
+      <div className="h-full" style={{ marginTop: "-200px", width: "100%" }}>
         <MyPoint />
         <div className="mt-6">
           <div
@@ -96,13 +96,11 @@ const Point = () => {
                       style={{ paddingLeft: "2rem", paddingTop: "10px" }}
                     >
                       {e.campaignType == "1"
-                        ? "Code"
+                        ? "กรอก Code จากสินค้า"
                         : e.campaignType == "2"
-                          ? "Ecommerce"
-                          : e.campaignType == "3" ? "Register"
-                            : e.campaignType == "4" ? "แลกคูปอง" :
-                              e.campaignType == "5" ? "แลกของสมนาคุณ"
-                                : "เล่นเกมส์"}
+                          ? "ซื้อสินค้าออนไลน์"
+                          : e.campaignType == "3" ? "สมัตรสมาชิก"
+                            : "เล่นเกม"}
                     </div>
                     <div className="absolute" style={{ right: "0" }}>
                       <div
