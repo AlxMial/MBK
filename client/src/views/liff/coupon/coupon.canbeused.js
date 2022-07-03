@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 // components
 
 const Canbeused = ({ data }) => {
+  console.log(data)
   const history = useHistory();
   return (
     <>
@@ -13,7 +14,9 @@ const Canbeused = ({ data }) => {
         <div className="flex relative" style={{ height: "100%" }}>
           {data.length > 0 ?
             <div className="w-full mt-2 mb-2 text-green-mbk font-bold text-xs" style={{ height: "calc(100% - 250px)" }}>
-              {[...data].map((e, i) => {
+              {[...data].filter((e) => { 
+                return e.isUsedCoupon === false && new Date(e.expiredDate) > new Date() 
+              }).map((e, i) => {
                 return (
                   <div key={i} className="w-full  mb-2" >
                     <div className="w-full mb-2" >
@@ -36,6 +39,7 @@ const Canbeused = ({ data }) => {
                     }}>
                       <div className="flex" style={{ width: "calc(100% - 30px)", alignItems: "center" }}>{e.couponName}</div>
                       <div style={{ width: "30px", textAlign: "right" }}>
+               
                         <i className="flex fas fa-angle-right" style={{ alignItems: "center", fontSize: "25px" }}></i>
                       </div>
                     </div>

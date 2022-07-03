@@ -43,10 +43,16 @@ const InfoCoupon = () => {
             <div style={{ height: "calc(50% - 100px)" }}>
                 {MyCoupon != null ?
                     <div className="w-full absolute" style={{ height: "100%" }}>
-                        <div className="mb-4" style={{ height: "100px", backgroundColor: "#efefef" }}>
-                            กรุณาแสดงรหัสนี้ให้แก่ร้านค้า เพื่อใช้สิทธิพิเศษของคุณ
+                    
+                        <div className="bg-green-mbk">
+                            <div
+                            style={{ height: "10vh",width:"70%",margin:"auto",lineHeight:"2" }}
+                            className=" noselect text-lg text-white font-bold text-center "
+                            >
+                             กรุณาแสดงรหัสนี้ให้แก่ร้านค้า<br/> เพื่อใช้สิทธิพิเศษของคุณ
+                            </div>
                         </div>
-                        <div className="mb-4" style={{ height: "100px", }}>
+                        <div className="mb-4 mt-6" style={{ height: "100px", }}>
                             {/* {MyCoupon} */}
                             <div className="w-full flex px-2">
                                 <div style={{ width: "30%" }}>
@@ -93,7 +99,7 @@ const InfoCoupon = () => {
                                         height={100}
                                     />
                                 </div>
-                                <div className="mt-2 text-center">{MyCoupon.codeCoupon}</div>
+                                <div className="mt-2 text-center" style={{ width:"70%", justifyContent: "center",margin: "auto",wordBreak:"break-word"}} >{MyCoupon.codeCoupon}</div>
                             </div>}
 
                     </div> : null}
