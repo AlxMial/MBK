@@ -66,20 +66,21 @@ const Member = () => {
         <div
           className=" flex margin-a shadow-2xl"
           style={{
-            width: "95%",
+            width: "90%",
             padding: "20px",
-            height: "55vw",
+            height: "40vw",
             borderRadius: "10px",
             backgroundColor:"#007A40",
             border:"2px solid white",
             backgroundImage: `url(${
               IsNullOrEmpty(tbMember)
                 ? null
-                : require(tbMember.memberType === "1"
-                    ? "assets/img/mbk/Green.png"
-                    : tbMember.memberType === "2"
-                    ? "assets/img/mbk/Silver.png"
-                    : "assets/img/mbk/Gold.png").default
+                : require("assets/img/mbk/Green.png").default
+                // : require(tbMember.memberType === "1"
+                //     ? "assets/img/mbk/Green.png"
+                //     : tbMember.memberType === "2"
+                //     ? "assets/img/mbk/Silver.png"
+                //     : "assets/img/mbk/Gold.png").default
             })`,
             // backgroundSize: "cover",
             // objectFit: "cover",
@@ -195,7 +196,7 @@ const Member = () => {
           <div
             className="bg-green-mbk flex text-white font-bold text-xs relative margin-a shadow-2xl"
             style={{
-              width: "95%",
+              width: "90%",
               padding: "10px",
               height: "40px",
               marginTop: "-2px",

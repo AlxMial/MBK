@@ -427,11 +427,27 @@ const StockInfo = ({
                           uncheckedIcon={false}
                           checkedIcon={false}
                           onChange={(value) => {
-                            formik.setFieldValue('startDateCampaign',"");
-                            formik.setFieldValue('endDateCampaign',"");
-                            formik.setFieldValue('startTimeCampaign',"");
-                            formik.setFieldValue('endTimeCampaign',"");
+                            // if(value){
+                            //   formik.setFieldValue('startDateCampaign',moment(
+                            //     new Date(),
+                            //     "DD/MM/YYYY"
+                            //   ));
+                            //   formik.setFieldValue('endDateCampaign',moment(
+                            //     new Date(),
+                            //     "DD/MM/YYYY"
+                            //   ));
+                            //   formik.setFieldValue('startTimeCampaign',"");
+                            //   formik.setFieldValue('endTimeCampaign',"");
+                            //   formik.setFieldValue("isFlashSale", value);
+                            // } else {
+                            //   formik.setFieldValue('startDateCampaign',"");
+                            //   formik.setFieldValue('endDateCampaign',"");
+                            //   formik.setFieldValue('startTimeCampaign',"");
+                            //   formik.setFieldValue('endTimeCampaign',"");
+                            //   formik.setFieldValue("isFlashSale", value);
+                            // }
                             formik.setFieldValue("isFlashSale", value);
+                            
                           }}
                           checked={formik.values.isFlashSale}
                         />
@@ -507,6 +523,7 @@ const StockInfo = ({
                           value={formik.values.startTimeCampaign}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
+                            console.log(e)
                             formik.handleChange(e);
                           }}
                         />

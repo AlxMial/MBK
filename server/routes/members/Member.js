@@ -827,7 +827,7 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
 });
 
 /// คูปอง รวม product อย่างละ 2 row
-router.get("/getMyReward", validateLineToken, async (req, res) => {
+router.get("/getMyReward",validateLineToken, async (req, res) => {
   let status = true;
   let msg;
   let Member;
