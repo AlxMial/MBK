@@ -45,12 +45,11 @@ const MyPointUC = () => {
 
             }}
           >
-            {/* <span className="text-shadow">{tbMember.memberPoint === null ? 0 : tbMember.memberPoint}</span> */}
-            <span className="text-shadow">{0}</span>
+            <span className="text-shadow">{tbMember.memberPoint === null ? 0 : tbMember.memberPoint}</span>
           </div>
         </div>
         <div className=" text-sm font-bold text-center mt-4 ">
-          {Memberpoints.memberpoints +
+          {/*Memberpoints.memberpoints*/0 +
             " คะแนน จะหมดอายุ " +
             (IsNullOrEmpty(Memberpoints.enddate)
               ? "-"

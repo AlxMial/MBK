@@ -44,7 +44,6 @@ const MyOrder = () => {
         </div>
         {OrderHD && OrderHD.length > 0 ?
           <div className="line-scroll" >
-
             {OrderHD.map((hd, index) => {
               return (
                 <div key={index}>
