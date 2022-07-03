@@ -8,7 +8,7 @@ import CheckBoxUC from "components/CheckBoxUC";
 import TextAreaUC from 'components/InputUC/TextAreaUC';
 
 const Logistic = ({ props, setOrderHD }) => {
-    const { orderHD, orderDT, memberData,
+    const { orderHD, orderHDold, orderDT, memberData,
         isChangeOrderNumber, isCanEdit,
         setIsChangeOrderNumber, orderNumber,
         setOrderNumber, isCancel, setIsCancel
@@ -18,6 +18,9 @@ const Logistic = ({ props, setOrderHD }) => {
     const [address, setAddress] = useState(orderHD.address);
     const [province, setProvince] = useState();
     const [isChange, setIsChange] = useState(false);
+
+    const [isChangeTrackNo, setisChangeTrackNo] = useState(false);
+
 
     const getStatus = (value) => {
         if (value && value === 'done')
@@ -36,11 +39,34 @@ const Logistic = ({ props, setOrderHD }) => {
         { label: "ไปรษณีย์ไทย", value: 'post' },
     ];
 
-    const options = [
-        { value: 1, label: 'เตรียมส่ง' },
-        { value: 2, label: 'กำลังส่ง' },
-        { value: 3, label: 'ส่งแล้ว' },
-    ];
+    // const options = [
+    //     { value: 1, label: 'เตรียมส่ง' },
+    //     { value: 2, label: 'กำลังส่ง' },
+    //     { value: 3, label: 'ส่งแล้ว' },
+    // ];
+
+    const getoption = () => {
+        if (orderHDold.transportStatus == 1) {
+            return [
+                { value: 1, label: 'เตรียมส่ง' },
+                { value: 2, label: 'กำลังส่ง' },
+                { value: 3, label: 'ส่งแล้ว' },
+            ]
+        } else if (orderHDold.transportStatus == 2) {
+            return [
+                { value: 1, label: 'เตรียมส่ง', isDisabled: true },
+                { value: 2, label: 'กำลังส่ง' },
+                { value: 3, label: 'ส่งแล้ว' },
+            ]
+        } else {
+            return [
+                { value: 1, label: 'เตรียมส่ง', isDisabled: true },
+                { value: 2, label: 'กำลังส่ง', isDisabled: true },
+                { value: 3, label: 'ส่งแล้ว' },
+            ]
+        }
+
+    }
 
     useEffect(async () => {
         const subDistrict = await Address.getAddressName("subDistrict", memberData.subDistrict);
@@ -52,10 +78,25 @@ const Logistic = ({ props, setOrderHD }) => {
         setProvince(_province ? ((_province !== 'กรุงเทพมหานคร' ? 'จังหวัด ' : '') + _province) : '');
     }, [address, memberData]);
 
-    const handleChangeOrderNumber = (value) => {
-        setIsChange(value);
-        setIsChangeOrderNumber(value);
-    }
+    // const handleChangeOrderNumber = (value) => {
+    //     setIsChange(value);
+    //     setIsChangeOrderNumber(value);
+    // }
+    const OpenmodelCancel = [
+        {
+            value: "ต้องการเปลี่ยนแปลงที่อยู่ในการจัดส่งสินค้า",
+            label: "ต้องการเปลี่ยนแปลงที่อยู่ในการจัดส่งสินค้า",
+        },
+        {
+            value: "ผู้ขายไม่ตอบสนองในการสอบถามข้อมูล",
+            label: "ผู้ขายไม่ตอบสนองในการสอบถามข้อมูล",
+        },
+        { value: "สั่งสินค้าผิด", label: "สั่งสินค้าผิด" },
+        { value: "เปลี่ยนใจ", label: "เปลี่ยนใจ" },
+        { value: "อื่นๆ", label: "อื่นๆ" },
+    ];
+
+    console.log(orderHD)
 
     return (
         <div className='mt-2 px-4'>
@@ -72,12 +113,13 @@ const Logistic = ({ props, setOrderHD }) => {
                                 // setTransportStatus(value.value);
                                 setOrderHD(p => { return { ...p, transportStatus: value.value } })
                             }}
-                            options={options}
+                            options={getoption()}
                             value={ValidateService.defaultValue(
-                                options,
+                                getoption(),
                                 orderHD.transportStatus
                             )}
-                            isDisabled={orderHD.paymentStatus != 3 ? true : false}
+                            // isDisabled={orderHD.paymentStatus != 3 && !isCanEdit}
+                            isDisabled={!isCanEdit ? true : orderHD.paymentStatus != 3 ? true : false}
                         // bgColor={getStatus(transportStatus).bg}
                         />
                     </div>
@@ -102,10 +144,11 @@ const Logistic = ({ props, setOrderHD }) => {
                 </div>
                 <div className='py-2 margin-auto-t-b w-full flex'>
                     <label className='text-blueGray-600 text-sm font-bold  margin-auto-t-b' >หมายเลขพัสดุ</label>
-                    {!isChange ? (
+                    {!isChangeTrackNo ? (
                         <>
-                            <label className='text-blueGray-600 text-sm ml-2 mr-2' >{orderHD.orderNumber}</label>
-                            {isCanEdit && <i className="fas fa-pen cursor-pointer" onClick={() => handleChangeOrderNumber(true)}></i>}
+                            <label className='text-blueGray-600 text-sm ml-2 mr-2' >{orderHD.trackNo}</label>
+                            {isCanEdit && orderHD.transportStatus > 1 && <i className="fas fa-pen cursor-pointer" onClick={() => setisChangeTrackNo(true)}></i>}
+                            {/* <i className="fas fa-pen cursor-pointer" onClick={() => setisChangeTrackNo(true)}></i> */}
                         </>
                     ) : (
                         <div className='flex flex-col'>
@@ -113,12 +156,13 @@ const Logistic = ({ props, setOrderHD }) => {
                                 <InputUC
                                     name='orderNumber'
                                     maxLength={50}
-                                    value={orderNumber}
+                                    value={orderHD.trackNo}
                                     moreClassName='lg:w-10/12'
                                     onChange={(e) => {
-                                        setOrderNumber(e.target.value);
+
+                                        setOrderHD(p => { return { ...p, trackNo: e.target.value } })
                                     }} />
-                                <i className="ml-2 fas fa-times cursor-pointer margin-auto-t-b" onClick={() => handleChangeOrderNumber(false)}></i>
+                                <i className="ml-2 fas fa-times cursor-pointer margin-auto-t-b" onClick={() => setisChangeTrackNo(false)}></i>
                             </div>
                             {isChangeOrderNumber && !orderNumber && (
                                 <div className='w-full pl-4'>
@@ -137,37 +181,69 @@ const Logistic = ({ props, setOrderHD }) => {
                         classLabel="mt-2"
                         classSpan='text-cancel'
                         onChange={(e) => {
-                            setIsCancel(e.target.checked);
+                            // setIsCancel(e.target.checked);
+                            setOrderHD(p => { return { ...p, isCancel: e.target.checked } })
                         }}
-                        disabled={!isCanEdit}
-                        checked={isCancel}
+                        disabled={!isCanEdit ? true : (orderHDold.isCancel || orderHD.paymentStatus == 3)}
+                        checked={orderHD.isCancel}
                     />
                 </div>
-                {isCancel && (
-                    <>
-                        <LabelUC label={'สาเหตุที่ยกเลิก'} isRequired={true} />
-                        <div className='py-2 margin-auto-t-b w-full flex mt-2'>
-                            <TextAreaUC
-                                name='cancelReason'
-                                value={cancelReason}
-                                rows={3}
-                                maxLength={255}
-                                disabled={!isCanEdit}
-                                onChange={(e) => {
-                                    setCancelReason(e.target.value);
-                                }} />
-                        </div>
-                        {!cancelReason && (
-                            <div className='py-2 margin-auto-t-b w-full flex'>
-                                <div className='w-full'>
-                                    <div className="text-sm py-2 px-2  text-red-500">
-                                        * กรุณากรอกสาเหตุที่ยกเลิกคำสั่งซื้อ
-                                    </div>
+                {/* {orderHD.isCancel && ( */}
+                <>
+
+                    <div className={'p-2 rounded '}>
+                        <SelectUC
+                            name="cancelDetail"
+                            onChange={(value) => {
+
+                                if (orderHD.tbCancelOrder == null) {
+                                    orderHD.tbCancelOrder = { cancelDetail: value.value }
+                                } else {
+                                    orderHD.tbCancelOrder.cancelDetail = value.value
+                                }
+                                setOrderHD(orderHD)
+                            }}
+                            options={OpenmodelCancel}
+                            value={ValidateService.defaultValue(
+                                OpenmodelCancel,
+                                orderHD.tbCancelOrder == null ? null : orderHD.tbCancelOrder.cancelDetail
+                            )}
+                            isDisabled={!isCanEdit ? true : (orderHD.paymentStatus == 3) ? true : !orderHD.isCancel ? true : false}
+                        // bgColor={getStatus(transportStatus).bg}
+                        />
+                    </div>
+                    <div className='py-2 margin-auto-t-b '>
+                        <LabelUC label={'สาเหตุที่ยกเลิก'} />
+                    </div>
+                    <div className='py-2 margin-auto-t-b w-full flex mt-2'>
+                        <TextAreaUC
+                            name='cancelReason'
+                            value={orderHD.tbCancelOrder == null ? "" : orderHD.tbCancelOrder.description}
+                            rows={3}
+                            maxLength={255}
+                            disabled={!isCanEdit ? true : orderHD.paymentStatus == 3 ? true : false}
+                            onChange={(e) => {
+                                setCancelReason(e.target.value);
+                                if (orderHD.tbCancelOrder == null) {
+                                    orderHD.tbCancelOrder = { description: e.target.value }
+                                } else {
+                                    orderHD.tbCancelOrder.description = e.target.value
+                                }
+                                setOrderHD(orderHD)
+
+                            }} />
+                    </div>
+                    {!cancelReason && (
+                        <div className='py-2 margin-auto-t-b w-full flex'>
+                            <div className='w-full'>
+                                <div className="text-sm py-2 px-2  text-red-500">
+                                    * กรุณากรอกสาเหตุที่ยกเลิกคำสั่งซื้อ
                                 </div>
                             </div>
-                        )}
-                    </>
-                )}
+                        </div>
+                    )}
+                </>
+                {/* )} */}
             </div>
         </div >
     )

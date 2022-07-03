@@ -4,11 +4,11 @@ import './index.scss'
 
 const PurchaseOrder = ({ props }) => {
     const { orderHD, orderDT, openExport } = props;
-    const thClass = "px-2  py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
-    const tdClass = "border-t-0 pl-2 align-middle border-l-0 border-r-0 py-3 text-sm whitespace-normal";
+    const thClass = "px-2  py-1 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
+    const tdClass = "border-t-0 pl-2 align-middle border-l-0 border-r-0 py-1 text-sm whitespace-normal";
     const tdSpan = "text-gray-mbk hover:text-gray-mbk ";
-    const footerClass = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
-    const footerSumPrice = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-green-mbk ";
+    // const footerClass = "py-1 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
+    // const footerSumPrice = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-green-mbk ";
 
 
     const sumPrice = orderDT.reduce((sum, item) => {
@@ -49,7 +49,7 @@ const PurchaseOrder = ({ props }) => {
                                                 {key + 1}
                                             </span>
                                         </td>
-                                        <td className={tdClass + ' flex margin-auto-t-b'}>
+                                        <td className={' flex margin-auto-t-b'}>
                                             {!openExport &&
                                                 <div className="h-full mr-2">
                                                     <img className='order-image-stock' src={value.image ?? require('assets/img/mbk/no-image.png').default} />
@@ -74,11 +74,11 @@ const PurchaseOrder = ({ props }) => {
                                                 <div className="flex flex-col">
                                                     <div>
                                                         <strike className='text-gray-300'>
-                                                            ฿{(parseFloat(parseFloat(value.price) + parseFloat(value.discount)).toFixed(2)).toLocaleString('en')}
+                                                            {(parseFloat(parseFloat(value.price) + parseFloat(value.discount)).toFixed(2)).toLocaleString('en')}
                                                         </strike>
                                                     </div>
                                                     <div className='text-red-500'>
-                                                        ฿{parseFloat(parseFloat(value.price).toFixed(2)).toLocaleString('en')}
+                                                        {parseFloat(parseFloat(value.price).toFixed(2)).toLocaleString('en')}
                                                     </div>
                                                 </div>
                                             </td>
@@ -106,14 +106,61 @@ const PurchaseOrder = ({ props }) => {
                                 </span>
                             </td>
                             <td className={tdClass + ' text-right'}>
-                                <span className={footerClass}>
-                                    ยอดรวม
+                                ยอดรวมสินค้า
+                            </td>
+                            <td className={tdClass + ' text-right font-bold'}>
+                                <span className={' pr-4'}>
+                                    {parseFloat(sumPrice.toFixed(2)).toLocaleString('en')}
                                 </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className={thClass}>
+                                <span className={tdSpan}>
+
+                                </span>
+                            </td>
+                            <td className={thClass}>
+                                <span className={tdSpan}>
+
+                                </span>
+                            </td>
+
+                            <td className={tdClass + ' text-right'}>
+                                ส่วนลดร้านค้า
                             </td>
                             <td className={tdClass + ' text-right'}>
-                                <span className={footerSumPrice + ' pr-4'}>
-                                    ฿{parseFloat(sumPrice.toFixed(2)).toLocaleString('en')}
+                                <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left  pr-4"}
+                                    style={{ textAlign: "end" }}>
+                                    {orderHD.discountStorePromotion}
+                                </div>
+                            </td>
+                        </tr>
+
+
+
+                        <tr>
+                            <td className={thClass}>
+                                <span className={tdSpan}>
+
                                 </span>
+                            </td>
+                            <td className={thClass}>
+                                <span className={tdSpan}>
+
+                                </span>
+                            </td>
+
+
+                            <td className={tdClass + ' text-right '}>
+                                ค่าจัดส่ง
+                            </td>
+                            <td className={tdClass + ' text-right '}>
+                                <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left  pr-4"}
+                                    style={{ textAlign: "end" }}>
+                                    {orderHD.deliveryCost > orderHD.discountDelivery ? (orderHD.deliveryCost) : (orderHD.discountDelivery)}
+                                </div>
+
                             </td>
                         </tr>
                         <tr>
@@ -127,43 +174,16 @@ const PurchaseOrder = ({ props }) => {
 
                                 </span>
                             </td>
-                            <td className={tdClass + ' text-right ' + (sumDiscount > 0 ? '' : 'border-b')}>
-                                <span className={footerClass}>
-                                    ค่าจัดส่ง
-                                </span>
+                            <td className={tdClass + ' text-right border-b'}>
+                                ส่วนลดคูปอง
                             </td>
-                            <td className={tdClass + ' text-right ' + (sumDiscount > 0 ? '' : 'border-b')}>
-                                <span className={footerClass + ' pr-4'}>
-                                    {orderHD.deliveryCost === 0 ? 'ฟรี' : ('฿' + orderHD.deliveryCost)}
-                                </span>
+                            <td className={tdClass + ' text-right border-b'}>
+                                <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left  pr-4" + (orderHD.discountCoupon > 0 ? " text-red-500 " : "")}
+                                    style={{ textAlign: "end" }}>
+                                    {(orderHD.discountCoupon > 0 ? "-" : "") + parseFloat((orderHD.discountCoupon)).toLocaleString('en')}
+                                </div>
                             </td>
                         </tr>
-                        {
-                            sumDiscount > 0 && (
-                                <tr>
-                                    <td className={thClass}>
-                                        <span className={tdSpan}>
-
-                                        </span>
-                                    </td>
-                                    <td className={thClass}>
-                                        <span className={tdSpan}>
-
-                                        </span>
-                                    </td>
-                                    <td className={tdClass + ' text-right border-b'}>
-                                        <span className={footerClass}>
-                                            ส่วนลด
-                                        </span>
-                                    </td>
-                                    <td className={tdClass + ' text-right border-b'}>
-                                        <span className="py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-red-500 pr-4">
-                                            -฿{parseFloat((sumDiscount.toFixed(2))).toLocaleString('en')}
-                                        </span>
-                                    </td>
-                                </tr>
-                            )
-                        }
                         <tr>
                             <td className={thClass}>
                                 <span className={tdSpan}>
@@ -175,12 +195,30 @@ const PurchaseOrder = ({ props }) => {
 
                                 </span>
                             </td>
-                            <td className={tdClass + ' text-right border-b'}>
-                                <LabelUC label='รวมทั้งสิ้น' />
+                            <td className={tdClass + " text-green-mbk text-right border-b"}>
+                                <div className='text-green-mbk font-bold'>{"ยอดสุทธิ"}</div>
                             </td>
-                            <td className={tdClass + ' text-right border-b'}>
-                                <LabelUC label={'฿' + parseFloat(parseFloat(orderHD.deliveryCost + sumPrice - sumDiscount).toFixed(2)).toLocaleString('en')}
-                                    moreClassName=' pr-4' />
+                            <td className={tdClass + "  text-right border-b pr-4"}>
+                                <div className='text-green-mbk font-bold'>{parseFloat(parseFloat(orderHD.netTotal).toFixed(2)).toLocaleString('en')} </div>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td className={thClass}>
+                                <span className={tdSpan}>
+
+                                </span>
+                            </td>
+                            <td className={thClass}>
+                                <span className={tdSpan}>
+
+                                </span>
+                            </td>
+                            <td className={tdClass + " text-green-mbk text-right "}>
+                                <div className='text-green-mbk font-bold'>{""}</div>
+                            </td>
+                            <td className={tdClass + "  text-right pr-4"}>
+                                <div className='text-gold-mbk font-bold text-xs'>{"+" + orderHD.points + " points"} </div>
                             </td>
                         </tr>
                     </tfoot>

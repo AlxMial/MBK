@@ -62,50 +62,60 @@ router.get("/", validateToken, async (req, res) => {
 
 router.get("/byOrderId/:id", validateToken, async (req, res) => {
     const id = req.params.id;
-    const data = await tbOrderDT.findAll({
-        where: { orderId: id },
-        attributes: {
-            include: [
-                [
-                    Sequelize.literal(`(
+    let _tbOrderDT = []
+    let status = true
+    let msg = "success"
+    try {
+        const data = await tbOrderDT.findAll({
+            where: { orderId: id },
+            attributes: {
+                include: [
+                    [
+                        Sequelize.literal(`(
                         select image from tbimages t
                             where relatedId = tbOrderDT.stockId
                             and relatedTable = 'stock1'
                             and isDeleted = 0
                     )`),
-                    "image",
-                ],
-                [
-                    Sequelize.literal(`(
+                        "image",
+                    ],
+                    [
+                        Sequelize.literal(`(
                         select productName from tbstocks t
                             where id = tbOrderDT.stockId
                             and isDeleted = 0
                     )`),
-                    "productName",
-                ],
-                [
-                    Sequelize.literal(`(
+                        "productName",
+                    ],
+                    [
+                        Sequelize.literal(`(
                         select description from tbstocks t
                             where id = tbOrderDT.stockId
                             and isDeleted = 0
                     )`),
-                    "description",
+                        "description",
+                    ],
+                    // [
+                    //     Sequelize.literal(`(
+                    //         select price from tbstocks t
+                    //             where id = tbOrderDT.stockId
+                    //             and isDeleted = 0
+                    //     )`),
+                    //     "stockPrice",
+                    // ],
                 ],
-                // [
-                //     Sequelize.literal(`(
-                //         select price from tbstocks t
-                //             where id = tbOrderDT.stockId
-                //             and isDeleted = 0
-                //     )`),
-                //     "stockPrice",
-                // ],
-            ],
-        },
-    });
+            },
+        });
+
+        _tbOrderDT = data
+    } catch (e) {
+        status = false
+        msg = e.message
+    }
     res.json({
-        status: true,
-        message: "success",
-        tbOrderDT: data,
+        status: status,
+        message: msg,
+        tbOrderDT: _tbOrderDT,
     });
 });
 

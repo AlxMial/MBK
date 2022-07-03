@@ -36,6 +36,7 @@ const Order = () => {
         await axios.get("order/orderHD").then(async (response) => {
             if (!response.data.error && response.data.tbOrderHD) {
                 let _orderData = response.data.tbOrderHD;
+                console.log(_orderData)
                 await axios.get("members").then(res => {
                     _orderData = _orderData.map(order => {
                         const member = res.data.tbMember.filter(
@@ -134,7 +135,7 @@ const Order = () => {
 
                     _dataHD.transportStatus = orderHD.transportStatus;
                     _dataHD.paymentStatus = orderHD.paymentStatus;
-
+                    _dataHD.trackNo = orderHD.trackNo;
                     // if (isChangeOrderNumber) {
                     //     _dataHD.orderNumber = orderNumber;
                     // }
@@ -211,6 +212,7 @@ const Order = () => {
                 open={open}
                 orderImage={orderImage}
                 orderHD={orderHD}
+                orderHDold={orderHD}
                 orderDT={orderDT}
                 memberData={memberData}
                 handleExport={handleExport}

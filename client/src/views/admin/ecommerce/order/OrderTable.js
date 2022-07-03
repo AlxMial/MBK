@@ -56,7 +56,7 @@ const OrderTable = ({ orderList, openModal }) => {
         }
     }
     const getStatustransportStatus = (v) => {
-        if (v.paymentStatus == 3) {
+        if (v.paymentStatus == 3 && !v.isCancel) {
             if (v.isReturn) {
                 return { text: 'คืนสินค้า', color: ' text-red-500 ' }
             }
@@ -134,7 +134,7 @@ const OrderTable = ({ orderList, openModal }) => {
                                         </td>
                                         <td className={tdClass} >
                                             <span className={tdSpan}>
-                                                {value.sumPrice ?? 0} ฿
+                                                {value.netTotal ?? 0} ฿
                                             </span>
                                         </td>
                                         <td className={tdClass} >

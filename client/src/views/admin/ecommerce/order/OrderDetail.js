@@ -25,7 +25,7 @@ import { fetchLoading, fetchSuccess } from 'redux/actions/common';
 import * as Address from "services/GetAddress.js";
 
 const OrderDetail = ({
-    open, handleModal, orderHD, orderDT, memberData, orderImage,
+    open, handleModal, orderHD, orderHDold, orderDT, memberData, orderImage,
     handleExport, transportStatus, setTransportStatus,
     isChangeOrderNumber,
     setIsChangeOrderNumber, orderNumber, setOrderNumber,
@@ -34,21 +34,26 @@ const OrderDetail = ({
     const dispatch = useDispatch();
     const useStyle = customStyles({ width: '70vw' });
     const useStyleMobile = customStylesMobile();
-    const [isCanEdit, setIsCanEdit] = useState(false);
+    const [isCanEdit, setIsCanEdit] = useState(true);
     const { width } = useWindowDimensions();
     const [openExport, setOpenExport] = useState(false);
     const [dataExport, setDataExport] = useState({});
 
     const propsPurchaseOrder = { orderHD, orderDT, openExport };
-    const propsPayment = { orderHD, orderDT }
+    const propsPayment = { orderHD, orderHDold, orderDT, isCanEdit }
     const propsLogistic = {
-        orderHD, orderDT, memberData, setIsChangeOrderNumber, isCanEdit,
+        orderHD, orderDT,orderHDold, memberData, setIsChangeOrderNumber, isCanEdit,
         orderNumber, setOrderNumber, isCancel, setIsCancel, isChangeOrderNumber,
         cancelReason, setCancelReason, transportStatus, setTransportStatus
     }
 
     useEffect(async () => {
-        if (orderHD.isCancel) {
+        //สถานะยกเลิก
+        if (orderHDold.isCancel) {
+            setIsCanEdit(false);
+        }
+        //มีการขอยกเลิก
+        if (orderHD.tbCancelOrder != null) {
             setIsCanEdit(false);
         }
 
@@ -86,7 +91,7 @@ const OrderDetail = ({
     }, [openExport, dataExport]);
 
 
-    console.log(orderHD)
+    // console.log(orderHD)
 
     return (
         <Modal
@@ -105,8 +110,11 @@ const OrderDetail = ({
                                 <div className="w-full" id='purchaseOrder'>
                                     {/* {!openExport && <LabelUC label='รายการคำสั่งซื้อ' moreClassName='border-b py-2' />}
                                     {openExport && (<ExportHeader dataExport={dataExport} />)} */}
-                                    <LabelUC label='รายการคำสั่งซื้อ' moreClassName='border-b py-2' />
-                                    {/* <ExportHeader dataExport={dataExport} /> */}
+                                    {/* <LabelUC label='รายการคำสั่งซื้อ' moreClassName='border-b py-2' /> */}
+                                    <div className='flex'>
+                                        <div className='font-bold' style={{ width: "100px" }}>รายการคำสั่งซื้อ</div>
+                                        <div style={{ width: "calc(100% - 100px)", textAlign: "end" }}>{"หมายเลขคำสั่งซื้อ " + orderHD.orderNumber}</div>
+                                    </div>
                                     <PurchaseOrder props={propsPurchaseOrder} />
 
                                 </div>
@@ -141,7 +149,12 @@ const OrderDetail = ({
                                 // exportBtnLabel='Export คำสั่งซื้อ'
                                 // handleExport={createPDF}
                                 // isShowSave={isCanEdit}
-                                onClick={() => handleModal('save')}
+                                onClick={() => {
+                                    if (isCanEdit) {
+                                        handleModal('save')
+                                    }
+                                }
+                                }
                             />
                         </div>
                     </div>

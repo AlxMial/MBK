@@ -46,70 +46,162 @@ router.post("/", validateToken, async (req, res) => {
 });
 
 router.get("/", validateToken, async (req, res) => {
-  const data = await tbOrderHD.findAll({
-    limit: 3,
-    where: { isDeleted: false },
-    attributes: {
+  let status = true
+  let msg = "success"
+  let orderHD = []
+  try {
+
+
+    // tbImage.hasMany(tbOrderHD, { foreignKey: "relatedId" });
+    // tbOrderHD.belongsTo(tbImage, { foreignKey: "id" });
+
+    // tbImage.hasMany(tbOrderHD, { foreignKey: "id" });
+    // tbOrderHD.belongsTo(tbImage, { foreignKey: "id" });
+
+    tbOrderHD.hasMany(tbImage, {
+      foreignKey: "relatedId",
+    });
+
+    tbOrderHD.hasMany(tbCancelOrder, {
+      foreignKey: "orderId",
+    });
+
+    tbOrderHD.hasMany(tbReturnOrder, {
+      foreignKey: "orderId",
+    });
+
+
+    const data = await tbOrderHD.findAll({
+      where: { isDeleted: false },
       include: [
-        [
-          Sequelize.literal(`(
-                        select sum(price) from tbstocks t 
-                            where id in (select stockId from tborderdts t2 
-				                            where isDeleted=0
-				                            and orderId = tbOrderHD.id)
-                    )`),
-          "sumPrice",
-        ],
-        [
-          Sequelize.literal(`(
-                        select image from tbimages t
-                            where relatedId = tbOrderHD.id
-                            and relatedTable = 'tbOrderHD'
-                            and isDeleted = 0
-                    )`),
-          "image",
-        ],
-        [
-          Sequelize.literal(`(
-                        select imageName from tbimages t
-                            where relatedId = tbOrderHD.id
-                            and relatedTable = 'tbOrderHD'
-                            and isDeleted = 0
-                    )`),
-          "imageName",
-        ],
-        [
-          Sequelize.literal(`(
-                        select deliveryCost from tblogistics t
-                            where id = tbOrderHD.logisticId
-                            and isDeleted = 0
-                    )`),
-          "deliveryCost",
-        ],
-        [
-          Sequelize.literal(`(
-                        select logisticType from tblogistics t
-                            where id = tbOrderHD.logisticId
-                            and isDeleted = 0
-                    )`),
-          "logisticType",
-        ],
-        [
-          Sequelize.literal(`(
-                        select sum(weight) from tbstocks t 
-                            where id in (select stockId from tborderdts t2 
-				                            where t2.isDeleted=0
-				                            and t2.orderId = tbOrderHD.id)
-                    )`),
-          "sumWeight",
-        ],
+        {
+          model: tbImage,
+          where: {
+            isDeleted: false,
+            relatedTable: 'tbOrderHD',
+          },
+          required: false
+        },
+        {
+          model: tbCancelOrder,
+          where: {
+            isDeleted: false,
+          },
+          required: false
+        },
+        {
+          model: tbReturnOrder,
+          where: {
+            isDeleted: false,
+          },
+          required: false
+        },
       ],
-    },
-  });
+    })
+    if (data) {
+      data.map((e, i) => {
+        let hd = e.dataValues;
+        if (hd.tbImages.length > 0) {
+          hd.image = hd.tbImages[0].image
+          hd.imageName = hd.tbImages[0].imageName
+        }
+        if (hd.tbCancelOrders.length > 0) {
+          hd.tbCancelOrder = hd.tbCancelOrders[0]
+        }
+        if (hd.tbReturnOrders.length > 0) {
+          hd.tbReturnOrder = hd.tbCancelOrders[0]
+        }
+
+
+
+        hd.tbImages = null
+        hd.tbCancelOrders = null
+        hd.tbReturnOrders = null
+        orderHD.push(hd)
+      })
+      // orderHD = data
+    }
+    // const data = await tbOrderHD.findAll({
+    //   // limit: 3,
+    //   where: { isDeleted: false },
+    //   // attributes: {
+    //   //   include: [
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select sum(price) from tbstocks t 
+    //   //                       where id in (select stockId from tborderdts t2 
+    //   // 	                            where isDeleted=0
+    //   // 	                            and orderId = tbOrderHD.id)
+    //   //               )`),
+    //   //       "sumPrice",
+    //   //     ],
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select image from tbimages t
+    //   //                       where relatedId = tbOrderHD.id
+    //   //                       and relatedTable = 'tbOrderHD'
+    //   //                       and isDeleted = 0
+    //   //               )`),
+    //   //       "image",
+    //   //     ],
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select imageName from tbimages t
+    //   //                       where relatedId = tbOrderHD.id
+    //   //                       and relatedTable = 'tbOrderHD'
+    //   //                       and isDeleted = 0
+    //   //               )`),
+    //   //       "imageName",
+    //   //     ],
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select deliveryCost from tblogistics t
+    //   //                       where id = tbOrderHD.logisticId
+    //   //                       and isDeleted = 0
+    //   //               )`),
+    //   //       "deliveryCost",
+    //   //     ],
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select logisticType from tblogistics t
+    //   //                       where id = tbOrderHD.logisticId
+    //   //                       and isDeleted = 0
+    //   //               )`),
+    //   //       "logisticType",
+    //   //     ],
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select sum(weight) from tbstocks t 
+    //   //                       where id in (select stockId from tborderdts t2 
+    //   // 	                            where t2.isDeleted=0
+    //   // 	                            and t2.orderId = tbOrderHD.id)
+    //   //               )`),
+    //   //       "sumWeight",
+    //   //     ],
+    //   //   ],
+    //   // },
+    // });
+    // if (data) {
+
+    //   for (var i = 0; i < data.length; i++) {
+    //     let hd = data[i].dataValues
+    //     const _tbImage = await tbImage.findOne({ where: { relatedId: hd.id, relatedTable: "tbOrderHD" } })
+    //     if (_tbImage) {
+    //       hd.image = _tbImage.image
+    //       hd.imageName = _tbImage.imageName
+    //     }
+    //     orderHD.push(hd)
+    //   }
+    //   // orderHD = data
+    // }
+  } catch (e) {
+    status = false
+    msg = e.message
+  }
   res.json({
-    status: true,
-    message: "success",
-    tbOrderHD: data,
+    status: status,
+    message: msg,
+    tbOrderHD: orderHD,
   });
 });
 
