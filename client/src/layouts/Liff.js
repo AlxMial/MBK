@@ -122,8 +122,8 @@ const LiffAPP = () => {
   if (
     pathname.toLowerCase().includes("member") ||
     pathname.toLowerCase().includes("point") ||
-    pathname.toLowerCase().includes("/line/coupon") ||
-    pathname.toLowerCase().includes("/line/product") ||
+    // pathname.toLowerCase().includes("/line/coupon") ||
+    // pathname.toLowerCase().includes("/line/product") ||
     pathname.toLowerCase().includes("/reward")
   ) {
     bg = "180px";
@@ -196,13 +196,13 @@ const LiffAPP = () => {
       ) : (
         <div className="noselect" style={{ display: !view ? "none" : "", height: "100vh" }}>
           <div
-            className={"noselect " + (!ismemberpage ? "bg-green-mbk flex" : "")}
+            className={"noselect " + (!ismemberpage || pathname.includes("/line/coupon") || pathname.includes("/line/product") ? "bg-green-mbk flex" : "")}
             style={{ height: bg }}
           >
             <div className="w-full">
               {pathname
                 .toLowerCase()
-                .includes("shoplist") ? null : ismemberpage ? (
+                .includes("shoplist") ? null : (ismemberpage && !pathname.includes("/line/coupon") && !pathname.includes("/line/product")) ? (
                   <img
                     className="w-full"
                     src={

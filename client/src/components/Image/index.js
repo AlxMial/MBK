@@ -43,7 +43,7 @@ const ImageUC = (prop) => {
   }, []);
   let className = other.className;
   return (
-    <div className="w-full h-full">
+    <div className={"w-full h-full" + (other.divimage ? (" " + other.divimage) : '')}>
       {ImgisLoading ? (
         <div {...other} className={className}></div>
       ) : (

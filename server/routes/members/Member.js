@@ -737,8 +737,6 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
   let msg;
   let Member;
   let OrderHD = [];
-  let sumamount = 0;
-  let sumprice = 0;
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
     Member = await tbMember.findOne({
@@ -754,6 +752,8 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
       if (_tbOrderHD && _tbOrderHD.length > 0) {
 
         for (let i = 0; i < _tbOrderHD.length; i++) {
+          let sumamount = 0;
+          let sumprice = 0;
           let hd = _tbOrderHD[i].dataValues;
           hd.dt = [];
           const OrderDTData = await tbOrderDT.findAll({
@@ -828,8 +828,6 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
     status: status,
     msg: msg,
     OrderHD: OrderHD,
-    sumamount: sumamount,
-    sumprice: sumprice,
   });
 });
 

@@ -101,7 +101,7 @@ const Member = () => {
               </div>
               <div style={{ paddingLeft: "10px" }}>
                 <div
-                  className="mt-2 font-bold text-green-mbk text-12"
+                  className="mt-2 font-bold text-green-mbk text-xs"
                   style={{
                     // fontSize: "0.7rem",
                     minWidth: "120px",
@@ -119,6 +119,7 @@ const Member = () => {
                           : "#d0af2c",
                     borderRadius: "20px",
                     padding: "2px 10px",
+                    textAlign: "center",
                   }}
                 >
                   {tbMember.memberType === "1"
@@ -148,7 +149,7 @@ const Member = () => {
               {"รหัสสมาชิก : " + tbMember.memberCard}
             </div>
           </div>
-          <div className="relative" style={{ width: "40%", height: "100%" }}>
+          <div className="relative" style={{ width: "50%", height: "100%" }}>
             <div
               className="absolute right-0"
               onClick={() => {
@@ -225,10 +226,10 @@ const Member = () => {
           defaultActiveKey="1"
           onChange={tabsChange}
         >
-          <TabPane tab="รางวัลของฉัน" key="1">
+          <TabPane tab="รางวัลของฉัน" key="1" className="font-bold" style={{ fontSize: '14px' }}>
             <MyAward />
           </TabPane>
-          <TabPane tab="คำสั่งชื้อของฉัน" key="2">
+          <TabPane tab="คำสั่งชื้อของฉัน" key="2" className="font-bold" style={{ fontSize: '14px' }}>
             <MyOrder />
           </TabPane>
         </Tabs>
