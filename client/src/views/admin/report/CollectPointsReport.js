@@ -46,18 +46,14 @@ export default function CollectPointsReport() {
             if(x.startDate !== '' && x.endDate !== '') {             
               isDate = true;
             }            
-            if((inputSerch !== "" ? (x.pointCodeName.toLowerCase().includes(inputSerch) ||
-            (x.memberName === null ? "" : x.memberName)
-            .toLowerCase()
-            .includes(inputSerch) ||
-            x.point.toString().includes(inputSerch) ||
-            (x.pointType === null ? "" : x.pointType)
-            .toString()
-            .includes(inputSerch) ||
-            x.status.toLowerCase().toString().includes(inputSerch) ||
-            (x.code === null ? "" : x.code)
-            .toLowerCase()
-            .includes(inputSerch)
+            if((inputSerch !== "" ? 
+            (
+            Search(x.pointCodeName, inputSerch) ||
+            Search(x.memberName, inputSerch) ||
+            Search(x.point, inputSerch) ||
+            Search(x.pointType, inputSerch) ||
+            Search(x.status, inputSerch) ||
+            Search(x.code, inputSerch)
            ) : true) &&
 
             ((startDate !== null && endDate !== null) ? (isDate ? ((startDate <= _startDate  && startDate <= _endDate &&
@@ -72,6 +68,14 @@ export default function CollectPointsReport() {
       setForcePage(0);
     }
   };
+
+  const Search = (val, inputSerch) =>  {
+    let status = false;
+    if(val !== '' && val !== null && val !== undefined) {
+      status =  val.toString().toLowerCase().includes(inputSerch);
+    }
+    return status;
+  }
 
   const convertToDate = (e) => {    
    const date = new Date(e);
