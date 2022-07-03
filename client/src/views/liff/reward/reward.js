@@ -36,10 +36,10 @@ const Reward = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ marginTop: "-80px", position: "absolute", width: "100%" }}>
+      <div style={{ top: "10%", position: "absolute", width: "100%" }}>
         <MyPoint />
 
-        <div className="mt-2">
+        <div className="mt-5">
           <div style={{ width: "90%", margin: "auto" }}>
             <div className="flex h-10">
               <div className="bg-green-mbk" style={{ width: "10px" }}></div>
@@ -53,14 +53,15 @@ const Reward = () => {
                     <div className="w-full mb-2" key={i} onClick={() => {
                       history.push(path.inforeward.replace(":id", e.id))
                     }}>
-                      <div className="w-ful" style={{ width: "200px", height: "100px", margin: "auto" }}>
+                      <div className="w-ful" style={{ width: "200px", height: "auto", margin: "auto" }}>
                         <ImageUC
-                          style={{ width: "200px", height: "100px", }}
+                          // style={{ width: "200px", height: "100px", }}
                           find={1}
                           relatedid={e.redemptionId}
                           relatedtable={[(e.rewardType == 1 ? "tbRedemptionCoupon" : "tbRedemptionProduct")]}
                           alt="tbRedemptionProduct"
                           className=" animated-img"
+                          imgclassname=" w-full h-full"
                         />
                       </div>
                       <div className="mt-2 text-ms">

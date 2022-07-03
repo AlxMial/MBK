@@ -69,7 +69,7 @@ const Member = () => {
           style={{
             width: "90%",
             padding: "20px",
-            height: "48vw",
+            height: "180px",
             borderRadius: "15px",
             backgroundColor: "#007A40",
             border: "2px solid white",

@@ -42,10 +42,11 @@ const MyPointUC = () => {
               width: "50%",
               margin: "auto",
               borderRadius: "20px",
-       
+
             }}
           >
-            <span className="text-shadow">{tbMember.memberPoint === null ? 0 : tbMember.memberPoint}</span>
+            {/* <span className="text-shadow">{tbMember.memberPoint === null ? 0 : tbMember.memberPoint}</span> */}
+            <span className="text-shadow">{0}</span>
           </div>
         </div>
         <div className=" text-sm font-bold text-center mt-4 ">
@@ -54,9 +55,9 @@ const MyPointUC = () => {
             (IsNullOrEmpty(Memberpoints.enddate)
               ? "-"
               : moment(Memberpoints.enddate.split("T")[0])
-                  .locale("th")
-                  .add(543, "year")
-                  .format("DD/MM/yyyy"))}
+                .locale("th")
+                .add(543, "year")
+                .format("DD/MM/yyyy"))}
         </div>
       </div>
     </>
