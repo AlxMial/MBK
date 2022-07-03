@@ -12,6 +12,7 @@ import { IsNullOrEmpty, liff_dateToString } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import * as Session from "@services/Session.service";
 import ModelPolicy from "./modelpolicy";
+import './index.scss';
 
 
 // components
@@ -20,7 +21,7 @@ const Member = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const { TabPane } = Tabs;
-  const tabsChange = () => {};
+  const tabsChange = () => { };
   const [tbMember, settbMember] = useState({});
   const [Memberpoints, setMemberpoints] = useState({});
   const [isOpenPolicy, setisOpenPolicy] = useState(false);
@@ -34,7 +35,7 @@ const Member = () => {
           getMemberpoints({ id: res.data.tbMember.id });
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -48,7 +49,7 @@ const Member = () => {
           setMemberpoints(res.data);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -68,20 +69,19 @@ const Member = () => {
           style={{
             width: "90%",
             padding: "20px",
-            height: "40vw",
-            borderRadius: "10px",
-            backgroundColor:"#007A40",
-            border:"2px solid white",
-            backgroundImage: `url(${
-              IsNullOrEmpty(tbMember)
-                ? null
-                : require("assets/img/mbk/Green.png").default
-                // : require(tbMember.memberType === "1"
-                //     ? "assets/img/mbk/Green.png"
-                //     : tbMember.memberType === "2"
-                //     ? "assets/img/mbk/Silver.png"
-                //     : "assets/img/mbk/Gold.png").default
-            })`,
+            height: "48vw",
+            borderRadius: "15px",
+            backgroundColor: "#007A40",
+            border: "2px solid white",
+            backgroundImage: `url(${IsNullOrEmpty(tbMember)
+              ? null
+              : require("assets/img/mbk/Green.png").default
+              // : require(tbMember.memberType === "1"
+              //     ? "assets/img/mbk/Green.png"
+              //     : tbMember.memberType === "2"
+              //     ? "assets/img/mbk/Silver.png"
+              //     : "assets/img/mbk/Gold.png").default
+              })`,
             // backgroundSize: "cover",
             // objectFit: "cover",
           }}
@@ -101,21 +101,21 @@ const Member = () => {
               </div>
               <div style={{ paddingLeft: "10px" }}>
                 <div
-                  className="mt-2 font-bold text-green-mbk"
+                  className="mt-2 font-bold text-green-mbk text-12"
                   style={{
-                    fontSize: "0.7rem",
+                    // fontSize: "0.7rem",
                     backgroundColor:
                       tbMember.memberType === "1"
                         ? "#cbe8ba"
                         : tbMember.memberType === "2"
-                        ? "#ebebeb"
-                        : "#f3eac1",
+                          ? "#ebebeb"
+                          : "#f3eac1",
                     color:
                       tbMember.memberType === "1"
                         ? "#047738"
                         : tbMember.memberType === "2"
-                        ? "#929292"
-                        : "#d0af2c",
+                          ? "#929292"
+                          : "#d0af2c",
                     borderRadius: "20px",
                     padding: "2px 10px",
                   }}
@@ -123,8 +123,8 @@ const Member = () => {
                   {tbMember.memberType === "1"
                     ? "GREEN MEMBER"
                     : tbMember.memberType === "2"
-                    ? "SLIVER MEMBER"
-                    : "GOLD MEMBER"}
+                      ? "SLIVER MEMBER"
+                      : "GOLD MEMBER"}
                 </div>
                 <div className="text-white font-bold text-xs mt-2">
                   {tbMember.firstName + " " + tbMember.lastName}
@@ -163,7 +163,7 @@ const Member = () => {
                   <img
                     src={require("assets/img/mbk/Coint1.png").default}
                     alt="..."
-                    className="w-8 h-8 rounded-full border-2 border-blueGray-50 shadow"
+                    className="w-6 h-6 rounded-full border-2 border-blueGray-50 shadow"
                   ></img>
                   <span className="text-white font-bold text-xl pl-2 margin-auto-t-b">
                     {tbMember.memberPoint === null ? 0 : tbMember.memberPoint}
@@ -180,7 +180,7 @@ const Member = () => {
                 <span className=" text-2xs text-white ">
                   {
                     "จะหมดอายุ : " +
-                      liff_dateToString(Memberpoints.enddate, "DD/MM/yyyy")
+                    liff_dateToString(Memberpoints.enddate, "DD/MM/yyyy")
                     // (IsNullOrEmpty(Memberpoints.enddate)
                     //   ? "-"
                     //   : moment(Memberpoints.enddate.split("T")[0])
@@ -260,7 +260,7 @@ const Member = () => {
 
               <a
                 className="text-underline"
-                style={{color:"white"}}
+                style={{ color: "white" }}
                 href="https://www.prg.co.th/th/privacy_policy"
                 target="_blank"
               >

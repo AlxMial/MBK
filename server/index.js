@@ -71,6 +71,8 @@ const pointStoreRouter = require('./routes/points/pointStore');
 app.use("/mahboonkrongserver/pointStore", pointStoreRouter);
 const pointRegisterRouter = require('./routes/points/pointRegister');
 app.use("/mahboonkrongserver/pointRegister", pointRegisterRouter);
+const pointEcommerceRouter = require('./routes/points/pointEcommerce');
+app.use("/mahboonkrongserver/pointEcommerce", pointEcommerceRouter);
 const uploadExcelRouter = require('./routes/uploadExcel/uploadExcel');
 app.use("/mahboonkrongserver/uploadExcel", uploadExcelRouter);
 const redeemRouter = require('./routes/redeem/redeem');

@@ -24,6 +24,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
+    email5: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    email6: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     // isInactive: {
     //   type: DataTypes.BOOLEAN,
     //   allowNull: true,

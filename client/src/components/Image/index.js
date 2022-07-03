@@ -31,7 +31,7 @@ const ImageUC = (prop) => {
         setImgisLoading(false);
         tobase64(require("assets/img/mbk/no-image.png").default);
       })
-      .finally(() => {});
+      .finally(() => { });
   };
   const tobase64 = async (data) => {
     const base64 = await FilesService.buffer64UTF8(data);
@@ -50,7 +50,7 @@ const ImageUC = (prop) => {
         <img
           {...other}
           id={other.relatedid + other.relatedtable}
-          className={className.repeat("animated-img", "")}
+          className={className.repeat("animated-img", "") + (other.imgclassname ? other.imgclassname : "")}
           src={Img}
           onError={({ currentTarget }) => {
             currentTarget.onerror = null;
