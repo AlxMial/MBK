@@ -10,6 +10,12 @@ class ValidateService {
   };
 
   onHandleDecimalChange = (e) => {
+    const re = /([^0-9.]+)/;
+    if(re.test(e.target.value))
+    { 
+      return Number(0).toFixed(2);
+    }
+
     let val = e.target.value;
     val = val.replace(/([^0-9.]+)/, "");
     val = val.replace(/^(0|\.)/, "");

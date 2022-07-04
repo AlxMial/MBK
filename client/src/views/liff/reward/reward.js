@@ -67,7 +67,7 @@ const Reward = () => {
                       <div className="mt-2 text-ms px-4">
                         <div className="flex justify-between">
                           <div className="font-bold ">{e.redemptionName} </div>
-                          <i class="fas fa-chevron-right"></i>
+                          <i className="fas fa-chevron-right"></i>
                         </div>
                         <div className="w-full text-liff-gray-mbk">{e.points + " คะแนน"} </div>
                         <div className="w-full text-liff-gray-mbk">

@@ -70,7 +70,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                             <th className={thClass} >
                                 เหลือ
                             </th>
-                            <th className={thClass} >
+                            <th className={thClass + " text-center"}  >
                                 สถานะ
                             </th>
                             <th className={thClass + " text-center"} >
@@ -79,7 +79,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                             <th className={thClass + " text-center"} >
                                 FLASH SALE
                             </th>
-                            <th className={thClass} >
+                            <th className={thClass + " text-center"} >
                                 สถานะการแสดง
                             </th>
                             <th className={thClass + ' text-center'} >
@@ -100,49 +100,49 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                                 {pagesVisited + key + 1}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                        <td className={tdClass + " cursor-pointer"} title={value.productName}  onClick={() => {
                                             openModal(value.id);
                                         }}>
                                             <span className={tdSpan}>
-                                                {value.productName}
+                                            <div className="TextWordWarp-300">  {value.productName} </div>
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                        <td className={tdClass + " cursor-pointer"} title={value.categoryName} onClick={() => {
                                             openModal(value.id);
                                         }}>
                                             <span className={tdSpan}>
-                                                {value.categoryName}
+                                            <div className="TextWordWarp-150">   {value.categoryName}</div>
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                        <td className={tdClass + " text-right cursor-pointer"} onClick={() => {
                                             openModal(value.id);
                                         }}>
                                             <span className={tdSpan}>
-                                                {value.price} ฿
+                                            <div className="TextWordWarp-100">    {value.price} ฿ </div>
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                        <td className={tdClass + " text-right cursor-pointer"} onClick={() => {
                                             openModal(value.id);
                                         }}>
                                             <span className={tdSpan}>
                                                 {value.productCount}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                        <td className={tdClass + " text-right cursor-pointer"} onClick={() => {
                                             openModal(value.id);
                                         }}>
                                             <span className={tdSpan}>
                                                 {value.buy}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                        <td className={tdClass + " text-right cursor-pointer"} onClick={() => {
                                             openModal(value.id);
                                         }}>
                                             <span className={tdSpan}>
                                                 {value.productCount - value.buy}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer "} onClick={() => {
+                                        <td className={tdClass + " text-center cursor-pointer "} onClick={() => {
                                             openModal(value.id);
                                         }}>
                                             <span className={(
@@ -161,7 +161,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                         }}>
                                             <input type="checkbox" className='rounded text-green-mbk' defaultChecked={value.isFlashSale}/>
                                         </td>
-                                        <td className={tdClass + " cursor-pointer"} onClick={() => {
+                                        <td className={tdClass + " cursor-pointer text-center"} onClick={() => {
                                             openModal(value.id);
                                         }}>
                                             <span className={tdSpan}>
