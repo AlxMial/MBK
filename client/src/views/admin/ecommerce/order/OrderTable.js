@@ -56,8 +56,8 @@ const OrderTable = ({ orderList, openModal }) => {
         }
     }
     const getStatustransportStatus = (v) => {
-        if (v.paymentStatus == 3) {
-            if (v.isReturn) {
+        if (v.paymentStatus == 3 && !v.isCancel && v.tbCancelOrder == null) {
+            if (v.isReturn || v.tbReturnOrder != null) {
                 return { text: 'คืนสินค้า', color: ' text-red-500 ' }
             }
             else if (v.transportStatus == 1) {
@@ -69,7 +69,7 @@ const OrderTable = ({ orderList, openModal }) => {
             }
 
         } else {
-            if (v.isCancel) {
+            if (v.isCancel || v.tbCancelOrder != null) {
                 return { text: 'ยกเลิกคำสั่งซื้อ', color: ' text-red-500 ' }
             } else {
                 return { text: ' ', color: ' ' }
@@ -134,7 +134,7 @@ const OrderTable = ({ orderList, openModal }) => {
                                         </td>
                                         <td className={tdClass} >
                                             <span className={tdSpan}>
-                                                {value.sumPrice ?? 0} ฿
+                                                {value.netTotal ?? 0} ฿
                                             </span>
                                         </td>
                                         <td className={tdClass} >
@@ -146,7 +146,7 @@ const OrderTable = ({ orderList, openModal }) => {
                                             onClickAttachment(value.image);
                                         }} >
                                             <span className={(value.image ? (value.imageName ?? ' text-blue-700') : tdSpan)}>
-                                                {value.image ? (value.imageName ?? 'สลิปโอนเงิน') : "ไม่มีไฟล์แนบ"}
+                                                {value.image ? (value.imageName ?? 'สลิปโอนเงิน') : ""}
                                             </span>
                                         </td>
                                         <td className={tdClass} >
@@ -156,12 +156,14 @@ const OrderTable = ({ orderList, openModal }) => {
                                         </td>
                                         <td className={tdClass} >
                                             <span >
-                                                {value.cancelDetail}
+                                                {value.tbCancelOrder != null ? value.tbCancelOrder.cancelDetail :
+                                                    value.tbReturnOrder != null ? value.tbReturnOrder.returnDetail : ""}
                                             </span>
                                         </td>
                                         <td className={tdClass} >
                                             <span >
-                                                {value.returnDetail}
+                                                {value.tbCancelOrder != null ? value.tbCancelOrder.description :
+                                                    value.tbReturnOrder != null ? value.tbReturnOrder.description : ""}
                                             </span>
                                         </td>
                                         <td className={tdClass} >

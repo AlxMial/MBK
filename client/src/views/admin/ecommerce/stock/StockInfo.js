@@ -25,6 +25,7 @@ import { useToasts } from "react-toast-notifications";
 import ModalHeader from "views/admin/ModalHeader";
 import ButtonModalUC from "components/ButtonModalUC";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
+
 const StockInfo = ({
   handleModal,
   formik,
@@ -53,6 +54,7 @@ const StockInfo = ({
   const [isLoadingSelect, setIsLoadingSelect] = useState(false);
   const [productCategoryList, setProductCategoryList] = useState([]);
   const [categoryValue, setCategoryValue] = useState(null);
+  const [delayValue, setDelayValue] = useState("");
 
   useEffect(async () => {
     await fetchData();
@@ -100,7 +102,6 @@ const StockInfo = ({
     if (_categoryValue) {
       setCategoryValue(_categoryValue[0]);
     }
-    console.log(newValue.value);
     formik.setFieldValue("productCategoryId", newValue.value, false);
   };
 
@@ -134,6 +135,34 @@ const StockInfo = ({
         }
       });
     }, 1000);
+  };
+
+  const calculateValue = (value, type) => {
+    var Calculate = 0;
+    if (type === "percent") {
+      if (value !== "" && value > 0) {
+        if (formik.values.price !== "" && formik.values.price > 0) {
+          Calculate = formik.values.price * (value / 100);
+          formik.setFieldValue("discount", Calculate);
+        }
+      } else {
+        formik.setFieldValue("discount", 0);
+      }
+    } else if (type === "discount") {
+      if (value !== "" && value > 0) {
+        if (formik.values.price !== "" && formik.values.price > 0) {
+          Calculate =  (value / formik.values.price) * 100;
+          formik.setFieldValue("percent", Calculate.toFixed(2));
+        }
+      } else {
+        formik.setFieldValue("percent", 0);
+      }
+    } else {
+      if (value !== "" && value > 0) {
+        formik.setFieldValue("percent", 0);
+        formik.setFieldValue("discount", 0);
+      }
+    }
   };
 
   return (
@@ -271,18 +300,30 @@ const StockInfo = ({
                   <div className="flex flex-wrap mt-4">
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
                       <LabelUC label="ราคา" isRequired={true} />
+                      <div className="relative w-full px-4">
+                        {formik.touched.price && formik.errors.price ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            &nbsp;
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
-                          type="number"
+                          type="text"
+                          className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                          id="price"
                           name="price"
-                          maxLength={10}
+                          maxLength={5}
                           onBlur={formik.handleBlur}
                           value={formik.values.price}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
-                            formik.handleChange(e);
+                            setDelayValue(ValidateService.onHandleNumber(e));
+                            formik.values.price =
+                              ValidateService.onHandleNumber(e);
+                            calculateValue(formik.values.price, "price");
                           }}
                         />
                       </div>
@@ -296,37 +337,110 @@ const StockInfo = ({
                     </div>
                     <div className="w-full lg:w-1/12 px-4 margin-auto-t-b flex justify-between">
                       <LabelUC label="บาท" />
-                      <LabelUC label="ส่วนลด" />
+                      {/* <LabelUC label="ส่วนลด" /> */}
+                    </div>
+                    {/* ส่วนลด */}
+                    <div className="w-full lg:w-1/12 margin-auto-t-b">
+                      <div className="relative w-full px-4">&nbsp;</div>
+                    </div>
+                    <div className="w-full lg:w-1/12 pl-4 margin-auto-t-b ">
+                      &nbsp;
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap mt-4">
+                    <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
+                      <LabelUC label="ส่วนลด" isRequired={true} />
+                      <div className="relative w-full px-4">
+                        {formik.touched.discount && formik.errors.discount ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            &nbsp;
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="w-full lg:w-2/12 margin-auto-t-b">
+                      <div className="relative w-full px-4">
+                        <InputUC
+                          type="text"
+                          className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                          id="discount"
+                          name="discount"
+                          maxLength={5}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.discount}
+                          onChange={(e) => {
+                            setDelayValue(ValidateService.onHandleNumber(e));
+                            formik.values.discount =
+                              ValidateService.onHandleNumber(e);
+                            if (formik.values.discount !== "" && formik.values.price !== "" ) {
+                              if (
+                                parseInt(formik.values.discount) >
+                                parseInt(formik.values.price)
+                              ) {
+                                formik.values.discount = formik.values.price;
+                              }
+                            }
+                            calculateValue(formik.values.discount, "discount");
+                          }}
+                        />
+                      </div>
+                      <div className="relative w-full px-4">
+                        {formik.touched.discount && formik.errors.discount ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            {formik.errors.discount}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="w-full lg:w-1/12 px-4 margin-auto-t-b flex justify-between">
+                      <LabelUC label="บาท" />
+                      <div className="relative w-full px-4">
+                        {formik.touched.discount && formik.errors.discount ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            &nbsp;
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                     {/* ส่วนลด */}
                     <div className="w-full lg:w-1/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
-                          type="number"
-                          name="discount"
-                          maxLength={10}
+                          type="text"
+                          id="percent"
+                          className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                          name="percent"
+                          maxLength={3}
                           onBlur={formik.handleBlur}
-                          value={formik.values.discount}
-                          // disabled={typePermission !== "1"}
+                          value={formik.values.percent}
                           onChange={(e) => {
-                            formik.handleChange(e);
+                            setDelayValue(ValidateService.onHandleNumber(e));
+                            formik.values.percent =
+                              ValidateService.onHandleNumber(e);
+                            if (formik.values.percent > 100) {
+                              formik.values.percent = 100;
+                            }
+                            calculateValue(formik.values.percent, "percent");
                           }}
                         />
                       </div>
+                      <div className="relative w-full px-4">
+                        {formik.touched.discount && formik.errors.discount ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            &nbsp;
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                     <div className="w-full lg:w-1/12 pl-4 margin-auto-t-b ">
-                      <SelectUC
-                        id="discountType"
-                        name="discountType"
-                        onChange={(e) => {
-                          formik.setFieldValue("discountType", e.value);
-                        }}
-                        options={discountList}
-                        value={ValidateService.defaultValue(
-                          discountList,
-                          formik.values.discountType
-                        )}
-                      />
+                      <LabelUC label="เปอร์เซ็นต์" />
+                      <div className="relative w-full px-4">
+                        {formik.touched.discount && formik.errors.discount ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            &nbsp;
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
                   {/* จำนวนสินค้าในคลัง */}
@@ -337,14 +451,19 @@ const StockInfo = ({
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
-                          type="number"
+                          type="text"
+                          id="productCount"
+                          className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                           name="productCount"
-                          maxLength={10}
+                          maxLength={5}
                           onBlur={formik.handleBlur}
                           value={formik.values.productCount}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
-                            formik.handleChange(e);
+                            setDelayValue(ValidateService.onHandleNumber(e));
+                            formik.values.productCount =
+                              ValidateService.onHandleNumber(e);
+                            // formik.handleChange(e);
                           }}
                         />
                       </div>
@@ -361,14 +480,18 @@ const StockInfo = ({
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
-                          type="number"
+                          type="text"
                           name="weight"
-                          maxLength={10}
+                          maxLength={2}
+                          className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                           onBlur={formik.handleBlur}
                           value={formik.values.weight}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
-                            formik.handleChange(e);
+                            setDelayValue(ValidateService.onHandleNumber(e));
+                            formik.values.weight =
+                              ValidateService.onHandleNumber(e);
+                            // formik.handleChange(e);
                           }}
                         />
                       </div>
@@ -447,7 +570,6 @@ const StockInfo = ({
                             //   formik.setFieldValue("isFlashSale", value);
                             // }
                             formik.setFieldValue("isFlashSale", value);
-                            
                           }}
                           checked={formik.values.isFlashSale}
                         />
@@ -523,7 +645,7 @@ const StockInfo = ({
                           value={formik.values.startTimeCampaign}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
-                            console.log(e)
+                            console.log(e);
                             formik.handleChange(e);
                           }}
                         />

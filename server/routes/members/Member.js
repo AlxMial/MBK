@@ -539,11 +539,11 @@ router.post("/checkRegister", async (req, res) => {
 
 router.get("/getMember", validateLineToken, async (req, res) => {
   let code = 500;
-  const id = Encrypt.DecodeKey(req.user.id);
   let members;
   try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
     let member = await tbMember.findOne({
-      where: { id: id, isDeleted: false },
+      where: { uid: uid, isDeleted: false },
     });
     code = 200;
     if (member) {
@@ -814,6 +814,11 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
           hd.sumamount = sumamount;
           hd.sumprice = sumprice;
           hd.id = Encrypt.EncodeKey(hd.id);
+          if (hd.paymentStatus == 2) {
+            hd.isPaySlip = true;
+          } else {
+            hd.isPaySlip = false;
+          }
           OrderHD.push(hd);
         }
 
@@ -903,6 +908,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
               if (coupon.length < 2) {
                 coupon.push({
                   id: Encrypt.EncodeKey(_RedemptionCoupon.id),
+                  couponId: Encrypt.EncodeKey(_coupon[i].TableHDId),
                   couponName: _coupon[i].dataValues.couponName,
                   expiredDate: _coupon[i].dataValues.expiredDate,
                 });
@@ -948,6 +954,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
             /// 1 = เตรียมจัดส่ง 2 = อยู่ระหว่างจัดส่ง 3 = ส่งแล้ว
             const data = {
               id: Encrypt.EncodeKey(_RedemptionProduct.id)
+              , productId: Encrypt.EncodeKey(_product[i].id)
               , productName: productName
               , trackingNo: trackingNo
               , status: deliverStatus == "Wait" ? 1 : deliverStatus == "InTransit" ? 2 : 3

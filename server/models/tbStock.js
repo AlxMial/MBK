@@ -12,9 +12,13 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
     },
+    percent: {
+      type: DataTypes.DECIMAL(11, 2),
+      allowNull: true,
+    },
     discountType: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     productCount: {
       type: DataTypes.INTEGER,

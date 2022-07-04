@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { path } from "services/liff.services";
 import { useHistory } from "react-router-dom";
 // components
 
-const GameUC = ({UseGame}) => {
+const GameUC = ({ UseGame }) => {
     const history = useHistory();
+    const [image360, setimage360] = useState(false);
     return (
         <>
             <div style={{ height: "100%", backgroundColor: "#007a40" }}>
@@ -14,10 +15,36 @@ const GameUC = ({UseGame}) => {
                         justifyContent: "center"
                         , color: "#FFFFFF"
                         , fontSize: "50px"
-                        , height: "200px"
+                        , height: "350px"
                         , border: "1px solid "
                     }}>
-                        รูป
+                        <div className="relative" style={{ width: "350px", height: "350px" }} >
+                            <div className="absolute" style={{ width: "320px", height: "320px" }}>
+                                <img
+                                    style={{
+                                        width: "320px",
+                                        height: "320px",
+                                    }}
+                                    src={require("assets/img/mbk/game_bg.png").default}
+                                    alt="game_bg"
+                                    className=" absolute"
+                                ></img>
+                            </div>
+                            <div className="absolute " style={{ width: "320px", height: "320px" }}>
+                                <img
+                                    style={{
+                                        width: "150px",
+                                        height: "150px",
+                                        left: "27.7%",
+                                        top: "23.5%"
+                                    }}
+                                    src={require("assets/img/mbk/game.png").default}
+                                    alt="game_bg"
+                                    className={" absolute " + (image360 ? "image360" : "")}
+                                ></img>
+                            </div>
+
+                        </div>
                     </div>
 
                     <div className="w-full flex" style={{
@@ -54,7 +81,13 @@ const GameUC = ({UseGame}) => {
                                     alignItems: "center",
                                     justifyContent: "center",
                                 }}
-                                onClick={UseGame}
+                                onClick={() => {
+                                    setimage360(true)
+                                    setTimeout(() => {
+                                        setimage360(false)
+                                        UseGame()
+                                    }, 2000);
+                                }}
                             >
                                 {"เปิด"}
                             </div>

@@ -1,21 +1,23 @@
 const express = require("express");
 const router = express.Router();
-var nodemailer = require('nodemailer');
+var nodemailer = require("nodemailer");
 const path = require("path");
 const fs = require("fs");
 const handlebars = require("handlebars");
+var ejs = require("ejs");
+const { tbMember } = require("../../models");
 
-router.post("/",async (req,res)=>{
-  const frommail=req.body.frommail
-  const password = req.body.password
-  const tomail=req.body.tomail
-  const fullName = req.body.fullName
-  const resetUrl = req.body.resetUrl
-  const filePath = path.join(__dirname, './index.html');
-  const source = fs.readFileSync(filePath, 'utf-8').toString();
+router.post("/", async (req, res) => {
+  const frommail = req.body.frommail;
+  const password = req.body.password;
+  const tomail = req.body.tomail;
+  const fullName = req.body.fullName;
+  const resetUrl = req.body.resetUrl;
+  const filePath = path.join(__dirname, "./index.html");
+  const source = fs.readFileSync(filePath, "utf-8").toString();
   const template = handlebars.compile(source);
   const replacements = {
-    urlPath: resetUrl
+    urlPath: resetUrl,
   };
   const htmlToSend = template(replacements);
   var transporter = nodemailer.createTransport({
@@ -24,35 +26,140 @@ router.post("/",async (req,res)=>{
     port: 587,
     auth: {
       user: frommail,
-      pass: password
+      pass: password,
     },
     secureConnection: true,
     // tls: { ciphers: 'SSLv3' }
   });
 
-
   var mailOptions = {
     from: frommail,
     to: tomail,
     text: "แจ้งเปลี่ยนแปลงรหัสผ่าน (ระบบจัดการหลังบ้านข้าวมาบุญครอง)",
-    subject: 'แจ้งเปลี่ยนแปลงรหัสผ่าน (ระบบจัดการหลังบ้านข้าวมาบุญครอง)',
-    html : htmlToSend
+    subject: "แจ้งเปลี่ยนแปลงรหัสผ่าน (ระบบจัดการหลังบ้านข้าวมาบุญครอง)",
+    html: htmlToSend,
   };
-  
-  transporter.sendMail(mailOptions, function(error, info){
+
+  transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       res.json({
-        msg: error
+        msg: error,
       });
-    } 
-    else{
+    } else {
       res.json({
-        msg: 'success'
-      })
+        msg: "success",
+      });
     }
   });
+});
 
-})
+router.post("/paymentsuccess", async (req, res) => {
+  const frommail = req.body.frommail;
+  const password = req.body.password;
+  const tomail = req.body.tomail;
+  const orderNumber = req.body.orderNumber;
+  const memberName = req.body.memberName;
+  const orderPrice = req.body.orderPrice;
 
+  var transporter = nodemailer.createTransport({
+    // service: 'Outlook365',
+    host: "smtp.office365.com",
+    port: 587,
+    auth: {
+      user: frommail,
+      pass: password,
+    },
+    secureConnection: true,
+    // tls: { ciphers: 'SSLv3' }
+  });
+
+  ejs.renderFile(
+    __dirname + "/paymentSuccess.ejs",
+    { 
+      memberName: memberName,
+      orderNumber: orderNumber,
+      orderPrice: orderPrice,
+     },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+
+        var mailOptions = {
+          from: frommail,
+          to: tomail,
+          text: "ใบเสร็จรับเงินสำหรับใบสั่งซื้อ "+orderNumber,
+          subject: "ใบเสร็จรับเงินสำหรับใบสั่งซื้อ "+orderNumber,
+          html: htmlToSend,
+        };
+      
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            res.json({
+              msg: error,
+            });
+          } else {
+            res.json({
+              msg: "success",
+            });
+          }
+        });
+      }
+    }
+  );
+});
+
+router.post("/paymentwatiting", async (req, res) => {
+  const frommail = req.body.frommail;
+  const password = req.body.password;
+  const tomail = req.body.tomail;
+  const orderNumber = req.body.orderNumber;
+  const memberName = req.body.memberName;
+  var transporter = nodemailer.createTransport({
+    // service: 'Outlook365',
+    host: "smtp.office365.com",
+    port: 587,
+    auth: {
+      user: frommail,
+      pass: password,
+    },
+    secureConnection: true,
+    // tls: { ciphers: 'SSLv3' }
+  });
+
+  ejs.renderFile(
+    __dirname + "/paymentWatiting.ejs",
+    { 
+      memberName: memberName,
+      orderNumber: orderNumber
+     },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+
+        var mailOptions = {
+          from: frommail,
+          to: tomail,
+          text: "เราได้รับแจ้งการโอนเงินสำหรับ " + orderNumber + " แล้ว",
+          subject: "เราได้รับแจ้งการโอนเงินสำหรับ " + orderNumber + " แล้ว",
+          html: data,
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            res.json({
+              msg: error,
+            });
+          } else {
+            res.json({
+              msg: "success",
+            });
+          }
+        });
+      }
+    }
+  );
+});
 
 module.exports = router;

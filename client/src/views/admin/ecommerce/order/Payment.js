@@ -5,25 +5,33 @@ import moment from 'moment';
 import SelectUC from "components/SelectUC";
 import ValidateService from "services/validateValue";
 const Payment = ({ props, setOrderHD }) => {
-    const { orderHD, orderDT } = props;
+    const { orderHD, orderHDold, orderDT, isCanEdit } = props;
     const [payment, setPayment] = useState(null);
 
 
-    const options = [
-        { value: 1, label: 'รอชำระเงิน' },
-        { value: 2, label: 'รอตรวจสอบ' },
-        { value: 3, label: 'ชำระเงินแล้ว' },
-    ];
 
-    const getStatus = (value) => {
-        if (value == 3)
-            return { text: 'ชำระเงินแล้ว', bg: ' bg-lightBlue-200 ' };
-        else if (value === 1)
-            return { text: 'รอชำระเงิน', bg: ' bg-yellow-200 ' };
-        else
-            return { text: 'รอตรวจสอบ', bg: ' bg-yellow-200 ' };
+    const getoption = () => {
+        if (orderHDold.paymentStatus == 1) {
+            return [
+                { value: 1, label: 'รอชำระเงิน' },
+                { value: 2, label: 'รอตรวจสอบ' },
+                { value: 3, label: 'ชำระเงินแล้ว' },
+            ]
+        } else if (orderHDold.paymentStatus == 2) {
+            return [
+                { value: 1, label: 'รอชำระเงิน', isDisabled: true },
+                { value: 2, label: 'รอตรวจสอบ' },
+                { value: 3, label: 'ชำระเงินแล้ว' },
+            ]
+        } else {
+            return [
+                { value: 1, label: 'รอชำระเงิน', isDisabled: true },
+                { value: 2, label: 'รอตรวจสอบ', isDisabled: true },
+                { value: 3, label: 'ชำระเงินแล้ว' },
+            ]
+        }
+
     }
-
     useEffect(async () => {
         const response = await axios.get(`/payment/byId/${orderHD.paymentId}`);
         if (response.data.status) {
@@ -31,6 +39,8 @@ const Payment = ({ props, setOrderHD }) => {
 
         }
     }, []);
+    console.log("old")
+    console.log(orderHDold)
 
     return (
         <div className='mt-2 px-4'>
@@ -53,13 +63,14 @@ const Payment = ({ props, setOrderHD }) => {
 
                                     setOrderHD(p => { return { ...p, paymentStatus: value.value } })
                                 }}
-                                options={options}
+                                options={getoption()}
                                 value={ValidateService.defaultValue(
-                                    options,
+                                    getoption(),
                                     orderHD.paymentStatus
                                 )}
-                                // isDisabled={!isCanEdit}
-                                // bgColor={getStatus(orderHD.paymentStatus).bg}
+                                isOptionDisabled={(option) => option.disabled}
+                                isDisabled={!isCanEdit}
+                            // bgColor={getStatus(orderHD.paymentStatus).bg}
                             />
                         </div>
                     </div>

@@ -80,7 +80,7 @@ const DetailOrder = ({
               style={{ opacity: returnStatus == true ? e.returnStatus != null ? "0.7" : "1" : "1" }}
             >
               <div className="w-full">
-                <div className="liff-inline mb-2" style={{ height: '10px', backgroundColor: '#ebebeb' }} />
+                <div className="liff-inline mb-2" style={{ height: '5px', backgroundColor: '#ebebeb' }} />
                 <div className="w-full flex mb-2 relative text-xs">
                   <div className="flex" style={{ width: "calc(100% - 120px)" }}>
                     <div className="font-bold" style={{ minWidth: "85px" }}>

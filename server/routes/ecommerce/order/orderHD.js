@@ -2,6 +2,7 @@ const express = require("express");
 const moment = require("moment");
 const router = express.Router();
 const bcrypt = require("bcrypt");
+const { tb2c2p } = require("../../../models");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../../middlewares/LineMiddleware");
@@ -46,70 +47,162 @@ router.post("/", validateToken, async (req, res) => {
 });
 
 router.get("/", validateToken, async (req, res) => {
-  const data = await tbOrderHD.findAll({
-    limit: 3,
-    where: { isDeleted: false },
-    attributes: {
+  let status = true
+  let msg = "success"
+  let orderHD = []
+  try {
+
+
+    // tbImage.hasMany(tbOrderHD, { foreignKey: "relatedId" });
+    // tbOrderHD.belongsTo(tbImage, { foreignKey: "id" });
+
+    // tbImage.hasMany(tbOrderHD, { foreignKey: "id" });
+    // tbOrderHD.belongsTo(tbImage, { foreignKey: "id" });
+
+    tbOrderHD.hasMany(tbImage, {
+      foreignKey: "relatedId",
+    });
+
+    tbOrderHD.hasMany(tbCancelOrder, {
+      foreignKey: "orderId",
+    });
+
+    tbOrderHD.hasMany(tbReturnOrder, {
+      foreignKey: "orderId",
+    });
+
+
+    const data = await tbOrderHD.findAll({
+      where: { isDeleted: false },
       include: [
-        [
-          Sequelize.literal(`(
-                        select sum(price) from tbstocks t 
-                            where id in (select stockId from tborderdts t2 
-				                            where isDeleted=0
-				                            and orderId = tbOrderHD.id)
-                    )`),
-          "sumPrice",
-        ],
-        [
-          Sequelize.literal(`(
-                        select image from tbimages t
-                            where relatedId = tbOrderHD.id
-                            and relatedTable = 'tbOrderHD'
-                            and isDeleted = 0
-                    )`),
-          "image",
-        ],
-        [
-          Sequelize.literal(`(
-                        select imageName from tbimages t
-                            where relatedId = tbOrderHD.id
-                            and relatedTable = 'tbOrderHD'
-                            and isDeleted = 0
-                    )`),
-          "imageName",
-        ],
-        [
-          Sequelize.literal(`(
-                        select deliveryCost from tblogistics t
-                            where id = tbOrderHD.logisticId
-                            and isDeleted = 0
-                    )`),
-          "deliveryCost",
-        ],
-        [
-          Sequelize.literal(`(
-                        select logisticType from tblogistics t
-                            where id = tbOrderHD.logisticId
-                            and isDeleted = 0
-                    )`),
-          "logisticType",
-        ],
-        [
-          Sequelize.literal(`(
-                        select sum(weight) from tbstocks t 
-                            where id in (select stockId from tborderdts t2 
-				                            where t2.isDeleted=0
-				                            and t2.orderId = tbOrderHD.id)
-                    )`),
-          "sumWeight",
-        ],
+        {
+          model: tbImage,
+          where: {
+            isDeleted: false,
+            relatedTable: 'tbOrderHD',
+          },
+          required: false
+        },
+        {
+          model: tbCancelOrder,
+          where: {
+            isDeleted: false,
+          },
+          required: false
+        },
+        {
+          model: tbReturnOrder,
+          where: {
+            isDeleted: false,
+          },
+          required: false
+        },
       ],
-    },
-  });
+    })
+    if (data) {
+      data.map((e, i) => {
+        let hd = e.dataValues;
+        if (hd.tbImages.length > 0) {
+          hd.image = hd.tbImages[0].image
+          hd.imageName = hd.tbImages[0].imageName
+        }
+        if (hd.tbCancelOrders.length > 0) {
+          hd.tbCancelOrder = hd.tbCancelOrders[0]
+        }
+        if (hd.tbReturnOrders.length > 0) {
+          hd.tbReturnOrder = hd.tbReturnOrders[0]
+        }
+
+
+
+        hd.tbImages = null
+        hd.tbCancelOrders = null
+        hd.tbReturnOrders = null
+        orderHD.push(hd)
+      })
+      // orderHD = data
+    }
+    // const data = await tbOrderHD.findAll({
+    //   // limit: 3,
+    //   where: { isDeleted: false },
+    //   // attributes: {
+    //   //   include: [
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select sum(price) from tbstocks t 
+    //   //                       where id in (select stockId from tborderdts t2 
+    //   // 	                            where isDeleted=0
+    //   // 	                            and orderId = tbOrderHD.id)
+    //   //               )`),
+    //   //       "sumPrice",
+    //   //     ],
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select image from tbimages t
+    //   //                       where relatedId = tbOrderHD.id
+    //   //                       and relatedTable = 'tbOrderHD'
+    //   //                       and isDeleted = 0
+    //   //               )`),
+    //   //       "image",
+    //   //     ],
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select imageName from tbimages t
+    //   //                       where relatedId = tbOrderHD.id
+    //   //                       and relatedTable = 'tbOrderHD'
+    //   //                       and isDeleted = 0
+    //   //               )`),
+    //   //       "imageName",
+    //   //     ],
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select deliveryCost from tblogistics t
+    //   //                       where id = tbOrderHD.logisticId
+    //   //                       and isDeleted = 0
+    //   //               )`),
+    //   //       "deliveryCost",
+    //   //     ],
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select logisticType from tblogistics t
+    //   //                       where id = tbOrderHD.logisticId
+    //   //                       and isDeleted = 0
+    //   //               )`),
+    //   //       "logisticType",
+    //   //     ],
+    //   //     [
+    //   //       Sequelize.literal(`(
+    //   //                   select sum(weight) from tbstocks t 
+    //   //                       where id in (select stockId from tborderdts t2 
+    //   // 	                            where t2.isDeleted=0
+    //   // 	                            and t2.orderId = tbOrderHD.id)
+    //   //               )`),
+    //   //       "sumWeight",
+    //   //     ],
+    //   //   ],
+    //   // },
+    // });
+    // if (data) {
+
+    //   for (var i = 0; i < data.length; i++) {
+    //     let hd = data[i].dataValues
+    //     const _tbImage = await tbImage.findOne({ where: { relatedId: hd.id, relatedTable: "tbOrderHD" } })
+    //     if (_tbImage) {
+    //       hd.image = _tbImage.image
+    //       hd.imageName = _tbImage.imageName
+    //     }
+    //     orderHD.push(hd)
+    //   }
+    //   // orderHD = data
+    // }
+  } catch (e) {
+    status = false
+    msg = e.message
+  }
   res.json({
-    status: true,
-    message: "success",
-    tbOrderHD: data,
+    status: status,
+    message: msg,
+    tbOrderHD: orderHD,
   });
 });
 
@@ -680,23 +773,25 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
           let secretKey = '0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22'
           let payload = {
             "merchantID": '764764000011180',
-
             "invoiceNo": orderId + "-" + orderhd.orderNumber,
             "description": "item 1",
             "amount": orderhd.netTotal,
             "currencyCode": "THB",
             "request3DS": "Y",
-            "backendReturnUrl": "https://undefined.ddns.net/mahboonkrongserver/2c2p",
-            "frontendReturnUrl": "https://undefined.ddns.net/mahboonkrongserver/line/paymentsucceed/" + Encrypt.EncodeKey((orderId + "," + orderhd.orderNumber)),
+            "paymentChannel": ["CC"],
+            "backendReturnUrl": "",
+            "frontendReturnUrl": "https://mbk.hopeagro.co.th/line/paymentsucceed/" + Encrypt.EncodeKey((orderId + "," + orderhd.orderNumber)),
           }
 
           const token = jwt.sign(payload, secretKey);
+
           await axios.post("https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken",
             { "payload": token })
-            .then(function (res) {
+            .then(async function (res) {
               // handle success
               let payload = res.data.payload
               const decoded = jwt.decode(payload)
+              const _2c2p = await tb2c2p.create({payload:payload,uid:uid,orderId: orderId + "," + orderhd.orderNumber});
               url2c2p = decoded
             })
             .catch(function (error) {
@@ -1301,7 +1396,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
     });
     if (Member) {
       OrderHDData = await tbOrderHD.findOne({
-        attributes: ["id", "logisticId", "paymentId", "memberRewardId", "paymentStatus"],
+        attributes: ["id","orderNumber","orderDate","logisticId", "paymentId", "memberRewardId", "paymentStatus"],
         where: {
           id: Encrypt.DecodeKey(orderId),
           isCancel: false,
@@ -1513,8 +1608,16 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
           );
         }
 
+        const member = await tbMember.findOne({
+          attributes: ["firstName", "lastName","email"],
+          where: { uid: Encrypt.DecodeKey(req.user.uid) },
+        });
+
         OrderHD = {
           id: Encrypt.EncodeKey(OrderHDData.dataValues.id),
+          orderNumber:OrderHDData.dataValues.orderNumber,
+          email:(member) ? Encrypt.DecodeKey(member.dataValues.email) : null,
+          memberName:(member) ?   Encrypt.DecodeKey(member.dataValues.firstName) + " " +  Encrypt.DecodeKey(member.dataValues.lastName) : null,
           price: total,
           Payment: _tbPayment,
         };
@@ -1533,6 +1636,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
   return res.json({
     status: status,
     msg: msg,
+    order:OrderHDData,
     OrderHD: OrderHD,
   });
 });
@@ -1857,6 +1961,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
   return res.json({
     status: status,
     msg: msg,
+    order: OrderHDData,
     OrderHD: OrderHD,
   });
 });

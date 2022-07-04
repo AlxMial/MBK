@@ -149,7 +149,8 @@ const Stock = () => {
       productCategoryId: "",
       price: "",
       discount: "",
-      discountType: "THB",
+      percent:"",
+      // discountType: "THB",
       productCount: "",
       weight: "",
       description: "",
@@ -168,6 +169,7 @@ const Stock = () => {
       productName: yup.string().required("* กรุณากรอก ชื่อสินค้า"),
       productCategoryId: yup.string().required("* กรุณากรอก หมวดหมู่สินค้า"),
       price: yup.string().required("* กรุณากรอก ราคา"),
+      discount: yup.string().required("* กรุณากรอก ส่วนลด"),
     }),
     onSubmit: (values) => {
       dispatch(fetchLoading());
@@ -180,7 +182,6 @@ const Stock = () => {
         values.updateBy = sessionStorage.getItem("user");
         if (values.id) {
           axios.put("stock", values).then(async (res) => {
-            console.log("res", res);
             if (res.data.status) {
               await saveImage(values.id);
               afterSaveSuccess();

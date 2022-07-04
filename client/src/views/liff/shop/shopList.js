@@ -348,7 +348,7 @@ const ShopList = () => {
           )}
         </div>
         <div
-          className="flex relative flex mt-2"
+          className="flex relative  mt-2"
           style={{ height: "40px", alignItems: "center" }}
         >
           <div
@@ -514,7 +514,7 @@ const ShopList = () => {
                                         .default
                                     }
                                     alt="icon_hot"
-                                    className="w-32 border-2 border-blueGray-50 absolute"
+                                    className="w-32 absolute"
                                   ></img>
                                 ) : null}
                               </div>
@@ -630,7 +630,7 @@ const ShopList = () => {
                               }}
                               src={require("assets/img/mbk/icon_hot.png").default}
                               alt="icon_hot"
-                              className="w-32 border-2 border-blueGray-50 absolute"
+                              className="w-32 absolute"
                             ></img>
                           ) : null}
                         </div>

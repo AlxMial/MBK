@@ -124,7 +124,7 @@ const ShowCart = () => {
 
                     <img
                       src={e.image}
-                      alt="icon_hot"
+                      alt=""
                       className="w-32 border-2 border-blueGray-50"
                     ></img>
 

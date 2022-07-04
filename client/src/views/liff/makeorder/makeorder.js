@@ -171,6 +171,7 @@ const MakeOrder = () => {
               history.push(path.paymentInfo.replace(":id", res.data.orderId));
             } else {
               window.location.href = res.data.url.webPaymentUrl
+              
             }
           } else {
           }

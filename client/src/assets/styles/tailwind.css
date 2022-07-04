@@ -4968,8 +4968,24 @@ button.bt-quantity.broder-plus {
 
 .ant-tabs-tab-btn {
   font-weight: normal !important;
+  font-size: 0.875rem !important;
 }
 
 /* a{
   color:white !important;
 } */
+.disabledInput button, [type="button"]:disabled{
+  background-color:white !important;
+  color: #374151;
+}
+
+
+.image360 {
+
+  -webkit-animation:spin 1s linear infinite;
+  -moz-animation:spin 1s linear infinite;
+  animation:spin 1s linear infinite;
+}
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }

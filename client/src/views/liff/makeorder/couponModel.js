@@ -95,7 +95,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                       <img
                         src={e.image}
                         alt="icon_hot"
-                        className="w-32 border-2 border-blueGray-50"
+                        className="w-32"
                       ></img>
                     </div>
                     <div

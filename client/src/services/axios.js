@@ -6,9 +6,9 @@ const token = Buffer.from(`${username}:${password}`, "utf8").toString("base64");
 
 const axiosInstance = axios.create({
   // baseURL: `https://undefined.ddns.net/mbkserver/`,
-  // baseURL: `https://undefined.ddns.net/mahboonkrongserver/`,
+  baseURL: `https://undefined.ddns.net/mahboonkrongserver/`,
   // baseURL: `https://hopeagro.co.th/mahboonkrongserver/`,
-  baseURL: `http://localhost:3001/mahboonkrongserver/`,
+  // baseURL: `http://localhost:3001/mahboonkrongserver/`,
 });
 
 axiosInstance.interceptors.request.use(
@@ -30,12 +30,14 @@ const headconfig = {
   api_key: config.api_key,
   secret_key: config.secret_key,
 };
+
+
 const Otp = (isSender, data, callblack) => {
   var config = {
     method: "post",
     url: isSender
-      ? config.otpsend
-      : config.otpvalidate,
+      ? "https://portal-otp.smsmkt.com/api/otp-send"
+      : "https://portal-otp.smsmkt.com/api/otp-validate",
     headers: headconfig,
     data: data,
   };
