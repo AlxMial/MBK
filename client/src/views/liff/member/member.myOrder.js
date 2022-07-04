@@ -86,7 +86,7 @@ const MyOrder = () => {
                   <div className="w-full flex mb-2 text-liff-gray-mbk" style={{ fontSize: "12px", justifyContent: "end" }}>
                     <div className="font-bold  text-12"
                       onClick={() => {
-                        history.push(OrderHD.paymentStatus == 1 ? path.makeorderbyid.replace(":id", hd.id) : path.orderpaymentdone.replace(":id", hd.id))
+                        history.push(hd.paymentStatus == 1 ? path.makeorderbyid.replace(":id", hd.id) : path.orderpaymentdone.replace(":id", hd.id))
                       }}>
                       {"ดูรายละเอียดคำสั่งซื้อ >"}
                     </div>
