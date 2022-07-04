@@ -110,7 +110,7 @@ router.get("/", validateToken, async (req, res) => {
           hd.tbCancelOrder = hd.tbCancelOrders[0]
         }
         if (hd.tbReturnOrders.length > 0) {
-          hd.tbReturnOrder = hd.tbCancelOrders[0]
+          hd.tbReturnOrder = hd.tbReturnOrders[0]
         }
 
 
