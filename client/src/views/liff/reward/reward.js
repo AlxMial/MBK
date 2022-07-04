@@ -36,10 +36,10 @@ const Reward = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ top: "10%", position: "absolute", width: "100%" }}>
+      <div style={{ position: "absolute", top: "90px", width: "100%" }}>
         <MyPoint />
 
-        <div className="mt-5">
+        <div className="mt-8">
           <div style={{ width: "90%", margin: "auto" }}>
             <div className="flex h-10">
               <div className="bg-green-mbk" style={{ width: "10px" }}></div>
@@ -47,7 +47,7 @@ const Reward = () => {
             </div>
 
             {Redemptionconditionshd.length > 0 ?
-              <div className="w-full line-scroll" style={{ width: "90%", margin: "auto", height: "calc(100vh - 280px)" }}>
+              <div className="w-full line-scroll" style={{ width: "90%", margin: "auto", height: "calc(100vh - 310px)" }}>
                 {[...Redemptionconditionshd].map((e, i) => {
                   return (
                     <div className="w-full mb-2" key={i} onClick={() => {
@@ -64,20 +64,29 @@ const Reward = () => {
                           imgclassname=" w-full h-full"
                         />
                       </div>
-                      <div className="mt-2 text-ms">
-                        <div className="w-full font-bold mb-2 ">{e.redemptionName} </div>
-                        <div className="w-full mb-2 text-liff-gray-mbk">{e.points + " คะแนน"} </div>
-                        <div className="w-full mb-2 text-liff-gray-mbk">
+                      <div className="mt-2 text-ms px-4">
+                        <div className="flex justify-between">
+                          <div className="font-bold ">{e.redemptionName} </div>
+                          <i className="fas fa-chevron-right"></i>
+                        </div>
+                        <div className="w-full text-liff-gray-mbk">{e.points + " คะแนน"} </div>
+                        <div className="w-full text-liff-gray-mbk">
                           {"ใช้ได้ถึง " + moment(e.endDate).locale("th").add("years", 543).format("DD MMM yyyy")}
                         </div>
+                        <div className="liff-inline mb-2" />
                       </div>
                     </div>
                   )
                 })}
               </div>
               :
-              <EmptyOrder text={"ยังไม่มีรางวัลที่สามารถแลกได้"} />
-
+              <div className="w-full line-scroll" style={{ width: "90%", margin: "auto", height: "calc(100vh - 310px)" }}>
+                <div className="flex justify-center items-center h-full">
+                  <div style={{ height: "50px" }}>
+                    <EmptyOrder text={"ยังไม่มีรางวัลที่สามารถแลกได้"} />
+                  </div>
+                </div>
+              </div>
             }
           </div>
         </div>

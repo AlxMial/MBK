@@ -12,7 +12,8 @@ const PurchaseOrder = ({ props }) => {
 
 
     const sumPrice = orderDT.reduce((sum, item) => {
-        return parseFloat(sum) + ((parseFloat(item.price) + parseFloat(item.discount)) * parseFloat(item.amount));
+  
+        return ((parseFloat(item.price)) * parseFloat(item.amount));
     }, 0);
 
     const sumDiscount = orderDT.reduce((sum, item) => {
@@ -76,7 +77,8 @@ const PurchaseOrder = ({ props }) => {
                                                 <div className="flex flex-col">
                                                     <div>
                                                         <strike className='text-gray-300'>
-                                                            {(parseFloat(parseFloat(value.price) + parseFloat(value.discount)).toFixed(2)).toLocaleString('en')}
+                                                            
+                                                            {(parseInt(value.price) + parseFloat(value.discount)).toFixed(2)}
                                                         </strike>
                                                     </div>
                                                     <div className='text-red-500'>

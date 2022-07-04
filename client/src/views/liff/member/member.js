@@ -63,7 +63,7 @@ const Member = () => {
     <>
       {/* card */}
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="noselect absolute w-full" style={{ marginTop: "-99px" }}>
+      <div className="noselect absolute w-full" style={{ marginTop: "-150px" }}>
         <div
           className=" flex margin-a shadow-2xl"
           style={{

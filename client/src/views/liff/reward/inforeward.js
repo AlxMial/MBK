@@ -121,11 +121,11 @@ const InfoReward = () => {
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
       {page == "main" ?
-        <div style={{ height: "calc(50% - 100px)", backgroundColor: "#007a40" }}>
+        <div style={{ height: "250px", backgroundColor: "#007a40" }}>
           {Redemptionconditionshd != null ?
             <>
               <div className="w-full h-full absolute" >
-                <div className="mb-4" style={{ height: "200px" }}>
+                <div className="mb-4" style={{ height: "150px" }}>
                   <div style={{ width: "200px", height: "100px", margin: "auto" }}>
                     <ImageUC
                       find={1}
@@ -148,7 +148,7 @@ const InfoReward = () => {
                   <div className="liff-inline" />
                   <div className="font-bold text-center mt-2 mb-4 text-sm">รายละเอียด</div>
                   <div className="liff-inline" />
-                  <div className="text-sm" style={{ minHeight: "150px" }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{Redemptionconditionshd.description}</div>
+                  <div className="text-sm p-4" style={{ minHeight: "150px" }}>{Redemptionconditionshd.description}</div>
                   <div className="text-sm text-liff-gray-mbk" style={{ textAlign: "center" }}>{"ใช้ " + Redemptionconditionshd.points + " คะแนน"}</div>
                 </div>
               </div>

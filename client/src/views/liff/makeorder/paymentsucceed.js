@@ -4,6 +4,7 @@ import { path } from "services/liff.services";
 import * as Session from "@services/Session.service";
 import * as fn from "services/default.service";
 import { sendEmailSuccess } from "services/liff.services";
+import moment from "moment";
 // components
 import {
   getPaymentsucceed,
@@ -17,7 +18,20 @@ const Paymentsucceed = () => {
     getPaymentsucceed({ id: id, uid: Session.getLiff().uid }, (res) => {
       // console.log('res', res);
       if (res.status) {
-        sendEmailSuccess()
+        sendEmailSuccess(
+          {
+            frommail: "noreply@undefined.co.th",
+            password: "Has88149*",
+            tomail:'weatherzilla@gmail.com',
+            orderNumber: res.data.OrderHD.orderNumber,
+            memberName: res.data.OrderHD.memberName,
+            orderPrice: res.data.OrderHD.netTotal,
+            orderDate :  moment(res.data.OrderHD.orderDate).format("DD/MM/YYYY"),
+          },
+          (res) => {
+            console.log(res);
+          }
+        );
         // res.data.status = false;
         setOrderHD(res.data.OrderHD)
       }

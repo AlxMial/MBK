@@ -9,6 +9,31 @@ class ValidateService {
     }
   };
 
+  onHandleDecimalChange = (e) => {
+    const re = /([^0-9.]+)/;
+    if(re.test(e.target.value))
+    { 
+      return Number(0).toFixed(2);
+    }
+
+    let val = e.target.value;
+    val = val.replace(/([^0-9.]+)/, "");
+    val = val.replace(/^(0|\.)/, "");
+    const match = /(\d{0,7})[^.]*((?:\.\d{0,2})?)/g.exec(val);
+    const value = match[1] + match[2];
+    if (val.length > 0) {
+      e.target.value = Number(value).toFixed(2);
+      return e.target.value;
+    }
+
+    // console.log(val)
+    // if (val.length > 0) {
+    //   e.target.value = Number(value).toFixed(2);
+    //   e.target.setSelectionRange(this.start, this.start);
+    //   return Number(value).toFixed(2);
+    // }
+  };
+
   onHandlePhoneChange = (e) => {
     const re = /^[0-9\b]+$/;
     // if value is not blank, then test the regex
@@ -27,10 +52,15 @@ class ValidateService {
     return value.toString();
   };
 
+  onHandleDecimal = (e) => {
+    var value = this.onHandleDecimalChange(e);
+    return value;
+  };
+
   onHandleNumberValue = (e) => {
     var value = this.onHandleNumberChange(e.target.value);
 
-    return parseInt(value=="" || value ==null?0 :value).toString();
+    return parseInt(value === "" || value == null ? 0 : value).toString();
   };
 
   onHandleIdentityCard = (e) => {
@@ -63,9 +93,9 @@ class ValidateService {
       value = options[0].value;
     }
 
-      return options
-        ? options.find((option) => option.value.toString() === value.toString())
-        : "";
+    return options
+      ? options.find((option) => option.value.toString() === value.toString())
+      : "";
   };
 
   defaultValueText = (options, value) => {

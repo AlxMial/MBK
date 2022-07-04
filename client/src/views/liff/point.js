@@ -31,9 +31,9 @@ const Point = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div className="h-full" style={{ marginTop: "-200px", width: "100%" }}>
+      <div className="h-full absolute" style={{ top: "90px", width: "100%" }}>
         <MyPoint />
-        <div className="mt-6">
+        <div className="mt-8">
           <div
             className="bg-green-mbk flex text-white font-bold text-xs relative "
             style={{
@@ -73,7 +73,7 @@ const Point = () => {
               width: "90%",
               padding: "10px",
               margin: "auto",
-              height: "calc(100% - 375px)",
+              height: "calc(100% - 365px)",
             }}
           >
             {[...dataPoints].map((e, i) => {

@@ -4008,6 +4008,15 @@ strike {
   border-radius: 1rem !important;
 }
 
+.TextWordWarp-100 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+  /* width:100px; */
+}
+
+
 .TextWordWarp-150 {
   white-space: nowrap;
   overflow: hidden;
@@ -4021,6 +4030,14 @@ strike {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
+  /* width:100px; */
+}
+
+.TextWordWarp-300 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
   /* width:100px; */
 }
 
@@ -4276,7 +4293,7 @@ input[type="number"] {
 }
 
 .liff-footer {
-  height: calc(100vh - 420px);
+  height: calc(100vh - 440px);
 }
 
 .bg-import {
@@ -4347,13 +4364,19 @@ input[type="number"] {
   }
 
   .Overflow-Banner {
-    max-height: 58vh;
+    max-height: 88vh;
     overflow-y: auto;
   }
 
   .widthDigi {
     width: 120px;
   }
+  
+  .Overflow-Banner {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
 }
 
 @media only screen and (max-width: 1536px) {
@@ -4379,7 +4402,7 @@ input[type="number"] {
   }
 
   .Overflow-Banner {
-    max-height: 50vh;
+    max-height: 80vh;
     overflow-y: auto;
   }
 
@@ -4974,18 +4997,30 @@ button.bt-quantity.broder-plus {
 /* a{
   color:white !important;
 } */
-.disabledInput button, [type="button"]:disabled{
-  background-color:white !important;
+.disabledInput button,
+[type="button"]:disabled {
+  background-color: white !important;
   color: #374151;
 }
 
-
 .image360 {
-
-  -webkit-animation:spin 1s linear infinite;
-  -moz-animation:spin 1s linear infinite;
-  animation:spin 1s linear infinite;
+  -webkit-animation: spin 1s linear infinite;
+  -moz-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
 }
-@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+@-moz-keyframes spin {
+  100% {
+    -moz-transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

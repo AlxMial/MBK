@@ -157,6 +157,10 @@ const ShowCart = () => {
     getProducts();
   }, []);
 
+  console.log('Cart Item', CartItem)
+  const sumQuantity = CartItem.reduce((sum, item) => {
+    return parseFloat(sum) + parseFloat(item.quantity);
+  }, 0);
 
   return (
     <>
@@ -181,7 +185,7 @@ const ShowCart = () => {
         <div
           className="mt-2 line-scroll"
           style={{
-            height: "calc(100% - 420px)",
+            height: "calc(100% - 470px)",
             width: "95%",
             marginLeft: "auto",
             marginRight: "auto",
@@ -323,9 +327,19 @@ const ShowCart = () => {
             );
           })}
         </div> :
-        <EmptyOrder text={"ยังไม่มีรายการสินค้า"} />
-
+        <div className="flex justify-center items-center h-full">
+          <div style={{ height: "50px" }}>
+            <EmptyOrder text={"ยังไม่มีรายการสินค้า"} />
+          </div>
+        </div>
       }
+      <div className="liff-inline mb-2" />
+      <div className="flex px-2 items-center" style={{ height: '40px' }}>
+        <div className="text-sm font-bold" style={{ width: "50%" }}>{"ยอดรวมสินค้า (" + sumQuantity + " ชิ้น)"}</div>
+        <div className="font-bold text-sm" style={{ width: "50%", textAlign: "end" }}>
+          {"฿ " + fn.formatMoney(sumprice)} </div>
+      </div>
+      <div className="liff-inline mb-2" />
       <div
         className="flex relative"
         style={{

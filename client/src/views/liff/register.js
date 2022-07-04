@@ -99,9 +99,8 @@ const Register = () => {
     consentDate: new Date(),
     isPolicy1: false,
     isPolicy2: false,
-    isCustomer:1,
+    isCustomer:"1",
     eating:""
-
   });
 
   const [policy, setpolicy] = useState({
@@ -118,9 +117,9 @@ const Register = () => {
   });
   const policyAllow = () => {
     // if (policy.policy1 && policy.policy2) {
-    // setpage("otp");
-    // generate();
-    DoSave();
+    setpage("otp");
+    generate();
+    // DoSave();
     // }
   };
   const policyclose = () => {
@@ -233,7 +232,7 @@ const Register = () => {
   }
   const policyChange = (e) => {
     const { name } = e.target;
-    if (name === "policy1") Data.isPolicy1 = e.target.checked;
+    if (name === "isPolicy1") Data.isPolicy1 = e.target.checked;
     else Data.isPolicy2 = e.target.checked;
     setpolicy((prevState) => ({
       ...prevState,
@@ -1555,12 +1554,12 @@ const Register = () => {
             <div className="mt-2">
               <label className="inline-flex items-center cursor-pointer">
                 <input
-                  id="remember"
+                  id="isPolicy1"
                   type="checkbox"
-                  name="policy1"
+                  name="isPolicy1"
                   className="form-checkbox text-xs border-2 rounded text-gold-mbk ml-1 w-5 h-5 ease-linear transition-all duration-150"
                   onChange={policyChange}
-                  checked={Data.policy1}
+                  checked={Data.isPolicy1}
                   style={{ alignSelf: "stretch" }}
                 />
                 <span
@@ -1576,12 +1575,12 @@ const Register = () => {
             <div className="mt-2">
               <label className="inline-flex items-center cursor-pointer">
                 <input
-                  id="remember"
+                  id="isPolicy2"
                   type="checkbox"
-                  name="policy2"
+                  name="isPolicy2"
                   className="form-checkbox text-xs border-2 rounded text-gold-mbk ml-1 w-5 h-5 ease-linear transition-all duration-150"
                   onChange={policyChange}
-                  checked={Data.policy2}
+                  checked={Data.isPolicy2}
                   style={{ alignSelf: "stretch" }}
                 />
                 <span

@@ -6,14 +6,14 @@ import ImageUC from "components/Image/index";
 const Expire = ({ data }) => {
   return (
     <>
-      <div className="mt-2 " style={{ padding: "10px" }}>
-        <div className="flex relative">
+      <div className="mt-2 h-full" style={{ padding: "10px" }}>
+        <div className="flex relative h-full">
           {data.length > 0 ?
             <div className="mt-2 mb-2 text-green-mbk font-bold text-xs" style={{
               width: "90%", margin: "auto"
               , height: "calc(100% - 250px)"
             }}>
-              {[...data].filter((e) => {  return new Date(e.expiredDate) > new Date()  && e.isUsedCoupon === true  }).map((e, i) => {
+              {[...data].filter((e) => { return new Date(e.expiredDate) > new Date() && e.isUsedCoupon === true }).map((e, i) => {
                 return (
                   <div key={i} className="w-full  mb-2" >
                     <div className="w-full" style={{
@@ -62,8 +62,8 @@ const Expire = ({ data }) => {
                 )
               })}
             </div>
-            : <div className="w-full flex" style={{
-              height: "50px",
+            : <div className="w-full flex items-center h-full" style={{
+              // height: "50px",
               justifyContent: "center",
               justifyItems: "center",
               color: "#ddd"
