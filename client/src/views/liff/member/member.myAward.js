@@ -202,7 +202,7 @@ const MyAward = () => {
             );
           })
         ) : (
-          <div className="flex justify-center items-center mt-20">
+          <div className="flex justify-center items-center mt-10">
             <div style={{ height: "50px" }}>
               <EmptyOrder text={"ยังไม่มีของสมนาคุณ"} />
             </div>

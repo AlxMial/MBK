@@ -36,10 +36,10 @@ const Reward = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ top: "10%", position: "absolute", width: "100%" }}>
+      <div style={{ marginTop: "-170px", width: "100%" }}>
         <MyPoint />
 
-        <div className="mt-5">
+        <div className="mt-10">
           <div style={{ width: "90%", margin: "auto" }}>
             <div className="flex h-10">
               <div className="bg-green-mbk" style={{ width: "10px" }}></div>
@@ -76,9 +76,11 @@ const Reward = () => {
                 })}
               </div>
               :
-              <div className="flex justify-center items-center h-full">
-                <div style={{ height: "50px" }}>
-                  <EmptyOrder text={"ยังไม่มีรางวัลที่สามารถแลกได้"} />
+              <div className="w-full line-scroll" style={{ width: "90%", margin: "auto", height: "calc(100vh - 280px)" }}>
+                <div className="flex justify-center items-center h-full">
+                  <div style={{ height: "50px" }}>
+                    <EmptyOrder text={"ยังไม่มีรางวัลที่สามารถแลกได้"} />
+                  </div>
                 </div>
               </div>
             }
