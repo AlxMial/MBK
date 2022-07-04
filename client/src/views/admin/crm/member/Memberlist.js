@@ -167,10 +167,8 @@ export default function MemberList() {
       "memberPointExpiry",
       "isPolicy1",
       "isPolicy2",
-      "description",
       "isCustomer",
       "eating",
-      "description"
     ];
     for (var i = 0; i < member.data.tbMember.length; i++) {
       member.data.tbMember[i]["province"] = await Address.getAddressName(

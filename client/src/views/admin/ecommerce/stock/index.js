@@ -12,6 +12,7 @@ import PageTitle from "views/admin/PageTitle";
 import FilesService from "../../../../services/files";
 import { onSaveImage } from "services/ImageService";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 const Stock = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,7 @@ const Stock = () => {
   const [listStock, setListStock] = useState([]);
   const [listSearch, setListSearch] = useState([]);
   const [open, setOpen] = useState(false);
+  let history = useHistory();
 
   const _defaultImage = {
     id: null,
@@ -46,7 +48,7 @@ const Stock = () => {
     await axios.get("stock").then(async (response) => {
       if (!response.data.error && response.data.tbStock) {
         let _stockData = response.data.tbStock;
-        _stockData = _stockData.map((stock) => {
+        _stockData = await _stockData.map((stock) => {
           if (stock.productCount - stock.buy > 10) {
             stock.status = "พร้อมขาย";
           } else if (stock.productCount - stock.buy <= 0) {
@@ -56,11 +58,11 @@ const Stock = () => {
           }
           return stock;
         });
-
+        setOpen(false);
+        dispatch(fetchSuccess());
         setListStock(_stockData);
-        setListSearch(_stockData);
+        setListSearch([_stockData]);
       }
-      dispatch(fetchSuccess());
     });
   };
 
@@ -150,7 +152,6 @@ const Stock = () => {
       price: "",
       discount: "",
       percent:"",
-      // discountType: "THB",
       productCount: "",
       weight: "",
       description: "",
@@ -212,10 +213,12 @@ const Stock = () => {
     },
   });
 
-  const afterSaveSuccess = () => {
-    fetchData();
-    setOpen(false);
-    dispatch(fetchSuccess());
+  const afterSaveSuccess = async () => {
+    await fetchData();
+    history.push(window.location.pathname);
+    // setOpen(false);
+    // dispatch(fetchSuccess());
+
     addToast("บันทึกข้อมูลสำเร็จ", {
       appearance: "success",
       autoDismiss: true,
@@ -224,7 +227,6 @@ const Stock = () => {
 
   const saveImage = async (id) => {
     stockImage.forEach(async (item, index) => {
-      console.log(item);
       if (item.image) {
         item.relatedId = id;
         await onSaveImage(item);

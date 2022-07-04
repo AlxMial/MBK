@@ -4347,13 +4347,19 @@ input[type="number"] {
   }
 
   .Overflow-Banner {
-    max-height: 58vh;
+    max-height: 88vh;
     overflow-y: auto;
   }
 
   .widthDigi {
     width: 120px;
   }
+  
+  .Overflow-Banner {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
 }
 
 @media only screen and (max-width: 1536px) {
@@ -4379,7 +4385,7 @@ input[type="number"] {
   }
 
   .Overflow-Banner {
-    max-height: 50vh;
+    max-height: 80vh;
     overflow-y: auto;
   }
 

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const axios = require('axios').default;
-const { tbPayment, tbPromotionStore, tbOrderHD, tb2c2p } = require("../../models");
+const { tbPayment, tbPromotionStore, tbOrderHD, tb2c2p,tbMember } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -164,6 +164,12 @@ router.get("/getPromotionstores", validateLineToken, async (req, res) => {
 });
 router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
   let id = Encrypt.DecodeKey(req.body.id);
+
+  const member = await tbMember.findOne({
+    attributes: ["firstName", "lastName","email"],
+    where: { uid: Encrypt.DecodeKey(req.user.uid) },
+  });
+
   try {
     const _2c2p = await tb2c2p.findOne({
       where: { orderId: id, uid: req.body.uid },
@@ -197,7 +203,7 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
         });
 
       const _tbOrderHD = await tbOrderHD.findOne({
-        attributes: ["orderNumber", "paymentStatus", "netTotal"],
+        attributes: ["orderNumber", "paymentStatus", "netTotal","orderDate"],
         where: {
           id: Encrypt.DecodeKey(id.split(",")[0]),
           orderNumber: id.split(",")[1],
@@ -206,6 +212,8 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
       res.json({
         status: true,
         orderNumber: id.split(",")[1],
+        memberName : (member) ? Encrypt.DecodeKey(member.dataValues.firstName) + ' ' + Encrypt.DecodeKey(member.dataValues.lastName) : null,
+        email : (member) ? Encrypt.DecodeKey(member.dataValues.email) : null,
         OrderHD: _tbOrderHD
       });
     } else {

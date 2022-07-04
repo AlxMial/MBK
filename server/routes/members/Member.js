@@ -104,8 +104,7 @@ router.get("/export", validateToken, async (req, res) => {
       "isPolicy1",
       "isPolicy2",
       "isCustomer",
-      "eating",
-      "description"
+      "eating"
     ],
     where: { isDeleted: false },
   });

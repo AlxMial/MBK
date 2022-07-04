@@ -91,8 +91,13 @@ module.exports = (sequelize, DataTypes) => {
     , isPolicy2: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
-    },
-
+    }, isCustomer :{
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+    }, eating  :{
+      type: DataTypes.STRING,
+      allowNull: true,
+    }
   });
 
   tbMember.associate = (models) => {

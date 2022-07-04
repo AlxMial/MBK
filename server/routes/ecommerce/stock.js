@@ -138,7 +138,7 @@ router.post("/getStock"
             isBestSeller: e.isBestSeller,
             productCategoryId: Encrypt.EncodeKey(e.productCategoryId),
             percent: e.percent,
-            priceDiscount: e.discount,
+            priceDiscount: e.price - e.discount,
             // percent:
             //   e.discount > 0
             //     ? e.discountType.toString().toLowerCase().includes("percent")

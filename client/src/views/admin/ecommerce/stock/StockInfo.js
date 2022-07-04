@@ -25,6 +25,7 @@ import { useToasts } from "react-toast-notifications";
 import ModalHeader from "views/admin/ModalHeader";
 import ButtonModalUC from "components/ButtonModalUC";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
+import Categorylist from "./Categorylist";
 
 const StockInfo = ({
   handleModal,
@@ -36,10 +37,6 @@ const StockInfo = ({
 }) => {
   Modal.setAppElement("#root");
   const useStyleCreate = styleSelect();
-  const discountList = [
-    { value: "THB", label: "บาท" },
-    { value: "percent", label: "%" },
-  ];
 
   const inactiveList = [
     { label: "เปิดการใช้งาน", value: true },
@@ -55,6 +52,17 @@ const StockInfo = ({
   const [productCategoryList, setProductCategoryList] = useState([]);
   const [categoryValue, setCategoryValue] = useState(null);
   const [delayValue, setDelayValue] = useState("");
+
+  const [openCategory, setOpenCategory] = useState(false);
+
+  const onOpenModal = () => {
+    console.log(openCategory);
+    setOpenCategory(true);
+  };
+
+  const onCloseModal = () => {
+    setOpenCategory(false);
+  };
 
   useEffect(async () => {
     await fetchData();
@@ -96,13 +104,21 @@ const StockInfo = ({
   });
 
   const handleChange = (newValue, actionMeta) => {
-    const _categoryValue =
-      productCategoryList &&
-      productCategoryList.filter((item) => item.value === newValue);
-    if (_categoryValue) {
-      setCategoryValue(_categoryValue[0]);
+
+    if (newValue !== null) {
+      const _categoryValue =
+        productCategoryList &&
+        productCategoryList.filter((item) => item.value === newValue);
+      if (_categoryValue) {
+        setCategoryValue(_categoryValue[0]);
+      }
     }
-    formik.setFieldValue("productCategoryId", newValue.value, false);
+
+    formik.setFieldValue(
+      "productCategoryId",
+      newValue !== null ? newValue.value : "",
+      false
+    );
   };
 
   const handleCreate = (inputValue) => {
@@ -143,24 +159,24 @@ const StockInfo = ({
       if (value !== "" && value > 0) {
         if (formik.values.price !== "" && formik.values.price > 0) {
           Calculate = formik.values.price * (value / 100);
-          formik.setFieldValue("discount", Calculate);
+          formik.setFieldValue("discount", Calculate.toFixed(2));
         }
       } else {
-        formik.setFieldValue("discount", 0);
+        formik.setFieldValue("discount", "0");
       }
     } else if (type === "discount") {
       if (value !== "" && value > 0) {
         if (formik.values.price !== "" && formik.values.price > 0) {
-          Calculate =  (value / formik.values.price) * 100;
+          Calculate = (value / formik.values.price) * 100;
           formik.setFieldValue("percent", Calculate.toFixed(2));
         }
       } else {
-        formik.setFieldValue("percent", 0);
+        formik.setFieldValue("percent", "0");
       }
     } else {
       if (value !== "" && value > 0) {
-        formik.setFieldValue("percent", 0);
-        formik.setFieldValue("discount", 0);
+        formik.setFieldValue("percent", "");
+        formik.setFieldValue("discount", "");
       }
     }
   };
@@ -221,7 +237,7 @@ const StockInfo = ({
                               <LabelUC
                                 moreClassName="text-center mt-2 pr-4"
                                 label={
-                                  i == 0
+                                  i === 0
                                     ? "รูปปกสินค้า"
                                     : "รูปสินค้า " + (i + 1)
                                 }
@@ -273,19 +289,31 @@ const StockInfo = ({
                     </div>
                     <div className="w-full lg:w-8/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
-                        <CreatableSelect
-                          isClearable
-                          className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                          styles={useStyleCreate}
-                          menuPortalTarget={document.body}
-                          menuPosition="fixed"
-                          isLoading={isLoadingSelect}
-                          options={productCategoryList}
-                          onChange={handleChange}
-                          placeholder="เลือกข้อมูล / เพิ่มข้อมูล"
-                          onCreateOption={handleCreate}
-                          value={categoryValue}
-                        />
+                        <div className="flex flex-warp">
+                          <div className="relative w-full ">
+                            <CreatableSelect
+                              isClearable
+                              className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                              styles={useStyleCreate}
+                              menuPortalTarget={document.body}
+                              menuPosition="fixed"
+                              isLoading={isLoadingSelect}
+                              options={productCategoryList}
+                              onChange={handleChange}
+                              placeholder="เลือกข้อมูล / เพิ่มข้อมูล"
+                              onCreateOption={handleCreate}
+                              value={categoryValue}
+                            />
+                          </div>
+                          <div className="relative px-4 margin-a ">
+                            <i
+                              className=" cursor-pointer fas fa-bars"
+                              onClick={() => {
+                                onOpenModal();
+                              }}
+                            ></i>
+                          </div>
+                        </div>
                       </div>
                       <div className="relative w-full px-4">
                         {formik.touched.productCategoryId &&
@@ -315,14 +343,17 @@ const StockInfo = ({
                           className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                           id="price"
                           name="price"
-                          maxLength={5}
                           onBlur={formik.handleBlur}
                           value={formik.values.price}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
-                            setDelayValue(ValidateService.onHandleNumber(e));
+                            var start = e.target.selectionStart;
+                            setDelayValue(
+                              ValidateService.onHandleDecimalChange(e)
+                            );
                             formik.values.price =
-                              ValidateService.onHandleNumber(e);
+                              ValidateService.onHandleDecimalChange(e);
+                            e.target.setSelectionRange(start, start);
                             calculateValue(formik.values.price, "price");
                           }}
                         />
@@ -365,14 +396,19 @@ const StockInfo = ({
                           className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                           id="discount"
                           name="discount"
-                          maxLength={5}
                           onBlur={formik.handleBlur}
                           value={formik.values.discount}
                           onChange={(e) => {
-                            setDelayValue(ValidateService.onHandleNumber(e));
+                            var start = e.target.selectionStart;
+                            setDelayValue(
+                              ValidateService.onHandleDecimalChange(e)
+                            );
                             formik.values.discount =
-                              ValidateService.onHandleNumber(e);
-                            if (formik.values.discount !== "" && formik.values.price !== "" ) {
+                              ValidateService.onHandleDecimalChange(e);
+                            if (
+                              formik.values.discount !== "" &&
+                              formik.values.price !== ""
+                            ) {
                               if (
                                 parseInt(formik.values.discount) >
                                 parseInt(formik.values.price)
@@ -380,6 +416,7 @@ const StockInfo = ({
                                 formik.values.discount = formik.values.price;
                               }
                             }
+                            e.target.setSelectionRange(start, start);
                             calculateValue(formik.values.discount, "discount");
                           }}
                         />
@@ -407,19 +444,34 @@ const StockInfo = ({
                       <div className="relative w-full px-4">
                         <InputUC
                           type="text"
-                          id="percent"
                           className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                          id="percent"
                           name="percent"
-                          maxLength={3}
                           onBlur={formik.handleBlur}
                           value={formik.values.percent}
                           onChange={(e) => {
-                            setDelayValue(ValidateService.onHandleNumber(e));
+                            var start = e.target.selectionStart;
+                            if (
+                              ValidateService.onHandleDecimalChange(e) > 100.0
+                            )
+                              e.target.value = 100;
+                            setDelayValue(
+                              ValidateService.onHandleDecimalChange(e)
+                            );
                             formik.values.percent =
-                              ValidateService.onHandleNumber(e);
-                            if (formik.values.percent > 100) {
-                              formik.values.percent = 100;
+                              ValidateService.onHandleDecimalChange(e);
+                            if (
+                              formik.values.percent !== "" &&
+                              formik.values.price !== ""
+                            ) {
+                              if (
+                                parseInt(formik.values.percent) >
+                                parseInt(formik.values.price)
+                              ) {
+                                formik.values.percent = formik.values.price;
+                              }
                             }
+                            e.target.setSelectionRange(start, start);
                             calculateValue(formik.values.percent, "percent");
                           }}
                         />
@@ -452,10 +504,10 @@ const StockInfo = ({
                       <div className="relative w-full px-4">
                         <InputUC
                           type="text"
+                          maxLength={5}
                           id="productCount"
                           className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                           name="productCount"
-                          maxLength={5}
                           onBlur={formik.handleBlur}
                           value={formik.values.productCount}
                           // disabled={typePermission !== "1"}
@@ -463,7 +515,6 @@ const StockInfo = ({
                             setDelayValue(ValidateService.onHandleNumber(e));
                             formik.values.productCount =
                               ValidateService.onHandleNumber(e);
-                            // formik.handleChange(e);
                           }}
                         />
                       </div>
@@ -482,7 +533,8 @@ const StockInfo = ({
                         <InputUC
                           type="text"
                           name="weight"
-                          maxLength={2}
+                          id="weight"
+                          maxLength={3}
                           className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                           onBlur={formik.handleBlur}
                           value={formik.values.weight}
@@ -491,7 +543,7 @@ const StockInfo = ({
                             setDelayValue(ValidateService.onHandleNumber(e));
                             formik.values.weight =
                               ValidateService.onHandleNumber(e);
-                            // formik.handleChange(e);
+            
                           }}
                         />
                       </div>
@@ -645,7 +697,6 @@ const StockInfo = ({
                           value={formik.values.startTimeCampaign}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
-                            console.log(e);
                             formik.handleChange(e);
                           }}
                         />
@@ -694,6 +745,12 @@ const StockInfo = ({
           </div>
         </div>
       </Modal>
+      <Categorylist
+        listCategory={productCategoryList}
+        setProductCategoryList={setProductCategoryList}
+        showModal={openCategory}
+        hideModal={() => setOpenCategory(false)}
+      />
     </>
   );
 };

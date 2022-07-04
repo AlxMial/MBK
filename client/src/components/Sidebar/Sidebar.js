@@ -263,7 +263,7 @@ export default function Sidebar() {
               />
               <ul
                 className={
-                  "py-2 space-y-2 " + (isReport ? " block" : " hidden")
+                  " space-y-2 " + (isReport ? " block" : " hidden")
                 }
               >
                 {menuList
@@ -276,7 +276,7 @@ export default function Sidebar() {
                           onClick={() => onSession(item.link)}
                           className={linkClassName(item.link)}
                         >
-                          <i className={iClassName(item.link, item.icon)}></i>
+                          {/* <i className={iClassName(item.link, item.icon)}></i> */}
                           {item.label}
                         </Link>
                       </li>

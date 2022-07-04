@@ -60,6 +60,7 @@ router.post("/paymentsuccess", async (req, res) => {
   const orderNumber = req.body.orderNumber;
   const memberName = req.body.memberName;
   const orderPrice = req.body.orderPrice;
+  const orderDate = req.body.orderDate;
 
   var transporter = nodemailer.createTransport({
     // service: 'Outlook365',
@@ -79,6 +80,7 @@ router.post("/paymentsuccess", async (req, res) => {
       memberName: memberName,
       orderNumber: orderNumber,
       orderPrice: orderPrice,
+      orderDate:orderDate,
      },
     function (err, data) {
       if (err) {
@@ -90,7 +92,7 @@ router.post("/paymentsuccess", async (req, res) => {
           to: tomail,
           text: "ใบเสร็จรับเงินสำหรับใบสั่งซื้อ "+orderNumber,
           subject: "ใบเสร็จรับเงินสำหรับใบสั่งซื้อ "+orderNumber,
-          html: htmlToSend,
+          html: data,
         };
       
         transporter.sendMail(mailOptions, function (error, info) {

@@ -112,9 +112,6 @@ router.get("/", validateToken, async (req, res) => {
         if (hd.tbReturnOrders.length > 0) {
           hd.tbReturnOrder = hd.tbReturnOrders[0]
         }
-
-
-
         hd.tbImages = null
         hd.tbCancelOrders = null
         hd.tbReturnOrders = null
