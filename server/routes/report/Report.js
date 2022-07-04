@@ -77,12 +77,12 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
       const fullname = tb_member !== null ? (Encrypt.DecodeKey(tb_member.firstName) + ' ' + Encrypt.DecodeKey(tb_member.lastName)) : "";
       tutorials.push({
           code: obj.code !== null ? Encrypt.DecodeKey(obj.code).toUpperCase() : "", 
-          pointCodeName:  tb_pointCodeHD !== null ? tb_pointCodeHD.pointCodeName : "",
+          pointCodeName:  obj.campaignType === "3" ? "สมัครสมาชิก" : (tb_pointCodeHD !== null ? tb_pointCodeHD.pointCodeName : ""),
           startDate:  (tb_pointCodeHD !== null) ? tb_pointCodeHD.startDate : "",
           endDate:   (tb_pointCodeHD !== null) ? tb_pointCodeHD.endDate : "",
           pointTypeId: obj.campaignType,
-          memberName: obj.campaignType === "1" ? fullname :"",
-          phone   : obj.campaignType === "1" ? (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : "") : "",       
+          memberName: fullname,
+          phone   : (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : ""),       
           point: obj.point,
           exchangedate: obj.redeemDate,
         });  
@@ -164,7 +164,7 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
         obj.tbRedemptionCoupons.forEach(e => {
              if(e.tbCouponCodes.length > 0) {
               e.tbCouponCodes.forEach(ele => {
-                const m_Coupon = listMemberReward.find(el => el.TableHDId === ele.id.toString());
+                const m_Coupon = listMemberReward.find(el => el.TableHDId === ele.id.toString() && el.isUsedCoupon);
                 if(m_Coupon !== undefined) {
                   exchangedTotal +=  parseInt(e.couponCount, 10);
                   expiredDate = e.expiredDate !== null ? e.expiredDate :"";
@@ -287,6 +287,10 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
           endDate:  endDate ,
           memberName: fullname,
           address: address,
+          subDistrict: (tb_member !== null ?tb_member.subDistrict : 0),
+          district: (tb_member !== null ? tb_member.district : 0),
+          postcode: (tb_member !== null ? tb_member.postcode : 0),
+          province: (tb_member !== null ? tb_member.province : 0),
           phone   : (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : ""),   
           deliverStatus : deliverStatus,
           trackingNo: trackingNo,
@@ -305,21 +309,25 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
   tbPointCodeDT.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });
   tbMemberPoint.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });
   tbMemberPoint.belongsTo(tbMember, { foreignKey: "tbMemberId" });  
-    const id = req.params.id;
+    const id = parseInt(req.params.id, 10);
     tbPointCodeDT.findAll({
          where: { tbPointCodeHDId: id , isDeleted: false},
+         required: false,
          include: [          
           {
             model: tbPointCodeHD,
             where: { isDeleted: false, id: id  },
+            required: false,
             include: [
               {
                 model: tbMemberPoint,
                 where: { isDeleted: false, tbPointCodeHDId: id},
+                required: false,
                 include: [
                   {
                     model: tbMember,
                     where: { isDeleted: false},
+                    required: false,
                   },
                 ]
               },
