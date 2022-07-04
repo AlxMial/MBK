@@ -476,11 +476,11 @@ const ShopList = () => {
                                 <div
                                   className="absolute text-white font-bold"
                                   style={{
-                                    backgroundColor: "rgb(213 183 65 / 59%)",
+                                    backgroundColor: "rgb(213 183 65 / 90%)",
                                     width: "100%",
                                     bottom: "0",
                                     height: "30px",
-                                    borderRadius: "10px 0 10px 0",
+                                    borderRadius: "20px 0 20px 0",
                                     padding: "5px",
                                     textAlign: "center",
                                     zIndex: "1",
@@ -493,7 +493,7 @@ const ShopList = () => {
                                 </div>
 
                                 <ImageUC
-                                  style={{ margin: "auto", minHeight: "120px" }}
+                                  style={{ margin: "auto", minHeight: "120px", height: '100%' }}
                                   find={1}
                                   relatedid={e.id}
                                   relatedtable={["stock1"]}
