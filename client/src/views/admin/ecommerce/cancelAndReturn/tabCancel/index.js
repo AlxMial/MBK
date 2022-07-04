@@ -121,7 +121,7 @@ const TabCancel = () => {
         for (const field in row) {
             formik.setFieldValue(field, row[field], false);
         }
-        formik.setFieldValue('cancelStatus', 'done', false);
+        formik.setFieldValue('cancelStatus', status, false);
         // setCancelStatus(status);
         setOpen(true);
     }
