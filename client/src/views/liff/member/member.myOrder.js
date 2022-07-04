@@ -17,7 +17,7 @@ const MyOrder = () => {
   const GetMyOrder = () => {
     setIsLoading(true)
     getMyOrder((res) => {
-      // console.log('res', res.data)
+      console.log('res.data.OrderHD', res.data.OrderHD)
       if (res.status) {
         setOrderHD(res.data.OrderHD)
       }
@@ -44,9 +44,19 @@ const MyOrder = () => {
               return (
                 <div key={index}>
                   {index > 0 && <div className="liff-inline mb-2" style={{ height: '5px', backgroundColor: '#ebebeb' }} />}
-                  <div className="flex" style={{ height: "30px" }}>
-                    <div className="font-bold  text-12" style={{ width: "115px" }}>หมายเลขคำสั่งซื้อ : </div>
+                  <div className="flex relative" style={{ height: "30px" }}>
+                    <div className="font-bold  text-12" style={{ minWidth: "85px" }}>หมายเลขคำสั่งซื้อ : </div>
                     <div className="px-2 line-clamp-1  text-12" >{hd.orderNumber} </div>
+                    {hd.isPaySlip &&
+                      <div
+                        className="absolute px-2 text-white border right-0"
+                        style={{
+                          borderRadius: "10px",
+                          background: "red",
+                        }}
+                      >
+                        {"รอการตรวจสอบ"}
+                      </div>}
                   </div>
                   {hd.dt.map((e, i) => {
                     return (

@@ -814,6 +814,11 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
           hd.sumamount = sumamount;
           hd.sumprice = sumprice;
           hd.id = Encrypt.EncodeKey(hd.id);
+          if (hd.paymentStatus == 2) {
+            hd.isPaySlip = true;
+          } else {
+            hd.isPaySlip = false;
+          }
           OrderHD.push(hd);
         }
 
