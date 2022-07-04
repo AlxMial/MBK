@@ -100,9 +100,6 @@ export default function PointHistoryReport() {
           )
         );
       } 
-      // else {
-      //   getDataPoint_ByCode();
-      // }     
       setPageNumber(0);
       setForcePage(0);
     }
@@ -123,6 +120,8 @@ export default function PointHistoryReport() {
   };
 
   const setDataSearch = (e, type) => {    
+    const s_Date = formSerch.values.startDate;
+    const e_Date = formSerch.values.endDate;
     if (type === "s_input") {
       formSerch.values.inputSerch = e.target.value.toLowerCase();
       InputSearch();
@@ -132,10 +131,16 @@ export default function PointHistoryReport() {
       }      
     } else if(type === "s_type") {
       formSerch.values.serchType = e; 
-    } else if(type === "s_stdate") {    
-      formSerch.values.startDate = e; 
-    } else if(type === "s_eddate") {     
-      formSerch.values.endDate = e;
+    } else if(type === "s_stdate") {  
+      formSerch.setFieldValue("startDate", e);
+      if(e > e_Date && e_Date !== null) {
+        formSerch.setFieldValue("startDate", e_Date);
+      }
+    } else if(type === "s_eddate") {  
+      formSerch.setFieldValue("endDate", e);
+      if(e < s_Date && s_Date !== null) {
+        formSerch.setFieldValue("endDate", s_Date);
+      }  
     } 
   };
 
@@ -202,11 +207,15 @@ export default function PointHistoryReport() {
 
   const ExportFile = async (id, name) => {
     setIsLoading(true);
-    let coupon = await axios.get(`report/exportExcel/${id}`);
-    const TitleColumns = ["รหัส Coupon", "สถานะใช้งาน", "สถานะหมดอายุ", "ชื่อผู้ที่แลก", "วันที่แลก"];
-    const columns = ["code", "isUse", "isExpire", "memberName", "dateUseCode"];
-    exportExcel(coupon.data, name, TitleColumns, columns, "Coupon");
-    setIsLoading(false);
+   await axios.get(`report/exportExcel/${id}`).then((response) => {
+      const TitleColumns = ["รหัส Coupon", "สถานะใช้งาน", "สถานะหมดอายุ", "ชื่อผู้ที่แลก", "วันที่แลก"];
+      const columns = ["code", "isUse", "isExpire", "memberName", "dateUseCode"];
+      if (!response.data.error) {
+        exportExcel(response.data, name, TitleColumns, columns, "Coupon");
+      }     
+      setIsLoading(false);
+    });
+    
   };
 
   const fetchPermission = async () => {
@@ -415,6 +424,10 @@ export default function PointHistoryReport() {
                         paddingLeft: "0.5rem",
                         paddingRight: "0.5rem",
                     }}
+                    value={ 
+                      formSerch.values.startDate !== null 
+                      ? moment(new Date(formSerch.values.startDate),"DD/MM/YYYY") : ""
+                    }
                     onChange={(e) => {
                       setDataSearch(e, "s_stdate");
                     }}
@@ -443,16 +456,20 @@ export default function PointHistoryReport() {
                     placeholder="เลือกวันที่"
                     showToday={false}
                     style={{
-                    height: "100%",
-                    width: "100%",
-                    borderRadius: "0.25rem",
-                    cursor: "pointer",
-                    margin: "0px",
-                    paddingTop: "0.5rem",
-                    paddingBottom: "0.5rem",
-                    paddingLeft: "0.5rem",
-                    paddingRight: "0.5rem",
+                      height: "100%",
+                      width: "100%",                   
+                      borderRadius: "0.25rem",
+                      cursor: "pointer",
+                      margin: "0px",
+                      paddingTop: "0.5rem",
+                      paddingBottom: "0.5rem",
+                      paddingLeft: "0.5rem",
+                      paddingRight: "0.5rem",
                     }}
+                    value={ 
+                      formSerch.values.endDate !== null 
+                      ? moment(new Date(formSerch.values.endDate),"DD/MM/YYYY") : ""
+                    }
                     onChange={(e) => {
                       setDataSearch(e, "s_eddate");                         
                     }}                    

@@ -13,6 +13,7 @@ import { useToasts } from "react-toast-notifications";
 import ValidateService from "services/validateValue";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import * as Address from "../../../services/GetAddress.js";
 
 export default function CampaignExchangeHistoryReport() {
   const { addToast } = useToasts();
@@ -25,6 +26,9 @@ export default function CampaignExchangeHistoryReport() {
   const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;  
+  let dataSubDistrict = [];
+  let dataDistrict = [];
+  let dataProvice = [];
   const redemptionType = [
     { value: "1", label: "Standard" },
     { value: "2", label: "Game" },
@@ -49,7 +53,6 @@ export default function CampaignExchangeHistoryReport() {
       endDate: null, 
     }
   });
-
   const InputSearch = () => {   
       const inputSerch = formSerch.values.inputSerch;
       let startDate = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
@@ -77,7 +80,7 @@ export default function CampaignExchangeHistoryReport() {
             Search(x.statusStr, inputSerch) ||
             Search(x.deliverStatusStr, inputSerch) ||
             Search(x.trackingNo, inputSerch) ||
-            Search(x.address, inputSerch)
+            Search(x.addressMember, inputSerch)
            ) : true) &&
 
             ((startDate !== null && endDate !== null) ? (isDate ? ((startDate <= _startDate  && startDate <= _endDate &&
@@ -108,13 +111,21 @@ export default function CampaignExchangeHistoryReport() {
   };
 
   const setDataSearch = (e, type) => {    
+    const s_Date = formSerch.values.startDate;
+    const e_Date = formSerch.values.endDate;
     if (type === "s_input") {
       formSerch.values.inputSerch = e.toLowerCase();
       InputSearch();      
-    } else if(type === "s_stdate") {    
-      formSerch.values.startDate = e; 
-    } else if(type === "s_eddate") {     
-      formSerch.values.endDate = e;
+    } else if(type === "s_stdate") {  
+      formSerch.setFieldValue("startDate", e);
+      if(e > e_Date && e_Date !== null) {
+        formSerch.setFieldValue("startDate", e_Date);
+      }
+    } else if(type === "s_eddate") {  
+      formSerch.setFieldValue("endDate", e);
+      if(e < s_Date && s_Date !== null) {
+        formSerch.setFieldValue("endDate", s_Date);
+      }  
     }   
   };
 
@@ -218,7 +229,7 @@ export default function CampaignExchangeHistoryReport() {
       "redeemDate",
       "deliverStatusStr",
       "trackingNo",
-      "address"
+      "addressMember"
     ];
     let count = 0;
     listCampaignExchange.forEach(el => { 
@@ -235,19 +246,32 @@ export default function CampaignExchangeHistoryReport() {
     setIsLoading(false);
   };
 
-  
-
+  const fatchAddress = async () => {
+    dataDistrict =  Address.getDistrict().then((response) => {
+      dataDistrict = response;
+    });
+    dataSubDistrict =  Address.getSubDistrict();
+    Address.getProvince().then((response) => {
+        dataProvice = response;
+    });
+  };
   useEffect(() => {
+      fatchAddress();
       axios.get("report/ShowCampaignExchange").then((response) => {
         if (response.data.length > 0) {
-          response.data.forEach(e => {
-            e.redemptionTypeStr = (e.redemptionType !== "" ? (redemptionType.find(el => el.value === e.redemptionType).label) : ""); 
-            e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : ""); 
-            e.statusStr =  ((e.status !== '' &&  e.status !== undefined) ? rewardStatus.find(el => el.value === e.status.toString()).label : ""); 
-            e.deliverStatusStr = e.deliverStatus !=='' ? dropdown.find(el => el.value === e.deliverStatus).label : "";
-      
-          });
-                  
+            response.data.forEach(e => {
+              e.redemptionTypeStr = (e.redemptionType !== "" ? (redemptionType.find(el => el.value === e.redemptionType).label) : ""); 
+              e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : ""); 
+              e.statusStr =  ((e.status !== '' &&  e.status !== undefined) ? rewardStatus.find(el => el.value === e.status.toString()).label : ""); 
+              e.deliverStatusStr = e.deliverStatus !=='' ? dropdown.find(el => el.value === e.deliverStatus).label : "";  
+              
+              const subDistrict = dataSubDistrict.find(el => el.value === e.subDistrict).label;
+              const district = dataDistrict.find(el => el.value === e.district).label;
+              const province = dataProvice.find(el => el.value === e.province).label;
+           
+              e.addressMember = e.address.concat(" ").concat(subDistrict).concat(" ").concat(district).concat(" ")
+                                .concat(province).concat(" ").concat(e.postcode);            
+          });                  
           setListSerch(response.data);
           setListCampaignExchange(response.data);
         }
@@ -327,6 +351,10 @@ export default function CampaignExchangeHistoryReport() {
                         paddingLeft: "0.5rem",
                         paddingRight: "0.5rem",
                     }}
+                    value={ 
+                      formSerch.values.startDate !== null 
+                      ? moment(new Date(formSerch.values.startDate),"DD/MM/YYYY") : ""
+                    }
                     onChange={(e) => {
                       setDataSearch(e, "s_stdate");
                     }}
@@ -366,6 +394,10 @@ export default function CampaignExchangeHistoryReport() {
                     paddingLeft: "0.5rem",
                     paddingRight: "0.5rem",
                     }}
+                    value={ 
+                      formSerch.values.endDate !== null 
+                      ? moment(new Date(formSerch.values.endDate),"DD/MM/YYYY") : ""
+                    }
                     onChange={(e) => {
                       setDataSearch(e, "s_eddate");                         
                     }}                    
@@ -650,8 +682,8 @@ export default function CampaignExchangeHistoryReport() {
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0  border-r-0 text-sm whitespace-nowrap text-center ">
                           <div className="flex">
-                            <i className="fa fa-home  text-right text-underline cursor-pointer" data-tip={item.address}></i>
-                            <div className="text-underline  cursor-pointer"  data-tip={item.address}
+                            <i className="fa fa-home  text-right text-underline cursor-pointer" data-tip={item.addressMember}></i>
+                            <div className="text-underline  cursor-pointer"  data-tip={item.addressMember}
                                   style={{
                                     width: "40px",
                                     textAlign: "end",
@@ -662,7 +694,7 @@ export default function CampaignExchangeHistoryReport() {
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           <CopyToClipboard
-                                text={item.address}
+                                text={item.addressMember}
                                 onCopy={() => {
                                   addToast("คัดลอกเรียบร้อยแล้ว", {
                                     appearance: "success",
