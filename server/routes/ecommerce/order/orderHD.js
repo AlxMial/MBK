@@ -1396,7 +1396,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
     });
     if (Member) {
       OrderHDData = await tbOrderHD.findOne({
-        attributes: ["id", "logisticId", "paymentId", "memberRewardId", "paymentStatus"],
+        attributes: ["id","orderNumber","orderDate","logisticId", "paymentId", "memberRewardId", "paymentStatus"],
         where: {
           id: Encrypt.DecodeKey(orderId),
           isCancel: false,
@@ -1608,8 +1608,16 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
           );
         }
 
+        const member = await tbMember.findOne({
+          attributes: ["firstName", "lastName","email"],
+          where: { uid: Encrypt.DecodeKey(req.user.uid) },
+        });
+
         OrderHD = {
           id: Encrypt.EncodeKey(OrderHDData.dataValues.id),
+          orderNumber:OrderHDData.dataValues.orderNumber,
+          email:(member) ? Encrypt.DecodeKey(member.dataValues.email) : null,
+          memberName:(member) ?   Encrypt.DecodeKey(member.dataValues.firstName) + " " +  Encrypt.DecodeKey(member.dataValues.lastName) : null,
           price: total,
           Payment: _tbPayment,
         };
@@ -1628,6 +1636,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
   return res.json({
     status: status,
     msg: msg,
+    order:OrderHDData,
     OrderHD: OrderHD,
   });
 });
@@ -1952,6 +1961,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
   return res.json({
     status: status,
     msg: msg,
+    order: OrderHDData,
     OrderHD: OrderHD,
   });
 });

@@ -154,12 +154,12 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                         <td className={tdClass + " cursor-pointer text-center "} onClick={() => {
                                             openModal(value.id);
                                         }}>
-                                             <input type="checkbox" className='rounded text-green-mbk' checked={value.isBestSeller}/>
+                                             <input type="checkbox" className='rounded text-green-mbk' defaultChecked={value.isBestSeller}/>
                                         </td>
                                         <td className={tdClass + " cursor-pointer text-center "} onClick={() => {
                                             openModal(value.id);
                                         }}>
-                                            <input type="checkbox" className='rounded text-green-mbk' checked={value.isFlashSale}/>
+                                            <input type="checkbox" className='rounded text-green-mbk' defaultChecked={value.isFlashSale}/>
                                         </td>
                                         <td className={tdClass + " cursor-pointer"} onClick={() => {
                                             openModal(value.id);

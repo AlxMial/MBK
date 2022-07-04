@@ -5,15 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const handlebars = require("handlebars");
 var ejs = require("ejs");
-const { tbMember,
-  tbMemberPoint,
-  tbPointCodeHD, 
-  tbPointCodeDT, 
-  tbRedemptionConditionsHD,
-  tbRedemptionCoupon,
-  tbRedemptionProduct,
-  tbMemberReward,
-  tbCouponCode, } = require("../../models");
+const { tbMember } = require("../../models");
 
 router.post("/", async (req, res) => {
   const frommail = req.body.frommail;
@@ -67,8 +59,6 @@ router.post("/paymentsuccess", async (req, res) => {
   const tomail = req.body.tomail;
   const orderNumber = req.body.orderNumber;
   const memberName = req.body.memberName;
-  const orderDetail = req.body.orderDetail;
-  const orderDate = req.body.orderDate;
   const orderPrice = req.body.orderPrice;
 
   var transporter = nodemailer.createTransport({
@@ -88,9 +78,7 @@ router.post("/paymentsuccess", async (req, res) => {
     { 
       memberName: memberName,
       orderNumber: orderNumber,
-      orderDetail: orderDetail,
-      orderDate:orderDate,
-      orderPrice:orderPrice
+      orderPrice: orderPrice,
      },
     function (err, data) {
       if (err) {
@@ -100,8 +88,8 @@ router.post("/paymentsuccess", async (req, res) => {
         var mailOptions = {
           from: frommail,
           to: tomail,
-          text: "แจ้งเปลี่ยนแปลงรหัสผ่าน (ระบบจัดการหลังบ้านข้าวมาบุญครอง)",
-          subject: "แจ้งเปลี่ยนแปลงรหัสผ่าน (ระบบจัดการหลังบ้านข้าวมาบุญครอง)",
+          text: "ใบเสร็จรับเงินสำหรับใบสั่งซื้อ "+orderNumber,
+          subject: "ใบเสร็จรับเงินสำหรับใบสั่งซื้อ "+orderNumber,
           html: htmlToSend,
         };
       
@@ -127,14 +115,6 @@ router.post("/paymentwatiting", async (req, res) => {
   const tomail = req.body.tomail;
   const orderNumber = req.body.orderNumber;
   const memberName = req.body.memberName;
-  const orderDetail = req.body.orderDetail
-  // const orderDetail = await tbRedemptionCoupon.findAll();
-  // await orderDetail.map((e,i) =>{
-  //   order.push({value:i , label:e.dataValues.couponName})
-  // })
-  // console.log(order)
-
-
   var transporter = nodemailer.createTransport({
     // service: 'Outlook365',
     host: "smtp.office365.com",
@@ -151,8 +131,7 @@ router.post("/paymentwatiting", async (req, res) => {
     __dirname + "/paymentWatiting.ejs",
     { 
       memberName: memberName,
-      orderNumber: orderNumber,
-      orderDetail: orderDetail
+      orderNumber: orderNumber
      },
     function (err, data) {
       if (err) {

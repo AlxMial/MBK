@@ -146,7 +146,7 @@ const OrderTable = ({ orderList, openModal }) => {
                                             onClickAttachment(value.image);
                                         }} >
                                             <span className={(value.image ? (value.imageName ?? ' text-blue-700') : tdSpan)}>
-                                                {value.image ? (value.imageName ?? 'สลิปโอนเงิน') : "ไม่มีไฟล์แนบ"}
+                                                {value.image ? (value.imageName ?? 'สลิปโอนเงิน') : ""}
                                             </span>
                                         </td>
                                         <td className={tdClass} >

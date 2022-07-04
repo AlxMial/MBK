@@ -406,6 +406,35 @@ export const listPointStore = (s, e = () => { }, f = () => { }) => {
     });
 };
 
+
+export const sendEmailSuccess = (data,s, e = () => { }, f = () => { }) => {
+  axios
+    .post("mails/paymentsuccess",data)
+    .then((res) => {
+      s(res);
+    })
+    .catch((error) => {
+      e(error);
+    })
+    .finally((final) => {
+      f();
+    });
+};
+
+export const sendEmailWaiting = (data,s, e = () => { }, f = () => { }) => {
+  axios
+    .post("mails/paymentwatiting",data)
+    .then((res) => {
+      s(res);
+    })
+    .catch((error) => {
+      e(error);
+    })
+    .finally((final) => {
+      f();
+    });
+};
+
 export const withUniqueId = (Target) => {
   return class WithUniqueId extends React.Component {
     render() {

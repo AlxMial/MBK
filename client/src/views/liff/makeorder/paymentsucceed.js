@@ -3,7 +3,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { path } from "services/liff.services";
 import * as Session from "@services/Session.service";
 import * as fn from "services/default.service";
-
+import { sendEmailSuccess } from "services/liff.services";
 // components
 import {
   getPaymentsucceed,
@@ -17,6 +17,7 @@ const Paymentsucceed = () => {
     getPaymentsucceed({ id: id, uid: Session.getLiff().uid }, (res) => {
       // console.log('res', res);
       if (res.status) {
+        sendEmailSuccess()
         // res.data.status = false;
         setOrderHD(res.data.OrderHD)
       }

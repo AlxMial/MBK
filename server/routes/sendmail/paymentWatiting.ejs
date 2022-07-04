@@ -77,13 +77,13 @@
       >
         <div style="margin: 0 15px">
           <p style="color: #242526; line-height: 1.3">
-            <strong> สวัสดี คุณ {{ memberName }}, </strong>
+            <strong> สวัสดี คุณ <%= memberName %>, </strong>
           </p>
           <p style="color: #535658; line-height: 1.3">
             Email ฉบับนี้เป็นหลักฐานยืนยันว่า
             <strong>ข้าวมาบุญครอง (Mah Boonkrong Rice)</strong>
             ได้รับแจ้งการโอนเงินสำหรับใบสั่<wbr />งซื้อหมายเลข
-            <strong style="color: #da004d">{{ orderNumber }}</strong>
+            <strong style="color: #da004d"><%= orderNumber %></strong>
             จากคุณเรียบร้อยแล้ว เราจะรีบทำการตรวจสอบยอดเงิ<wbr />นและติดต่อกลับไปในไม่ช้า
           </p>
           <p style="color: #535658; line-height: 1.3">
@@ -92,180 +92,6 @@
           </p>
         </div>
       </div>
-    </div>
-    <div style="margin: 20px 15px">
-      <hr
-        style="
-          height: 0;
-          border-right: 0;
-          border-top: 0;
-          border-bottom: 1px solid #e4e6e6;
-          border-left: 0;
-        "
-      />
-    </div>
-    <div style="text-align: left; font-size: 14px">
-      <div
-        style="
-          width: 100%;
-          max-width: 100%;
-          width: -webkit-calc(230400px - 48000%);
-          min-width: -webkit-calc(100%);
-          width: calc(230400px - 48000%);
-          min-width: calc(100%);
-        "
-      >
-        <div style="margin: 0 15px">
-          <p style="margin: 15px 0; font-weight: bold; color: #242526">
-            รายละเอียดของใบสั่งซื้อ: <%= orderNumber %>
-          </p>
-        </div>
-      </div>
-    </div>
-    <div style="font-size: 0">
-      <% orderDetail.forEach(function(order) { %>
-      <table
-        style="
-          font-size: 14px;
-          color: #666;
-          border-spacing: 0;
-          border-collapse: collapse;
-          width: 100%;
-        "
-      >
-        <tbody>
-          <tr>
-            <th></th>
-            <th></th>
-            <th width="30%"></th>
-          </tr>
-          <tr>
-            <td
-              style="
-                padding-top: 5px;
-                padding-bottom: 5px;
-                padding-left: 15px;
-                padding-right: 15px;
-              "
-            >
-              <img
-                src="https://ci6.googleusercontent.com/proxy/V7DpYKpamQ1N73lEhITiUqdTxRGYqYubvPxglu-lcgUaY9VDDVeyPVNJ7aPx8sNwNZnOo6yYaqSqgABoTqNsiUjlVl8QPJIw1wyjblptBh3bc2wKkzgNpQN942CCV4kDh3ErD5ac3zlDdg=s0-d-e1-ft#https://f.btwcdn.com/store-46701/product-thumb/4572bb05-b1df-867b-12d3-61b1b178fe0b.jpg"
-                style="width: 70px"
-                class="CToWUd"
-              />
-            </td>
-            <td
-              style="
-                padding-top: 5px;
-                padding-bottom: 5px;
-                padding-left: 15px;
-                padding-right: 15px;
-                vertical-align: top;
-                line-height: 1.3;
-              "
-            >
-              <%= order.label %>
-              <br />
-              ธรรมดา
-              <br />
-              จำนวน&nbsp;1 x ฿ 150.00
-            </td>
-            <td
-              style="
-                padding-top: 5px;
-                padding-bottom: 5px;
-                padding-left: 15px;
-                padding-right: 15px;
-                vertical-align: top;
-                text-align: right;
-              "
-            >
-              <strong>฿ 150.00</strong>
-            </td>
-          </tr>
-          <tr>
-            <td
-              colspan="2"
-              style="
-                padding-top: 3px;
-                padding-bottom: 3px;
-                text-align: right;
-                padding-left: 15px;
-                padding-right: 15px;
-              "
-            >
-              <strong>ยอดรวม</strong>
-            </td>
-            <td
-              style="
-                padding-top: 3px;
-                padding-bottom: 3px;
-                text-align: right;
-                padding-left: 15px;
-                padding-right: 15px;
-              "
-            >
-              <strong>฿ 150.00</strong>
-            </td>
-          </tr>
-
-          <tr>
-            <td
-              colspan="2"
-              style="
-                padding-top: 3px;
-                padding-bottom: 3px;
-                text-align: right;
-                padding-left: 15px;
-                padding-right: 15px;
-              "
-            >
-              ค่าจัดส่ง จัดส่งโดยผู้ขาย
-            </td>
-            <td
-              style="
-                padding-top: 3px;
-                padding-bottom: 3px;
-                text-align: right;
-                padding-left: 15px;
-                padding-right: 15px;
-              "
-            >
-              ฿ 0.00
-            </td>
-          </tr>
-          <tr>
-            <td
-              colspan="2"
-              style="
-                padding-top: 3px;
-                padding-bottom: 3px;
-                color: #da004d;
-                font-size: 16px;
-                text-align: right;
-                padding-left: 15px;
-                padding-right: 15px;
-              "
-            >
-              <strong>ยอดที่ต้องชำระ</strong>
-            </td>
-            <td
-              style="
-                padding-top: 3px;
-                padding-bottom: 3px;
-                color: #da004d;
-                font-size: 16px;
-                text-align: right;
-                padding-left: 15px;
-                padding-right: 15px;
-              "
-            >
-              <strong>฿ 150.00</strong>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <% }); %>
     </div>
     <div style="margin: 15px">
       <hr
