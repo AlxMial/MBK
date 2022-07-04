@@ -31,7 +31,7 @@ const Point = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div className="h-full" style={{ marginTop: "-150px", width: "100%" }}>
+      <div className="h-full absolute" style={{ top: "125px", width: "100%" }}>
         <MyPoint />
         <div className="mt-6">
           <div
