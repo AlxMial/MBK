@@ -137,18 +137,20 @@ router.post("/getStock"
             endTimeCampaign: e.endTimeCampaign,
             isBestSeller: e.isBestSeller,
             productCategoryId: Encrypt.EncodeKey(e.productCategoryId),
-            percent:
-              e.discount > 0
-                ? e.discountType.toLowerCase().includes("percent")
-                  ? e.discount
-                  : (e.discount / e.price) * 100
-                : 0,
-            priceDiscount:
-              e.discount > 0
-                ? e.discountType.toLowerCase().includes("thb")
-                  ? e.price - e.discount
-                  : e.price - (e.discount / 100) * e.price
-                : 0,
+            percent: e.percent,
+            priceDiscount: e.discount,
+            // percent:
+            //   e.discount > 0
+            //     ? e.discountType.toString().toLowerCase().includes("percent")
+            //       ? e.discount
+            //       : (e.discount / e.price) * 100
+            //     : 0,
+            // priceDiscount:
+            //   e.discount > 0
+            //     ? e.discountType.toString().toLowerCase().includes("thb")
+            //       ? e.price - e.discount
+            //       : e.price - (e.discount / 100) * e.price
+            //     : 0,
           });
         });
       }

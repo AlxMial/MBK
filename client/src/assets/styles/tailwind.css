@@ -4974,7 +4974,10 @@ button.bt-quantity.broder-plus {
 /* a{
   color:white !important;
 } */
-
+.disabledInput button, [type="button"]:disabled{
+  background-color:white !important;
+  color: #374151;
+}
 
 
 .image360 {

@@ -125,19 +125,22 @@ export default function MemberList() {
     let member = await axios.get("members/export");
     const TitleColumns = [
       "รหัสสมาชิก",
+      "ระดับสมาชิก",
       "ชื่อ",
       "นามสกุล",
       "เพศ",
       "เบอร์โทร",
       "อีเมล",
-      "ที่อยู่",
       "วันเกิด",
       "วันที่สมัคร",
-      "จังหวัด",
-      "อำเภอ",
+      "ที่อยู่",
       "ตำบล",
+      "อำเภอ",
+      "จังหวัด",
       "รหัสไปรษณีย์",
       "คะแนนสมาชิก",
+      "คะแนนสะสมล่าสุดที่จะหมดอายุ",
+      "วันหมดอายุคะแนนสะสม",
       "ยอมรับ Consent เพื่อการติดต่อสื่อสาร",
       "ยอมรับ Consent เพื่อวิเคราะห์ข้อมูล",
       "หมายเหตุ",
@@ -146,19 +149,22 @@ export default function MemberList() {
     ];
     const columns = [
       "memberCard",
+      "memberType",
       "firstName",
       "lastName",
       "sex",
       "phone",
       "email",
-      "address",
       "birthDate",
       "registerDate",
-      "province",
-      "district",
+      "address",
       "subDistrict",
+      "district",
+      "province",
       "postcode",
       "memberPoint",
+      "expirePoint",
+      "memberPointExpiry",
       "isPolicy1",
       "isPolicy2",
       "description",
@@ -179,6 +185,9 @@ export default function MemberList() {
         "subDistrict",
         member.data.tbMember[i]["subDistrict"]
       );
+      member.data.tbMember[i]["memberType"] = "GREEN MEMBER";
+      member.data.tbMember[i]["expirePoint"] = "0";
+      member.data.tbMember[i]["memberPointExpiry"] = "31/12/2022";
     }
     exportExcel(
       member.data.tbMember,

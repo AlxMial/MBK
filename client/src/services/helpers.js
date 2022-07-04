@@ -1,5 +1,4 @@
 const config = {
-
     dev: false,
     UID: "Ufc56a9d0ab0ce8707a9fcdafd56433ad",
     // liffId: "1657238460-3deq6ard",

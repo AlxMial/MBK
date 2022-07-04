@@ -12,7 +12,9 @@ import liff from "@line/liff";
 import config from "@services/helpers";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import WaitingPayment from "./waitingPayment";
-import Error from "../error"
+import Error from "../error";
+import { sendEmailWaiting } from "services/liff.services";
+import * as Session from "@services/Session.service";
 const PaymentInfo = () => {
   let { id } = useParams();
   const history = useHistory();
@@ -22,7 +24,11 @@ const PaymentInfo = () => {
   const [isAttachLater, setisAttachLater] = useState(false);
   const [SlipImage, setSlipImage] = useState(null);
 
-  const [modeldata, setmodeldata] = useState({ open: false, title: "", msg: "" });
+  const [modeldata, setmodeldata] = useState({
+    open: false,
+    title: "",
+    msg: "",
+  });
 
   const [statuspayment, setstatuspayment] = useState(true);
   const [status, setstatus] = useState(true);
@@ -35,18 +41,22 @@ const PaymentInfo = () => {
         if (res.status) {
           if (res.data.status) {
             setOrderHD(res.data.OrderHD);
-            setstatuspayment(res.data.status)
+            setstatuspayment(res.data.status);
           } else {
             setOrderHD(res.data.OrderHD);
-            setstatuspayment(res.data.status)
-            setmodeldata({ open: true, title: "สถานะคำสั่งซื้อ", msg: res.data.msg })
+            setstatuspayment(res.data.status);
+            setmodeldata({
+              open: true,
+              title: "สถานะคำสั่งซื้อ",
+              msg: res.data.msg,
+            });
           }
         } else {
-          setstatus(false)
-          setstatuspayment(false)
+          setstatus(false);
+          setstatuspayment(false);
         }
       },
-      () => { },
+      () => {},
       () => {
         setIsLoading(false);
       }
@@ -59,16 +69,28 @@ const PaymentInfo = () => {
     image.src = URL.createObjectURL(e.target.files[0]);
     const base64 = await FilesService.convertToBase64(e.target.files[0]);
     setSlipImage(base64);
-    addToast("อัพโหลดสลิปเรียบร้อยแล้ว", {
-      appearance: "success",
-      autoDismiss: true,
-    });
+    // addToast("อัพโหลดสลิปเรียบร้อยแล้ว", {
+    //   appearance: "success",
+    //   autoDismiss: true,
+    // });
   };
   const saveSlip = () => {
     if (SlipImage != null) {
       doSaveSlip({ data: { id: id, Image: SlipImage } }, (res) => {
         if (res.status === 200) {
           if (res.data.status) {
+            sendEmailWaiting(
+              {
+                frommail: "noreply@undefined.co.th",
+                password: "Has88149*",
+                tomail:OrderHD.email,
+                orderNumber: OrderHD.orderNumber,
+                memberName: OrderHD.memberName,
+              },
+              (res) => {
+                console.log(res);
+              }
+            );
             addToast("บันทึกสลิปเรียบร้อยแล้ว", {
               appearance: "success",
               autoDismiss: true,
@@ -216,7 +238,14 @@ const PaymentInfo = () => {
                 justifyContent: "center",
               }}
             >
-              <div className="w-full " style={{ width: "90%", margin: "auto", filter: statuspayment ? "" : "grayscale(1)" }}>
+              <div
+                className="w-full "
+                style={{
+                  width: "90%",
+                  margin: "auto",
+                  filter: statuspayment ? "" : "grayscale(1)",
+                }}
+              >
                 {OrderHD != null ? (
                   <div style={{ width: "80%", margin: "auto" }}>
                     <div className="mb-2">
@@ -268,10 +297,13 @@ const PaymentInfo = () => {
                                       )
                                       .then(function (res) {
                                         if (res) {
-                                          addToast("แชร์ QRCode เรียบร้อยแล้ว", {
-                                            appearance: "success",
-                                            autoDismiss: true,
-                                          });
+                                          addToast(
+                                            "แชร์ QRCode เรียบร้อยแล้ว",
+                                            {
+                                              appearance: "success",
+                                              autoDismiss: true,
+                                            }
+                                          );
                                         } else {
                                           const [majorVer, minorVer] = (
                                             liff.getLineVersion() || ""
@@ -343,14 +375,15 @@ const PaymentInfo = () => {
                     >
                       แนบสลิปโอนเงิน
                     </label>
-                    {statuspayment ?
+                    {statuspayment ? (
                       <input
                         id="transfer-slip"
                         type="file"
                         onChange={onChangeslip}
                         accept="image/*"
                         style={{ display: "none" }}
-                      /> : null}
+                      />
+                    ) : null}
                   </div>
                 </div>
                 <div className="w-full">
@@ -396,7 +429,7 @@ const PaymentInfo = () => {
                   className="flex bg-green-mbk text-white text-center text-lg  font-bold bt-line "
                   onClick={() => {
                     if (statuspayment) {
-                      saveSlip()
+                      saveSlip();
                     } else {
                       history.push(path.myorder.replace(":id", "1"));
                     }
