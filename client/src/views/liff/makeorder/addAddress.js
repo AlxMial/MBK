@@ -144,13 +144,14 @@ const AddAddress = () => {
         addMemberAddress(
             _Data,
             (res) => {
+                console.log('res', res)
                 let msg = { msg: "", appearance: "warning" };
                 res.data.status
                     ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
-                    : !res.data.isPhone
+                    : !res.data.isPhone === false
                         ? (msg.msg =
                             "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-                        : !res.data.isMemberCard
+                        : !res.data.isMemberCard === false
                             ? (msg.msg =
                                 "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
                             : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
@@ -185,7 +186,7 @@ const AddAddress = () => {
                     }}
                 >
 
-                    <div
+                    <div className="line-scroll"
                         style={{
                             width: "100%",
                             backgroundColor: "#FFF",
@@ -193,12 +194,12 @@ const AddAddress = () => {
                             minHeight: "450px",
                             borderRadius: "10px",
                             padding: "20px",
-                            overflow: "scroll",
+                            // overflow: "scroll",
                         }}
                     >
-                        <div className="flex text-green-mbk font-bold text-lg mb-4">
+                        {/* <div className="flex text-green-mbk font-bold text-lg mb-4">
                             {"ข้อมูลสมาชิก"}
-                        </div>
+                        </div> */}
                         <InputUC
                             name="firstName"
                             lbl="ชื่อ"
@@ -231,7 +232,7 @@ const AddAddress = () => {
                             valid={true}
                         // disabled={true}
                         />
-                        <SelectUC
+                        {false && <SelectUC
                             name="sex"
                             lbl="เพศ"
                             valid={true}
@@ -244,10 +245,10 @@ const AddAddress = () => {
                                 { value: "2", label: "หญิง" },
                             ]}
                             error={errors.sex}
-                        />
+                        />}
                         {/* วันเกิด */}
 
-                        <div
+                        {false && <div
                             className="mb-5 DatePicker-disabled"
                             onClick={(e) => {
                                 e.preventDefault();
@@ -330,9 +331,9 @@ const AddAddress = () => {
                                 </div>
                             </div>
 
-                        </div>
+                        </div>}
 
-                        <InputUC
+                        {false && <InputUC
                             name="email"
                             lbl="อีเมล"
                             type="text"
@@ -342,6 +343,7 @@ const AddAddress = () => {
                             valid={true}
                         // disabled={true}
                         />
+                        }
                         <div className="mb-5" style={{ display: "none" }}>
                             <Radio.Group
                                 options={[

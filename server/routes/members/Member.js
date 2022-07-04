@@ -712,10 +712,13 @@ router.post("/addMemberAddress", validateLineToken, async (req, res) => {
       if (
         !Encrypt.IsNullOrEmpty(data.firstName) &&
         !Encrypt.IsNullOrEmpty(data.lastName) &&
-        !Encrypt.IsNullOrEmpty(data.phone) &&
-        !Encrypt.IsNullOrEmpty(data.email)
+        !Encrypt.IsNullOrEmpty(data.phone)
+        // &&
+        // !Encrypt.IsNullOrEmpty(data.email)
       ) {
-        data.email = data.email.toLowerCase();
+        if (data.email) {
+          data.email = data.email.toLowerCase();
+        }
         data.memberID = Member.id;
         const ValuesEncrypt = Encrypt.encryptAllData(data);
         const MemberAddress = await tbOtherAddress.create(ValuesEncrypt);
@@ -728,7 +731,7 @@ router.post("/addMemberAddress", validateLineToken, async (req, res) => {
     }
   } catch (e) {
     msg = e.message;
-    res.json({ status: false, msg: msg });
+    res.json({ status: false, msg: msg, Member: Member });
   }
 });
 
