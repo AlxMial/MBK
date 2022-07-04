@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true,
     },
+    cancelOtherRemark: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },  
     cancelType: {
       type: DataTypes.STRING,
       allowNull: true,
