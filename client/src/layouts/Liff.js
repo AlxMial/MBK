@@ -128,12 +128,12 @@ const LiffAPP = () => {
   ) {
     bg = "250px";
 
-    if (
-      pathname.includes("point") ||
-      pathname.toLowerCase().includes("/reward")
-    ) {
-      bg = "280px";
-    }
+    // if (
+    //   pathname.includes("point") ||
+    //   pathname.toLowerCase().includes("/reward")
+    // ) {
+    //   bg = "280px";
+    // }
     ismemberpage = true;
   } else if (pathname.toLowerCase().includes("shoplist")) {
     bg = "0px";

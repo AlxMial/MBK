@@ -36,10 +36,10 @@ const Reward = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ position: "absolute", top: "110px", width: "100%" }}>
+      <div style={{ position: "absolute", top: "90px", width: "100%" }}>
         <MyPoint />
 
-        <div className="mt-10">
+        <div className="mt-8">
           <div style={{ width: "90%", margin: "auto" }}>
             <div className="flex h-10">
               <div className="bg-green-mbk" style={{ width: "10px" }}></div>
@@ -47,7 +47,7 @@ const Reward = () => {
             </div>
 
             {Redemptionconditionshd.length > 0 ?
-              <div className="w-full line-scroll" style={{ width: "90%", margin: "auto", height: "calc(100vh - 280px)" }}>
+              <div className="w-full line-scroll" style={{ width: "90%", margin: "auto", height: "calc(100vh - 310px)" }}>
                 {[...Redemptionconditionshd].map((e, i) => {
                   return (
                     <div className="w-full mb-2" key={i} onClick={() => {
@@ -80,7 +80,7 @@ const Reward = () => {
                 })}
               </div>
               :
-              <div className="w-full line-scroll" style={{ width: "90%", margin: "auto", height: "calc(100vh - 280px)" }}>
+              <div className="w-full line-scroll" style={{ width: "90%", margin: "auto", height: "calc(100vh - 310px)" }}>
                 <div className="flex justify-center items-center h-full">
                   <div style={{ height: "50px" }}>
                     <EmptyOrder text={"ยังไม่มีรางวัลที่สามารถแลกได้"} />
