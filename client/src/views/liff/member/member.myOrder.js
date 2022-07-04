@@ -111,7 +111,11 @@ const MyOrder = () => {
               )
             })}
           </div> :
-          <EmptyOrder text={"ยังไม่คำสั่งชื้อ"} />
+          <div className="flex justify-center items-center h-full">
+            <div style={{ height: "50px" }}>
+              <EmptyOrder text={"ยังไม่คำสั่งชื้อ"} />
+            </div>
+          </div>
         }
       </div>
     </>

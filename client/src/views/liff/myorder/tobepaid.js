@@ -24,7 +24,7 @@ const Tobepaid = () => {
           setOrderHD(res.data.OrderHD);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -75,7 +75,11 @@ const Tobepaid = () => {
             }}
           />
         ) : (
-          <EmptyOrder text={"ยังไม่คำสั่งซื้อที่ต้องชำระ"} />
+          <div className="flex justify-center items-center h-full">
+            <div style={{ height: "50px" }}>
+              <EmptyOrder text={"ยังไม่คำสั่งซื้อที่ต้องชำระ"} />
+            </div>
+          </div>
         )}
       </div>
     </>

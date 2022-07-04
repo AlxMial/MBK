@@ -76,8 +76,11 @@ const Reward = () => {
                 })}
               </div>
               :
-              <EmptyOrder text={"ยังไม่มีรางวัลที่สามารถแลกได้"} />
-
+              <div className="flex justify-center items-center h-full">
+                <div style={{ height: "50px" }}>
+                  <EmptyOrder text={"ยังไม่มีรางวัลที่สามารถแลกได้"} />
+                </div>
+              </div>
             }
           </div>
         </div>

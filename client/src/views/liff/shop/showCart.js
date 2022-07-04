@@ -323,8 +323,11 @@ const ShowCart = () => {
             );
           })}
         </div> :
-        <EmptyOrder text={"ยังไม่มีรายการสินค้า"} />
-
+        <div className="flex justify-center items-center h-full">
+          <div style={{ height: "50px" }}>
+            <EmptyOrder text={"ยังไม่มีรายการสินค้า"} />
+          </div>
+        </div>
       }
       <div
         className="flex relative"

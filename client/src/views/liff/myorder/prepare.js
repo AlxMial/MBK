@@ -18,7 +18,7 @@ const Prepare = () => {
           setOrderHD(res.data.OrderHD);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -47,7 +47,11 @@ const Prepare = () => {
             }}
           />
         ) : (
-          <EmptyOrder text={"ยังไม่คำสั่งซื้อที่กำลังเตรียมสินค้า"} />
+          <div className="flex justify-center items-center h-full">
+            <div style={{ height: "50px" }}>
+              <EmptyOrder text={"ยังไม่คำสั่งซื้อที่กำลังเตรียมสินค้า"} />
+            </div>
+          </div>
         )}
       </div>
     </>
