@@ -64,12 +64,16 @@ const Reward = () => {
                           imgclassname=" w-full h-full"
                         />
                       </div>
-                      <div className="mt-2 text-ms">
-                        <div className="w-full font-bold mb-2 ">{e.redemptionName} </div>
-                        <div className="w-full mb-2 text-liff-gray-mbk">{e.points + " คะแนน"} </div>
-                        <div className="w-full mb-2 text-liff-gray-mbk">
+                      <div className="mt-2 text-ms px-4">
+                        <div className="flex justify-between">
+                          <div className="font-bold ">{e.redemptionName} </div>
+                          <i class="fas fa-chevron-right"></i>
+                        </div>
+                        <div className="w-full text-liff-gray-mbk">{e.points + " คะแนน"} </div>
+                        <div className="w-full text-liff-gray-mbk">
                           {"ใช้ได้ถึง " + moment(e.endDate).locale("th").add("years", 543).format("DD MMM yyyy")}
                         </div>
+                        <div className="liff-inline mb-2" />
                       </div>
                     </div>
                   )
