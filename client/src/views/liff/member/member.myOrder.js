@@ -103,9 +103,9 @@ const MyOrder = () => {
                   </div>
 
                   <div className="flex" >
-                    <div className="text-sm font-bold" style={{ width: "50%" }}>{"ยอดรวมสินค้า (" + hd.sumamount + " ชิ้น)"}</div>
+                    <div className="text-sm font-bold" style={{ width: "50%" }}>{"ยอดรวมสินค้า (" + hd.stockNumber + " ชิ้น)"}</div>
                     <div className="font-bold text-sm" style={{ width: "50%", textAlign: "end", color: "#047738" }}>
-                      {"฿ " + fn.formatMoney(hd.sumprice) + " บาท"} </div>
+                      {"฿ " + fn.formatMoney(hd.netTotal) + " บาท"} </div>
                   </div>
                 </div>
               )
