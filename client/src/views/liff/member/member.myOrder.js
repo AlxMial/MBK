@@ -17,7 +17,7 @@ const MyOrder = () => {
   const GetMyOrder = () => {
     setIsLoading(true)
     getMyOrder((res) => {
-      console.log('res', res.data)
+      // console.log('res', res.data)
       if (res.status) {
         setOrderHD(res.data.OrderHD)
       }
