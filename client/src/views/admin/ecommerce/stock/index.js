@@ -45,9 +45,22 @@ const Stock = () => {
 
   const fetchData = async () => {
     dispatch(fetchLoading());
+    setListStock([]);
+    setListSearch([]);
     await axios.get("stock").then(async (response) => {
       if (!response.data.error && response.data.tbStock) {
         let _stockData = response.data.tbStock;
+        // for (var i = 0; i < _stockData.length; i++) {
+        //   if (_stockData[i].productCount - _stockData[i].buy > 10) {
+        //     _stockData[i].status = "พร้อมขาย";
+        //   } else if (_stockData[i].productCount - _stockData[i].buy <= 0) {
+        //     _stockData[i].status = "หมด";
+        //   } else {
+        //     _stockData[i].status = "เหลือน้อย";
+        //   }
+        // }
+        // console.log(_stockData)
+
         _stockData = await _stockData.map((stock) => {
           if (stock.productCount - stock.buy > 10) {
             stock.status = "พร้อมขาย";
@@ -58,11 +71,12 @@ const Stock = () => {
           }
           return stock;
         });
-        setOpen(false);
-        dispatch(fetchSuccess());
+
         setListStock(_stockData);
         setListSearch(_stockData);
       }
+      setOpen(false);
+      dispatch(fetchSuccess());
     });
   };
 
@@ -151,7 +165,7 @@ const Stock = () => {
       productCategoryId: "",
       price: "",
       discount: "",
-      percent:"",
+      percent: "",
       productCount: "",
       weight: "",
       description: "",

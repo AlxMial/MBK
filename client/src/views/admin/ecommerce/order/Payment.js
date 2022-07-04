@@ -39,8 +39,6 @@ const Payment = ({ props, setOrderHD }) => {
 
         }
     }, []);
-    console.log("old")
-    console.log(orderHDold)
 
     return (
         <div className='mt-2 px-4'>

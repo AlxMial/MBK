@@ -61,7 +61,7 @@ export default function ConditioRewardInfo() {
     redemptionEnd: false,
     couponStart: false,
     couponEnd: false,
-    expireDate: false,
+    expired: false,
   });
 
   const [stateDelay, setStateDelay] = useState("");
@@ -152,20 +152,20 @@ export default function ConditioRewardInfo() {
           "* จำนวนคะแนนต้องมากกว่า 0",
           (value) => value > 0
         ),
-      startDate:
-        Yup.string().required(
-          Storage.GetLanguage() === "th"
-            ? "* กรุณากรอก วันที่เริ่มต้น"
-            : "* Please enter Start Date"
-        )
-      ,
-      endDate: Yup.string().when('isNotExpired', {
+      startDate: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่เริ่มต้น"
+          : "* Please enter Start Date"
+      ),
+      endDate: Yup.string().when("isNotExpired", {
         is: false,
-        then: Yup.string().required(Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก วันที่สิ้นสุด"
-          : "* Please enter End Date"),
+        then: Yup.string().required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก วันที่สิ้นสุด"
+            : "* Please enter End Date"
+        ),
         otherwise: Yup.string(),
-      })
+      }),
     }),
     onSubmit: (values) => {
       let ImageSave = {};
@@ -179,7 +179,6 @@ export default function ConditioRewardInfo() {
               setIsNew(false);
               formik.values.id = res.data.tbRedemptionConditionsHD.id;
               history.push(
-
                 `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
               );
               dispatch(fetchSuccess());
@@ -267,7 +266,9 @@ export default function ConditioRewardInfo() {
                 formik.values.id = res.data.tbRedemptionConditionsHD.id;
                 formikCoupon.setFieldValue(
                   "pictureCoupon",
-                  (isImport) ? formikCouponImport.values.pictureCoupon : formikCoupon.values.pictureCoupon
+                  isImport
+                    ? formikCouponImport.values.pictureCoupon
+                    : formikCoupon.values.pictureCoupon
                 );
                 if (isImport) {
                   for (var columns in res.data.tbRedemptionCoupon) {
@@ -295,7 +296,9 @@ export default function ConditioRewardInfo() {
                         .then(async (resExcel) => {
                           if (resExcel.data.status) {
                             await axios
-                              .post("/uploadExcel/coupon", { couponId: res.data.tbRedemptionCoupon.id })
+                              .post("/uploadExcel/coupon", {
+                                couponId: res.data.tbRedemptionCoupon.id,
+                              })
                               .then((resUpload) => {
                                 dispatch(fetchSuccess());
                                 addToast(
@@ -356,7 +359,8 @@ export default function ConditioRewardInfo() {
           } else {
             formik.values.updateBy = sessionStorage.getItem("user");
             dispatch(fetchLoading());
-            formik.setFieldValue("expireDate", null);
+            console.log(values);
+            // formik.setFieldValue("expired", null);
             axios.put("redemptions", values).then(async (res) => {
               if (res.data.status) {
                 ImageSave = {
@@ -366,7 +370,7 @@ export default function ConditioRewardInfo() {
                       ? formikCoupon.values.id
                       : formikProduct.values.id,
                 };
-                await onSaveImage(ImageSave, async (res) => { });
+                await onSaveImage(ImageSave, async (res) => {});
                 addToast(
                   Storage.GetLanguage() === "th"
                     ? "บันทึกข้อมูลสำเร็จ"
@@ -400,6 +404,7 @@ export default function ConditioRewardInfo() {
       discountType: "1",
       startDate: new Date(),
       isNotExpired: false,
+      expired: moment(new Date()).add(1, "days").toDate(),
       expireDate: moment(new Date()).add(1, "days").toDate(),
       couponCount: 0,
       isNoLimitPerDayCount: false,
@@ -429,21 +434,20 @@ export default function ConditioRewardInfo() {
           (value) => value > 0
         ),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
-      startDate:
-        Yup.string().required(
-          Storage.GetLanguage() === "th"
-            ? "* กรุณากรอก วันที่เริ่มต้น"
-            : "* Please enter Start Date"
-        )
-      ,
-      expireDate: Yup.string().when('isNotExpired', {
+      startDate: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่เริ่มต้น"
+          : "* Please enter Start Date"
+      ),
+      expired: Yup.string().when("isNotExpired", {
         is: false,
-        then: Yup.string().required(Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก วันที่สิ้นสุด"
-          : "* Please enter End Date"),
+        then: Yup.string().required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก วันที่สิ้นสุด"
+            : "* Please enter End Date"
+        ),
         otherwise: Yup.string(),
-      })
-
+      }),
     }),
   });
 
@@ -457,6 +461,7 @@ export default function ConditioRewardInfo() {
       discountType: "1",
       startDate: new Date(),
       isNotExpired: false,
+      expired: moment(new Date()).add(1, "days").toDate(),
       expireDate: moment(new Date()).add(1, "days").toDate(),
       couponCount: "",
       isNoLimitPerDayCount: false,
@@ -480,21 +485,20 @@ export default function ConditioRewardInfo() {
         ),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
       fileName: Yup.string().required("* กรุณาเลือก ไฟล์"),
-      startDate:
-        Yup.string().required(
-          Storage.GetLanguage() === "th"
-            ? "* กรุณากรอก วันที่เริ่มต้น"
-            : "* Please enter Start Date"
-        )
-      ,
-      expireDate: Yup.string().when('isNotExpired', {
+      startDate: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก วันที่เริ่มต้น"
+          : "* Please enter Start Date"
+      ),
+      expired: Yup.string().when("isNotExpired", {
         is: false,
-        then: Yup.string().required(Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก วันที่สิ้นสุด"
-          : "* Please enter End Date"),
+        then: Yup.string().required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก วันที่สิ้นสุด"
+            : "* Please enter End Date"
+        ),
         otherwise: Yup.string(),
-      })
-
+      }),
     }),
   });
 
@@ -561,20 +565,26 @@ export default function ConditioRewardInfo() {
                 );
               }
             }
+
             if (reademptionType === "2") {
               for (var i = 0; i < response.data.listGame.length; i++) {
                 if (response.data.listGame[i].rewardType === "1") {
-                  response.data.listGame[i]["pictureCoupon"] =
-                    FilesService.buffer64UTF8(
-                      response.data.listGame[i]["pictureCoupon"]
-                    );
+                  if (response.data.listGame[i]["pictureCoupon"] !== null) {
+                    response.data.listGame[i]["pictureCoupon"] =
+                      FilesService.buffer64UTF8(
+                        response.data.listGame[i]["pictureCoupon"]
+                      );
+                  }
                 } else {
-                  response.data.listGame[i]["pictureProduct"] =
-                    FilesService.buffer64UTF8(
-                      response.data.listGame[i]["pictureProduct"]
-                    );
+                  if (response.data.listGame[i]["pictureProduct"] !== null) {
+                    response.data.listGame[i]["pictureProduct"] =
+                      FilesService.buffer64UTF8(
+                        response.data.listGame[i]["pictureProduct"]
+                      );
+                  }
                 }
               }
+
               setListGame(response.data.listGame);
             } else {
               for (var columnsCoupon in response.data.tbRedemptionCoupon) {
@@ -616,8 +626,6 @@ export default function ConditioRewardInfo() {
                     FilesService.buffer64UTF8(response.data.tbImage["image"])
                   );
                   setImageCoupon({ ...imageCoupon, ...response.data.tbImage });
-
-
                 } else {
                   formikProduct.setFieldValue(
                     "pictureProduct",
@@ -814,7 +822,7 @@ export default function ConditioRewardInfo() {
                       />
 
                       {formik.touched.redemptionName &&
-                        formik.errors.redemptionName ? (
+                      formik.errors.redemptionName ? (
                         <div className="text-sm py-2 px-2 text-red-500">
                           &nbsp;
                         </div>
@@ -835,7 +843,7 @@ export default function ConditioRewardInfo() {
                     </div>
                     <div className="relative w-full px-4">
                       {formik.touched.redemptionName &&
-                        formik.errors.redemptionName ? (
+                      formik.errors.redemptionName ? (
                         <div className="text-sm py-2 px-2  text-red-500">
                           {formik.errors.redemptionName}
                         </div>
@@ -920,9 +928,8 @@ export default function ConditioRewardInfo() {
                   </div>
                   <div
                     className="w-full lg:w-5/12 margin-auto-t-b"
-                  // style={{ width: width < 764 ? "100%" : "39.7%" }}
+                    // style={{ width: width < 764 ? "100%" : "39.7%" }}
                   >
-
                     <div className="relative flex px-4">
                       <InputUC
                         name="points"
@@ -930,7 +937,6 @@ export default function ConditioRewardInfo() {
                         maxLength={7}
                         onBlur={formik.handleBlur}
                         value={formik.values.points}
-
                         onChange={(e) => {
                           setStateDelay(ValidateService.onHandleNumber(e));
                           formik.values.points =
@@ -956,7 +962,9 @@ export default function ConditioRewardInfo() {
                   <div className="w-full">&nbsp;</div>
                   <div className="w-full lg:w-1/12 margin-auto-t-b ">
                     <LabelUC label="วันที่เริ่มต้น" isRequired={true} />
-                    <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
+                    <div className="text-sm py-2 px-2  text-red-500">
+                      &nbsp;
+                    </div>
                   </div>
                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                     <div className="relative">
@@ -966,45 +974,48 @@ export default function ConditioRewardInfo() {
                         }}
                         onBlur={(e) => {
                           setIsClick({ ...isClick, redemptionStart: false });
-
                         }}
                         onChange={(e) => {
                           setIsClick({ ...isClick, redemptionStart: false });
                           if (e === null) {
-                            formik.setFieldValue(
-                              "startDate",
-                              "",
-                              false
-                            );
-                            formik.setFieldValue(
-                              "endDate",
-                              "",
-                              false
-                            );
+                            formik.setFieldValue("startDate", "", false);
+                            formik.setFieldValue("endDate", "", false);
                           } else {
-                            formik.handleChange({ target: { name: 'startDate', value: moment(e).toDate() } });
+                            formik.handleChange({
+                              target: {
+                                name: "startDate",
+                                value: moment(e).toDate(),
+                              },
+                            });
                             if (formik.values.endDate != null) {
                               if (moment(e).toDate() >= formik.values.endDate) {
-                                formik.handleChange({ target: { name: 'endDate', value: moment(e).add(1, "days").toDate() } });
+                                formik.handleChange({
+                                  target: {
+                                    name: "endDate",
+                                    value: moment(e).add(1, "days").toDate(),
+                                  },
+                                });
                               }
                             }
-
                           }
                         }}
                         value={
                           !isClick.redemptionStart
-                            ? formik.values.startDate == "" ? null : moment(
-                              new Date(formik.values.startDate),
-                              "DD/MM/YYYY"
-                            )
+                            ? formik.values.startDate == ""
+                              ? null
+                              : moment(
+                                  new Date(formik.values.startDate),
+                                  "DD/MM/YYYY"
+                                )
                             : null
                         }
                       />
-                      <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
+                      <div className="text-sm py-2 px-2  text-red-500">
+                        &nbsp;
+                      </div>
                     </div>
                     <div className="relative w-full px-4">
-                      {formik.touched.startDate &&
-                        formik.errors.startDate ? (
+                      {formik.touched.startDate && formik.errors.startDate ? (
                         <div className="text-sm py-2 px-2  text-red-500">
                           {formik.errors.startDate}
                         </div>
@@ -1018,7 +1029,9 @@ export default function ConditioRewardInfo() {
                   </div>
                   <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
                     <LabelUC label="สิ้นสุด" isRequired={true} />
-                    <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
+                    <div className="text-sm py-2 px-2  text-red-500">
+                      &nbsp;
+                    </div>
                   </div>
                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                     <div className="relative">
@@ -1034,9 +1047,7 @@ export default function ConditioRewardInfo() {
                         onClick={(e) => {
                           setIsClick({
                             ...isClick,
-                            expireDate: formik.values.isNotExpired
-                              ? false
-                              : true,
+                            expired: formik.values.isNotExpired ? false : true,
                           });
                         }}
                         onBlur={(e) => {
@@ -1047,7 +1058,9 @@ export default function ConditioRewardInfo() {
                           if (e === null) {
                             formik.setFieldValue("endDate", "", false);
                           } else {
-                            formik.handleChange({ target: { name: 'endDate', value: e } });
+                            formik.handleChange({
+                              target: { name: "endDate", value: e },
+                            });
                             formik.setFieldValue(
                               "endDate",
                               moment(e).toDate(),
@@ -1057,16 +1070,21 @@ export default function ConditioRewardInfo() {
                         }}
                         value={
                           !isClick.redemptionEnd
-                            ? formik.values.endDate == "" ? null : moment(
-                              new Date(formik.values.endDate),
-                              "DD/MM/YYYY"
-                            )
+                            ? formik.values.endDate == ""
+                              ? null
+                              : moment(
+                                  new Date(formik.values.endDate),
+                                  "DD/MM/YYYY"
+                                )
                             : null
                         }
                         disabledDate={(current) => {
                           if (formik.values.startDate != null) {
-                            let day = formik.values.startDate
-                            return current && current <= moment(new Date(day)).endOf('day');
+                            let day = formik.values.startDate;
+                            return (
+                              current &&
+                              current <= moment(new Date(day)).endOf("day")
+                            );
                           }
                         }}
                       />
@@ -1079,21 +1097,18 @@ export default function ConditioRewardInfo() {
                         classLabel="mt-2 w-full"
                       />
                       <div className="relative w-full px-4">
-                        {formik.touched.endDate &&
-                          formik.errors.endDate ? (
+                        {formik.touched.endDate && formik.errors.endDate ? (
                           <div className="text-sm py-2 px-2  text-red-500">
                             {formik.errors.endDate}
                           </div>
                         ) : null}
                       </div>
                     </div>
-
                   </div>
                   <div className="w-full">&nbsp;</div>
                   <div className="w-full lg:w-1/12 margin-auto-t-b ">
                     <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
                   </div>
-
 
                   <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                     <div className="relative">
@@ -1107,8 +1122,7 @@ export default function ConditioRewardInfo() {
                       />
                     </div>
                   </div>
-                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
-                  </div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
                   <div className="w-full lg:w-11/12 px-4 margin-auto-t-b ">
                     <Radio.Group
                       options={options}

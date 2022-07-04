@@ -3,7 +3,7 @@ import React from 'react'
 import '../index.scss'
 
 const ExportHeader = ({ dataExport }) => {
-    console.log('dataExport', dataExport);
+
     return (
         <>
             <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xl text-green-mbk font-bold whitespace-nowrap p-4">

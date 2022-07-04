@@ -159,8 +159,11 @@ function Categorylist({
               {open && (
                 <ConfirmDelete
                   showModal={open}
-                  message={"จัดการข้อมูลสินค้า"}
+                  message={"หมวดหมู่สินค้า"}
                   hideModal={() => {
+                    setOpen(false);
+                  }}
+                  returnModal={() => { 
                     setOpen(false);
                   }}
                   confirmModal={() => {

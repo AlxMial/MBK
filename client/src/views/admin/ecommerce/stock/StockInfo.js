@@ -52,6 +52,7 @@ const StockInfo = ({
   const [productCategoryList, setProductCategoryList] = useState([]);
   const [categoryValue, setCategoryValue] = useState(null);
   const [delayValue, setDelayValue] = useState("");
+  const [delayValue2, setDelayValue2] = useState("");
 
   const [openCategory, setOpenCategory] = useState(false);
 
@@ -104,7 +105,7 @@ const StockInfo = ({
   });
 
   const handleChange = (newValue, actionMeta) => {
-
+    console.log(newValue);
     if (newValue !== null) {
       const _categoryValue =
         productCategoryList &&
@@ -123,34 +124,43 @@ const StockInfo = ({
 
   const handleCreate = (inputValue) => {
     setIsLoadingSelect(true);
-    console.group("Option created");
-    console.log("Wait a moment...");
-    setTimeout(() => {
-      const newOption = createOption(inputValue);
-      const newItem = {
-        id: "",
-        categoryName: inputValue,
-        isDeleted: false,
-        addBy: sessionStorage.getItem("user"),
-        updateBy: sessionStorage.getItem("user"),
-      };
-      axios.post("productCategory", newItem).then((res) => {
-        if (res.data.status) {
-          console.groupEnd();
-          setProductCategoryList([...productCategoryList, newOption]);
-          setIsLoadingSelect(false);
-          console.log("newOption", newOption);
-          setCategoryValue(newOption);
-          formik.setFieldValue("productCategoryId", newOption.value, false);
-        } else {
-          setIsLoadingSelect(false);
-          addToast("บันทึกข้อมูลหมวดหมู่สินค้าไม่สำเร็จ", {
-            appearance: "warning",
-            autoDismiss: true,
-          });
-        }
-      });
-    }, 1000);
+
+    const newOption = createOption(inputValue);
+    const newItem = {
+      id: "",
+      categoryName: inputValue,
+      isDeleted: false,
+      addBy: sessionStorage.getItem("user"),
+      updateBy: sessionStorage.getItem("user"),
+    };
+    axios.post("productCategory", newItem).then((res) => {
+      if (res.data.status) {
+        console.groupEnd();
+        // setProductCategoryList([...productCategoryList, newOption]);
+        newOption.value = res.data.tbProductCategory.id;
+        setProductCategoryList((s) => {
+          return [
+            ...s,
+            {
+              value: newOption.value,
+              label: newOption.label,
+            },
+          ];
+        });
+
+        setDelayValue2("setvalue");
+        setIsLoadingSelect(false);
+        setCategoryValue(newOption);
+        console.log(res.data.tbProductCategory)
+        formik.setFieldValue("productCategoryId",  newOption.value);
+      } else {
+        setIsLoadingSelect(false);
+        addToast("บันทึกข้อมูลหมวดหมู่สินค้าไม่สำเร็จ", {
+          appearance: "warning",
+          autoDismiss: true,
+        });
+      }
+    });
   };
 
   const calculateValue = (value, type) => {
@@ -543,7 +553,6 @@ const StockInfo = ({
                             setDelayValue(ValidateService.onHandleNumber(e));
                             formik.values.weight =
                               ValidateService.onHandleNumber(e);
-            
                           }}
                         />
                       </div>

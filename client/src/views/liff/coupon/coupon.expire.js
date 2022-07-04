@@ -13,7 +13,7 @@ const Expire = ({ data }) => {
               width: "90%", margin: "auto"
               , height: "calc(100% - 250px)"
             }}>
-              {[...data].filter((e) => { return new Date(e.expiredDate) > new Date() && e.isUsedCoupon === true }).map((e, i) => {
+              {[...data].filter((e) => { return  new Date(e.expiredDate) < new Date() || e.isUsedCoupon === true }).map((e, i) => {
                 return (
                   <div key={i} className="w-full  mb-2" >
                     <div className="w-full" style={{

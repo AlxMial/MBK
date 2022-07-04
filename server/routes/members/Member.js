@@ -796,10 +796,11 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
 
               let discount =
                 dt.discount > 0
-                  ? dt.discountType == 1
-                    ? parseFloat(dt.price) - parseFloat(dt.discount)
-                    : parseFloat(dt.price) -
-                    (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
+                  // ? dt.discountType == 1
+                  //   ? parseFloat(dt.price) - parseFloat(dt.discount)
+                  //   : parseFloat(dt.price) -
+                  //   (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
+                  ? parseFloat(dt.price) - parseFloat(dt.discount)
                   : 0;
 
               if (j < 2) {
@@ -1031,7 +1032,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
                   "couponName",
                   "isNotExpired",
                   "startDate",
-                  "expiredDate",
+                  "expireDate",
                   "isDeleted"
                 ],
                 // where: { isDeleted: false },
@@ -1058,7 +1059,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
               , isUse: !_coupon[i].isUsedCoupon ? (_RedemptionCoupon.expiredDate <= new Date() && _RedemptionCoupon.startDate >= new Date()) ? true : false : false
               , isUsedCoupon: _coupon[i].isUsedCoupon
               , points: _tbRedemptionConditionsHD.dataValues.points
-              , expiredDate: _RedemptionCoupon.expiredDate
+              , expiredDate: _RedemptionCoupon.expireDate
               , isDeleted: _RedemptionCoupon.isDeleted
               , CouponCodeId: Encrypt.EncodeKey(_coupon[i].TableHDId)
             }

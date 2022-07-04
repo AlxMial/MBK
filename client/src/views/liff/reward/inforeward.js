@@ -177,7 +177,7 @@ const InfoReward = () => {
                           UseProduct()
                     }}
                   >
-                    {Redemptionconditionshd.redemptionType == 2 ? "หมุนวงล้อ" : Redemptionconditionshd.rewardType == 1 ? "ใช้คูปอง" : "แลกสินค้า"}
+                    {Redemptionconditionshd.redemptionType == 2 ? "หมุนวงล้อ" : Redemptionconditionshd.rewardType == 1 ? "แลกคูปอง" : "แลกสินค้า"}
                   </div>
                 </div>
 

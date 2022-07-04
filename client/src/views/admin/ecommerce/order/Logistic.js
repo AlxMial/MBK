@@ -18,7 +18,7 @@ const Logistic = ({ props, setOrderHD }) => {
     const [address, setAddress] = useState(orderHD.address);
     const [province, setProvince] = useState();
     const [isChange, setIsChange] = useState(false);
-
+    const [delay,setDalay] = useState("");
     const [isChangeTrackNo, setisChangeTrackNo] = useState(false);
 
 
@@ -95,8 +95,6 @@ const Logistic = ({ props, setOrderHD }) => {
         { value: "เปลี่ยนใจ", label: "เปลี่ยนใจ" },
         { value: "อื่นๆ", label: "อื่นๆ" },
     ];
-
-    console.log(orderHD)
 
     return (
         <div className='mt-2 px-4'>
@@ -181,11 +179,18 @@ const Logistic = ({ props, setOrderHD }) => {
                         classLabel="mt-2"
                         classSpan='text-cancel'
                         onChange={(e) => {
-                            // setIsCancel(e.target.checked);
-                            setOrderHD(p => { return { ...p, isCancel: e.target.checked } })
+                            setIsCancel(e.target.checked);
+                            if(orderHD.tbCancelOrder === undefined)
+                            {
+                                orderHD.tbCancelOrder = { cancelDetail: OpenmodelCancel[0].value }
+                                setOrderHD(orderHD);
+
+                            }
+                            // console.log(e.target.checked)
+                            // setOrderHD(p => { return { ...p, isCancel: e.target.checked } })
                         }}
-                        disabled={!isCanEdit ? true : (orderHDold.isCancel || orderHD.paymentStatus == 3)}
-                        checked={orderHD.isCancel}
+                        disabled={!isCanEdit ? true : ( orderHD.paymentStatus === 3)}
+                        checked={isCancel}
                     />
                 </div>
                 {/* {orderHD.isCancel && ( */}
@@ -201,14 +206,15 @@ const Logistic = ({ props, setOrderHD }) => {
                                 } else {
                                     orderHD.tbCancelOrder.cancelDetail = value.value
                                 }
+                                setDalay(orderHD.tbCancelOrder.cancelDetail);
                                 setOrderHD(orderHD)
                             }}
                             options={OpenmodelCancel}
                             value={ValidateService.defaultValue(
                                 OpenmodelCancel,
-                                orderHD.tbCancelOrder == null ? null : orderHD.tbCancelOrder.cancelDetail
+                                orderHD.tbCancelOrder == null ? null : delay
                             )}
-                            isDisabled={!isCanEdit ? true : (orderHD.paymentStatus == 3) ? true : !orderHD.isCancel ? true : false}
+                            isDisabled={!isCanEdit ? true : (orderHD.paymentStatus === 3) ? true : !isCancel ? true : false}
                         // bgColor={getStatus(transportStatus).bg}
                         />
                     </div>

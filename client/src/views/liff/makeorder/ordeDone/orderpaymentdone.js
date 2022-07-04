@@ -295,11 +295,17 @@ const OrderPaymentDone = () => {
                 </div>
                 <div className="flex relative mb-2 text-sm">
                   <div>ค่าจัดส่ง : </div>
-                  <div
+                  {/* <div
                     className={"absolute " + (OrderHD.hddeliveryCost > 0 || OrderHD.hddiscountDelivery > 0 ? "text-gold-mbk" : "")}
                     style={{ right: "0" }}
                   >
                     {(OrderHD.hddeliveryCost > 0 || OrderHD.hddiscountDelivery > 0 ? "-" : "") + "฿ " + fn.formatMoney(OrderHD.hddeliveryCost + OrderHD.hddiscountDelivery)}
+                  </div> */}
+                  <div
+                    className={"absolute " + (OrderHD.hddeliveryCost > 0 || OrderHD.hddiscountDelivery > 0 ? "" : "")}
+                    style={{ right: "0" }}
+                  >
+                    {(OrderHD.hddeliveryCost > 0 || OrderHD.hddiscountDelivery > 0 ? "" : "") + "฿ " + fn.formatMoney(OrderHD.hddeliveryCost + OrderHD.hddiscountDelivery)}
                   </div>
                 </div>
                 <div className="flex relative mb-2 text-sm">
@@ -313,7 +319,7 @@ const OrderPaymentDone = () => {
                 </div>
                 <div className="flex relative  mt-4">
                   <div className="flex text-sm" style={{ width: "50%", alignItems: "end" }}>ยอดสุทธิ  : </div>
-                  <i className="flex fas fa-receipt text-gold-mbk text-xl" style={{ alignItems: "center" }}></i>
+                  {/* <i className="flex fas fa-receipt text-gold-mbk text-xl" style={{ alignItems: "center" }}></i> */}
                   <div
                     className="flex text-green-mbk font-blod text-xl"
                     style={{ right: "0", justifyContent: "end", width: "50%" }}

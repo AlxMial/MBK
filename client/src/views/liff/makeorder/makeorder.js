@@ -37,6 +37,7 @@ const MakeOrder = () => {
   const [openCoupon, setopenCoupon] = useState(false); //เปิดCoupon
   const [pageID, setpageID] = useState("");
   const [sumprice, setsumprice] = useState(0);
+  const [couponUse, setCouponUse] = useState(null);
 
   const [CartItem, setCartItem] = useState([]); //สินค้าในตระกร้า
   const [freebies, setfreebies] = useState([]); //ของแถม
@@ -102,7 +103,7 @@ const MakeOrder = () => {
       item = Storage.getbyorder();
       if (fn.IsNullOrEmpty(item)) {
         // console.log("IsNullOrEmpty")
-        history.push(path.shopList)
+        history.push(path.shopList);
       } else {
         setData();
       }
@@ -153,10 +154,11 @@ const MakeOrder = () => {
             usecouponid: usecoupon == null ? null : usecoupon.id,
           },
           orderdt: dt,
-          cart: id == "cart" ? true : false
+          cart: id == "cart" ? true : false,
         };
+
         if (RadioPayment === 1) {
-          order.orderhd.paymentId = paymentID
+          order.orderhd.paymentId = paymentID;
         }
 
         doSaveOrder(order, async (res) => {
@@ -168,10 +170,10 @@ const MakeOrder = () => {
               item = Storage.remove_byorder();
             }
             if (RadioPayment === 1) {
+              console.log(res.data)
               history.push(path.paymentInfo.replace(":id", res.data.orderId));
             } else {
-              window.location.href = res.data.url.webPaymentUrl
-              
+              window.location.href = res.data.url.webPaymentUrl;
             }
           } else {
           }
@@ -220,9 +222,17 @@ const MakeOrder = () => {
         _deliveryCost = tbPromotionDelivery.deliveryCost;
       }
     }
+
     total = total + _deliveryCost;
     if (usecoupon != null) {
-      total = total - usecoupon.discount;
+      if (usecoupon.discountType === "2") {
+        usecoupon.discount = (usecoupon.discount / 100) * sumprice;
+        usecoupon.discount = parseFloat(usecoupon.discount).toFixed(2);
+        total = total - usecoupon.discount;
+        console.log(total);
+      } else {
+        total = total - usecoupon.discount;
+      }
     }
 
     return total;
@@ -248,7 +258,7 @@ const MakeOrder = () => {
 
         pro.map((e, i) => {
           let discount = 0;
-          if (e.condition == "discount") {
+          if (e.condition === "discount") {
             discount = e.discount;
           } else {
             discount = (e.percentDiscount / 100) * totel;
@@ -264,7 +274,9 @@ const MakeOrder = () => {
       } else {
         //สินค้า
 
-        let productList = promotionstores.find((e) => e.condition == "product" && e.buy <= totel);
+        let productList = promotionstores.find(
+          (e) => e.condition === "product" && e.buy <= totel
+        );
         // console.log(productList);
         if (productList != null) {
           console.log("แถมสินค้า");
@@ -297,22 +309,22 @@ const MakeOrder = () => {
   const calcdeliveryCost = () => {
     return usecoupon == null
       ? //ไม่มีสวนลด
-      //ไม่โปร
-      tbPromotionDelivery == null
+        //ไม่โปร
+        tbPromotionDelivery == null
         ? deliveryCost
         : //มีโปร
         sumprice + deliveryCost > tbPromotionDelivery.buy && deliveryCost > 0
-          ? tbPromotionDelivery.deliveryCost
-          : deliveryCost
+        ? tbPromotionDelivery.deliveryCost
+        : deliveryCost
       : //มีส่วนลด
       //ไม่โปร
       tbPromotionDelivery == null
-        ? deliveryCost
-        : //มีโปร
-        sumprice - usecoupon.discount > tbPromotionDelivery.buy &&
-          deliveryCost > 0
-          ? tbPromotionDelivery.deliveryCost
-          : deliveryCost;
+      ? deliveryCost
+      : //มีโปร
+      sumprice - usecoupon.discount > tbPromotionDelivery.buy &&
+        deliveryCost > 0
+      ? tbPromotionDelivery.deliveryCost
+      : deliveryCost;
   };
   useEffect(() => {
     GetPromotionstores(getProducts);
@@ -373,7 +385,12 @@ const MakeOrder = () => {
                     }}
                   >
                     {usecoupon != null
-                      ? "-฿ " + fn.formatMoney(usecoupon.discount)
+                      ? "-฿ " +
+                        fn.formatMoney(
+                          usecoupon.discountType === "2"
+                            ? (usecoupon.discount / 100) * sumprice
+                            : usecoupon.discount
+                        )
                       : "ใช้ส่วนลด >"}
                   </div>
                   <div className="px-2">
@@ -454,7 +471,12 @@ const MakeOrder = () => {
                         className="absolute text-gold-mbk"
                         style={{ right: "0" }}
                       >
-                        {"-฿ " + fn.formatMoney(usecoupon.discount)}
+                        {"-฿ " +
+                          fn.formatMoney(
+                            usecoupon.discountType === "2"
+                              ? (usecoupon.discount / 100) * sumprice
+                              : usecoupon.discount
+                          )}
                       </div>
                     ) : (
                       <div className="absolute" style={{ right: "0" }}>

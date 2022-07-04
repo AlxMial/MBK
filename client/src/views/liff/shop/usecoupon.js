@@ -31,6 +31,7 @@ const ShowCart = () => {
           const base64 = await FilesService.buffer64UTF8(data[i].image.data);
           data[i].image = base64
         }
+
         settbcouponcodes(data)
       }
     });
@@ -39,10 +40,12 @@ const ShowCart = () => {
   const usecoupon = (e) => {
     console.log(" id " + id)
     console.log(e)
+    console.log(id)
     if (id === "cart") {
       Storage.addconpon_cart(e);
     } else if (id === "byorder") {
       let item = Storage.getbyorder()
+      console.log(item)
       item.usecoupon = e
       Storage.updbyorder(item)
     } else {

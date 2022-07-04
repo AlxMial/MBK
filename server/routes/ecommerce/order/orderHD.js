@@ -271,18 +271,20 @@ const getorderDT = async (DT) => {
       if (_tbStock) {
         //มีสินค้า
         let _price = 0;
-        if (_tbStock.discount > 0) {
+        // if (_tbStock.discount > 0) {
+        //   if (_tbStock.discountType == 1) {
+        //     _price = _tbStock.price - _tbStock.discount;
+        //   } else {
+        //     _price =
+        //       _tbStock.price - (_tbStock.discount / 100) * _tbStock.price;
+        //   }
+        //   total += _price * DT[i].amount;
+        // } else {
+        //   total += _tbStock.price * DT[i].amount;
+        // }
 
-          if (_tbStock.discountType == 1) {
-            _price = _tbStock.price - _tbStock.discount;
-          } else {
-            _price =
-              _tbStock.price - (_tbStock.discount / 100) * _tbStock.price;
-          }
-          total += _price * DT[i].amount;
-        } else {
-          total += _tbStock.price * DT[i].amount;
-        }
+        total = _tbStock.price - _tbStock.discount;
+
         orderDT.push({
           stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
           amount: DT[i].amount,
@@ -491,12 +493,13 @@ const getDelivery = async (logisticId, total) => {
   }
 }
 //คูปอง
-const getDiscountCoupon = async (usecouponid) => {
+const getDiscountCoupon = async (usecouponid,total) => {
   let status = true
   let msg = ""
   let DiscountCoupon = 0; // ส่วนลดCoupon
   let memberRewardId = null
   try {
+
     if (usecouponid != null) {
       const _tbMemberReward = await tbMemberReward.findOne({
         attributes: ["id", "TableHDId"],
@@ -511,16 +514,18 @@ const getDiscountCoupon = async (usecouponid) => {
           attributes: ["redemptionCouponId"],
           where: { id: _tbMemberReward.TableHDId },
         });
+   
         const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
           attributes: ["discount", "discountType"],
           where: { id: _tbCouponCode.redemptionCouponId },
         });
 
         if (_tbRedemptionCoupon) {
-          if (_tbRedemptionCoupon.discountType == 1) {
+          if (_tbRedemptionCoupon.discountType === "1") {
             DiscountCoupon = _tbRedemptionCoupon.discount;
           } else {
-            DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * totel;
+            console.log(total)
+            DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * total;
           }
         }
       } else {
@@ -614,9 +619,11 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     //#region ข้อมูลสินค้า
     let total = 0; //ราคารวม
     let point = 0
+    let sumprice = 0;
     let _getorderDT = await getorderDT(orderdt)
     if (_getorderDT.status) {
       total = _getorderDT.total
+      sumprice = _getorderDT.total
       point = _getorderDT.point
       orderDT = _getorderDT.orderDT
     } else {
@@ -650,7 +657,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     let deliveryCost = 0; //ค่าส่ง
     let discountDelivery = 0; //โปรค่าส่ง
     if (status) {
-      let _getDelivery = await getDelivery(orderhd.logisticId, total)
+      let _getDelivery = await getDelivery(orderhd.logisticId, sumprice)
       if (_getDelivery.status) {
         deliveryCost = _getDelivery.deliveryCost; //ค่าส่ง
         discountDelivery = _getDelivery.discountDelivery; //โปรค่าส่ง
@@ -666,7 +673,8 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     let DiscountCoupon = 0;
     if (status) {
       if (orderhd.usecouponid != null) {
-        let _getDiscountCoupon = await getDiscountCoupon(orderhd.usecouponid)
+   
+        let _getDiscountCoupon = await getDiscountCoupon(orderhd.usecouponid,sumprice)
         if (_getDiscountCoupon.status) {
           DiscountCoupon = _getDiscountCoupon.DiscountCoupon
           orderhd.memberRewardId = _getDiscountCoupon.memberRewardId
@@ -836,11 +844,13 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       //สินค้า
       let total = 0; //ราคารวม
       let point = 0
+      let sumprice = 0;
       let orderdt = data.orderdt;
       let orderDT = [];
       let _getorderDT = await getorderDT(orderdt)
       if (_getorderDT.status) {
         total = _getorderDT.total
+        sumprice = _getorderDT.total
         point = _getorderDT.point
         orderDT = _getorderDT.orderDT
       } else {
@@ -886,7 +896,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       let DiscountCoupon = 0;
       if (status) {
         if (data.usecouponid != null) {
-          let _getDiscountCoupon = await getDiscountCoupon(data.usecouponid)
+          let _getDiscountCoupon = await getDiscountCoupon(data.usecouponid,sumprice)
           if (_getDiscountCoupon.status) {
             DiscountCoupon = _getDiscountCoupon.DiscountCoupon
             data.memberRewardId = _getDiscountCoupon.memberRewardId
@@ -1420,11 +1430,12 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
           dt.productName = _tbStock.productName;
           dt.discount =
             parseFloat(_tbStock.discount) > 0
-              ? _tbStock.discountType == 1
-                ? parseFloat(_tbStock.price) - parseFloat(_tbStock.discount)
-                : parseFloat(_tbStock.price) -
-                (parseFloat(_tbStock.discount) / 100) *
-                parseFloat(_tbStock.price)
+              // ? _tbStock.discountType == 1
+              //   ? parseFloat(_tbStock.price) - parseFloat(_tbStock.discount)
+              //   : parseFloat(_tbStock.price) -
+              //   (parseFloat(_tbStock.discount) / 100) *
+              //   parseFloat(_tbStock.price)
+              ? parseFloat(_tbStock.price) - parseFloat(_tbStock.discount)
               : 0;
           dt.price = parseFloat(_tbStock.price);
           amount += dt.amount;
@@ -1500,6 +1511,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         },
       });
       let total = 0;
+      let sumprice = 0;
       if (OrderHDData) {
         const OrderDTData = await tbOrderDT.findAll({
           attributes: [
@@ -1519,14 +1531,17 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
           //ลดราคา
           if (dt.discount > 0) {
             let price = 0;
-            if (dt.discountType === "Percent") {
-              price = dt.price - (dt.discount / 100) * dt.price;
-            } else {
-              price = dt.price - dt.discount;
-            }
-            total = total + price * dt.amount;
+            // if (dt.discountType === "Percent") {
+            //   price = dt.price - (dt.discount / 100) * dt.price;
+            // } else {
+            //   price = dt.price - dt.discount;
+            // }
+            // total = total + price * dt.amount;
+            total =  (dt.price - dt.discount) * dt.amount
+            sumprice = (dt.price - dt.discount) * dt.amount
           } else {
             total = total + dt.price * dt.amount;
+            sumprice = total + dt.price * dt.amount;
           }
         }
         // คูปอง
@@ -1673,7 +1688,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
               if (_tbRedemptionCoupon.discountType == 1) {
                 DiscountCoupon = _tbRedemptionCoupon.discount;
               } else {
-                DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * total;
+                DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * sumprice;
               }
             }
           } else {
@@ -1821,9 +1836,10 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
           dt.discount = parseFloat(dt.discount);
           dt.discount =
             dt.discount > 0
-              ? dt.discountType == 1
-                ? dt.price - dt.discount
-                : dt.price - (dt.discount / 100) * dt.price
+              // ? dt.discountType == 1
+              //   ? dt.price - dt.discount
+              //   : dt.price - (dt.discount / 100) * dt.price
+              ? dt.price - dt.discount
               : 0;
           sumprice +=
             dt.discount > 0 ? dt.discount * dt.amount : dt.price * dt.amount;

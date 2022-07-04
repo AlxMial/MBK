@@ -262,7 +262,7 @@ const StandardCoupon = ({ formik }) => {
                 }}
                 value={
                   !isClick.expireDate
-                    ? formik.values.expireDate == "" ? null : moment(
+                    ? formik.values.expireDate === "" ? null : moment(
                       new Date(
                         formik.values.expireDate
                           ? formik.values.expireDate

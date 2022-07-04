@@ -227,7 +227,7 @@ const GameList = ({ id, setListGame, listGame }) => {
               </thead>
 
               <tbody>
-                {listGame
+                {null ??  listGame
                   .slice(pagesVisited, pagesVisited + usersPerPage)
                   .map((value, key) => {
                     return (

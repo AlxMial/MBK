@@ -11,6 +11,7 @@ const Encrypt = new ValidateEncrypt();
 const Op = Sequelize.Op;
 
 router.post("/", validateToken, async (req, res) => {
+  console.log(req.body)
   const data = await tbStock.create(req.body);
   res.json({
     status: true,

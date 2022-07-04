@@ -142,6 +142,7 @@ export default function PointEcommerce() {
   const onEditValue = async () => {
     closeModalEdit();
     formik.handleSubmit();
+    setIsOpen(false);
   };
 
   const onReturn = () => {
@@ -1120,7 +1121,7 @@ export default function PointEcommerce() {
             />
             <ConfirmEdit
               showModal={modalIsOpenEdit}
-              message={"แคมเปญ"}
+              message={"E-Commerce"}
               hideModal={() => {
                 closeModalEdit();
               }}

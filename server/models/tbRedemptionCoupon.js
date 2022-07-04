@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
-      expiredDate: {
+      expireDate: {
         type: DataTypes.DATE,
         allowNull: true,
       },

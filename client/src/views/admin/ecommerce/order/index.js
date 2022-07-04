@@ -36,7 +36,6 @@ const Order = () => {
         await axios.get("order/orderHD").then(async (response) => {
             if (!response.data.error && response.data.tbOrderHD) {
                 let _orderData = response.data.tbOrderHD;
-                console.log(_orderData)
                 await axios.get("members").then(res => {
                     _orderData = _orderData.map(order => {
                         const member = res.data.tbMember.filter(
@@ -122,8 +121,6 @@ const Order = () => {
     const handleModal = async (value) => {
         if (value === 'save') {
             dispatch(fetchLoading());
-            console.log('save');
-            console.log('transportStatus', transportStatus);
             if ((!isCancel || (isCancel && cancelReason !== ''))
                 && ((orderNumber !== orderHD.orderNumber
                     && isChangeOrderNumber && orderNumber !== '') || !isChangeOrderNumber)) {
@@ -140,6 +137,7 @@ const Order = () => {
                     //     _dataHD.orderNumber = orderNumber;
                     // }
                     _dataHD.isCancel = isCancel;
+                   
                     await axios.put("order/orderHD", _dataHD).then(async (res) => {
                         if (res.data.error) {
                             dispatch(fetchSuccess());
@@ -153,12 +151,13 @@ const Order = () => {
                                 id: '',
                                 orderId: orderHD.id,
                                 cancelStatus: 'done',
-                                cancelDetail: '',
+                                cancelDetail: orderHD.tbCancelOrder.cancelDetail,
                                 description: cancelReason,
                                 addBy: sessionStorage.getItem('user'),
                                 updateBy: sessionStorage.getItem('user'),
                                 isDeleted: false,
                             }
+                            console.log(_dataCancel)
                             await axios.post("cancelOrder", _dataCancel).then(async (res) => {
                                 if (res.data.status) {
                                     addToast("บันทึกข้อมูลสำเร็จ",
@@ -177,7 +176,7 @@ const Order = () => {
                     await fetchData();
                     setOpen(false);
                 }
-            }
+            }else {     dispatch(fetchSuccess()); }
 
             // await saveImage(orderHD.id);
         } else {

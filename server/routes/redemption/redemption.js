@@ -531,6 +531,7 @@ router.put("/", validateToken, async (req, res) => {
       let coupon = null;
       let product = null;
       if (req.body.rewardType === "1") {
+        console.log(req.body.coupon.expiredDate)
         req.body.coupon.expiredDate = req.body.coupon.isNotExpired
           ? null
           : req.body.coupon.expiredDate;
@@ -695,7 +696,7 @@ router.get("/gettbcouponcodes"
                 include: [
                   {
                     model: tbRedemptionCoupon,
-                    attributes: ['id', 'discount', "isNotExpired", "startDate", "expiredDate", "couponName"],
+                    attributes: ['id', 'discount', 'discountType', "isNotExpired", "startDate", "expiredDate", "couponName"],
                     where: {
                       isDeleted: !1,
                       id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
@@ -719,7 +720,8 @@ router.get("/gettbcouponcodes"
                   id: Encrypt.EncodeKey(_tbCouponCode.dataValues.id)
                   , image: _tbCouponCode.dataValues.image
                   , couponName: _tbCouponCode.tbRedemptionCoupon.couponName
-                  , discount: _tbCouponCode.tbRedemptionCoupon.discount
+                  , discount:  _tbCouponCode.tbRedemptionCoupon.discount
+                  , discountType: _tbCouponCode.tbRedemptionCoupon.discountType
                   , expiredDate: _tbCouponCode.tbRedemptionCoupon.expiredDate == null ? "-" : _tbCouponCode.tbRedemptionCoupon.expiredDate
                 })
 
