@@ -1995,9 +1995,9 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                 couponName: _tbCouponCode.tbRedemptionCoupon.couponName,
                 discount: _tbCouponCode.tbRedemptionCoupon.discount,
                 expiredDate:
-                  _tbCouponCode.tbRedemptionCoupon.expiredDate == null
+                  _tbCouponCode.tbRedemptionCoupon.expireDate == null
                     ? "-"
-                    : _tbCouponCode.tbRedemptionCoupon.expiredDate,
+                    : _tbCouponCode.tbRedemptionCoupon.expireDate,
               };
             }
           }

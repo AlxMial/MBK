@@ -890,7 +890,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
                   "couponName",
                   "isNotExpired",
                   "startDate",
-                  "expiredDate",
+                  "expireDate",
                 ],
                 where: { isDeleted: false },
               },
@@ -902,16 +902,16 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
 
             if (
               _RedemptionCoupon.startDate <= new Date() &&
-              _RedemptionCoupon.expiredDate >= new Date()
+              _RedemptionCoupon.expireDate >= new Date()
             ) {
               _coupon[i].dataValues.couponName = _RedemptionCoupon.couponName;
-              _coupon[i].dataValues.expiredDate = _RedemptionCoupon.expiredDate;
+              _coupon[i].dataValues.expireDate = _RedemptionCoupon.expireDate;
               if (coupon.length < 2) {
                 coupon.push({
                   id: Encrypt.EncodeKey(_RedemptionCoupon.id),
                   couponId: Encrypt.EncodeKey(_coupon[i].TableHDId),
                   couponName: _coupon[i].dataValues.couponName,
-                  expiredDate: _coupon[i].dataValues.expiredDate,
+                  expireDate: _coupon[i].dataValues.expireDate,
                 });
               }
             }
@@ -1010,6 +1010,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
           rewardType: "Coupon",
         },
       });
+      console.log(_coupon)
       if (_coupon) {
         for (var i = 0; i < _coupon.length; i++) {
           tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
@@ -1056,7 +1057,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
             let data = {
 
               id: Encrypt.EncodeKey(_RedemptionCoupon.id), couponName: couponName
-              , isUse: !_coupon[i].isUsedCoupon ? (_RedemptionCoupon.expiredDate <= new Date() && _RedemptionCoupon.startDate >= new Date()) ? true : false : false
+              , isUse: !_coupon[i].isUsedCoupon ? (_RedemptionCoupon.expireDate <= new Date() && _RedemptionCoupon.startDate >= new Date()) ? true : false : false
               , isUsedCoupon: _coupon[i].isUsedCoupon
               , points: _tbRedemptionConditionsHD.dataValues.points
               , expiredDate: _RedemptionCoupon.expireDate

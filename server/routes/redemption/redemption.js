@@ -722,7 +722,7 @@ router.get("/gettbcouponcodes"
                   , couponName: _tbCouponCode.tbRedemptionCoupon.couponName
                   , discount:  _tbCouponCode.tbRedemptionCoupon.discount
                   , discountType: _tbCouponCode.tbRedemptionCoupon.discountType
-                  , expiredDate: _tbCouponCode.tbRedemptionCoupon.expiredDate == null ? "-" : _tbCouponCode.tbRedemptionCoupon.expiredDate
+                  , expiredDate: _tbCouponCode.tbRedemptionCoupon.expireDate == null ? "-" : _tbCouponCode.tbRedemptionCoupon.expireDate
                 })
 
               }
