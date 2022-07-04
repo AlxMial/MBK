@@ -163,8 +163,6 @@ router.get("/getPromotionstores", validateLineToken, async (req, res) => {
   });
 });
 router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
-  
-
   let id = Encrypt.DecodeKey(req.body.id);
   try {
     const _2c2p = await tb2c2p.findOne({
@@ -174,33 +172,41 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
       axios.post('https://sandbox-pgw.2c2p.com/payment/4.1/PaymentInquiry', {
         payload: _2c2p.payload
       })
-      .then(async function (response) {
-        let decoded = jwt.decode(response.data.payload);
-        if (decoded.respDesc == "Success") {
-          let referenceNo = decoded.referenceNo;
-          const _tbOrderHD = await tbOrderHD.update(
-            {
-              transetionId: referenceNo,
-              paymentDate: new Date(),
-              paymentStatus: 3,
-            },
-            {
-              where: {
-                id: Encrypt.DecodeKey(id.split(",")[0]),
-                // id: id.split(",")[0],
-                orderNumber: id.split(",")[1],
+        .then(async function (response) {
+          let decoded = jwt.decode(response.data.payload);
+          if (decoded.respDesc == "Success") {
+            let referenceNo = decoded.referenceNo;
+            await tbOrderHD.update(
+              {
+                transetionId: referenceNo,
+                paymentDate: new Date(),
+                paymentStatus: 3,
               },
-            }
-          );
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+              {
+                where: {
+                  id: Encrypt.DecodeKey(id.split(",")[0]),
+                  // id: id.split(",")[0],
+                  orderNumber: id.split(",")[1],
+                },
+              }
+            );
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
 
+      const _tbOrderHD = await tbOrderHD.findOne({
+        attributes: ["orderNumber", "paymentStatus", "netTotal"],
+        where: {
+          id: Encrypt.DecodeKey(id.split(",")[0]),
+          orderNumber: id.split(",")[1],
+        },
+      });
       res.json({
         status: true,
-        orderNumber:id.split(",")[1],
+        orderNumber: id.split(",")[1],
+        OrderHD: _tbOrderHD
       });
     } else {
       const _tbOrderHD = await tbOrderHD.findOne({
@@ -212,13 +218,14 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
       });
       res.json({
         status: false,
-        orderNumber:id.split(",")[1],
+        orderNumber: id.split(",")[1],
+        OrderHD: _tbOrderHD
       });
     }
   } catch (e) {
     res.json({
       status: false,
-      orderNumber:'',
+      orderNumber: '',
     });
   }
 

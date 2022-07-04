@@ -348,7 +348,7 @@ const ShopList = () => {
           )}
         </div>
         <div
-          className="flex relative flex mt-2"
+          className="flex relative  mt-2"
           style={{ height: "40px", alignItems: "center" }}
         >
           <div
