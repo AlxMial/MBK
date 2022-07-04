@@ -117,7 +117,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-
+    trackNo: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     addBy: {
       type: DataTypes.STRING,
       allowNull: true,

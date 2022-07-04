@@ -755,6 +755,7 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
         where: { memberId: memberId },
         include: [
           {
+            limit: 2,
             attributes: [
               "id",
               "amount",
@@ -784,11 +785,7 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
               dt.id = Encrypt.EncodeKey(dt.id);
               const _tbStockData = await tbStock.findOne({
                 attributes: [
-                  "id",
                   "productName",
-                  "discount",
-                  "discountType",
-                  "price",
                 ],
                 where: { id: dt.stockId },
               });
