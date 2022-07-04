@@ -61,7 +61,7 @@ const Stock = () => {
         setOpen(false);
         dispatch(fetchSuccess());
         setListStock(_stockData);
-        setListSearch([_stockData]);
+        setListSearch(_stockData);
       }
     });
   };
@@ -79,9 +79,9 @@ const Stock = () => {
       setListStock(
         listSearch.filter(
           (x) =>
-            x.productName.toLowerCase().includes(e) ||
-            x.categoryName.toLowerCase().includes(e) ||
-            x.status.toLowerCase().includes(e) ||
+            x.productName.toString().toLowerCase().includes(e) ||
+            x.categoryName.toString().toLowerCase().includes(e) ||
+            x.status.toString().toLowerCase().includes(e) ||
             x.price.toString().toLowerCase().includes(e) ||
             x.buy.toString().toLowerCase().includes(e) ||
             x.productCount.toString().toLowerCase().includes(e)

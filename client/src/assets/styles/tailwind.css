@@ -4008,6 +4008,15 @@ strike {
   border-radius: 1rem !important;
 }
 
+.TextWordWarp-100 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+  /* width:100px; */
+}
+
+
 .TextWordWarp-150 {
   white-space: nowrap;
   overflow: hidden;
@@ -4021,6 +4030,14 @@ strike {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
+  /* width:100px; */
+}
+
+.TextWordWarp-300 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
   /* width:100px; */
 }
 

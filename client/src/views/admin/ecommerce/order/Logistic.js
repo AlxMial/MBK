@@ -140,7 +140,7 @@ const Logistic = ({ props, setOrderHD }) => {
                     </div>
                 </div>
                 <div className='py-2 margin-auto-t-b w-full'>
-                    <LabelUC label={'น้ำหนัก ' + orderHD.sumWeight + ' กิโลกรัม'} />
+                    <LabelUC label={'น้ำหนัก ' + ((orderHD.sumWeight===undefined) ? 0 : orderHD.sumWeight)  + ' กิโลกรัม'} />
                 </div>
                 <div className='py-2 margin-auto-t-b w-full flex'>
                     <label className='text-blueGray-600 text-sm font-bold  margin-auto-t-b' >หมายเลขพัสดุ</label>
