@@ -6,139 +6,144 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-const { tbReturnOrder, tbImage } = require("../../models");
+const { tbReturnOrder, tbImage,tbOrderHD } = require("../../models");
 const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
 router.post("/", validateToken, async (req, res) => {
-    const data = await tbReturnOrder.create(req.body);
-    res.json({
-        status: true,
-        message: "success",
-        tbReturnOrder: data,
-    });
+  const data = await tbReturnOrder.create(req.body);
+  res.json({
+    status: true,
+    message: "success",
+    tbReturnOrder: data,
+  });
 });
 
 router.get("/", validateToken, async (req, res) => {
-    const data = await tbReturnOrder.findAll({
-        where: { isDeleted: false },
-        attributes: {
-            include: [
-                [
-                    Sequelize.literal(`(
+  const data = await tbReturnOrder.findAll({
+    where: { isDeleted: false },
+    attributes: {
+      include: [
+        [
+          Sequelize.literal(`(
                         select sum(price) from tbstocks t 
                             where id in (select stockId from tborderdts t2 
 				                            where isDeleted=0
 				                            and orderId = tbReturnOrder.orderId)
                     )`),
-                    "sumPrice",
-                ],
-                [
-                    Sequelize.literal(`(
+          "sumPrice",
+        ],
+        [
+          Sequelize.literal(`(
                         select memberId from tborderhds t
                             where id = tbReturnOrder.orderId
                             and isDeleted = 0
                     )`),
-                    "memberId",
-                ],
-                [
-                    Sequelize.literal(`(
+          "memberId",
+        ],
+        [
+          Sequelize.literal(`(
                         select orderNumber from tborderhds t
                             where id = tbReturnOrder.orderId
                             and isDeleted = 0
                     )`),
-                    "orderNumber",
-                ],
-                [
-                    Sequelize.literal(`(
+          "orderNumber",
+        ],
+        [
+          Sequelize.literal(`(
                         select orderDate from tborderhds t
                             where id = tbReturnOrder.orderId
                             and isDeleted = 0
                     )`),
-                    "orderDate",
-                ],
-            ],
-        },
-    });
-    res.json({
-        status: true,
-        message: "success",
-        tbReturnOrder: data,
-    });
+          "orderDate",
+        ],
+      ],
+    },
+  });
+  res.json({
+    status: true,
+    message: "success",
+    tbReturnOrder: data,
+  });
 });
 
 router.get("/byId/:id", validateToken, async (req, res) => {
-    const id = req.params.id;
-    const data = await tbReturnOrder.findOne({ where: { id: id } });
-    res.json({
-        status: true,
-        message: "success",
-        tbReturnOrder: data,
-    });
+  const id = req.params.id;
+  const data = await tbReturnOrder.findOne({ where: { id: id } });
+  res.json({
+    status: true,
+    message: "success",
+    tbReturnOrder: data,
+  });
 });
 
 router.put("/", validateToken, async (req, res) => {
-    const data = await tbReturnOrder.findOne({
-        where: {
-            isDeleted: false,
-            id: {
-                [Op.ne]: req.body.id,
-            }
-        },
-    });
+  const data = await tbReturnOrder.findOne({
+    where: {
+      isDeleted: false,
+      id: {
+        [Op.ne]: req.body.id,
+      },
+    },
+  });
 
-    const dataUpdate = await tbReturnOrder.update(req.body, {
-        where: { id: req.body.id },
-    });
-    res.json({
-        status: true,
-        message: "success",
-        tbReturnOrder: dataUpdate,
-    });
+  const dataUpdate = await tbReturnOrder.update(req.body, {
+    where: { id: req.body.id },
+  });
+  const _tbOrderHD = await tbOrderHD.update(
+    { isReturn: true },
+    {
+      where: { id: req.body.orderId },
+    }
+  );
+
+  res.json({
+    status: true,
+    message: "success",
+    tbReturnOrder: dataUpdate,
+  });
 });
 
 router.delete("/:id", validateToken, async (req, res) => {
-    const id = req.params.id;
-    req.body.isDeleted = true;
-    tbReturnOrder.update(req.body, { where: { id: id } });
-    res.json({ status: true, message: "success", tbReturnOrder: null });
+  const id = req.params.id;
+  req.body.isDeleted = true;
+  tbReturnOrder.update(req.body, { where: { id: id } });
+  res.json({ status: true, message: "success", tbReturnOrder: null });
 });
 
 //#region line liff
 router.post("/returnOrder", validateLineToken, async (req, res) => {
-
-    let { orderId, returnDetail, description, returnImage } = req.body;
-    let status = true
-    let msg = ""
-    try {
-        const data = await tbReturnOrder.create({
-            orderId: Encrypt.DecodeKey(orderId)
-            , returnStatus: 1
-            , returnType: 1
-            , returnDetail: returnDetail
-            , description: description
-            , isDeleted: false
-        });
-        if (data) {
-            const _tbImage = await tbImage.create({
-                createdAt: new Date(),
-                relatedId: data.dataValues.id,
-                image: returnImage,
-                isDeleted: false,
-                relatedTable: "tbReturnOrder"
-            });
-        }
-    } catch (e) {
-        status = false
-        msg = e.message
-    }
-
-    res.json({
-        status: status,
-        message: msg,
-        tbCancelOrder: req.body,
+  let { orderId, returnDetail, description, returnImage } = req.body;
+  let status = true;
+  let msg = "";
+  try {
+    const data = await tbReturnOrder.create({
+      orderId: Encrypt.DecodeKey(orderId),
+      returnStatus: 1,
+      returnType: 1,
+      returnDetail: returnDetail,
+      description: description,
+      isDeleted: false,
     });
+    if (data) {
+      const _tbImage = await tbImage.create({
+        createdAt: new Date(),
+        relatedId: data.dataValues.id,
+        image: returnImage,
+        isDeleted: false,
+        relatedTable: "tbReturnOrder",
+      });
+    }
+  } catch (e) {
+    status = false;
+    msg = e.message;
+  }
 
+  res.json({
+    status: status,
+    message: msg,
+    tbCancelOrder: req.body,
+  });
 });
 //#endregion line liff
 module.exports = router;

@@ -138,7 +138,7 @@ const ReturnTable = ({ listData, handleChangeStatus }) => {
                       <span className={tdSpan}>{value.returnDetail}</span>
                     </td>
                     <td className={tdClass}>
-                      <span className={tdSpan}>{value.description}</span>
+                      <span className={tdSpan}>{value.returnOtherRemark}</span>
                     </td>
                   </tr>
                 );

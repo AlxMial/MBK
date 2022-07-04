@@ -64,9 +64,17 @@ const ConfirmDialog = ({ open, formik, handleModal, status, type }) => {
                   <div className="w-full lg:w-12/12 margin-auto-t-b">
                     <div className="relative w-full">
                       <TextAreaUC
-                        name="description"
+                        name={
+                          type === "cancel"
+                            ? "cancelOtherRemark"
+                            : "returnOtherRemark"
+                        }
                         onBlur={formik.handleBlur}
-                        value={formik.values.description}
+                        value={
+                          type === "cancel"
+                            ? formik.values.cancelOtherRemark
+                            : formik.values.returnOtherRemark
+                        }
                         onChange={(e) => {
                           formik.handleChange(e);
                         }}

@@ -138,7 +138,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
                       <span className={tdSpan}>{value.cancelDetail}</span>
                     </td>
                     <td className={tdClass}>
-                      <span className={tdSpan}>{value.description}</span>
+                      <span className={tdSpan}>{value.cancelOtherRemark}</span>
                     </td>
                   </tr>
                 );
