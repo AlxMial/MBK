@@ -130,6 +130,38 @@ router.put("/", validateToken, async (req, res) => {
     },
   });
 
+
+  let hd = data.dataValues
+  //รอตรวจสอบ
+  //จ่ายเงินสำเร็จ
+  if (req.body.paymentStatus == 3 || hd.paymentStatus == 3) {
+    // สถานะขนส่ง
+    if (hd.transportStatus == 1) {
+      if (req.body.transportStatus == 1) {
+        if (req.body.prepareDate == null) {
+          req.body.prepareDate = new Date()
+        }
+      } else if (req.body.transportStatus == 2) {
+        if (req.body.prepareDate == null) {
+          req.body.prepareDate = new Date()
+        }
+        req.body.inTransitDate = new Date()
+      } else if (req.body.transportStatus == 3) {
+        if (req.body.prepareDate == null) {
+          req.body.prepareDate = new Date()
+        }
+        if (req.body.inTransitDate == null) {
+          req.body.inTransitDate = new Date()
+        }
+        if (req.body.doneDate == null) {
+          req.body.doneDate = new Date()
+        }
+      }
+    }
+  }
+
+
+
   const dataUpdate = await tbOrderHD.update(req.body, {
     where: { id: req.body.id },
   });
@@ -189,9 +221,9 @@ const getorderDT = async (DT) => {
         // } else {
         //   total += _tbStock.price * DT[i].amount;
         // }
-        
+
         total = total + (_tbStock.price - _tbStock.discount);
-        
+
         orderDT.push({
           stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
           amount: DT[i].amount,
@@ -1444,7 +1476,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
             //   price = dt.price - dt.discount;
             // }
             // total = total + price * dt.amount;
-            total = total +  (dt.price - dt.discount) * dt.amount
+            total = total + (dt.price - dt.discount) * dt.amount
             sumprice = total + (dt.price - dt.discount) * dt.amount
           } else {
             total = total + dt.price * dt.amount;
@@ -1884,7 +1916,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                 },
               ],
             });
-            
+
 
             if (_tbCouponCode) {
               const _tbImage = await tbImage.findOne({
@@ -1902,8 +1934,8 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                 id: Encrypt.EncodeKey(_tbCouponCode.dataValues.id),
                 image: _tbCouponCode.dataValues.image,
                 couponName: _tbCouponCode.tbRedemptionCoupon.couponName,
-                discountType : _tbCouponCode.tbRedemptionCoupon.discountType ,
-                discount:  _tbCouponCode.tbRedemptionCoupon.discount,
+                discountType: _tbCouponCode.tbRedemptionCoupon.discountType,
+                discount: _tbCouponCode.tbRedemptionCoupon.discount,
                 expireDate:
                   _tbCouponCode.tbRedemptionCoupon.expireDate == null
                     ? "-"
@@ -2143,7 +2175,7 @@ router.post(
           });
         });
       }
-      
+
     } catch (e) {
       status = false;
       msg = e.message;

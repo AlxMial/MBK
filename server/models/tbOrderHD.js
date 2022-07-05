@@ -35,6 +35,18 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: true,
     },
+    prepareDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    inTransitDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    doneDate: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
     isCancel: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
