@@ -42,7 +42,9 @@ const MyOrder = () => {
           <div className="line-scroll" >
             {OrderHD.map((hd, index) => {
               return (
-                <div key={index}>
+                <div key={index} onClick={() => {
+                  history.push(hd.paymentStatus == 1 ? path.makeorderbyid.replace(":id", hd.id) : path.orderpaymentdone.replace(":id", hd.id))
+                }}>
                   {index > 0 && <div className="liff-inline mb-2" style={{ height: '5px', backgroundColor: '#ebebeb' }} />}
                   <div className="flex relative" style={{ height: "30px" }}>
                     <div className="font-bold  text-12" style={{ minWidth: "85px" }}>หมายเลขคำสั่งซื้อ : </div>
@@ -95,9 +97,10 @@ const MyOrder = () => {
                   })}
                   <div className="w-full flex mb-2 text-liff-gray-mbk" style={{ fontSize: "12px", justifyContent: "end" }}>
                     <div className="font-bold  text-12"
-                      onClick={() => {
-                        history.push(hd.paymentStatus == 1 ? path.makeorderbyid.replace(":id", hd.id) : path.orderpaymentdone.replace(":id", hd.id))
-                      }}>
+                    // onClick={() => {
+                    //   history.push(hd.paymentStatus == 1 ? path.makeorderbyid.replace(":id", hd.id) : path.orderpaymentdone.replace(":id", hd.id))
+                    // }}
+                    >
                       {"ดูรายละเอียดคำสั่งซื้อ >"}
                     </div>
                   </div>

@@ -9,14 +9,16 @@ import * as fn from "@services/default.service";
 import {
   doSaveUpdateOrder,
   getOrderHDById,
-  getPromotionstores,
+  getPromotionstores, cancelOrder
 } from "@services/liff.services";
+import moment from "moment";
 import AddressModel from "./addressModel";
 import LogisticModel from "./logisticModel";
 import DetailModel from "./detailModel";
 import PaymentModel from "./paymentModel";
 import FooterButton from "./footerButton";
 import CouponModel from "./couponModel";
+import CancelModel from "./ordeDone/cancelModel";
 // components
 
 const MakeOrderById = () => {
@@ -37,6 +39,12 @@ const MakeOrderById = () => {
   const [OrderHD, setOrderHD] = useState(null);
   const [freebies, setfreebies] = useState([]); //ของแถม
   const [amount, setamount] = useState(0);
+
+  const [remark, setremark] = useState("");
+  const [isOpenmodel, setisOpenmodel] = useState(false);
+  const [Cancelvalue, setCancelvalue] = useState(
+    "ต้องการเปลี่ยนแปลงที่อยู่ในการจัดส่งสินค้า"
+  );
   const getProducts = async () => {
     let idlist = [];
     if (!fn.IsNullOrEmpty(id)) {
@@ -65,11 +73,11 @@ const MakeOrderById = () => {
             } else {
               let usecoupon = Storage.getusecoupon();
               // if (usecoupon.id === id) {
-              
+
               setusecoupon(usecoupon);
               // }
             }
-           
+
             setIsLoading(true);
             await axios
               .post("stock/getStock", { id: idlist })
@@ -171,7 +179,7 @@ const MakeOrderById = () => {
     }
     total = total + _deliveryCost;
     if (usecoupon != null) {
-      total = (usecoupon.discountType==="1") ?  total - usecoupon.discount :   total - (usecoupon.discount / 100) * total; 
+      total = (usecoupon.discountType === "1") ? total - usecoupon.discount : total - (usecoupon.discount / 100) * total;
     }
     return total;
   };
@@ -260,7 +268,21 @@ const MakeOrderById = () => {
   useEffect(() => {
     GetPromotionstores(getProducts);
   }, []);
-
+  const Cancelorder = () => {
+    setIsLoading(true);
+    cancelOrder(
+      { orderId: id, cancelDetail: Cancelvalue, description: remark },
+      (res) => {
+        setisOpenmodel(false);
+        // getProducts();
+        history.push(path.orderpaymentdone.replace(":id", id))
+      },
+      () => { },
+      () => {
+        setIsLoading(false);
+      }
+    );
+  };
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
@@ -437,6 +459,34 @@ const MakeOrderById = () => {
                 </div>
               </div>
             </div>
+            <div
+              className="w-full  relative mt-2"
+              style={{ alignItems: "center", justifyContent: "center" }}
+            >
+              <div className="flex">
+                <div style={{ width: "100%", padding: "10px" }}>
+                  <div
+                    className="flex  text-center text-lg  font-bold bt-line"
+                    style={{
+                      backgroundColor: "red",
+                      border: "red",
+                      color: "#FFFFFF"
+                    }}
+                    onClick={() => {
+                      if (
+                        OrderHD.transportStatus == 1 &&
+                        OrderHD.tbCancelOrder == null
+                      ) {
+                        setisOpenmodel(true);
+                      }
+                    }}
+                  >
+                    <i className="fas fa-backspace"></i>
+                    <div className="px-2">ยกเลิกคำสั่งซื้อ</div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <FooterButton sendOrder={sendOrder} />
           </div>
         </>
@@ -447,6 +497,19 @@ const MakeOrderById = () => {
           id={id}
         />
       )}
+
+
+      <CancelModel
+        isOpenmodel={isOpenmodel}
+        setisOpenmodel={setisOpenmodel}
+        onChange={(e) => {
+          setCancelvalue(e.value);
+          setremark("");
+        }}
+        Cancelvalue={Cancelvalue}
+        setremark={setremark}
+        Cancelorder={Cancelorder}
+      />
     </>
   );
 };

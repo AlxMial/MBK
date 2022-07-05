@@ -420,7 +420,7 @@ const OrderPaymentDone = () => {
               </div>
             </div>
             {/* // "Money Transfer" : "Credit" 1,2 */}
-            {OrderHD.paymentType == 1 ? (
+            {OrderHD.paymentType == 1 && OrderHD.paymentStatus > 1 ? (
               <div style={{ width: "90%", margin: "auto" }}>
                 <ImageUC
                   style={{ margin: "auto" }}

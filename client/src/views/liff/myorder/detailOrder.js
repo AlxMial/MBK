@@ -78,6 +78,9 @@ const DetailOrder = ({
           return (
             <div key={i}
               style={{ opacity: returnStatus == true ? e.returnStatus != null ? "0.7" : "1" : "1" }}
+              onClick={() => {
+                onClick(e);
+              }}
             >
               <div className="w-full">
                 <div className="liff-inline mb-2" style={{ height: '5px', backgroundColor: '#ebebeb' }} />
@@ -214,9 +217,9 @@ const DetailOrder = ({
                 >
                   <div
                     className="font-bold"
-                    onClick={() => {
-                      onClick(e);
-                    }}
+                  // onClick={() => {
+                  //   onClick(e);
+                  // }}
                   >
                     {"ดูรายละเอียดคำสั่งซื้อ >"}
                   </div>
