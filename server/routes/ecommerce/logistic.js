@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { tbLogistic, tbPromotionDelivery } = require("../../models");
-const bcrypt = require("bcrypt");
-const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const ValidateEncrypt = require("../../services/crypto");
@@ -21,6 +19,19 @@ router.post("/", validateToken, async (req, res) => {
 
 router.get("/", validateToken, async (req, res) => {
     const data = await tbLogistic.findAll({
+        attributes: {
+            include: [
+                [
+                    Sequelize.literal(`(
+                        SELECT logisticCategory
+                        FROM tblogisticcategories
+                        WHERE
+                            tblogisticcategories.id = tbLogistic.logisticCategoryId
+                    )`),
+                    'logisticCatagoryName'
+                ]
+            ]
+        },
         where: { isDeleted: false },
     });
     res.json({

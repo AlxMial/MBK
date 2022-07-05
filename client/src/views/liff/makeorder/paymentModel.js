@@ -12,6 +12,7 @@ const PaymentModel = ({
   paymentID,
   disabled,
 }) => {
+
   const { addToast } = useToasts();
   const [optionPayment, setPayment] = useState([]);
   const [resetRadio, setresetRadio] = useState(false);

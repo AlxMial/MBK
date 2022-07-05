@@ -20,18 +20,16 @@ const e = require("express");
 const Encrypt = new ValidateEncrypt();
 
 router.post("/lowLevel", async (req, res) => {
-
-  const PointDt = await tbPointCodeDT.findAll();
+  const PointDt = await tbPointCodeDT.findAll({ where: { tbPointCodeHDId: req.body.id } });
   for (var i = 0; i < PointDt.length; i++) {
     const de = Encrypt.DecodeKey(PointDt[i].dataValues.code);
-    const lowde = de.toLowerCase();
+    const lowde = de.toLowerCase().replace('-','');
 
-    const updatelow = await tbPointCodeDT.update({ code: Encrypt.EncodeKey(lowde) }, {
+    const updatelow = await tbPointCodeDT.update({ codeNone: Encrypt.EncodeKey(lowde) }, {
       where: { id: PointDt[i].dataValues.id },
     });
-    console.log("update Success  = " + i);
+    console.log("update Success  = " + i + " / " + PointDt.length);
   }
-
 });
 
 
@@ -43,7 +41,7 @@ router.post("/", async (req, res) => {
     let statusRedeem = [];
     let status;
     for (var x = 0; x < redeemCode.length; x++) {
-      redeemCode[x] = Encrypt.EncodeKey(redeemCode[x].toLowerCase().replaceAll('-',''));
+      redeemCode[x] = Encrypt.EncodeKey(redeemCode[x].toLowerCase());
       // try {
       //   const splitValue = redeemCode[x].split("-");
       //   if (splitValue.length > 1) {
@@ -62,17 +60,21 @@ router.post("/", async (req, res) => {
       //   statusRedeem.push(status);
       // }
     }
-
     for (var i = 0; i < redeemCode.length; i++) {
       const PointDt = await tbPointCodeDT.findOne({
-        where: { code: redeemCode[i], isDeleted: false },
+        where: { [Op.or]: [
+          { code: redeemCode[i] },
+          { codeNone: redeemCode[i] },
+        ], isDeleted: false, isUse: false },
       });
-
       const Point = await tbPointCodeHD.findOne({
         where: { isActive: "1", isDeleted: false },
         include: {
           model: tbPointCodeDT,
-          where: { code: redeemCode[i], isDeleted: false },
+          where: {[Op.or]: [
+            { code: redeemCode[i] },
+            { codeNone: redeemCode[i] },
+          ], isDeleted: false },
         },
       });
 
@@ -197,7 +199,7 @@ router.get("/getRedemptionconditionshd", validateLineToken, async (req, res) => 
   let RedemptionConditionsHD = []
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
-    Member = await tbMember.findOne({
+    const Member = await tbMember.findOne({
       attributes: ["id"],
       where: { uid: uid },
     });
@@ -268,8 +270,8 @@ router.post("/getRedemptionconditionshdById", validateLineToken, async (req, res
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
     const RedemptionConditionsHDId = Encrypt.DecodeKey(req.body.Id);
-    Member = await tbMember.findOne({
-      attributes: ["id"],
+    const Member = await tbMember.findOne({
+      attributes: ["id", "memberPoint"],
       where: { uid: uid },
     });
     if (Member) {
@@ -317,7 +319,7 @@ router.post("/getRedemptionconditionshdById", validateLineToken, async (req, res
           RedemptionConditionsHD = item
         }
       }
-
+      RedemptionConditionsHD.isCanRedeem = Member.memberPoint >= RedemptionConditionsHD.points;
     }
   } catch (e) {
     status = false
@@ -687,7 +689,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
               } else {
                 const data = await tbMemberReward.create({
                   rewardType: "Product"
-                  , TableHDId: item.id
+                  , TableHDId: itemrendom.id
                   , redeemDate: new Date()
                   , isUsedCoupon: false
                   , isDeleted: false

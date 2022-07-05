@@ -47,7 +47,7 @@ const ShopDetail = () => {
       for (const columns in shop) {
         formik.setFieldValue(columns, shop[columns], false);
       }
-
+      localStorage.setItem('shop',shop.id);
       const _shopImage = await axios.get(`image/byRelated/${shop.id}/shop`);
       if (_shopImage && _shopImage.data.tbImage) {
         if (_shopImage.data.tbImage.image !== null) {
@@ -87,7 +87,6 @@ const ShopDetail = () => {
             setModalData(Banner);
             setDataBanner(Banner);
           } else {
-            console.log("2");
             Banner.push({
               imageId:null,
               categoryId: e.stockId === null ? e.productCategoryId : e.stockId,
@@ -129,6 +128,10 @@ const ShopDetail = () => {
   const handleSubmitModal = (data) => {
     setDataBanner(data.arr);
     setModalData(data.arr);
+    const shopId = localStorage.getItem('shop');
+    if(shopId){
+      saveAfterShop(shopId);
+    }
     setOpen(false);
   };
 

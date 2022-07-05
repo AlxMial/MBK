@@ -87,7 +87,7 @@ const MyAward = () => {
                     </div>
                   </div>
                   <div className="flex flex-col pt-2 justify-between" >
-                    <div className="font-bold line-clamp-1 text-12">
+                    <div className="font-bold line-clamp-2 text-12">
                       {" "}
                       {e.couponName}
                     </div>
@@ -138,22 +138,22 @@ const MyAward = () => {
                   history.push(path.infoproduct.replace(":id", e.productId))
                 }}>
                   <div
-                    className="flex"
-                    style={{ width: "30%", justifyContent: "center" }}
+                    className="flex mr-8 pl-2"
+                    style={{ justifyContent: "center" }}
                   >
-                    <div style={{ width: "80px", height: "80px" }}>
+                    <div style={{ width: "140px", height: "80px" }}>
                       <ImageUC
                         find={1}
                         relatedid={e.id}
                         relatedtable={["tbRedemptionProduct"]}
                         alt="flash_sale"
-                        className=" border-2 border-blueGray-50 animated-img"
+                        className="  animated-img"
+                        imgclassname={"flex"}
                       ></ImageUC>
                     </div>
                   </div>
-                  <div className="relative" style={{ width: "70%" }}>
-                    <div className="font-bold line-clamp-1 text-12">
-                      {" "}
+                  <div className="flex flex-col pt-2 justify-between relative" style={{ width: "calc(100% - 140px - 2rem)" }}>
+                    <div className="font-bold line-clamp-2 text-12">
                       {e.productName}
                     </div>
                     <div

@@ -85,7 +85,7 @@ const CancelDetail = ({ OrderHD }) => {
             style={{ alignItems: "center" }}
           ></i>
           <div className="px-2">
-            {"รายละเอียด : " + OrderHD.tbCancelOrder.description}
+            {"รายละเอียด : " + OrderHD.tbCancelOrder.cancelOtherRemark}
           </div>
         </div>
       </div>

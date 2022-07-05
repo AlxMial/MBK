@@ -13,6 +13,8 @@ import CouponSucceed from "./coupon.succeed"
 import ProductSucceed from "./product.succeed"
 import GameSucceed from "./game.succeed"
 import GameUC from "./gameUC"
+import ConfirmDialogNew from "components/ConfirmDialog/ConfirmDialogNew";
+
 // components
 
 const InfoReward = () => {
@@ -21,6 +23,7 @@ const InfoReward = () => {
   const [modeldata, setmodeldata] = useState({ open: false, title: "", msg: "" });
   const [page, setpage] = useState("main");
   const [gameData, setgameData] = useState(null);
+  const [isOpenDialog, setIsOpenDialog] = useState(false);
   const [Redemptionconditionshd, setRedemptionconditionshd] = useState(null);
   const GetRedemptionconditionshdById = async () => {
     setIsLoading(true);
@@ -115,8 +118,40 @@ const InfoReward = () => {
   useEffect(() => {
     GetRedemptionconditionshdById();
   }, []);
+
+  const onConfirmDialog = () => {
+    setIsOpenDialog(false);
+    if (Redemptionconditionshd.redemptionType == 2) {
+      openGameUC()
+    }
+    else if (Redemptionconditionshd.rewardType == 1) {
+      UseCoupon()
+    } else {
+      UseProduct()
+    }
+  }
+
   return (
     <>
+      {isOpenDialog && (
+        <ConfirmDialogNew
+          className={" liff-Dialog "}
+          showModal={isOpenDialog}
+          message={
+            Redemptionconditionshd.redemptionType == 2 ?
+              'ต้องการหมุนวงล้อ ใช่หรือไม่' :
+              Redemptionconditionshd.rewardType == 1 ?
+                'ต้องการแลกคูปอง ใช่หรือไม่' :
+                'ต้องการแลกของสมนาคุณ ใช่หรือไม่'
+          }
+          hideModal={() => {
+            setIsOpenDialog(false);
+          }}
+          confirmModal={() => {
+            onConfirmDialog();
+          }}
+        />
+      )}
       <Error data={modeldata} setmodeldata={setmodeldata} />
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
@@ -170,7 +205,8 @@ const InfoReward = () => {
                   width: "50%"
                 }}>
                   <div
-                    className="flex bg-green-mbk text-white text-center text-lg  font-bold "
+                    className={"flex text-center text-lg  font-bold text-white"
+                      + (Redemptionconditionshd.isCanRedeem ? ' bg-green-mbk ' : ' bg-gray-300')}
                     style={{
                       margin: "auto",
                       height: "45px",
@@ -180,12 +216,7 @@ const InfoReward = () => {
                       justifyContent: "center",
                     }}
                     onClick={() => {
-
-                      Redemptionconditionshd.redemptionType == 2 ?
-                        openGameUC() :
-                        Redemptionconditionshd.rewardType == 1 ?
-                          UseCoupon() :
-                          UseProduct()
+                      setIsOpenDialog(Redemptionconditionshd.isCanRedeem);
                     }}
                   >
                     {Redemptionconditionshd.redemptionType == 2 ? "หมุนวงล้อ" : Redemptionconditionshd.rewardType == 1 ? "แลกคูปอง" : "แลกสินค้า"}

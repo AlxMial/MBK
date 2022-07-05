@@ -58,7 +58,7 @@ router.post("/", validateToken, async (req, res) => {
 
 router.get("/", validateToken, async (req, res) => {
   const listPointStore = await tbPointStoreHD.findAll({
-    where: { isDeleted: false },
+    where: { isDeleted: false },  order: ["ordering"]
   });
 
   Encrypt.encryptValueIdArray(listPointStore);
@@ -165,7 +165,7 @@ router.delete("/:pointStoreId", validateToken, async (req, res) => {
   res.json({ status: true, message: "success", tbPointStoreHD: null });
 });
 
-router.get("/listPointStore",validateLineToken, async (req, res) => {
+router.get("/listPointStore", validateLineToken, async (req, res) => {
   let listPointStore = await tbPointStoreHD.findAll({
     where: { isDeleted: false },
   });

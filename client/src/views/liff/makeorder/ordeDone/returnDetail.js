@@ -97,7 +97,7 @@ const ReturnDetail = ({ OrderHD }) => {
             style={{ alignItems: "center" }}
           ></i>
           <div className="px-2">
-            {"รายละเอียด : " + OrderHD.tbReturnOrder.description}
+            {"รายละเอียด : " + OrderHD.tbReturnOrder.returnOtherRemark}
           </div>
         </div>
       </div>

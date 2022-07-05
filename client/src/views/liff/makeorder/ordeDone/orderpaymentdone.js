@@ -294,18 +294,13 @@ const OrderPaymentDone = () => {
                   </div>
                 </div>
                 <div className="flex relative mb-2 text-sm">
-                  <div>ค่าจัดส่ง : </div>
-                  {/* <div
-                    className={"absolute " + (OrderHD.hddeliveryCost > 0 || OrderHD.hddiscountDelivery > 0 ? "text-gold-mbk" : "")}
-                    style={{ right: "0" }}
-                  >
-                    {(OrderHD.hddeliveryCost > 0 || OrderHD.hddiscountDelivery > 0 ? "-" : "") + "฿ " + fn.formatMoney(OrderHD.hddeliveryCost + OrderHD.hddiscountDelivery)}
-                  </div> */}
+                  <div>ส่วนลดค่าจัดส่ง : </div>
+
                   <div
-                    className={"absolute " + (OrderHD.hddeliveryCost > 0 || OrderHD.hddiscountDelivery > 0 ? "" : "")}
+                    className={"absolute " + (OrderHD.hddiscountDelivery > 0 ? " text-gold-mbk" : "")}
                     style={{ right: "0" }}
                   >
-                    {(OrderHD.hddeliveryCost > 0 || OrderHD.hddiscountDelivery > 0 ? "" : "") + "฿ " + fn.formatMoney(OrderHD.hddeliveryCost + OrderHD.hddiscountDelivery)}
+                    {(OrderHD.hddiscountDelivery > 0 ? "-" : "") + "฿ " + fn.formatMoney(OrderHD.hddeliveryCost - OrderHD.hddiscountDelivery)}
                   </div>
                 </div>
                 <div className="flex relative mb-2 text-sm">

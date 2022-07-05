@@ -1,6 +1,6 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-const FooterButton = ({ sendOrder }) => {
+const FooterButton = ({ sendOrder,text }) => {
   const history = useHistory();
   return (
     <div className="absolute w-full flex" style={{ bottom: "0" }}>
@@ -17,7 +17,7 @@ const FooterButton = ({ sendOrder }) => {
           className="flex bg-gold-mbk text-white text-center text-base  font-bold bt-line "
           onClick={sendOrder}
         >
-          {"สั่งสินค้า"}
+          {text}
         </div>
       </div>
     </div>

@@ -136,7 +136,7 @@ const Updateprofile = () => {
           });
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -207,12 +207,12 @@ const Updateprofile = () => {
         res.data.status
           ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
           : !res.data.isPhone
-          ? (msg.msg =
+            ? (msg.msg =
               "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-          : !res.data.isMemberCard
-          ? (msg.msg =
-              "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
-          : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
+            : !res.data.isMemberCard
+              ? (msg.msg =
+                "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+              : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
         addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
       },
@@ -237,6 +237,7 @@ const Updateprofile = () => {
         >
 
           <div
+            className="line-scroll"
             style={{
               width: "100%",
               backgroundColor: "#FFF",
@@ -244,7 +245,6 @@ const Updateprofile = () => {
               minHeight: "450px",
               borderRadius: "10px",
               padding: "20px",
-              overflow: "scroll",
             }}
           >
             <div className="flex text-green-mbk font-bold text-lg mb-4">
@@ -374,7 +374,7 @@ const Updateprofile = () => {
                         target: { name: "year", value: e.value },
                       });
                     }}
-    
+
                     value={ValidateService.defaultValue(optionYears, Data.year)}
                     options={optionYears}
                     styles={useStyle}
@@ -476,14 +476,14 @@ const Updateprofile = () => {
               name="district"
               lbl={"อำเภอ"}
               onChange={async (e) => {
-          
+
                 const subDistrict = await Address.getAddress(
                   "subDistrict",
                   e.value
                 );
-    
-          
-                const postcode =  await Address.getAddress(
+
+
+                const postcode = await Address.getAddress(
                   "postcode",
                   subDistrict[0].value
                 );
