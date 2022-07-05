@@ -82,7 +82,7 @@ router.get("/", validateToken, async (req, res) => {
         //เป็นการโอนและมีการแนบสลิปแล้ว 
         if (hd.paymentType == 1 && hd.paymentStatus >= 2) {
           hd.isImage = true//มี image 
-          hd.imageName = "test"
+          hd.imageName = "ไฟล์แนบ"
         } else {
           hd.isImage = false
         }
