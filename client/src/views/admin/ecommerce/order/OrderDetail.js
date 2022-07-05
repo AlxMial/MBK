@@ -106,6 +106,21 @@ const OrderDetail = ({
                 <div className="w-full flex-auto mt-2">
                     <ModalHeader title="รายละเอียดการสั่งซื้อ" handleModal={() => handleModal('close')} />
                     <div className="flex flex-wrap justify-center  Overflow-info">
+                    <div className="flex w-full justify-end">
+                            <ExportPdf props={propsPurchaseOrder} dataExport={dataExport} />
+                            <ButtonUCSaveModal
+                                // showExport={true}
+                                // exportBtnLabel='Export คำสั่งซื้อ'
+                                // handleExport={createPDF}
+                                // isShowSave={isCanEdit}
+                                onClick={() => {
+                                    if (isCanEdit) {
+                                        handleModal('save')
+                                    }
+                                }
+                                }
+                            />
+                        </div>
                         <div className="w-full p-4 margin-auto-t-b flex flex-wrap ">
                             <div className="w-full lg:w-8/12 px-4  flex flex-col">
                                 <div className="w-full" id='purchaseOrder'>
@@ -145,21 +160,7 @@ const OrderDetail = ({
                                 </div>
                             </div>
                         </div>
-                        <div className="flex w-full justify-end">
-                            <ExportPdf props={propsPurchaseOrder} dataExport={dataExport} />
-                            <ButtonUCSaveModal
-                                // showExport={true}
-                                // exportBtnLabel='Export คำสั่งซื้อ'
-                                // handleExport={createPDF}
-                                // isShowSave={isCanEdit}
-                                onClick={() => {
-                                    if (isCanEdit) {
-                                        handleModal('save')
-                                    }
-                                }
-                                }
-                            />
-                        </div>
+                        
                     </div>
                 </div>
             </div>
