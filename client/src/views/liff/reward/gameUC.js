@@ -16,9 +16,9 @@ const GameUC = ({ UseGame }) => {
                         , color: "#FFFFFF"
                         , fontSize: "50px"
                         , height: "350px"
-                        , border: "1px solid "
+                        // , border: "1px solid "
                     }}>
-                        <div className="relative" style={{ width: "350px", height: "350px" }} >
+                        <div className="relative flex justify-center items-center" style={{ width: "350px", height: "350px" }} >
                             <div className="absolute" style={{ width: "320px", height: "320px" }}>
                                 <img
                                     style={{
@@ -47,28 +47,28 @@ const GameUC = ({ UseGame }) => {
                         </div>
                     </div>
 
-                    <div className="w-full flex" style={{
+                    <div className="w-full flex text-2xl" style={{
                         justifyContent: "center"
                         , color: "#FFFFFF"
-                        , fontSize: "30px"
-                        , height: "50px"
+                        // , fontSize: "30px"
+                        , height: "40px"
                     }}>
                         หมุนวงล้อ
                     </div>
-                    <div className="w-full flex" style={{
+                    <div className="w-full flex text-2xl" style={{
                         justifyContent: "center"
                         , color: "#FFFFFF"
-                        , fontSize: "30px"
-                        , height: "50px"
+                        // , fontSize: "30px"
+                        , height: "40px"
                     }}>
                         เพื่อรับของรางวัล
                     </div>
                 </div>
 
-                <div className="w-full" style={{ position: "absolute", bottom: "10px" }}>
+                <div className="w-full" style={{ position: "absolute", bottom: "20px" }}>
                     <div className="w-full flex mb-2" style={{ justifyContent: "center" }}>
                         <div className=" w-full" style={{
-                            padding: "10px", margin: "auto",
+                            margin: "auto",
                             width: "50%"
                         }}>
                             <div
@@ -95,7 +95,7 @@ const GameUC = ({ UseGame }) => {
                     </div>
                     <div className="w-full flex mb-2" style={{ justifyContent: "center" }}>
                         <div className=" w-full" style={{
-                            padding: "10px", margin: "auto",
+                            margin: "auto",
                             width: "50%"
                         }}>
                             <div
