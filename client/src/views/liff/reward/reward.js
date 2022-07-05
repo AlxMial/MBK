@@ -47,13 +47,13 @@ const Reward = () => {
             </div>
 
             {Redemptionconditionshd.length > 0 ?
-              <div className="w-full line-scroll" style={{ width: "90%", margin: "auto", height: "calc(100vh - 310px)" }}>
+              <div className="w-full line-scroll" style={{ margin: "auto", height: "calc(100vh - 310px)" }}>
                 {[...Redemptionconditionshd].map((e, i) => {
                   return (
                     <div className="w-full mb-2" key={i} onClick={() => {
                       history.push(path.inforeward.replace(":id", e.id))
                     }}>
-                      <div className="w-ful" style={{ width: "200px", height: "auto", margin: "auto" }}>
+                      <div className="w-ful" style={{ width: "auto", maxWidth: "80%", height: "auto", margin: "auto" }}>
                         {e.redemptionType == 1 ?
                           <ImageUC
                             // style={{ width: "200px", height: "100px", }}
@@ -76,7 +76,7 @@ const Reward = () => {
                           ></img>
                         }
                       </div>
-                      <div className="mt-2 text-ms px-4">
+                      <div className="mt-2 text-ms mx-auto" style={{ maxWidth: "80%" }}>
                         <div className="flex justify-between items-center">
                           <div className="font-bold ">{e.redemptionName} </div>
                           <i className="fas fa-chevron-right"></i>
