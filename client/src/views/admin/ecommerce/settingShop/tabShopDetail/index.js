@@ -62,6 +62,7 @@ const ShopDetail = () => {
 
       const resBanner = await axios.get(`banner/byShopId/${shop.id}`);
       if (resBanner.data.tbBanner && resBanner.data.tbBanner.length > 0) {
+        
         let Banner = [];
         await resBanner.data.tbBanner.forEach(async (e) => {
           const resImg = await axios.get(
@@ -74,7 +75,6 @@ const ShopDetail = () => {
           e.name = e.level;
           setDelayValue("delay");
           if (image) {
-            console.log(resImg.data.tbImage.id);
             Banner.push({
               imageId:resImg.data.tbImage.id,
               categoryId: e.stockId === null ? e.productCategoryId : e.stockId,
