@@ -77,7 +77,7 @@ const Reward = () => {
                         }
                       </div>
                       <div className="mt-2 text-ms px-4">
-                        <div className="flex justify-between">
+                        <div className="flex justify-between items-center">
                           <div className="font-bold ">{e.redemptionName} </div>
                           <i className="fas fa-chevron-right"></i>
                         </div>
