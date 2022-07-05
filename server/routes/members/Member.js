@@ -773,7 +773,7 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
             },
             required: false
           },
-        ],      
+        ],
         order: [
           ['orderNumber', 'DESC']
         ],
@@ -1215,7 +1215,7 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
           if (_tbRedemptionConditionsHD) {
             points = _tbRedemptionConditionsHD.dataValues.points
           }
-          let codeCoupon = _tbCouponCode.dataValues.codeCoupon
+          let codeCoupon = Encrypt.DecodeKey(_tbCouponCode.dataValues.codeCoupon)
           let couponName = _RedemptionCoupon.couponName
           let description = _RedemptionCoupon.description
           let redemptionCouponId = Encrypt.EncodeKey(_RedemptionCoupon.id)
