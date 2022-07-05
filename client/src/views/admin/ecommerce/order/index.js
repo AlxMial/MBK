@@ -87,6 +87,7 @@ const Order = () => {
     const openModal = async (id) => {
         dispatch(fetchLoading());
         settbCancelOrder(null)
+        setOrderImage(null);
         const data = orderList.filter((x) => x.id === id);
         if (data && data.length > 0) {
             setOrderHD(data[0]);
