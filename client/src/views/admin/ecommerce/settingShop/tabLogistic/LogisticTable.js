@@ -150,11 +150,7 @@ const LogisticTable = ({
                       }}
                     >
                       <span className={tdSpan}>
-                        {
-                          logisticTypeList.filter(
-                            (item) => item.value === value.logisticType
-                          )[0].label
-                        }
+                        {value.logisticCatagoryName}
                       </span>
                     </td>
                     <td

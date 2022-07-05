@@ -154,12 +154,22 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                         <td className={tdClass + " cursor-pointer text-center "} onClick={() => {
                                             openModal(value.id);
                                         }}>
-                                             <input type="checkbox" className='rounded text-green-mbk' defaultChecked={value.isBestSeller}/>
+                                            <span className={(value.isBestSeller) ? "" : "hidden"}>
+                                                <input type="checkbox" className='rounded text-green-mbk' defaultChecked={true} disabled/>
+                                            </span>
+                                            <span className={(value.isBestSeller) ? "hidden" : ""}>
+                                                <input type="checkbox" className='rounded text-green-mbk' defaultChecked={false} disabled/>
+                                            </span>
                                         </td>
                                         <td className={tdClass + " cursor-pointer text-center "} onClick={() => {
                                             openModal(value.id);
                                         }}>
-                                            <input type="checkbox" className='rounded text-green-mbk' defaultChecked={value.isFlashSale}/>
+                                            <span className={(value.isFlashSale) ? "" : "hidden"}>
+                                                <input type="checkbox" className='rounded text-green-mbk' defaultChecked={true} disabled/>
+                                            </span>
+                                            <span className={(value.isFlashSale) ? "hidden" : ""}>
+                                                <input type="checkbox" className='rounded text-green-mbk' defaultChecked={false} disabled/>
+                                            </span>
                                         </td>
                                         <td className={tdClass + " cursor-pointer text-center"} onClick={() => {
                                             openModal(value.id);

@@ -1830,6 +1830,7 @@ router.post("/upd_shopcart", async (req, res) => {
   const { id, quantity, type, uid } = req.body;
   let shop_orders = [];
   try {
+
     const _tbCartHD = await tbCartHD.findOne({
       attributes: ["id"],
       where: { uid: uid },
@@ -1838,7 +1839,7 @@ router.post("/upd_shopcart", async (req, res) => {
       //#region ข้อมูลมีตระกร้า
       const _tbCartDT = await tbCartDT.findOne({
         attributes: ["id", "amount"],
-        where: { strockId: Encrypt.DecodeKey(id) },
+        where: { strockId: Encrypt.DecodeKey(id) ,  carthdId : _tbCartHD.dataValues.id   },
       });
       //#endregion ข้อมูลมีตระกร้า
 
