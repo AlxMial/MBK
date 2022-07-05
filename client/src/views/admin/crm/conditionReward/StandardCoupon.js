@@ -127,7 +127,7 @@ const StandardCoupon = ({ formik }) => {
               />
               <span
                 className="margin-auto-t-b font-bold ml-2"
-                style={{ width: "120px" }}
+                style={{ minWidth: "100px" }}
               >
                 <SelectUC
                   options={discountType}

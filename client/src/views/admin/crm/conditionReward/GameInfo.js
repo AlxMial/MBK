@@ -372,7 +372,7 @@ const GameInfo = ({
                     }}
                     min="0"
                   />
-                  <span className="margin-auto-t-b font-bold ml-2 widthDigi">
+                  <span className="margin-auto-t-b font-bold ml-2 widthDigi" style={{ minWidth: "100px" }}>
                     <SelectUC
                       options={discountType}
                       name="discountType"
