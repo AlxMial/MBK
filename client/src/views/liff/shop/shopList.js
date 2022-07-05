@@ -271,11 +271,6 @@ const ShopList = () => {
                   e.endTimeCampaign
                 );
                 today = new Date();
-                // console.log(' new Date().toISOString().split("T")[0]', new Date().toISOString().split("T")[0].replace(/-/g, '/'))
-                // console.log('today', today)
-                // console.log('startTimeCampaign', startTimeCampaign)
-                // console.log('endTimeCampaign', endTimeCampaign)
-
                 if (today > startTimeCampaign && today < endTimeCampaign) {
                   tbStockiewFlashSale.push(e);
                 } else {

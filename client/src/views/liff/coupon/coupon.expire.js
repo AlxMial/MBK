@@ -6,26 +6,23 @@ import ImageUC from "components/Image/index";
 const Expire = ({ data }) => {
   return (
     <>
-      <div className="mt-2 h-full" style={{ padding: "10px" }}>
-        <div className="flex relative h-full">
+      <div className="mt-2 h-full">
+        <div className="flex relative h-full" style={{ padding: '10px' }}>
           {data.length > 0 ?
-            <div className="mt-2 mb-2 text-green-mbk font-bold text-xs" style={{
-              width: "90%", margin: "auto"
-              , height: "calc(100% - 250px)"
-            }}>
-              {[...data].filter((e) => { return  new Date(e.expiredDate) < new Date() || e.isUsedCoupon === true }).map((e, i) => {
+            <div className="my-2 mx-auto text-green-mbk font-bold text-xs h-full">
+              {[...data].filter((e) => { return new Date(e.expiredDate) < new Date() || e.isUsedCoupon === true }).map((e, i) => {
                 return (
-                  <div key={i} className="w-full  mb-2" >
+                  <div key={i} className="w-full  mb-4" >
                     <div className="w-full" style={{
                       filter: "grayscale(1)",
                       opacity: "0.5"
                     }}>
                       <div className="w-full">
-                        <div className="relative" style={{ width: "auto", maxWidth: "150px", margin: "auto" }}>
+                        <div className="relative" style={{ width: "80%", margin: "auto" }}>
                           <ImageUC
                             style={{
-                              width: "150px",
-                              height: "100px"
+                              width: "100%",
+                              height: "auto"
                             }}
                             find={1}
                             relatedid={e.id}
@@ -43,16 +40,16 @@ const Expire = ({ data }) => {
                           }}>{e.isUsedCoupon ? "ถูกใช้ไปแล้ว" : "หมดอายุ"}</div>
                         </div>
                       </div>
-                      <div className="w-full font-bold flex mb-2" style={{ fontSize: "14px", color: "#000000" }}>
+                      <div className="w-full font-bold flex my-2 mx-auto" style={{ width: "80%", fontSize: "14px", color: "#000000" }}>
                         <div className="flex" style={{ width: "calc(100% - 30px)", alignItems: "center" }}>{e.couponName}</div>
                         <div style={{ width: "30px", textAlign: "right" }}>
-                          <i className="flex fas fa-angle-right" style={{ alignItems: "center", fontSize: "25px" }}></i>
+                          <i className="flex fas fa-angle-right justify-end" style={{ alignItems: "center", fontSize: "25px" }}></i>
                         </div>
                       </div>
-                      <div className="w-full" style={{ fontSize: "12px", color: "#ddd", }}>
+                      <div className="w-full mx-auto" style={{ width: "80%", fontSize: "12px", color: "#ddd", }}>
                         {e.points + " คะแนน"}
                       </div>
-                      <div className="w-full" style={{ fontSize: "12px", color: "#ddd" }}>
+                      <div className="w-full mx-auto" style={{ width: "80%", fontSize: "12px", color: "#ddd" }}>
                         {"ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add(543, "year").format("DD MMM YYYY")}
                       </div>
                     </div>
