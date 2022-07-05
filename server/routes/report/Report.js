@@ -197,15 +197,8 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
   tbRedemptionCoupon.belongsTo(tbRedemptionConditionsHD, { foreignKey: "redemptionConditionsHDId" });
   tbRedemptionProduct.belongsTo(tbRedemptionConditionsHD, { foreignKey: "redemptionConditionsHDId" });
   tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
-  const listRedemptionProduct = await tbRedemptionProduct.findAll({
-    where: { isDeleted: false },
-    include: [    
-      { 
-        model: tbRedemptionConditionsHD,
-        where: { isDeleted: false},
-        required: false,
-      }
-  ]
+  const listRedemptionConditionsHD = await tbRedemptionConditionsHD.findAll({
+    where: { isDeleted: false }
   });
   const listCouponCode = await tbCouponCode.findAll({
     where: { isDeleted: false , isUse: true},
@@ -260,13 +253,13 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
           }
         }
       } else {
-        const lRedemptionProduct = listRedemptionProduct.filter(e => e.id.toString() === obj.TableHDId);
+        const lRedemptionProduct = listRedemptionConditionsHD.filter(e => e.id.toString() === obj.TableHDId);
         if(lRedemptionProduct.length > 0) {
-          const rwHD = lRedemptionProduct[0].tbRedemptionConditionsHD;
+          const rwHD = lRedemptionProduct[0];
           deliverStatus = obj.deliverStatus;
           trackingNo = obj.trackingNo;
-          status =  obj.isUsedCoupon ? 1 : 0;
-          isShowControl = true;
+          status = 1;
+          isShowControl = rwHD.rewardType === '1' ? false : true;
           if(rwHD !== null) {
             redemptionName = rwHD.redemptionName;
             redemptionType = rwHD.redemptionType;
@@ -285,13 +278,15 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
           rewardType: rewardType,
           startDate:  startDate,
           endDate:  endDate ,
+          firstName: (tb_member !== null ?tb_member.firstName : 0),
+          lastName: (tb_member !== null ?tb_member.lastName : 0),
           memberName: fullname,
-          address: address,
-          subDistrict: (tb_member !== null ?tb_member.subDistrict : 0),
-          district: (tb_member !== null ? tb_member.district : 0),
-          postcode: (tb_member !== null ? tb_member.postcode : 0),
-          province: (tb_member !== null ? tb_member.province : 0),
-          phone   : (tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : ""),   
+          address:  isShowControl ? address : "",
+          subDistrict: (tb_member !== null && isShowControl ?tb_member.subDistrict : 0),
+          district: (tb_member !== null && isShowControl ? tb_member.district : 0),
+          postcode: (tb_member !== null && isShowControl ? tb_member.postcode : 0),
+          province: (tb_member !== null && isShowControl ? tb_member.province : 0),
+          phone   : (tb_member !== null && isShowControl ? Encrypt.DecodeKey(tb_member.phone) : ""),   
           deliverStatus : deliverStatus,
           trackingNo: trackingNo,
           points: points,
