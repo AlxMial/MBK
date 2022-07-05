@@ -207,7 +207,121 @@ const Order = () => {
 
     const handleExport = async () => {
 
+      
     }
+
+    const Excel = async (sheetname) => {
+      dispatch(fetchLoading());
+      let order = await axios.get("order/orderHD/export");
+      const TitleColumns = [
+        "หมายเลขคำสั่งซื้อ",
+        "วันที่สั่งซื้อ",
+        "ชื่อ",
+        "นามสกุล",
+        "รหัสสมาชิก",
+        "หมวดหมู่สินค้า",
+        "ชื่อสินค้า",
+        "จำนวน",
+        "ราคาต่อหน่วย",
+        "ค่าจัดส่ง",
+        "ยอดสุทธิ",
+        "สถานะโปรโมชั่น Flashsale",
+        "ส่วนลดโปรโมชั่นร้านค้า",
+        "ส่วนลดโปรโมชั่นสินค้า",
+        "ส่วนลดจากคูปอง",
+        "รหัสคูปอง",
+        "ช่องทางการชำระเงิน",
+        "สถานะการชำระเงิน",
+        "วันที่ชำระเงินสำเร็จ",
+        "ตัวเลือกการจัดส่ง",
+        "สถานะการจัดส่ง",
+        "หมายเลขติดตามพัสดุ",
+        "วันที่จัดส่งสำเร็จ",
+        "สถานะการยกเลิก/คืนสินค้า",
+        "วันที่ยกเลิก/คืนสินค้า",
+        "สาเหตุที่ยกเลิก/คืน",
+        "รายละเอียด",
+        "หมายเหตุ",
+        "คะแนนสะสมที่ได้รับ",
+        "เบอร์โทร",
+        "อีเมล์",
+        "ที่อยู่",
+        "จังหวัด",
+        "อำเภอ",
+        "ตำบล",
+        "รหัสไปรษณีย์",
+      ];
+      const columns = [
+        "orderNumber",
+        "orderDate",
+        "firstName",
+        "lastName",
+        "memberCard",
+        "productName",
+        "amount",
+        "price",
+        "deliveryCost",
+        "netTotal",
+        "isFlashSale",
+        "discountStorePromotion",
+        "discount",
+        "discountCoupon",
+        "paymentStatus",
+        "paymentDate",
+        "transportStatus",
+        "trackNo",
+        "points",
+        "phone",
+        "email",
+        "address",
+        "province",
+        "district",
+        "subDistrict",
+        "postcode",
+      ];
+  
+      // for (var i = 0; i < order.data.tbOrder.length; i++) {
+      //   order.data.tbOrder[i]["province"] = await Address.getAddressName(
+      //     "province",
+      //     order.data.tbOrder[i]["province"]
+      //   );
+      //   order.data.tbOrder[i]["district"] = await Address.getAddressName(
+      //     "district",
+      //     order.data.tbOrder[i]["district"]
+      //   );
+      //   order.data.tbOrder[i]["subDistrict"] = await Address.getAddressName(
+      //     "subDistrict",
+      //     order.data.tbOrder[i]["subDistrict"]
+      //   );
+  
+      //   order.data.tbOrder[i]["paymentStatus"] =
+      //     order.data.tbOrder[i]["paymentStatus"] === "1"
+      //       ? "รอการชำระ"
+      //       : order.data.tbOrder[i]["paymentStatus"] === "2"
+      //       ? "รอการตรวจสอบ"
+      //       : "สำเร็จ";
+        
+      //   order.data.tbOrder[i]["transportStatus"] =
+      //     order.data.tbOrder[i]["transportStatus"] === "1"
+      //       ? "รอการขนส่ง"
+      //       : order.data.tbOrder[i]["transportStatus"] === "2"
+      //       ? "กำลังขนส่ง"
+      //       : "สำเร็จ";
+      // }
+      // exportExcel(
+      //   order.data.tbOerder,
+      //   "ข้อมูลการสั่งซื้อ",
+      //   TitleColumns,
+      //   columns,
+      //   sheetname
+      // );
+      dispatch(fetchSuccess());
+    };
+
+
+
+
+    
 
     return (
         <>

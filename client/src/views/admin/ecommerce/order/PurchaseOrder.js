@@ -4,8 +4,8 @@ import './index.scss'
 import * as fn from "@services/default.service";
 const PurchaseOrder = ({ props }) => {
     const { orderHD, orderDT, openExport } = props;
-    const thClass = "px-2  py-1 text-sm  border-l-0 border-r-0 whitespace-nowrap text-left text-blueGray-500 ";
-    const tdClass = "border-t-0 pl-2 align-middle border-l-0 border-r-0 py-1 text-sm whitespace-normal";
+    const thClass = "px-2  py-4 text-sm  border-l-0 border-r-0 whitespace-nowrap text-left text-blueGray-500 ";
+    const tdClass = "border-t-0  py-3 pl-2 align-middle border-l-0 border-r-0 py-1 text-sm whitespace-normal";
     const tdSpan = "text-gray-mbk hover:text-gray-mbk ";
     // const footerClass = "py-1 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
     // const footerSumPrice = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-green-mbk ";
@@ -24,7 +24,7 @@ const PurchaseOrder = ({ props }) => {
             <div className="w-full lg:w-12/12 pr-2 margin-auto-t-b ">
                 <table className="items-center w-full ">
                     <thead>
-                        <tr className={openExport ? 'border-b' : ''}>
+                        <tr className={openExport ? '' : ''} style={{borderTop:"1px solid  #e5e7eb",borderBottom:"1px solid  #e5e7eb"}}>
                             <th className={thClass + ' text-center'}  >
                                 ลำดับที่
                             </th>
@@ -75,14 +75,18 @@ const PurchaseOrder = ({ props }) => {
                                             <td className={tdClass + ' margin-auto-t-b text-right pr-4'}>
                                                 <div className="flex flex-col">
                                                     <div>
+                                                        ฿{(parseFloat(value.price) - parseFloat(value.discount)).toFixed(2).toLocaleString('en')}
+                                                    </div>
+                                                    {/* <div>
                                                         <strike className='text-gray-300'>
 
                                                             {fn.formatMoney(value.price)}
                                                         </strike>
                                                     </div>
+                                                    
                                                     <div className='text-red-500'>
                                                         {fn.formatMoney(value.price - value.discount)}
-                                                    </div>
+                                                    </div>*/}
                                                 </div>
                                             </td>
                                         ) : (

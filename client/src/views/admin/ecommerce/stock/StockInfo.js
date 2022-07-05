@@ -71,7 +71,6 @@ const StockInfo = ({
 
   const fetchData = async () => {
     const res = await axios.get("productCategory");
-    console.log(res)
     const productCategory = await res.data.tbProductCategory;
     if (productCategory) {
       // console.log('setProductCategoryList', productCategory);
@@ -228,12 +227,13 @@ const StockInfo = ({
                   <div className="flex flex-wrap">
                     {/* รูปสินค้า */}
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                      <LabelUC label="รูปสินค้า" isRequired={true} />
+                      <LabelUC label="รูปสินค้า" isRequired={true} /> <span className="text-red-500 text-xs">600*600 px</span>
                     </div>
                     <div className="w-full lg:w-10/12 margin-auto-t-b">
                       <div className="relative w-full px-4 flex">
                         {stockImage.map((item, i) => {
                           return (
+                            <>
                             <div
                               key={i + 1}
                               className="flex justify-center flex-col"
@@ -255,9 +255,13 @@ const StockInfo = ({
                                 isRequired={i === 0}
                               />
                             </div>
+                      
+                            </>
                           );
                         })}
                       </div>
+   
+                          
                       {isImageCoverNull && (
                         <div className="relative w-full px-4">
                           <div className="text-sm py-2 px-2  text-red-500">

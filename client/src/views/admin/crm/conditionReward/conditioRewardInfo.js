@@ -568,6 +568,7 @@ export default function ConditioRewardInfo() {
 
             if (reademptionType === "2") {
               for (var i = 0; i < response.data.listGame.length; i++) {
+                response.data.listGame[i]['index'] = i;
                 if (response.data.listGame[i].rewardType === "1") {
                   if (response.data.listGame[i]["pictureCoupon"] !== null) {
                     response.data.listGame[i]["pictureCoupon"] =

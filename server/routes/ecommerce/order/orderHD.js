@@ -2057,18 +2057,18 @@ router.get("/export", async (req, res) => {
   const data = await tbOrderHD.findAll({
     where: { isDeleted: false },
     include: [
-      {
+      // {
 
-        model: tbMemberReward,
-        where: {isDeleted: false , id: Sequelize.col('tbOrderHD.memberRewardId')},
-        include: [
-          {
-            model: tbCouponCode,
-            where: { id: Sequelize.col('tbOrderHD.memberRewardId') }
-          }
-        ],
-        required: false,
-      },
+      //   model: tbMemberReward,
+      //   where: {isDeleted: false , id: Sequelize.col('tbOrderHD.memberRewardId')},
+      //   include: [
+      //     {
+      //       model: tbCouponCode,
+      //       where: { id: Sequelize.col('tbOrderHD.memberRewardId') }
+      //     }
+      //   ],
+      //   required: false,
+      // },
       {
         model: tbCancelOrder,
         where: {

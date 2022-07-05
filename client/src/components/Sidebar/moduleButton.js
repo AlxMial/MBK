@@ -8,9 +8,8 @@ const ModuleButton = ({ onClick, label, icon, typePermission }) => {
             type="button"
             className={
                 "flex items-center py-4 px-2 w-full text-sm font-normal bg-transparent outline-none button-focus" +
-                (width < 765 ? " text-blueGray-700" : " text-white") + ((typePermission === "2") ? " hidden" : " ")
+                (width < 765 ? " text-blueGray-700" : " text-white") + ((typePermission === "2" && label === "CRM") ? " hidden" : " ")
             }
-
             onClick={onClick}
         >
             <i className={icon + " text-sm"}></i>

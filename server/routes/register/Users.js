@@ -54,7 +54,7 @@ router.post("/login", async (req, res) => {
             Encrypt.DecodeKey(user.role) === "3"
               ? "/admin/members"
               : Encrypt.DecodeKey(user.role) === "2"
-              ? "/admin/empty"
+              ? "/admin/order"
               : "/admin/users",
         });
       }

@@ -263,6 +263,7 @@ const GameInfo = ({
               >
                 <div className="relative w-full">
                   <LabelUC label="รูปคูปอง" isRequired={true} />
+                  <span className="text-red-500 text-xs">380*254 px</span>
                   {formikCoupon.touched.pictureCoupon &&
                     formikCoupon.errors.pictureCoupon ? (
                     <div className="text-sm py-2 px-2 text-red-500">&nbsp;</div>
@@ -641,7 +642,7 @@ const GameInfo = ({
                   (data.rewardType === "2" ? " hidden" : " ")
                 }
               >
-                <LabelUC label="จำนวนที่ใช้แลกต่อวัน" isRequired={false} />
+                {/* <LabelUC label="จำนวนที่ใช้แลกต่อวัน" isRequired={false} /> */}
                 {formikCoupon.touched.couponCount &&
                   formikCoupon.errors.couponCount ? (
                   <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
@@ -654,7 +655,7 @@ const GameInfo = ({
                 }
               >
                 <div className="relative">
-                  <InputUC
+                  {/* <InputUC
                     name="usedPerDayCount"
                     type="number"
                     maxLength={7}
@@ -666,7 +667,7 @@ const GameInfo = ({
                         ValidateService.onHandleNumberValue(e);
                     }}
                     min="0"
-                  />
+                  /> */}
                   {formikCoupon.touched.couponCount &&
                     formikCoupon.errors.couponCount ? (
                     <div className="text-sm py-2 px-2  text-red-500">

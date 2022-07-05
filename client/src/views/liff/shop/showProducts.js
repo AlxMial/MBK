@@ -40,11 +40,11 @@ const ShowProducts = () => {
 
   const add_to_cart = () => {
     if (spin > 0) {
-
+      console.log(id)
       upd_shopcart({ id: id, quantity: spin, type: "add", uid: Session.getLiff().uid }, (res) => {
-
         if (res.data.status) {
           if (res.data.shop_orders) {
+            console.log(res.data.shop_orders)
             setcartNumberBadge(res.data.shop_orders.length)
             addToast("คุณได้เพิ่มสินค้าลงในรถเข็นเรียบร้อยแล้ว", {
               appearance: "success",

@@ -85,7 +85,7 @@ const GameList = ({ id, setListGame, listGame }) => {
   };
 
   const handleSubmitModal = (data) => {
-    if (data.id) {
+    if (data['index'] !== undefined) {
       setListGame((s) => {
         const newArr = s.slice();
         newArr[index] = data;
@@ -97,6 +97,8 @@ const GameList = ({ id, setListGame, listGame }) => {
         return newArr;
       });
     } else {
+      data['index'] = listGame.length;
+      console.log(data)
       setListGame((s) => {
         return [...s, data];
       });

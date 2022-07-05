@@ -236,14 +236,16 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCance
                     <div className='py-2 margin-auto-t-b w-full flex mt-2'>
                         <TextAreaUC
                             name='cancelReason'
-                            value={tbCancelOrder == null ? "" : tbCancelOrder.cancelOtherRemark}
+                             value={!isCancel ? "" : tbCancelOrder.cancelOtherRemark}
                             rows={3}
                             maxLength={255}
                             disabled={!isCanEdit ? true : (orderHD.paymentStatus === 3) ? true : !isCancel ? true : false}
                             onChange={(e) => {
+                                console.log(e.target.value)
                                 if (tbCancelOrder == null) {
                                     tbCancelOrder = { cancelOtherRemark: e.target.value }
                                 } else {
+                                    setDalay(e.target.value);
                                     tbCancelOrder.cancelOtherRemark = e.target.value
                                 }
                                 settbCancelOrder(tbCancelOrder)

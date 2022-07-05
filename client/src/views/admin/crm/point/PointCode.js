@@ -266,11 +266,11 @@ export default function PointCode() {
     }
   };
 
-  const ExportFile = async (id, name) => {
+  const ExportFile = async (id, name, point,startDate,endDate) => {
     setIsLoading(true);
     let coupon = await axios.get(`pointCode/exportExcel/${id}`);
-    const TitleColumns = ["รหัส Coupon", "สถานะใช้งาน", "สถานะหมดอายุ"];
-    const columns = ["code", "isUse", "isExpire"];
+    const TitleColumns = ["ชื่อแคมเปญ", "จำนวนคะแนน", "วันที่เริ่มต้น", "วันที่สิ้นสุด", "Code", "สถานะใช้งาน", "สถานะหมดอายุ"];
+    const columns = ["name", "point", "startDate", "endDate", "code", "isUse", "isExpire"];
     exportExcel(coupon.data, name, TitleColumns, columns, "Coupon");
     setIsLoading(false);
   };
@@ -2092,7 +2092,7 @@ export default function PointCode() {
                         </td>
                         <td
                           onClick={() => {
-                            ExportFile(value.id, value.pointCodeName);
+                            ExportFile(value.id, value.pointCodeName,value.pointCodePoint,value.startDate,value.endDate);
                           }}
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >

@@ -10,7 +10,6 @@ const fs = require("fs");
 
 const upload = async (req, res) => {
   try {
-    console.log(req)
     if (req.file == undefined) {
       return res.status(400).send("Please upload an excel file!");
     }

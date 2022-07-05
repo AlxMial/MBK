@@ -8,7 +8,7 @@ const {
   tbCouponCode,
   tbMember,
   tbMemberReward,
-  tbOrderHD
+  tbOrderHD,
 } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
@@ -230,7 +230,7 @@ router.post("/", validateToken, async (req, res) => {
                 }
               });
           } catch (e) {
-            console.log(e)
+            console.log(e);
           }
         } else {
           Encrypt.encryptValueId(redemption);
@@ -350,12 +350,31 @@ router.post("/game", validateToken, async (req, res) => {
           redemption.dataValues.id;
         if (req.body.listGame[i].rewardType === "1") {
           coupon = await tbRedemptionCoupon.create(req.body.listGame[i]);
+          req.body.listGame[i].id = coupon.dataValues.id;
+          console.log(coupon.dataValues.couponCount)
+          const generateCode = await axiosInstance
+            .post("api/coupon/generateCoupon", coupon)
+            .then(async (resGenerate) => {
+              if (resGenerate.data.status) {
+                const qry = `INSERT INTO mbk_database.tbcouponcodes SELECT * FROM mbk_temp.tbcouponcodes where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
+                db.sequelize
+                  .query(qry, null, { raw: true })
+                  .then((result) => {
+                    const deleteqry = `DELETE FROM mbk_temp.tbcouponcodes WHERE mbk_temp.tbcouponcodes.redemptionCouponId IN (select redemptionCouponId from mbk_database.tbcouponcodes)`;
+                    db.sequelize
+                      .query(deleteqry, null, { raw: true })
+                      .then((result) => {console.log(result)})
+                      .catch((error) => {console.log(error)});
+                  })
+                  .catch((error) => {console.log(error)});
+              }
+            });
         } else if (req.body.listGame[i].rewardType === "2") {
           product = await tbRedemptionProduct.create(req.body.listGame[i]);
+          req.body.listGame[i].id = product.dataValues.id;
         }
         UpdateImage(req.body.listGame[i]);
       }
-
       Encrypt.encryptValueId(redemption);
       res.json({
         status: true,
@@ -531,7 +550,7 @@ router.put("/", validateToken, async (req, res) => {
       let coupon = null;
       let product = null;
       if (req.body.rewardType === "1") {
-        console.log(req.body.coupon.expiredDate)
+        console.log(req.body.coupon.expiredDate);
         req.body.coupon.expiredDate = req.body.coupon.isNotExpired
           ? null
           : req.body.coupon.expiredDate;
@@ -654,97 +673,107 @@ router.post("/CloneCoupon", async (req, res) => {
 
 //#region line liff
 
-router.get("/gettbcouponcodes"
-  , validateLineToken
-  , async (req, res) => {
+router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
+  let status = true;
+  let msg = "";
+  let RedemptionCoupon = [];
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    const Member = await tbMember.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
+    });
 
-    let status = true
-    let msg = ""
-    let RedemptionCoupon = []
-    try {
-      const uid = Encrypt.DecodeKey(req.user.uid);
-      const Member = await tbMember.findOne({ attributes: ["id"], where: { uid: uid } });
+    if (Member) {
+      const _tbMemberReward = await tbMemberReward.findAll({
+        where: {
+          isDeleted: !1,
+          rewardType: "Coupon",
+          memberId: Member.id,
+          isUsedCoupon: !1,
+        },
+        attributes: ["id", "TableHDId"],
+      });
+      if (_tbMemberReward) {
+        for (var i = 0; i < _tbMemberReward.length; i++) {
+          //ตรวจสอบถูกนำไปใช้ใน tbOrderHD
+          const _tbOrderHD = await tbOrderHD.count({
+            where: {
+              memberRewardId: _tbMemberReward[i].id,
+            },
+          });
 
-      if (Member) {
-
-        const _tbMemberReward = await tbMemberReward.findAll({
-          where: {
-            isDeleted: !1,
-            rewardType: "Coupon",
-            memberId: Member.id,
-            isUsedCoupon: !1
-          },
-          attributes: ["id", "TableHDId"],
-        });
-        if (_tbMemberReward) {
-          for (var i = 0; i < _tbMemberReward.length; i++) {
-
-            //ตรวจสอบถูกนำไปใช้ใน tbOrderHD
-            const _tbOrderHD = await tbOrderHD.count({
-              where: {
-                memberRewardId: _tbMemberReward[i].id,
-              },
+          if (_tbOrderHD == 0) {
+            tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+            tbCouponCode.belongsTo(tbRedemptionCoupon, {
+              foreignKey: "redemptionCouponId",
             });
 
-            if (_tbOrderHD == 0) {
-              tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
-              tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });
-
-              let _tbCouponCode = await tbCouponCode.findOne({
-                where: { isDeleted: !1, id: _tbMemberReward[i].TableHDId },
-                attributes: ["id", 'redemptionCouponId'],
-                include: [
-                  {
-                    model: tbRedemptionCoupon,
-                    attributes: ['id', 'discount', 'discountType', "isNotExpired", "startDate", "expiredDate", "couponName"],
-                    where: {
-                      isDeleted: !1,
-                      id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
-                    },
-                  },
-                ],
-              });
-
-              if (_tbCouponCode) {
-
-                const _tbImage = await tbImage.findOne({
-                  attributes: ['image'],
+            let _tbCouponCode = await tbCouponCode.findOne({
+              where: { isDeleted: !1, id: _tbMemberReward[i].TableHDId },
+              attributes: ["id", "redemptionCouponId"],
+              include: [
+                {
+                  model: tbRedemptionCoupon,
+                  attributes: [
+                    "id",
+                    "discount",
+                    "discountType",
+                    "isNotExpired",
+                    "startDate",
+                    "expiredDate",
+                    "couponName",
+                  ],
                   where: {
-                    isDeleted: false,
-                    relatedId: Encrypt.DecodeKey(_tbCouponCode.tbRedemptionCoupon.id),
-                    relatedTable: "tbRedemptionCoupon",
+                    isDeleted: !1,
+                    id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
                   },
-                });
-                _tbCouponCode.dataValues.image = _tbImage.image
-                RedemptionCoupon.push({
-                  id: Encrypt.EncodeKey(_tbCouponCode.dataValues.id)
-                  , image: _tbCouponCode.dataValues.image
-                  , couponName: _tbCouponCode.tbRedemptionCoupon.couponName
-                  , discount:  _tbCouponCode.tbRedemptionCoupon.discount
-                  , discountType: _tbCouponCode.tbRedemptionCoupon.discountType
-                  , expiredDate: _tbCouponCode.tbRedemptionCoupon.expireDate == null ? "-" : _tbCouponCode.tbRedemptionCoupon.expireDate
-                })
+                },
+              ],
+            });
 
-              }
+            if (_tbCouponCode) {
+              const _tbImage = await tbImage.findOne({
+                attributes: ["image"],
+                where: {
+                  isDeleted: false,
+                  relatedId: Encrypt.DecodeKey(
+                    _tbCouponCode.tbRedemptionCoupon.id
+                  ),
+                  relatedTable: "tbRedemptionCoupon",
+                },
+              });
+              _tbCouponCode.dataValues.image = _tbImage.image;
+              RedemptionCoupon.push({
+                id: Encrypt.EncodeKey(_tbCouponCode.dataValues.id),
+                image: _tbCouponCode.dataValues.image,
+                couponName: _tbCouponCode.tbRedemptionCoupon.couponName,
+                discount: _tbCouponCode.tbRedemptionCoupon.discount,
+                discountType: _tbCouponCode.tbRedemptionCoupon.discountType,
+                expiredDate:
+                  _tbCouponCode.tbRedemptionCoupon.expireDate == null
+                    ? "-"
+                    : _tbCouponCode.tbRedemptionCoupon.expireDate,
+              });
             }
           }
         }
-
       }
-    } catch (e) {
-      res.json({
-        status: false,
-        message: e.message,
-        RedemptionCoupon: RedemptionCoupon,
-      });
     }
-
-    return res.json({
-      status: status,
-      msg: msg,
-      tbredemptioncoupons: RedemptionCoupon
+  } catch (e) {
+    res.json({
+      status: false,
+      message: e.message,
+      RedemptionCoupon: RedemptionCoupon,
     });
+  }
+
+  return res.json({
+    status: status,
+    msg: msg,
+    tbredemptioncoupons: RedemptionCoupon,
   });
+});
 //#endregion line liff
 
 module.exports = router;
