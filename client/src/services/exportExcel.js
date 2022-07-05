@@ -30,7 +30,7 @@ export const exportExcel = async (
           "," + (val[valueColumns] !== "0" ? "เคย" : "ไม่เคย");
         } else if (valueColumns.includes("sex")) {
           GenerateData +=
-          "," + (val[valueColumns] !== "1" ? "หญิง" : "ชาย");
+          "," + (val[valueColumns] === "1" ? "ชาย" : val[valueColumns] === "2" ? "หญิง"  : "ไม่ระบุ");
         }  else if (valueColumns.toLocaleLowerCase().includes("date"))
           GenerateData +=
             "," +

@@ -43,7 +43,7 @@ router.post("/", async (req, res) => {
     let statusRedeem = [];
     let status;
     for (var x = 0; x < redeemCode.length; x++) {
-      redeemCode[x] = Encrypt.EncodeKey(redeemCode[x].toLowerCase());
+      redeemCode[x] = Encrypt.EncodeKey(redeemCode[x].toLowerCase().replaceAll('-',''));
       // try {
       //   const splitValue = redeemCode[x].split("-");
       //   if (splitValue.length > 1) {
@@ -339,7 +339,7 @@ router.post("/useCoupon", validateLineToken, async (req, res) => {
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
     const RedemptionConditionsHDId = Encrypt.DecodeKey(req.body.Id);
-    Member = await tbMember.findOne({
+    const Member = await tbMember.findOne({
       attributes: ["id", "memberPoint"],
       where: { uid: uid },
     });

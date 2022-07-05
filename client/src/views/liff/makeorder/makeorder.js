@@ -223,7 +223,6 @@ const MakeOrder = () => {
 
     total = total + _deliveryCost;
     if (usecoupon != null && sumprice > 0) {
-      console.log(sumprice)
       if (usecoupon.discountType === "2") {
         total = total - ((usecoupon.discount / 100) * sumprice).toFixed(2);
       } else {

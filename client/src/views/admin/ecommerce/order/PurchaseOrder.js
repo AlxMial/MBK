@@ -11,7 +11,8 @@ const PurchaseOrder = ({ props }) => {
     // const footerSumPrice = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-green-mbk ";
 
     const sumPrice = orderDT.reduce((sum, item) => {
-        return sum + ((parseFloat(item.price) - parseFloat(item.discount) ) * parseFloat(item.amount));
+        console.log(sum + ((parseFloat(item.price) - parseFloat(item.discount) ) * parseFloat(item.amount)))
+        return  sum + ((parseFloat(item.price) - parseFloat(item.discount) ) * parseFloat(item.amount));
     }, 0);
 
     const sumDiscount = orderDT.reduce((sum, item) => {

@@ -35,6 +35,7 @@ export default function MemberInfo() {
   const optionsSex = [
     { value: "1", label: "ชาย" },
     { value: "2", label: "หญิง" },
+    { value: "3", label: "ไม่ระบุ" },
   ];
   /* RegEx formatter */
   const phoneRegExp =

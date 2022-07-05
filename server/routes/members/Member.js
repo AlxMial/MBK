@@ -773,6 +773,9 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
             },
             required: false
           },
+        ],      
+        order: [
+          ['orderNumber', 'DESC']
         ],
       });
       if (_tbOrderHD && _tbOrderHD.length > 0) {

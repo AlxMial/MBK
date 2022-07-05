@@ -569,7 +569,7 @@ const StockInfo = ({
                     <div className="w-full lg:w-8/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <TextAreaUC
-                          rows={3}
+                          rows={10}
                           name="description"
                           onBlur={formik.handleBlur}
                           value={formik.values.description}
@@ -589,7 +589,7 @@ const StockInfo = ({
                     <div className="w-full lg:w-8/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <TextAreaUC
-                          rows={3}
+                          rows={10}
                           name="descriptionPromotion"
                           onBlur={formik.handleBlur}
                           value={formik.values.descriptionPromotion}

@@ -1774,6 +1774,11 @@ select {
   line-height: 1rem;
 }
 
+.text-1xs {
+  font-size: 0.675rem;
+  line-height: 1rem;
+}
+
 .text-xs {
   font-size: 0.7rem;
   line-height: 1.2rem;

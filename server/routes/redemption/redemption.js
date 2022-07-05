@@ -324,7 +324,7 @@ const UpdateImage = async (listGame) => {
           ? "tbRedemptionCoupon"
           : "tbRedemptionProduct",
       isDeleted: 0,
-      addBy: req.body.addBy,
+      // addBy: req.body.addBy,
     };
     const Insert = await tbImage.create(Value);
   }

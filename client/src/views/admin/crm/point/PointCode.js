@@ -777,7 +777,7 @@ export default function PointCode() {
                           className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
                         >
                           <i className="fas fa-save mr-2"></i>
-                          {(formik.values.id !== "") ? "แก้ไข" : "เพิ่ม"}แคมเปญ
+                          {"เพิ่ม"}แคมเปญ
                         </span>
                       </div>
                     </li>
@@ -1271,7 +1271,7 @@ export default function PointCode() {
                   }}
                 >
                   <i className="fas fa-plus-circle text-white "></i>{" "}
-                  <span className=" text-sm px-2">{(formik.values.id !== "") ? "แก้ไข" : "เพิ่ม"}แคมเปญ</span>
+                  <span className=" text-sm px-2">{"เพิ่ม"}แคมเปญ</span>
                 </button>
                 <Modal
                   isOpen={modalIsOpen}

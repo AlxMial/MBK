@@ -75,6 +75,9 @@ router.get("/", validateToken, async (req, res) => {
           required: false
         },
       ],
+      order: [
+        ['orderNumber', 'DESC']
+      ],
     })
     if (data) {
       data.map((e, i) => {
@@ -189,8 +192,7 @@ const getorderDT = async (DT) => {
         // } else {
         //   total += _tbStock.price * DT[i].amount;
         // }
-        
-        total = total + (_tbStock.price - _tbStock.discount);
+        total = total + (_tbStock.price - _tbStock.discount) * DT[i].amount;
         
         orderDT.push({
           stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
@@ -214,7 +216,8 @@ const getorderDT = async (DT) => {
           where: {
             stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
             startDate: { [Op.lte]: new Date() },
-            endDate: { [Op.gte]: new Date() }
+            endDate: { [Op.gte]: new Date() },
+            isDeleted:false
           },
         });
         if (_tbPointEcommerce) {
@@ -1047,6 +1050,9 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             },
             required: false
           },
+        ],
+        order: [
+          ['orderNumber', 'DESC']
         ],
       });
 
