@@ -737,96 +737,87 @@ router.post("/addMemberAddress", validateLineToken, async (req, res) => {
 router.get("/getMyOrder", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
-  let Member;
   let OrderHD = [];
   try {
-
     const memberId = Encrypt.DecodeKey(req.user.id);
     tbOrderHD.hasMany(tbOrderDT, {
       foreignKey: "orderId",
     });
-    Member = await tbMember.findOne({
-      attributes: ["id"],
-      where: { id: memberId },
-    });
-
-    if (Member) {
-      const _tbOrderHD = await tbOrderHD.findAll({
-        limit: 5,
-        attributes: ["id", "orderNumber", "paymentStatus", "netTotal", "stockNumber"],
-        where: { memberId: memberId },
-        include: [
-          {
-            limit: 2,
-            attributes: [
-              "id",
-              "amount",
-              "price",
-              "discount",
-              "discountType",
-              "stockId",
-              "orderId",
-            ],
-            model: tbOrderDT,
-            where: {
-              isDeleted: false,
-            },
-            required: false
+    const _tbOrderHD = await tbOrderHD.findAll({
+      limit: 5,
+      attributes: ["id", "orderNumber", "paymentStatus", "netTotal", "stockNumber"],
+      where: { memberId: memberId },
+      include: [
+        {
+          limit: 2,
+          attributes: [
+            "id",
+            "amount",
+            "price",
+            "discount",
+            "discountType",
+            "stockId",
+            "orderId",
+          ],
+          model: tbOrderDT,
+          where: {
+            isDeleted: false,
           },
-        ],
-        order: [
-          ['orderNumber', 'DESC']
-        ],
-      });
-      if (_tbOrderHD && _tbOrderHD.length > 0) {
+          required: false
+        },
+      ],
+      order: [
+        ['orderNumber', 'DESC']
+      ],
+    });
+    if (_tbOrderHD && _tbOrderHD.length > 0) {
 
-        for (let i = 0; i < _tbOrderHD.length; i++) {
+      for (let i = 0; i < _tbOrderHD.length; i++) {
 
-          let hd = _tbOrderHD[i].dataValues;
-          hd.dt = [];
-          if (hd.tbOrderDTs) {
-            for (var j = 0; j < hd.tbOrderDTs.length; j++) {
-              let dt = hd.tbOrderDTs[j].dataValues;
-              dt.id = Encrypt.EncodeKey(dt.id);
-              const _tbStockData = await tbStock.findOne({
-                attributes: [
-                  "productName",
-                ],
-                where: { id: dt.stockId },
+        let hd = _tbOrderHD[i].dataValues;
+        hd.dt = [];
+        if (hd.tbOrderDTs) {
+          for (var j = 0; j < hd.tbOrderDTs.length; j++) {
+            let dt = hd.tbOrderDTs[j].dataValues;
+            dt.id = Encrypt.EncodeKey(dt.id);
+            const _tbStockData = await tbStock.findOne({
+              attributes: [
+                "productName",
+              ],
+              where: { id: dt.stockId },
+            });
+            let _tbStock = _tbStockData.dataValues;
+            dt.productName = _tbStock.productName;
+
+            let discount =
+              dt.discount > 0
+                // ? dt.discountType == 1
+                //   ? parseFloat(dt.price) - parseFloat(dt.discount)
+                //   : parseFloat(dt.price) -
+                //   (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
+                ? parseFloat(dt.price) - parseFloat(dt.discount)
+                : 0;
+
+            if (j < 2) {
+              hd.dt.push({
+                id: Encrypt.EncodeKey(dt.stockId),
+                price: parseFloat(dt.price),
+                discount: parseFloat(discount),
+                productName: dt.productName,
+                amount: dt.amount,
               });
-              let _tbStock = _tbStockData.dataValues;
-              dt.productName = _tbStock.productName;
-
-              let discount =
-                dt.discount > 0
-                  // ? dt.discountType == 1
-                  //   ? parseFloat(dt.price) - parseFloat(dt.discount)
-                  //   : parseFloat(dt.price) -
-                  //   (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
-                  ? parseFloat(dt.price) - parseFloat(dt.discount)
-                  : 0;
-
-              if (j < 2) {
-                hd.dt.push({
-                  id: Encrypt.EncodeKey(dt.stockId),
-                  price: parseFloat(dt.price),
-                  discount: parseFloat(discount),
-                  productName: dt.productName,
-                  amount: dt.amount,
-                });
-              }
             }
           }
-          hd.id = Encrypt.EncodeKey(hd.id);
-          if (hd.paymentStatus == 2) {
-            hd.isPaySlip = true;
-          } else {
-            hd.isPaySlip = false;
-          }
-          OrderHD.push(hd);
         }
-
+        hd.id = Encrypt.EncodeKey(hd.id);
+        if (hd.paymentStatus == 2) {
+          hd.isPaySlip = true;
+        } else {
+          hd.isPaySlip = false;
+        }
+        OrderHD.push(hd);
       }
+
     }
   } catch (e) {
     status = false;

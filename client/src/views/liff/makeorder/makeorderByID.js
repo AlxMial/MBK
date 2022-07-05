@@ -334,12 +334,12 @@ const MakeOrderById = () => {
               className="flex relative"
               style={{
                 height: "20px",
-                alignItems: "center",
-                justifyContent: "center",
+                // alignItems: "center",
+                // justifyContent: "center",
                 marginTop: "0.5rem",
               }}
             >
-              <div className="px-2 absolute" style={{ left: "10px" }}>
+              <div className="px-2 " style={{ left: "10px", width: "50px" }}>
                 <img
                   style={{ margin: "auto", width: "22px", height: "22px" }}
                   src={require("assets/img/mbk/icon_sale.png").default}
@@ -347,10 +347,10 @@ const MakeOrderById = () => {
                   className="w-32 border-2 border-blueGray-50"
                 ></img>
               </div>
-              <div className="px-2 absolute font-bold" style={{ left: "50px" }}>
+              <div className="px-2 font-bold line-clamp-1" style={{ left: "50px", width: "calc(100% - 180px)" }}>
                 {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
               </div>
-              <div className="absolute" style={{ right: "10px" }}>
+              <div className="flex" style={{ right: "10px", width: "130px", justifyContent: "end" }}>
                 {OrderHD != null ? (
                   <div className="flex">
                     <div
@@ -370,7 +370,8 @@ const MakeOrderById = () => {
                       }}
                     >
                       {usecoupon != null
-                        ? "-฿ " + fn.formatMoney(
+                        ? "-฿ " +
+                        fn.formatMoney(
                           usecoupon.discountType === "2"
                             ? (usecoupon.discount / 100) * sumprice
                             : usecoupon.discount
