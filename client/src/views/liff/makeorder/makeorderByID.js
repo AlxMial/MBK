@@ -133,7 +133,11 @@ const MakeOrderById = () => {
       logisticId: isLogistic,
       isAddress: isAddress,
       usecouponid: usecoupon == null ? null : usecoupon.id,
-      orderdt: OrderHD.dt,
+      orderdt: OrderHD.dt.filter(e => {
+        if (e.isFree == false) {
+          return e
+        }
+      }),
     };
     if (RadioPayment === 1) {
       updatrOrder.paymentId = paymentID

@@ -227,7 +227,7 @@ const getorderDT = async (DT) => {
         });
 
         //แต้มสะสม 
-
+        //type : จำนวนสิน
         let _tbPointEcommerce = await tbPointEcommerce.findAll({
           attributes: [
             "type",
@@ -239,21 +239,15 @@ const getorderDT = async (DT) => {
             stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
             startDate: { [Op.lte]: new Date() },
             endDate: { [Op.gte]: new Date() },
-            isDeleted: false
+            isDeleted: false,
+            type: 2
           },
         });
         if (_tbPointEcommerce) {
           _tbPointEcommerce.map((e, i) => {
-            if (e.type == 1) {
-              if (e.purchaseAmount <= (DT[i].price * DT[i].amount)) {
-                let conut = parseInt((DT[i].price * DT[i].amount) / e.purchaseAmount)
-                point = point + (conut * e.points)
-              }
-            } else {
-              if (e.productAmount <= DT[i].amount) {
-                let conut = parseInt((DT[i].amount) / e.purchaseAmount)
-                point = point + (conut * e.points)
-              }
+            if (e.productAmount <= DT[i].amount) {
+              let conut = parseInt((DT[i].amount) / e.productAmount)
+              point += (conut * e.points)
             }
           })
 
@@ -262,6 +256,33 @@ const getorderDT = async (DT) => {
       } else {
         status = false;
         msg = "Stock empty !";
+      }
+
+    }
+
+    //คะแนนจากยอดซื้อ
+    if (total > 0) {
+      let _tbPointEcommerce = await tbPointEcommerce.findAll({
+        attributes: [
+          "type",
+          "purchaseAmount",
+          "productAmount",
+          "points",
+        ],
+        where: {
+          startDate: { [Op.lte]: new Date() },
+          endDate: { [Op.gte]: new Date() },
+          isDeleted: false,
+          type: 1,
+          purchaseAmount: { [Op.lte]: total }
+        },
+      });
+      if (_tbPointEcommerce) {
+        _tbPointEcommerce.map((e, i) => {
+          let conut = parseInt(total / e.purchaseAmount)
+          point += (conut * e.points)
+        })
+
       }
     }
   } catch (e) {
@@ -1589,6 +1610,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
           model: tbOrderDT,
           where: {
             isDeleted: false,
+            // isFree: false
           },
           required: false
         },
@@ -1629,6 +1651,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
           amount: dt.amount,
           price: dt.price,
           discount: dt.discount,
+          isFree: dt.isFree
         });
       }
       //ค่าจัดส่ง
