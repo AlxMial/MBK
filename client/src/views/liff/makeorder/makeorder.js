@@ -53,8 +53,8 @@ const MakeOrder = () => {
         shop_orders.map((e, i) => {
           idlist.push(e.id);
         });
-
-        if (id == "cart") {
+      
+        if (id === "cart") {
           setusecoupon(Storage.getconpon_cart());
         } else {
           let item = Storage.getbyorder();
@@ -102,7 +102,6 @@ const MakeOrder = () => {
     } else if (id === "byorder") {
       item = Storage.getbyorder();
       if (fn.IsNullOrEmpty(item)) {
-        // console.log("IsNullOrEmpty")
         history.push(path.shopList);
       } else {
         setData();
@@ -111,13 +110,12 @@ const MakeOrder = () => {
   };
   const setDeliveryCost = (e) => {
     setdeliveryCost(e);
-    // console.log(tbPromotionDelivery)
     setTimeout(() => {
       getProducts();
     }, 1000);
   };
   const Cancelcoupon = () => {
-    if (id == "cart") {
+    if (id === "cart") {
       Storage.removeconpon_cart();
     } else {
       let item = Storage.getbyorder();
@@ -170,7 +168,7 @@ const MakeOrder = () => {
               item = Storage.remove_byorder();
             }
             if (RadioPayment === 1) {
-              console.log(res.data)
+    
               history.push(path.paymentInfo.replace(":id", res.data.orderId));
             } else {
               window.location.href = res.data.url.webPaymentUrl;
@@ -179,7 +177,7 @@ const MakeOrder = () => {
           }
         });
       };
-      if (pageID == "cart") {
+      if (pageID === "cart") {
         get_shopcart({ uid: Session.getLiff().uid }, async (res) => {
           if (res.data.status) {
             if (res.data.shop_orders.length > 0) {
@@ -211,7 +209,7 @@ const MakeOrder = () => {
     let total = sumprice;
     let _prodiscstro = calcprodiscount(sumprice);
     let _prodiscount = 0;
-    if (_prodiscstro.type == "discount") {
+    if (_prodiscstro.type === "discount") {
       _prodiscount = _prodiscstro.data;
     }
     total = total - _prodiscount;
@@ -224,17 +222,14 @@ const MakeOrder = () => {
     }
 
     total = total + _deliveryCost;
-    if (usecoupon != null) {
+    if (usecoupon != null && sumprice > 0) {
+      console.log(sumprice)
       if (usecoupon.discountType === "2") {
-        usecoupon.discount = (usecoupon.discount / 100) * sumprice;
-        usecoupon.discount = parseFloat(usecoupon.discount).toFixed(2);
-        total = total - usecoupon.discount;
-        console.log(total);
+        total = total - ((usecoupon.discount / 100) * sumprice).toFixed(2);
       } else {
         total = total - usecoupon.discount;
       }
     }
-
     return total;
   };
   const calcprodiscount = (totel) => {
@@ -277,9 +272,7 @@ const MakeOrder = () => {
         let productList = promotionstores.find(
           (e) => e.condition === "product" && e.buy <= totel
         );
-        // console.log(productList);
         if (productList != null) {
-          console.log("แถมสินค้า");
           data = { type: "product", data: productList.stockId };
           if (freebies.length < 1) {
             getfreebies(productList);

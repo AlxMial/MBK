@@ -1801,7 +1801,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                   "discount",
                   "isNotExpired",
                   "startDate",
-                  "expiredDate",
+                  "expireDate",
                   "couponName",
                 ],
                 where: {
@@ -1871,9 +1871,10 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                   attributes: [
                     "id",
                     "discount",
+                    "discountType",
                     "isNotExpired",
                     "startDate",
-                    "expiredDate",
+                    "expireDate",
                     "couponName",
                   ],
                   where: {
@@ -1883,6 +1884,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                 },
               ],
             });
+            
 
             if (_tbCouponCode) {
               const _tbImage = await tbImage.findOne({
@@ -1900,8 +1902,9 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
                 id: Encrypt.EncodeKey(_tbCouponCode.dataValues.id),
                 image: _tbCouponCode.dataValues.image,
                 couponName: _tbCouponCode.tbRedemptionCoupon.couponName,
-                discount: _tbCouponCode.tbRedemptionCoupon.discount,
-                expiredDate:
+                discountType : _tbCouponCode.tbRedemptionCoupon.discountType ,
+                discount:  _tbCouponCode.tbRedemptionCoupon.discount,
+                expireDate:
                   _tbCouponCode.tbRedemptionCoupon.expireDate == null
                     ? "-"
                     : _tbCouponCode.tbRedemptionCoupon.expireDate,

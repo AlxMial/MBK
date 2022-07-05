@@ -55,7 +55,6 @@ const MakeOrderById = () => {
             shop_orders.map((e, i) => {
               idlist.push(e.id);
             });
-
             if (Storage.getusecoupon() == null) {
               if (!fn.IsNullOrEmpty(OrderHD.coupon)) {
                 setusecoupon(OrderHD.coupon);
@@ -66,9 +65,11 @@ const MakeOrderById = () => {
             } else {
               let usecoupon = Storage.getusecoupon();
               // if (usecoupon.id === id) {
+              
               setusecoupon(usecoupon);
               // }
             }
+           
             setIsLoading(true);
             await axios
               .post("stock/getStock", { id: idlist })
@@ -170,9 +171,8 @@ const MakeOrderById = () => {
     }
     total = total + _deliveryCost;
     if (usecoupon != null) {
-      total = total - usecoupon.discount;
+      total = (usecoupon.discountType==="1") ?  total - usecoupon.discount :   total - (usecoupon.discount / 100) * total; 
     }
-
     return total;
   };
   const calcprodiscount = (totel) => {
@@ -208,13 +208,10 @@ const MakeOrderById = () => {
             _prodiscount = discount;
           }
         });
-        console.log(_prodiscount);
         data = { type: "discount", data: _prodiscount };
       } else {
         //สินค้า
-        console.log("แถมสินค้า");
         let productList = promotionstores.find((e) => e.condition == "product" && e.buy <= totel);
-        console.log(productList);
         if (productList != null) {
           data = { type: "product", data: productList.stockId };
           if (freebies.length < 1) {
@@ -329,7 +326,11 @@ const MakeOrderById = () => {
                       }}
                     >
                       {usecoupon != null
-                        ? "-฿ " + fn.formatMoney(usecoupon.discount)
+                        ? "-฿ " + fn.formatMoney(
+                          usecoupon.discountType === "2"
+                            ? (usecoupon.discount / 100) * sumprice
+                            : usecoupon.discount
+                        )
                         : "ใช้ส่วนลด >"}
                     </div>
                     <div className="px-2">
@@ -412,7 +413,11 @@ const MakeOrderById = () => {
                         className="absolute text-gold-mbk"
                         style={{ right: "0" }}
                       >
-                        {"-฿ " + fn.formatMoney(usecoupon.discount)}
+                        {"-฿ " + fn.formatMoney(
+                          usecoupon.discountType === "2"
+                            ? (usecoupon.discount / 100) * sumprice
+                            : usecoupon.discount
+                        )}
                       </div>
                     ) : (
                       <div className="absolute" style={{ right: "0" }}>
