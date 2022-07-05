@@ -29,11 +29,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     description: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     descriptionPromotion: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     isFlashSale: {

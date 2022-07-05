@@ -28,6 +28,8 @@ export const validationSchema = Yup.object({
     .required("* โปรดระบุที่อยู่"),
   postcode: Yup.string()
     .required("* โปรดระบุรหัสไปรษณีย์"),
+  eating: Yup.string()
+    .required("* โปรดระบุ ปัจจุบันทานข้าวแบรด์"),
 });
 export const DatePickerContainer = styled.div`
   .datepicker {

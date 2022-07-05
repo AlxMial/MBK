@@ -295,7 +295,7 @@ export default function PointEcommerce() {
         } else {
           axios.put("pointEcommerce", values).then((res) => {
             if (res.data.status) {
-              formik.values.id = res.data.tbPointEcommerce.id;
+              // formik.values.id = res.data.tbPointEcommerce.id;
               fetchData();
               setErrorPoint(false);
               setErrorPrice(false);

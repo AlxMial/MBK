@@ -50,9 +50,9 @@ const Register = () => {
   const [OptionDay, setOptionDay] = useState([]);
   const [sameEmail, setSameEmail] = useState(false);
   const [samePhone, setSamePhone] = useState(false);
-  const [page, setpage] = useState("register");
+  const [page, setpage] = useState("privacypolicy");
   const [enableButton, setEnableButton] = useState(true);
-  const [scroll,setScroll] = useState("");
+  const [scroll, setScroll] = useState("");
   const useStyle = styleSelect();
 
   const optionsYear = [];
@@ -99,8 +99,8 @@ const Register = () => {
     consentDate: new Date(),
     isPolicy1: false,
     isPolicy2: false,
-    isCustomer:"1",
-    eating:""
+    isCustomer: "1",
+    eating: "",
   });
 
   const [policy, setpolicy] = useState({
@@ -229,7 +229,7 @@ const Register = () => {
       ...prevState,
       ["isCustomer"]: value,
     }));
-  }
+  };
   const policyChange = (e) => {
     const { name } = e.target;
     if (name === "isPolicy1") Data.isPolicy1 = e.target.checked;
@@ -453,6 +453,7 @@ const Register = () => {
                 options={[
                   { value: "1", label: "ชาย" },
                   { value: "2", label: "หญิง" },
+                  { value: "3", label: "ไม่ระบุ" },
                 ]}
                 error={errors.sex}
               />
@@ -708,13 +709,24 @@ const Register = () => {
                 options={optionsCustomer}
                 Active={Data.isCustomer}
               />
+              <div className="mt-4"></div>
               <InputUC
                 name="eating"
-                lbl=""
+                lbl="ปัจจุบันทานข้าวแบรด์"
+                type="text"
+                valid={true}
+                onChange={handleChange}
+                value={Data.eating}
+                error={errors.eating}
+              />
+
+              {/* <InputUC
+                name="eating"
+                lbl="ปัจจุบันทานข้าวแบรด์"
                 type="description"
                 onChange={handleChange}
                 value={Data.eating}
-              />
+              /> */}
 
               <div className="relative  px-4  flex-grow flex-1 flex mt-5">
                 <button
@@ -755,15 +767,15 @@ const Register = () => {
               marginBottom: "1rem",
             }}
             onScroll={setScrollToEnd}
-            className="heightPolicy"
+            className="heightPolicy text-xs"
           >
             <div className="text-center mt-2 mb-1">
-              <span className="text-green-mbk font-bold text-base">
+              <span className="text-green-mbk font-bold text-sm">
                 ข้อกำหนดและเงื่อนไข
               </span>
             </div>
             <strong>
-              <span data-contrast="none">
+              <span data-contrast="none" className="text-sm">
                 ข้อกำหนดและเงื่อนไข : สำหรับสมาชิกข้าวมาบุญครอง
               </span>
             </strong>
@@ -772,7 +784,7 @@ const Register = () => {
             </span>
 
             <p></p>
-            <span data-contrast="none">
+            <span data-contrast="none text-xs">
               &nbsp; &nbsp; &nbsp; &nbsp;
               &nbsp;ข้าพเจ้ามีความประสงค์จะขอรับหมายเลขสมาชิกและเป็นสมาชิก
               โดยรับทราบ ตกลง และยอมรับข้อกำหนดและเงื่อนไข ดังต่อไปนี้
@@ -1057,7 +1069,7 @@ const Register = () => {
             </ol>
             <p>
               <strong>
-                <span data-contrast="none">
+                <span data-contrast="none" className="text-sm">
                   ข้อกำหนดและเงื่อนไขการใช้แพลตฟอร์ม
                 </span>
               </strong>
@@ -1507,7 +1519,7 @@ const Register = () => {
               <li>
                 <strong> </strong>
                 <strong>
-                  <span data-contrast="none">
+                  <span data-contrast="none" className="text-sm">
                     การปรับเปลี่ยนข้อมูลส่วนตัวของสมาชิก
                   </span>
                 </strong>
@@ -1638,7 +1650,9 @@ const Register = () => {
                 {"ยกเลิก"}
               </button>
               <button
-                className= {"disabledInput w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150" } 
+                className={
+                  "disabledInput w-6/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                }
                 type="button"
                 disabled={enableButton}
                 style={{ width: "50%" }}

@@ -75,6 +75,9 @@ router.get("/", validateToken, async (req, res) => {
           required: false
         },
       ],
+      order: [
+        ['orderNumber', 'DESC']
+      ],
     })
     if (data) {
       data.map((e, i) => {
@@ -246,7 +249,8 @@ const getorderDT = async (DT) => {
           where: {
             stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
             startDate: { [Op.lte]: new Date() },
-            endDate: { [Op.gte]: new Date() }
+            endDate: { [Op.gte]: new Date() },
+            isDeleted:false
           },
         });
         if (_tbPointEcommerce) {
@@ -1079,6 +1083,9 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             },
             required: false
           },
+        ],
+        order: [
+          ['orderNumber', 'DESC']
         ],
       });
 

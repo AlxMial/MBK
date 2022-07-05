@@ -139,6 +139,7 @@ const GameList = ({ id, setListGame, listGame }) => {
                     }
                     type="button"
                     onClick={() => {
+                      setModalData({couponName:""})
                       setOpen(true);
                     }}
                   >
