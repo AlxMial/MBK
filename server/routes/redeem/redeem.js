@@ -65,14 +65,20 @@ router.post("/", async (req, res) => {
 
     for (var i = 0; i < redeemCode.length; i++) {
       const PointDt = await tbPointCodeDT.findOne({
-        where: { code: redeemCode[i], isDeleted: false },
+        where: { [Op.or]: [
+          { code: redeemCode[i] },
+          { codeNone: redeemCode[i] },
+        ], isDeleted: false, isUse: false, isExpire: false },
       });
 
       const Point = await tbPointCodeHD.findOne({
         where: { isActive: "1", isDeleted: false },
         include: {
           model: tbPointCodeDT,
-          where: { code: redeemCode[i], isDeleted: false },
+          where: {[Op.or]: [
+            { code: redeemCode[i] },
+            { codeNone: redeemCode[i] },
+          ], isDeleted: false },
         },
       });
 
@@ -197,7 +203,7 @@ router.get("/getRedemptionconditionshd", validateLineToken, async (req, res) => 
   let RedemptionConditionsHD = []
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
-    Member = await tbMember.findOne({
+    const Member = await tbMember.findOne({
       attributes: ["id"],
       where: { uid: uid },
     });
@@ -268,7 +274,7 @@ router.post("/getRedemptionconditionshdById", validateLineToken, async (req, res
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
     const RedemptionConditionsHDId = Encrypt.DecodeKey(req.body.Id);
-    Member = await tbMember.findOne({
+    const Member = await tbMember.findOne({
       attributes: ["id", "memberPoint"],
       where: { uid: uid },
     });

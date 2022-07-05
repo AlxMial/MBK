@@ -90,6 +90,8 @@ const stock = require('./routes/ecommerce/stock');
 app.use("/mahboonkrongserver/stock", stock);
 const productCategory = require('./routes/ecommerce/productCategory');
 app.use("/mahboonkrongserver/productCategory", productCategory);
+const logisticCategory = require('./routes/ecommerce/logisticCategory');
+app.use("/mahboonkrongserver/logisticCategory", logisticCategory);
 const payment = require('./routes/ecommerce/payment');
 app.use("/mahboonkrongserver/payment", payment);
 const orderHD = require('./routes/ecommerce/order/orderHD');

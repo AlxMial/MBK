@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
+    logisticCategoryId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     addBy: {
       type: DataTypes.STRING,
       allowNull: true,
@@ -35,7 +39,8 @@ module.exports = (sequelize, DataTypes) => {
     updateBy: {
       type: DataTypes.STRING,
       allowNull: true,
-    },
+    },  
+
   });
 
   tbLogistic.associate = (models) => {

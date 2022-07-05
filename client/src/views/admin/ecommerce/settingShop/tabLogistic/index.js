@@ -88,7 +88,8 @@ const Logistic = () => {
             isShowName: '',
             isDeleted: false,
             addBy: "",
-            updateBy: ""
+            updateBy: "",
+            logisticCategoryId:""
         },
         validationSchema: yup.object({
             logisticType: yup.string().required("* กรุณากรอก บริษัทขนส่ง"),

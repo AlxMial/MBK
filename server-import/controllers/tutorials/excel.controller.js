@@ -29,6 +29,7 @@ const upload = async (req, res) => {
         if(row[0] !== null && rowx > 2 && row[0].length > 5) {
           let tutorial = {
             code:  Encrypt.EncodeKey(row[0].toLowerCase()),
+            codeNone:  Encrypt.EncodeKey(row[0].toLowerCase()),
             tbPointCodeHDId: req.body.tbPointCodeHDId,
             memberId: null,
             isUse: 0,
@@ -114,8 +115,10 @@ const generateCode = async (req, res) => {
       } else codeCoupon += splitVar[i];
     }
     codeCoupon = req.body.pointCodeSymbol + "-" + codeCoupon;
+    codeCouponNone = req.body.pointCodeSymbol + codeCoupon;
     let ArrayCoupon = {
       code: Encrypt.EncodeKey(codeCoupon.toLocaleLowerCase()),
+      codeNone: Encrypt.EncodeKey(codeCouponNone.toLocaleLowerCase()),
       tbPointCodeHDId: req.body.tbPointCodeHDId,
       memberId: null,
       isUse: 0,
@@ -133,6 +136,7 @@ const generateCode = async (req, res) => {
     for (var i = 0; i < result.length; i++) {
       let successCode = await createCoupon(result[i]);
     }
+    console.log(result)
     res.status(200).send({
       message: "Generate successfully: ",
     });

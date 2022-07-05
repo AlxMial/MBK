@@ -71,6 +71,7 @@ const StockInfo = ({
 
   const fetchData = async () => {
     const res = await axios.get("productCategory");
+    console.log(res)
     const productCategory = await res.data.tbProductCategory;
     if (productCategory) {
       // console.log('setProductCategoryList', productCategory);
