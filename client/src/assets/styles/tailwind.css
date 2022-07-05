@@ -628,14 +628,15 @@ textarea:focus,
 select:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
-  --tw-ring-inset: var(--tw-empty, /*!*/ /*!*/);
+  --tw-ring-inset: var(--tw-empty,
+      /*!*/
+      /*!*/
+    );
   --tw-ring-offset-width: 0px;
   --tw-ring-offset-color: #fff;
   --tw-ring-color: #d0b027;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
-    var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
-    calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: none;
   border-color: #d0b027;
 }
@@ -707,14 +708,15 @@ select {
 [type="checkbox"]:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
-  --tw-ring-inset: var(--tw-empty, /*!*/ /*!*/);
+  --tw-ring-inset: var(--tw-empty,
+      /*!*/
+      /*!*/
+    );
   --tw-ring-offset-width: 2px;
   --tw-ring-offset-color: #fff;
   --tw-ring-color: #d0b027;
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
-    var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
-    calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
     var(--tw-shadow, 0 0 #0000);
 }
@@ -2605,7 +2607,10 @@ select {
 }
 
 * {
-  --tw-ring-inset: var(--tw-empty, /*!*/ /*!*/);
+  --tw-ring-inset: var(--tw-empty,
+      /*!*/
+      /*!*/
+    );
   --tw-ring-offset-width: 0px;
   --tw-ring-offset-color: #fff;
   --tw-ring-color: rgba(59, 130, 246, 0.5);
@@ -2614,10 +2619,8 @@ select {
 }
 
 .focus\:ring:focus {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
-    var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
-    calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
     var(--tw-shadow, 0 0 #0000);
 }
@@ -2755,6 +2758,7 @@ select {
   --tw-text-opacity: 1;
   color: rgba(30, 41, 59, var(--tw-text-opacity));
 }
+
 .text-underline {
   text-decoration: underline;
 }
@@ -2945,13 +2949,8 @@ select {
   --tw-skew-y: 0;
   --tw-scale-x: 1;
   --tw-scale-y: 1;
-  -webkit-transform: translateX(var(--tw-translate-x))
-    translateY(var(--tw-translate-y)) rotate(var(--tw-rotate))
-    skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x))
-    scaleY(var(--tw-scale-y));
-  transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y))
-    rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y))
-    scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  -webkit-transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+  transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
 .transition-all {
@@ -2983,6 +2982,7 @@ select {
 }
 
 @-webkit-keyframes ping {
+
   75%,
   100% {
     -webkit-transform: scale(2);
@@ -2992,6 +2992,7 @@ select {
 }
 
 @keyframes ping {
+
   75%,
   100% {
     -webkit-transform: scale(2);
@@ -3013,6 +3014,7 @@ select {
 }
 
 @-webkit-keyframes bounce {
+
   0%,
   100% {
     -webkit-transform: translateY(-25%);
@@ -3030,6 +3032,7 @@ select {
 }
 
 @keyframes bounce {
+
   0%,
   100% {
     -webkit-transform: translateY(-25%);
@@ -3468,8 +3471,7 @@ select {
   }
 }
 
-@media (min-width: 1536px) {
-}
+@media (min-width: 1536px) {}
 
 ::-webkit-scrollbar {
   width: 20px;
@@ -3811,17 +3813,17 @@ strike {
   color: #334155 !important;
 }
 
-.ant-tabs-top > .ant-tabs-nav::before,
-.ant-tabs-bottom > .ant-tabs-nav::before,
-.ant-tabs-top > div > .ant-tabs-nav::before,
-.ant-tabs-bottom > div > .ant-tabs-nav::before {
+.ant-tabs-top>.ant-tabs-nav::before,
+.ant-tabs-bottom>.ant-tabs-nav::before,
+.ant-tabs-top>div>.ant-tabs-nav::before,
+.ant-tabs-bottom>div>.ant-tabs-nav::before {
   border: unset !important;
 }
 
-.ant-tabs-top > .ant-tabs-nav,
-.ant-tabs-bottom > .ant-tabs-nav,
-.ant-tabs-top > div > .ant-tabs-nav,
-.ant-tabs-bottom > div > .ant-tabs-nav {
+.ant-tabs-top>.ant-tabs-nav,
+.ant-tabs-bottom>.ant-tabs-nav,
+.ant-tabs-top>div>.ant-tabs-nav,
+.ant-tabs-bottom>div>.ant-tabs-nav {
   margin: 0 !important;
 }
 
@@ -3856,7 +3858,7 @@ strike {
   width: 100%;
 }
 
-.Tabs-line .ant-tabs-tab + .ant-tabs-tab {
+.Tabs-line .ant-tabs-tab+.ant-tabs-tab {
   margin: 0;
 }
 
@@ -3888,11 +3890,11 @@ strike {
 
 .ant-radio-wrapper:hover .ant-radio,
 .ant-radio:hover .ant-radio-inner,
-.ant-radio-input:focus + .ant-radio-inner {
+.ant-radio-input:focus+.ant-radio-inner {
   border-color: #047738 !important;
 }
 
-.ant-radio-input:focus + .ant-radio-inner {
+.ant-radio-input:focus+.ant-radio-inner {
   box-shadow: 0 0 0 3px #dfe7e3 !important;
 }
 
@@ -3923,11 +3925,11 @@ strike {
   position: relative;
 }
 
-.imageUpload > input {
+.imageUpload>input {
   display: none;
 }
 
-.image-upload > input {
+.image-upload>input {
   display: none;
 }
 
@@ -3985,7 +3987,7 @@ strike {
   transform: translateY(70%) scale(1);
 }
 
-.dateRegister .ant-picker-input > input {
+.dateRegister .ant-picker-input>input {
   text-align: center;
 }
 
@@ -4069,8 +4071,7 @@ strike {
   overflow-y: auto;
 }
 
-.product-scroll {
-}
+.product-scroll {}
 
 .product-scroll::-webkit-scrollbar {
   display: none;
@@ -4128,7 +4129,7 @@ strike {
   padding: 0 !important;
 }
 
-.datepicker .datepicker-scroll > li {
+.datepicker .datepicker-scroll>li {
   height: 40px !important;
   line-height: 30px !important;
   font-size: 0.875em !important;
@@ -4151,7 +4152,7 @@ strike {
 
 /* Image Stock */
 
-.image-upload-stock > input {
+.image-upload-stock>input {
   display: none;
 }
 
@@ -4198,12 +4199,12 @@ strike {
   height: 100%;
 }
 
-.react-slideshow-container + ul.indicators {
+.react-slideshow-container+ul.indicators {
   margin-top: -20px !important;
 }
 
-.react-slideshow-container + ul.indicators .each-slideshow-indicator:before {
-  background-color: #fff !important;
+.react-slideshow-container+ul.indicators .each-slideshow-indicator:before {
+  background-color: #ffcf00 !important
 }
 
 .line-row {
@@ -4435,8 +4436,7 @@ input[type="number"] {
   }
 }
 
-@media only screen and (max-width: 1024px) {
-}
+@media only screen and (max-width: 1024px) {}
 
 @media only screen and (max-width: 912px) {
   .mobile {
@@ -4579,6 +4579,7 @@ input[type="number"] {
   .liff-Reward-height {
     height: 70%;
   }
+
   /* .liff-footer {
     height: calc(100vh - 412px);
   } */
@@ -4597,6 +4598,7 @@ input[type="number"] {
   .liff-Reward-height {
     height: 70%;
   }
+
   /* .liff-footer{
     height: calc(100vh - 532px);
     /* position: fixed;
@@ -4623,6 +4625,7 @@ input[type="number"] {
   .heightPolicy {
     height: 55vh;
   }
+
   /* .liff-footer {
     height: calc(100vh - 463px);
   } */
@@ -4704,6 +4707,7 @@ input[type="number"] {
   .liff-Reward-height {
     height: 70%;
   }
+
   /* .liff-footer {
     height: calc(100vh - 375px);
   } */
@@ -4847,7 +4851,7 @@ input[type="number"] {
   box-shadow: none;
 }
 
-.Radio-Payment > span:nth-child(2) {
+.Radio-Payment>span:nth-child(2) {
   width: 100%;
 }
 
@@ -5011,16 +5015,19 @@ button.bt-quantity.broder-plus {
   -moz-animation: spin 1s linear infinite;
   animation: spin 1s linear infinite;
 }
+
 @-moz-keyframes spin {
   100% {
     -moz-transform: rotate(360deg);
   }
 }
+
 @-webkit-keyframes spin {
   100% {
     -webkit-transform: rotate(360deg);
   }
 }
+
 @keyframes spin {
   100% {
     -webkit-transform: rotate(360deg);

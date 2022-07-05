@@ -67,7 +67,7 @@ const InfoCoupon = () => {
                                     </div>
                                 </div>
                                 <div className=" px-2 relative" style={{ width: "70%" }}>
-                                    <div className="w-full  font-bold"> {MyCoupon.couponName} </div>
+                                    <div className="w-full  font-bold line-clamp-2 "> {MyCoupon.couponName} </div>
                                     <div className="w-full absolute" style={{ bottom: "0" }}>{"ใช้ " + MyCoupon.points + " คะแนน"} </div>
                                 </div>
                             </div>
