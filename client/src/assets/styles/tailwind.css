@@ -4021,7 +4021,6 @@ strike {
   /* width:100px; */
 }
 
-
 .TextWordWarp-150 {
   white-space: nowrap;
   overflow: hidden;
@@ -4376,12 +4375,11 @@ input[type="number"] {
   .widthDigi {
     width: 120px;
   }
-  
+
   .Overflow-Banner {
     max-height: 70vh;
     overflow-y: auto;
   }
-
 }
 
 @media only screen and (max-width: 1536px) {
@@ -5005,7 +5003,7 @@ button.bt-quantity.broder-plus {
 .disabledInput button,
 [type="button"]:disabled {
   background-color: white !important;
-  color: #374151;
+  color: #ccc;
 }
 
 .image360 {

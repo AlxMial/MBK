@@ -72,10 +72,10 @@ const MyAward = () => {
                   history.push(path.infocoupon.replace(":id", e.couponId))
                 }}>
                   <div
-                    className="flex mr-4"
+                    className="flex mr-8 pl-2"
                     style={{ justifyContent: "center" }}
                   >
-                    <div style={{ width: "120px", height: "70px" }}>
+                    <div style={{ width: "140px", height: "80px" }}>
                       <ImageUC
                         find={1}
                         relatedid={e.id}

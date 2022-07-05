@@ -50,7 +50,7 @@ const Register = () => {
   const [OptionDay, setOptionDay] = useState([]);
   const [sameEmail, setSameEmail] = useState(false);
   const [samePhone, setSamePhone] = useState(false);
-  const [page, setpage] = useState("privacypolicy");
+  const [page, setpage] = useState("register");
   const [enableButton, setEnableButton] = useState(true);
   const [scroll, setScroll] = useState("");
   const useStyle = styleSelect();
@@ -350,15 +350,15 @@ const Register = () => {
         res.data.status
           ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
           : res.data.isPhone === false
-          ? (msg.msg =
+            ? (msg.msg =
               "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-          : res.data.isEmail === false
-          ? (msg.msg =
-              "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
-          : res.data.isMemberCard === false
-          ? (msg.msg =
-              "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
-          : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
+            : res.data.isEmail === false
+              ? (msg.msg =
+                "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+              : res.data.isMemberCard === false
+                ? (msg.msg =
+                  "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+                : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
         // addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
         if (res.data.status) {
@@ -385,7 +385,7 @@ const Register = () => {
             }}
           >
             <div
-              className="fullheight"
+              className="fullheight line-scroll"
               style={{
                 width: "100%",
                 backgroundColor: "#FFF",
@@ -393,7 +393,7 @@ const Register = () => {
                 minHeight: "450px",
                 borderRadius: "10px",
                 padding: "20px",
-                overflowY: "scroll",
+                // overflowY: "scroll",
               }}
             >
               <div className="flex text-green-mbk font-bold text-lg mb-4">
@@ -712,7 +712,7 @@ const Register = () => {
               <div className="mt-4"></div>
               <InputUC
                 name="eating"
-                lbl="ปัจจุบันทานข้าวแบรด์"
+                lbl="ปัจจุบันทานข้าวแบรนด์"
                 type="text"
                 valid={true}
                 onChange={handleChange}
@@ -733,7 +733,7 @@ const Register = () => {
                   className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                   type="button"
                   style={{ width: "50%" }}
-                  // onClick={windowclose}
+                // onClick={windowclose}
                 >
                   {"ยกเลิก"}
                 </button>
@@ -763,11 +763,10 @@ const Register = () => {
               padding: "20px",
               margin: "auto",
               borderRadius: "10px",
-              overflowY: "auto",
               marginBottom: "1rem",
             }}
             onScroll={setScrollToEnd}
-            className="heightPolicy text-xs"
+            className="heightPolicy text-xs line-scroll"
           >
             <div className="text-center mt-2 mb-1">
               <span className="text-green-mbk font-bold text-sm">
@@ -1162,7 +1161,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.2    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.2
               </span>
               <span data-contrast="none">
                 ผู้ใช้งานรับรองว่าบรรดาข้อมูลที่ได้ให้ไว้แก่บริษัทในแพลตฟอร์มเป็นข้อมูลของผู้ใช้งานที่ถูกต้องครบถ้วน
@@ -1175,7 +1174,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.3    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.3
               </span>
               <span data-contrast="none">
                 ผู้ใช้งานตกลงและรับทราบว่า
@@ -1189,7 +1188,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.4    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.4
               </span>
               <span data-contrast="none">
                 ก่อนจะทำรายการใด ๆ ผ่านแพลตฟอร์ม
@@ -1204,7 +1203,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.5    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.5
               </span>
               <span data-contrast="none">
                 ผู้ใช้งานจะตรวจสอบเงื่อนไขเกี่ยวกับสิทธิประโยชน์
@@ -1221,7 +1220,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.6    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.6
               </span>
               <span data-contrast="none">
                 การใช้งานแพลตฟอร์มในแต่ละครั้ง
@@ -1261,7 +1260,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.8    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.8
               </span>
               <span data-contrast="none">
                 ในกรณีที่มีเหตุอันสมควร บริษัทอาจระงับหรือยกเลิกการให้บริการ
@@ -1274,7 +1273,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.9    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.9
               </span>
               <span data-contrast="none">
                 คะแนนสะสมที่ปรากฏเมื่อมีการตรวจสอบคะแนน
@@ -1290,7 +1289,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.10    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.10
               </span>
               <span data-contrast="none">
                 คะแนนสะสมที่แลกผ่านทางแพลตฟอร์ม
@@ -1302,7 +1301,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.11    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.11
               </span>
               <span data-contrast="none">
                 ในการแลกคะแนนบนแพลตฟอร์ม
@@ -1315,7 +1314,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.12    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.12
               </span>
               <span data-contrast="none">
                 เมื่อผู้ใช้งานทำการยืนยันการแลกคะแนนหรือโอนคะแนนบนแพลตฟอร์มเรียบร้อยแล้ว
@@ -1358,7 +1357,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.15    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.15
               </span>
               <span data-contrast="none">คะแนนสะสมจะมีอายุ </span>
               <span data-contrast="none">1 (</span>
@@ -1398,7 +1397,7 @@ const Register = () => {
             </ol>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.1    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.1
               </span>
               <span data-contrast="none">
                 ผู้ขอใช้บริการสามารถสมัครสมาชิกได้โดยจะต้องทำการให้รายละเอียดข้อมูลตามที่บริษัทกำหนด
@@ -1411,7 +1410,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.2    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.2
               </span>
               <span data-contrast="none">
                 ผู้สมัครตกลงและยอมรับตามข้อกำหนดและเงื่อนไขต่าง ๆ
@@ -1424,7 +1423,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.3    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.3
               </span>
               <span data-contrast="none">
                 ผู้สมัครรับรองว่าบรรดาข้อมูลที่ได้ให้ไว้แก่บริษัทในการลงทะเบียนเป็นสมาชิกถูกต้องครบถ้วน
@@ -1482,7 +1481,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3.1    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3.1
               </span>
               <span data-contrast="none">
                 ผู้ขอใช้บริการสามารถลงทะเบียนเข้าใช้งานแพลตฟอร์มได้โดยจะต้องทำการให้รายละเอียดข้อมูลตามที่บริษัทกำหนด
@@ -1505,7 +1504,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3.2    
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3.2
               </span>
               <span data-contrast="none">
                 สมาชิกรับรองว่าบรรดาข้อมูลที่ได้ให้ไว้แก่บริษัทในการลงทะเบียนเข้าใช้แพลตฟอร์มนี้ถูกต้องครบถ้วน
@@ -1559,7 +1558,7 @@ const Register = () => {
                   }}
                 >
                   ข้าพเจ้ายินยอมให้ บริษัท ข้าวมาบุญครอง จำกัด ("บริษัทฯ")
-                  รวมถึงบริษัทในกลุ่มเอ็มบีเคและพันธมิตรทางธุรกิจประมวลผลข้อมูลส่วนบุคคลของข้าพเจ้า 
+                  รวมถึงบริษัทในกลุ่มเอ็มบีเคและพันธมิตรทางธุรกิจประมวลผลข้อมูลส่วนบุคคลของข้าพเจ้า
                 </span>
               </label>
             </div>
@@ -1626,11 +1625,12 @@ const Register = () => {
                   <a
                     href="https://www.prg.co.th/th/privacy_policy"
                     style={{
-                      textDecorationLine: "underline",
-                      textDecorationThickness: "2px",
+                      // textDecorationLine: "underline",
+                      // textDecorationColor: '#d0b027',
+                      // textDecorationThickness: "2px",
                       lineHeight: "1.2",
                     }}
-                    className="policyLink text-xs"
+                    className="underline text-xs text-gold-mbk"
                     target="_blank"
                   >
                     นโยบายคุ้มครองข้อมูลส่วนบุคคล (Privacy Policy)
