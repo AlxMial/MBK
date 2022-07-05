@@ -460,9 +460,9 @@ const ShopList = () => {
                           return (
                             <div
                               key={i}
-                              className="px-2 relative"
-                              // style={{ minWidth: "170px", width: "200px" }}
-                              style={{ maxWidth: "170px" }}
+                              className="relative"
+                              // style={{ minWidth: "150px", width: "200px" }}
+                              style={{ minWidth: "calc(50vw - 9px - 5%)", padding: "0px 10px" }}
                               onClick={() => {
                                 history.push(
                                   path.showProducts.replace(":id", e.id)
@@ -577,7 +577,7 @@ const ShopList = () => {
                 </div>
               </div>
             ) : null}
-            <div className="mt-2 mb-2 mt-2">
+            <div className="mt-2 mb-2">
               <div className="line-row mb-2 ">
                 {[...tbStockiewNominal].map((e, i) => {
                   return (

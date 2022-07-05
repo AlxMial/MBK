@@ -87,17 +87,19 @@ module.exports = (sequelize, DataTypes) => {
     isPolicy1: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
-    }
-    , isPolicy2: {
+    },
+    isPolicy2: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
-    }, isCustomer :{
+    },
+    isCustomer: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
-    }, eating  :{
+    },
+    eating: {
       type: DataTypes.STRING,
       allowNull: true,
-    }
+    },
   });
 
   tbMember.associate = (models) => {

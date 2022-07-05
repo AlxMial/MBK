@@ -189,9 +189,9 @@ const getorderDT = async (DT) => {
         // } else {
         //   total += _tbStock.price * DT[i].amount;
         // }
-
-        total = _tbStock.price - _tbStock.discount;
-
+        
+        total = total + (_tbStock.price - _tbStock.discount);
+        
         orderDT.push({
           stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
           amount: DT[i].amount,
@@ -431,7 +431,6 @@ const getDiscountCoupon = async (usecouponid, total) => {
           if (_tbRedemptionCoupon.discountType === "1") {
             DiscountCoupon = _tbRedemptionCoupon.discount;
           } else {
-            console.log(total)
             DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * total;
           }
         }
@@ -530,6 +529,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     let _getorderDT = await getorderDT(orderdt)
     if (_getorderDT.status) {
       total = _getorderDT.total
+      console.log(_getorderDT.total)
       sumprice = _getorderDT.total
       point = _getorderDT.point
       orderDT = _getorderDT.orderDT
@@ -1444,8 +1444,8 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
             //   price = dt.price - dt.discount;
             // }
             // total = total + price * dt.amount;
-            total = (dt.price - dt.discount) * dt.amount
-            sumprice = (dt.price - dt.discount) * dt.amount
+            total = total +  (dt.price - dt.discount) * dt.amount
+            sumprice = total + (dt.price - dt.discount) * dt.amount
           } else {
             total = total + dt.price * dt.amount;
             sumprice = total + dt.price * dt.amount;
@@ -2140,6 +2140,7 @@ router.post(
           });
         });
       }
+      
     } catch (e) {
       status = false;
       msg = e.message;

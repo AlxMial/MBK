@@ -40,6 +40,7 @@ const PaymentInfo = () => {
       (res) => {
         if (res.status) {
           if (res.data.status) {
+            console.log(res.data.OrderHD)
             setOrderHD(res.data.OrderHD);
             setstatuspayment(res.data.status);
           } else {
@@ -284,10 +285,10 @@ const PaymentInfo = () => {
                                           {
                                             type: "image",
                                             originalContentUrl:
-                                              "https://undefined.ddns.net/mahboonkrongserver/image/getImgQrCode/" +
+                                              "https://undefined.ddns.net/mbkserver/image/getImgQrCode/" +
                                               OrderHD.Payment.id,
                                             previewImageUrl:
-                                              "https://undefined.ddns.net/mahboonkrongserver/image/getImgQrCode/" +
+                                              "https://undefined.ddns.net/mbkserver/image/getImgQrCode/" +
                                               OrderHD.Payment.id,
                                           },
                                         ],
