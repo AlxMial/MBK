@@ -52,7 +52,7 @@ const ShopList = () => {
     useInterval(() => {
       const current_date = new Date().getTime();
       let _endTimeCampaign = new Date(
-        new Date().toISOString().split("T")[0] +
+        new Date().toISOString().split("T")[0].replace(/-/g, '/') +
         " " +
         endTimeCampaign
       );
@@ -110,18 +110,18 @@ const ShopList = () => {
             tbStockiewNominal.push(e);
           } else {
             let startDateCampaign = new Date(
-              new Date(e.startDateCampaign).toISOString().split("T")[0]
+              new Date(e.startDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
             );
             let endDateCampaign = new Date(
-              new Date(e.endDateCampaign).toISOString().split("T")[0]
+              new Date(e.endDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
             );
-            let today = new Date(new Date().toISOString().split("T")[0]);
+            let today = new Date(new Date().toISOString().split("T")[0].replace(/-/g, '/'));
             if (today >= startDateCampaign && today <= endDateCampaign) {
               let startTimeCampaign = new Date(
-                new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign
+                new Date().toISOString().split("T")[0].replace(/-/g, '/') + " " + e.startTimeCampaign
               );
               let endTimeCampaign = new Date(
-                new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign
+                new Date().toISOString().split("T")[0].replace(/-/g, '/') + " " + e.endTimeCampaign
               );
               today = new Date();
               if (today > startTimeCampaign && today < endTimeCampaign) {
@@ -160,18 +160,18 @@ const ShopList = () => {
             tbStockiewNominal.push(e);
           } else {
             let startDateCampaign = new Date(
-              new Date(e.startDateCampaign).toISOString().split("T")[0]
+              new Date(e.startDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
             );
             let endDateCampaign = new Date(
-              new Date(e.endDateCampaign).toISOString().split("T")[0]
+              new Date(e.endDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
             );
-            let today = new Date(new Date().toISOString().split("T")[0]);
+            let today = new Date(new Date().toISOString().split("T")[0].replace(/-/g, '/'));
             if (today >= startDateCampaign && today <= endDateCampaign) {
               let startTimeCampaign = new Date(
-                new Date().toISOString().split("T")[0] + " " + e.startTimeCampaign
+                new Date().toISOString().split("T")[0].replace(/-/g, '/') + " " + e.startTimeCampaign
               );
               let endTimeCampaign = new Date(
-                new Date().toISOString().split("T")[0] + " " + e.endTimeCampaign
+                new Date().toISOString().split("T")[0].replace(/-/g, '/') + " " + e.endTimeCampaign
               );
               today = new Date();
               if (today > startTimeCampaign && today < endTimeCampaign) {
@@ -247,28 +247,35 @@ const ShopList = () => {
           let tbStockiewFlashSale = [];
           tbStock.filter((e) => {
 
-            if (!e.isFlashSale) {
+            if (e.isFlashSale === false) {
               tbStockiewNominal.push(e);
             } else {
               let startDateCampaign = new Date(
-                new Date(e.startDateCampaign).toISOString().split("T")[0]
+                new Date(e.startDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
               );
               let endDateCampaign = new Date(
-                new Date(e.endDateCampaign).toISOString().split("T")[0]
+                new Date(e.endDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
               );
-              let today = new Date(new Date().toISOString().split("T")[0]);
+              // let today = new Date(new Date().toISOString().split("T")[0]);
+              let _today = new Date();
+              let today = new Date(_today.getFullYear() + "/" + (_today.getMonth() + 1) + "/" + _today.getDate());
               if (today >= startDateCampaign && today <= endDateCampaign) {
                 let startTimeCampaign = new Date(
-                  new Date().toISOString().split("T")[0] +
+                  new Date().toISOString().split("T")[0].replace(/-/g, '/') +
                   " " +
                   e.startTimeCampaign
                 );
                 let endTimeCampaign = new Date(
-                  new Date().toISOString().split("T")[0] +
+                  new Date().toISOString().split("T")[0].replace(/-/g, '/') +
                   " " +
                   e.endTimeCampaign
                 );
                 today = new Date();
+                // console.log(' new Date().toISOString().split("T")[0]', new Date().toISOString().split("T")[0].replace(/-/g, '/'))
+                // console.log('today', today)
+                // console.log('startTimeCampaign', startTimeCampaign)
+                // console.log('endTimeCampaign', endTimeCampaign)
+
                 if (today > startTimeCampaign && today < endTimeCampaign) {
                   tbStockiewFlashSale.push(e);
                 } else {
