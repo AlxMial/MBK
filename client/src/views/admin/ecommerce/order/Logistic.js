@@ -7,12 +7,12 @@ import InputUC from 'components/InputUC';
 import CheckBoxUC from "components/CheckBoxUC";
 import TextAreaUC from 'components/InputUC/TextAreaUC';
 
-const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus }) => {
+const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCancelOrder, tbCancelOrder }) => {
     const { orderHD, orderHDold, orderDT, memberData,
         isChangeOrderNumber, isCanEdit,
         setIsChangeOrderNumber, orderNumber,
         setOrderNumber, isCancel, setIsCancel
-        , transportStatus, setTransportStatus
+
         , cancelReason, setCancelReason, } = props;
     // const [transportStatus, setTransportStatus] = useState(orderHD.transportStatus);
     const [address, setAddress] = useState(orderHD.address);
@@ -22,28 +22,12 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus }) => {
     const [isChangeTrackNo, setisChangeTrackNo] = useState(false);
 
 
-    const getStatus = (value) => {
-        if (value && value === 'done')
-            return { text: 'ส่งแล้ว', bg: ' rgba(188, 240, 218, 1) ' };
-        else if (value && value === 'inTransit')
-            return { text: 'กำลังส่ง', bg: ' rgba(252, 217, 189,1) ' };
-        else if (value && value === 'prepare')
-            return { text: 'เตรียมส่ง', bg: ' rgba(102, 205 ,255,1) ' };
-        else
-            return { text: '', bg: ' rgba(102, 205 ,255,1) ' };
-    }
 
     const logisticTypeList = [
         { label: "Kerry Express", value: 'kerry' },
         // { label: "Flash Express", value: 'flash' },
         { label: "ไปรษณีย์ไทย", value: 'post' },
     ];
-
-    // const options = [
-    //     { value: 1, label: 'เตรียมส่ง' },
-    //     { value: 2, label: 'กำลังส่ง' },
-    //     { value: 3, label: 'ส่งแล้ว' },
-    // ];
 
     const getoption = () => {
         if (orderHDold.transportStatus == 1) {
@@ -67,7 +51,29 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus }) => {
         }
 
     }
-
+    const getCss = (value) => {
+        if (value && value == 1)
+            return {
+                control: (base, state) => ({
+                    ...base,
+                    background: "hsl(57deg 87% 91%)",
+                }),
+            };
+        else if (value && value == 2)
+            return {
+                control: (base, state) => ({
+                    ...base,
+                    background: "hsl(148deg 48% 83%)",
+                }),
+            };
+        else
+            return {
+                control: (base, state) => ({
+                    ...base,
+                    background: "hsl(1deg 82% 87%)",
+                }),
+            };
+    };
     useEffect(async () => {
         const subDistrict = await Address.getAddressName("subDistrict", memberData.subDistrict);
         const district = await Address.getAddressName("district", memberData.district);
@@ -118,7 +124,7 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus }) => {
                             )}
                             // isDisabled={orderHD.paymentStatus != 3 && !isCanEdit}
                             isDisabled={!isCanEdit ? true : orderHD.paymentStatus != 3 ? true : false}
-                        // bgColor={getStatus(transportStatus).bg}
+                            customStyles={getCss(orderHD.transportStatus)}
                         />
                     </div>
                 </div>
@@ -180,13 +186,18 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus }) => {
                         classSpan='text-cancel'
                         onChange={(e) => {
                             setIsCancel(e.target.checked);
-                            if (orderHD.tbCancelOrder === undefined) {
-                                orderHD.tbCancelOrder = { cancelDetail: OpenmodelCancel[0].value }
-                                setOrderHD(orderHD);
+                            if (tbCancelOrder == undefined) {
+                                let tbCancelOrder = {
+                                    cancelDetail:
+                                        OpenmodelCancel[0].value
+                                }
+                                settbCancelOrder(tbCancelOrder)
 
                             }
-                            console.log(e.target.checked)
-                            setOrderHD(p => { return { ...p, isCancel: e.target.checked } })
+
+                            // settbCancelOrder, tbCancelOrder
+                            // console.log(e.target.checked)
+                            // setOrderHD(p => { return { ...p, isCancel: e.target.checked } })
                         }}
                         disabled={!isCanEdit ? true : (orderHD.paymentStatus === 3)}
                         checked={isCancel}
@@ -200,18 +211,18 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus }) => {
                             name="cancelDetail"
                             onChange={(value) => {
 
-                                if (orderHD.tbCancelOrder == null) {
-                                    orderHD.tbCancelOrder = { cancelDetail: value.value }
+                                if (tbCancelOrder == null) {
+                                    tbCancelOrder = { cancelDetail: value.value }
                                 } else {
-                                    orderHD.tbCancelOrder.cancelDetail = value.value
+                                    tbCancelOrder.cancelDetail = value.value
                                 }
-                                setDalay(orderHD.tbCancelOrder.cancelDetail);
-                                setOrderHD(orderHD)
+                                setDalay(tbCancelOrder.cancelDetail);
+                                settbCancelOrder(tbCancelOrder)
                             }}
                             options={OpenmodelCancel}
                             value={ValidateService.defaultValue(
                                 OpenmodelCancel,
-                                orderHD.tbCancelOrder == null ? null : delay
+                                tbCancelOrder == null ? null : tbCancelOrder.cancelDetail == null ? null : delay
                             )}
                             isDisabled={!isCanEdit ? true : (orderHD.paymentStatus === 3) ? true : !isCancel ? true : false}
                         // bgColor={getStatus(transportStatus).bg}
@@ -223,19 +234,17 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus }) => {
                     <div className='py-2 margin-auto-t-b w-full flex mt-2'>
                         <TextAreaUC
                             name='cancelReason'
-                            value={orderHD.tbCancelOrder == null ? "" : orderHD.tbCancelOrder.cancelOtherRemark}
+                            value={tbCancelOrder == null ? "" : tbCancelOrder.cancelOtherRemark}
                             rows={3}
                             maxLength={255}
                             disabled={!isCanEdit ? true : (orderHD.paymentStatus === 3) ? true : !isCancel ? true : false}
                             onChange={(e) => {
-                                setCancelReason(e.target.value);
-                                if (orderHD.tbCancelOrder == null) {
-                                    orderHD.tbCancelOrder = { cancelOtherRemark: e.target.value }
+                                if (tbCancelOrder == null) {
+                                    tbCancelOrder = { cancelOtherRemark: e.target.value }
                                 } else {
-                                    orderHD.tbCancelOrder.cancelOtherRemark = e.target.value
+                                    tbCancelOrder.cancelOtherRemark = e.target.value
                                 }
-                                setOrderHD(orderHD)
-
+                                settbCancelOrder(tbCancelOrder)
                             }} />
                     </div>
                     <div className='py-2 margin-auto-t-b w-full flex'>
@@ -245,20 +254,17 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus }) => {
                             classLabel="mt-2 text-green-mbk"
                             // classSpan='text-cancel'
                             onChange={(e) => {
-                                // setIsCancel(e.target.checked);
-                                console.log(orderHD.tbCancelOrder)
-                                if (orderHD.tbCancelOrder === undefined) {
-                                    orderHD.tbCancelOrder = { cancelStatus: e.target.checked }
-                                    console.log(orderHD.tbCancelOrder.cancelStatus)
+                                if (tbCancelOrder === undefined) {
+                                    tbCancelOrder = { cancelStatus: e.target.checked }
                                 } else {
-                                    orderHD.tbCancelOrder.cancelStatus = e.target.checked
+                                    tbCancelOrder.cancelStatus = e.target.checked
                                 }
-                                setOrderHD(orderHD);
-                                setcancelStatus(e.target.checked)
-
+                                setDalay(tbCancelOrder.cancelStatus);
+                                settbCancelOrder(tbCancelOrder)
                             }}
                             disabled={!isCanEdit ? true : (orderHD.paymentStatus === 3) ? true : !isCancel ? true : false}
-                            checked={cancelStatus}
+                            checked={tbCancelOrder == null ? false : (tbCancelOrder.cancelStatus == null ? false : tbCancelOrder.cancelStatus)}
+
                         />
                     </div>
 

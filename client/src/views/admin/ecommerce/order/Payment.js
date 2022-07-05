@@ -32,6 +32,29 @@ const Payment = ({ props, setOrderHD }) => {
         }
 
     }
+    const getCss = (value) => {
+        if (value && value == 1)
+            return {
+                control: (base, state) => ({
+                    ...base,
+                    background: "hsl(57deg 87% 91%)",
+                }),
+            };
+        else if (value && value == 2)
+            return {
+                control: (base, state) => ({
+                    ...base,
+                    background: "hsl(148deg 48% 83%)",
+                }),
+            };
+        else
+            return {
+                control: (base, state) => ({
+                    ...base,
+                    background: "hsl(1deg 82% 87%)",
+                }),
+            };
+    };
     useEffect(async () => {
         const response = await axios.get(`/payment/byId/${orderHD.paymentId}`);
         if (response.data.status) {
@@ -53,7 +76,8 @@ const Payment = ({ props, setOrderHD }) => {
                         </div>
 
                     </div>
-                    <div>
+                    <div style={{ minWidth: "100px" }} >
+
                         <div className={'p-2 rounded '}>
                             <SelectUC
                                 name="transportType"
@@ -68,7 +92,7 @@ const Payment = ({ props, setOrderHD }) => {
                                 )}
                                 isOptionDisabled={(option) => option.disabled}
                                 isDisabled={!isCanEdit}
-                            // bgColor={getStatus(orderHD.paymentStatus).bg}
+                                customStyles={getCss( orderHD.paymentStatus)}
                             />
                         </div>
                     </div>

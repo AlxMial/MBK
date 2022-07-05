@@ -32,10 +32,12 @@ const Order = () => {
     const [cancelStatus, setcancelStatus] = useState(null);
     const [ismodalIsOpenEdit, setmodalIsOpenEdit] = useState({ open: false, callback: () => { } });
 
+    const [tbCancelOrder, settbCancelOrder] = useState(null);
 
     const fetchData = async () => {
         dispatch(fetchLoading());
         setOrderImage(null);
+        
         await axios.get("order/orderHD").then(async (response) => {
             if (!response.data.error && response.data.tbOrderHD) {
                 let _orderData = response.data.tbOrderHD;
@@ -84,6 +86,7 @@ const Order = () => {
 
     const openModal = async (id) => {
         dispatch(fetchLoading());
+        settbCancelOrder(null)
         const data = orderList.filter((x) => x.id === id);
         if (data && data.length > 0) {
             setOrderHD(data[0]);
@@ -95,6 +98,7 @@ const Order = () => {
                 if (!res.data.error && res.data.tbCancelOrder) {
                     setCancelReason(res.data.tbCancelOrder.cancelOtherRemark);
                     setcancelStatus(res.data.tbCancelOrder.cancelStatus == 2 ? true : false)
+                    settbCancelOrder(res.data.tbCancelOrder)
                 }
             }
             const res = await axios.get("order/orderDT/byOrderId/" + id);
@@ -153,9 +157,9 @@ const Order = () => {
                                         id: '',
                                         orderId: orderHD.id,
                                         cancelStatus: cancelStatus ? 2 : 3,
-                                        cancelDetail: orderHD.tbCancelOrder.cancelDetail == undefined ? "" : orderHD.tbCancelOrder.cancelDetail,
-                                        description: orderHD.tbCancelOrder.description,
-                                        cancelOtherRemark: cancelReason,
+                                        cancelDetail: tbCancelOrder.cancelDetail == undefined ? "" : tbCancelOrder.cancelDetail,
+                                        description: tbCancelOrder.description,
+                                        cancelOtherRemark: tbCancelOrder.cancelOtherRemark,
                                         cancelType: 1,
                                         addBy: sessionStorage.getItem('user'),
                                         updateBy: sessionStorage.getItem('user'),
@@ -223,6 +227,7 @@ const Order = () => {
                     setmodalIsOpenEdit({ open: false })
                 }}
                 confirmModal={() => {
+                    setmodalIsOpenEdit({ open: false })
                     ismodalIsOpenEdit.callback()
                 }}
                 returnModal={() => {
@@ -251,7 +256,10 @@ const Order = () => {
                 handleModal={handleModal}
                 setOrderHD={setOrderHD}
                 cancelStatus={cancelStatus}
-                setcancelStatus={setcancelStatus} />}
+                setcancelStatus={setcancelStatus}
+
+                tbCancelOrder={tbCancelOrder} settbCancelOrder={settbCancelOrder}
+            />}
 
 
 
