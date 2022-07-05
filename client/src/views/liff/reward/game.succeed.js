@@ -19,15 +19,16 @@ const GameSucceed = ({ data }) => {
                             ได้รับ
                         </div>
                         <div className="w-full flex mx-auto mt-2 justify-center" style={{
-                            width: "150px", height: "150px"
+                            height: "150px"
                         }}>
-                            <div style={{ width: "150px", height: "150px", margin: "auto" }}>
+                            <div style={{ height: "150px", margin: "auto" }}>
                                 <ImageUC
                                     find={1}
                                     relatedid={data.id}
                                     relatedtable={[(data.type == "Coupon" ? "tbRedemptionCoupon" : "tbRedemptionProduct")]}
                                     alt="img"
                                     className=" animated-img"
+                                    imgclassname="h-full"
                                 ></ImageUC>
                             </div>
                         </div>
@@ -47,9 +48,9 @@ const GameSucceed = ({ data }) => {
                             }}>
 
                                 <div className="font-bold text-center mb-2">รายละเอียด</div>
-                                <div className="mb-4" style={{ borderBottom: "1px solid #ddd" }}></div>
+                                <div className="" style={{ borderBottom: "1px solid #ddd" }}></div>
                                 <div className="text-xs p-4 line-scroll" style={{
-                                    height: "115px",
+                                    height: "115px", wordBreak: "break-all"
                                 }}>{data.description}</div>
                                 {data.type != "Coupon" ?
                                     <div style={{ fontSize: "12px", wordBreak: "break-all", textAlign: "center", color: "var(--mq-txt-color, rgb(250, 174, 62))" }}>
