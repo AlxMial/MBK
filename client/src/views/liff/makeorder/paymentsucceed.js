@@ -22,7 +22,7 @@ const Paymentsucceed = () => {
           {
             frommail: "noreply@undefined.co.th",
             password: "Has88149*",
-            tomail:'weatherzilla@gmail.com',
+            tomail:res.data.OrderHD.email,
             orderNumber: res.data.OrderHD.orderNumber,
             memberName: res.data.OrderHD.memberName,
             orderPrice: res.data.OrderHD.netTotal,
