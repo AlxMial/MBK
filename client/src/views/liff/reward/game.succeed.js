@@ -10,18 +10,18 @@ const GameSucceed = ({ data }) => {
         <>
             <div style={{ height: "100%", backgroundColor: "#007a40" }}>
                 {data != null ?
-                    <div className="w-full" style={{ height: "100%" }}>
+                    <div className="w-full" style={{ height: "calc(100% - 100px)" }}>
 
-                        <div className="w-full flex" style={{ justifyContent: "center", color: "#FFFFFF", fontSize: "50px" }}>
+                        <div className="w-full flex text-2xl mb-2" style={{ justifyContent: "center", color: "#FFFFFF" }}>
                             ยินดีด้วย
                         </div>
-                        <div className="w-full flex" style={{ justifyContent: "center", color: "#FFFFFF", fontSize: "40px" }}>
+                        <div className="w-full flex text-2xl" style={{ justifyContent: "center", color: "#FFFFFF" }}>
                             ได้รับ
                         </div>
-                        <div className="w-full flex" style={{
-                            justifyContent: "center", margin: "auto", width: "200px", height: "200px"
+                        <div className="w-full flex mx-auto mt-2 justify-center" style={{
+                            width: "150px", height: "150px"
                         }}>
-                            <div style={{ width: "200px", height: "200px", margin: "auto" }}>
+                            <div style={{ width: "150px", height: "150px", margin: "auto" }}>
                                 <ImageUC
                                     find={1}
                                     relatedid={data.id}
@@ -32,14 +32,12 @@ const GameSucceed = ({ data }) => {
                             </div>
                         </div>
 
-                        <div className="flex line-clamp-1" style={{
-                            justifyContent: "center", color: "#FFFFFF", fontSize: "30px",
-                            width: "90%",
-                            margin: "auto"
+                        <div className="flex line-clamp-1 text-lg mx-auto my-2 mt-4 text-white justify-center" style={{
+                            width: "90%", lineHeight: "1.5",
                         }}>
                             {data.name}
                         </div>
-                        <div style={{ height: "calc(100% - 600px)" }}>
+                        <div style={{ height: "200px" }}>
                             <div className="px-8 py-2" style={{
                                 width: "90%", margin: "auto",
                                 borderRadius: "40px",
@@ -48,14 +46,11 @@ const GameSucceed = ({ data }) => {
                                 height: "100%"
                             }}>
 
-                                <div className="font-bold text-center mb-4" style={{ fontSize: "15px" }}>รายละเอียด</div>
+                                <div className="font-bold text-center mb-2">รายละเอียด</div>
                                 <div className="mb-4" style={{ borderBottom: "1px solid #ddd" }}></div>
-                                <div className="" style={{
-                                    fontSize: "15px", 
-                                    height: "calc(100% - 100px)", 
-                                    wordBreak: "break-all",
-                                    overflow: "scroll"
-                                }}>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{data.description}</div>
+                                <div className="text-xs p-4 line-scroll" style={{
+                                    height: "115px",
+                                }}>{data.description}</div>
                                 {data.type != "Coupon" ?
                                     <div style={{ fontSize: "12px", wordBreak: "break-all", textAlign: "center", color: "var(--mq-txt-color, rgb(250, 174, 62))" }}>
                                         **รางวัลจะถูกจัดส่งตามที่อยู่ที่ระบุไว้ในโปรไฟล์
@@ -64,7 +59,7 @@ const GameSucceed = ({ data }) => {
                         </div>
                     </div>
                     : null}
-                <div className="w-full" style={{ position: "absolute", bottom: "10px" }}>
+                <div className="w-full" style={{ position: "absolute", bottom: "20px" }}>
 
                     <div className="w-full flex mb-2" style={{ justifyContent: "center" }}>
                         <div className=" w-full" style={{

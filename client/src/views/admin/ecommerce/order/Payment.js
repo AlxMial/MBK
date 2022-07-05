@@ -63,6 +63,7 @@ const Payment = ({ props, setOrderHD }) => {
         }
     }, []);
 
+    console.log(isCanEdit)
     return (
         <div className='mt-2 px-4'>
             <div className="w-full">
@@ -92,7 +93,7 @@ const Payment = ({ props, setOrderHD }) => {
                                 )}
                                 isOptionDisabled={(option) => option.disabled}
                                 isDisabled={!isCanEdit}
-                                customStyles={getCss( orderHD.paymentStatus)}
+                                // customStyles={getCss( orderHD.paymentStatus)}
                             />
                         </div>
                     </div>
