@@ -263,14 +263,13 @@ export default function CampaignExchangeHistoryReport() {
               e.redemptionTypeStr = (e.redemptionType !== "" ? (redemptionType.find(el => el.value === e.redemptionType).label) : ""); 
               e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : ""); 
               e.statusStr =  ((e.status !== '' &&  e.status !== undefined) ? rewardStatus.find(el => el.value === e.status.toString()).label : ""); 
-              e.deliverStatusStr = e.deliverStatus !=='' ? dropdown.find(el => el.value === e.deliverStatus).label : "";  
-              
-              const subDistrict = dataSubDistrict.find(el => el.value === e.subDistrict).label;
-              const district = dataDistrict.find(el => el.value === e.district).label;
-              const province = dataProvice.find(el => el.value === e.province).label;
-           
-              e.addressMember = e.address.concat(" ").concat(subDistrict).concat(" ").concat(district).concat(" ")
-                                .concat(province).concat(" ").concat(e.postcode);            
+              e.deliverStatusStr = e.deliverStatus !=='' ? dropdown.find(el => el.value === e.deliverStatus).label : "";                
+             
+              e.subDistrictStr = (e.subDistrict > 0 ? dataSubDistrict.find(el => el.value === e.subDistrict).label : "");
+              e.districtStr = (e.district > 0 ? dataDistrict.find(el => el.value === e.district).label : "");
+              e.provinceStr = (e.province > 0 ? dataProvice.find(el => el.value === e.province).label : "");
+              e.addressMember = e.address.concat(" ").concat(e.subDistrictStr).concat(" ").concat(e.districtStr).concat(" ")
+                                .concat(e.provinceStr).concat(" ").concat(e.postcode);            
           });                  
           setListSerch(response.data);
           setListCampaignExchange(response.data);
@@ -681,18 +680,24 @@ export default function CampaignExchangeHistoryReport() {
                             }
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0  border-r-0 text-sm whitespace-nowrap text-center ">
+                       
                           <div className="flex">
+                          {  item.isShowControl ?
                             <i className="fa fa-home  text-right text-underline cursor-pointer" data-tip={item.addressMember}></i>
+                            : <div></div>}  
                             <div className="text-underline  cursor-pointer"  data-tip={item.addressMember}
                                   style={{
                                     width: "40px",
                                     textAlign: "end",
                                   }}
-                                > ดูที่อยู่ </div>       
-                          </div>                                           
-                          <ReactTooltip globalEventOff="click" />
+                                > {  item.isShowControl ? "ดูที่อยู่" : ""} </div>
+                          </div>    
+                          {  item.isShowControl ?                                    
+                          <ReactTooltip globalEventOff="click" />  
+                          : ""}                              
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
+                        { item.isShowControl ?
                           <CopyToClipboard
                                 text={item.addressMember}
                                 onCopy={() => {
@@ -711,7 +716,9 @@ export default function CampaignExchangeHistoryReport() {
                                 >
                                   คัดลอก
                                 </div>
-                            </CopyToClipboard>
+                          </CopyToClipboard>
+                          : <div></div>
+                        }
                         </td>
                       </tr>
                     );
