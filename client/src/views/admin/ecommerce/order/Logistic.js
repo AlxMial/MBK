@@ -7,18 +7,18 @@ import InputUC from 'components/InputUC';
 import CheckBoxUC from "components/CheckBoxUC";
 import TextAreaUC from 'components/InputUC/TextAreaUC';
 
-const Logistic = ({ props, setOrderHD }) => {
+const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus }) => {
     const { orderHD, orderHDold, orderDT, memberData,
         isChangeOrderNumber, isCanEdit,
         setIsChangeOrderNumber, orderNumber,
         setOrderNumber, isCancel, setIsCancel
         , transportStatus, setTransportStatus
-        , cancelReason, setCancelReason } = props;
+        , cancelReason, setCancelReason, } = props;
     // const [transportStatus, setTransportStatus] = useState(orderHD.transportStatus);
     const [address, setAddress] = useState(orderHD.address);
     const [province, setProvince] = useState();
     const [isChange, setIsChange] = useState(false);
-    const [delay,setDalay] = useState("");
+    const [delay, setDalay] = useState("");
     const [isChangeTrackNo, setisChangeTrackNo] = useState(false);
 
 
@@ -138,7 +138,7 @@ const Logistic = ({ props, setOrderHD }) => {
                     </div>
                 </div>
                 <div className='py-2 margin-auto-t-b w-full'>
-                    <LabelUC label={'น้ำหนัก ' + ((orderHD.sumWeight===undefined) ? 0 : orderHD.sumWeight)  + ' กิโลกรัม'} />
+                    <LabelUC label={'น้ำหนัก ' + ((orderHD.sumWeight === undefined) ? 0 : orderHD.sumWeight) + ' กิโลกรัม'} />
                 </div>
                 <div className='py-2 margin-auto-t-b w-full flex'>
                     <label className='text-blueGray-600 text-sm font-bold  margin-auto-t-b' >หมายเลขพัสดุ</label>
@@ -180,16 +180,15 @@ const Logistic = ({ props, setOrderHD }) => {
                         classSpan='text-cancel'
                         onChange={(e) => {
                             setIsCancel(e.target.checked);
-                            if(orderHD.tbCancelOrder === undefined)
-                            {
+                            if (orderHD.tbCancelOrder === undefined) {
                                 orderHD.tbCancelOrder = { cancelDetail: OpenmodelCancel[0].value }
                                 setOrderHD(orderHD);
 
                             }
-                            // console.log(e.target.checked)
-                            // setOrderHD(p => { return { ...p, isCancel: e.target.checked } })
+                            console.log(e.target.checked)
+                            setOrderHD(p => { return { ...p, isCancel: e.target.checked } })
                         }}
-                        disabled={!isCanEdit ? true : ( orderHD.paymentStatus === 3)}
+                        disabled={!isCanEdit ? true : (orderHD.paymentStatus === 3)}
                         checked={isCancel}
                     />
                 </div>
@@ -224,21 +223,45 @@ const Logistic = ({ props, setOrderHD }) => {
                     <div className='py-2 margin-auto-t-b w-full flex mt-2'>
                         <TextAreaUC
                             name='cancelReason'
-                            value={orderHD.tbCancelOrder == null ? "" : orderHD.tbCancelOrder.description}
+                            value={orderHD.tbCancelOrder == null ? "" : orderHD.tbCancelOrder.cancelOtherRemark}
                             rows={3}
                             maxLength={255}
-                            disabled={!isCanEdit ? true : orderHD.paymentStatus == 3 ? true : false}
+                            disabled={!isCanEdit ? true : (orderHD.paymentStatus === 3) ? true : !isCancel ? true : false}
                             onChange={(e) => {
                                 setCancelReason(e.target.value);
                                 if (orderHD.tbCancelOrder == null) {
-                                    orderHD.tbCancelOrder = { description: e.target.value }
+                                    orderHD.tbCancelOrder = { cancelOtherRemark: e.target.value }
                                 } else {
-                                    orderHD.tbCancelOrder.description = e.target.value
+                                    orderHD.tbCancelOrder.cancelOtherRemark = e.target.value
                                 }
                                 setOrderHD(orderHD)
 
                             }} />
                     </div>
+                    <div className='py-2 margin-auto-t-b w-full flex'>
+                        <CheckBoxUC
+                            text="คืนเงิน"
+                            name="isCancel"
+                            classLabel="mt-2 text-green-mbk"
+                            // classSpan='text-cancel'
+                            onChange={(e) => {
+                                // setIsCancel(e.target.checked);
+                                console.log(orderHD.tbCancelOrder)
+                                if (orderHD.tbCancelOrder === undefined) {
+                                    orderHD.tbCancelOrder = { cancelStatus: e.target.checked }
+                                    console.log(orderHD.tbCancelOrder.cancelStatus)
+                                } else {
+                                    orderHD.tbCancelOrder.cancelStatus = e.target.checked
+                                }
+                                setOrderHD(orderHD);
+                                setcancelStatus(e.target.checked)
+
+                            }}
+                            disabled={!isCanEdit ? true : (orderHD.paymentStatus === 3) ? true : !isCancel ? true : false}
+                            checked={cancelStatus}
+                        />
+                    </div>
+
                     {!cancelReason && (
                         <div className='py-2 margin-auto-t-b w-full flex'>
                             <div className='w-full'>

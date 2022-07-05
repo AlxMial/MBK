@@ -19,7 +19,7 @@ const customStyles = {
     //   height:"80vh",
     width: "25vw",
   },
-  overlay: { zIndex: 100, backgroundColor: "rgba(70, 70, 70, 0.5)" },
+  overlay: { zIndex: 101, backgroundColor: "rgba(70, 70, 70, 0.5)" },
 };
 
 

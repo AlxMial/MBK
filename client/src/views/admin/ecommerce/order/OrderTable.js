@@ -176,7 +176,9 @@ const OrderTable = ({ orderList, openModal }) => {
                                             </span>
                                         </td>
                                         <td className={tdClass + (value.isImage ? ' cursor-pointer ' : '')} onClick={() => {
-                                            onClickAttachment(value.id);
+                                            if (value.isImage) {
+                                                onClickAttachment(value.id);
+                                            }
                                         }} >
                                             <span className={(value.isImage ? ' text-blue-700' : "")}>
                                                 {value.isImage ? (value.imageName ?? 'สลิปโอนเงิน') : ""}

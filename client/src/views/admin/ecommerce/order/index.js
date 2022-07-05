@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux';
 import OrderList from './OrderList';
 import { EncodeKey } from 'services/default.service';
 import OrderDetail from './OrderDetail';
-
+import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 const Order = () => {
     const dispatch = useDispatch();
     const { addToast } = useToasts();
@@ -29,6 +29,9 @@ const Order = () => {
     const [orderNumber, setOrderNumber] = useState(null);
     const [isCancel, setIsCancel] = useState(false);
     const [cancelReason, setCancelReason] = useState('');
+    const [cancelStatus, setcancelStatus] = useState(null);
+    const [ismodalIsOpenEdit, setmodalIsOpenEdit] = useState({ open: false, callback: () => { } });
+
 
     const fetchData = async () => {
         dispatch(fetchLoading());
@@ -90,7 +93,8 @@ const Order = () => {
             if (data[0].isCancel) {
                 const res = await axios.get("cancelOrder/byOrderId/" + id);
                 if (!res.data.error && res.data.tbCancelOrder) {
-                    setCancelReason(res.data.tbCancelOrder.description);
+                    setCancelReason(res.data.tbCancelOrder.cancelOtherRemark);
+                    setcancelStatus(res.data.tbCancelOrder.cancelStatus == 2 ? true : false)
                 }
             }
             const res = await axios.get("order/orderDT/byOrderId/" + id);
@@ -121,68 +125,73 @@ const Order = () => {
     const handleModal = async (value) => {
         if (value === 'save') {
             dispatch(fetchLoading());
-            if ((!isCancel || (isCancel && cancelReason !== ''))
+            if ((!isCancel || (isCancel))
                 && ((orderNumber !== orderHD.orderNumber
                     && isChangeOrderNumber && orderNumber !== '') || !isChangeOrderNumber)) {
 
                 const res = await axios.get("order/orderHD/ById/" + orderHD.id);
                 if (!res.data.error && res.data.tbOrderHD) {
-                    // console.log(res.data.tbOrderHD);
-                    const _dataHD = res.data.tbOrderHD;
+                    dispatch(fetchSuccess());
+                    setmodalIsOpenEdit({
+                        open: true, callback: async () => {
+                            const _dataHD = res.data.tbOrderHD;
+                            _dataHD.transportStatus = orderHD.transportStatus;
+                            _dataHD.paymentStatus = orderHD.paymentStatus;
+                            _dataHD.trackNo = orderHD.trackNo;
+                            _dataHD.isCancel = isCancel;
 
-                    _dataHD.transportStatus = orderHD.transportStatus;
-                    _dataHD.paymentStatus = orderHD.paymentStatus;
-                    _dataHD.trackNo = orderHD.trackNo;
-                    // if (isChangeOrderNumber) {
-                    //     _dataHD.orderNumber = orderNumber;
-                    // }
-                    _dataHD.isCancel = isCancel;
-                   
-                    await axios.put("order/orderHD", _dataHD).then(async (res) => {
-                        if (res.data.error) {
-                            dispatch(fetchSuccess());
-                            addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                                appearance: "warning",
-                                autoDismiss: true,
-                            });
-                        } else if (isCancel) {
-                            // insert into tbCancelOrder
-                            const _dataCancel = {
-                                id: '',
-                                orderId: orderHD.id,
-                                cancelStatus: 'done',
-                                cancelDetail: orderHD.tbCancelOrder.cancelDetail,
-                                description: cancelReason,
-                                addBy: sessionStorage.getItem('user'),
-                                updateBy: sessionStorage.getItem('user'),
-                                isDeleted: false,
-                            }
-                            console.log(_dataCancel)
-                            await axios.post("cancelOrder", _dataCancel).then(async (res) => {
-                                if (res.data.status) {
-                                    addToast("บันทึกข้อมูลสำเร็จ",
-                                        { appearance: "success", autoDismiss: true }
-                                    );
-                                } else {
+                            await axios.put("order/orderHD", _dataHD).then(async (res) => {
+                                if (res.data.error) {
+                                    dispatch(fetchSuccess());
                                     addToast("บันทึกข้อมูลไม่สำเร็จ", {
                                         appearance: "warning",
                                         autoDismiss: true,
                                     });
+                                } else if (isCancel) {
+                                    // insert into tbCancelOrder
+                                    const _dataCancel = {
+                                        id: '',
+                                        orderId: orderHD.id,
+                                        cancelStatus: cancelStatus ? 2 : 3,
+                                        cancelDetail: orderHD.tbCancelOrder.cancelDetail == undefined ? "" : orderHD.tbCancelOrder.cancelDetail,
+                                        description: orderHD.tbCancelOrder.description,
+                                        cancelOtherRemark: cancelReason,
+                                        cancelType: 1,
+                                        addBy: sessionStorage.getItem('user'),
+                                        updateBy: sessionStorage.getItem('user'),
+                                        isDeleted: false,
+                                    }
+                                    console.log(_dataCancel)
+                                    await axios.post("cancelOrder", _dataCancel).then(async (res) => {
+                                        if (res.data.status) {
+                                            addToast("บันทึกข้อมูลสำเร็จ",
+                                                { appearance: "success", autoDismiss: true }
+                                            );
+                                        } else {
+                                            addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                                                appearance: "warning",
+                                                autoDismiss: true,
+                                            });
+                                        }
+                                        dispatch(fetchSuccess());
+                                    });
                                 }
-                                dispatch(fetchSuccess());
                             });
+
+                            await fetchData();
+                            setOpen(false);
                         }
-                    });
-                    await fetchData();
-                    setOpen(false);
+                    })
+
                 }
-            }else {     dispatch(fetchSuccess()); }
+            } else { dispatch(fetchSuccess()); }
 
             // await saveImage(orderHD.id);
         } else {
             setOpen(false);
         }
     }
+
 
     const handleExport = async () => {
 
@@ -207,6 +216,20 @@ const Order = () => {
                     <OrderList orderList={orderList} openModal={openModal} />
                 </div>
             </div>
+            <ConfirmEdit
+                showModal={ismodalIsOpenEdit.open}
+                message={"รายละเอียดการสั่งซื้อ"}
+                hideModal={() => {
+                    setmodalIsOpenEdit({ open: false })
+                }}
+                confirmModal={() => {
+                    ismodalIsOpenEdit.callback()
+                }}
+                returnModal={() => {
+                    setmodalIsOpenEdit({ open: false })
+                }}
+            />
+
             {open && <OrderDetail
                 open={open}
                 orderImage={orderImage}
@@ -226,7 +249,12 @@ const Order = () => {
                 transportStatus={transportStatus}
                 setTransportStatus={setTransportStatus}
                 handleModal={handleModal}
-                setOrderHD={setOrderHD} />}
+                setOrderHD={setOrderHD}
+                cancelStatus={cancelStatus}
+                setcancelStatus={setcancelStatus} />}
+
+
+
         </>
     )
 }

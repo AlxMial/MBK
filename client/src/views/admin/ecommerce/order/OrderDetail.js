@@ -29,7 +29,7 @@ const OrderDetail = ({
     handleExport, transportStatus, setTransportStatus,
     isChangeOrderNumber,
     setIsChangeOrderNumber, orderNumber, setOrderNumber,
-    isCancel, setIsCancel, cancelReason, setCancelReason, setOrderHD }) => {
+    isCancel, setIsCancel, cancelReason, setCancelReason, setOrderHD ,cancelStatus,setcancelStatus }) => {
     Modal.setAppElement("#root");
     const dispatch = useDispatch();
     const useStyle = customStyles({ width: '70vw' });
@@ -42,9 +42,9 @@ const OrderDetail = ({
     const propsPurchaseOrder = { orderHD, orderDT, openExport };
     const propsPayment = { orderHD, orderHDold, orderDT, isCanEdit }
     const propsLogistic = {
-        orderHD, orderDT,orderHDold, memberData, setIsChangeOrderNumber, isCanEdit,
+        orderHD, orderDT, orderHDold, memberData, setIsChangeOrderNumber, isCanEdit,
         orderNumber, setOrderNumber, isCancel, setIsCancel, isChangeOrderNumber,
-        cancelReason, setCancelReason, transportStatus, setTransportStatus
+        cancelReason, setCancelReason, transportStatus, setTransportStatus ,cancelStatus
     }
 
     useEffect(async () => {
@@ -138,7 +138,7 @@ const OrderDetail = ({
                                 <div className="w-full mt-4">
                                     <LabelUC label='การจัดส่ง' moreClassName='border-b py-2' />
                                     <Logistic props={propsLogistic}
-                                        setOrderHD={setOrderHD} />
+                                        setOrderHD={setOrderHD} cancelStatus={cancelStatus} setcancelStatus={setcancelStatus}/>
                                 </div>
                             </div>
                         </div>
