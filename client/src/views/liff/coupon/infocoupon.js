@@ -6,13 +6,14 @@ import {
 import { path } from "services/liff.services";
 import ImageUC from "components/Image/index";
 import Spinner from "components/Loadings/spinner/Spinner";
+import ConfirmDialogNew from "components/ConfirmDialog/ConfirmDialogNew";
 // components
-
 const InfoCoupon = () => {
     const history = useHistory();
     let { id } = useParams();
     const [isLoading, setIsLoading] = useState(false);
     const [MyCoupon, setMyCoupon] = useState(null);
+    const [isOpenDialog, setIsOpenDialog] = useState(false);
     const GetCouponByID = async () => {
         setIsLoading(true);
         getCouponByID(
@@ -31,8 +32,28 @@ const InfoCoupon = () => {
     useEffect(() => {
         GetCouponByID();
     }, []);
+
+
+    const onConfirmDialog = () => {
+        setIsOpenDialog(false);
+        history.push(path.usecouponUC.replace(":id", id));
+    }
     return (
         <>
+            {isOpenDialog && (
+                <ConfirmDialogNew
+                    className={" liff-Dialog "}
+                    showModal={isOpenDialog}
+                    message={'ต้องการใช้คูปอง ใช่หรือไม่'
+                    }
+                    hideModal={() => {
+                        setIsOpenDialog(false);
+                    }}
+                    confirmModal={() => {
+                        onConfirmDialog();
+                    }}
+                />
+            )}
             {isLoading ? <Spinner customText={"Loading"} /> : null}
             {/* card */}
             <div style={{ height: "calc(50% - 100px)", backgroundColor: "#007a40" }}>
@@ -81,10 +102,11 @@ const InfoCoupon = () => {
                                 justifyContent: "center",
                             }}
                             onClick={() => {
-                                history.push(path.usecouponUC.replace(":id", id))
+                                // history.push(path.usecouponUC.replace(":id", id))
+                                setIsOpenDialog(true)
                             }}
                         >
-                            {"แลกคูปอง"}
+                            {"ใช้คูปอง"}
                         </div>
                     </div>
 

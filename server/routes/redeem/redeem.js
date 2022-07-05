@@ -43,7 +43,7 @@ router.post("/", async (req, res) => {
     let statusRedeem = [];
     let status;
     for (var x = 0; x < redeemCode.length; x++) {
-      redeemCode[x] = Encrypt.EncodeKey(redeemCode[x].toLowerCase().replaceAll('-',''));
+      redeemCode[x] = Encrypt.EncodeKey(redeemCode[x].toLowerCase().replaceAll('-', ''));
       // try {
       //   const splitValue = redeemCode[x].split("-");
       //   if (splitValue.length > 1) {
@@ -269,7 +269,7 @@ router.post("/getRedemptionconditionshdById", validateLineToken, async (req, res
     const uid = Encrypt.DecodeKey(req.user.uid);
     const RedemptionConditionsHDId = Encrypt.DecodeKey(req.body.Id);
     Member = await tbMember.findOne({
-      attributes: ["id"],
+      attributes: ["id", "memberPoint"],
       where: { uid: uid },
     });
     if (Member) {
@@ -317,7 +317,7 @@ router.post("/getRedemptionconditionshdById", validateLineToken, async (req, res
           RedemptionConditionsHD = item
         }
       }
-
+      RedemptionConditionsHD.isCanRedeem = Member.memberPoint >= RedemptionConditionsHD.points;
     }
   } catch (e) {
     status = false
