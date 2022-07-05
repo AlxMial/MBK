@@ -5,7 +5,7 @@ import moment from 'moment';
 import SelectUC from "components/SelectUC";
 import ValidateService from "services/validateValue";
 const Payment = ({ props, setOrderHD }) => {
-    const { orderHD, orderHDold, orderDT, isCanEdit } = props;
+    const { orderHD, orderHDold, orderDT, isCanEdit, paymentStatus, setpaymentStatus, setTransportStatus } = props;
     const [payment, setPayment] = useState(null);
 
 
@@ -84,16 +84,19 @@ const Payment = ({ props, setOrderHD }) => {
                                 name="transportType"
                                 onChange={(value) => {
 
-                                    setOrderHD(p => { return { ...p, paymentStatus: value.value } })
+                                    setpaymentStatus(value.value)
+                                    if (value.value != 3) {
+                                        setTransportStatus(1)
+                                    }
                                 }}
                                 options={getoption()}
                                 value={ValidateService.defaultValue(
                                     getoption(),
-                                    orderHD.paymentStatus
+                                    paymentStatus
                                 )}
                                 isOptionDisabled={(option) => option.disabled}
                                 isDisabled={!isCanEdit}
-                                // customStyles={getCss( orderHD.paymentStatus)}
+                            // customStyles={getCss( orderHD.paymentStatus)}
                             />
                         </div>
                     </div>

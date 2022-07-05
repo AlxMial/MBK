@@ -33,6 +33,9 @@ const Order = () => {
     const [ismodalIsOpenEdit, setmodalIsOpenEdit] = useState({ open: false, callback: () => { } });
 
     const [tbCancelOrder, settbCancelOrder] = useState(null);
+    const [paymentStatus, setpaymentStatus] = useState(null);//สถานะการจ่ายเงิน
+    // const [transportStatus, settransportStatus] = useState(null);//สถานะการจ่ายเงิน
+
 
     const fetchData = async () => {
         dispatch(fetchLoading());
@@ -94,6 +97,9 @@ const Order = () => {
             setOrderNumber(data[0].orderNumber);
             setTransportStatus(data[0].transportStatus);
             setIsCancel(data[0].isCancel);
+            setpaymentStatus(data[0].paymentStatus)
+            // settransportStatus(data[0].transportStatus)
+
             if (data[0].isCancel) {
                 const res = await axios.get("cancelOrder/byOrderId/" + id);
                 if (!res.data.error && res.data.tbCancelOrder) {
@@ -140,8 +146,8 @@ const Order = () => {
                     setmodalIsOpenEdit({
                         open: true, callback: async () => {
                             const _dataHD = res.data.tbOrderHD;
-                            _dataHD.transportStatus = orderHD.transportStatus;
-                            _dataHD.paymentStatus = orderHD.paymentStatus;
+                            _dataHD.transportStatus = transportStatus;
+                            _dataHD.paymentStatus = paymentStatus;
                             _dataHD.trackNo = orderHD.trackNo;
                             _dataHD.isCancel = isCancel;
                             // _dataHD.transportStatus = orderHD.transportStatus;
@@ -261,6 +267,7 @@ const Order = () => {
                 setcancelStatus={setcancelStatus}
 
                 tbCancelOrder={tbCancelOrder} settbCancelOrder={settbCancelOrder}
+                paymentStatus={paymentStatus} setpaymentStatus={setpaymentStatus}
             />}
 
 

@@ -30,7 +30,7 @@ const OrderDetail = ({
     isChangeOrderNumber,
     setIsChangeOrderNumber, orderNumber, setOrderNumber,
     isCancel, setIsCancel, cancelReason, setCancelReason, setOrderHD, cancelStatus, setcancelStatus,
-    tbCancelOrder, settbCancelOrder }) => {
+    tbCancelOrder, settbCancelOrder, paymentStatus, setpaymentStatus }) => {
     Modal.setAppElement("#root");
     const dispatch = useDispatch();
     const useStyle = customStyles({ width: '70vw' });
@@ -41,11 +41,11 @@ const OrderDetail = ({
     const [dataExport, setDataExport] = useState({});
 
     const propsPurchaseOrder = { orderHD, orderDT, openExport };
-    const propsPayment = { orderHD, orderHDold, orderDT, isCanEdit }
+    const propsPayment = { orderHD, orderHDold, orderDT, isCanEdit, paymentStatus, setpaymentStatus, transportStatus, setTransportStatus }
     const propsLogistic = {
         orderHD, orderDT, orderHDold, memberData, setIsChangeOrderNumber, isCanEdit,
         orderNumber, setOrderNumber, isCancel, setIsCancel, isChangeOrderNumber,
-        cancelReason, setCancelReason, transportStatus, setTransportStatus, cancelStatus
+        cancelReason, setCancelReason, transportStatus, setTransportStatus, cancelStatus, paymentStatus
     }
 
     useEffect(async () => {

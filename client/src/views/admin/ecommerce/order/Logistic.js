@@ -11,9 +11,9 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCance
     const { orderHD, orderHDold, orderDT, memberData,
         isChangeOrderNumber, isCanEdit,
         setIsChangeOrderNumber, orderNumber,
-        setOrderNumber, isCancel, setIsCancel
-
-        , cancelReason, setCancelReason, } = props;
+        setOrderNumber, isCancel, setIsCancel,
+        transportStatus, setTransportStatus
+        , cancelReason, setCancelReason, paymentStatus } = props;
     // const [transportStatus, setTransportStatus] = useState(orderHD.transportStatus);
     const [address, setAddress] = useState(orderHD.address);
     const [province, setProvince] = useState();
@@ -114,16 +114,19 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCance
                         <SelectUC
                             name="transportType"
                             onChange={(value) => {
-                                // setTransportStatus(value.value);
-                                setOrderHD(p => { return { ...p, transportStatus: value.value } })
+                                setTransportStatus(value.value);
+                                if (value.value > 1) {
+                                    setIsCancel(false);
+                                    settbCancelOrder(null)
+                                }
                             }}
                             options={getoption()}
                             value={ValidateService.defaultValue(
                                 getoption(),
-                                orderHD.transportStatus
+                                transportStatus
                             )}
                             // isDisabled={orderHD.paymentStatus != 3 && !isCanEdit}
-                            isDisabled={!isCanEdit ? true : orderHD.paymentStatus != 3 ? true : false}
+                            isDisabled={!isCanEdit ? true : paymentStatus != 3 ? true : false}
                         // customStyles={getCss(orderHD.transportStatus)}
                         />
                     </div>
@@ -195,11 +198,8 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCance
 
                             }
 
-                            // settbCancelOrder, tbCancelOrder
-                            // console.log(e.target.checked)
-                            // setOrderHD(p => { return { ...p, isCancel: e.target.checked } })
                         }}
-                        disabled={!isCanEdit ? true : (orderHD.paymentStatus === 3)}
+                        disabled={!isCanEdit ? true : transportStatus > 1 ? true : (paymentStatus === 3)}
                         checked={isCancel}
                     />
                 </div>
@@ -224,7 +224,9 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCance
                                 OpenmodelCancel,
                                 tbCancelOrder == null ? null : tbCancelOrder.cancelDetail == null ? null : delay
                             )}
-                            isDisabled={!isCanEdit ? true : (orderHD.paymentStatus === 3) ? true : !isCancel ? true : false}
+                            isDisabled={!isCanEdit ? true : (paymentStatus === 3) ?
+                                true
+                                : !isCancel ? true : false}
                         // bgColor={getStatus(transportStatus).bg}
                         />
                     </div>
