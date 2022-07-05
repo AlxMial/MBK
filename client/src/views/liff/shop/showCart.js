@@ -157,7 +157,7 @@ const ShowCart = () => {
     getProducts();
   }, []);
 
-  console.log('Cart Item', CartItem)
+  // console.log('Cart Item', CartItem)
   const sumQuantity = CartItem.reduce((sum, item) => {
     return parseFloat(sum) + parseFloat(item.quantity);
   }, 0);
@@ -209,7 +209,7 @@ const ShowCart = () => {
                     <div className="flex" style={{ height: "35px" }}>
                       <div className="font-bold line-clamp-2 text-sm" style={{ width: "calc(100% - 20px)" }}>{e.productName}</div>
                       <div
-                        className="relative"
+                        className="relative flex justify-center"
                         style={{ width: "20px" }}
                         onClick={() => {
                           setconfirmDelete(true);
@@ -231,8 +231,8 @@ const ShowCart = () => {
                         bottom: "0"
                       }}
                     >
-                      <div style={{ width: "calc(100% - 100px)", height: "15px" }}>
-                        <div className="flex text-sm" >
+                      <div style={{ /*width: "calc(100% - 100px)",*/ height: "15px" }}>
+                        <div className="flex text-xs" >
                           <div
                             style={{
                               color: e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
@@ -257,7 +257,7 @@ const ShowCart = () => {
                         bottom: "0"
                       }}
                     >
-                      <div className="text-liff-gray-mbk text-sm" style={{ width: "calc(100% - 90px)" }}>{"สินค้าคงเหลือ " + e.productCount + " ชิ้น"}</div>
+                      <div className="text-liff-gray-mbk text-xs" style={{ width: "calc(100% - 90px)" }}>{"สินค้าคงเหลือ " + e.productCount + " ชิ้น"}</div>
                       <div
                         className="flex"
                         style={{
@@ -334,19 +334,19 @@ const ShowCart = () => {
         </div>
       }
       <div className="liff-inline mb-2" />
-      <div className="flex px-2 items-center" style={{ height: '40px' }}>
-        <div className="text-sm font-bold" style={{ width: "50%" }}>{"ยอดรวมสินค้า (" + sumQuantity + " ชิ้น)"}</div>
-        <div className="font-bold text-sm" style={{ width: "50%", textAlign: "end" }}>
+      <div className="flex px-2 items-center" style={{ height: '30px' }}>
+        <div className="text-xs font-bold" style={{ width: "50%" }}>{"ยอดรวมสินค้า (" + sumQuantity + " ชิ้น)"}</div>
+        <div className="font-bold text-xs" style={{ width: "50%", textAlign: "end" }}>
           {"฿ " + fn.formatMoney(sumprice)} </div>
       </div>
       <div className="liff-inline mb-2" />
       <div
         className="flex relative"
         style={{
-          height: "40px",
+          height: "30px",
           alignItems: "center",
           justifyContent: "center",
-          marginTop: "0.5rem"
+          // marginTop: "0.5rem"
         }}
       >
         <div className="px-2 absolute" style={{ left: "10px" }}>
@@ -358,7 +358,7 @@ const ShowCart = () => {
             className="w-32 border-2 border-blueGray-50"
           ></img>
         </div>
-        <div className="px-2 absolute text-bold" style={{ left: "50px" }}>
+        <div className="px-2 absolute text-bold text-xs" style={{ left: "50px" }}>
           {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
         </div>
         <div
@@ -368,6 +368,7 @@ const ShowCart = () => {
         >
           <div className="flex">
             <div style={{ color: usecoupon != null ? "red" : "var(--mq-txt-color, rgb(192, 192, 192))" }}
+              className="text-xs"
               onClick={() => {
                 if (CartItem.length > 0) {
                   history.push(path.usecoupon.replace(":id", "cart"))
