@@ -20,18 +20,16 @@ const e = require("express");
 const Encrypt = new ValidateEncrypt();
 
 router.post("/lowLevel", async (req, res) => {
-
-  const PointDt = await tbPointCodeDT.findAll();
+  const PointDt = await tbPointCodeDT.findAll({ where: { tbPointCodeHDId: req.body.id } });
   for (var i = 0; i < PointDt.length; i++) {
     const de = Encrypt.DecodeKey(PointDt[i].dataValues.code);
-    const lowde = de.toLowerCase();
+    const lowde = de.toLowerCase().replace('-','');
 
-    const updatelow = await tbPointCodeDT.update({ code: Encrypt.EncodeKey(lowde) }, {
+    const updatelow = await tbPointCodeDT.update({ codeNone: Encrypt.EncodeKey(lowde) }, {
       where: { id: PointDt[i].dataValues.id },
     });
-    console.log("update Success  = " + i);
+    console.log("update Success  = " + i + " / " + PointDt.length);
   }
-
 });
 
 
@@ -43,7 +41,7 @@ router.post("/", async (req, res) => {
     let statusRedeem = [];
     let status;
     for (var x = 0; x < redeemCode.length; x++) {
-      redeemCode[x] = Encrypt.EncodeKey(redeemCode[x].toLowerCase().replaceAll('-', ''));
+      redeemCode[x] = Encrypt.EncodeKey(redeemCode[x].toLowerCase());
       // try {
       //   const splitValue = redeemCode[x].split("-");
       //   if (splitValue.length > 1) {
@@ -62,15 +60,13 @@ router.post("/", async (req, res) => {
       //   statusRedeem.push(status);
       // }
     }
-
     for (var i = 0; i < redeemCode.length; i++) {
       const PointDt = await tbPointCodeDT.findOne({
         where: { [Op.or]: [
           { code: redeemCode[i] },
           { codeNone: redeemCode[i] },
-        ], isDeleted: false, isUse: false, isExpire: false },
+        ], isDeleted: false, isUse: false },
       });
-
       const Point = await tbPointCodeHD.findOne({
         where: { isActive: "1", isDeleted: false },
         include: {

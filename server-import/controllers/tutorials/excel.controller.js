@@ -115,7 +115,7 @@ const generateCode = async (req, res) => {
       } else codeCoupon += splitVar[i];
     }
     codeCoupon = req.body.pointCodeSymbol + "-" + codeCoupon;
-    codeCouponNone = req.body.pointCodeSymbol + codeCoupon;
+    codeCouponNone = codeCoupon.replace('-','');
     let ArrayCoupon = {
       code: Encrypt.EncodeKey(codeCoupon.toLocaleLowerCase()),
       codeNone: Encrypt.EncodeKey(codeCouponNone.toLocaleLowerCase()),
@@ -136,7 +136,6 @@ const generateCode = async (req, res) => {
     for (var i = 0; i < result.length; i++) {
       let successCode = await createCoupon(result[i]);
     }
-    console.log(result)
     res.status(200).send({
       message: "Generate successfully: ",
     });

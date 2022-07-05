@@ -8,6 +8,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
+      ordering: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      }
     });
 
     tbPointStoreHD.associate = (models) => {
