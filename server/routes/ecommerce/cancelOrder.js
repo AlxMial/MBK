@@ -16,9 +16,50 @@ const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
 router.post("/", validateToken, async (req, res) => {
-  const data = await tbCancelOrder.create(req.body);
+  let status = true
+  let msg = "success"
+  let data;
+  try {
+    data = await tbCancelOrder.create(req.body);
+    //#region update ราคาสินค้า
+    if (data) {
+      const orderId = req.body.orderId
+      const OrderDTData = await tbOrderDT.findAll({
+        attributes: ["amount", "stockId"],
+        where: {
+          IsDeleted: false,
+          orderId: orderId,
+          isFree: false,
+        },
+      });
+
+      if (OrderDTData) {
+        for (var i = 0; i < OrderDTData.length; i++) {
+          let _tbStockData = await tbStock.findOne({
+            attributes: ["productCount"],
+            where: { id: OrderDTData[i].stockId },
+          });
+          if (_tbStockData) {
+            let _tbStock = await tbStock.update(
+              { productCount: _tbStockData.productCount + OrderDTData[i].amount },
+              {
+                where: {
+                  id: OrderDTData[i].stockId,
+                },
+              }
+            );
+          }
+        }
+      }
+    }
+    //#region update ราคาสินค้า
+  } catch (e) {
+    status = false
+    msg = e.message
+  }
+
   res.json({
-    status: true,
+    status: status,
     message: "success",
     tbCancelOrder: data,
   });
