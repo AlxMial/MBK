@@ -43,22 +43,26 @@ const ImageUC = (prop) => {
   }, []);
   let className = other.className;
   return (
-    <div className={"w-full h-full" + (other.divimage ? (" " + other.divimage) : '')}>
-      {ImgisLoading ? (
-        <div {...other} className={className}></div>
-      ) : (
-        <img
-          {...other}
-          id={other.relatedid + other.relatedtable}
-          className={"object-cover " + className.repeat("animated-img", "") + (other.imgclassname ? (" " + other.imgclassname) : "")}
-          src={Img}
-          onError={({ currentTarget }) => {
-            currentTarget.onerror = null;
-            currentTarget.src = require("assets/img/mbk/no-image.png").default;
-          }}
-        ></img>
-      )}
-    </div>
+    <div className={"w-full h-full flex" + (other.divimage ? (" " + other.divimage) : '')}
+      style={{
+        justifyContent: "center"
+      }}>
+      {
+        ImgisLoading ? (
+          <div {...other} className={className} ></div>
+        ) : (
+          <img
+            {...other}
+            id={other.relatedid + other.relatedtable}
+            className={"object-cover " + className.repeat("animated-img", "") + (other.imgclassname ? (" " + other.imgclassname) : "")}
+            src={Img}
+            onError={({ currentTarget }) => {
+              currentTarget.onerror = null;
+              currentTarget.src = require("assets/img/mbk/no-image.png").default;
+            }}
+          ></img>
+        )}
+    </div >
   );
 };
 

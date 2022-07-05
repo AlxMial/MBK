@@ -78,11 +78,12 @@ const DetailOrder = ({
           return (
             <div key={i}
               style={{ opacity: returnStatus == true ? e.returnStatus != null ? "0.7" : "1" : "1" }}
-              onClick={() => {
-                onClick(e);
-              }}
+
             >
-              <div className="w-full">
+              <div className="w-full"
+                onClick={() => {
+                  onClick(e);
+                }}>
                 <div className="liff-inline mb-2" style={{ height: '5px', backgroundColor: '#ebebeb' }} />
                 <div className="w-full flex mb-2 relative text-xs">
                   <div className="flex" style={{ width: "calc(100% - 120px)" }}>
@@ -183,10 +184,12 @@ const DetailOrder = ({
                                 style={{
                                   textDecoration:
                                     dt.discount > 0 ? "line-through" : "none",
-                                  color: dt.discount > 0 ? "#ddd" : "#047738",
+                                  color: dt.isFree ? "red" : dt.discount > 0 ? "#ddd" : "#047738",
                                 }}
                               >
-                                {"฿ " + fn.formatMoney(dt.price)}
+                                {dt.isFree ? "Free" :
+                                  "฿ " + fn.formatMoney(dt.price)
+                                }
                               </div>
                               {dt.discount > 0 ? (
                                 <div
@@ -261,7 +264,10 @@ const DetailOrder = ({
               ) : null}
 
               <div className="liff-inline mb-2" />
-              <div className="flex relative">
+              <div className="flex relative"
+                onClick={() => {
+                  onClick(e);
+                }}>
                 <div className="font-bold">
                   {"ยอดรวมสินค้า ( " + e.amount + " ชิ้น)"}
                 </div>
@@ -272,7 +278,6 @@ const DetailOrder = ({
                   {"฿ " + fn.formatMoney(e.price)}
                 </div>
               </div>
-              {/* <div className="liff-inline mb-2" /> */}
             </div>
           );
         })}

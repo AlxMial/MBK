@@ -191,6 +191,7 @@ const getorderDT = async (DT) => {
   let msg = ""
   let total = 0; //ราคารวม
   let point = 0 //แต้ม
+  let stockNumber = 0
   try {
     for (var i = 0; i < DT.length; i++) {
       //ดึงราคาใหม่ และ จำนวนใหม่
@@ -212,21 +213,9 @@ const getorderDT = async (DT) => {
 
       if (_tbStock) {
         //มีสินค้า
-        let _price = 0;
-        // if (_tbStock.discount > 0) {
-        //   if (_tbStock.discountType == 1) {
-        //     _price = _tbStock.price - _tbStock.discount;
-        //   } else {
-        //     _price =
-        //       _tbStock.price - (_tbStock.discount / 100) * _tbStock.price;
-        //   }
-        //   total += _price * DT[i].amount;
-        // } else {
-        //   total += _tbStock.price * DT[i].amount;
-        // }
 
-        total = total + (_tbStock.price - _tbStock.discount);
-
+        total = total + (_tbStock.price - _tbStock.discount) * DT[i].amount;
+        stockNumber += DT[i].amount
         orderDT.push({
           stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
           amount: DT[i].amount,
@@ -278,7 +267,7 @@ const getorderDT = async (DT) => {
   } catch (e) {
     msg = e.message
   }
-  return { status: status, msg: msg, orderDT: orderDT, total: total, point: point }
+  return { status: status, msg: msg, orderDT: orderDT, total: total, point: point, stockNumber: stockNumber }
 }
 //คำนวนโปรร้าน
 const getStorePromotion = async (total) => {
@@ -307,7 +296,7 @@ const getStorePromotion = async (total) => {
     if (_tbPromotionStore) {
       let prodiscountList = _tbPromotionStore.find(
         (e) =>
-          (e.condition == "discount" || e.condition == "%discount") &&
+          (e.condition == 1 || e.condition == 2) &&
           e.buy <= total
       );
 
@@ -315,7 +304,7 @@ const getStorePromotion = async (total) => {
         type = "discount"
         let pro = _tbPromotionStore.filter((e) => {
           if (
-            (e.condition == "discount" || e.condition == "%discount") &&
+            (e.condition == 1 || e.condition == 2) &&
             e.buy <= total
           ) {
             return e;
@@ -324,7 +313,7 @@ const getStorePromotion = async (total) => {
 
         pro.map((e, i) => {
           let discount = 0;
-          if (e.condition == "discount") {
+          if (e.condition == 1) {
             discount = e.discount;
           } else {
             discount = (e.percentDiscount / 100) * total;
@@ -340,7 +329,7 @@ const getStorePromotion = async (total) => {
         //แถมสินค้า
 
         let productList = _tbPromotionStore.find(
-          (e) => e.condition == "product"
+          (e) => e.condition == 3
         );
         if (productList) {
           type = "product"
@@ -391,9 +380,9 @@ const getDelivery = async (logisticId, total) => {
     });
     if (_tbLogistic) {
       //มีข้อมูลในระบบ
-      let _deliveryCost = _tbLogistic.deliveryCost;
+      deliveryCost = _tbLogistic.deliveryCost;
       //มีค่าส่ง
-      if (_deliveryCost > 0) {
+      if (deliveryCost > 0) {
         //ตรวสอบโปรส่ง
         const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
           attributes: ["buy", "deliveryCost"],
@@ -406,15 +395,15 @@ const getDelivery = async (logisticId, total) => {
           //มีโปร
           if (total >= _tbPromotionDelivery.buy) {
             //เข้าเงื่อนไขโปร
-            deliveryCost = 0; //ค่าส่ง
+            // deliveryCost = 0; //ค่าส่ง
             discountDelivery = _tbPromotionDelivery.deliveryCost; //โปรค่าส่ง
           } else {
-            deliveryCost = _deliveryCost; //ค่าส่ง
-            discountDelivery = 0; //โปรค่าส่ง
+            // deliveryCost = _deliveryCost; //ค่าส่ง
+            // discountDelivery = 0; //โปรค่าส่ง
           }
         } else {
-          deliveryCost = _deliveryCost; //ค่าส่ง
-          discountDelivery = 0; //โปรค่าส่ง
+          // deliveryCost = _deliveryCost; //ค่าส่ง
+          // discountDelivery = 0; //โปรค่าส่ง
         }
       } else {
 
@@ -527,26 +516,22 @@ const getAddress = async (addressId, memberID) => {
 router.post("/doSaveOrder", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
-  const uid = Encrypt.DecodeKey(req.user.uid);
+
   let Member;
   let orderId;
   let { orderhd, orderdt, cart } = req.body;
   let orderDT = [];
   let url2c2p
   try {
-    Member = await tbMember.findOne({
-      attributes: ["id"],
-      where: { uid: uid },
-    });
-
+    // Member = await tbMember.findOne({
+    //   attributes: ["id"],
+    //   where: { uid: uid },
+    // });
+    const memberId = Encrypt.DecodeKey(req.user.id);
+    const uid = Encrypt.DecodeKey(req.user.uid);
     //#region ถอดรหัส 
-    orderhd.memberId = Member.id;
-    orderhd.orderDate = new Date(
-      new Date().toLocaleString("en-US", {
-        timeZone: "asia/bangkok",
-        hour12: false,
-      })
-    );
+    orderhd.memberId = memberId;
+    orderhd.orderDate = new Date();
     if (orderhd.paymentId != null) {
       orderhd.paymentId = Encrypt.DecodeKey(orderhd.paymentId);
     }
@@ -562,6 +547,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     let total = 0; //ราคารวม
     let point = 0
     let sumprice = 0;
+    let stockNumber = 0
     let _getorderDT = await getorderDT(orderdt)
     if (_getorderDT.status) {
       total = _getorderDT.total
@@ -569,6 +555,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       sumprice = _getorderDT.total
       point = _getorderDT.point
       orderDT = _getorderDT.orderDT
+      stockNumber = _getorderDT.stockNumber
     } else {
       status = _getorderDT.status;
       msg = _getorderDT.msg;
@@ -604,13 +591,14 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       if (_getDelivery.status) {
         deliveryCost = _getDelivery.deliveryCost; //ค่าส่ง
         discountDelivery = _getDelivery.discountDelivery; //โปรค่าส่ง
-        total = total + deliveryCost + discountDelivery
+        //  total = total + deliveryCost + discountDelivery
       } else {
         status = _getDelivery.status;
         msg = _getDelivery.msg;
       }
     }
     //#endregion ข้อมูลวิธีการจัดส่ง
+
 
     //#region ส่วนลด Coupon
     let DiscountCoupon = 0;
@@ -628,11 +616,13 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       }
     }
     total = total - DiscountCoupon
+    //บวกค้าส่งทีหลัง
+    total = total + (discountDelivery > 0 ? discountDelivery : deliveryCost)
     //#endregion ส่วนลด Coupon
 
     //#region ที่อยู่ปัจจุบัน
     if (status) {
-      let _getAddress = await getAddress(orderhd.otherAddressId, Member.id)
+      let _getAddress = await getAddress(orderhd.otherAddressId, memberId)
       if (_getAddress.status) {
         const address = _getAddress.address
         orderhd.firstName = address.firstName
@@ -681,6 +671,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       orderhd.discountStorePromotion = DiscountStorePromotion;
       orderhd.points = point
       orderhd.netTotal = total
+      orderhd.stockNumber = stockNumber
 
       try {
         //#region create dt
@@ -790,12 +781,14 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       let sumprice = 0;
       let orderdt = data.orderdt;
       let orderDT = [];
+      let stockNumber = 0
       let _getorderDT = await getorderDT(orderdt)
       if (_getorderDT.status) {
         total = _getorderDT.total
         sumprice = _getorderDT.total
         point = _getorderDT.point
         orderDT = _getorderDT.orderDT
+        stockNumber = _getorderDT.stockNumber
       } else {
         status = _getorderDT.status;
         msg = _getorderDT.msg;
@@ -828,7 +821,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       if (_getDelivery.status) {
         deliveryCost = _getDelivery.deliveryCost; //ค่าส่ง
         discountDelivery = _getDelivery.discountDelivery; //โปรค่าส่ง
-        total = total + deliveryCost + discountDelivery
+
       } else {
         status = _getDelivery.status;
         msg = _getDelivery.msg;
@@ -851,6 +844,8 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       }
       total = total - DiscountCoupon
 
+      //บวกค้าส่งทีหลัง
+      total = total + (discountDelivery > 0 ? discountDelivery : deliveryCost)
       //ที่อยู่ปัจจุบัน
       if (status) {
         let _getAddress = await getAddress(data.otherAddressId, Member.id)
@@ -899,7 +894,8 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
               discountDelivery: discountDelivery,
               discountCoupon: DiscountCoupon,
               points: point,
-              netTotal: total
+              netTotal: total,
+              stockNumber: stockNumber
             },
             { where: { id: Encrypt.DecodeKey(data.id) } }
           );
@@ -1026,6 +1022,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
     "discountDelivery",
     "discountCoupon",
     "discountStorePromotion",
+    "netTotal"
   ];
   try {
     const memberId = Encrypt.DecodeKey(req.user.id);
@@ -1076,6 +1073,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
               "discount",
               "discountType",
               "stockId",
+              "isFree"
             ],
             model: tbOrderDT,
             where: {
@@ -1335,7 +1333,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         let hd = OrderHDData[i].dataValues;
 
         hd.dt = [];
-        let amount = 0;
+        // let amount = 0;
         let price = 0;
         let OrderDTData = []
         if (hd.tbOrderDTs == null) {
@@ -1374,23 +1372,19 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
           });
           let _tbStock = _tbStockData.dataValues;
           dt.productName = _tbStock.productName;
+
           dt.discount =
-            parseFloat(_tbStock.discount) > 0
-              // ? _tbStock.discountType == 1
-              //   ? parseFloat(_tbStock.price) - parseFloat(_tbStock.discount)
-              //   : parseFloat(_tbStock.price) -
-              //   (parseFloat(_tbStock.discount) / 100) *
-              //   parseFloat(_tbStock.price)
-              ? parseFloat(_tbStock.price) - parseFloat(_tbStock.discount)
+            parseFloat(dt.discount) > 0
+              ? parseFloat(dt.price) - parseFloat(dt.discount)
               : 0;
-          dt.price = parseFloat(_tbStock.price);
-          amount += dt.amount;
+          dt.price = parseFloat(dt.price);
           hd.dt.push({
             id: Encrypt.EncodeKey(dt.stockId),
             price: dt.price,
             discount: dt.discount,
             productName: dt.productName,
             amount: dt.amount,
+            isFree: dt.isFree
           });
 
           price += (dt.discount > 0 ? dt.discount : dt.price) * dt.amount;
@@ -1403,14 +1397,14 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
           hd.discountCoupon -
           hd.discountStorePromotion;
 
-        hd.amount = amount;
-        hd.price = price;
+        // hd.amount = stockNumber;
+        // hd.price = netTotal;
         hd.id = Encrypt.EncodeKey(hd.id);
         OrderHD.push({
           id: hd.id,
           orderNumber: hd.orderNumber,
-          amount: hd.amount,
-          price: hd.price,
+          amount: hd.stockNumber,
+          price: hd.netTotal,
           returnStatus: hd.returnStatus,
           cancelStatus: hd.cancelStatus,
           dt: hd.dt,
@@ -1438,11 +1432,8 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
   let OrderHD;
   try {
     const memberId = Encrypt.DecodeKey(req.user.id);
-    tbOrderHD.hasMany(tbOrderDT, {
-      foreignKey: "orderId",
-    });
     OrderHDData = await tbOrderHD.findOne({
-      attributes: ["id", "orderNumber", "orderDate", "logisticId", "paymentId", "memberRewardId", "paymentStatus","netTotal"],
+      attributes: ["id", "orderNumber", "orderDate", "logisticId", "paymentId", "memberRewardId", "paymentStatus", "netTotal"],
       where: {
         id: Encrypt.DecodeKey(orderId),
         isCancel: false,
@@ -1451,196 +1442,10 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         transportStatus: 1,
         isReturn: false,
       },
-      include: [
-        {
-          attributes: [
-            "id",
-            "amount",
-            "price",
-            "discount",
-            "discountType",
-            "stockId",
-            "orderId",
-          ],
-          model: tbOrderDT,
-          where: {
-            isDeleted: false,
-          },
-          required: false
-        },
-      ],
+
     });
-    let total = 0;
-    let sumprice = 0;
+
     if (OrderHDData) {
-
-      // ลดราคา
-      for (var j = 0; j < OrderHDData.tbOrderDTs.length; j++) {
-        let dt = OrderHDData.tbOrderDTs[j].dataValues;
-        //ลดราคา
-        if (dt.discount > 0) {
-          total = total + (dt.price - dt.discount) * dt.amount
-          sumprice = total + (dt.price - dt.discount) * dt.amount
-        } else {
-          total = total + dt.price * dt.amount;
-          sumprice = total + dt.price * dt.amount;
-        }
-      }
-      // คูปอง
-
-      let DiscountStorePromotion = 0; // โปรร้าน
-
-      const _tbPromotionStore = await tbPromotionStore.findAll({
-        attributes: [
-          "id",
-          "buy",
-          "condition",
-          "discount",
-          "percentDiscount",
-          "percentDiscountAmount",
-          "stockId",
-          "campaignName",
-        ],
-        where: {
-          isDeleted: false,
-          isInactive: true,
-        },
-      });
-      if (_tbPromotionStore) {
-        let prodiscountList = _tbPromotionStore.find(
-          (e) =>
-            (e.condition == "discount" || e.condition == "%discount") &&
-            e.buy <= total
-        );
-
-        if (prodiscountList != null) {
-          let pro = _tbPromotionStore.filter((e) => {
-            if (
-              (e.condition == "discount" || e.condition == "%discount") &&
-              e.buy <= total
-            ) {
-              return e;
-            }
-          });
-
-          pro.map((e, i) => {
-            let discount = 0;
-            if (e.condition == "discount") {
-              discount = e.discount;
-            } else {
-              discount = (e.percentDiscount / 100) * total;
-              if (discount > e.percentDiscountAmount) {
-                discount = e.percentDiscountAmount;
-              }
-            }
-            if (discount > DiscountStorePromotion) {
-              DiscountStorePromotion = discount;
-            }
-          });
-        } else {
-          //แถมสินค้า
-          let productList = _tbPromotionStore.find(
-            (e) => e.condition == "product"
-          );
-          if (productList) {
-            let _tbStock = await tbStock.findOne({
-              attributes: [
-                "isFlashSale",
-                "price",
-                "discount",
-                "discountType",
-                "productCount",
-              ],
-              where: {
-                id: productList.stockId,
-              },
-            });
-          }
-
-        }
-      }
-      total = total - DiscountStorePromotion;
-
-      // ค่าขนส่ง
-      //ข้อมูลวิธีการจัดส่ง
-      let deliveryCost = 0; //ค่าส่ง
-      let discountDelivery = 0; //โปรค่าส่ง
-      const _tbLogistic = await tbLogistic.findOne({
-        attributes: ["id", "deliveryCost"],
-        where: {
-          id: OrderHDData.dataValues.logisticId,
-          isShow: true,
-          isDeleted: false,
-        },
-      });
-      if (_tbLogistic) {
-        //มีข้อมูลในระบบ
-        let _deliveryCost = _tbLogistic.deliveryCost;
-        //มีค่าส่ง
-        if (_deliveryCost > 0) {
-          //ตรวสอบโปรส่ง
-          const _tbPromotionDelivery = await tbPromotionDelivery.findOne({
-            attributes: ["buy", "deliveryCost"],
-            where: {
-              isInactive: true,
-              isDeleted: false,
-            },
-          });
-          if (_tbPromotionDelivery) {
-            //มีโปร
-            if (total - DiscountStorePromotion >= _tbPromotionDelivery.buy) {
-              //เข้าเงื่อนไขโปร
-              deliveryCost = 0; //ค่าส่ง
-              discountDelivery = _tbPromotionDelivery.deliveryCost; //โปรค่าส่ง
-            } else {
-              deliveryCost = _deliveryCost; //ค่าส่ง
-              discountDelivery = 0; //โปรค่าส่ง
-            }
-          } else {
-            deliveryCost = _deliveryCost; //ค่าส่ง
-            discountDelivery = 0; //โปรค่าส่ง
-          }
-        }
-      } else {
-        //ไม่มีข้อมูลการจัดส่ง
-        status = false;
-        msg = "logistic empty !";
-      }
-      total = total + deliveryCost + discountDelivery;
-
-      // ส่วนลดCoupon
-      let DiscountCoupon = 0;
-      if (OrderHDData.dataValues.memberRewardId != null) {
-        const _tbMemberReward = await tbMemberReward.findOne({
-          attributes: ["id", "TableHDId"],
-          where: { id: OrderHDData.dataValues.memberRewardId },
-        });
-        //มีคูปอง
-        if (_tbMemberReward) {
-          const _tbCouponCode = await tbCouponCode.findOne({
-            attributes: ["redemptionCouponId"],
-            where: { id: _tbMemberReward.TableHDId },
-          });
-          const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
-            attributes: ["discount", "discountType"],
-            where: { id: _tbCouponCode.redemptionCouponId },
-          });
-
-          if (_tbRedemptionCoupon) {
-            if (_tbRedemptionCoupon.discountType == 1) {
-              DiscountCoupon = _tbRedemptionCoupon.discount;
-            } else {
-              DiscountCoupon = (_tbRedemptionCoupon.discount / 100) * sumprice;
-            }
-          }
-        } else {
-          status = false;
-          msg = "คูปองไม่สามมารถใช้ได้";
-        }
-      }
-
-      total = total - DiscountCoupon;
-
       let _tbPayment = await tbPayment.findOne({
         attributes: [
           "id",
@@ -1667,7 +1472,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         orderNumber: OrderHDData.dataValues.orderNumber,
         email: (member) ? Encrypt.DecodeKey(member.dataValues.email) : null,
         memberName: (member) ? Encrypt.DecodeKey(member.dataValues.firstName) + " " + Encrypt.DecodeKey(member.dataValues.lastName) : null,
-        price: total,
+        price: OrderHDData.dataValues.netTotal,
         Payment: _tbPayment,
       };
 

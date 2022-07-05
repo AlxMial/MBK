@@ -687,7 +687,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
               } else {
                 const data = await tbMemberReward.create({
                   rewardType: "Product"
-                  , TableHDId: item.id
+                  , TableHDId: itemrendom.id
                   , redeemDate: new Date()
                   , isUsedCoupon: false
                   , isDeleted: false
