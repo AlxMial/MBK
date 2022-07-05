@@ -51,38 +51,15 @@ router.get("/", validateToken, async (req, res) => {
   let msg = "success"
   let orderHD = []
   try {
-
-
-    // tbImage.hasMany(tbOrderHD, { foreignKey: "relatedId" });
-    // tbOrderHD.belongsTo(tbImage, { foreignKey: "id" });
-
-    // tbImage.hasMany(tbOrderHD, { foreignKey: "id" });
-    // tbOrderHD.belongsTo(tbImage, { foreignKey: "id" });
-
-    tbOrderHD.hasMany(tbImage, {
-      foreignKey: "relatedId",
-    });
-
     tbOrderHD.hasMany(tbCancelOrder, {
       foreignKey: "orderId",
     });
-
     tbOrderHD.hasMany(tbReturnOrder, {
       foreignKey: "orderId",
     });
-
-
     const data = await tbOrderHD.findAll({
       where: { isDeleted: false },
       include: [
-        {
-          model: tbImage,
-          where: {
-            isDeleted: false,
-            relatedTable: 'tbOrderHD',
-          },
-          required: false
-        },
         {
           model: tbCancelOrder,
           where: {
@@ -102,9 +79,12 @@ router.get("/", validateToken, async (req, res) => {
     if (data) {
       data.map((e, i) => {
         let hd = e.dataValues;
-        if (hd.tbImages.length > 0) {
-          hd.image = hd.tbImages[0].image
-          hd.imageName = hd.tbImages[0].imageName
+        //เป็นการโอนและมีการแนบสลิปแล้ว 
+        if (hd.paymentType == 1 && hd.paymentStatus >= 2) {
+          hd.isImage = true//มี image 
+          hd.imageName = "ไฟล์แนบ"
+        } else {
+          hd.isImage = false
         }
         if (hd.tbCancelOrders.length > 0) {
           hd.tbCancelOrder = hd.tbCancelOrders[0]
@@ -112,86 +92,13 @@ router.get("/", validateToken, async (req, res) => {
         if (hd.tbReturnOrders.length > 0) {
           hd.tbReturnOrder = hd.tbReturnOrders[0]
         }
-        hd.tbImages = null
+        // hd.tbImages = null
         hd.tbCancelOrders = null
         hd.tbReturnOrders = null
         orderHD.push(hd)
       })
-      // orderHD = data
     }
-    // const data = await tbOrderHD.findAll({
-    //   // limit: 3,
-    //   where: { isDeleted: false },
-    //   // attributes: {
-    //   //   include: [
-    //   //     [
-    //   //       Sequelize.literal(`(
-    //   //                   select sum(price) from tbstocks t 
-    //   //                       where id in (select stockId from tborderdts t2 
-    //   // 	                            where isDeleted=0
-    //   // 	                            and orderId = tbOrderHD.id)
-    //   //               )`),
-    //   //       "sumPrice",
-    //   //     ],
-    //   //     [
-    //   //       Sequelize.literal(`(
-    //   //                   select image from tbimages t
-    //   //                       where relatedId = tbOrderHD.id
-    //   //                       and relatedTable = 'tbOrderHD'
-    //   //                       and isDeleted = 0
-    //   //               )`),
-    //   //       "image",
-    //   //     ],
-    //   //     [
-    //   //       Sequelize.literal(`(
-    //   //                   select imageName from tbimages t
-    //   //                       where relatedId = tbOrderHD.id
-    //   //                       and relatedTable = 'tbOrderHD'
-    //   //                       and isDeleted = 0
-    //   //               )`),
-    //   //       "imageName",
-    //   //     ],
-    //   //     [
-    //   //       Sequelize.literal(`(
-    //   //                   select deliveryCost from tblogistics t
-    //   //                       where id = tbOrderHD.logisticId
-    //   //                       and isDeleted = 0
-    //   //               )`),
-    //   //       "deliveryCost",
-    //   //     ],
-    //   //     [
-    //   //       Sequelize.literal(`(
-    //   //                   select logisticType from tblogistics t
-    //   //                       where id = tbOrderHD.logisticId
-    //   //                       and isDeleted = 0
-    //   //               )`),
-    //   //       "logisticType",
-    //   //     ],
-    //   //     [
-    //   //       Sequelize.literal(`(
-    //   //                   select sum(weight) from tbstocks t 
-    //   //                       where id in (select stockId from tborderdts t2 
-    //   // 	                            where t2.isDeleted=0
-    //   // 	                            and t2.orderId = tbOrderHD.id)
-    //   //               )`),
-    //   //       "sumWeight",
-    //   //     ],
-    //   //   ],
-    //   // },
-    // });
-    // if (data) {
 
-    //   for (var i = 0; i < data.length; i++) {
-    //     let hd = data[i].dataValues
-    //     const _tbImage = await tbImage.findOne({ where: { relatedId: hd.id, relatedTable: "tbOrderHD" } })
-    //     if (_tbImage) {
-    //       hd.image = _tbImage.image
-    //       hd.imageName = _tbImage.imageName
-    //     }
-    //     orderHD.push(hd)
-    //   }
-    //   // orderHD = data
-    // }
   } catch (e) {
     status = false
     msg = e.message
@@ -493,7 +400,7 @@ const getDelivery = async (logisticId, total) => {
   }
 }
 //คูปอง
-const getDiscountCoupon = async (usecouponid,total) => {
+const getDiscountCoupon = async (usecouponid, total) => {
   let status = true
   let msg = ""
   let DiscountCoupon = 0; // ส่วนลดCoupon
@@ -514,7 +421,7 @@ const getDiscountCoupon = async (usecouponid,total) => {
           attributes: ["redemptionCouponId"],
           where: { id: _tbMemberReward.TableHDId },
         });
-   
+
         const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
           attributes: ["discount", "discountType"],
           where: { id: _tbCouponCode.redemptionCouponId },
@@ -673,8 +580,8 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     let DiscountCoupon = 0;
     if (status) {
       if (orderhd.usecouponid != null) {
-   
-        let _getDiscountCoupon = await getDiscountCoupon(orderhd.usecouponid,sumprice)
+
+        let _getDiscountCoupon = await getDiscountCoupon(orderhd.usecouponid, sumprice)
         if (_getDiscountCoupon.status) {
           DiscountCoupon = _getDiscountCoupon.DiscountCoupon
           orderhd.memberRewardId = _getDiscountCoupon.memberRewardId
@@ -896,7 +803,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       let DiscountCoupon = 0;
       if (status) {
         if (data.usecouponid != null) {
-          let _getDiscountCoupon = await getDiscountCoupon(data.usecouponid,sumprice)
+          let _getDiscountCoupon = await getDiscountCoupon(data.usecouponid, sumprice)
           if (_getDiscountCoupon.status) {
             DiscountCoupon = _getDiscountCoupon.DiscountCoupon
             data.memberRewardId = _getDiscountCoupon.memberRewardId
@@ -1499,7 +1406,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
     });
     if (Member) {
       OrderHDData = await tbOrderHD.findOne({
-        attributes: ["id","orderNumber","orderDate","logisticId", "paymentId", "memberRewardId", "paymentStatus"],
+        attributes: ["id", "orderNumber", "orderDate", "logisticId", "paymentId", "memberRewardId", "paymentStatus"],
         where: {
           id: Encrypt.DecodeKey(orderId),
           isCancel: false,
@@ -1537,7 +1444,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
             //   price = dt.price - dt.discount;
             // }
             // total = total + price * dt.amount;
-            total =  (dt.price - dt.discount) * dt.amount
+            total = (dt.price - dt.discount) * dt.amount
             sumprice = (dt.price - dt.discount) * dt.amount
           } else {
             total = total + dt.price * dt.amount;
@@ -1716,15 +1623,15 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         }
 
         const member = await tbMember.findOne({
-          attributes: ["firstName", "lastName","email"],
+          attributes: ["firstName", "lastName", "email"],
           where: { uid: Encrypt.DecodeKey(req.user.uid) },
         });
 
         OrderHD = {
           id: Encrypt.EncodeKey(OrderHDData.dataValues.id),
-          orderNumber:OrderHDData.dataValues.orderNumber,
-          email:(member) ? Encrypt.DecodeKey(member.dataValues.email) : null,
-          memberName:(member) ?   Encrypt.DecodeKey(member.dataValues.firstName) + " " +  Encrypt.DecodeKey(member.dataValues.lastName) : null,
+          orderNumber: OrderHDData.dataValues.orderNumber,
+          email: (member) ? Encrypt.DecodeKey(member.dataValues.email) : null,
+          memberName: (member) ? Encrypt.DecodeKey(member.dataValues.firstName) + " " + Encrypt.DecodeKey(member.dataValues.lastName) : null,
           price: total,
           Payment: _tbPayment,
         };
@@ -1743,7 +1650,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
   return res.json({
     status: status,
     msg: msg,
-    order:OrderHDData,
+    order: OrderHDData,
     OrderHD: OrderHD,
   });
 });

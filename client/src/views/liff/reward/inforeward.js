@@ -127,13 +127,24 @@ const InfoReward = () => {
               <div className="w-full h-full absolute" >
                 <div className="mb-4" style={{ height: "150px" }}>
                   <div style={{ width: "200px", height: "100px", margin: "auto" }}>
-                    <ImageUC
-                      find={1}
-                      relatedid={Redemptionconditionshd.redemptionId}
-                      relatedtable={[(Redemptionconditionshd.rewardType == 1 ? "tbRedemptionCoupon" : "tbRedemptionProduct")]}
-                      alt="tbRedemptionCoupon"
-                      className=" animated-img"
-                    ></ImageUC>
+                    {Redemptionconditionshd.redemptionType == 1 ?
+                      <ImageUC
+                        find={1}
+                        relatedid={Redemptionconditionshd.redemptionId}
+                        relatedtable={[(Redemptionconditionshd.rewardType == 1 ? "tbRedemptionCoupon" : "tbRedemptionProduct")]}
+                        alt="tbRedemptionCoupon"
+                        className=" animated-img"
+                      ></ImageUC> :
+                      <img
+                        id={"img-gane-" + Redemptionconditionshd.id}
+                        className={"object-cover w-full h-ful"}
+                        src={require("assets/img/mbk/gameInfo.jpg").default}
+                        onError={({ currentTarget }) => {
+                          currentTarget.onerror = null;
+                          currentTarget.src = require("assets/img/mbk/no-image.png").default;
+                        }}
+                      ></img>
+                    }
                   </div>
 
                 </div>
@@ -186,14 +197,22 @@ const InfoReward = () => {
             : null}
         </div>
         : null}
-      {page == "CouponSucceed" ?
-        <CouponSucceed /> : null}
-      {page == "ProductSucceed" ?
-        <ProductSucceed /> : null}
-      {page == "gameUC" ?
-        <GameUC UseGame={UseGame} /> : null}
-      {page == "GameSucceed" ?
-        <GameSucceed data={gameData} /> : null}
+      {
+        page == "CouponSucceed" ?
+          <CouponSucceed /> : null
+      }
+      {
+        page == "ProductSucceed" ?
+          <ProductSucceed /> : null
+      }
+      {
+        page == "gameUC" ?
+          <GameUC UseGame={UseGame} /> : null
+      }
+      {
+        page == "GameSucceed" ?
+          <GameSucceed data={gameData} /> : null
+      }
 
     </>
   );

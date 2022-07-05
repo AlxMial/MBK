@@ -54,15 +54,27 @@ const Reward = () => {
                       history.push(path.inforeward.replace(":id", e.id))
                     }}>
                       <div className="w-ful" style={{ width: "200px", height: "auto", margin: "auto" }}>
-                        <ImageUC
-                          // style={{ width: "200px", height: "100px", }}
-                          find={1}
-                          relatedid={e.redemptionId}
-                          relatedtable={[(e.rewardType == 1 ? "tbRedemptionCoupon" : "tbRedemptionProduct")]}
-                          alt="tbRedemptionProduct"
-                          className=" animated-img"
-                          imgclassname=" w-full h-full"
-                        />
+                        {e.redemptionType == 1 ?
+                          <ImageUC
+                            // style={{ width: "200px", height: "100px", }}
+                            find={1}
+                            relatedid={e.redemptionId}
+                            relatedtable={[(e.rewardType == 1 ? "tbRedemptionCoupon" : "tbRedemptionProduct")]}
+                            alt="tbRedemptionProduct"
+                            className=" animated-img"
+                            imgclassname=" w-full h-full"
+                          /> :
+                          <img
+                            id={"img-gane-" + e.id}
+                            className={"object-cover w-full h-ful"}
+                            style={{ borderRadius: "15px" }}
+                            src={require("assets/img/mbk/gameInfo.jpg").default}
+                            onError={({ currentTarget }) => {
+                              currentTarget.onerror = null;
+                              currentTarget.src = require("assets/img/mbk/no-image.png").default;
+                            }}
+                          ></img>
+                        }
                       </div>
                       <div className="mt-2 text-ms px-4">
                         <div className="flex justify-between">
