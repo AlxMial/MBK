@@ -5,6 +5,7 @@ import ModalImage from "react-modal-image";
 import FilesService from "services/files";
 import Modal from "react-modal";
 import SlipModal from './SlipModal';
+import axios from "services/axios";
 
 const OrderTable = ({ orderList, openModal }) => {
     Modal.setAppElement("#root");
@@ -78,12 +79,44 @@ const OrderTable = ({ orderList, openModal }) => {
         }
     }
 
-    const onClickAttachment = async (image) => {
-        if (image) {
-            const _image = await FilesService.buffer64UTF8(image)
+    const onClickAttachment = async (id) => {
+        console.log("id : " + id)
+        // if (image) {
+        //     const _image = await FilesService.buffer64UTF8(image)
+        //     setImage(_image);
+        //     setOpen(true);
+        // }
+        const noImage = async () => {
+            const _image = await FilesService.buffer64UTF8(require("assets/img/mbk/no-image.png").default)
             setImage(_image);
             setOpen(true);
         }
+        await axios
+            .post("stock/getImg", {
+                id: id,
+                relatedTable: "tbOrderHD",
+            })
+            .then(async (response) => {
+                if (response.data.status) {
+                    if (response.data.data.length > 0) {
+                        if (response.data.data[0].image == null) {
+                            noImage()
+                        } else {
+                            const _image = await FilesService.buffer64UTF8(response.data.data[0].image)
+                            setImage(_image);
+                            setOpen(true);
+                        }
+                    } else {
+                        noImage()
+                    }
+                } else {
+                    noImage()
+                }
+            })
+            .catch(() => {
+                noImage()
+            })
+            .finally(() => { });
     }
 
     const _thList = ['ลำดับที่', 'เลขที่ใบสั่งซื้อ', 'วันที่สั่งซื้อ', 'ผู้สั่งซื้อ', 'ยอดสุทธิ', 'สถานะการชำระ', 'ไฟล์แนบ', "สถานะการจัดส่ง", "สาเหตุที่ยกเลิก/คืน", "รายละเอียด", "หมายเหตุ"];
@@ -142,11 +175,11 @@ const OrderTable = ({ orderList, openModal }) => {
                                                 {getStatuspayment(value.paymentStatus).text}
                                             </span>
                                         </td>
-                                        <td className={tdClass + (value.image ? ' cursor-pointer ' : '')} onClick={() => {
-                                            onClickAttachment(value.image);
+                                        <td className={tdClass + (value.isImage ? ' cursor-pointer ' : '')} onClick={() => {
+                                            onClickAttachment(value.id);
                                         }} >
-                                            <span className={(value.image ? (value.imageName ?? ' text-blue-700') : tdSpan)}>
-                                                {value.image ? (value.imageName ?? 'สลิปโอนเงิน') : ""}
+                                            <span className={(value.isImage ? (value.imageName ?? ' text-blue-700') : tdSpan)}>
+                                                {value.isImage ? (value.imageName ?? 'สลิปโอนเงิน') : ""}
                                             </span>
                                         </td>
                                         <td className={tdClass} >
