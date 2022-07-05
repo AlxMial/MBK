@@ -85,15 +85,15 @@ const InfoCoupon = () => {
                         {isSelect == 1 ?
                             <div className="w-full  mb-4" >
                                 <div className="w-full flex  mb-2" style={{ margin: "auto", justifyContent: "center" }}>
-                                    <QRCode size={100} value={id} />
+                                    <QRCode size={100} value={MyCoupon.codeCoupon} />
 
                                 </div>
-                                <div className="mt-2 text-center">{id}</div>
+                                <div className="mt-2 text-center">{MyCoupon.codeCoupon}</div>
                             </div> :
                             <div className="w-full  mb-4" >
                                 <div className="w-full flex  mb-2" style={{ margin: "auto", justifyContent: "center", width: "80%" }}>
                                     <Barcode
-                                        value={id}
+                                        value={MyCoupon.codeCoupon}
                                         displayValue={false}
                                         width={2}
                                         height={100}

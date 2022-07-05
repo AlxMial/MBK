@@ -124,7 +124,7 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCance
                             )}
                             // isDisabled={orderHD.paymentStatus != 3 && !isCanEdit}
                             isDisabled={!isCanEdit ? true : orderHD.paymentStatus != 3 ? true : false}
-                            customStyles={getCss(orderHD.transportStatus)}
+                            // customStyles={getCss(orderHD.transportStatus)}
                         />
                     </div>
                 </div>
