@@ -116,9 +116,9 @@ const MakeOrder = () => {
   };
   const setDeliveryCost = (e) => {
     setdeliveryCost(e);
-    setTimeout(() => {
-      getProducts();
-    }, 1000);
+    // setTimeout(() => {
+    //   getProducts();
+    // }, 1000);
   };
   const Cancelcoupon = () => {
     if (id === "cart") {
@@ -237,6 +237,7 @@ const MakeOrder = () => {
   };
   const calcprodiscount = (totel) => {
     let _prodiscount = 0;
+    let typeValue=""
     let data = { data: 0 };
     if (promotionstores.length > 0 && totel > 0) {
       let prodiscountList = promotionstores.find(
@@ -271,7 +272,7 @@ const MakeOrder = () => {
         data = { type: "discount", data: _prodiscount };
       } else {
         //สินค้า
-
+        typeValue = "product";
         let productList = promotionstores.find(
           (e) => e.condition == 3 && e.buy <= totel
         );
@@ -283,7 +284,17 @@ const MakeOrder = () => {
         }
       }
     }
-    return data;
+    try{
+      if (typeValue === "product") 
+      {
+        return 0;
+      }else {
+        return data.data
+      }
+
+    }catch{
+      return 0;
+    }
   };
 
   const getfreebies = async (productList) => {
@@ -419,10 +430,10 @@ const MakeOrder = () => {
             <LogisticModel
               isLogistic={isLogistic}
               onChange={(e) => {
-                addToast("เปลียนช่องทางการขนส่ง", {
-                  appearance: "success",
-                  autoDismiss: true,
-                });
+                // addToast("เปลียนช่องทางการขนส่ง", {
+                //   appearance: "success",
+                //   autoDismiss: true,
+                // });
                 setisLogistic(e.id);
                 setDeliveryCost(e.deliveryCost);
               }}
@@ -458,7 +469,13 @@ const MakeOrder = () => {
                   <div className="flex relative mb-2">
                     <div>ส่วนลดร้านค้า : </div>
                     <div className={"absolute" + (calcprodiscount(sumprice).data > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
-                      {(calcprodiscount(sumprice).data > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice).data)}
+                      {(calcprodiscount(sumprice).data > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice))}
+                    </div>
+                  </div>
+                  <div className="flex relative mb-2">
+                    <div>ค่าจัดส่ง : </div>
+                    <div className={"absolute" + (deliveryCost > 0 ? " " : "")} style={{ right: "0" }}>
+                      {(deliveryCost > 0 ? "฿ " : "฿ ") + fn.formatMoney(deliveryCost)}
                     </div>
                   </div>
                   <div className="flex relative mb-2">

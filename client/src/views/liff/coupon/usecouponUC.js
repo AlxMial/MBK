@@ -24,6 +24,7 @@ const InfoCoupon = () => {
             (res) => {
                 if (res.data.status) {
                     setMyCoupon(res.data.coupon);
+                    
                 }
             },
             () => { },

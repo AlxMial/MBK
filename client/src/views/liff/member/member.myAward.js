@@ -22,7 +22,6 @@ const MyAward = () => {
     getMyReward(
       (res) => {
         if (res.status) {
-          console.log('res.data.product', res.data.coupon)
           setcouponItem(res.data.coupon);
           setproductItem(res.data.product);
         }

@@ -1174,6 +1174,16 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
         }
       })
       if (_coupon) {
+
+
+        const _updateCoupon = await tbMemberReward.update({isUsedCoupon:true}, {
+          where: {
+            memberId: Member.id
+            , rewardType: "Coupon"
+            , TableHDId: CouponCodeId
+          }
+        });
+        
         let data = _coupon.dataValues
         tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
         tbCouponCode.belongsTo(tbRedemptionCoupon, { foreignKey: "redemptionCouponId" });

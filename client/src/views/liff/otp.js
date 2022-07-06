@@ -141,7 +141,7 @@ const Otp = () => {
                 {"Referance No. " + Data.generateref}
               </div>
               <div className="flex text-green-mbk text-xxs font-bold justify-center mt-5">
-                {"กรุณากรองรหัส OTP"}
+                {"กรุณากรอกรหัส OTP"}
               </div>
               <div className="mt-10 unsetInputMark">
                 <OtpInput

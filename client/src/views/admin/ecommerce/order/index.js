@@ -14,6 +14,8 @@ import OrderList from './OrderList';
 import { EncodeKey } from 'services/default.service';
 import OrderDetail from './OrderDetail';
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
+import * as Address from "../../../../services/GetAddress.js";
+import { exportExcel } from "services/exportExcel";
 const Order = () => {
     const dispatch = useDispatch();
     const { addToast } = useToasts();
@@ -280,41 +282,41 @@ const Order = () => {
         "postcode",
       ];
   
-      // for (var i = 0; i < order.data.tbOrder.length; i++) {
-      //   order.data.tbOrder[i]["province"] = await Address.getAddressName(
-      //     "province",
-      //     order.data.tbOrder[i]["province"]
-      //   );
-      //   order.data.tbOrder[i]["district"] = await Address.getAddressName(
-      //     "district",
-      //     order.data.tbOrder[i]["district"]
-      //   );
-      //   order.data.tbOrder[i]["subDistrict"] = await Address.getAddressName(
-      //     "subDistrict",
-      //     order.data.tbOrder[i]["subDistrict"]
-      //   );
+      for (var i = 0; i < order.data.tbOrder.length; i++) {
+        order.data.tbOrder[i]["province"] = await Address.getAddressName(
+          "province",
+          order.data.tbOrder[i]["province"]
+        );
+        order.data.tbOrder[i]["district"] = await Address.getAddressName(
+          "district",
+          order.data.tbOrder[i]["district"]
+        );
+        order.data.tbOrder[i]["subDistrict"] = await Address.getAddressName(
+          "subDistrict",
+          order.data.tbOrder[i]["subDistrict"]
+        );
   
-      //   order.data.tbOrder[i]["paymentStatus"] =
-      //     order.data.tbOrder[i]["paymentStatus"] === "1"
-      //       ? "รอการชำระ"
-      //       : order.data.tbOrder[i]["paymentStatus"] === "2"
-      //       ? "รอการตรวจสอบ"
-      //       : "สำเร็จ";
+        order.data.tbOrder[i]["paymentStatus"] =
+          order.data.tbOrder[i]["paymentStatus"] === "1"
+            ? "รอการชำระ"
+            : order.data.tbOrder[i]["paymentStatus"] === "2"
+            ? "รอการตรวจสอบ"
+            : "สำเร็จ";
         
-      //   order.data.tbOrder[i]["transportStatus"] =
-      //     order.data.tbOrder[i]["transportStatus"] === "1"
-      //       ? "รอการขนส่ง"
-      //       : order.data.tbOrder[i]["transportStatus"] === "2"
-      //       ? "กำลังขนส่ง"
-      //       : "สำเร็จ";
-      // }
-      // exportExcel(
-      //   order.data.tbOerder,
-      //   "ข้อมูลการสั่งซื้อ",
-      //   TitleColumns,
-      //   columns,
-      //   sheetname
-      // );
+        order.data.tbOrder[i]["transportStatus"] =
+          order.data.tbOrder[i]["transportStatus"] === "1"
+            ? "รอการขนส่ง"
+            : order.data.tbOrder[i]["transportStatus"] === "2"
+            ? "กำลังขนส่ง"
+            : "สำเร็จ";
+      }
+      exportExcel(
+        order.data.tbOerder,
+        "ข้อมูลการสั่งซื้อ",
+        TitleColumns,
+        columns,
+        sheetname
+      );
       dispatch(fetchSuccess());
     };
 
