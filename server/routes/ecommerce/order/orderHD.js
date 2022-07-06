@@ -31,6 +31,7 @@ const {
   tbPromotionStore,
   tbPointEcommerce,
   tbProductCategory,
+  tbMemberPoint
 } = require("../../../models");
 const e = require("express");
 const { parseWithoutProcessing } = require("handlebars");
@@ -123,7 +124,7 @@ router.get("/byId/:id", async (req, res) => {
     include: [
       {
         model: tbMember,
-        attributes:['email'],
+        attributes: ['email'],
         where: {
           isDeleted: false,
         },
@@ -146,37 +147,35 @@ router.put("/", validateToken, async (req, res) => {
   const data = await tbOrderHD.findOne({
     where: {
       isDeleted: false,
-      id: {
-        [Op.ne]: req.body.id,
-      },
+      id: req.body.id
     },
   });
 
   let hd = data.dataValues;
   //รอตรวจสอบ
   //จ่ายเงินสำเร็จ
+  let addPoint = false
   if (req.body.paymentStatus == 3 || hd.paymentStatus == 3) {
     // สถานะขนส่ง
-    if (hd.transportStatus == 1) {
-      if (req.body.transportStatus == 1) {
-        if (req.body.prepareDate == null) {
-          req.body.prepareDate = new Date();
-        }
-      } else if (req.body.transportStatus == 2) {
-        if (req.body.prepareDate == null) {
-          req.body.prepareDate = new Date();
-        }
+    if (req.body.transportStatus == 1) {
+      if (req.body.prepareDate == null) {
+        req.body.prepareDate = new Date();
+      }
+    } else if (req.body.transportStatus == 2) {
+      if (req.body.prepareDate == null) {
+        req.body.prepareDate = new Date();
+      }
+      req.body.inTransitDate = new Date();
+    } else if (req.body.transportStatus == 3) {
+      if (req.body.prepareDate == null) {
+        req.body.prepareDate = new Date();
+      }
+      if (req.body.inTransitDate == null) {
         req.body.inTransitDate = new Date();
-      } else if (req.body.transportStatus == 3) {
-        if (req.body.prepareDate == null) {
-          req.body.prepareDate = new Date();
-        }
-        if (req.body.inTransitDate == null) {
-          req.body.inTransitDate = new Date();
-        }
-        if (req.body.doneDate == null) {
-          req.body.doneDate = new Date();
-        }
+      }
+      if (req.body.doneDate == null) {
+        req.body.doneDate = new Date();
+        addPoint = true
       }
     }
   }
@@ -184,6 +183,26 @@ router.put("/", validateToken, async (req, res) => {
   const dataUpdate = await tbOrderHD.update(req.body, {
     where: { id: req.body.id },
   });
+  if (addPoint) {
+
+    let Member = await tbMember.findOne({
+      attributes: ["id", "memberPoint"],
+      where: { id: data.memberId },
+    });
+    const _tbMemberPoint = await tbMemberPoint.create({
+      campaignType: 2
+      , point: data.points
+      , redeemDate: new Date()
+      , expireDate: new Date().setFullYear(new Date().getFullYear() + 2)
+      , tbMemberId: Member.id
+      , isDeleted: false
+
+    });
+    const dataMember = await tbMember.update(
+      { memberPoint: Member.memberPoint + data.points },
+      { where: { id: Member.id } })
+
+  }
   res.json({
     status: true,
     message: "success",
@@ -353,7 +372,7 @@ const getStorePromotion = async (total) => {
       } else {
         //แถมสินค้า
 
-        let productList = _tbPromotionStore.find((e) => e.condition == 3);
+        let productList = _tbPromotionStore.find((e) => e.condition == 3  && e.buy <= total);
         if (productList) {
           type = "product";
           let _tbStock = await tbStock.findOne({
@@ -1508,8 +1527,8 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         email: member ? Encrypt.DecodeKey(member.dataValues.email) : null,
         memberName: member
           ? Encrypt.DecodeKey(member.dataValues.firstName) +
-            " " +
-            Encrypt.DecodeKey(member.dataValues.lastName)
+          " " +
+          Encrypt.DecodeKey(member.dataValues.lastName)
           : null,
         price: OrderHDData.dataValues.netTotal,
         Payment: _tbPayment,
