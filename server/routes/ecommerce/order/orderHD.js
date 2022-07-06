@@ -30,7 +30,7 @@ const {
   tbMemberReward,
   tbPromotionStore,
   tbPointEcommerce,
-  tbProductCategory
+  tbProductCategory,
 } = require("../../../models");
 const e = require("express");
 const { parseWithoutProcessing } = require("handlebars");
@@ -113,7 +113,24 @@ router.get("/", validateToken, async (req, res) => {
 
 router.get("/byId/:id", validateToken, async (req, res) => {
   const id = req.params.id;
-  const data = await tbOrderHD.findOne({ where: { id: id } });
+
+  tbOrderHD.belongsTo(tbMember, {
+    foreignKey: "memberId",
+  });
+
+  const data = await tbOrderHD.findOne({
+    where: { id: id },
+    include: [
+      {
+        model: tbMember,
+        where: {
+          isDeleted: false,
+        },
+        required: false,
+      },
+    ],
+  });
+
   res.json({
     status: true,
     message: "success",
@@ -221,7 +238,7 @@ const getorderDT = async (DT) => {
           isFree: false,
         });
 
-        //แต้มสะสม 
+        //แต้มสะสม
         //type : จำนวนสิน
         let _tbPointEcommerce = await tbPointEcommerce.findAll({
           attributes: ["type", "purchaseAmount", "productAmount", "points"],
@@ -230,14 +247,14 @@ const getorderDT = async (DT) => {
             startDate: { [Op.lte]: new Date() },
             endDate: { [Op.gte]: new Date() },
             isDeleted: false,
-            type: 2
+            type: 2,
           },
         });
         if (_tbPointEcommerce) {
           _tbPointEcommerce.map((e, i) => {
             if (e.productAmount <= DT[i].amount) {
-              let conut = parseInt((DT[i].amount) / e.productAmount)
-              point += (conut * e.points)
+              let conut = parseInt(DT[i].amount / e.productAmount);
+              point += conut * e.points;
             }
           });
         }
@@ -245,32 +262,25 @@ const getorderDT = async (DT) => {
         status = false;
         msg = "Stock empty !";
       }
-
     }
 
     //คะแนนจากยอดซื้อ
     if (total > 0) {
       let _tbPointEcommerce = await tbPointEcommerce.findAll({
-        attributes: [
-          "type",
-          "purchaseAmount",
-          "productAmount",
-          "points",
-        ],
+        attributes: ["type", "purchaseAmount", "productAmount", "points"],
         where: {
           startDate: { [Op.lte]: new Date() },
           endDate: { [Op.gte]: new Date() },
           isDeleted: false,
           type: 1,
-          purchaseAmount: { [Op.lte]: total }
+          purchaseAmount: { [Op.lte]: total },
         },
       });
       if (_tbPointEcommerce) {
         _tbPointEcommerce.map((e, i) => {
-          let conut = parseInt(total / e.purchaseAmount)
-          point += (conut * e.points)
-        })
-
+          let conut = parseInt(total / e.purchaseAmount);
+          point += conut * e.points;
+        });
       }
     }
   } catch (e) {
@@ -1658,7 +1668,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
           amount: dt.amount,
           price: dt.price,
           discount: dt.discount,
-          isFree: dt.isFree
+          isFree: dt.isFree,
         });
       }
       //ค่าจัดส่ง
