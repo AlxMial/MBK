@@ -256,9 +256,10 @@ const Register = () => {
     useInterval(() => {
       setCount(count - 1);
     }, 1000);
-    if (count == 0) {
-      setcounter(0)
-    }
+    // if (count == 0) {
+    //   setcounter(0)
+    // }
+    setcounter(count)
     return <div
       className="flex text-gray-mbk text-xxs font-bold justify-center mt-2"
     >
@@ -1746,12 +1747,12 @@ const Register = () => {
               </div>
 
               <div
-                className="text-center py-2 text-red-500"
-                style={{ display: otp.incorrect ? "" : "none" }}
+                className="text-center py-2 "
+                style={{ color: otp.incorrect ? "red" : "transparent" }}
               >
                 รหัส OTP ไม่ถูกต้อง
               </div>
-              <div className="flex justify-center mt-10">
+              <div className="flex justify-center mt-2">
                 <button
                   className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                   type="button"
