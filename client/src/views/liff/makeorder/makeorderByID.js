@@ -53,62 +53,68 @@ const MakeOrderById = () => {
         async (res) => {
           if (res.status) {
             let OrderHD = res.data.OrderHD;
-            setOrderHD(OrderHD);
-            setpaymentID(OrderHD.paymentId);
-            setisLogistic(OrderHD.logisticId);
-            setdeliveryCost(OrderHD.olddeliveryCost);
-            setisAddress(OrderHD.otherAddressId);
+            if (OrderHD.tbCancelOrder == null) {
+              setOrderHD(OrderHD);
+              setpaymentID(OrderHD.paymentId);
+              setisLogistic(OrderHD.logisticId);
+              setdeliveryCost(OrderHD.olddeliveryCost);
+              setisAddress(OrderHD.otherAddressId);
 
-            let shop_orders = OrderHD.dt;
-            shop_orders.map((e, i) => {
-              idlist.push(e.id);
-            });
-            if (Storage.getusecoupon() == null) {
-              if (!fn.IsNullOrEmpty(OrderHD.coupon)) {
-                setusecoupon(OrderHD.coupon);
-                Storage.setusecoupon(OrderHD.coupon);
-              } else {
-                setusecoupon(null);
-              }
-            } else {
-              let usecoupon = Storage.getusecoupon();
-              // if (usecoupon.id === id) {
-
-              setusecoupon(usecoupon);
-              // }
-            }
-
-            setIsLoading(true);
-            await axios
-              .post("stock/getStock", { id: idlist })
-              .then((response) => {
-                if (response.data.status) {
-
-                  let tbStock = response.data.tbStock;
-                  let price = 0;
-                  let amount = 0;
-                  tbStock.map((e, i) => {
-                    let item = shop_orders.find((o) => o.id == e.id);
-                    if (!item.isFree) {
-                      let quantity = item.amount;
-                      amount += quantity
-                      e.quantity = quantity;
-                      if (e.priceDiscount > 0) {
-                        price += parseFloat(e.priceDiscount) * parseInt(quantity);
-                      } else {
-                        price += parseFloat(e.price) * parseInt(quantity);
-                      }
-                    }
-                  });
-
-                  price = price;
-                  setsumprice(price < 1 ? 0 : price);
-                  setamount(amount)
-                }
-              })
-              .finally(() => {
-                setIsLoading(false);
+              let shop_orders = OrderHD.dt;
+              shop_orders.map((e, i) => {
+                idlist.push(e.id);
               });
+              if (Storage.getusecoupon() == null) {
+                if (!fn.IsNullOrEmpty(OrderHD.coupon)) {
+                  setusecoupon(OrderHD.coupon);
+                  Storage.setusecoupon(OrderHD.coupon);
+                } else {
+                  setusecoupon(null);
+                }
+              } else {
+                let usecoupon = Storage.getusecoupon();
+                // if (usecoupon.id === id) {
+
+                setusecoupon(usecoupon);
+                // }
+              }
+
+              setIsLoading(true);
+              await axios
+                .post("stock/getStock", { id: idlist })
+                .then((response) => {
+                  if (response.data.status) {
+
+                    let tbStock = response.data.tbStock;
+                    let price = 0;
+                    let amount = 0;
+                    tbStock.map((e, i) => {
+                      let item = shop_orders.find((o) => o.id == e.id);
+                      if (!item.isFree) {
+                        let quantity = item.amount;
+                        amount += quantity
+                        e.quantity = quantity;
+                        if (e.priceDiscount > 0) {
+                          price += parseFloat(e.priceDiscount) * parseInt(quantity);
+                        } else {
+                          price += parseFloat(e.price) * parseInt(quantity);
+                        }
+                      }
+                    });
+
+                    price = price;
+                    setsumprice(price < 1 ? 0 : price);
+                    setamount(amount)
+                  }
+                })
+                .finally(() => {
+                  setIsLoading(false);
+                });
+            } else {
+              history.push(path.orderpaymentdone.replace(":id", OrderHD.id));
+            }
+          } else {
+            history.push(path.shopList);
           }
         },
         () => { },
