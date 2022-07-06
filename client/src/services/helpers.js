@@ -1,5 +1,5 @@
 const config = {
-  dev: false,
+  dev: true,
   UID: "U17068a8797b1f7c44866067f1871826a",
   // liffId: "1657109260-L0jrqxlN", //whale
   liffId: "1657238460-gz9m6Wkn", //undefined
@@ -11,7 +11,7 @@ const config = {
   otpvalidate: "https://portal-otp.smsmkt.com/api/otp-validate",
 
   // _baseURL: "http://localhost:3001/mahboonkrongserver/",
-  // _baseURLImport: "http://localhost:3001/mahboonkrongimport/",
+  // _baseURLImport: "http://localhost:3002/mahboonkrongimport/",
 
   _baseURL: "https://undefined.ddns.net/mahboonkrongserver/",
   _baseURLImport: "https://undefined.ddns.net/mahboonkrongimport/",

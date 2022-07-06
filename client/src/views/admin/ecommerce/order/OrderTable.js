@@ -93,12 +93,6 @@ const OrderTable = ({ orderList, openModal }) => {
   };
 
   const onClickAttachment = async (id) => {
-    console.log("id : " + id);
-    // if (image) {
-    //     const _image = await FilesService.buffer64UTF8(image)
-    //     setImage(_image);
-    //     setOpen(true);
-    // }
     const noImage = async () => {
       const _image = await FilesService.buffer64UTF8(
         require("assets/img/mbk/no-image.png").default
@@ -171,7 +165,16 @@ const OrderTable = ({ orderList, openModal }) => {
                   <th
                     key={index}
                     className={
-                      thClass + (item === "ลำดับที่" ? " text-center" : "")
+                      thClass +
+                      (item === "ลำดับที่" ||
+                      item === "สถานะการชำระ" ||
+                      item === "ไฟล์แนบ" ||
+                      item === "สถานะการจัดส่ง" ||
+                      item === "สาเหตุที่ยกเลิก/คืน"
+                        ? " text-center"
+                        : item === "ยอดสุทธิ"
+                        ? " text-right"
+                        : "")
                     }
                   >
                     {item}
@@ -208,10 +211,15 @@ const OrderTable = ({ orderList, openModal }) => {
                     <td className={tdClass}>
                       <span className={tdSpan}>{value.memberName}</span>
                     </td>
-                    <td className={tdClass}>
-                      <span className={tdSpan}>{value.netTotal ?? 0} ฿</span>
+                    <td className={tdClass + " text-right"}>
+                      <span className={tdSpan}>
+                        {value.netTotal.toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                        }) ?? 0}{" "}
+                        ฿
+                      </span>
                     </td>
-                    <td className={tdClass}>
+                    <td className={tdClass + " text-center"}>
                       <span
                         className={getStatuspayment(value.paymentStatus).color}
                       >
@@ -220,7 +228,9 @@ const OrderTable = ({ orderList, openModal }) => {
                     </td>
                     <td
                       className={
-                        tdClass + (value.isImage ? " cursor-pointer " : "")
+                        tdClass +
+                        (value.isImage ? " cursor-pointer " : "") +
+                        " text-center"
                       }
                       onClick={() => {
                         if (value.isImage) {
@@ -232,7 +242,7 @@ const OrderTable = ({ orderList, openModal }) => {
                         {value.isImage ? value.imageName ?? "สลิปโอนเงิน" : ""}
                       </span>
                     </td>
-                    <td className={tdClass}>
+                    <td className={tdClass + " text-center"}>
                       <span className={getStatustransportStatus(value).color}>
                         {getStatustransportStatus(value).text}
                       </span>

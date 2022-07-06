@@ -151,8 +151,8 @@ const StockInfo = ({
         setDelayValue2("setvalue");
         setIsLoadingSelect(false);
         setCategoryValue(newOption);
-        console.log(res.data.tbProductCategory)
-        formik.setFieldValue("productCategoryId",  newOption.value);
+        console.log(res.data.tbProductCategory);
+        formik.setFieldValue("productCategoryId", newOption.value);
       } else {
         setIsLoadingSelect(false);
         addToast("บันทึกข้อมูลหมวดหมู่สินค้าไม่สำเร็จ", {
@@ -227,41 +227,36 @@ const StockInfo = ({
                   <div className="flex flex-wrap">
                     {/* รูปสินค้า */}
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                      <LabelUC label="รูปสินค้า" isRequired={true} /> <span className="text-red-500 text-xs">600*600 px</span>
+                      <LabelUC label="รูปสินค้า" isRequired={true} />{" "}
+                      <span className="text-red-500 text-xs">600*600 px</span>
                     </div>
                     <div className="w-full lg:w-10/12 margin-auto-t-b">
                       <div className="relative w-full px-4 flex">
                         {stockImage.map((item, i) => {
                           return (
-                            <>
-                            <div
-                              key={i + 1}
-                              className="flex justify-center flex-col"
-                            >
-                              <ProfilePictureUC
-                                className="pr-4"
-                                id={i + 1}
-                                hoverText="เลือกรูปสินค้า"
-                                src={item.image}
-                                onChange={handleChangeImage}
-                              />
-                              <LabelUC
-                                moreClassName="text-center mt-2 pr-4"
-                                label={
-                                  i === 0
-                                    ? "รูปปกสินค้า"
-                                    : "รูปสินค้า " + (i + 1)
-                                }
-                                isRequired={i === 0}
-                              />
+                            <div key={i + 1}>
+                              <div className="flex justify-center flex-col">
+                                <ProfilePictureUC
+                                  className="pr-4"
+                                  id={i + 1}
+                                  hoverText="เลือกรูปสินค้า"
+                                  src={item.image}
+                                  onChange={handleChangeImage}
+                                />
+                                <LabelUC
+                                  moreClassName="text-center mt-2 pr-4"
+                                  label={
+                                    i === 0
+                                      ? "รูปปกสินค้า"
+                                      : "รูปสินค้า " + (i + 1)
+                                  }
+                                  isRequired={i === 0}
+                                />
+                              </div>
                             </div>
-                      
-                            </>
                           );
                         })}
                       </div>
-   
-                          
                       {isImageCoverNull && (
                         <div className="relative w-full px-4">
                           <div className="text-sm py-2 px-2  text-red-500">
