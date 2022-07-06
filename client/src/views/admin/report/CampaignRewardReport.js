@@ -42,7 +42,7 @@ export default function CampaignRewardReport() {
       let startDate = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
       let endDate = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
     if (inputSerch === "" && startDate === null && endDate === null) {
-       setListCampaign(listSearch);
+       setListCampaign(listSearch.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
     } else {
      
        setListCampaign(
@@ -54,28 +54,49 @@ export default function CampaignRewardReport() {
             if(x.startDate !== '' && x.endDate !== '') {             
               isDate = true;
             }            
-            if((inputSerch !== "" ? (x.redemptionName.toLowerCase().includes(inputSerch) ||
-            (x.redemptionTypeStr === null ? "" : x.redemptionTypeStr).toLowerCase().includes(inputSerch) ||
-            x.points.toString().includes(inputSerch) ||
-            (x.rewardTypeStr === null ? "" : x.rewardTypeStr).toString().toLowerCase().includes(inputSerch) ||
-            x.rewardTotal.toString().includes(inputSerch) ||
-            x.exchangedTotal.toString().includes(inputSerch) ||
-            x.toTal.toString().includes(inputSerch)
-           ) : true) &&
-
-            ((startDate !== null && endDate !== null) ? (isDate ? ((startDate <= _startDate  && startDate <= _endDate &&
-              endDate >= _startDate && endDate >= _endDate)) : false) : true)) {
+            if((inputSerch !== "" ? 
+            (Search(x.redemptionName, inputSerch) ||
+            Search(x.redemptionTypeStr, inputSerch) ||
+            Search(x.points, inputSerch) ||
+            Search(x.rewardTypeStr, inputSerch) ||
+            Search(x.rewardTota, inputSerch) ||
+            Search(x.exchangedTotal, inputSerch) ||
+            Search(x.toTal, inputSerch)) : true) &&
+            SearchByDate(_startDate, _endDate)) {
                 return true;
             }
             return false;
           }            
-        )
+        ).sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate))
      );
       setPageNumber(0);
       setForcePage(0);
     }
   };
-
+  const Search = (val, inputSerch) =>  {
+    let status = false;
+    if(val !== '' && val !== null && val !== undefined) {
+      status =  val.toString().toLowerCase().includes(inputSerch);
+    }
+    return status;
+  }
+  const SearchByDate = (dataST_Date, dataED_Date) =>  {
+    let isSearch = false;
+    let st_Date = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
+    let ed_Date = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
+    if(((st_Date !== null && ed_Date !== null) && 
+        ((st_Date <= dataST_Date  && st_Date <= dataED_Date && ed_Date >= dataST_Date && ed_Date >= dataED_Date) || 
+         (st_Date <= dataST_Date  && ed_Date >= dataST_Date && !(st_Date <= dataED_Date  && ed_Date >= dataED_Date)) ||
+         (!(st_Date <= dataST_Date  && ed_Date >= dataST_Date) && st_Date <= dataED_Date  && ed_Date >= dataED_Date))) 
+         
+         
+         || ((st_Date !== null && ed_Date === null) && (st_Date <= dataST_Date || st_Date <= dataED_Date))
+         || ((st_Date === null && ed_Date !== null) && (ed_Date >= dataST_Date || ed_Date >= dataED_Date))
+         || (st_Date === null && ed_Date === null)) {
+          isSearch = true;
+    }
+    return isSearch;
+  }
   const convertToDate = (e) => {    
    const date = new Date(e);
          date.setHours(0,0,0,0);
@@ -162,8 +183,8 @@ export default function CampaignRewardReport() {
             e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : "");             
           });
 
-          setListCampaign(response.data);
-          setListSerch(response.data);
+          setListCampaign(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
+          setListSerch(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
         }
       }
     });
