@@ -425,6 +425,20 @@ export const sendEmailWaiting = (data,s, e = () => { }, f = () => { }) => {
   axios
     .post("mails/paymentwatiting",data)
     .then((res) => {
+
+      axios
+      .post("mails/paymentwatitingadmin",data)
+      .then((resAdmin) => {
+        s(resAdmin);
+      })
+      .catch((errorAdmin) => {
+        e(errorAdmin);
+      })
+      .finally((finalAdmin) => {
+        f();
+      });
+
+
       s(res);
     })
     .catch((error) => {
