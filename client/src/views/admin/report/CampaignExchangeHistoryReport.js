@@ -58,7 +58,7 @@ export default function CampaignExchangeHistoryReport() {
       let startDate = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
       let endDate = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
     if (inputSerch === "" && startDate === null && endDate === null) {
-        setListCampaignExchange(listSearch);
+        setListCampaignExchange(listSearch.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
     } else {     
         setListCampaignExchange(
         listSearch.filter(
@@ -83,13 +83,12 @@ export default function CampaignExchangeHistoryReport() {
             Search(x.addressMember, inputSerch)
            ) : true) &&
 
-            ((startDate !== null && endDate !== null) ? (isDate ? ((startDate <= _startDate  && startDate <= _endDate &&
-            endDate >= _startDate && endDate >= _endDate)) : false) : true)) {
+           SearchByDate(_startDate, _endDate)) {
                 return true;
             }
             return false;
           }            
-        )
+        ).sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate))
      );
       setPageNumber(0);
       setForcePage(0);
@@ -102,6 +101,24 @@ export default function CampaignExchangeHistoryReport() {
       status =  val.toString().toLowerCase().includes(inputSerch);
     }
     return status;
+  }
+
+  const SearchByDate = (dataST_Date, dataED_Date) =>  {
+    let isSearch = false;
+    let st_Date = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
+    let ed_Date = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
+    if(((st_Date !== null && ed_Date !== null) && 
+        ((st_Date <= dataST_Date  && st_Date <= dataED_Date && ed_Date >= dataST_Date && ed_Date >= dataED_Date) || 
+         (st_Date <= dataST_Date  && ed_Date >= dataST_Date && !(st_Date <= dataED_Date  && ed_Date >= dataED_Date)) ||
+         (!(st_Date <= dataST_Date  && ed_Date >= dataST_Date) && st_Date <= dataED_Date  && ed_Date >= dataED_Date))) 
+         
+         
+         || ((st_Date !== null && ed_Date === null) && (st_Date <= dataST_Date || st_Date <= dataED_Date))
+         || ((st_Date === null && ed_Date !== null) && (ed_Date >= dataST_Date || ed_Date >= dataED_Date))
+         || (st_Date === null && ed_Date === null)) {
+          isSearch = true;
+    }
+    return isSearch;
   }
 
   const convertToDate = (e) => {    
@@ -271,8 +288,8 @@ export default function CampaignExchangeHistoryReport() {
               e.addressMember = e.address.concat(" ").concat(e.subDistrictStr).concat(" ").concat(e.districtStr).concat(" ")
                                 .concat(e.provinceStr).concat(" ").concat(e.postcode);            
           });                  
-          setListSerch(response.data);
-          setListCampaignExchange(response.data);
+          setListSerch(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
+          setListCampaignExchange(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
         }
       });   
   }, []);

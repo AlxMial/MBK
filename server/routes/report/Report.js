@@ -152,6 +152,7 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
       let exchangedTotal = 0;
       const rewardTotal = ((obj.dataValues.couponsCount !== null ? parseInt(obj.dataValues.couponsCount, 10) : 0)  + 
                         (obj.dataValues.productCount !== null ? parseInt(obj.dataValues.productCount, 10) :0));
+      // Products
       if(obj.tbRedemptionProducts.length > 0) {
         obj.tbRedemptionProducts.forEach(e => {
                const m_reward = listMemberReward.find(el => el.TableHDId === e.id.toString());
@@ -160,6 +161,7 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
                 }
         });         
       }
+      // Coupons
       if(obj.tbRedemptionCoupons.length > 0) {
         obj.tbRedemptionCoupons.forEach(e => {
              if(e.tbCouponCodes.length > 0) {
@@ -241,7 +243,7 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
         const lCouponCode = listCouponCode.filter(e => e.id.toString() === obj.TableHDId);
         if(lCouponCode.length > 0) {
           const rdCupon = lCouponCode[0].tbRedemptionCoupon;
-          status = (!rdCupon.iscancel && lCouponCode[0].isUse) ? 1 : 0;
+          status = (rdCupon !== null && !rdCupon.iscancel && lCouponCode[0].isUse) ? 1 : 0;
           code = Encrypt.DecodeKey(lCouponCode[0].codeCoupon);
           if(rdCupon !== null && rdCupon.tbRedemptionConditionsHD !== null) {
             redemptionName = rdCupon.tbRedemptionConditionsHD.redemptionName;

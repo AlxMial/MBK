@@ -18,9 +18,12 @@ export default function CollectPointsReport() {
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;  
   const listPointType = [
-    { value: "1", type: "Code", status: "แลกคะแนน"},
-    { value: "2", type: "E-Commerce", status: "รับคะแนน" },
-    { value: "3", type: "Register", status: "รับคะแนน" },
+    { value: "1", type: "Code", status: "สะสมคะแนน"},
+    { value: "2", type: "E-Commerce", status: "สะสมคะแนน" },
+    { value: "3", type: "Register", status: "สะสมคะแนน" },
+    { value: "4", type: "E-Coupon", status: "ใช้คะแนน"},
+    { value: "5", type: "ของสมมนาคุณ", status: "ใช้คะแนน" },
+    { value: "6", type: "Game", status: "ใช้คะแนน" },
   ];
   const formSerch =  useFormik({
     initialValues:  { 
@@ -34,7 +37,7 @@ export default function CollectPointsReport() {
       let startDate = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
       let endDate = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
     if (inputSerch === "" && startDate === null && endDate === null) {
-      setListPoint(listSearch);
+      setListPoint(listSearch.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
     } else {
      
       setListPoint(
@@ -55,14 +58,12 @@ export default function CollectPointsReport() {
             Search(x.status, inputSerch) ||
             Search(x.code, inputSerch)
            ) : true) &&
-
-            ((startDate !== null && endDate !== null) ? (isDate ? ((startDate <= _startDate  && startDate <= _endDate &&
-            endDate >= _startDate && endDate >= _endDate)) : false) : true)) {
+            SearchByDate(_startDate, _endDate)) {
                 return true;
             }
             return false;
           }            
-        )
+        ).sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate))
      );
       setPageNumber(0);
       setForcePage(0);
@@ -75,6 +76,24 @@ export default function CollectPointsReport() {
       status =  val.toString().toLowerCase().includes(inputSerch);
     }
     return status;
+  }
+
+  const SearchByDate = (dataST_Date, dataED_Date) =>  {
+    let isSearch = false;
+    let st_Date = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
+    let ed_Date = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
+    if(((st_Date !== null && ed_Date !== null) && 
+        ((st_Date <= dataST_Date  && st_Date <= dataED_Date && ed_Date >= dataST_Date && ed_Date >= dataED_Date) || 
+         (st_Date <= dataST_Date  && ed_Date >= dataST_Date && !(st_Date <= dataED_Date  && ed_Date >= dataED_Date)) ||
+         (!(st_Date <= dataST_Date  && ed_Date >= dataST_Date) && st_Date <= dataED_Date  && ed_Date >= dataED_Date))) 
+         
+         
+         || ((st_Date !== null && ed_Date === null) && (st_Date <= dataST_Date || st_Date <= dataED_Date))
+         || ((st_Date === null && ed_Date !== null) && (ed_Date >= dataST_Date || ed_Date >= dataED_Date))
+         || (st_Date === null && ed_Date === null)) {
+          isSearch = true;
+    }
+    return isSearch;
   }
 
   const convertToDate = (e) => {    
@@ -170,8 +189,8 @@ export default function CollectPointsReport() {
             }
           });
                  
-          setListSerch(response.data);
-          setListPoint(response.data);
+          setListSerch(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
+          setListPoint(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
         }
       });
   };
