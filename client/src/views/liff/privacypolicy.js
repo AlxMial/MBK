@@ -26,12 +26,13 @@ const Privacypolicy = () => {
   };
   return (
     <>
-      <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
+      <div className="bg-green-mbk" style={{ height: "calc(100% - 100px)" }}>
         <div
+          className="line-scroll"
           style={{
             width: "90%",
             backgroundColor: "#FFF",
-            height: "45vh",
+            height: "calc(100% - 270px)",
             padding: "10px",
             margin: "auto",
             borderRadius: "10px",
@@ -97,7 +98,7 @@ const Privacypolicy = () => {
                 style={{ alignSelf: "stretch" }}
               />
               <span
-                className="ml-2 text-sm font-normal text-white"
+                className="ml-2 text-sm font-normal text-white line-clamp-3"
                 style={{ whiteSpace: "pre-wrap" }}
               >
                 {"ข้าพเจ้าได้อ่านและยอมรับ ข้อกำหนดและเงื่อนไข"}

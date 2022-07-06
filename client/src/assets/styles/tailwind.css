@@ -4869,6 +4869,13 @@ input[type="number"] {
   overflow: hidden;
 }
 
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .Modal-line {
   background-color: #fff;
   padding: 20px;

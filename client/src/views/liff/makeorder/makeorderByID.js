@@ -83,18 +83,21 @@ const MakeOrderById = () => {
               .post("stock/getStock", { id: idlist })
               .then((response) => {
                 if (response.data.status) {
-       
+
                   let tbStock = response.data.tbStock;
                   let price = 0;
                   let amount = 0;
                   tbStock.map((e, i) => {
-                    let quantity = shop_orders.find((o) => o.id == e.id).amount;
-                    amount += quantity
-                    e.quantity = quantity;
-                    if (e.priceDiscount > 0) {
-                      price += parseFloat(e.priceDiscount) * parseInt(quantity);
-                    } else {
-                      price += parseFloat(e.price) * parseInt(quantity);
+                    let item = shop_orders.find((o) => o.id == e.id);
+                    if (!item.isFree) {
+                      let quantity = item.amount;
+                      amount += quantity
+                      e.quantity = quantity;
+                      if (e.priceDiscount > 0) {
+                        price += parseFloat(e.priceDiscount) * parseInt(quantity);
+                      } else {
+                        price += parseFloat(e.price) * parseInt(quantity);
+                      }
                     }
                   });
 
@@ -169,7 +172,7 @@ const MakeOrderById = () => {
   const calctotel = () => {
     // มีโปรร้าน
     let total = sumprice;
-  
+
     let _prodiscstro = calcprodiscount(sumprice);
     let _prodiscount = 0;
     if (_prodiscstro.type === "discount") {
@@ -240,9 +243,9 @@ const MakeOrderById = () => {
         }
       }
     }
-    if(valueType === "product"){
+    if (valueType === "product") {
       return 0
-    }else return data.data
+    } else return data.data
   };
 
   // const getfreebies = async (productList) => {

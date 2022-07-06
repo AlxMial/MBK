@@ -6,7 +6,7 @@ import FilesService from "services/files";
 import { path } from "services/liff.services";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
-import { triggerBase64Download } from "common-base64-downloader-react";
+// import { triggerBase64Download } from "common-base64-downloader-react";
 import { getOrder, doSaveSlip } from "@services/liff.services";
 import liff from "@line/liff";
 import config from "@services/helpers";
@@ -14,7 +14,8 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import WaitingPayment from "./waitingPayment";
 import Error from "../error";
 import { sendEmailWaiting } from "services/liff.services";
-import * as Session from "@services/Session.service";
+// import * as Session from "@services/Session.service";
+
 const PaymentInfo = () => {
   let { id } = useParams();
   const history = useHistory();
@@ -57,7 +58,7 @@ const PaymentInfo = () => {
           setstatuspayment(false);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -84,7 +85,7 @@ const PaymentInfo = () => {
               {
                 frommail: "noreply@undefined.co.th",
                 password: "Has88149*",
-                tomail:OrderHD.email,
+                tomail: OrderHD.email,
                 orderNumber: OrderHD.orderNumber,
                 memberName: OrderHD.memberName,
               },
@@ -346,12 +347,17 @@ const PaymentInfo = () => {
                         <div className="px-2" style={{ width: "50%" }}>
                           <div
                             className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+
                             onClick={() => {
+                              var link = document.createElement("a");
                               const image = document.getElementById(
                                 OrderHD.Payment.id + "paymentQrCode"
                               );
+                              document.body.appendChild(link); // for Firefox
 
-                              triggerBase64Download(image.src, "paymentQrCode");
+                              link.setAttribute("href", image.src);
+                              link.setAttribute("download", "paymentQrCode");
+                              link.click();
                             }}
                           >
                             {"บันทึก QR"}
