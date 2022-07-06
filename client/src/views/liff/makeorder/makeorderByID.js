@@ -180,10 +180,10 @@ const MakeOrderById = () => {
     let total = sumprice;
 
     let _prodiscstro = calcprodiscount(sumprice);
-    let _prodiscount = 0;
-    if (_prodiscstro.type === "discount") {
-      _prodiscount = _prodiscstro.data;
-    }
+    let _prodiscount =_prodiscstro;
+    // if (_prodiscstro.type === "discount") {
+    //   _prodiscount = _prodiscstro.data;
+    // }
 
     if (usecoupon != null) {
       total = (usecoupon.discountType === "1") ? total - usecoupon.discount : total - (usecoupon.discount / 100) * total;
