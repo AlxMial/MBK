@@ -8,7 +8,7 @@ const axiosInstance = axios.create({
   // baseURL: `https://undefined.ddns.net/mbkserver/`,
   // baseURL: `https://undefined.ddns.net/mahboonkrongserver/`,
   // baseURL: `https://hopeagro.co.th/mahboonkrongserver/`,
-  baseURL: `http://localhost:3001/mahboonkrongserver/`,
+  baseURL: config._baseURL,
 });
 
 axiosInstance.interceptors.request.use(
@@ -33,16 +33,16 @@ const headconfig = {
 
 
 const Otp = (isSender, data, callblack) => {
-  var config = {
+  var configs = {
     method: "post",
     url: isSender
-      ? "https://portal-otp.smsmkt.com/api/otp-send"
-      : "https://portal-otp.smsmkt.com/api/otp-validate",
+      ? config.otpsend
+      : config.otpvalidate,
     headers: headconfig,
     data: data,
   };
 
-  axios(config)
+  axios(configs)
     .then(function (res) {
       callblack(res.data);
     })

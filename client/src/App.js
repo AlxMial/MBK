@@ -24,7 +24,7 @@ const getPermission = async () => {
   // const session = sessionStorage.getItem("linkPage");
   // console.log(role)
   const value = window.location.pathname.toString().toLowerCase();
-  if (role === undefined && !value.includes('line')) {
+  if (role === undefined && !value.includes('line') && !value.includes('auth')) {
     history.push("/auth/login");
     // if (!role.data.error)
     //   if (role.data.data.filter((e) => e.id === 10).length > 0) {

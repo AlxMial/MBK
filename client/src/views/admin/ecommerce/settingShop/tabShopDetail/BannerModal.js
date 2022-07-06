@@ -14,6 +14,7 @@ import axios from "services/axios";
 import ModalHeader from "views/admin/ModalHeader";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import ProfilePictureUC from "components/ProfilePictureUC";
+import PictureBannerUC from "components/PictureBannerUC";
 
 const BannerModal = ({
   open,
@@ -357,13 +358,14 @@ const BannerModal = ({
                     key={i}
                     className="border rounded-lg px-24 py-4 flex mt-2 mb-2 flex-wrap w-full"
                   >
-                    <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                      <ProfilePictureUC
+                    <div className="w-full lg:w-2/12 margin-auto-t-b ">
+                      <PictureBannerUC
                         id={i}
                         hoverText="เลือกรูปภาพ Banner"
                         onChange={(e) => handleSeletectImage(e)}
                         src={item.picture}
                       />
+                      <div className="text-red-500 text-xs text-center">1140*460 px</div>
                     </div>
                     <div className="w-full lg:w-10/12 px-4 margin-auto-t-b">
                       <div className="w-full text-right">

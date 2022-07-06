@@ -106,7 +106,7 @@ export default function Sidebar() {
             className="md:block text-left md:pb-2 text-white mr-0 inline-block whitespace-nowrap text-xl uppercase font-bold p-4 px-0"
             to={
               typePermission === "2"
-                ? "/admin/empty"
+                ? "/admin/order"
                 : typePermission === "3"
                 ? "/admin/members"
                 : "/admin/users"
@@ -207,7 +207,7 @@ export default function Sidebar() {
                 className={
                   "py-2 space-y-2" +
                   (isCRM ? " block" : " hidden") +
-                  (typePermission === "2" ? " hidden" : " ")
+                  (typePermission === "2" ? " " : " ")
                 }
               >
                 {menuList

@@ -66,6 +66,7 @@ const MakeOrder = () => {
           .then((response) => {
             if (response.data.status) {
               let tbStock = response.data.tbStock;
+
               setCartItem(tbStock);
               let price = 0;
               tbStock.map((e, i) => {
@@ -116,9 +117,9 @@ const MakeOrder = () => {
   };
   const setDeliveryCost = (e) => {
     setdeliveryCost(e);
-    setTimeout(() => {
-      getProducts();
-    }, 1000);
+    // setTimeout(() => {
+    //   getProducts();
+    // }, 1000);
   };
   const Cancelcoupon = () => {
     if (id === "cart") {
@@ -212,31 +213,34 @@ const MakeOrder = () => {
 
   const calctotel = () => {
     // มีโปรร้าน
-    let total = sumprice;
-    let _prodiscstro = calcprodiscount(sumprice);
-    let _prodiscount = 0;
-    if (_prodiscstro.type == "discount") {
-      _prodiscount = _prodiscstro.data;
-    }
+    let total = 0;
+    if (sumprice > 0) {
+      total = sumprice
+      let _prodiscstro = calcprodiscount(sumprice);
+      let _prodiscount = _prodiscstro;
+      // if (_prodiscstro.type == "discount") {
+      //   _prodiscount = _prodiscstro.data;
+      // }
 
-    if (usecoupon != null) {
-      total = (usecoupon.discountType === "1") ? total - usecoupon.discount : total - (usecoupon.discount / 100) * total;
-    }
-
-    total = total - _prodiscount;
-    //มีโปรส่ง
-    let _deliveryCost = deliveryCost;
-    if (tbPromotionDelivery != null) {
-      if (total >= tbPromotionDelivery.buy && deliveryCost > 0) {
-        _deliveryCost = tbPromotionDelivery.deliveryCost;
+      if (usecoupon != null) {
+        total = (usecoupon.discountType === "1") ? total - usecoupon.discount : total - (usecoupon.discount / 100) * total;
       }
-    }
-    total = total + _deliveryCost;
 
+      total = total - _prodiscount;
+      //มีโปรส่ง
+      let _deliveryCost = deliveryCost;
+      if (tbPromotionDelivery != null) {
+        if (total >= tbPromotionDelivery.buy && deliveryCost > 0) {
+          _deliveryCost = tbPromotionDelivery.deliveryCost;
+        }
+      }
+      total = total + _deliveryCost;
+    }
     return total;
   };
   const calcprodiscount = (totel) => {
     let _prodiscount = 0;
+    let typeValue = ""
     let data = { data: 0 };
     if (promotionstores.length > 0 && totel > 0) {
       let prodiscountList = promotionstores.find(
@@ -269,9 +273,10 @@ const MakeOrder = () => {
           }
         });
         data = { type: "discount", data: _prodiscount };
+        typeValue = "discount";
       } else {
         //สินค้า
-
+        typeValue = "product";
         let productList = promotionstores.find(
           (e) => e.condition == 3 && e.buy <= totel
         );
@@ -283,7 +288,16 @@ const MakeOrder = () => {
         }
       }
     }
-    return data;
+    try {
+      if (typeValue === "product") {
+        return 0;
+      } else {
+        return data.data
+      }
+
+    } catch {
+      return 0;
+    }
   };
 
   const getfreebies = async (productList) => {
@@ -349,12 +363,12 @@ const MakeOrder = () => {
               className="flex relative"
               style={{
                 height: "20px",
-                alignItems: "center",
-                justifyContent: "center",
+                // alignItems: "center",
+                // justifyContent: "center",
                 marginTop: "0.5rem",
               }}
             >
-              <div className="px-2 absolute" style={{ left: "10px" }}>
+              <div className="px-2 " style={{ left: "10px", width: "50px" }}>
                 <img
                   style={{ margin: "auto", width: "22px", height: "22px" }}
                   src={require("assets/img/mbk/icon_sale.png").default}
@@ -362,10 +376,10 @@ const MakeOrder = () => {
                   className="w-32 border-2 border-blueGray-50"
                 ></img>
               </div>
-              <div className="px-2 absolute font-bold" style={{ left: "50px" }}>
+              <div className="px-2 font-bold line-clamp-1" style={{ left: "50px", width: "calc(100% - 180px)" }}>
                 {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
               </div>
-              <div className="absolute" style={{ right: "10px" }}>
+              <div className="flex" style={{ right: "10px", width: "130px", justifyContent: "end" }}>
                 <div className="flex">
                   <div
                     style={{
@@ -407,10 +421,10 @@ const MakeOrder = () => {
             <AddressModel
               isAddress={isAddress}
               onChange={(e) => {
-                addToast("เปลียนที่อยู่จัดส่ง", {
-                  appearance: "success",
-                  autoDismiss: true,
-                });
+                // addToast("เปลียนที่อยู่จัดส่ง", {
+                //   appearance: "success",
+                //   autoDismiss: true,
+                // });
                 setisAddress(e.id);
               }}
               setisAddress={setisAddress}
@@ -419,10 +433,10 @@ const MakeOrder = () => {
             <LogisticModel
               isLogistic={isLogistic}
               onChange={(e) => {
-                addToast("เปลียนช่องทางการขนส่ง", {
-                  appearance: "success",
-                  autoDismiss: true,
-                });
+                // addToast("เปลียนช่องทางการขนส่ง", {
+                //   appearance: "success",
+                //   autoDismiss: true,
+                // });
                 setisLogistic(e.id);
                 setDeliveryCost(e.deliveryCost);
               }}
@@ -458,7 +472,13 @@ const MakeOrder = () => {
                   <div className="flex relative mb-2">
                     <div>ส่วนลดร้านค้า : </div>
                     <div className={"absolute" + (calcprodiscount(sumprice).data > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
-                      {(calcprodiscount(sumprice).data > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice).data)}
+                      {(calcprodiscount(sumprice).data > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice))}
+                    </div>
+                  </div>
+                  <div className="flex relative mb-2">
+                    <div>ค่าจัดส่ง : </div>
+                    <div className={"absolute" + (deliveryCost > 0 ? " " : "")} style={{ right: "0" }}>
+                      {(deliveryCost > 0 ? "฿ " : "฿ ") + fn.formatMoney(deliveryCost)}
                     </div>
                   </div>
                   <div className="flex relative mb-2">
@@ -499,6 +519,10 @@ const MakeOrder = () => {
                 </div>
               </div>
             </div>
+            <div
+              className="w-full  relative mt-2"
+              style={{ alignItems: "center", justifyContent: "center", height: "30px" }}
+            ></div>
             <FooterButton sendOrder={sendOrder} text={"สั่งสินค้า"} />
           </div>
         </>

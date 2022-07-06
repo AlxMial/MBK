@@ -40,9 +40,7 @@ const ShowProducts = () => {
 
   const add_to_cart = () => {
     if (spin > 0) {
-
       upd_shopcart({ id: id, quantity: spin, type: "add", uid: Session.getLiff().uid }, (res) => {
-
         if (res.data.status) {
           if (res.data.shop_orders) {
             setcartNumberBadge(res.data.shop_orders.length)

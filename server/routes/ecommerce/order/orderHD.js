@@ -8,8 +8,8 @@ const { validateToken } = require("../../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../../middlewares/LineMiddleware");
 const ValidateEncrypt = require("../../../services/crypto");
 const Encrypt = new ValidateEncrypt();
-const jwt = require('jsonwebtoken');
-const axios = require('axios').default;
+const jwt = require("jsonwebtoken");
+const axios = require("axios").default;
 
 const Sequelize = require("sequelize");
 const {
@@ -29,7 +29,9 @@ const {
   tbImage,
   tbMemberReward,
   tbPromotionStore,
-  tbPointEcommerce
+  tbPointEcommerce,
+  tbProductCategory,
+  tbMemberPoint
 } = require("../../../models");
 const e = require("express");
 const { parseWithoutProcessing } = require("handlebars");
@@ -47,9 +49,9 @@ router.post("/", validateToken, async (req, res) => {
 });
 
 router.get("/", validateToken, async (req, res) => {
-  let status = true
-  let msg = "success"
-  let orderHD = []
+  let status = true;
+  let msg = "success";
+  let orderHD = [];
   try {
     tbOrderHD.hasMany(tbCancelOrder, {
       foreignKey: "orderId",
@@ -65,46 +67,43 @@ router.get("/", validateToken, async (req, res) => {
           where: {
             isDeleted: false,
           },
-          required: false
+          required: false,
         },
         {
           model: tbReturnOrder,
           where: {
             isDeleted: false,
           },
-          required: false
+          required: false,
         },
       ],
-      order: [
-        ['orderNumber', 'DESC']
-      ],
-    })
+      order: [["orderNumber", "DESC"]],
+    });
     if (data) {
       data.map((e, i) => {
         let hd = e.dataValues;
-        //เป็นการโอนและมีการแนบสลิปแล้ว 
+        //เป็นการโอนและมีการแนบสลิปแล้ว
         if (hd.paymentType == 1 && hd.paymentStatus >= 2) {
-          hd.isImage = true//มี image 
-          hd.imageName = "ไฟล์แนบ"
+          hd.isImage = true; //มี image
+          hd.imageName = "ไฟล์แนบ";
         } else {
-          hd.isImage = false
+          hd.isImage = false;
         }
         if (hd.tbCancelOrders.length > 0) {
-          hd.tbCancelOrder = hd.tbCancelOrders[0]
+          hd.tbCancelOrder = hd.tbCancelOrders[0];
         }
         if (hd.tbReturnOrders.length > 0) {
-          hd.tbReturnOrder = hd.tbReturnOrders[0]
+          hd.tbReturnOrder = hd.tbReturnOrders[0];
         }
         // hd.tbImages = null
-        hd.tbCancelOrders = null
-        hd.tbReturnOrders = null
-        orderHD.push(hd)
-      })
+        hd.tbCancelOrders = null;
+        hd.tbReturnOrders = null;
+        orderHD.push(hd);
+      });
     }
-
   } catch (e) {
-    status = false
-    msg = e.message
+    status = false;
+    msg = e.message;
   }
   res.json({
     status: status,
@@ -113,9 +112,30 @@ router.get("/", validateToken, async (req, res) => {
   });
 });
 
-router.get("/byId/:id", validateToken, async (req, res) => {
+router.get("/byId/:id", async (req, res) => {
   const id = req.params.id;
-  const data = await tbOrderHD.findOne({ where: { id: id } });
+
+  tbOrderHD.belongsTo(tbMember, {
+    foreignKey: "memberId",
+  });
+
+  const data = await tbOrderHD.findOne({
+    where: { id: id },
+    include: [
+      {
+        model: tbMember,
+        attributes: ['email'],
+        where: {
+          isDeleted: false,
+        },
+        required: false,
+      },
+    ],
+  });
+  data.dataValues['email'] = Encrypt.DecodeKey(data.dataValues.tbMember.email);
+  data.dataValues.firstName = Encrypt.DecodeKey(data.dataValues.firstName);
+  data.dataValues.lastName = Encrypt.DecodeKey(data.dataValues.lastName);
+
   res.json({
     status: true,
     message: "success",
@@ -127,47 +147,62 @@ router.put("/", validateToken, async (req, res) => {
   const data = await tbOrderHD.findOne({
     where: {
       isDeleted: false,
-      id: {
-        [Op.ne]: req.body.id,
-      },
+      id: req.body.id
     },
   });
 
-
-  let hd = data.dataValues
+  let hd = data.dataValues;
   //รอตรวจสอบ
   //จ่ายเงินสำเร็จ
+  let addPoint = false
   if (req.body.paymentStatus == 3 || hd.paymentStatus == 3) {
     // สถานะขนส่ง
-    if (hd.transportStatus == 1) {
-      if (req.body.transportStatus == 1) {
-        if (req.body.prepareDate == null) {
-          req.body.prepareDate = new Date()
-        }
-      } else if (req.body.transportStatus == 2) {
-        if (req.body.prepareDate == null) {
-          req.body.prepareDate = new Date()
-        }
-        req.body.inTransitDate = new Date()
-      } else if (req.body.transportStatus == 3) {
-        if (req.body.prepareDate == null) {
-          req.body.prepareDate = new Date()
-        }
-        if (req.body.inTransitDate == null) {
-          req.body.inTransitDate = new Date()
-        }
-        if (req.body.doneDate == null) {
-          req.body.doneDate = new Date()
-        }
+    if (req.body.transportStatus == 1) {
+      if (req.body.prepareDate == null) {
+        req.body.prepareDate = new Date();
+      }
+    } else if (req.body.transportStatus == 2) {
+      if (req.body.prepareDate == null) {
+        req.body.prepareDate = new Date();
+      }
+      req.body.inTransitDate = new Date();
+    } else if (req.body.transportStatus == 3) {
+      if (req.body.prepareDate == null) {
+        req.body.prepareDate = new Date();
+      }
+      if (req.body.inTransitDate == null) {
+        req.body.inTransitDate = new Date();
+      }
+      if (req.body.doneDate == null) {
+        req.body.doneDate = new Date();
+        addPoint = true
       }
     }
   }
 
-
-
   const dataUpdate = await tbOrderHD.update(req.body, {
     where: { id: req.body.id },
   });
+  if (addPoint) {
+
+    let Member = await tbMember.findOne({
+      attributes: ["id", "memberPoint"],
+      where: { id: data.memberId },
+    });
+    const _tbMemberPoint = await tbMemberPoint.create({
+      campaignType: 2
+      , point: data.points
+      , redeemDate: new Date()
+      , expireDate: new Date().setFullYear(new Date().getFullYear() + 2)
+      , tbMemberId: Member.id
+      , isDeleted: false
+
+    });
+    const dataMember = await tbMember.update(
+      { memberPoint: Member.memberPoint + data.points },
+      { where: { id: Member.id } })
+
+  }
   res.json({
     status: true,
     message: "success",
@@ -186,12 +221,12 @@ router.delete("/:id", validateToken, async (req, res) => {
 
 //ข้อมูลสินค้า
 const getorderDT = async (DT) => {
-  let orderDT = []
-  let status = true
-  let msg = ""
+  let orderDT = [];
+  let status = true;
+  let msg = "";
   let total = 0; //ราคารวม
-  let point = 0 //แต้ม
-  let stockNumber = 0
+  let point = 0; //แต้ม
+  let stockNumber = 0;
   try {
     for (var i = 0; i < DT.length; i++) {
       //ดึงราคาใหม่ และ จำนวนใหม่
@@ -215,7 +250,7 @@ const getorderDT = async (DT) => {
         //มีสินค้า
 
         total = total + (_tbStock.price - _tbStock.discount) * DT[i].amount;
-        stockNumber += DT[i].amount
+        stockNumber += DT[i].amount;
         orderDT.push({
           stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
           amount: DT[i].amount,
@@ -223,59 +258,73 @@ const getorderDT = async (DT) => {
           discount: _tbStock.discount,
           discountType: _tbStock.discountType,
           isFlashSale: _tbStock.isFlashSale,
-          isFree: false
+          isFree: false,
         });
 
-        //แต้มสะสม 
-
+        //แต้มสะสม
+        //type : จำนวนสิน
         let _tbPointEcommerce = await tbPointEcommerce.findAll({
-          attributes: [
-            "type",
-            "purchaseAmount",
-            "productAmount",
-            "points",
-          ],
+          attributes: ["type", "purchaseAmount", "productAmount", "points"],
           where: {
             stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
             startDate: { [Op.lte]: new Date() },
             endDate: { [Op.gte]: new Date() },
-            isDeleted: false
+            isDeleted: false,
+            type: 2,
           },
         });
         if (_tbPointEcommerce) {
           _tbPointEcommerce.map((e, i) => {
-            if (e.type == 1) {
-              if (e.purchaseAmount <= (DT[i].price * DT[i].amount)) {
-                let conut = parseInt((DT[i].price * DT[i].amount) / e.purchaseAmount)
-                point = point + (conut * e.points)
-              }
-            } else {
-              if (e.productAmount <= DT[i].amount) {
-                let conut = parseInt((DT[i].amount) / e.purchaseAmount)
-                point = point + (conut * e.points)
-              }
+            if (e.productAmount <= DT[i].amount) {
+              let conut = parseInt(DT[i].amount / e.productAmount);
+              point += conut * e.points;
             }
-          })
-
+          });
         }
-
       } else {
         status = false;
         msg = "Stock empty !";
       }
     }
+
+    //คะแนนจากยอดซื้อ
+    if (total > 0) {
+      let _tbPointEcommerce = await tbPointEcommerce.findAll({
+        attributes: ["type", "purchaseAmount", "productAmount", "points"],
+        where: {
+          startDate: { [Op.lte]: new Date() },
+          endDate: { [Op.gte]: new Date() },
+          isDeleted: false,
+          type: 1,
+          purchaseAmount: { [Op.lte]: total },
+        },
+      });
+      if (_tbPointEcommerce) {
+        _tbPointEcommerce.map((e, i) => {
+          let conut = parseInt(total / e.purchaseAmount);
+          point += conut * e.points;
+        });
+      }
+    }
   } catch (e) {
-    msg = e.message
+    msg = e.message;
   }
-  return { status: status, msg: msg, orderDT: orderDT, total: total, point: point, stockNumber: stockNumber }
-}
+  return {
+    status: status,
+    msg: msg,
+    orderDT: orderDT,
+    total: total,
+    point: point,
+    stockNumber: stockNumber,
+  };
+};
 //คำนวนโปรร้าน
 const getStorePromotion = async (total) => {
-  let DiscountStorePromotion = 0
-  let type = ""
-  let msg = ""
-  let status = true
-  let orderDT = []
+  let DiscountStorePromotion = 0;
+  let type = "";
+  let msg = "";
+  let status = true;
+  let orderDT = [];
   try {
     const _tbPromotionStore = await tbPromotionStore.findAll({
       attributes: [
@@ -295,18 +344,13 @@ const getStorePromotion = async (total) => {
     });
     if (_tbPromotionStore) {
       let prodiscountList = _tbPromotionStore.find(
-        (e) =>
-          (e.condition == 1 || e.condition == 2) &&
-          e.buy <= total
+        (e) => (e.condition == 1 || e.condition == 2) && e.buy <= total
       );
 
       if (prodiscountList != null) {
-        type = "discount"
+        type = "discount";
         let pro = _tbPromotionStore.filter((e) => {
-          if (
-            (e.condition == 1 || e.condition == 2) &&
-            e.buy <= total
-          ) {
+          if ((e.condition == 1 || e.condition == 2) && e.buy <= total) {
             return e;
           }
         });
@@ -328,11 +372,9 @@ const getStorePromotion = async (total) => {
       } else {
         //แถมสินค้า
 
-        let productList = _tbPromotionStore.find(
-          (e) => e.condition == 3
-        );
+        let productList = _tbPromotionStore.find((e) => e.condition == 3  && e.buy <= total);
         if (productList) {
-          type = "product"
+          type = "product";
           let _tbStock = await tbStock.findOne({
             attributes: [
               "isFlashSale",
@@ -353,23 +395,29 @@ const getStorePromotion = async (total) => {
               discount: 0,
               discountType: 0,
               isFlashSale: false,
-              isFree: true
+              isFree: true,
             });
           }
         }
       }
     }
   } catch (e) {
-    msg = e.message
-    status = false
+    msg = e.message;
+    status = false;
   }
 
-  return { status: status, msg: msg, type: type, DiscountStorePromotion: DiscountStorePromotion, orderDT: orderDT }
-}
+  return {
+    status: status,
+    msg: msg,
+    type: type,
+    DiscountStorePromotion: DiscountStorePromotion,
+    orderDT: orderDT,
+  };
+};
 //คำนวนค้าส่ง
 const getDelivery = async (logisticId, total) => {
-  let status = true
-  let msg = ""
+  let status = true;
+  let msg = "";
   let deliveryCost = 0; //ค่าส่ง
   let discountDelivery = 0; //โปรค่าส่ง
 
@@ -406,7 +454,6 @@ const getDelivery = async (logisticId, total) => {
           // discountDelivery = 0; //โปรค่าส่ง
         }
       } else {
-
       }
     } else {
       //ไม่มีข้อมูลการจัดส่ง
@@ -414,24 +461,23 @@ const getDelivery = async (logisticId, total) => {
       msg = "logistic empty !";
     }
   } catch (e) {
-    status = false
-    msg = e.message
+    status = false;
+    msg = e.message;
   }
   return {
     status: status,
     msg: msg,
     deliveryCost: deliveryCost,
-    discountDelivery: discountDelivery
-  }
-}
+    discountDelivery: discountDelivery,
+  };
+};
 //คูปอง
 const getDiscountCoupon = async (usecouponid, total) => {
-  let status = true
-  let msg = ""
+  let status = true;
+  let msg = "";
   let DiscountCoupon = 0; // ส่วนลดCoupon
-  let memberRewardId = null
+  let memberRewardId = null;
   try {
-
     if (usecouponid != null) {
       const _tbMemberReward = await tbMemberReward.findOne({
         attributes: ["id", "TableHDId"],
@@ -464,37 +510,42 @@ const getDiscountCoupon = async (usecouponid, total) => {
         msg = "คูปองไม่สามมารถใช้ได้";
       }
     }
-  }
-  catch (e) {
+  } catch (e) {
     status = false;
     msg = e.message;
   }
-  return { status: status, msg: msg, DiscountCoupon: DiscountCoupon, memberRewardId: memberRewardId }
-}
+  return {
+    status: status,
+    msg: msg,
+    DiscountCoupon: DiscountCoupon,
+    memberRewardId: memberRewardId,
+  };
+};
 const getAddress = async (addressId, memberID) => {
-  let status = true
-  let msg = ""
+  let status = true;
+  let msg = "";
   let address;
   try {
-    let attributes = ["firstName"
-      , "lastName"
-      , "phone"
-      , "address"
-      , "subDistrict"
-      , "district"
-      , "province"
-      , "country"
-      , "postcode"]
+    let attributes = [
+      "firstName",
+      "lastName",
+      "phone",
+      "address",
+      "subDistrict",
+      "district",
+      "province",
+      "country",
+      "postcode",
+    ];
     if (addressId == null) {
-      //ใช้ที่อยู่ member 
+      //ใช้ที่อยู่ member
       let Member = await tbMember.findOne({
         attributes: attributes,
         where: { id: memberID },
       });
       if (Member) {
-        address = Member.dataValues
+        address = Member.dataValues;
       }
-
     } else {
       //ใช้ที่อยู่ที่เลิก
 
@@ -503,15 +554,15 @@ const getAddress = async (addressId, memberID) => {
         where: { memberID: memberID },
       });
       if (Member) {
-        address = Member.dataValues
+        address = Member.dataValues;
       }
     }
   } catch (e) {
-    status = false
-    msg = "Error Address !"
+    status = false;
+    msg = "Error Address !";
   }
-  return { status: status, msg: msg, address: address }
-}
+  return { status: status, msg: msg, address: address };
+};
 //เพิ่ม Order เท่านั่น
 router.post("/doSaveOrder", validateLineToken, async (req, res) => {
   let status = true;
@@ -521,7 +572,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
   let orderId;
   let { orderhd, orderdt, cart } = req.body;
   let orderDT = [];
-  let url2c2p
+  let url2c2p;
   try {
     // Member = await tbMember.findOne({
     //   attributes: ["id"],
@@ -529,7 +580,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     // });
     const memberId = Encrypt.DecodeKey(req.user.id);
     const uid = Encrypt.DecodeKey(req.user.uid);
-    //#region ถอดรหัส 
+    //#region ถอดรหัส
     orderhd.memberId = memberId;
     orderhd.orderDate = new Date();
     if (orderhd.paymentId != null) {
@@ -541,21 +592,21 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       Encrypt.DecodeKey(orderhd.isAddress) == "memberId"
         ? null
         : Encrypt.DecodeKey(orderhd.isAddress);
-    //#endregion ถอดรหัส 
+    //#endregion ถอดรหัส
 
     //#region ข้อมูลสินค้า
     let total = 0; //ราคารวม
-    let point = 0
+    let point = 0;
     let sumprice = 0;
-    let stockNumber = 0
-    let _getorderDT = await getorderDT(orderdt)
+    let stockNumber = 0;
+    let _getorderDT = await getorderDT(orderdt);
     if (_getorderDT.status) {
-      total = _getorderDT.total
-      console.log(_getorderDT.total)
-      sumprice = _getorderDT.total
-      point = _getorderDT.point
-      orderDT = _getorderDT.orderDT
-      stockNumber = _getorderDT.stockNumber
+      total = _getorderDT.total;
+      console.log(_getorderDT.total);
+      sumprice = _getorderDT.total;
+      point = _getorderDT.point;
+      orderDT = _getorderDT.orderDT;
+      stockNumber = _getorderDT.stockNumber;
     } else {
       status = _getorderDT.status;
       msg = _getorderDT.msg;
@@ -565,16 +616,16 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     //#region โปรร้าน
     let DiscountStorePromotion = 0;
     if (status) {
-      let _getStorePromotion = await getStorePromotion(total)
+      let _getStorePromotion = await getStorePromotion(total);
       if (_getStorePromotion.status) {
         if (_getStorePromotion.type == "discount") {
-          DiscountStorePromotion = _getStorePromotion.DiscountStorePromotion
-          total = total - DiscountStorePromotion
+          DiscountStorePromotion = _getStorePromotion.DiscountStorePromotion;
+          total = total - DiscountStorePromotion;
         } else if (_getStorePromotion.type == "product") {
-          let _orderDT = _getStorePromotion.orderDT
+          let _orderDT = _getStorePromotion.orderDT;
           _orderDT.map((e, i) => {
-            orderDT.push(e)
-          })
+            orderDT.push(e);
+          });
         }
       } else {
         status = _getStorePromotion.status;
@@ -587,7 +638,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     let deliveryCost = 0; //ค่าส่ง
     let discountDelivery = 0; //โปรค่าส่ง
     if (status) {
-      let _getDelivery = await getDelivery(orderhd.logisticId, sumprice)
+      let _getDelivery = await getDelivery(orderhd.logisticId, sumprice);
       if (_getDelivery.status) {
         deliveryCost = _getDelivery.deliveryCost; //ค่าส่ง
         discountDelivery = _getDelivery.discountDelivery; //โปรค่าส่ง
@@ -599,41 +650,42 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     }
     //#endregion ข้อมูลวิธีการจัดส่ง
 
-
     //#region ส่วนลด Coupon
     let DiscountCoupon = 0;
     if (status) {
       if (orderhd.usecouponid != null) {
-
-        let _getDiscountCoupon = await getDiscountCoupon(orderhd.usecouponid, sumprice)
+        let _getDiscountCoupon = await getDiscountCoupon(
+          orderhd.usecouponid,
+          sumprice
+        );
         if (_getDiscountCoupon.status) {
-          DiscountCoupon = _getDiscountCoupon.DiscountCoupon
-          orderhd.memberRewardId = _getDiscountCoupon.memberRewardId
+          DiscountCoupon = _getDiscountCoupon.DiscountCoupon;
+          orderhd.memberRewardId = _getDiscountCoupon.memberRewardId;
         } else {
           status = _getDiscountCoupon.status;
           msg = _getDiscountCoupon.msg;
         }
       }
     }
-    total = total - DiscountCoupon
+    total = total - DiscountCoupon;
     //บวกค้าส่งทีหลัง
-    total = total + (discountDelivery > 0 ? discountDelivery : deliveryCost)
+    total = total + (discountDelivery > 0 ? discountDelivery : deliveryCost);
     //#endregion ส่วนลด Coupon
 
     //#region ที่อยู่ปัจจุบัน
     if (status) {
-      let _getAddress = await getAddress(orderhd.otherAddressId, memberId)
+      let _getAddress = await getAddress(orderhd.otherAddressId, memberId);
       if (_getAddress.status) {
-        const address = _getAddress.address
-        orderhd.firstName = address.firstName
-        orderhd.lastName = address.lastName
-        orderhd.phone = address.phone
-        orderhd.address = address.firstName
-        orderhd.subDistrict = address.subDistrict
-        orderhd.district = address.district
-        orderhd.province = address.province
-        orderhd.country = address.country
-        orderhd.postcode = address.postcode
+        const address = _getAddress.address;
+        orderhd.firstName = address.firstName;
+        orderhd.lastName = address.lastName;
+        orderhd.phone = address.phone;
+        orderhd.address = address.firstName;
+        orderhd.subDistrict = address.subDistrict;
+        orderhd.district = address.district;
+        orderhd.province = address.province;
+        orderhd.country = address.country;
+        orderhd.postcode = address.postcode;
       } else {
         status = _getAddress.status;
         msg = _getAddress.msg;
@@ -669,9 +721,9 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       orderhd.discountDelivery = discountDelivery;
       orderhd.discountCoupon = DiscountCoupon;
       orderhd.discountStorePromotion = DiscountStorePromotion;
-      orderhd.points = point
-      orderhd.netTotal = total
-      orderhd.stockNumber = stockNumber
+      orderhd.points = point;
+      orderhd.netTotal = total;
+      orderhd.stockNumber = stockNumber;
 
       try {
         //#region create dt
@@ -684,19 +736,25 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
             const _tbOrderDT = await tbOrderDT.create(orderDT[i]);
             //#region อัพ Stock สินค้า
             if (_tbOrderDT) {
-              let _tbStockData = await tbStock.findOne({ attributes: ["productCount"], where: { id: orderDT[i].stockId } })
+              let _tbStockData = await tbStock.findOne({
+                attributes: ["productCount"],
+                where: { id: orderDT[i].stockId },
+              });
               if (_tbStockData) {
-                let _tbStock = await tbStock.update({ productCount: _tbStockData.productCount - orderDT[i].amount }, {
-
-                  where: {
-                    id: orderDT[i].stockId,
+                let _tbStock = await tbStock.update(
+                  {
+                    productCount: _tbStockData.productCount - orderDT[i].amount,
                   },
-                });
+                  {
+                    where: {
+                      id: orderDT[i].stockId,
+                    },
+                  }
+                );
               }
             }
             //#endregion อัพ Stock สินค้า
           }
-
         }
         //#endregion create dt
 
@@ -709,29 +767,38 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         //#region 2c2p
         if (orderhd.paymentType == 2) {
           // orderId = 6
-          let secretKey = '0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22'
+          let secretKey =
+            "0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22";
           let payload = {
-            "merchantID": '764764000011180',
-            "invoiceNo": orderId + "-" + orderhd.orderNumber,
-            "description": "item 1",
-            "amount": orderhd.netTotal,
-            "currencyCode": "THB",
-            "request3DS": "Y",
-            "paymentChannel": ["CC"],
-            "backendReturnUrl": "",
-            "frontendReturnUrl": "https://mbk.hopeagro.co.th/line/paymentsucceed/" + Encrypt.EncodeKey((orderId + "," + orderhd.orderNumber)),
-          }
+            merchantID: "764764000011180",
+            invoiceNo: orderId + "-" + orderhd.orderNumber,
+            description: "item 1",
+            amount: orderhd.netTotal,
+            currencyCode: "THB",
+            request3DS: "Y",
+            paymentChannel: ["CC"],
+            backendReturnUrl: "",
+            frontendReturnUrl:
+              "https://mbk.hopeagro.co.th/line/paymentsucceed/" +
+              Encrypt.EncodeKey(orderId + "," + orderhd.orderNumber),
+          };
 
           const token = jwt.sign(payload, secretKey);
 
-          await axios.post("https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken",
-            { "payload": token })
+          await axios
+            .post("https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken", {
+              payload: token,
+            })
             .then(async function (res) {
               // handle success
-              let payload = res.data.payload
-              const decoded = jwt.decode(payload)
-              const _2c2p = await tb2c2p.create({ payload: payload, uid: uid, orderId: orderId + "," + orderhd.orderNumber });
-              url2c2p = decoded
+              let payload = res.data.payload;
+              const decoded = jwt.decode(payload);
+              const _2c2p = await tb2c2p.create({
+                payload: payload,
+                uid: uid,
+                orderId: orderId + "," + orderhd.orderNumber,
+              });
+              url2c2p = decoded;
             })
             .catch(function (error) {
               // handle error
@@ -742,13 +809,11 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
             });
         }
         //#endregion 2c2p
-
       } catch (e) {
-        status = false
-        msg = e.message
+        status = false;
+        msg = e.message;
       }
     }
-
   } catch (e) {
     status = false;
     msg = e.message;
@@ -757,7 +822,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     status: status,
     msg: msg,
     orderId: orderId,
-    url: url2c2p
+    url: url2c2p,
   });
 });
 router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
@@ -774,21 +839,20 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       where: { uid: uid },
     });
     if (Member) {
-
       //สินค้า
       let total = 0; //ราคารวม
-      let point = 0
+      let point = 0;
       let sumprice = 0;
       let orderdt = data.orderdt;
       let orderDT = [];
-      let stockNumber = 0
-      let _getorderDT = await getorderDT(orderdt)
+      let stockNumber = 0;
+      let _getorderDT = await getorderDT(orderdt);
       if (_getorderDT.status) {
-        total = _getorderDT.total
-        sumprice = _getorderDT.total
-        point = _getorderDT.point
-        orderDT = _getorderDT.orderDT
-        stockNumber = _getorderDT.stockNumber
+        total = _getorderDT.total;
+        sumprice = _getorderDT.total;
+        point = _getorderDT.point;
+        orderDT = _getorderDT.orderDT;
+        stockNumber = _getorderDT.stockNumber;
       } else {
         status = _getorderDT.status;
         msg = _getorderDT.msg;
@@ -796,70 +860,73 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
 
       // โปรร้าน
       let DiscountStorePromotion = 0;
-      let _getStorePromotion = await getStorePromotion(total)
+      let _getStorePromotion = await getStorePromotion(total);
       if (_getStorePromotion.status) {
         if (_getStorePromotion.type == "discount") {
-          DiscountStorePromotion = _getStorePromotion.DiscountStorePromotion
-          total = total - DiscountStorePromotion
+          DiscountStorePromotion = _getStorePromotion.DiscountStorePromotion;
+          total = total - DiscountStorePromotion;
         } else if (_getStorePromotion.type == "product") {
-          let _orderDT = _getStorePromotion.orderDT
+          let _orderDT = _getStorePromotion.orderDT;
           _orderDT.map((e, i) => {
-            orderDT.push(e)
-          })
+            orderDT.push(e);
+          });
         }
       } else {
         status = _getStorePromotion.status;
         msg = _getStorePromotion.msg;
       }
 
-
       //ข้อมูลวิธีการจัดส่ง
       let deliveryCost = 0; //ค่าส่ง
       let discountDelivery = 0; //โปรค่าส่ง
 
-      let _getDelivery = await getDelivery(Encrypt.DecodeKey(data.logisticId), total)
+      let _getDelivery = await getDelivery(
+        Encrypt.DecodeKey(data.logisticId),
+        total
+      );
       if (_getDelivery.status) {
         deliveryCost = _getDelivery.deliveryCost; //ค่าส่ง
         discountDelivery = _getDelivery.discountDelivery; //โปรค่าส่ง
-
       } else {
         status = _getDelivery.status;
         msg = _getDelivery.msg;
       }
 
-
       // ส่วนลดCoupon
       let DiscountCoupon = 0;
       if (status) {
         if (data.usecouponid != null) {
-          let _getDiscountCoupon = await getDiscountCoupon(data.usecouponid, sumprice)
+          let _getDiscountCoupon = await getDiscountCoupon(
+            data.usecouponid,
+            sumprice
+          );
           if (_getDiscountCoupon.status) {
-            DiscountCoupon = _getDiscountCoupon.DiscountCoupon
-            data.memberRewardId = _getDiscountCoupon.memberRewardId
+            DiscountCoupon = _getDiscountCoupon.DiscountCoupon;
+            data.memberRewardId = _getDiscountCoupon.memberRewardId;
           } else {
             status = _getDiscountCoupon.status;
             msg = _getDiscountCoupon.msg;
           }
         }
       }
-      total = total - DiscountCoupon
+      total = total - DiscountCoupon;
 
       //บวกค้าส่งทีหลัง
-      total = total + (discountDelivery > 0 ? discountDelivery : deliveryCost)
+      total = total + (discountDelivery > 0 ? discountDelivery : deliveryCost);
       //ที่อยู่ปัจจุบัน
       if (status) {
-        let _getAddress = await getAddress(data.otherAddressId, Member.id)
+        let _getAddress = await getAddress(data.otherAddressId, Member.id);
         if (_getAddress.status) {
-          const address = _getAddress.address
-          data.firstName = address.firstName
-          data.lastName = address.lastName
-          data.phone = address.phone
-          data.address = address.firstName
-          data.subDistrict = address.subDistrict
-          data.district = address.district
-          data.province = address.province
-          data.country = address.country
-          data.postcode = address.postcodeF
+          const address = _getAddress.address;
+          data.firstName = address.firstName;
+          data.lastName = address.lastName;
+          data.phone = address.phone;
+          data.address = address.firstName;
+          data.subDistrict = address.subDistrict;
+          data.district = address.district;
+          data.province = address.province;
+          data.country = address.country;
+          data.postcode = address.postcodeF;
         } else {
           status = _getAddress.status;
           msg = _getAddress.msg;
@@ -895,7 +962,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
               discountCoupon: DiscountCoupon,
               points: point,
               netTotal: total,
-              stockNumber: stockNumber
+              stockNumber: stockNumber,
             },
             { where: { id: Encrypt.DecodeKey(data.id) } }
           );
@@ -920,12 +987,12 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         }
       }
     } else {
-      status = false
-      msg = "member empty !"
+      status = false;
+      msg = "member empty !";
     }
   } catch (e) {
-    status = false
-    msg = e.message
+    status = false;
+    msg = e.message;
   }
   return res.json({
     status: status,
@@ -967,28 +1034,24 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
       );
       //#endregion อัพถานะการจ่ายเงิน
       //#region อัพถานะคูปอง
-      const _tbOrderHD = await tbOrderHD.findOne(
-        {
-          attributes: ["memberRewardId", "transportStatus"],
-          where: {
-            id: Encrypt.DecodeKey(data.id),
-          },
-        }
-      );
+      const _tbOrderHD = await tbOrderHD.findOne({
+        attributes: ["memberRewardId", "transportStatus"],
+        where: {
+          id: Encrypt.DecodeKey(data.id),
+        },
+      });
       if (_tbOrderHD) {
         if (_tbOrderHD.memberRewardId != null) {
           await tbMemberReward.update(
             {
               isUsedCoupon: true,
-              deliverStatus: _tbOrderHD.transportStatus
+              deliverStatus: _tbOrderHD.transportStatus,
             },
             { where: { id: _tbOrderHD.memberRewardId } }
           );
         }
-
       }
       //#endregion อัพถานะคูปอง
-
     } else {
       status = false;
       msg = "auth";
@@ -1022,7 +1085,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
     "discountDelivery",
     "discountCoupon",
     "discountStorePromotion",
-    "netTotal"
+    "netTotal",
   ];
   try {
     const memberId = Encrypt.DecodeKey(req.user.id);
@@ -1038,12 +1101,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
     });
 
     //#region รายการที่ต้องชำระ
-    if (
-      PaymentStatus == 1 &&
-      TransportStatus == 1 &&
-      !isCancel &&
-      !isReturn
-    ) {
+    if (PaymentStatus == 1 && TransportStatus == 1 && !isCancel && !isReturn) {
       ///
 
       let _OrderHDData = await tbOrderHD.findAll({
@@ -1063,7 +1121,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             where: {
               isDeleted: false,
             },
-            required: false
+            required: false,
           },
           {
             attributes: [
@@ -1073,23 +1131,19 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
               "discount",
               "discountType",
               "stockId",
-              "isFree"
+              "isFree",
             ],
             model: tbOrderDT,
             where: {
               isDeleted: false,
             },
-            required: false
+            required: false,
           },
         ],
-        order: [
-          ['orderNumber', 'DESC']
-        ],
+        order: [["orderNumber", "DESC"]],
       });
 
-
-
-      //#region ตรวจสอบ เกิน 48 ชม.ให้ยกเลิก auto 
+      //#region ตรวจสอบ เกิน 48 ชม.ให้ยกเลิก auto
       for (var i = 0; i < _OrderHDData.length; i++) {
         let hd = _OrderHDData[i].dataValues;
         //ไม่มีการยกเลิก
@@ -1124,10 +1178,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
           }
         }
       }
-      //#endregion ตรวจสอบ เกิน 48 ชม.ให้ยกเลิก auto 
+      //#endregion ตรวจสอบ เกิน 48 ชม.ให้ยกเลิก auto
       //#endregion รายการที่ต้องชำระ
-
-
     } else if (PaymentStatus == 3 && TransportStatus == 1) {
       //#region รายการเตรียมสินค้า
       let _OrderHDData = await tbOrderHD.findAll({
@@ -1146,7 +1198,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             where: {
               isDeleted: false,
             },
-            required: false
+            required: false,
           },
           {
             attributes: [
@@ -1161,7 +1213,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             where: {
               isDeleted: false,
             },
-            required: false
+            required: false,
           },
         ],
       });
@@ -1200,16 +1252,12 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             where: {
               isDeleted: false,
             },
-            required: false
+            required: false,
           },
         ],
       });
       //#endregion รายการที่ต้องได้รับ
-    } else if (
-      PaymentStatus == 3 &&
-      TransportStatus == 3 &&
-      !isReturn
-    ) {
+    } else if (PaymentStatus == 3 && TransportStatus == 3 && !isReturn) {
       //#region รายการสำเร็จ
       let _OrderHDData = await tbOrderHD.findAll({
         attributes: attributesOrderHD,
@@ -1235,7 +1283,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             where: {
               isDeleted: false,
             },
-            required: false
+            required: false,
           },
           {
             attributes: ["id", "orderId", "returnStatus"],
@@ -1243,7 +1291,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             where: {
               isDeleted: false,
             },
-            required: false
+            required: false,
           },
         ],
       });
@@ -1254,7 +1302,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             OrderHDData.push(_OrderHDData[i]);
           } else {
             if (_OrderHDData[i].tbReturnOrders[0].returnStatus == 3) {
-              _OrderHDData[i].dataValues.returnStatus = __OrderHDData[i].tbReturnOrders[0].returnStatus;
+              _OrderHDData[i].dataValues.returnStatus =
+                __OrderHDData[i].tbReturnOrders[0].returnStatus;
               OrderHDData.push(_OrderHDData[i]);
             }
           }
@@ -1286,8 +1335,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             },
           });
           if (_tbOrderHD != null) {
-            _tbOrderHD.dataValues.cancelStatus =
-              _tbCancelOrder[i].cancelStatus;
+            _tbOrderHD.dataValues.cancelStatus = _tbCancelOrder[i].cancelStatus;
             OrderHDData.push({ dataValues: _tbOrderHD.dataValues });
           }
         }
@@ -1319,8 +1367,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             },
           });
           if (_tbOrderHD != null) {
-            _tbOrderHD.dataValues.returnStatus =
-              _tbReturnOrder[i].returnStatus;
+            _tbOrderHD.dataValues.returnStatus = _tbReturnOrder[i].returnStatus;
             OrderHDData.push({ dataValues: _tbOrderHD.dataValues });
           }
         }
@@ -1335,7 +1382,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         hd.dt = [];
         // let amount = 0;
         let price = 0;
-        let OrderDTData = []
+        let OrderDTData = [];
         if (hd.tbOrderDTs == null) {
           const _OrderDTData = await tbOrderDT.findAll({
             attributes: [
@@ -1348,13 +1395,14 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
               // , "orderId"
             ],
             where: {
-              IsDeleted: false, orderId: hd.id,
-              isFree: false
+              IsDeleted: false,
+              orderId: hd.id,
+              isFree: false,
             },
           });
-          OrderDTData = _OrderDTData
+          OrderDTData = _OrderDTData;
         } else {
-          OrderDTData = hd.tbOrderDTs
+          OrderDTData = hd.tbOrderDTs;
         }
 
         for (var j = 0; j < OrderDTData.length; j++) {
@@ -1384,7 +1432,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             discount: dt.discount,
             productName: dt.productName,
             amount: dt.amount,
-            isFree: dt.isFree
+            isFree: dt.isFree,
           });
 
           price += (dt.discount > 0 ? dt.discount : dt.price) * dt.amount;
@@ -1433,7 +1481,16 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
   try {
     const memberId = Encrypt.DecodeKey(req.user.id);
     OrderHDData = await tbOrderHD.findOne({
-      attributes: ["id", "orderNumber", "orderDate", "logisticId", "paymentId", "memberRewardId", "paymentStatus", "netTotal"],
+      attributes: [
+        "id",
+        "orderNumber",
+        "orderDate",
+        "logisticId",
+        "paymentId",
+        "memberRewardId",
+        "paymentStatus",
+        "netTotal",
+      ],
       where: {
         id: Encrypt.DecodeKey(orderId),
         isCancel: false,
@@ -1442,7 +1499,6 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         transportStatus: 1,
         isReturn: false,
       },
-
     });
 
     if (OrderHDData) {
@@ -1457,9 +1513,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         where: { isDeleted: false, id: OrderHDData.dataValues.paymentId },
       });
       if (_tbPayment) {
-        _tbPayment.dataValues.id = Encrypt.EncodeKey(
-          _tbPayment.dataValues.id
-        );
+        _tbPayment.dataValues.id = Encrypt.EncodeKey(_tbPayment.dataValues.id);
       }
 
       const member = await tbMember.findOne({
@@ -1470,15 +1524,22 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
       OrderHD = {
         id: Encrypt.EncodeKey(OrderHDData.dataValues.id),
         orderNumber: OrderHDData.dataValues.orderNumber,
-        email: (member) ? Encrypt.DecodeKey(member.dataValues.email) : null,
-        memberName: (member) ? Encrypt.DecodeKey(member.dataValues.firstName) + " " + Encrypt.DecodeKey(member.dataValues.lastName) : null,
+        email: member ? Encrypt.DecodeKey(member.dataValues.email) : null,
+        memberName: member
+          ? Encrypt.DecodeKey(member.dataValues.firstName) +
+          " " +
+          Encrypt.DecodeKey(member.dataValues.lastName)
+          : null,
         price: OrderHDData.dataValues.netTotal,
         Payment: _tbPayment,
       };
 
       if (OrderHDData.dataValues.paymentStatus != 1) {
         status = false;
-        msg = OrderHDData.dataValues.paymentStatus == 2 ? "รอการตรวจสอบ" : "ชำระเงินเรียบร้อยแล้ว";
+        msg =
+          OrderHDData.dataValues.paymentStatus == 2
+            ? "รอการตรวจสอบ"
+            : "ชำระเงินเรียบร้อยแล้ว";
       }
     }
   } catch (e) {
@@ -1539,7 +1600,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         "discountCoupon",
         "discountStorePromotion",
         "points",
-        "netTotal"
+        "netTotal",
       ],
       where: {
         IsDeleted: false,
@@ -1547,18 +1608,20 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
       },
       include: [
         {
-          attributes: ["id",
+          attributes: [
+            "id",
             "cancelStatus",
             "cancelType",
             "cancelDetail",
             "description",
             "createdAt",
-            "cancelOtherRemark",],
+            "cancelOtherRemark",
+          ],
           model: tbCancelOrder,
           where: {
             isDeleted: false,
           },
-          required: false
+          required: false,
         },
         {
           attributes: [
@@ -1568,12 +1631,13 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
             "returnDetail",
             "description",
             "createdAt",
-            "returnOtherRemark"],
+            "returnOtherRemark",
+          ],
           model: tbReturnOrder,
           where: {
             isDeleted: false,
           },
-          required: false
+          required: false,
         },
         {
           attributes: [
@@ -1584,13 +1648,14 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
             "discountType",
             "stockId",
             "orderId",
-            "isFree"
+            "isFree",
           ],
           model: tbOrderDT,
           where: {
             isDeleted: false,
+            // isFree: false
           },
-          required: false
+          required: false,
         },
       ],
     });
@@ -1598,7 +1663,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
     if (OrderHDData) {
       let hd = OrderHDData.dataValues;
       hd.dt = [];
-      const OrderDTData = hd.tbOrderDTs
+      const OrderDTData = hd.tbOrderDTs;
       for (var j = 0; j < OrderDTData.length; j++) {
         let dt = OrderDTData[j].dataValues;
         dt.id = Encrypt.EncodeKey(dt.id);
@@ -1617,10 +1682,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         _tbStock.id = Encrypt.EncodeKey(_tbStock.id);
         dt.stock = _tbStock;
         dt.discount = parseFloat(dt.discount);
-        dt.discount =
-          dt.discount > 0
-            ? dt.price - dt.discount
-            : 0;
+        dt.discount = dt.discount > 0 ? dt.price - dt.discount : 0;
         sumprice +=
           dt.discount > 0 ? dt.discount * dt.amount : dt.price * dt.amount;
         hd.dt.push({
@@ -1629,6 +1691,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
           amount: dt.amount,
           price: dt.price,
           discount: dt.discount,
+          isFree: dt.isFree,
         });
       }
       //ค่าจัดส่ง
@@ -1689,13 +1752,13 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
 
       let tbCancelOrderData = null;
       if (OrderHDData.tbCancelOrders.length > 0) {
-        let _tbCancelOrder = OrderHDData.tbCancelOrders[0].dataValues
+        let _tbCancelOrder = OrderHDData.tbCancelOrders[0].dataValues;
         _tbCancelOrder.id = Encrypt.EncodeKey(_tbCancelOrder.id);
         tbCancelOrderData = _tbCancelOrder;
       }
       let tbReturnOrderData = null;
       if (OrderHDData.tbReturnOrders.length > 0) {
-        let _tbReturnOrder = OrderHDData.tbReturnOrders[0].dataValues
+        let _tbReturnOrder = OrderHDData.tbReturnOrders[0].dataValues;
         _tbReturnOrder.id = Encrypt.EncodeKey(_tbReturnOrder.id);
         tbReturnOrderData = _tbReturnOrder;
       }
@@ -1736,7 +1799,6 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
               },
             ],
           });
-
 
           if (_tbCouponCode) {
             const _tbImage = await tbImage.findOne({
@@ -1787,8 +1849,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         tbReturnOrder: tbReturnOrderData,
         paymentType: hd.paymentType,
         // , paymentType: type == "update" ? hd.paymentType : null
-        logisticId:
-          type == "update" ? Encrypt.EncodeKey(hd.logisticId) : null,
+        logisticId: type == "update" ? Encrypt.EncodeKey(hd.logisticId) : null,
         paymentId: type == "update" ? Encrypt.EncodeKey(hd.paymentId) : null,
 
         memberRewardId:
@@ -1816,9 +1877,8 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         hddiscountStorePromotion: hd.discountStorePromotion,
         stockNumber: hd.stockNumber,
         points: hd.points,
-        netTotal: hd.netTotal
+        netTotal: hd.netTotal,
       };
-
 
       // เช็คการจ่ายเงิน
     }
@@ -1842,7 +1902,6 @@ router.post("/upd_shopcart", async (req, res) => {
   const { id, quantity, type, uid } = req.body;
   let shop_orders = [];
   try {
-
     const _tbCartHD = await tbCartHD.findOne({
       attributes: ["id"],
       where: { uid: uid },
@@ -1851,7 +1910,10 @@ router.post("/upd_shopcart", async (req, res) => {
       //#region ข้อมูลมีตระกร้า
       const _tbCartDT = await tbCartDT.findOne({
         attributes: ["id", "amount"],
-        where: { strockId: Encrypt.DecodeKey(id), carthdId: _tbCartHD.dataValues.id },
+        where: {
+          strockId: Encrypt.DecodeKey(id),
+          carthdId: _tbCartHD.dataValues.id,
+        },
       });
       //#endregion ข้อมูลมีตระกร้า
 
@@ -1967,8 +2029,7 @@ router.post("/upd_shopcart", async (req, res) => {
     msg: msg,
     shop_orders: shop_orders,
   });
-}
-);
+});
 router.post(
   "/get_shopcart",
   // , validateLineToken
@@ -1995,7 +2056,6 @@ router.post(
           });
         });
       }
-
     } catch (e) {
       status = false;
       msg = e.message;
@@ -2007,6 +2067,96 @@ router.post(
     });
   }
 );
+
+router.get("/export", async (req, res) => {
+  tbOrderHD.hasMany(tbCancelOrder, {
+    foreignKey: "orderId",
+  });
+  tbOrderHD.hasMany(tbReturnOrder, {
+    foreignKey: "orderId",
+  });
+  tbOrderHD.belongsTo(tbMember, {
+    foreignKey: "memberId",
+  });
+
+  tbOrderDT.belongsTo(tbStock, {
+    foreignKey: "stockId",
+  });
+
+  tbStock.belongsTo(tbProductCategory, {
+    foreignKey: "productCategoryId",
+  });
+
+  const data = await tbOrderHD.findAll({
+    where: { isDeleted: false },
+    include: [
+      // {
+
+      //   model: tbMemberReward,
+      //   where: {isDeleted: false , id: Sequelize.col('tbOrderHD.memberRewardId')},
+      //   include: [
+      //     {
+      //       model: tbCouponCode,
+      //       where: { id: Sequelize.col('tbOrderHD.memberRewardId') }
+      //     }
+      //   ],
+      //   required: false,
+      // },
+      {
+        model: tbCancelOrder,
+        where: {
+          isDeleted: false,
+        },
+        required: false,
+      },
+      {
+        model: tbReturnOrder,
+        where: {
+          isDeleted: false,
+        },
+        required: false,
+      },
+      {
+        model: tbOrderDT,
+        where: {
+          isDeleted: false,
+        },
+        include: [
+          {
+            model: tbStock,
+            where: {
+              isDeleted: false,
+            },
+            required: false,
+          },
+        ],
+        required: false,
+      },
+      {
+        model: tbMember,
+        attributes: ["memberCard", "email"],
+        where: {
+          isDeleted: false,
+        },
+        required: false,
+      },
+    ],
+    order: [["orderNumber", "DESC"]],
+  });
+
+  if (data) {
+    data.map((e, i) => {
+      let hd = e.dataValues;
+      hd.firstName = Encrypt.DecodeKey(hd.firstName);
+      hd.lastName = Encrypt.DecodeKey(hd.lastName);
+      hd.phone = Encrypt.DecodeKey(hd.phone);
+      hd.address = Encrypt.DecodeKey(hd.address);
+      hd["email"] = Encrypt.DecodeKey(hd.tbMember.email);
+      hd["memberCard"] = Encrypt.DecodeKey(hd.tbMember.memberCard);
+    });
+    res.json({ status: true, message: "success", tbOrder: data });
+  } else res.json({ status: false, message: "not found order", tbOrder: null });
+});
 
 //#endregion line liff
 module.exports = router;

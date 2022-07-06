@@ -107,10 +107,12 @@ const ShowCart = () => {
   };
 
   const Cancelcoupon = () => {
-    let cart = Storage.get_cart();
+    let cart = Storage.getconpon_cart();
     cart.usecoupon = null;
+    Storage.removeconpon_cart();
     Storage.upd_cart(cart);
     getProducts();
+
   };
   //ลบ
   const deleteCart = () => {

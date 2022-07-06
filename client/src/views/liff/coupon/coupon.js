@@ -90,7 +90,7 @@ const Coupon = () => {
           // overflow: "scroll"
         }}>
           {MyCoupon.isdata ?
-            Tabs == 1 ?
+            Tabs === 1 ?
               <Canbeused data={MyCoupon.MyCoupon} /> :
               <Expire data={MyCoupon.MyCoupon} />
             : null}

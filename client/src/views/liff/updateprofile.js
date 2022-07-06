@@ -12,6 +12,7 @@ import {
   InputUC,
   SelectUC,
   validationSchema,
+  validateShopAddress
   // DatePickerContainer,
   // monthMap,
 } from "./profile";
@@ -175,13 +176,13 @@ const Updateprofile = () => {
   };
 
   const validation = async () => {
-    const isFormValid = await validationSchema.isValid(Data, {
+    const isFormValid = await validateShopAddress.isValid(Data, {
       abortEarly: false,
     });
     if (isFormValid) {
       DoSave();
     } else {
-      validationSchema
+      validateShopAddress
         .validate(Data, {
           abortEarly: false,
         })

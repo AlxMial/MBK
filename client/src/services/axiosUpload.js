@@ -1,4 +1,5 @@
 import axios from 'axios';
+import config from './helpers';
 const username = 'VUh4MmZDekFzeDlHd1BHVzJranpHUT09'
 const password = 'NFgrWHk2bTE1UURGZ0M0WXVwOVpxQT09'
 const token = Buffer.from(`${username}:${password}`, 'utf8').toString('base64')
@@ -16,9 +17,9 @@ const token = Buffer.from(`${username}:${password}`, 'utf8').toString('base64')
 
 const axiosInstance = axios.create({
   // baseURL: `https://undefined.ddns.net/mbkimport/`,
-  // baseURL: `https://undefined.ddns.net/mahboonkrongimport/`,
+  baseURL: config._baseURLImport,
   // baseURL: `https://hopeagro.co.th/mahboonkrongimport/`,
-  baseURL: `http://localhost:3002/mahboonkrongimport/`,
+  // baseURL: `http://localhost:3002/mahboonkrongimport/`,
 });
 
 axiosInstance.interceptors.request.use(

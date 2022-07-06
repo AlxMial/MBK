@@ -122,18 +122,9 @@ const LiffAPP = () => {
   if (
     pathname.toLowerCase().includes("member") ||
     pathname.toLowerCase().includes("point") ||
-    // pathname.toLowerCase().includes("/line/coupon") ||
-    // pathname.toLowerCase().includes("/line/product") ||
     pathname.toLowerCase().includes("/reward")
   ) {
     bg = "250px";
-
-    // if (
-    //   pathname.includes("point") ||
-    //   pathname.toLowerCase().includes("/reward")
-    // ) {
-    //   bg = "280px";
-    // }
     ismemberpage = true;
   } else if (pathname.toLowerCase().includes("shoplist")) {
     bg = "0px";

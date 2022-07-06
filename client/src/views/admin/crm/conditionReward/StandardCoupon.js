@@ -51,6 +51,7 @@ const StandardCoupon = ({ formik }) => {
           <div className="w-full lg:w-1/12 margin-auto-t-b">
             <div className="relative w-full">
               <LabelUC label="รูปคูปอง" isRequired={true} />
+              <span className="text-red-500 text-xs">380*254 px</span>
               {formik.touched.pictureCoupon && formik.errors.pictureCoupon ? (
                 <div className="text-sm py-2 px-2 text-red-500">&nbsp;</div>
               ) : null}
@@ -64,6 +65,7 @@ const StandardCoupon = ({ formik }) => {
                 onChange={handleChangeImage}
                 src={formik.values.pictureCoupon}
               />
+
 
               {formik.touched.pictureCoupon && formik.errors.pictureCoupon ? (
                 <div className="text-sm py-2 px-2  text-red-500">
@@ -330,7 +332,7 @@ const StandardCoupon = ({ formik }) => {
           <div className={"w-full" + (width < 764 ? " block" : " hidden")}>
             &nbsp;
           </div>
-          <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
+          {/* <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
             <LabelUC label="จำนวนที่ใช้แลกต่อวัน" isRequired={false} />
             {formik.touched.couponCount && formik.errors.couponCount ? (
               <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
@@ -355,7 +357,7 @@ const StandardCoupon = ({ formik }) => {
                 <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
               ) : null}
             </div>
-          </div>
+          </div> */}
 
           <div className="w-full">&nbsp;</div>
           <div className="w-full lg:w-1/12 margin-auto-t-b ">

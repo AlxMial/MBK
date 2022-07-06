@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import Spinner from "components/Loadings/spinner/Spinner";
 import InputMask from "react-input-mask";
 import axios from "services/axios";
 import * as Storage from "@services/Storage.service";
@@ -8,10 +8,10 @@ import moment from "moment";
 // components
 
 const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
-  // let { id } = useParams();
-  const history = useHistory();
   const [tbcouponcodes, settbcouponcodes] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const fetchgettbcouponcodes = async () => {
+    setIsLoading(true)
     await axios.get("redemptions/gettbcouponcodes").then(async (response) => {
       if (response.status) {
         let data = response.data.tbredemptioncoupons;
@@ -21,6 +21,8 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
         }
         settbcouponcodes(data);
       }
+    }).finally(() => {
+      setIsLoading(false)
     });
   };
   useEffect(() => {
@@ -28,6 +30,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
   }, []);
   return (
     <>
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="bg-green-mbk">
         <div
           style={{ height: "40px" }}
@@ -56,7 +59,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
               value={""}
               name={"code"}
               type={"text"}
-              onChange={(e) => {}}
+              onChange={(e) => { }}
               placeholder={"XXXX-XXXX-XXXX"}
               maskChar=" "
             />
@@ -75,7 +78,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                   alignItems: "center",
                   justifyContent: "center",
                 }}
-                // onClick={add_to_cart}
+              // onClick={add_to_cart}
               >
                 {"ใช้คูปอง"}
               </div>
@@ -85,73 +88,73 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
 
         {tbcouponcodes.length > 0
           ? [...tbcouponcodes].map((e, i) => {
-              return (
-                <div key={i}>
-                  <div className="flex mt-2">
+            return (
+              <div key={i}>
+                <div className="flex mt-2">
+                  <div
+                    className="px-2 py-2"
+                    style={{ width: "120px", height: "120px" }}
+                  >
+                    <img
+                      src={e.image}
+                      alt="icon_hot"
+                      className="w-32"
+                    ></img>
+                  </div>
+                  <div
+                    className="px-2 py-5 relative"
+                    style={{ width: "calc(100% - 120px)" }}
+                  >
+                    <div className="text-base text-bold">{e.couponName}</div>
                     <div
-                      className="px-2 py-2"
-                      style={{ width: "120px", height: "120px" }}
+                      className="flex absolute w-full"
+                      style={{ bottom: "0" }}
                     >
-                      <img
-                        src={e.image}
-                        alt="icon_hot"
-                        className="w-32"
-                      ></img>
-                    </div>
-                    <div
-                      className="px-2 py-5 relative"
-                      style={{ width: "calc(100% - 120px)" }}
-                    >
-                      <div className="text-base text-bold">{e.couponName}</div>
                       <div
-                        className="flex absolute w-full"
-                        style={{ bottom: "0" }}
+                        className="flex"
+                        style={{
+                          width: "110px",
+                          color: "var(--mq-txt-color, rgb(122, 122, 122))",
+                          fontSize: "12px",
+                          alignItems: "end",
+                        }}
                       >
-                        <div
-                          className="flex"
-                          style={{
-                            width: "110px",
-                            color: "var(--mq-txt-color, rgb(122, 122, 122))",
-                            fontSize: "12px",
-                            alignItems: "end",
-                          }}
-                        >
-                          {!e.isNotExpired
-                            ? "ใช้ได้ถึง " +
-                              moment(e.expiredDate)
-                                .locale("th")
-                                .add(543, "years")
-                                .format("DD MMM yyyy")
-                            : ""}
-                        </div>
-                        <div
-                          className="bg-green-mbk text-white text-center text-lg  font-bold"
-                          style={{
-                            margin: "auto",
-                            width: "100px",
-                            borderRadius: "20px",
-                            padding: "10px",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            right: "0",
-                          }}
-                          onClick={() => {
-                            setusecoupon(e);
-                            setopenCoupon(false);
-                            if (id === "cart") {
-                              Storage.addconpon_cart(e);
-                            }
-                          }}
-                        >
-                          ใช้ส่วนลด
-                        </div>
+                        {!e.isNotExpired
+                          ? "ใช้ได้ถึง " +
+                          moment(e.expireDate)
+                            .locale("th")
+                            .add(543, "years")
+                            .format("DD MMM yyyy")
+                          : ""}
+                      </div>
+                      <div
+                        className="bg-green-mbk text-white text-center text-lg  font-bold"
+                        style={{
+                          margin: "auto",
+                          width: "100px",
+                          borderRadius: "20px",
+                          padding: "10px",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          right: "0",
+                        }}
+                        onClick={() => {
+                          setusecoupon(e);
+                          setopenCoupon(false);
+                          if (id === "cart") {
+                            Storage.addconpon_cart(e);
+                          }
+                        }}
+                      >
+                        ใช้ส่วนลด
                       </div>
                     </div>
                   </div>
-                  <div className="liff-inline" />
                 </div>
-              );
-            })
+                <div className="liff-inline" />
+              </div>
+            );
+          })
           : null}
       </div>
       <div className="absolute w-full flex" style={{ bottom: "0px" }}>

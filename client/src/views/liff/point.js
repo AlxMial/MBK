@@ -100,7 +100,7 @@ const Point = () => {
                         : e.campaignType == "2"
                           ? "ซื้อสินค้าออนไลน์"
                           : e.campaignType == "3" ? "สมัครสมาชิก"
-                            : "เล่นเกม"}
+                            : "แลกรางวัล"}
                     </div>
                     <div className="absolute" style={{ right: "0" }}>
                       <div

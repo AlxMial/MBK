@@ -56,11 +56,11 @@ const InfoCoupon = () => {
             )}
             {isLoading ? <Spinner customText={"Loading"} /> : null}
             {/* card */}
-            <div style={{ height: "calc(50% - 100px)", backgroundColor: "#007a40" }}>
+            <div style={{ height: "calc(50% - 160px)", backgroundColor: "#007a40" }}>
                 {MyCoupon != null ?
                     <div className="w-full absolute" style={{ height: "100%" }}>
-                        <div className="mb-4" style={{ height: "200px" }}>
-                            <div style={{ width: "200px", height: "100px", margin: "auto" }}>
+                        <div className="mb-4" style={{ height: "150px" }}>
+                            <div style={{ width: "220px", height: "150px", margin: "auto" }}>
                                 <ImageUC
                                     find={1}
                                     relatedid={MyCoupon.redemptionCouponId}
@@ -74,11 +74,12 @@ const InfoCoupon = () => {
                         <div className="px-8 py-2" style={{
                             width: "90%", margin: "auto",
                             borderRadius: "40px",
+                            height: "40%",
                             backgroundColor: "#FFFFFF",
                             boxShadow: "0px -2px 10px 0px #aba6a6"
                         }}>
 
-                            <div className="font-bold mt-4  mb-4 text-center" style={{ fontSize: "25px" }}>{MyCoupon.couponName}</div>
+                            <div className="font-bold mt-4  mb-4 text-center text-xl" >{MyCoupon.couponName}</div>
                             <div className="mb-4" style={{ borderBottom: "1px solid #ddd" }}></div>
                             <div className="font-bold text-center mb-4" style={{ fontSize: "15px" }}>รายละเอียด</div>
                             <div className="mb-4" style={{ borderBottom: "1px solid #ddd" }}></div>

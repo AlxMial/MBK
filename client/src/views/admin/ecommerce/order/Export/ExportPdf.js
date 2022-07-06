@@ -11,7 +11,7 @@ const ExportPdf = ({ props, dataExport }) => {
         + " font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md "
         + " outline-gold-mbk mr-1 ease-linear transition-all duration-150";
     return (
-        <div className='p-4 px-0'>
+        <div className='pt-4 px-0'>
             <div style={{ display: display }} className='mt-10'>
                 <ComponentToPrint props={propsExport} ref={componentRef} />
             </div>

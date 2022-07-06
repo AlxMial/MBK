@@ -19,6 +19,7 @@ const MyOrder = () => {
     getMyOrder((res) => {
       // console.log('res.data.OrderHD', res.data.OrderHD)
       if (res.status) {
+        console.log(res.data.OrderHD)
         setOrderHD(res.data.OrderHD)
       }
     }, () => { }, () => { setIsLoading(false) })
@@ -40,10 +41,10 @@ const MyOrder = () => {
         </div>
         {OrderHD && OrderHD.length > 0 ?
           <div className="line-scroll" >
-            {OrderHD.map((hd, index) => {
+            {OrderHD.filter((e) => { return e.tbCancelOrders.length === 0 && e.tbReturnOrders.length === 0 }).map((hd, index) => {
               return (
                 <div key={index} onClick={() => {
-                  history.push(hd.paymentStatus == 1 ? path.makeorderbyid.replace(":id", hd.id) : path.orderpaymentdone.replace(":id", hd.id))
+                  history.push(hd.paymentStatus === 1 ? path.makeorderbyid.replace(":id", hd.id) : path.orderpaymentdone.replace(":id", hd.id))
                 }}>
                   {index > 0 && <div className="liff-inline mb-2" style={{ height: '5px', backgroundColor: '#ebebeb' }} />}
                   <div className="flex relative" style={{ height: "30px" }}>

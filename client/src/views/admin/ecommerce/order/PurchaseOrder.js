@@ -1,18 +1,17 @@
 // import LabelUC from 'components/LabelUC';
 import React from 'react'
 import './index.scss'
-
+import * as fn from "@services/default.service";
 const PurchaseOrder = ({ props }) => {
     const { orderHD, orderDT, openExport } = props;
-    const thClass = "px-2  py-1 text-sm  border-l-0 border-r-0 whitespace-nowrap text-left text-blueGray-500 ";
-    const tdClass = "border-t-0 pl-2 align-middle border-l-0 border-r-0 py-1 text-sm whitespace-normal";
+    const thClass = "px-2  py-4 text-sm  border-l-0 border-r-0 whitespace-nowrap text-left text-blueGray-500 ";
+    const tdClass = "border-t-0  py-3 pl-2 align-middle border-l-0 border-r-0 py-1 text-sm whitespace-normal";
     const tdSpan = "text-gray-mbk hover:text-gray-mbk ";
     // const footerClass = "py-1 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
     // const footerSumPrice = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-green-mbk ";
 
     const sumPrice = orderDT.reduce((sum, item) => {
-        console.log(sum + ((parseFloat(item.price) - parseFloat(item.discount) ) * parseFloat(item.amount)))
-        return  sum + ((parseFloat(item.price) - parseFloat(item.discount) ) * parseFloat(item.amount));
+        return sum + ((parseFloat(item.price) - parseFloat(item.discount)) * parseFloat(item.amount));
     }, 0);
 
     const sumDiscount = orderDT.reduce((sum, item) => {
@@ -24,7 +23,7 @@ const PurchaseOrder = ({ props }) => {
             <div className="w-full lg:w-12/12 pr-2 margin-auto-t-b ">
                 <table className="items-center w-full ">
                     <thead>
-                        <tr className={openExport ? 'border-b' : ''}>
+                        <tr className={openExport ? '' : ''} style={{ borderTop: "1px solid  #e5e7eb", borderBottom: "1px solid  #e5e7eb" }}>
                             <th className={thClass + ' text-center'}  >
                                 ลำดับที่
                             </th>
@@ -75,20 +74,24 @@ const PurchaseOrder = ({ props }) => {
                                             <td className={tdClass + ' margin-auto-t-b text-right pr-4'}>
                                                 <div className="flex flex-col">
                                                     <div>
+                                                        ฿{(parseFloat(value.price) - parseFloat(value.discount)).toFixed(2).toLocaleString('en')}
+                                                    </div>
+                                                    {/* <div>
                                                         <strike className='text-gray-300'>
-                                                            
-                                                            {(parseInt(value.price)).toFixed(2)}
+
+                                                            {fn.formatMoney(value.price)}
                                                         </strike>
                                                     </div>
+                                                    
                                                     <div className='text-red-500'>
-                                                        {(parseFloat(value.price) - parseFloat(value.discount)).toFixed(2).toLocaleString('en')}
-                                                    </div>
+                                                        {fn.formatMoney(value.price - value.discount)}
+                                                    </div>*/}
                                                 </div>
                                             </td>
                                         ) : (
                                             <td className={tdClass + ' text-right pr-4'}>
                                                 <span className={tdSpan}>
-                                                    ฿{parseFloat(value.price).toFixed(2).toLocaleString('en')}
+                                                    {fn.formatMoney(value.price)}
                                                 </span>
                                             </td>
                                         )}
@@ -109,11 +112,11 @@ const PurchaseOrder = ({ props }) => {
                                 </span>
                             </td>
                             <td className={tdClass + ' text-right'}>
-                                ยอดรวมสินค้า
+                                {"ยอดรวมสินค้า (" + orderHD.stockNumber + " ชิ้น)"}
                             </td>
                             <td className={tdClass + ' text-right font-bold'}>
                                 <span className={' pr-4'}>
-                                    {parseFloat(sumPrice).toFixed(2).toLocaleString('en')}
+                                    {fn.formatMoney(sumPrice)}
                                 </span>
                             </td>
                         </tr>
@@ -133,14 +136,12 @@ const PurchaseOrder = ({ props }) => {
                                 ส่วนลดร้านค้า
                             </td>
                             <td className={tdClass + ' text-right'}>
-                                <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap text-left  pr-4"}
+                                <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap text-left  pr-4" + (orderHD.discountStorePromotion > 0 ? " text-gold-mbk" : "")}
                                     style={{ textAlign: "end" }}>
-                                    {orderHD.discountStorePromotion}
+                                    {orderHD.discountStorePromotion > 0 ? "-" + fn.formatMoney(orderHD.discountStorePromotion) : fn.formatMoney(0)}
                                 </div>
                             </td>
                         </tr>
-
-
 
                         <tr>
                             <td className={thClass}>
@@ -161,7 +162,32 @@ const PurchaseOrder = ({ props }) => {
                             <td className={tdClass + ' text-right '}>
                                 <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap text-left  pr-4"}
                                     style={{ textAlign: "end" }}>
-                                    {orderHD.deliveryCost > orderHD.discountDelivery ? (orderHD.deliveryCost) : (orderHD.discountDelivery)}
+                                    {orderHD.deliveryCost > 0 ? fn.formatMoney(orderHD.deliveryCost) : fn.formatMoney(0)}
+                                </div>
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td className={thClass}>
+                                <span className={tdSpan}>
+
+                                </span>
+                            </td>
+                            <td className={thClass}>
+                                <span className={tdSpan}>
+
+                                </span>
+                            </td>
+
+
+                            <td className={tdClass + ' text-right '}>
+                                ส่วนลดค่าจัดส่ง
+                            </td>
+                            <td className={tdClass + ' text-right '}>
+                                <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap text-left  pr-4" + (orderHD.discountDelivery > 0 ? " text-gold-mbk" : "")}
+                                    style={{ textAlign: "end" }}>
+                                    {orderHD.discountDelivery > 0 ? "-" + fn.formatMoney(orderHD.discountDelivery) : fn.formatMoney(0)}
                                 </div>
 
                             </td>
@@ -181,9 +207,9 @@ const PurchaseOrder = ({ props }) => {
                                 ส่วนลดคูปอง
                             </td>
                             <td className={tdClass + ' text-right border-b'}>
-                                <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap text-left  pr-4" + (orderHD.discountCoupon > 0 ? " text-red-500 " : "")}
+                                <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap text-left  pr-4" + (orderHD.discountCoupon > 0 ? " text-gold-mbk " : "")}
                                     style={{ textAlign: "end" }}>
-                                    {(orderHD.discountCoupon > 0 ? "-" : "") + parseFloat((orderHD.discountCoupon)).toLocaleString('en')}
+                                    {(orderHD.discountCoupon > 0 ? "-" + fn.formatMoney(orderHD.discountCoupon) : fn.formatMoney(0))}
                                 </div>
                             </td>
                         </tr>
@@ -202,7 +228,7 @@ const PurchaseOrder = ({ props }) => {
                                 <div className='text-green-mbk font-bold'>{"ยอดสุทธิ"}</div>
                             </td>
                             <td className={tdClass + "  text-right border-b pr-4"}>
-                                <div className='text-green-mbk font-bold'>{"฿" + parseFloat(orderHD.netTotal).toFixed(2).toLocaleString('en')} </div>
+                                <div className='text-green-mbk font-bold'>{fn.formatMoney(orderHD.netTotal)} </div>
 
                             </td>
                         </tr>

@@ -35,11 +35,11 @@ const InfoProduct = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ height: "calc(50% - 100px)", backgroundColor: "#007a40" }}>
+      <div style={{ height: "calc(50% - 160px)", backgroundColor: "#007a40" }}>
         {Product != null ?
           <div className="w-full absolute" style={{ height: "100%" }}>
-            <div className="mb-4" style={{ height: "200px" }}>
-              <div style={{ width: "200px", height: "100px", margin: "auto" }}>
+            <div className="mb-4" style={{ height: "150px" }}>
+              <div style={{ width: "220px", height: "150px", margin: "auto" }}>
                 <ImageUC
                   find={1}
                   relatedid={Product.id}

@@ -23,7 +23,7 @@ router.post("/lowLevel", async (req, res) => {
   const PointDt = await tbPointCodeDT.findAll({ where: { tbPointCodeHDId: req.body.id } });
   for (var i = 0; i < PointDt.length; i++) {
     const de = Encrypt.DecodeKey(PointDt[i].dataValues.code);
-    const lowde = de.toLowerCase().replace('-','');
+    const lowde = de.toLowerCase().replace('-', '');
 
     const updatelow = await tbPointCodeDT.update({ codeNone: Encrypt.EncodeKey(lowde) }, {
       where: { id: PointDt[i].dataValues.id },
@@ -62,19 +62,23 @@ router.post("/", async (req, res) => {
     }
     for (var i = 0; i < redeemCode.length; i++) {
       const PointDt = await tbPointCodeDT.findOne({
-        where: { [Op.or]: [
-          { code: redeemCode[i] },
-          { codeNone: redeemCode[i] },
-        ], isDeleted: false, isUse: false },
+        where: {
+          [Op.or]: [
+            { code: redeemCode[i] },
+            { codeNone: redeemCode[i] },
+          ], isDeleted: false, isUse: false
+        },
       });
       const Point = await tbPointCodeHD.findOne({
         where: { isActive: "1", isDeleted: false },
         include: {
           model: tbPointCodeDT,
-          where: {[Op.or]: [
-            { code: redeemCode[i] },
-            { codeNone: redeemCode[i] },
-          ], isDeleted: false },
+          where: {
+            [Op.or]: [
+              { code: redeemCode[i] },
+              { codeNone: redeemCode[i] },
+            ], isDeleted: false
+          },
         },
       });
 
@@ -595,7 +599,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
             //สินค้า
             const _tbRedemptionProduct = await tbRedemptionProduct.findAll({
               attributes: ["id", "isNoLimitReward", "rewardCount", "productName", "description"],
-              where: { redemptionConditionsHDId: item.id },
+              where: { redemptionConditionsHDId: item.id, isDeleted: false },
             });
             if (_tbRedemptionProduct) {
               for (var i = 0; i < _tbRedemptionProduct.length; i++) {
@@ -711,11 +715,12 @@ router.post("/useGame", validateLineToken, async (req, res) => {
                 });
 
               }
+              itemrendom = { id: itemrendom.imgId, name: itemrendom.name, description: itemrendom.description, type: itemrendom.type }
+
             } else {
               status = false
               msg = "ขออภัย ของรางวัลหมด"
             }
-            itemrendom = { id: itemrendom.imgId, name: itemrendom.name, description: itemrendom.description, type: itemrendom.type }
           } else {
             status = false
             msg = "ขออภัย คะแนนของคุณไม่เพียงพอ"

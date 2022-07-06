@@ -87,17 +87,17 @@ const DetailModel = ({ data, freebies, _static }) => {
                     <div className="flex font-bold relative text-sm">
                       <div
                         style={{
-                          color: "#ddd",
+                          color: "red",
                           textDecoration: "line-through",
                         }}
                       >
-                        {"฿ " + fn.formatMoney(e.price)}
+                        {"Free"}
                       </div>
-                      {e.discount > 0 ? (
+                      {/* {e.discount > 0 ? (
                         <div style={{ color: "red", paddingLeft: "10px" }}>
                           {"฿ " + fn.formatMoney(0)}
                         </div>
-                      ) : null}
+                      ) : null} */}
                     </div>
                   </div>
                   <div className="w-full text-sm">

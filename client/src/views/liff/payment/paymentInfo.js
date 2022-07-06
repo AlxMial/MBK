@@ -6,7 +6,6 @@ import FilesService from "services/files";
 import { path } from "services/liff.services";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
-import { triggerBase64Download } from "common-base64-downloader-react";
 import { getOrder, doSaveSlip } from "@services/liff.services";
 import liff from "@line/liff";
 import config from "@services/helpers";
@@ -14,7 +13,7 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import WaitingPayment from "./waitingPayment";
 import Error from "../error";
 import { sendEmailWaiting } from "services/liff.services";
-import * as Session from "@services/Session.service";
+
 const PaymentInfo = () => {
   let { id } = useParams();
   const history = useHistory();
@@ -57,7 +56,7 @@ const PaymentInfo = () => {
           setstatuspayment(false);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -84,7 +83,7 @@ const PaymentInfo = () => {
               {
                 frommail: "noreply@undefined.co.th",
                 password: "Has88149*",
-                tomail:OrderHD.email,
+                tomail: OrderHD.email,
                 orderNumber: OrderHD.orderNumber,
                 memberName: OrderHD.memberName,
               },
@@ -284,11 +283,9 @@ const PaymentInfo = () => {
                                         [
                                           {
                                             type: "image",
-                                            originalContentUrl:
-                                              "https://undefined.ddns.net/mbkserver/image/getImgQrCode/" +
+                                            originalContentUrl: config._baseURL + "image/getImgQrCode/" +
                                               OrderHD.Payment.id,
-                                            previewImageUrl:
-                                              "https://undefined.ddns.net/mbkserver/image/getImgQrCode/" +
+                                            previewImageUrl: config._baseURL + "image/getImgQrCode/" +
                                               OrderHD.Payment.id,
                                           },
                                         ],
@@ -346,12 +343,46 @@ const PaymentInfo = () => {
                         <div className="px-2" style={{ width: "50%" }}>
                           <div
                             className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+
                             onClick={() => {
-                              const image = document.getElementById(
-                                OrderHD.Payment.id + "paymentQrCode"
+                              liff.init(
+                                { liffId: config.liffId },
+                                () => {
+                                  if (liff.isLoggedIn()) {
+                                    console.log("openWindow")
+                                    // liff.openWindow({
+                                    //   url: config._baseURL + "image/getImgQrCode/" +
+                                    //     OrderHD.Payment.id,
+                                    //   external: true
+                                    // })
+                                    // {
+                                    //   type: "text",
+                                    //   text: OrderHD.Payment.bankName + " สาขา : " + OrderHD.Payment.bankBranchName + " เลขบัญชี : " + OrderHD.Payment.accountNumber,
+                                    // },
+                                    liff
+                                      .sendMessages([
+                                        {
+                                          type: "image",
+                                          originalContentUrl: config._baseURL + "image/getImgQrCode/" +
+                                            OrderHD.Payment.id,
+                                          previewImageUrl: config._baseURL + "image/getImgQrCode/" +
+                                            OrderHD.Payment.id,
+                                        }
+                                       
+                                      ])
+                                      .then(() => {
+                                        console.log("message sent");
+                                      })
+                                      .catch((err) => {
+                                        console.log("error", err);
+                                      });
+                                  } else {
+                                    liff.login();
+                                  }
+                                },
+                                (err) => console.error(err)
                               );
 
-                              triggerBase64Download(image.src, "paymentQrCode");
                             }}
                           >
                             {"บันทึก QR"}

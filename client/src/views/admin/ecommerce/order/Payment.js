@@ -5,19 +5,17 @@ import moment from 'moment';
 import SelectUC from "components/SelectUC";
 import ValidateService from "services/validateValue";
 const Payment = ({ props, setOrderHD }) => {
-    const { orderHD, orderHDold, orderDT, isCanEdit } = props;
+    const { orderHD, orderHDold, orderDT, isCanEdit, paymentStatus, setpaymentStatus, setTransportStatus } = props;
     const [payment, setPayment] = useState(null);
 
-
-
     const getoption = () => {
-        if (orderHDold.paymentStatus == 1) {
+        if (orderHDold.paymentStatus === 1) {
             return [
                 { value: 1, label: 'รอชำระเงิน' },
                 { value: 2, label: 'รอตรวจสอบ' },
                 { value: 3, label: 'ชำระเงินแล้ว' },
             ]
-        } else if (orderHDold.paymentStatus == 2) {
+        } else if (orderHDold.paymentStatus === 2) {
             return [
                 { value: 1, label: 'รอชำระเงิน', isDisabled: true },
                 { value: 2, label: 'รอตรวจสอบ' },
@@ -63,7 +61,6 @@ const Payment = ({ props, setOrderHD }) => {
         }
     }, []);
 
-    console.log(isCanEdit)
     return (
         <div className='mt-2 px-4'>
             <div className="w-full">
@@ -84,16 +81,19 @@ const Payment = ({ props, setOrderHD }) => {
                                 name="transportType"
                                 onChange={(value) => {
 
-                                    setOrderHD(p => { return { ...p, paymentStatus: value.value } })
+                                    setpaymentStatus(value.value)
+                                    if (value.value != 3) {
+                                        setTransportStatus(1)
+                                    }
                                 }}
                                 options={getoption()}
                                 value={ValidateService.defaultValue(
                                     getoption(),
-                                    orderHD.paymentStatus
+                                    paymentStatus
                                 )}
                                 isOptionDisabled={(option) => option.disabled}
                                 isDisabled={!isCanEdit}
-                                // customStyles={getCss( orderHD.paymentStatus)}
+                            // customStyles={getCss( orderHD.paymentStatus)}
                             />
                         </div>
                     </div>

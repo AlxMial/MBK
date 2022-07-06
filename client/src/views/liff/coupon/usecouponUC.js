@@ -24,6 +24,7 @@ const InfoCoupon = () => {
             (res) => {
                 if (res.data.status) {
                     setMyCoupon(res.data.coupon);
+                    
                 }
             },
             () => { },
@@ -43,13 +44,13 @@ const InfoCoupon = () => {
             <div style={{ height: "calc(50% - 100px)" }}>
                 {MyCoupon != null ?
                     <div className="w-full absolute" style={{ height: "100%" }}>
-                    
+
                         <div className="bg-green-mbk">
                             <div
-                            style={{ height: "10vh",width:"70%",margin:"auto",lineHeight:"2" }}
-                            className=" noselect text-lg text-white font-bold text-center "
+                                style={{ height: "10vh", width: "70%", margin: "auto", lineHeight: "2" }}
+                                className=" noselect text-lg text-white font-bold text-center "
                             >
-                             กรุณาแสดงรหัสนี้ให้แก่ร้านค้า<br/> เพื่อใช้สิทธิพิเศษของคุณ
+                                กรุณาแสดงรหัสนี้ให้แก่ร้านค้า<br /> เพื่อใช้สิทธิพิเศษของคุณ
                             </div>
                         </div>
                         <div className="mb-4 mt-6" style={{ height: "100px", }}>
@@ -67,7 +68,7 @@ const InfoCoupon = () => {
                                     </div>
                                 </div>
                                 <div className=" px-2 relative" style={{ width: "70%" }}>
-                                    <div className="w-full  font-bold"> {MyCoupon.couponName} </div>
+                                    <div className="w-full  font-bold line-clamp-2 text-base"> {MyCoupon.couponName} </div>
                                     <div className="w-full absolute" style={{ bottom: "0" }}>{"ใช้ " + MyCoupon.points + " คะแนน"} </div>
                                 </div>
                             </div>
@@ -99,7 +100,7 @@ const InfoCoupon = () => {
                                         height={100}
                                     />
                                 </div>
-                                <div className="mt-2 text-center" style={{ width:"70%", justifyContent: "center",margin: "auto",wordBreak:"break-word"}} >{MyCoupon.codeCoupon}</div>
+                                <div className="mt-2 text-center" style={{ width: "70%", justifyContent: "center", margin: "auto", wordBreak: "break-word" }} >{MyCoupon.codeCoupon}</div>
                             </div>}
 
                     </div> : null}
