@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     codeNone: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     memberId: {
       type: DataTypes.STRING,
