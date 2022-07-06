@@ -287,9 +287,9 @@ export default function CampaignExchangeHistoryReport() {
               e.provinceStr = (e.province > 0 ? dataProvice.find(el => el.value === e.province).label : "");
               e.addressMember = e.address.concat(" ").concat(e.subDistrictStr).concat(" ").concat(e.districtStr).concat(" ")
                                 .concat(e.provinceStr).concat(" ").concat(e.postcode);            
-          }).sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate));                  
-          setListSerch(response.data);
-          setListCampaignExchange(response.data);
+          });                  
+          setListSerch(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
+          setListCampaignExchange(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
         }
       });   
   }, []);
