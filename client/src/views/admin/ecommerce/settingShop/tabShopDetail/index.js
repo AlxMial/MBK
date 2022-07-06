@@ -39,6 +39,7 @@ const ShopDetail = () => {
   const [ removeBanner ,setRemoveBanner] = useState([]);
   const [ delayValue ,setDelayValue] = useState("");
 
+
   async function fetchData() {
     dispatch(fetchLoading());
     const response = await axios.get("shop");
@@ -130,7 +131,7 @@ const ShopDetail = () => {
     setModalData(data.arr);
     const shopId = localStorage.getItem('shop');
     if(shopId){
-      saveAfterShop(shopId);
+      saveBannerAuto(shopId,data.arr);
     }
     setOpen(false);
   };
@@ -249,10 +250,49 @@ const ShopDetail = () => {
     });
   };
 
+  const saveBannerAuto = async (id,data) => {
+    let success = true;
+
+    data.map(async (e, i) => {
+      console.log(e)
+      success = await saveBanners(e, id, i);
+    });
+
+    removeBanner.map(async (e, i) => {
+      success = await removeBanners(e.id);
+    });
+
+    addToast("บันทึกข้อมูลสำเร็จ", {
+      appearance: "success",
+      autoDismiss: true,
+    });
+
+    // if (banner1) {
+    //   success = await saveBanners(banner1, id);
+    // }
+    // if (success && banner2) {
+    //   success = await saveBanners(banner2, id);
+    // }
+    // if (success && banner3) {
+    //   success = await saveBanners(banner3, id);
+    // }
+    // if (success && banner4) {
+    //   success = await saveBanners(banner4, id);
+    // }
+    // if (success && banner5) {
+    //   success = await saveBanners(banner5, id);
+    // }
+    // if (success && banner6) {
+    //   success = await saveBanners(banner6, id);
+    // }
+    return success;
+  };
+
   const saveBanner = async (id) => {
     let success = true;
 
     dataBanner.map(async (e, i) => {
+      console.log(e)
       success = await saveBanners(e, id, i);
     });
 

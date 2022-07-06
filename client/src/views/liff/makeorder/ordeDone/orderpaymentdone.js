@@ -32,6 +32,7 @@ const OrderPaymentDone = () => {
         (res) => {
           if (res.status) {
             let OrderHD = res.data.OrderHD;
+            console.log(OrderHD)
             setOrderHD(OrderHD);
             if (!fn.IsNullOrEmpty(OrderHD.couponCodeId)) {
               setdiscount(OrderHD.RedemptionCoupon.tbRedemptionCoupon.discount);
@@ -290,7 +291,17 @@ const OrderPaymentDone = () => {
                   <div>ส่วนลดร้านค้า : </div>
                   <div className={"absolute " + (OrderHD.hddiscountStorePromotion > 0 ? " text-gold-mbk" : "")}
                     style={{ right: "0" }}>
-                    {"฿ " + fn.formatMoney(OrderHD.hddiscountStorePromotion)}
+                    {"-฿ " + fn.formatMoney(OrderHD.hddiscountStorePromotion)}
+                  </div>
+                </div>
+                <div className="flex relative mb-2 text-sm">
+                  <div>ค่าจัดส่ง : </div>
+
+                  <div
+                    className={"absolute "}
+                    style={{ right: "0" }}
+                  >
+                    {"฿ " + fn.formatMoney(OrderHD.hddeliveryCost)}
                   </div>
                 </div>
                 <div className="flex relative mb-2 text-sm">
