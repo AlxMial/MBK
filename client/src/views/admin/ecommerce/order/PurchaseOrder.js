@@ -24,7 +24,7 @@ const PurchaseOrder = ({ props }) => {
             <div className="w-full lg:w-12/12 pr-2 margin-auto-t-b ">
                 <table className="items-center w-full ">
                     <thead>
-                        <tr className={openExport ? '' : ''} style={{borderTop:"1px solid  #e5e7eb",borderBottom:"1px solid  #e5e7eb"}}>
+                        <tr className={openExport ? '' : ''} style={{ borderTop: "1px solid  #e5e7eb", borderBottom: "1px solid  #e5e7eb" }}>
                             <th className={thClass + ' text-center'}  >
                                 ลำดับที่
                             </th>
@@ -144,7 +144,30 @@ const PurchaseOrder = ({ props }) => {
                             </td>
                         </tr>
 
+                        <tr>
+                            <td className={thClass}>
+                                <span className={tdSpan}>
 
+                                </span>
+                            </td>
+                            <td className={thClass}>
+                                <span className={tdSpan}>
+
+                                </span>
+                            </td>
+
+
+                            <td className={tdClass + ' text-right '}>
+                                ค่าจัดส่ง
+                            </td>
+                            <td className={tdClass + ' text-right '}>
+                                <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap text-left  pr-4"}
+                                    style={{ textAlign: "end" }}>
+                                    {orderHD.deliveryCost > 0 ? fn.formatMoney(orderHD.deliveryCost) : fn.formatMoney(0)}
+                                </div>
+
+                            </td>
+                        </tr>
 
                         <tr>
                             <td className={thClass}>

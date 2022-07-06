@@ -54,9 +54,8 @@ const Register = () => {
   const [enableButton, setEnableButton] = useState(true);
   const [scroll, setScroll] = useState("");
   const useStyle = styleSelect();
-
   const optionsYear = [];
-
+  const [counter, setcounter] = useState(0);
   const optionsCustomer = [
     { label: "เคย", value: "1" },
     { label: "ไม่เคย", value: "2" },
@@ -158,6 +157,7 @@ const Register = () => {
       ["generateref"]: ref,
     }));
     SenderOTP(Data.phone.replaceAll("-", ""));
+    setcounter(60)
     // }
   };
   const onOTPChange = (e) => {
@@ -251,6 +251,37 @@ const Register = () => {
     setOptionYears(optionsYear);
   };
 
+  const Counter = ({ _count, setcounter }) => {
+    const [count, setCount] = useState(_count);
+    useInterval(() => {
+      setCount(count - 1);
+    }, 1000);
+    if (count == 0) {
+      setcounter(0)
+    }
+    return <div
+      className="flex text-gray-mbk text-xxs font-bold justify-center mt-2"
+    >
+      {"ส่งรหัส OTP อีกครั้งภายใน - " + count + " วินาที"}
+    </div>;
+  };
+  const useInterval = (callback, delay) => {
+    const savedCallback = useRef();
+    // Remember the latest function.
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+    // Set up the interval.
+    useEffect(() => {
+      function tick() {
+        savedCallback.current();
+      }
+      if (delay !== null) {
+        let id = setInterval(tick, delay);
+        return () => clearInterval(id);
+      }
+    }, [delay]);
+  };
   const selectOptionDay = (month, year) => {
     if (isLeapYear(year) && month === "02") {
       setOptionDay(optionsDayFab29);
@@ -752,14 +783,14 @@ const Register = () => {
       ) : null}
       {page === "privacypolicy" ? (
         <div
-          className="bg-green-mbk"
-          style={{ height: "100%", overflowY: "auto" }}
+          className="bg-green-mbk "
+          style={{ height: "calc(100% - 100px)", overflowY: "auto" }}
         >
           <div
             style={{
               width: "90%",
               backgroundColor: "#FFF",
-              height: "calc(100vh - 380px)",
+              height: "calc(100% - 320px)",
               padding: "20px",
               margin: "auto",
               borderRadius: "10px",
@@ -1730,12 +1761,13 @@ const Register = () => {
                   {"ยืนยัน"}
                 </button>
               </div>
-              <div
+              {counter < 1 ? <div
                 className="flex text-gray-mbk text-xxs font-bold justify-center mt-2"
                 onClick={generate}
               >
                 {"ขอรหัส OTP ใหม่"}
-              </div>
+              </div> :
+                <Counter _count={counter} setcounter={setcounter} />}
             </div>
           </div>
         </div>

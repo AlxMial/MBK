@@ -32,7 +32,7 @@ const Privacypolicy = () => {
           style={{
             width: "90%",
             backgroundColor: "#FFF",
-            height: "calc(100% - 270px)",
+            height: "calc(100% - 400px)",
             padding: "10px",
             margin: "auto",
             borderRadius: "10px",
@@ -122,7 +122,7 @@ const Privacypolicy = () => {
                 style={{ alignSelf: "stretch" }}
               />
               <span
-                className="ml-2 text-sm font-normal text-white"
+                className="ml-2 text-sm font-normal text-white line-clamp-3"
                 style={{ whiteSpace: "pre-wrap" }}
               >
                 {"ข้าพเจ้าได้อ่านและยอมรับ นโยบายความเป็นส่วนตัว"}
