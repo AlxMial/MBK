@@ -66,6 +66,7 @@ const MakeOrder = () => {
           .then((response) => {
             if (response.data.status) {
               let tbStock = response.data.tbStock;
+  
               setCartItem(tbStock);
               let price = 0;
               tbStock.map((e, i) => {
@@ -418,10 +419,10 @@ const MakeOrder = () => {
             <AddressModel
               isAddress={isAddress}
               onChange={(e) => {
-                addToast("เปลียนที่อยู่จัดส่ง", {
-                  appearance: "success",
-                  autoDismiss: true,
-                });
+                // addToast("เปลียนที่อยู่จัดส่ง", {
+                //   appearance: "success",
+                //   autoDismiss: true,
+                // });
                 setisAddress(e.id);
               }}
               setisAddress={setisAddress}

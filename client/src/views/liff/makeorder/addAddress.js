@@ -10,6 +10,7 @@ import {
     InputUC,
     SelectUC,
     validationSchema,
+    validateShopAddress,
 } from "../profile";
 import {
     optionsDay30,
@@ -53,11 +54,11 @@ const AddAddress = () => {
         birthDate: null,
         registerDate: null,
         address: "",
-        subDistrict: "",
-        district: "",
-        province: "",
+        subDistrict: "100101",
+        district: "1001",
+        province: "1",
         country: "",
-        postcode: "",
+        postcode: "10200",
         isDeleted: false,
         sex: "",
         isMemberType: "",
@@ -115,14 +116,15 @@ const AddAddress = () => {
     };
 
     const validation = async () => {
-        const isFormValid = await validationSchema.isValid(Data, {
+        const isFormValid = await validateShopAddress.isValid(Data, {
             abortEarly: false,
         });
         if (isFormValid) {
             DoSave();
             // console.log("DoSave")
+
         } else {
-            validationSchema
+            validateShopAddress
                 .validate(Data, {
                     abortEarly: false,
                 })
@@ -144,7 +146,6 @@ const AddAddress = () => {
         addMemberAddress(
             _Data,
             (res) => {
-                console.log('res', res)
                 let msg = { msg: "", appearance: "warning" };
                 res.data.status
                     ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
@@ -156,7 +157,8 @@ const AddAddress = () => {
                                 "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
                             : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
-                addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
+                // addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
+                history.goBack()
             },
             (e) => {
                 addToast(e.message, { appearance: "warning", autoDismiss: true });

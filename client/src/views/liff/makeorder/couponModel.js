@@ -121,7 +121,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                       >
                         {!e.isNotExpired
                           ? "ใช้ได้ถึง " +
-                          moment(e.expiredDate)
+                          moment(e.expireDate)
                             .locale("th")
                             .add(543, "years")
                             .format("DD MMM yyyy")

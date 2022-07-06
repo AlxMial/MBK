@@ -83,6 +83,7 @@ const MakeOrderById = () => {
               .post("stock/getStock", { id: idlist })
               .then((response) => {
                 if (response.data.status) {
+       
                   let tbStock = response.data.tbStock;
                   let price = 0;
                   let amount = 0;
@@ -168,9 +169,10 @@ const MakeOrderById = () => {
   const calctotel = () => {
     // มีโปรร้าน
     let total = sumprice;
+  
     let _prodiscstro = calcprodiscount(sumprice);
     let _prodiscount = 0;
-    if (_prodiscstro.type == "discount") {
+    if (_prodiscstro.type === "discount") {
       _prodiscount = _prodiscstro.data;
     }
 
@@ -192,6 +194,7 @@ const MakeOrderById = () => {
   };
   const calcprodiscount = (totel) => {
     let _prodiscount = 0;
+    let valueType = '';
     let data = { data: 0 };
     if (promotionstores.length > 0 && totel > 0) {
       let prodiscountList = promotionstores.find(
@@ -200,6 +203,7 @@ const MakeOrderById = () => {
           e.buy <= totel
       );
       if (prodiscountList != null) {
+        valueType = 'coupon';
         let pro = promotionstores.filter((e) => {
           if (
             (e.condition == 1 || e.condition == 2) &&
@@ -226,34 +230,37 @@ const MakeOrderById = () => {
         data = { type: "discount", data: _prodiscount };
       } else {
         //สินค้า
+        valueType = 'product';
         let productList = promotionstores.find((e) => e.condition == 3 && e.buy <= totel);
         if (productList != null) {
           data = { type: "product", data: productList.stockId };
-          if (freebies.length < 1) {
-            getfreebies(productList);
-          }
+          // if (freebies.length < 1) {
+          //   getfreebies(productList);
+          // }
         }
       }
     }
-    return data;
+    if(valueType === "product"){
+      return 0
+    }else return data.data
   };
 
-  const getfreebies = async (productList) => {
-    await axios
-      .post("stock/getStock", { id: [productList.stockId] })
-      .then((response) => {
-        if (response.data.status) {
-          let tbStock = response.data.tbStock;
-          tbStock[0].campaignName = productList.campaignName;
-          setfreebies(tbStock);
-        } else {
-          setfreebies([]);
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
+  // const getfreebies = async (productList) => {
+  //   await axios
+  //     .post("stock/getStock", { id: [productList.stockId] })
+  //     .then((response) => {
+  //       if (response.data.status) {
+  //         let tbStock = response.data.tbStock;
+  //         tbStock[0].campaignName = productList.campaignName;
+  //         setfreebies(tbStock);
+  //       } else {
+  //         setfreebies([]);
+  //       }
+  //     })
+  //     .finally(() => {
+  //       setIsLoading(false);
+  //     });
+  // };
   const calcdeliveryCost = () => {
     // มีโปรร้าน
     let total = sumprice;
@@ -397,10 +404,10 @@ const MakeOrderById = () => {
             <AddressModel
               isAddress={isAddress}
               onChange={(e) => {
-                addToast("เปลียนที่อยู่จัดส่ง", {
-                  appearance: "success",
-                  autoDismiss: true,
-                });
+                // addToast("เปลียนที่อยู่จัดส่ง", {
+                //   appearance: "success",
+                //   autoDismiss: true,
+                // });
                 setisAddress(e.id);
               }}
               setisAddress={setisAddress}
@@ -408,10 +415,10 @@ const MakeOrderById = () => {
             <LogisticModel
               isLogistic={isLogistic}
               onChange={(e) => {
-                addToast("เปลียนช่องทางการขนส่ง", {
-                  appearance: "success",
-                  autoDismiss: true,
-                });
+                // addToast("เปลียนช่องทางการขนส่ง", {
+                //   appearance: "success",
+                //   autoDismiss: true,
+                // });
                 setisLogistic(e.id);
                 setDeliveryCost(e.deliveryCost);
               }}
@@ -449,7 +456,13 @@ const MakeOrderById = () => {
                   <div className="flex relative mb-2">
                     <div>ส่วนลดร้านค้า : </div>
                     <div className={"absolute" + (calcprodiscount(sumprice).data > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
-                      {(calcprodiscount(sumprice).data > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice).data)}
+                      {(calcprodiscount(sumprice).data > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice))}
+                    </div>
+                  </div>
+                  <div className="flex relative mb-2">
+                    <div>ค่าจัดส่ง : </div>
+                    <div className={"absolute" + (deliveryCost > 0 ? " " : "")} style={{ right: "0" }}>
+                      {(deliveryCost > 0 ? "฿ " : "฿ ") + fn.formatMoney(deliveryCost)}
                     </div>
                   </div>
                   <div className="flex relative mb-2">

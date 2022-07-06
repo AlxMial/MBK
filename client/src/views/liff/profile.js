@@ -31,6 +31,19 @@ export const validationSchema = Yup.object({
   eating: Yup.string()
     .required("* โปรดระบุ ปัจจุบันทานข้าวแบรด์"),
 });
+
+
+export const validateShopAddress = Yup.object({
+  firstName: Yup.string().required("* โปรดระบุชื่อ"),
+  lastName: Yup.string().required("* โปรดระบุนามสกุล"),
+  phone: Yup.string()
+    .matches(phoneRegExp, "* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง")
+    .required("* โปรดระบุเบอร์โทร"),
+  address: Yup.string()
+    .required("* โปรดระบุที่อยู่"),
+  postcode: Yup.string()
+    .required("* โปรดระบุรหัสไปรษณีย์")
+});
 export const DatePickerContainer = styled.div`
   .datepicker {
     position: initial;
