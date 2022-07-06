@@ -6,7 +6,6 @@ import FilesService from "services/files";
 import { path } from "services/liff.services";
 import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
-// import { triggerBase64Download } from "common-base64-downloader-react";
 import { getOrder, doSaveSlip } from "@services/liff.services";
 import liff from "@line/liff";
 import config from "@services/helpers";
@@ -14,7 +13,6 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import WaitingPayment from "./waitingPayment";
 import Error from "../error";
 import { sendEmailWaiting } from "services/liff.services";
-// import * as Session from "@services/Session.service";
 
 const PaymentInfo = () => {
   let { id } = useParams();
@@ -285,11 +283,9 @@ const PaymentInfo = () => {
                                         [
                                           {
                                             type: "image",
-                                            originalContentUrl:
-                                              "https://undefined.ddns.net/mbkserver/image/getImgQrCode/" +
+                                            originalContentUrl: config._baseURL + "image/getImgQrCode/" +
                                               OrderHD.Payment.id,
-                                            previewImageUrl:
-                                              "https://undefined.ddns.net/mbkserver/image/getImgQrCode/" +
+                                            previewImageUrl: config._baseURL + "image/getImgQrCode/" +
                                               OrderHD.Payment.id,
                                           },
                                         ],

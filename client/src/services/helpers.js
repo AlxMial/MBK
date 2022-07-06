@@ -9,5 +9,9 @@ const config = {
   project_key: "9919fe9150",
   otpsend: "https://portal-otp.smsmkt.com/api/otp-send",
   otpvalidate: "https://portal-otp.smsmkt.com/api/otp-validate",
+  _baseURL: "http://localhost:3001/mahboonkrongserver/"
 };
 export default config;
+  // baseURL: `https://undefined.ddns.net/mbkserver/`,
+  // baseURL: `https://undefined.ddns.net/mahboonkrongserver/`,
+  // baseURL: `https://hopeagro.co.th/mahboonkrongserver/`,
