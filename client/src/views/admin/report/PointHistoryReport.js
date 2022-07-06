@@ -117,8 +117,12 @@ export default function PointHistoryReport() {
     let isSearch = false;
     let st_Date = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
     let ed_Date = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
-    if(((st_Date !== null && ed_Date !== null) && (st_Date <= dataST_Date  && st_Date <= dataED_Date &&
-         ed_Date >= dataST_Date && ed_Date >= dataED_Date)) 
+    if(((st_Date !== null && ed_Date !== null) && 
+        ((st_Date <= dataST_Date  && st_Date <= dataED_Date && ed_Date >= dataST_Date && ed_Date >= dataED_Date) || 
+         (st_Date <= dataST_Date  && ed_Date >= dataST_Date && !(st_Date <= dataED_Date  && ed_Date >= dataED_Date)) ||
+         (!(st_Date <= dataST_Date  && ed_Date >= dataST_Date) && st_Date <= dataED_Date  && ed_Date >= dataED_Date))) 
+         
+         
          || ((st_Date !== null && ed_Date === null) && (st_Date <= dataST_Date || st_Date <= dataED_Date))
          || ((st_Date === null && ed_Date !== null) && (ed_Date >= dataST_Date || ed_Date >= dataED_Date))
          || (st_Date === null && ed_Date === null)) {
