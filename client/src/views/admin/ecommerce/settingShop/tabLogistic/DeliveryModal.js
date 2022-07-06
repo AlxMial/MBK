@@ -33,7 +33,7 @@ const DeliveryModal = ({ open, formik, handleModal }) => {
             <form onSubmit={formik.handleSubmit}>
                 <div className="flex flex-wrap">
                     <div className="w-full flex-auto mt-2">
-                        <ModalHeader title="เพิ่มเงื่อนไขโปรโมชั่นการส่ง" handleModal={handleModal} />
+                        <ModalHeader title="ตั้งค่าเงื่อนไขโปรโมชั่น" handleModal={handleModal} />
                         <div className="flex flex-wrap px-24 py-10 justify-center">
                             <div className="w-full lg:w-12/12 px-4 margin-auto-t-b ">
                                 <div className="flex flex-wrap justify-center">

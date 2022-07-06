@@ -501,9 +501,9 @@ export default function MemberInfo() {
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info ">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
-                  {/* <div className="w-full lg:w-2/12 px-4 margin-auto-t-b"></div>
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b"></div>
                   <div className="w-full lg:w-8/12 px-4 mb-2 text-right">
-                    <div className="flex flex-wrap w-full justify-content-right">
+                    {/* <div className="flex flex-wrap w-full justify-content-right">
                       <img
                         src={require("assets/img/mbk/giftReward.png").default}
                         alt="..."
@@ -511,8 +511,8 @@ export default function MemberInfo() {
                       <span className="text-green-mbk text-lg font-bold cursor-pointer margin-auto-t-b" onClick={() => OpenModal()}>
                         &nbsp;{formik.values.memberPoint}&nbsp;คะแนน
                       </span>
-                    </div>
-                  </div> */}
+                    </div> */}
+                  </div>
                   <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full margin-a">
                       <label

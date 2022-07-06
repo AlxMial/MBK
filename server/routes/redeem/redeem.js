@@ -81,7 +81,6 @@ router.post("/", async (req, res) => {
           },
         },
       });
-
       if (PointDt && Point) {
         if (PointDt.dataValues.isExpire) {
           status = {

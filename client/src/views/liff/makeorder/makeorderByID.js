@@ -136,9 +136,11 @@ const MakeOrderById = () => {
   };
   //สั่งสินค้า
   const sendOrder = () => {
+    
     let updatrOrder = {
       id: id,
       // "Money Transfer" : "Credit" 1,2
+      orderHd: OrderHD,
       paymentType: RadioPayment === 1 ? 1 : 2,
       logisticId: isLogistic,
       isAddress: isAddress,
@@ -149,6 +151,7 @@ const MakeOrderById = () => {
         }
       }),
     };
+ 
     if (RadioPayment === 1) {
       updatrOrder.paymentId = paymentID
     }
@@ -158,7 +161,7 @@ const MakeOrderById = () => {
         if (RadioPayment === 1) {
           history.push(path.paymentInfo.replace(":id", id));
         } else {
-
+          console.log( res.data)
           window.location.href = res.data.url.webPaymentUrl
         }
       } else {
@@ -452,8 +455,8 @@ const MakeOrderById = () => {
 
                   <div className="flex relative mb-2">
                     <div>ส่วนลดร้านค้า : </div>
-                    <div className={"absolute" + (calcprodiscount(sumprice).data > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
-                      {(calcprodiscount(sumprice).data > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice))}
+                    <div className={"absolute" + (calcprodiscount(sumprice) > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
+                      {(calcprodiscount(sumprice) > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice))}
                     </div>
                   </div>
                   <div className="flex relative mb-2">

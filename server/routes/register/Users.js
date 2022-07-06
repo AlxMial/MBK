@@ -8,8 +8,17 @@ const Sequelize = require("sequelize");
 const ValidateEncrypt = require("../../services/crypto");
 const Op = Sequelize.Op;
 const Encrypt = new ValidateEncrypt();
+const config = require("../../services/config.line");
+const sequelize = new Sequelize(config.database.database,config.database.username, config.database.password, {
+  host: config.database.host,
+  dialect:config.database.dialect,
+});
 
 router.post("/login", async (req, res) => {
+
+  // const [results, data] = await sequelize.query(`update  tbpointcodedts set isExpire = 1 where tbPointCodeHDId in (select id from tbpointcodehds where endDate < now() and isDeleted = 0 )`);
+
+
   const { userName, password } = req.body;
   const user = await tbUser.findOne({
     attributes: [

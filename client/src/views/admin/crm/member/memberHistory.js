@@ -59,8 +59,8 @@ const MemberHistory = ({
           <TabPane tab="การรับคะแนน" key="1">
             <MemberReward memberId={memberId} />
           </TabPane>
-          <TabPane tab="การแลกของรางวัล" key="2" disabled={true}>
-            <MemberRedemption/>
+          <TabPane tab="การแลกของรางวัล" key="2" >
+            <MemberRedemption memberId={memberId}/>
           </TabPane>
         </Tabs>
       </div>

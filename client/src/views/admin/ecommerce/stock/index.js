@@ -184,7 +184,7 @@ const Stock = () => {
       productName: yup.string().required("* กรุณากรอก ชื่อสินค้า"),
       productCategoryId: yup.string().required("* กรุณากรอก หมวดหมู่สินค้า"),
       price: yup.string().required("* กรุณากรอก ราคา"),
-      discount: yup.string().required("* กรุณากรอก ส่วนลด"),
+      // discount: yup.string().required("* กรุณากรอก ส่วนลด"),
     }),
     onSubmit: (values) => {
       dispatch(fetchLoading());

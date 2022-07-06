@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { tbMemberPoint, tbPointCodeHD, tbPointCodeDT } = require("../../models");
+const { tbMemberPoint, tbPointCodeHD, tbPointCodeDT,tbMemberReward,tbCouponCode,tbRedemptionProduct } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
@@ -16,9 +16,9 @@ router.get("/reward/:memberId", async (req, res) => {
   const listMemberPoint = await tbMemberPoint.findAll({
     where: {
       isDeleted: false,
-      // campaignType: {
-      //   [Op.ne]: 3,
-      // },
+      campaignType: {
+        [Op.ne]: [4,5,6]
+      },
       tbMemberId: memberId,
     },
     include: [
@@ -39,9 +39,12 @@ router.get("/reward/:memberId", async (req, res) => {
   } else res.json({ error: "not found redeem" });
 });
 
-router.get("/redemption", validateToken, async (req, res) => {
-  const listRedemption = await tbMemberPoint.findAll({
-    where: { isDeleted: false },
+router.get("/redemption/:memberId", validateToken, async (req, res) => {
+  const memberId = Encrypt.DecodeKey(req.params.memberId);
+
+  const listRedemption = await tbMemberReward.findAll({
+    where: { isDeleted: false,memberId:memberId },
+
   });
   if (listRedemption.length > 0) {
     res.json({

@@ -390,13 +390,13 @@ const StockInfo = ({
                   </div>
                   <div className="flex flex-wrap mt-4">
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                      <LabelUC label="ส่วนลด" isRequired={true} />
+                      <LabelUC label="ส่วนลด"  />
                       <div className="relative w-full px-4">
-                        {formik.touched.discount && formik.errors.discount ? (
+                        {/* {formik.touched.discount && formik.errors.discount ? (
                           <div className="text-sm py-2 px-2  text-red-500">
                             &nbsp;
                           </div>
-                        ) : null}
+                        ) : null} */}
                       </div>
                     </div>
                     <div className="w-full lg:w-2/12 margin-auto-t-b">

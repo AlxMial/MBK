@@ -48,9 +48,8 @@ const InfoProduct = () => {
                   className=" animated-img"
                 ></ImageUC>
               </div>
-
             </div>
-            <div className="px-8 py-2" style={{
+            <div className="px-8 py-2 line-scroll" style={{
               width: "90%", margin: "auto",
               borderRadius: "40px",
               backgroundColor: "#FFFFFF",

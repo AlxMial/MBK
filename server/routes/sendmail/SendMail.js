@@ -110,6 +110,65 @@ router.post("/paymentsuccess", async (req, res) => {
   );
 });
 
+
+router.post("/paymentsuccessadmin", async (req, res) => {
+  const frommail = req.body.frommail;
+  const password = req.body.password;
+  const tomail = req.body.tomail;
+  const orderNumber = req.body.orderNumber;
+  const memberName = req.body.memberName;
+  const orderPrice = req.body.orderPrice;
+  const orderDate = req.body.orderDate;
+
+  var transporter = nodemailer.createTransport({
+    // service: 'Outlook365',
+    host: "smtp.office365.com",
+    port: 587,
+    auth: {
+      user: frommail,
+      pass: password,
+    },
+    secureConnection: true,
+    // tls: { ciphers: 'SSLv3' }
+  });
+
+  ejs.renderFile(
+    __dirname + "/paymentSuccessAdmin.ejs",
+    {
+      memberName: memberName,
+      orderNumber: orderNumber,
+      orderPrice: orderPrice,
+      orderDate: orderDate,
+    },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+        var mailOptions = {
+          from: frommail,
+          to: tomail,
+          text: "ใบเสร็จรับเงินสำหรับใบสั่งซื้อ " + orderNumber,
+          subject: "ใบเสร็จรับเงินสำหรับใบสั่งซื้อ " + orderNumber,
+          html: data,
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            res.json({
+              msg: error,
+            });
+          } else {
+            res.json({
+              msg: "success",
+            });
+          }
+        });
+      }
+    }
+  );
+});
+
+
 router.post("/paymentwatiting", async (req, res) => {
   const frommail = req.body.frommail;
   const password = req.body.password;

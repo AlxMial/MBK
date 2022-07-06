@@ -19,7 +19,7 @@ const MyOrder = () => {
     getMyOrder((res) => {
       // console.log('res.data.OrderHD', res.data.OrderHD)
       if (res.status) {
-        console.log(res.data.OrderHD)
+
         setOrderHD(res.data.OrderHD)
       }
     }, () => { }, () => { setIsLoading(false) })

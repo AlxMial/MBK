@@ -198,7 +198,7 @@ const Logistic = () => {
                             </div>
                             <div className={"lg:w-6/12 text-right block"} >
                                 <ButtonModalUC onClick={() => openModalDelivery()}
-                                    label='เพิ่มเงื่อนไขโปรโมชั่นการส่ง' />
+                                    label='ตั้งค่าเงื่อนไขโปรโมชั่น' />
                                 <ButtonModalUC onClick={() => openModalLogistic()}
                                     label='เพิ่มช่องทางการส่งของ' />
                             </div>

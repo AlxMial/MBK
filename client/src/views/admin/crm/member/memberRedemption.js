@@ -21,7 +21,7 @@ import {
 import useWindowDimensions from "services/useWindowDimensions";
 import ValidateService from "services/validateValue";
 
-export default function MemberRedemption() {
+export default function MemberRedemption({ memberId }) {
   /* Set useState */
   const [Active, setActive] = useState("1");
   const [score, setScore] = useState(0);
@@ -44,42 +44,6 @@ export default function MemberRedemption() {
     setPageNumber(selected);
   };
 
-  /* Method Condition */
-  const options = [
-    { label: "Active", value: "1" },
-    { label: "Inactive", value: "2" },
-  ];
-
-  function openModal(id) {
-    if (id) {
-      fetchDataById(id);
-      setIsNew(false);
-    } else {
-      setArr([]);
-      formik.resetForm();
-      setIsNew(true);
-    }
-    setIsOpen(true);
-  }
-
-  function afterOpenModal(type) {
-    // references are now sync'd and can be accessed.
-  }
-
-  function closeModal() {
-    setIsOpen(false);
-  }
-
-  /* Modal */
-  function openModalSubject(id) {
-    setDeleteValue(id);
-    setIsOpenSubject(true);
-  }
-
-  function closeModalSubject() {
-    setIsOpenSubject(false);
-  }
-
   const InputSearch = (e) => {
     e = e.toLowerCase();
     if (e === "") {
@@ -91,152 +55,13 @@ export default function MemberRedemption() {
     }
   };
 
-  /* formik */
-  const formik = useFormik({
-    initialValues: {
-      id: "",
-      pointStoreName: "",
-      isDeleted: false,
-    },
-    validationSchema: Yup.object({
-      pointStoreName: Yup.string().required(
-        Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก ชื่อร้านค้า"
-          : "* Please enter your Store Name"
-      ),
-    }),
-    onSubmit: (values) => {
-      if (isNew) {
-        values["branch"] = arr;
-        axios.post("pointStore", values).then((res) => {
-          if (res.data.status) {
-            formik.values.id = res.data.tbPointStoreHD.id;
-            setIsNew(false);
-            fetchData();
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            if (res.data.isPointStoreName) {
-              addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อร้านค้าเคยมีการบันทึกไว้เรียบร้อยแล้ว",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
-              );
-            }
-          }
-        });
-      } else {
-        values["branch"] = arr;
-        axios.put("pointStore", values).then((res) => {
-          if (res.data.status) {
-            fetchData();
-            addToast(
-              Storage.GetLanguage() === "th"
-                ? "บันทึกข้อมูลสำเร็จ"
-                : "Save data successfully",
-              { appearance: "success", autoDismiss: true }
-            );
-          } else {
-            if (res.data.isPointStoreName) {
-              addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อร้านค้าเคยมีการบันทึกเรียบร้อยแล้ว",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
-              );
-            }
-          }
-        });
-      }
-    },
-  });
-
-  const deleteUser = (e) => {
-    axios.delete(`/pointStore/${e}`).then(() => {
-      setlistStore(
-        listStore.filter((val) => {
-          return val.id !== e;
-        })
-      );
-      closeModalSubject();
-    });
-  };
-
-  const fetchDataById = async (id) => {
-    let response = await axios.get(`/pointStore/byId/${id}`);
-    let pointStore = await response.data.tbPointStoreHD;
-    let pointStoreDT = await response.data.tbPointStoreDT;
-    if (pointStore !== null) {
-      for (var columns in response.data.tbPointStoreHD) {
-        formik.setFieldValue(
-          columns,
-          response.data.tbPointStoreHD[columns],
-          false
-        );
-      }
-      let storeDt = [];
-      var i = 0;
-      await pointStoreDT.forEach((field) => {
-        storeDt.push({
-          type: "text",
-          id: field.id,
-          value: field.pointBranchName,
-        });
-        i++;
-      });
-      setArr(storeDt);
-    }
-  };
-
   const fetchData = async () => {
-    axios.get("pointStore").then((response) => {
+    axios.get(`memberPoint/reward/${memberId}`).then((response) => {
       if (response.data.error) {
       } else {
         setlistStore(response.data.tbPointStoreHD);
         setListSerch(response.data.tbPointStoreHD);
       }
-    });
-  };
-
-  const inputArr = [];
-
-  const [arr, setArr] = useState(inputArr);
-
-  const addInput = () => {
-    setArr((s) => {
-      return [
-        ...s,
-        {
-          type: "text",
-          value: "",
-          id: "",
-        },
-      ];
-    });
-  };
-
-  const handleRemove = (index) => {
-    const rows = [...arr];
-    rows.splice(index, 1);
-    setArr(rows);
-  };
-
-  const handleChangeBranch = (e) => {
-    e.preventDefault();
-
-    const index = e.target.id;
-    setArr((s) => {
-      const newArr = s.slice();
-      newArr[index].value = e.target.value;
-
-      return newArr;
     });
   };
 
@@ -324,13 +149,6 @@ export default function MemberRedemption() {
                   >
                     วันที่หมดอายุ
                   </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    จัดการ
-                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -345,76 +163,46 @@ export default function MemberRedemption() {
                           </span>
                         </td>
                         <td
-                          onClick={() => {
-                            openModal(value.id);
-                          }}
+                          
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
                           {value.pointStoreName}
                         </td>
                         <td
-                          onClick={() => {
-                            openModal(value.id);
-                          }}
+                          
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
                           {value.pointStoreName}
                         </td>
                         <td
-                          onClick={() => {
-                            openModal(value.id);
-                          }}
+                          
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
                           {value.pointStoreName}
                         </td>
                         <td
-                          onClick={() => {
-                            openModal(value.id);
-                          }}
+                          
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
                           {value.pointStoreName}
                         </td>
                         <td
-                          onClick={() => {
-                            openModal(value.id);
-                          }}
+                          
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
                           {value.pointStoreName}
                         </td>
                         <td
-                          onClick={() => {
-                            openModal(value.id);
-                          }}
+                          
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
                         >
                           {value.pointStoreName}
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <i
-                            className="fas fa-trash text-red-500 cursor-pointer"
-                            onClick={() => {
-                              openModalSubject(value.id);
-                            }}
-                          ></i>
                         </td>
                       </tr>
                     );
                   })}
               </tbody>
             </table>
-            <ConfirmDialog
-              showModal={modalIsOpenSubject}
-              message={"ร้านค้า"}
-              hideModal={() => {
-                closeModalSubject();
-              }}
-              confirmModal={(e) => {
-                deleteUser(deleteValue);
-              }}
-            />
           </div>
           <div className="px-4">
             <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">

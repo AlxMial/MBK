@@ -471,8 +471,8 @@ const MakeOrder = () => {
                   </div>
                   <div className="flex relative mb-2">
                     <div>ส่วนลดร้านค้า : </div>
-                    <div className={"absolute" + (calcprodiscount(sumprice).data > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
-                      {(calcprodiscount(sumprice).data > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice))}
+                    <div className={"absolute" + (calcprodiscount(sumprice) > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
+                      {(calcprodiscount(sumprice) > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice))}
                     </div>
                   </div>
                   <div className="flex relative mb-2">

@@ -25,11 +25,11 @@ const upload = async (req, res) => {
 
       let tutorials = [];
       var rowx = 0;
-      rows.forEach((row) => {
-        if(row[0] !== null && rowx > 2 && row[0].length > 5) {
+      await rows.forEach((row) => {
+        if(row[0] !== null && rowx > 2 && row[0].toString().length > 5) {
           let tutorial = {
-            code:  Encrypt.EncodeKey(row[0].toLowerCase()),
-            codeNone:  Encrypt.EncodeKey(row[0].toLowerCase()),
+            code:  Encrypt.EncodeKey(row[0].toString().toLowerCase()),
+            codeNone:  Encrypt.EncodeKey(row[0].toString().toLowerCase()),
             tbPointCodeHDId: req.body.tbPointCodeHDId,
             memberId: null,
             isUse: 0,
@@ -155,6 +155,7 @@ const createCoupon = async (Code) => {
 function chunkArray(myArray, chunk_size) {
   var index = 0;
   var arrayLength = myArray.length;
+  console.log(arrayLength)
   var tempArray = [];
 
   for (index = 0; index < arrayLength; index += chunk_size) {

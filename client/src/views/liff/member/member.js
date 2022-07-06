@@ -31,6 +31,7 @@ const Member = () => {
     getMember(
       (res) => {
         if (res.data.code === 200) {
+          console.log(res)
           settbMember(res.data.tbMember);
           getMemberpoints({ id: res.data.tbMember.id });
         }
@@ -45,6 +46,7 @@ const Member = () => {
     setIsLoading(true);
     getPoint(
       (res) => {
+        console.log(res)
         if (res.data.code === 200) {
           setMemberpoints(res.data);
         }
@@ -175,14 +177,14 @@ const Member = () => {
               <div className="text-right mt-2 "></div>
               <div className="text-right mt-2">
                 <span className=" text-2xs text-white ">
-                  {/*Memberpoints.memberpoints*/0 + " คะแนน  "}
+                  {tbMember.memberPoint + " คะแนน  "}
                 </span>
               </div>
               <div className="text-right ">
                 <span className=" text-2xs text-white ">
                   {
-                    "จะหมดอายุ : " +
-                    liff_dateToString(Memberpoints.enddate, "DD/MM/yyyy")
+                    "จะหมดอายุ : 31/12/2567" //+
+                    // liff_dateToString(Memberpoints.enddate, "DD/MM/yyyy")
                     // (IsNullOrEmpty(Memberpoints.enddate)
                     //   ? "-"
                     //   : moment(Memberpoints.enddate.split("T")[0])

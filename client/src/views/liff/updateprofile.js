@@ -12,7 +12,8 @@ import {
   InputUC,
   SelectUC,
   validationSchema,
-  validateShopAddress
+  validateShopAddress,
+  validateShopUpdate
   // DatePickerContainer,
   // monthMap,
 } from "./profile";
@@ -176,13 +177,13 @@ const Updateprofile = () => {
   };
 
   const validation = async () => {
-    const isFormValid = await validateShopAddress.isValid(Data, {
+    const isFormValid = await validateShopUpdate.isValid(Data, {
       abortEarly: false,
     });
     if (isFormValid) {
       DoSave();
     } else {
-      validateShopAddress
+      validateShopUpdate
         .validate(Data, {
           abortEarly: false,
         })
@@ -419,7 +420,6 @@ const Updateprofile = () => {
               value={Data.email}
               error={errors.email}
               valid={true}
-              disabled={true}
             />
             <div className="mb-5" style={{ display: "none" }}>
               <Radio.Group

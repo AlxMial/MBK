@@ -55,6 +55,7 @@ const Order = () => {
             const member = res.data.tbMember.filter(
               (member) => member.id === EncodeKey(order.memberId)
             );
+          
             if (member && member.length > 0) {
               order.memberName = member[0].firstName + " " + member[0].lastName;
               order.phone = member[0].phone;
@@ -64,6 +65,7 @@ const Order = () => {
           });
           dispatch(fetchSuccess());
         });
+     
         setOrderList(_orderData);
         setListSearch(_orderData);
       }
@@ -80,14 +82,32 @@ const Order = () => {
     if (e === "") {
       setOrderList(listSearch);
     } else {
-      console.log(listSearch);
+
       setOrderList(
         listSearch.filter(
           (x) =>
             x.orderNumber.toLowerCase().includes(e) ||
             x.memberName.toLowerCase().includes(e) ||
-            x.orderDate.toString().includes(e) ||
-            x.netTotal.toString().includes(e)
+            (x.orderDate ?? '').toString().includes(e) ||
+            (x.netTotal ?? '').toString().includes(e) ||
+            (x.paymentStatus === "1"
+              ? "รอการชำระเงิน"
+              : x.paymentStatus === "2"
+              ? "รอตรวจสอบ"
+              : "ชำระเงินแล้ว"
+            ).includes(e) || 
+            (x.transportStatus === "1"
+            ? "เตรียมส่ง"
+            : x.transportStatus === "2"
+            ? "อยู่ระหว่างจัดส่ง"
+            : "ส่งแล้ว"
+          ).includes(e) || 
+            (e.tbCancelOrder != null
+              ? e.tbCancelOrder.cancelDetail
+              : e.tbReturnOrder != null
+              ? e.tbReturnOrder.returnDetail
+              : "").includes(e) ||
+            (x.isCancel.toString() === "true" ? "ยกเลิกคำสั่งซื้อ" : "").includes(e)
         )
       );
     }
@@ -208,13 +228,13 @@ const Order = () => {
                       dispatch(fetchSuccess());
                     });
                 } else {
-                  console.log(paymentStatus);
                   if (paymentStatus.toString() === "3") {
-                    console.log(_dataHD);
                     axios
-                      .post("mails/paymentsuccess", {
-                        frommail: "noreply@undefined.co.th",
-                        password: "Has88149*",
+                      .post("mails/paymentsuccessadmin", {
+                        // frommail: "noreply@undefined.co.th",
+                        // password: "Has88149*",
+                        frommail: "no-reply@prg.co.th",
+                        password: "Tus92278",
                         tomail: _dataHD.email,
                         orderNumber: _dataHD.orderNumber,
                         memberName: _dataHD.firstName + " " + _dataHD.lastName,
@@ -307,6 +327,7 @@ const Order = () => {
       "discount",
       "discountCoupon",
       "codeCoupon",
+      "paymentType",
       "paymentStatus",
       "paymentDate",
       "logisticCategory",
@@ -357,8 +378,48 @@ const Order = () => {
           : order.data.tbOrder[i]["transportStatus"] === "2"
           ? "กำลังขนส่ง"
           : "สำเร็จ";
+
+      order.data.tbOrder[i]["codeCoupon"] =
+        order.data.tbOrder[i]["codeCoupon"] === null
+          ? ""
+          : order.data.tbOrder[i]["codeCoupon"];
+
+      order.data.tbOrder[i]["paymentDate"] =
+        order.data.tbOrder[i]["paymentDate"] === null
+          ? ""
+          : order.data.tbOrder[i]["paymentDate"];
+
+      order.data.tbOrder[i]["doneDate"] =
+        order.data.tbOrder[i]["doneDate"] === null
+          ? ""
+          : order.data.tbOrder[i]["doneDate"];
+
+      order.data.tbOrder[i]["trackNo"] =
+        order.data.tbOrder[i]["trackNo"] === null
+          ? ""
+          : order.data.tbOrder[i]["trackNo"];
+
+      order.data.tbOrder[i]["returnStatus"] =
+        order.data.tbOrder[i]["returnStatus"] === null
+          ? ""
+          : order.data.tbOrder[i]["returnStatus"];
+
+      order.data.tbOrder[i]["cancelStatus"] =
+        order.data.tbOrder[i]["cancelStatus"] === null
+          ? ""
+          : order.data.tbOrder[i]["cancelStatus"];
+
+      order.data.tbOrder[i]["returnDetail"] =
+        order.data.tbOrder[i]["returnDetail"] === null
+          ? ""
+          : order.data.tbOrder[i]["returnDetail"];
+
+      order.data.tbOrder[i]["cancelDetail"] =
+        order.data.tbOrder[i]["cancelDetail"] === null
+          ? ""
+          : order.data.tbOrder[i]["cancelDetail"];
     }
-    
+
     exportExcel(
       order.data.tbOrder,
       sheetname,

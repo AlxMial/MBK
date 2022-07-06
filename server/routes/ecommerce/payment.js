@@ -1,7 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const axios = require('axios').default;
-const { tbPayment, tbPromotionStore, tbOrderHD, tb2c2p,tbMember } = require("../../models");
+const axios = require("axios").default;
+const {
+  tbPayment,
+  tbPromotionStore,
+  tbOrderHD,
+  tb2c2p,
+  tbMember,
+} = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
@@ -11,7 +17,6 @@ const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-
 
 router.post("/", validateToken, async (req, res) => {
   const data = await tbPayment.create(req.body);
@@ -166,7 +171,7 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
   let id = Encrypt.DecodeKey(req.body.id);
 
   const member = await tbMember.findOne({
-    attributes: ["firstName", "lastName","email"],
+    attributes: ["firstName", "lastName", "email"],
     where: { uid: Encrypt.DecodeKey(req.user.uid) },
   });
 
@@ -175,47 +180,68 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
       where: { orderId: id, uid: req.body.uid },
     });
     if (_2c2p) {
-      axios.post('https://sandbox-pgw.2c2p.com/payment/4.1/PaymentInquiry', {
-        payload: _2c2p.payload
-      })
+      let Payment2c2p = false;
+      axios
+        .post("https://sandbox-pgw.2c2p.com/payment/4.1/PaymentInquiry", {
+          payload: _2c2p.payload,
+        })
         .then(async function (response) {
           let decoded = jwt.decode(response.data.payload);
           if (decoded.respDesc == "Success") {
+            Payment2c2p = true;
             let referenceNo = decoded.referenceNo;
-            await tbOrderHD.update(
-              {
-                transetionId: referenceNo,
-                paymentDate: new Date(),
-                paymentStatus: 3,
-              },
-              {
-                where: {
-                  id: Encrypt.DecodeKey(id.split(",")[0]),
-                  // id: id.split(",")[0],
-                  orderNumber: id.split(",")[1],
+            await tbOrderHD
+              .update(
+                {
+                  transetionId: referenceNo,
+                  paymentDate: new Date(),
+                  paymentStatus: 3,
                 },
-              }
-            );
+                {
+                  where: {
+                    id: Encrypt.DecodeKey(id.split(",")[0]),
+                    // id: id.split(",")[0],
+                    orderNumber: id.split(",")[1],
+                  },
+                }
+              )
+              .then(async () => {
+                const _tbOrderHD = await tbOrderHD.findOne({
+                  attributes: [
+                    "orderNumber",
+                    "paymentStatus",
+                    "netTotal",
+                    "orderDate",
+                  ],
+                  where: {
+                    id: Encrypt.DecodeKey(id.split(",")[0]),
+                    orderNumber: id.split(",")[1],
+                  },
+                });
+                res.json({
+                  status: true,
+                  orderNumber: id.split(",")[1],
+                  memberName: member
+                    ? Encrypt.DecodeKey(member.dataValues.firstName) +
+                      " " +
+                      Encrypt.DecodeKey(member.dataValues.lastName)
+                    : null,
+                  email: member
+                    ? Encrypt.DecodeKey(member.dataValues.email)
+                    : null,
+                  OrderHD: _tbOrderHD,
+                });
+              });
+          } else if (decoded.respDesc === "Customer Cancellation") {
+            res.json({
+              status: false,
+              OrderHD: null,
+            });
           }
         })
         .catch(function (error) {
           console.log(error);
         });
-
-      const _tbOrderHD = await tbOrderHD.findOne({
-        attributes: ["orderNumber", "paymentStatus", "netTotal","orderDate"],
-        where: {
-          id: Encrypt.DecodeKey(id.split(",")[0]),
-          orderNumber: id.split(",")[1],
-        },
-      });
-      res.json({
-        status: true,
-        orderNumber: id.split(",")[1],
-        memberName : (member) ? Encrypt.DecodeKey(member.dataValues.firstName) + ' ' + Encrypt.DecodeKey(member.dataValues.lastName) : null,
-        email : (member) ? Encrypt.DecodeKey(member.dataValues.email) : null,
-        OrderHD: _tbOrderHD
-      });
     } else {
       const _tbOrderHD = await tbOrderHD.findOne({
         attributes: ["orderNumber", "paymentStatus"],
@@ -227,13 +253,13 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
       res.json({
         status: false,
         orderNumber: id.split(",")[1],
-        OrderHD: _tbOrderHD
+        OrderHD: _tbOrderHD,
       });
     }
   } catch (e) {
     res.json({
       status: false,
-      orderNumber: '',
+      orderNumber: "",
     });
   }
 

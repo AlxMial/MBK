@@ -49,7 +49,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
           marginRight: "auto",
         }}
       >
-        <div className="flex mt-2" style={{ width: "90%", margin: "auto" }}>
+        {/* <div className="flex mt-2" style={{ width: "90%", margin: "auto" }}>
           <div className="noselect  w-full margin-auto-t-b">
             <InputMask
               className={
@@ -64,8 +64,8 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
               maskChar=" "
             />
           </div>
-        </div>
-        <div className="mt-2">
+        </div> */}
+        {/* <div className="mt-2">
           <div className="px-2 " style={{ width: "50%", margin: "auto" }}>
             <div className="w-full px-2">
               <div
@@ -78,13 +78,13 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                   alignItems: "center",
                   justifyContent: "center",
                 }}
-              // onClick={add_to_cart}
+
               >
                 {"ใช้คูปอง"}
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {tbcouponcodes.length > 0
           ? [...tbcouponcodes].map((e, i) => {

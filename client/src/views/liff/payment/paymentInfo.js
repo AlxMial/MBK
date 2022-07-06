@@ -81,8 +81,10 @@ const PaymentInfo = () => {
           if (res.data.status) {
             sendEmailWaiting(
               {
-                frommail: "noreply@undefined.co.th",
-                password: "Has88149*",
+                // frommail: "noreply@undefined.co.th",
+                // password: "Has88149*",
+                frommail: "no-reply@prg.co.th",
+                password: "Tus92278",
                 tomail: OrderHD.email,
                 orderNumber: OrderHD.orderNumber,
                 memberName: OrderHD.memberName,

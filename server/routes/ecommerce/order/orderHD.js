@@ -838,7 +838,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
 router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
-
+  let url2c2p;
   let Member;
 
   try {
@@ -945,10 +945,11 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
 
       if (status) {
         try {
+          console.log(Encrypt.DecodeKey(data.paymentId))
           const updtbOrderHD = await tbOrderHD.update(
             {
               logisticId: Encrypt.DecodeKey(data.logisticId),
-              paymentId: Encrypt.DecodeKey(data.paymentId),
+              // paymentId: (data.orderHd.paymentType == 2)  ? null :Encrypt.DecodeKey(data.paymentId),
               paymentType: data.paymentType,
               otherAddressId:
                 Encrypt.DecodeKey(data.isAddress) == "memberId"
@@ -995,6 +996,52 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           status = false;
           msg = e.message;
         }
+
+        //#region 2c2p
+        if (data.orderHd.paymentType == 2) {
+          // orderId = 6
+          let secretKey =
+            "0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22";
+          let payload = {
+            merchantID: "764764000011180",
+            invoiceNo: data.orderHd.id + "-" + data.orderHd.orderNumber,
+            description: "item 1",
+            amount: data.orderHd.netTotal,
+            currencyCode: "THB",
+            request3DS: "Y",
+            paymentChannel: ["CC"],
+            backendReturnUrl: "",
+            frontendReturnUrl:
+              "https://mbk.hopeagro.co.th/line/paymentsucceed/" +
+              Encrypt.EncodeKey(data.orderHd.id + "," + data.orderHd.orderNumber),
+          };
+
+          const token = jwt.sign(payload, secretKey);
+
+          await axios
+            .post("https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken", {
+              payload: token,
+            })
+            .then(async function (res) {
+              // handle success
+              let payload = res.data.payload;
+              const decoded = jwt.decode(payload);
+              const _2c2p = await tb2c2p.create({
+                payload: payload,
+                uid: uid,
+                orderId: data.orderHd.id + "," + data.orderHd.orderNumber,
+              });
+              url2c2p = decoded;
+            })
+            .catch(function (error) {
+              // handle error
+              console.log(error);
+            })
+            .then(function () {
+              // always executed
+            });
+        }
+        //#endregion 2c2p
       }
     } else {
       status = false;
@@ -1007,6 +1054,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
   return res.json({
     status: status,
     msg: msg,
+    url: url2c2p,
   });
 });
 

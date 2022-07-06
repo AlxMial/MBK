@@ -15,6 +15,8 @@ const {
   tbRedemptionProduct,
   tbCancelOrder,
   tbReturnOrder,
+  tbPointCodeHD,
+  tbPointCodeDT
 } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
@@ -27,6 +29,10 @@ const Encrypt = new ValidateEncrypt();
 const line = require("@line/bot-sdk");
 const config = require("../../services/config.line");
 const { sign } = require("jsonwebtoken");
+const sequelize = new Sequelize(config.database.database,config.database.username, config.database.password, {
+  host: config.database.host,
+  dialect:config.database.dialect,
+});
 
 // import moment from "moment";
 router.get("/", validateToken, async (req, res) => {
@@ -389,6 +395,7 @@ router.put("/", async (req, res) => {
   req.body.id = Encrypt.DecodeKey(req.body.id);
 
   const ConstMember = await tbMember.findOne({ where: { id: req.body.id } });
+
   if (ConstMember) {
     if (
       req.body.phone ===
@@ -405,6 +412,7 @@ router.put("/", async (req, res) => {
       .status(404)
       .json({ status: false, message: "not found id", tbMember: null });
   }
+
   const member = await tbMember.findOne({
     where: {
       [Op.or]: [
@@ -418,6 +426,7 @@ router.put("/", async (req, res) => {
       },
     },
   });
+  console.log(member)
   if (
     !Encrypt.IsNullOrEmpty(req.body.firstName) &&
     !Encrypt.IsNullOrEmpty(req.body.lastName) &&
@@ -509,6 +518,9 @@ router.post("/checkRegister", async (req, res) => {
   let accessToken;
 
   try {
+
+    // const [results, data] = await sequelize.query(`update  tbpointcodedts set isExpire = 1 where tbPointCodeHDId in (select id from tbpointcodehds where endDate < now() and isDeleted = 0 )`);
+
     let member = await tbMember.findOne({
       where: { uid: req.body.uid, isDeleted: false },
     });
@@ -878,6 +890,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
     });
     if (Member) {
       //Coupon
+
       let _coupon = await tbMemberReward.findAll({
         // limit: 2,
         attributes: [
@@ -895,6 +908,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
           isUsedCoupon: false,
         },
       });
+
       if (_coupon) {
         for (var i = 0; i < _coupon.length; i++) {
           tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
@@ -922,6 +936,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
               },
             ],
           });
+
           if (_tbCouponCode) {
             let _RedemptionCoupon =
               _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues;

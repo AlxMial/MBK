@@ -40,13 +40,13 @@ export default function ForgotPassword() {
     const fullName = sessionStorage.getItem("fullName");
     axios
       .post("mails", {
-        // frommail: "no-reply@prg.co.th",
-        // password: "Tus92278",
+        frommail: "no-reply@prg.co.th",
+        password: "Tus92278",
         // tomail: tomail,
         // fullName: fullName,
         // resetUrl: urlForgot + `/auth/resetpassword/${id}`,
-        frommail: "noreply@undefined.co.th",
-        password: "Has88149*",
+        // frommail: "noreply@undefined.co.th",
+        // password: "Has88149*",
         tomail: tomail,
         fullName: fullName,
         resetUrl: urlForgot + `/auth/resetpassword/${id}`,
