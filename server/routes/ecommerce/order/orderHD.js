@@ -12,9 +12,9 @@ const jwt = require("jsonwebtoken");
 const axios = require("axios").default;
 const config = require("../../../services/config.line");
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize(config.database.database,config.database.username, config.database.password, {
+const sequelize = new Sequelize(config.database.database, config.database.username, config.database.password, {
   host: config.database.host,
-  dialect:config.database.dialect,
+  dialect: config.database.dialect,
 });
 
 
@@ -37,7 +37,8 @@ const {
   tbPromotionStore,
   tbPointEcommerce,
   tbProductCategory,
-  tbMemberPoint
+  tbMemberPoint,
+  tbOtherAddress
 } = require("../../../models");
 const e = require("express");
 const { parseWithoutProcessing } = require("handlebars");
@@ -378,7 +379,7 @@ const getStorePromotion = async (total) => {
       } else {
         //แถมสินค้า
 
-        let productList = _tbPromotionStore.find((e) => e.condition == 3  && e.buy <= total);
+        let productList = _tbPromotionStore.find((e) => e.condition == 3 && e.buy <= total);
         if (productList) {
           type = "product";
           let _tbStock = await tbStock.findOne({
@@ -557,7 +558,10 @@ const getAddress = async (addressId, memberID) => {
 
       let Member = await tbOtherAddress.findOne({
         attributes: attributes,
-        where: { memberID: memberID },
+        where: {
+          memberID: memberID,
+          id: addressId
+        },
       });
       if (Member) {
         address = Member.dataValues;

@@ -4204,7 +4204,20 @@ strike {
 }
 
 .react-slideshow-container+ul.indicators .each-slideshow-indicator:before {
-  background-color: #ffcf00 !important
+  background-color: #FFFFFF !important;
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.react-slideshow-container+ul.indicators .each-slideshow-indicator {
+  background-color: #ddd !important;
+  /* opacity: .7 !important */
+}
+
+.react-slideshow-container+ul.indicators li {
+  width: 10px !important;
+  height: 10px !important;
+  padding: 7px !important;
 }
 
 .line-row {
