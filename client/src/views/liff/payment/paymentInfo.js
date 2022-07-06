@@ -349,11 +349,32 @@ const PaymentInfo = () => {
                                 { liffId: config.liffId },
                                 () => {
                                   if (liff.isLoggedIn()) {
-                                    liff.openWindow({
-                                      url: config._baseURL + "image/getImgQrCode/" +
-                                        OrderHD.Payment.id,
-                                      external: false
-                                    })
+                                    console.log("openWindow")
+                                    // liff.openWindow({
+                                    //   url: config._baseURL + "image/getImgQrCode/" +
+                                    //     OrderHD.Payment.id,
+                                    //   external: true
+                                    // })
+                                    liff
+                                      .sendMessages([
+                                        {
+                                          type: "image",
+                                          originalContentUrl: config._baseURL + "image/getImgQrCode/" +
+                                            OrderHD.Payment.id,
+                                          previewImageUrl: config._baseURL + "image/getImgQrCode/" +
+                                            OrderHD.Payment.id,
+                                        },
+                                        {
+                                          type: "text",
+                                          text: OrderHD.Payment.bankName + " สาขา : " + OrderHD.Payment.bankBranchName + " เลขบัญชี : " + OrderHD.Payment.accountNumber,
+                                        },
+                                      ])
+                                      .then(() => {
+                                        console.log("message sent");
+                                      })
+                                      .catch((err) => {
+                                        console.log("error", err);
+                                      });
                                   } else {
                                     liff.login();
                                   }

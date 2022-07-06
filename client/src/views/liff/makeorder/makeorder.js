@@ -518,7 +518,7 @@ const MakeOrder = () => {
             </div>
             <div
               className="w-full  relative mt-2"
-              style={{ alignItems: "center", justifyContent: "center", height: "10px" }}
+              style={{ alignItems: "center", justifyContent: "center", height: "30px" }}
             ></div>
             <FooterButton sendOrder={sendOrder} text={"สั่งสินค้า"} />
           </div>
