@@ -33,16 +33,16 @@ const headconfig = {
 
 
 const Otp = (isSender, data, callblack) => {
-  var config = {
+  var configs = {
     method: "post",
     url: isSender
-      ? "https://portal-otp.smsmkt.com/api/otp-send"
-      : "https://portal-otp.smsmkt.com/api/otp-validate",
+      ? config.otpsend
+      : config.otpvalidate,
     headers: headconfig,
     data: data,
   };
 
-  axios(config)
+  axios(configs)
     .then(function (res) {
       callblack(res.data);
     })
