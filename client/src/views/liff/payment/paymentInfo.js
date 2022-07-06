@@ -345,15 +345,22 @@ const PaymentInfo = () => {
                             className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
 
                             onClick={() => {
-                              var link = document.createElement("a");
-                              const image = document.getElementById(
-                                OrderHD.Payment.id + "paymentQrCode"
+                              liff.init(
+                                { liffId: config.liffId },
+                                () => {
+                                  if (liff.isLoggedIn()) {
+                                    liff.openWindow({
+                                      url: config._baseURL + "image/getImgQrCode/" +
+                                        OrderHD.Payment.id,
+                                      external: false
+                                    })
+                                  } else {
+                                    liff.login();
+                                  }
+                                },
+                                (err) => console.error(err)
                               );
-                              document.body.appendChild(link); // for Firefox
 
-                              link.setAttribute("href", image.src);
-                              link.setAttribute("download", "paymentQrCode");
-                              link.click();
                             }}
                           >
                             {"บันทึก QR"}

@@ -66,7 +66,7 @@ const MakeOrder = () => {
           .then((response) => {
             if (response.data.status) {
               let tbStock = response.data.tbStock;
-  
+
               setCartItem(tbStock);
               let price = 0;
               tbStock.map((e, i) => {
@@ -238,7 +238,7 @@ const MakeOrder = () => {
   };
   const calcprodiscount = (totel) => {
     let _prodiscount = 0;
-    let typeValue=""
+    let typeValue = ""
     let data = { data: 0 };
     if (promotionstores.length > 0 && totel > 0) {
       let prodiscountList = promotionstores.find(
@@ -285,15 +285,14 @@ const MakeOrder = () => {
         }
       }
     }
-    try{
-      if (typeValue === "product") 
-      {
+    try {
+      if (typeValue === "product") {
         return 0;
-      }else {
+      } else {
         return data.data
       }
 
-    }catch{
+    } catch {
       return 0;
     }
   };
@@ -517,6 +516,10 @@ const MakeOrder = () => {
                 </div>
               </div>
             </div>
+            <div
+              className="w-full  relative mt-2"
+              style={{ alignItems: "center", justifyContent: "center", height: "10px" }}
+            ></div>
             <FooterButton sendOrder={sendOrder} text={"สั่งสินค้า"} />
           </div>
         </>

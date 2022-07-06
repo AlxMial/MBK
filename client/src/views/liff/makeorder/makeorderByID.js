@@ -535,6 +535,10 @@ const MakeOrderById = () => {
                 </div>
               </div>
             </div>
+            <div
+              className="w-full  relative mt-2"
+              style={{ alignItems: "center", justifyContent: "center", height: "10px" }}
+            ></div>
             <FooterButton sendOrder={sendOrder} text={"ชำระเงิน"} />
           </div>
         </>
