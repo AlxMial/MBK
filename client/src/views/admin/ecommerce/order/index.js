@@ -80,14 +80,14 @@ const Order = () => {
     if (e === "") {
       setOrderList(listSearch);
     } else {
+      console.log(listSearch);
       setOrderList(
         listSearch.filter(
           (x) =>
             x.orderNumber.toLowerCase().includes(e) ||
-            x.orderDate.toLowerCase().includes(e) ||
             x.memberName.toLowerCase().includes(e) ||
-            x.sumPrice.toString().toLowerCase().includes(e) ||
-            x.imageName.toLowerCase().includes(e)
+            x.orderDate.toString().includes(e) ||
+            x.netTotal.toString().includes(e)
         )
       );
     }
@@ -208,16 +208,16 @@ const Order = () => {
                       dispatch(fetchSuccess());
                     });
                 } else {
-                  console.log(paymentStatus)
+                  console.log(paymentStatus);
                   if (paymentStatus.toString() === "3") {
-                    console.log(_dataHD)
+                    console.log(_dataHD);
                     axios
                       .post("mails/paymentsuccess", {
                         frommail: "noreply@undefined.co.th",
                         password: "Has88149*",
                         tomail: _dataHD.email,
                         orderNumber: _dataHD.orderNumber,
-                        memberName: _dataHD.firstName + ' ' + _dataHD.lastName,
+                        memberName: _dataHD.firstName + " " + _dataHD.lastName,
                         orderPrice: _dataHD.netTotal,
                         orderDate: moment(_dataHD.orderDate).format(
                           "DD/MM/YYYY"
@@ -274,11 +274,13 @@ const Order = () => {
       "สถานะการจัดส่ง",
       "หมายเลขติดตามพัสดุ",
       "วันที่จัดส่งสำเร็จ",
-      "สถานะการยกเลิก/คืนสินค้า",
-      "วันที่ยกเลิก/คืนสินค้า",
-      "สาเหตุที่ยกเลิก/คืน",
-      "รายละเอียด",
-      "หมายเหตุ",
+      "สถานะการยกเลิก",
+      "สถานะการคืนสินค้า",
+      // "วันที่ยกเลิก/คืนสินค้า",
+      "สาเหตุที่ยกเลิก",
+      "สาเหตุที่คืน",
+      // "รายละเอียด",
+      // "หมายเหตุ",
       "คะแนนสะสมที่ได้รับ",
       "เบอร์โทร",
       "อีเมล์",
@@ -294,6 +296,7 @@ const Order = () => {
       "firstName",
       "lastName",
       "memberCard",
+      "categoryName",
       "productName",
       "amount",
       "price",
@@ -303,10 +306,17 @@ const Order = () => {
       "discountStorePromotion",
       "discount",
       "discountCoupon",
+      "codeCoupon",
       "paymentStatus",
       "paymentDate",
+      "logisticCategory",
       "transportStatus",
       "trackNo",
+      "doneDate",
+      "returnDate",
+      "cancelDate",
+      "returnDetail",
+      "cancelDetail",
       "points",
       "phone",
       "email",
@@ -316,7 +326,6 @@ const Order = () => {
       "subDistrict",
       "postcode",
     ];
-
     for (var i = 0; i < order.data.tbOrder.length; i++) {
       order.data.tbOrder[i]["province"] = await Address.getAddressName(
         "province",
@@ -331,13 +340,17 @@ const Order = () => {
         order.data.tbOrder[i]["subDistrict"]
       );
 
+      order.data.tbOrder[i]["isFlashSale"] =
+        order.data.tbOrder[i]["isFlashSale"] === "1" ? "Flash Sale" : "";
+
+      order.data.tbOrder[i]["paymentType"] =
+        order.data.tbOrder[i]["paymentType"] === "1" ? "โอนเงิน" : "2c2p";
       order.data.tbOrder[i]["paymentStatus"] =
         order.data.tbOrder[i]["paymentStatus"] === "1"
           ? "รอการชำระ"
           : order.data.tbOrder[i]["paymentStatus"] === "2"
           ? "รอการตรวจสอบ"
           : "สำเร็จ";
-
       order.data.tbOrder[i]["transportStatus"] =
         order.data.tbOrder[i]["transportStatus"] === "1"
           ? "รอการขนส่ง"
@@ -345,9 +358,10 @@ const Order = () => {
           ? "กำลังขนส่ง"
           : "สำเร็จ";
     }
+    
     exportExcel(
-      order.data.tbOerder,
-      "ข้อมูลการสั่งซื้อ",
+      order.data.tbOrder,
+      sheetname,
       TitleColumns,
       columns,
       sheetname
@@ -368,6 +382,16 @@ const Order = () => {
             <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
               <div className="w-full lg:w-6/12">
                 <InputSearchUC onChange={(e) => InputSearch(e.target.value)} />
+              </div>
+              <div className="w-full lg:w-6/12">
+                <div className="flex mt-2 float-right">
+                  <img
+                    src={require("assets/img/mbk/excel.png").default}
+                    alt="..."
+                    onClick={() => Excel("รายการสั่งซื้อ")}
+                    className="imgExcel margin-auto-t-b cursor-pointer "
+                  ></img>
+                </div>
               </div>
             </div>
           </div>

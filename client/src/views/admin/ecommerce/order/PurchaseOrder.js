@@ -187,7 +187,7 @@ const PurchaseOrder = ({ props }) => {
                             <td className={tdClass + ' text-right '}>
                                 <div className={"text-sm  border-l-0 border-r-0 whitespace-nowrap text-left  pr-4" + (orderHD.discountDelivery > 0 ? " text-gold-mbk" : "")}
                                     style={{ textAlign: "end" }}>
-                                    {orderHD.discountDelivery > 0 ? "-" + fn.formatMoney(orderHD.discountDelivery) : fn.formatMoney(0)}
+                                    {orderHD.discountDelivery > 0 ? "-" + fn.formatMoney(orderHD.deliveryCost - orderHD.discountDelivery) : fn.formatMoney(0)}
                                 </div>
 
                             </td>

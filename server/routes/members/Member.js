@@ -486,6 +486,18 @@ router.delete("/:memberId", validateToken, async (req, res) => {
       .json({ status: false, message: "not found id", tbMember: null });
   }
 
+  
+  const client = new line.Client({
+    channelAccessToken: config.lineConfig.bearerToken,
+    channelSecret: config.lineConfig.channelSecret,
+  });
+
+  client
+    .linkRichMenuToUser(req.body.uid, config.lineConfig.menuMember)
+    .then((e) => {
+      console.log(e);
+    });
+
   tbMember.update(req.body, { where: { id: memberId } });
   res.json({ status: true, message: "success", tbMember: null });
 });

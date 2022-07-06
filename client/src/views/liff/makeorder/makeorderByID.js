@@ -180,7 +180,7 @@ const MakeOrderById = () => {
     let total = sumprice;
 
     let _prodiscstro = calcprodiscount(sumprice);
-    let _prodiscount =_prodiscstro;
+    let _prodiscount = _prodiscstro;
     // if (_prodiscstro.type === "discount") {
     //   _prodiscount = _prodiscstro.data;
     // }
@@ -272,26 +272,8 @@ const MakeOrderById = () => {
   // };
   const calcdeliveryCost = () => {
     // มีโปรร้าน
-    let total = sumprice;
-    let _prodiscstro = calcprodiscount(sumprice);
-    let _prodiscount = 0;
-    if (_prodiscstro.type == "discount") {
-      _prodiscount = _prodiscstro.data;
-    }
-    total = total - _prodiscount;
-
     let _promotionDelivery = 0;
-    if (tbPromotionDelivery != null && deliveryCost > 0) {
-      if (total >= tbPromotionDelivery.buy) {
-        _promotionDelivery = tbPromotionDelivery.deliveryCost;
-      }
-    }
-    return _promotionDelivery;
-  };
-  const calcusecoupon = () => {
-    if (usecoupon.discountType === "1") {
-      return usecoupon.discount
-    } else {
+    if (sumprice > 0) {
       let total = sumprice;
       let _prodiscstro = calcprodiscount(sumprice);
       let _prodiscount = 0;
@@ -300,9 +282,15 @@ const MakeOrderById = () => {
       }
       total = total - _prodiscount;
 
-      return (usecoupon.discount / 100) * total
+
+      if (tbPromotionDelivery != null && deliveryCost > 0) {
+        if (total >= tbPromotionDelivery.buy) {
+          _promotionDelivery = deliveryCost - tbPromotionDelivery.deliveryCost;
+        }
+      }
     }
-  }
+    return _promotionDelivery;
+  };
   useEffect(() => {
     GetPromotionstores(getProducts);
   }, []);
@@ -487,7 +475,12 @@ const MakeOrderById = () => {
                         className="absolute text-gold-mbk"
                         style={{ right: "0" }}
                       >
-                        {"-฿ " + fn.formatMoney(calcusecoupon())}
+                        {"-฿ " +
+                          fn.formatMoney(
+                            usecoupon.discountType === "2"
+                              ? (usecoupon.discount / 100) * sumprice
+                              : usecoupon.discount
+                          )}
                       </div>
                     ) : (
                       <div className="absolute" style={{ right: "0" }}>

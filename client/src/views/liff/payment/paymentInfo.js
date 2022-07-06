@@ -349,16 +349,13 @@ const PaymentInfo = () => {
                                 { liffId: config.liffId },
                                 () => {
                                   if (liff.isLoggedIn()) {
-                                    console.log("openWindow")
+                                    // console.log("openWindow")
                                     // liff.openWindow({
                                     //   url: config._baseURL + "image/getImgQrCode/" +
                                     //     OrderHD.Payment.id,
                                     //   external: true
                                     // })
-                                    // {
-                                    //   type: "text",
-                                    //   text: OrderHD.Payment.bankName + " สาขา : " + OrderHD.Payment.bankBranchName + " เลขบัญชี : " + OrderHD.Payment.accountNumber,
-                                    // },
+
                                     liff
                                       .sendMessages([
                                         {
@@ -367,11 +364,16 @@ const PaymentInfo = () => {
                                             OrderHD.Payment.id,
                                           previewImageUrl: config._baseURL + "image/getImgQrCode/" +
                                             OrderHD.Payment.id,
-                                        }
-                                       
+                                        },
+                                        {
+                                          type: "text",
+                                          text: OrderHD.Payment.bankName + " สาขา : " + OrderHD.Payment.bankBranchName + " เลขบัญชี : " + OrderHD.Payment.accountNumber,
+                                        },
+
                                       ])
                                       .then(() => {
                                         console.log("message sent");
+
                                       })
                                       .catch((err) => {
                                         console.log("error", err);
