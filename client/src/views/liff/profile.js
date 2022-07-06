@@ -18,20 +18,17 @@ export const validationSchema = Yup.object({
   phone: Yup.string()
     .matches(phoneRegExp, "* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง")
     .required("* โปรดระบุเบอร์โทร"),
-  // email: Yup.string()
-  //   .matches(
-  //     EmailRegExp,
-  //     "* ขออภัย อนุญาตให้ใช้เฉพาะตัวอักษร (a-z), ตัวเลข (0-9) และเครื่องหมายมหัพภาค (.) เท่านั้น"
-  //   ),
-  // .email("* โปรดระบุอีเมล"),
-  address: Yup.string()
-    .required("* โปรดระบุที่อยู่"),
-  postcode: Yup.string()
-    .required("* โปรดระบุรหัสไปรษณีย์"),
-  eating: Yup.string()
-    .required("* โปรดระบุ ปัจจุบันทานข้าวแบรด์"),
+  email: Yup.string()
+    .matches(
+      EmailRegExp,
+      "* ขออภัย อนุญาตให้ใช้เฉพาะตัวอักษร (a-z), ตัวเลข (0-9) และเครื่องหมายมหัพภาค (.) เท่านั้น"
+    )
+    .email("* รูปแบบอีเมลไม่ถูกต้อง")
+    .required("* กรุณากรอก Email"),
+  address: Yup.string().required("* โปรดระบุที่อยู่"),
+  postcode: Yup.string().required("* โปรดระบุรหัสไปรษณีย์"),
+  eating: Yup.string().required("* โปรดระบุ ปัจจุบันทานข้าวแบรด์"),
 });
-
 
 export const validateShopAddress = Yup.object({
   firstName: Yup.string().required("* โปรดระบุชื่อ"),
@@ -39,10 +36,8 @@ export const validateShopAddress = Yup.object({
   phone: Yup.string()
     .matches(phoneRegExp, "* รูปแบบเบอร์โทรศัพท์ ไม่ถูกต้อง")
     .required("* โปรดระบุเบอร์โทร"),
-  address: Yup.string()
-    .required("* โปรดระบุที่อยู่"),
-  postcode: Yup.string()
-    .required("* โปรดระบุรหัสไปรษณีย์")
+  address: Yup.string().required("* โปรดระบุที่อยู่"),
+  postcode: Yup.string().required("* โปรดระบุรหัสไปรษณีย์"),
 });
 export const DatePickerContainer = styled.div`
   .datepicker {
@@ -82,7 +77,12 @@ export const InputUC = ({
   return (
     <>
       <div className="mb-4">
-        <div className={"noselect flex text-green-mbk font-bold text-sm " + ((type === "description") ? ' hidden' : ' ')}>
+        <div
+          className={
+            "noselect flex text-green-mbk font-bold text-sm " +
+            (type === "description" ? " hidden" : " ")
+          }
+        >
           {lbl}{" "}
           {valid === true ? (
             <span className="ml-1" style={{ color: "red" }}>
@@ -93,7 +93,7 @@ export const InputUC = ({
         {type === "text" || type === "description" ? (
           <input
             disabled={disabled ? true : false}
-            type={(type === "description") ? 'text' : type}
+            type={type === "description" ? "text" : type}
             className="border-0 px-2 pt-2 placeholder-blueGray-300 text-gray-mbk bg-white text-sm w-full "
             style={{ borderBottom: "1px solid #d6d6d6" }}
             id={name}
@@ -139,7 +139,7 @@ export const RadioUC = ({
   valid,
   options,
   onChange,
-  Active
+  Active,
 }) => {
   return (
     <>

@@ -10,6 +10,7 @@ import Spinner from "components/Loadings/spinner/Spinner";
 import useWindowDimensions from "services/useWindowDimensions";
 import SelectUC from "components/SelectUC";
 import Modal from "react-modal";
+import { useToasts } from "react-toast-notifications";
 import {
   customStyles,
   customStylesMobile,
@@ -17,6 +18,7 @@ import {
 
 Modal.setAppElement("#root");
 export default function PointHistoryReport() {
+  const { addToast } = useToasts();
   const [listSearch, setListSerch] = useState([]);
   const [listPointCode, setListPointCode] = useState([]);
   const [listMemberPoint, setListMemberPoint] = useState([]);
@@ -89,15 +91,13 @@ export default function PointHistoryReport() {
               Search(x.status, inputSerch) ||
               Search(x.useCount, inputSerch) ||
               Search(x.remain, inputSerch)
-              ) : true) &&
-  
-              ((startDate !== null && endDate !== null) ? (startDate <= _startDate  && startDate <= _endDate &&
-                endDate >= _startDate && endDate >= _endDate) : true)) {
+              ) : true) &&  
+              SearchByDate(_startDate, _endDate)) {
                   return true;
                 }
                 return false;
             }            
-          )
+          ).sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate))
         );
       } 
       setPageNumber(0);
@@ -113,6 +113,20 @@ export default function PointHistoryReport() {
     return status;
   }
 
+  const SearchByDate = (dataST_Date, dataED_Date) =>  {
+    let isSearch = false;
+    let st_Date = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
+    let ed_Date = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
+    if(((st_Date !== null && ed_Date !== null) && (st_Date <= dataST_Date  && st_Date <= dataED_Date &&
+         ed_Date >= dataST_Date && ed_Date >= dataED_Date)) 
+         || ((st_Date !== null && ed_Date === null) && (st_Date <= dataST_Date || st_Date <= dataED_Date))
+         || ((st_Date === null && ed_Date !== null) && (ed_Date >= dataST_Date || ed_Date >= dataED_Date))
+         || (st_Date === null && ed_Date === null)) {
+          isSearch = true;
+    }
+    return isSearch;
+  }
+
   const convertToDate = (e) => {    
    const date = new Date(e);
          date.setHours(0,0,0,0);
@@ -124,11 +138,7 @@ export default function PointHistoryReport() {
     const e_Date = formSerch.values.endDate;
     if (type === "s_input") {
       formSerch.values.inputSerch = e.target.value.toLowerCase();
-      InputSearch();
-    } else if(type === "b_input") {
-      if(formSerch.values.serchType === '2') {
-        getDataPoint_ByCode(); 
-      }      
+      InputSearch();      
     } else if(type === "s_type") {
       formSerch.values.serchType = e; 
     } else if(type === "s_stdate") {  
@@ -141,7 +151,25 @@ export default function PointHistoryReport() {
       if(e < s_Date && s_Date !== null) {
         formSerch.setFieldValue("endDate", s_Date);
       }  
-    } 
+    } else if(type === "btn") {
+      if(formSerch.values.serchType === '2') {
+        if(formSerch.values.inputSerch !== "") {
+          getDataPoint_ByCode(); 
+        } else {
+          addToast("กรุณากรอก Code ที่ต้องค้นหา", {
+            appearance: "warning",
+            autoDismiss: true,
+          });
+        }
+       
+      } else {
+        InputSearch();
+      }
+    }
+    // } else if(type === "b_input") {
+    //   if(formSerch.values.serchType === '2') {
+    //     getDataPoint_ByCode(); 
+    //   }  
   };
 
   async function openModal(id) {   
@@ -244,8 +272,8 @@ export default function PointHistoryReport() {
             response.data.tbPointCodeHD[i]["status"] = status;
             response.data.tbPointCodeHD[i]["remain"] =  codeCount - useCount;
           }         
-          setListSerch(response.data.tbPointCodeHD);
-          setListPointCode(response.data.tbPointCodeHD);
+          setListSerch(response.data.tbPointCodeHD.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
+          setListPointCode(response.data.tbPointCodeHD.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
         }
       });
   };
@@ -274,6 +302,11 @@ export default function PointHistoryReport() {
             if(!isLoadingPoint) {
               getDataPointDT(listtbPointCodeHD[0].id);
             }           
+           } else {
+            addToast("ไม่พบ Code: " + formSerch.values.inputSerch.toLocaleUpperCase(), {
+              appearance: "warning",
+              autoDismiss: true,
+            });
            }
         }
       });
@@ -293,7 +326,12 @@ export default function PointHistoryReport() {
             setListPointCodeDt(listPointCodes);
             setListMemberPoint(listMemberPoint);
             setDataDialog(response.data, listPointCodes, listMemberPoint);           
-          }         
+          } else {
+            addToast("ไม่พบ Code: " + formSerch.values.inputSerch.toLocaleUpperCase(), {
+              appearance: "warning",
+              autoDismiss: true,
+            });
+          } 
         }
         setPointHDId(id);
         setIsLoadingPoint(false);
@@ -325,6 +363,11 @@ export default function PointHistoryReport() {
         dataPopUp.values.status = listPointType.find(e => e.value === listtbPointCodeDT[0].isUse).status;
         dataPopUp.values.pointType = listtbPointCodeDT[0].pointType ;
         openModal();
+      } else {
+        addToast("ไม่พบ Code: " + formSerch.values.inputSerch, {
+          appearance: "warning",
+          autoDismiss: true,
+        });
       }
   }
 
@@ -376,9 +419,9 @@ export default function PointHistoryReport() {
                   onChange={(e) => {
                     setDataSearch(e, "s_input")
                   }} 
-                  onBlur={(e) => {
-                    setDataSearch(e,"b_input");
-                  }}
+                  // onBlur={(e) => {
+                  //   setDataSearch(e,"b_input");
+                  // }}
                 />
               </div>              
             <div className="w-full lg:w-4/12 px-4  margin-auto-t-b">
@@ -481,7 +524,7 @@ export default function PointHistoryReport() {
                       className="bg-gold-mbk text-black active:bg-gold-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                       type="button"
                       onClick={() => {
-                        InputSearch();
+                        setDataSearch("","btn");
                       }}
                     >
                       <span className="text-white text-sm px-2">
@@ -783,7 +826,8 @@ export default function PointHistoryReport() {
                                     className="text-blueGray-600 text-sm font-bold "
                                     htmlFor="grid-password"
                                   >
-                                     {moment(dataPopUp.values.exchangedate).format("DD/MM/YYYY")}
+                                     {(dataPopUp.values.exchangedate !== null && dataPopUp.values.exchangedate !== '')
+                                      ? moment(dataPopUp.values.exchangedate).format("DD/MM/YYYY") : ""}
                                   </label>                                                                
                                 </div>                     
                               </div>
@@ -899,7 +943,7 @@ export default function PointHistoryReport() {
                           </span>
                         </td>
                         <td                         
-                          className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
+                          className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left"
                         >
                           <span
                             title={value.pointCodeName}
@@ -910,28 +954,28 @@ export default function PointHistoryReport() {
                           <span className="details">more info here</span>
                         </td>
                         <td                         
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
                             {value.pointCodeSymbol}
                           </span>
                         </td>
                         <td                         
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
                             {value.pointCodeLengthSymbol}
                           </span>
                         </td>
                         <td                          
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
                             {value.pointCodePoint}
                           </span>
                         </td>
                         <td                         
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "
                         >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
                             {moment(value.startDate).format("DD/MM/YYYY")}
@@ -967,7 +1011,7 @@ export default function PointHistoryReport() {
                             ExportFile(value.id, value.pointCodeName);
                           }}
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          <i className="fas fa-download  cursor-pointer"></i>
+                          <i className="fas fa-download  "></i>
                         </td>
                       </tr>
                     );
