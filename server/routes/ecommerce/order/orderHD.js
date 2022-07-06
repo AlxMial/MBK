@@ -2209,6 +2209,7 @@ router.get("/export", async (req, res) => {
   ,tbstocks.discount
   ,tborderhds.discountCoupon
   ,tbcouponcodes.codeCoupon 
+  ,tborderhds.paymentType 
   ,tborderhds.paymentStatus
   ,tborderhds.paymentDate
   ,tblogisticcategories.logisticCategory 
