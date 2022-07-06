@@ -111,7 +111,7 @@ router.get("/", validateToken, async (req, res) => {
   });
 });
 
-router.get("/byId/:id", validateToken, async (req, res) => {
+router.get("/byId/:id", async (req, res) => {
   const id = req.params.id;
 
   tbOrderHD.belongsTo(tbMember, {
@@ -123,6 +123,7 @@ router.get("/byId/:id", validateToken, async (req, res) => {
     include: [
       {
         model: tbMember,
+        attributes:['email'],
         where: {
           isDeleted: false,
         },
@@ -130,6 +131,9 @@ router.get("/byId/:id", validateToken, async (req, res) => {
       },
     ],
   });
+  data.dataValues['email'] = Encrypt.DecodeKey(data.dataValues.tbMember.email);
+  data.dataValues.firstName = Encrypt.DecodeKey(data.dataValues.firstName);
+  data.dataValues.lastName = Encrypt.DecodeKey(data.dataValues.lastName);
 
   res.json({
     status: true,

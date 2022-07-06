@@ -8,16 +8,14 @@ const Payment = ({ props, setOrderHD }) => {
     const { orderHD, orderHDold, orderDT, isCanEdit, paymentStatus, setpaymentStatus, setTransportStatus } = props;
     const [payment, setPayment] = useState(null);
 
-
-
     const getoption = () => {
-        if (orderHDold.paymentStatus == 1) {
+        if (orderHDold.paymentStatus === 1) {
             return [
                 { value: 1, label: 'รอชำระเงิน' },
                 { value: 2, label: 'รอตรวจสอบ' },
                 { value: 3, label: 'ชำระเงินแล้ว' },
             ]
-        } else if (orderHDold.paymentStatus == 2) {
+        } else if (orderHDold.paymentStatus === 2) {
             return [
                 { value: 1, label: 'รอชำระเงิน', isDisabled: true },
                 { value: 2, label: 'รอตรวจสอบ' },
@@ -63,7 +61,6 @@ const Payment = ({ props, setOrderHD }) => {
         }
     }, []);
 
-    console.log(isCanEdit)
     return (
         <div className='mt-2 px-4'>
             <div className="w-full">
