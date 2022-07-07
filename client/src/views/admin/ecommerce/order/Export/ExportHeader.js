@@ -36,7 +36,7 @@ const ExportHeader = ({ dataExport }) => {
         </div>
       </div>
       <div className="flex border-b py-4 ">
-        <div className="margin-auto-t-b w-full lg:w-3/12 flex flex-col px-4 ">
+        <div className="margin-auto-t-b lg:w-3/12 flex flex-col px-4 ">
           <div className=" text-sm mt-1 w-full font-bold">อีเมล :</div>
           <div className=" text-sm mt-1 w-full  lg:w-4/12">
             {dataExport && dataExport.email}

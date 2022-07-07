@@ -52,6 +52,7 @@ const TabCancel = () => {
     if (e === "") {
       setListData(listSearch);
     } else {
+      console.log(listSearch)
       setListData(
         listSearch.filter(
           (x) =>
@@ -59,9 +60,10 @@ const TabCancel = () => {
             x.orderDate.toLowerCase().includes(e) ||
             x.memberName.toLowerCase().includes(e) ||
             x.sumPrice.toString().toLowerCase().includes(e) ||
-            x.status.toLowerCase().includes(e) ||
-            x.cancelDetail.toLowerCase().includes(e) ||
-            x.description.toLowerCase().includes(e)
+            (x.cancelStatus === "1" ? "รอการยกเลิก" : x.cancelStatus === "2" ? "คืนเงิน" : "ไม่คืนเงิน" ).toLowerCase().includes(e) ||
+            x.cancelDetail.toString().toLowerCase().includes(e) ||
+            x.cancelOtherRemark.toString().toLowerCase().includes(e)
+
         )
       );
     }

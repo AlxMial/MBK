@@ -47,6 +47,7 @@
     "react-redux-i18n": "^1.9.3",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
+    "react-screen-orientation": "^0.0.4",
     "react-scripts": "4.0.3",
     "react-select": "^5.3.0",
     "react-slideshow-image": "^3.7.5",
