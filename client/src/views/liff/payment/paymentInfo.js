@@ -39,7 +39,6 @@ const PaymentInfo = () => {
       (res) => {
         if (res.status) {
           if (res.data.status) {
-            console.log(res.data.OrderHD)
             setOrderHD(res.data.OrderHD);
             setstatuspayment(res.data.status);
           } else {
@@ -165,6 +164,7 @@ const PaymentInfo = () => {
           >
             <div className="w-full" style={{ width: "90%", margin: "auto" }}>
               {OrderHD != null ? (
+
                 <div className="w-full  relative">
                   <div
                     className="flex w-full font-bold text-sm"

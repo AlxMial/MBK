@@ -47,73 +47,73 @@ const swaggerDocument = YAML.load('swagger.yaml');
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 // 2c2p
 const paymentRouter = require('./routes/2c2p/index');
-app.use("/mahboonkrongserver/2c2p", paymentRouter);
+app.use("/mbkserver/2c2p", paymentRouter);
 
 // app.use(authentication)
 const db = require('./models');
 // // Routers
 // Menu
 const MenuRouter = require('./routes/menu/menu');
-app.use("/mahboonkrongserver/menus", MenuRouter);
+app.use("/mbkserver/menus", MenuRouter);
 //Permission
 const PermissionRouter = require('./routes/permission/permission');
-app.use("/mahboonkrongserver/permission", PermissionRouter);
+app.use("/mbkserver/permission", PermissionRouter);
 //email
 const SendMailRouter = require('./routes/sendmail/SendMail');
-app.use("/mahboonkrongserver/mails", SendMailRouter);
+app.use("/mbkserver/mails", SendMailRouter);
 const UsersRouter = require('./routes/register/Users');
-app.use("/mahboonkrongserver/users", UsersRouter);
+app.use("/mbkserver/users", UsersRouter);
 const MembersRouter = require('./routes/members/member');
-app.use("/mahboonkrongserver/members", MembersRouter);
+app.use("/mbkserver/members", MembersRouter);
 const pointCodeRouter = require('./routes/points/pointCode');
-app.use("/mahboonkrongserver/pointCode", pointCodeRouter);
+app.use("/mbkserver/pointCode", pointCodeRouter);
 const pointStoreRouter = require('./routes/points/pointStore');
-app.use("/mahboonkrongserver/pointStore", pointStoreRouter);
+app.use("/mbkserver/pointStore", pointStoreRouter);
 const pointRegisterRouter = require('./routes/points/pointRegister');
-app.use("/mahboonkrongserver/pointRegister", pointRegisterRouter);
+app.use("/mbkserver/pointRegister", pointRegisterRouter);
 const pointEcommerceRouter = require('./routes/points/pointEcommerce');
-app.use("/mahboonkrongserver/pointEcommerce", pointEcommerceRouter);
+app.use("/mbkserver/pointEcommerce", pointEcommerceRouter);
 const uploadExcelRouter = require('./routes/uploadExcel/uploadExcel');
-app.use("/mahboonkrongserver/uploadExcel", uploadExcelRouter);
+app.use("/mbkserver/uploadExcel", uploadExcelRouter);
 const redeemRouter = require('./routes/redeem/redeem');
-app.use("/mahboonkrongserver/redeem", redeemRouter);
+app.use("/mbkserver/redeem", redeemRouter);
 const redemptionRouter = require('./routes/redemption/redemption');
-app.use("/mahboonkrongserver/redemptions", redemptionRouter);
+app.use("/mbkserver/redemptions", redemptionRouter);
 const MemberPointRouter = require('./routes/members/MemberPoint');
-app.use("/mahboonkrongserver/memberPoint", MemberPointRouter);
+app.use("/mbkserver/memberPoint", MemberPointRouter);
 // e-commerce
 const shop = require('./routes/ecommerce/shop');
-app.use("/mahboonkrongserver/shop", shop);
+app.use("/mbkserver/shop", shop);
 const banner = require('./routes/ecommerce/banner');
-app.use("/mahboonkrongserver/banner", banner);
+app.use("/mbkserver/banner", banner);
 const stock = require('./routes/ecommerce/stock');
-app.use("/mahboonkrongserver/stock", stock);
+app.use("/mbkserver/stock", stock);
 const productCategory = require('./routes/ecommerce/productCategory');
-app.use("/mahboonkrongserver/productCategory", productCategory);
+app.use("/mbkserver/productCategory", productCategory);
 const logisticCategory = require('./routes/ecommerce/logisticCategory');
-app.use("/mahboonkrongserver/logisticCategory", logisticCategory);
+app.use("/mbkserver/logisticCategory", logisticCategory);
 const payment = require('./routes/ecommerce/payment');
-app.use("/mahboonkrongserver/payment", payment);
+app.use("/mbkserver/payment", payment);
 const orderHD = require('./routes/ecommerce/order/orderHD');
-app.use("/mahboonkrongserver/order/orderHD", orderHD);
+app.use("/mbkserver/order/orderHD", orderHD);
 const orderDT = require('./routes/ecommerce/order/orderDT');
-app.use("/mahboonkrongserver/order/orderDT", orderDT);
+app.use("/mbkserver/order/orderDT", orderDT);
 const cancelOrder = require('./routes/ecommerce/cancelOrder');
-app.use("/mahboonkrongserver/cancelOrder", cancelOrder);
+app.use("/mbkserver/cancelOrder", cancelOrder);
 const returnOrder = require('./routes/ecommerce/returnOrder');
-app.use("/mahboonkrongserver/returnOrder", returnOrder);
+app.use("/mbkserver/returnOrder", returnOrder);
 // tab Logistic
 const logistic = require('./routes/ecommerce/logistic');
-app.use("/mahboonkrongserver/logistic", logistic);
+app.use("/mbkserver/logistic", logistic);
 const promotionDelivery = require('./routes/ecommerce/promotionDelivery');
-app.use("/mahboonkrongserver/promotionDelivery", promotionDelivery);
+app.use("/mbkserver/promotionDelivery", promotionDelivery);
 // tab promotion หน้าร้าน
 const promotionStore = require('./routes/ecommerce/promotionStore');
-app.use("/mahboonkrongserver/promotionStore", promotionStore);
+app.use("/mbkserver/promotionStore", promotionStore);
 const image = require('./routes/image/image');
-app.use("/mahboonkrongserver/image", image);
+app.use("/mbkserver/image", image);
 const pointHistoryReport = require('./routes/report/Report');
-app.use("/mahboonkrongserver/report", pointHistoryReport);
+app.use("/mbkserver/report", pointHistoryReport);
 initRoutes(app);
 
 const port = process.env.PORT || 3001;

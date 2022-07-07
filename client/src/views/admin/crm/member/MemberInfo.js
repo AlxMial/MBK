@@ -298,6 +298,7 @@ export default function MemberInfo() {
     response = await axios.get(`/members/byId/${id}`);
 
     let member = await response.data.tbMember;
+    console.log(member)
     if (member !== null) {
       var provinceId = response.data.tbMember["province"];
       var districtId = response.data.tbMember["district"];

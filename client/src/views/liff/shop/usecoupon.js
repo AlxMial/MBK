@@ -79,7 +79,7 @@ const ShowCart = () => {
           marginRight: "auto",
         }}
       >
-        <div className="flex mt-2" style={{ width: "90%", margin: "auto" }}>
+        {/* <div className="flex mt-2" style={{ width: "90%", margin: "auto" }}>
           <div className="noselect  w-full margin-auto-t-b">
             <InputMask
               className={
@@ -116,7 +116,7 @@ const ShowCart = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {tbcouponcodes.length > 0 ?
           [...tbcouponcodes].map((e, i) => {
