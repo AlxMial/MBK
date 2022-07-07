@@ -139,7 +139,7 @@ const PaymentModel = ({
                         </div>
                       )}
                       onChange={(e) => {
-                        addToast("เปลียนธนาคาร", {
+                        addToast("เปลี่ยนธนาคาร", {
                           appearance: "success",
                           autoDismiss: true,
                         });

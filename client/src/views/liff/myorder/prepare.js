@@ -49,7 +49,7 @@ const Prepare = () => {
         ) : (
           <div className="flex justify-center items-center h-full">
             <div style={{ height: "50px" }}>
-              <EmptyOrder text={"ยังไม่คำสั่งซื้อที่กำลังเตรียมสินค้า"} />
+              <EmptyOrder text={"ยังไม่มีคำสั่งซื้อที่กำลังเตรียมสินค้า"} />
             </div>
           </div>
         )}

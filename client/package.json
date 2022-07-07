@@ -1,6 +1,6 @@
 {
   "name": "notus-react",
-  "version": "1.2.2",
+  "version": "1.2.4",
   "description": "Notus React - A free Tailwind CSS and React UI Kit and Admin by Creative Tim.",
   "repository": "https://github.com/creativetimofficial/notus-react",
   "license": "MIT",
@@ -21,6 +21,7 @@
     "exceljs": "^4.3.0",
     "flowbite": "^1.4.2",
     "formik": "^2.2.9",
+    "fs": "^0.0.1-security",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.8",
     "html2canvas": "^1.4.1",
@@ -69,7 +70,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build && gulp licenses",
+    "build": "node ./update-build.js && react-app-rewired build && gulp licenses",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
     "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm run build:tailwind && npm start",
@@ -100,5 +101,6 @@
     "react-app-rewire-aliases": "^0.2.0",
     "react-app-rewired": "^2.2.1",
     "vite": "^2.9.13"
-  }
+  },
+  "buildDate": 1657221367318
 }

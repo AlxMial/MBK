@@ -6,6 +6,7 @@ import * as Address from "services/GetAddress.js";
 import InputUC from 'components/InputUC';
 import CheckBoxUC from "components/CheckBoxUC";
 import TextAreaUC from 'components/InputUC/TextAreaUC';
+import { EncodeKey,DecodeKey } from "@services/default.service";
 
 const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCancelOrder, tbCancelOrder }) => {
     const { orderHD, orderHDold, orderDT, memberData,
@@ -130,18 +131,17 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCance
                     </div>
                 </div>
                 <div className='py-2 margin-auto-t-b w-full'>
-                    <LabelUC label={orderHD.memberName} />
+                    <LabelUC label={orderHD.firstName + ' ' + orderHD.lastName} />
                     <div className='text-blueGray-400 text-sm mt-1' >
-                        {memberData && memberData.address + ' ' + address}
+                        {orderHD && orderHD.address + ' '}
+                        {orderHD && orderHD.subDistrict + ' '}
+                        {orderHD && orderHD.district + ' '}
                     </div>
                     <div className='text-blueGray-400 text-sm mt-1' >
-                        {province + ' ' + memberData.postcode}
+                        {orderHD && orderHD.province} {' '}   {orderHD && orderHD.postcode}
                     </div>
                     <div className='text-blueGray-400 text-sm mt-1' >
-                        {memberData && memberData.country}
-                    </div>
-                    <div className='text-blueGray-400 text-sm mt-1' >
-                        {memberData && memberData.email}
+                        {orderHD && orderHD.email}
                     </div>
                 </div>
                 <div className='py-2 margin-auto-t-b w-full'>

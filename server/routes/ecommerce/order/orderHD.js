@@ -70,6 +70,11 @@ router.get("/", validateToken, async (req, res) => {
     tbOrderHD.hasMany(tbReturnOrder, {
       foreignKey: "orderId",
     });
+
+    tbOrderHD.belongsTo(tbOtherAddress, {
+      foreignKey: "otherAddressId",
+    });
+
     const data = await tbOrderHD.findAll({
       where: { isDeleted: false },
       include: [
@@ -87,12 +92,20 @@ router.get("/", validateToken, async (req, res) => {
           },
           required: false,
         },
+        {
+          model: tbOtherAddress,
+          where: {
+            isDeleted: false,
+          },
+          required: false,
+        },
       ],
       order: [["orderNumber", "DESC"]],
     });
     if (data) {
       data.map((e, i) => {
         let hd = e.dataValues;
+     
         //เป็นการโอนและมีการแนบสลิปแล้ว
         if (hd.paymentType == 1 && hd.paymentStatus >= 2) {
           hd.isImage = true; //มี image
@@ -106,9 +119,19 @@ router.get("/", validateToken, async (req, res) => {
         if (hd.tbReturnOrders.length > 0) {
           hd.tbReturnOrder = hd.tbReturnOrders[0];
         }
+        if(e.dataValues.tbOtherAddress) {
+          hd.firstName = Encrypt.DecodeKey(e.dataValues.tbOtherAddress.firstName);
+          hd.lastName = Encrypt.DecodeKey(e.dataValues.tbOtherAddress.lastName);
+          hd.address = Encrypt.DecodeKey(e.dataValues.tbOtherAddress.address);
+          hd.subDistrict = e.dataValues.tbOtherAddress.subDistrict;
+          hd.district = e.dataValues.tbOtherAddress.district;
+          hd.province = e.dataValues.tbOtherAddress.province;
+          hd.postcode = e.dataValues.tbOtherAddress.postcode;
+        }
         // hd.tbImages = null
         hd.tbCancelOrders = null;
         hd.tbReturnOrders = null;
+        console.log(hd)
         orderHD.push(hd);
       });
     }

@@ -106,7 +106,6 @@ router.get("/byOrderId/:id", validateToken, async (req, res) => {
                 ],
             },
         });
-
         _tbOrderDT = data
     } catch (e) {
         status = false

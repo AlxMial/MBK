@@ -482,7 +482,6 @@ router.put("/", async (req, res) => {
       },
     },
   });
-  console.log(member);
   if (
     !Encrypt.IsNullOrEmpty(req.body.firstName) &&
     !Encrypt.IsNullOrEmpty(req.body.lastName) &&
@@ -503,6 +502,7 @@ router.put("/", async (req, res) => {
       res.json({ status: true, message: "success", tbMember: members });
     } else {
       if (member.email === Encrypt.EncodeKey(req.body.email.toLowerCase()))
+      {
         res.json({
           status: false,
           isEmail: true,
@@ -511,6 +511,7 @@ router.put("/", async (req, res) => {
           message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Email ซ้ำภายในระบบ",
           tbMember: null,
         });
+      }
       else if (member.phone === Encrypt.EncodeKey(req.body.phone))
         res.json({
           status: false,
@@ -520,18 +521,6 @@ router.put("/", async (req, res) => {
           message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์ซ้ำ",
           tbMember: null,
         });
-      // else if (
-      //   member.memberCard ===
-      //   Encrypt.EncodeKey(req.body.memberCard.toLowerCase())
-      // )
-      //   res.json({
-      //     status: false,
-      //     isEmail: false,
-      //     isPhone: false,
-      //     isMemberCard: true,
-      //     message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์ซ้ำ",
-      //     tbMember: null,
-      //   });
     }
   } else {
     res.json({ status: false, error: "value is empty" });

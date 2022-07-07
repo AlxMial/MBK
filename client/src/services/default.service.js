@@ -102,3 +102,24 @@ const encrypt = (val) => {
 export const formatMoney = (val) => {
   return parseFloat(val).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
 };
+
+
+export const DecodeKey = (id) => {
+  try{
+    if (this.IsNullOrEmpty(id)) {
+      return "";
+    }
+    let buff = new Buffer.from(id, "base64");
+    // console.log(buff)
+    id = buff.toString("ascii");
+    return this.decrypt(id);
+  }catch{
+    return id;
+  }
+}
+
+export const decrypt = (encrypted) => {
+  let decipher = crypto.createDecipheriv("aes-256-cbc", ENC_KEY, IV);
+  let decrypted = decipher.update(encrypted, "base64", "utf8");
+  return decrypted + decipher.final("utf8");
+};

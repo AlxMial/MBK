@@ -562,7 +562,7 @@ const ShowCart = () => {
         <AlertModel
           className={" liff-Dialog "}
           showModal={productCountError.open}
-          message={"จำนวนสินค้ามีการเปลียนแปลง"}
+          message={"จำนวนสินค้ามีการเปลี่ยนแปลง"}
           confirmModal={() => {
             productCountError.action.map((e, i) => {
               upd_shopcart(e);

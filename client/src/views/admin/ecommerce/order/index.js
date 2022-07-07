@@ -50,6 +50,13 @@ const Order = () => {
     await axios.get("order/orderHD").then(async (response) => {
       if (!response.data.error && response.data.tbOrderHD) {
         let _orderData = response.data.tbOrderHD;
+
+        await response.data.tbOrderHD.map(async (e, i) => {
+          e.province = await Address.getAddressName("province", e.province);
+          e.subDistrict = await Address.getAddressName("subDistrict", e.subDistrict);
+          e.district = await Address.getAddressName("district", e.district);
+        });
+
         await axios.get("members").then((res) => {
           _orderData = _orderData.map((order) => {
             const member = res.data.tbMember.filter(
@@ -224,7 +231,7 @@ const Order = () => {
                     .post("cancelOrder", _dataCancel)
                     .then(async (res) => {
                       if (res.data.status) {
-                        console.log(_dataHD)
+                        console.log(_dataHD);
                         axios
                           .post("mails/cancelsuccess", {
                             // frommail: "noreply@undefined.co.th",
@@ -233,7 +240,8 @@ const Order = () => {
                             password: "Tus92278",
                             tomail: _dataHD.email,
                             orderNumber: _dataHD.orderNumber,
-                            memberName:_dataHD.firstName + ' ' + _dataHD.lastName,
+                            memberName:
+                              _dataHD.firstName + " " + _dataHD.lastName,
                             cancelOtherRemark: tbCancelOrder.cancelOtherRemark,
                             cancelDetail:
                               tbCancelOrder.cancelDetail === undefined

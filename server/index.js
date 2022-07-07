@@ -116,6 +116,13 @@ const pointHistoryReport = require('./routes/report/Report');
 app.use("/mbkserver/report", pointHistoryReport);
 initRoutes(app);
 
+
+
+
+
+
+
+
 const port = process.env.PORT || 3001;
 db.sequelize.sync().then(() => {
     app.listen(port, () => {
