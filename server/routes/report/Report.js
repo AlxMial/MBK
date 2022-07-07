@@ -852,8 +852,15 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
   tbCouponCode.belongsTo(tbRedemptionCoupon, {
     foreignKey: "redemptionCouponId",
   });
-  const listRedemptionConditionsHD = await tbRedemptionConditionsHD.findAll({
+  const listRedemptionProduct = await tbRedemptionProduct.findAll({
     where: { isDeleted: false },
+    include: [
+      {
+        model: tbRedemptionConditionsHD,
+        where: { isDeleted: false },
+        required: false,
+      },
+    ],
   });
   const listCouponCode = await tbCouponCode.findAll({
     where: { isDeleted: false, isUse: true },
@@ -921,31 +928,32 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
             if (rdCupon !== null && rdCupon.tbRedemptionConditionsHD !== null) {
               redemptionName = rdCupon.tbRedemptionConditionsHD.redemptionName;
               redemptionType = rdCupon.tbRedemptionConditionsHD.redemptionType;
-              rewardType = rdCupon.tbRedemptionConditionsHD.rewardType;
+              rewardType = '1';
               points = rdCupon.tbRedemptionConditionsHD.points;
               startDate = rdCupon.tbRedemptionConditionsHD.startDate;
               endDate = rdCupon.tbRedemptionConditionsHD.endDate;
             }
           }
+          isShowControl = false;
         } else {
-          const lRedemptionProduct = listRedemptionConditionsHD.filter(
+          const lRedemptionProduct = listRedemptionProduct.filter(
             (e) => e.id.toString() === obj.TableHDId
           );
           if (lRedemptionProduct.length > 0) {
-            const rwHD = lRedemptionProduct[0];
+            const rwHD = lRedemptionProduct[0].tbRedemptionConditionsHD;
             deliverStatus = obj.deliverStatus;
-            trackingNo = obj.trackingNo;
-            status = 1;
-            isShowControl = rwHD.rewardType === "1" ? false : true;
+            trackingNo = obj.trackingNo === null ? "" : obj.trackingNo;
+            status = 1;           
             if (rwHD !== null) {
               redemptionName = rwHD.redemptionName;
               redemptionType = rwHD.redemptionType;
-              rewardType = rwHD.rewardType;
+              rewardType = '2';
               points = rwHD.points;
               startDate = rwHD.startDate;
               endDate = rwHD.endDate;
             }
           }
+          isShowControl = true;
         }
         tutorials.push({
           id: Encrypt.EncodeKey(obj.id),
@@ -955,8 +963,9 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
           rewardType: rewardType,
           startDate: startDate,
           endDate: endDate,
-          firstName: tb_member !== null ? tb_member.firstName : 0,
-          lastName: tb_member !== null ? tb_member.lastName : 0,
+          firstName: tb_member !== null ? Encrypt.DecodeKey(tb_member.firstName) : 0,
+          lastName: tb_member !== null ? Encrypt.DecodeKey(tb_member.lastName) : 0,
+          memberCard: tb_member !== null ? Encrypt.DecodeKey(tb_member.memberCard) : "",
           memberName: fullname,
           address: isShowControl ? address : "",
           subDistrict:
@@ -968,9 +977,7 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
           province:
             tb_member !== null && isShowControl ? tb_member.province : 0,
           phone:
-            tb_member !== null && isShowControl
-              ? Encrypt.DecodeKey(tb_member.phone)
-              : "",
+            tb_member !== null  ? Encrypt.DecodeKey(tb_member.phone): "",
           deliverStatus: deliverStatus,
           trackingNo: trackingNo,
           points: points,

@@ -10,15 +10,15 @@ import useWindowDimensions from "services/useWindowDimensions";
 
 export default function CampaignRewardReport() {
   const [listSearch, setListSerch] = useState([]);
-  const [listCampaign, setListCampaign] = useState([]);
+  const [listCampaign, setListCampaign] = useState([]);  
   const { width } = useWindowDimensions();
   const [forcePage, setForcePage] = useState(0);
-  const [pageNumber, setPageNumber] = useState(0);
+  const [pageNumber, setPageNumber] = useState(0);  
   const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
-  const pagesVisited = pageNumber * usersPerPage;
+  const pagesVisited = pageNumber * usersPerPage;  
   const listCampaignType = [
-    { value: "1", type: "Code", status: "แลกคะแนน" },
+    { value: "1", type: "Code", status: "แลกคะแนน"},
     { value: "2", type: "E-Commerce", status: "รับคะแนน" },
     { value: "3", type: "Register", status: "รับคะแนน" },
   ];
@@ -30,145 +30,99 @@ export default function CampaignRewardReport() {
     { value: "1", label: "E-Coupon" },
     { value: "2", label: "สินค้า" },
   ];
-  const formSerch = useFormik({
-    initialValues: {
-      inputSerch: "",
+  const formSerch =  useFormik({
+    initialValues:  { 
+      inputSerch: "",    
       startDate: null,
-      endDate: null,
-    },
+      endDate: null, 
+    }
   });
-  const InputSearch = () => {
-    const inputSerch = formSerch.values.inputSerch;
-    let startDate =
-      formSerch.values.startDate !== null
-        ? convertToDate(formSerch.values.startDate)
-        : null;
-    let endDate =
-      formSerch.values.endDate !== null
-        ? convertToDate(formSerch.values.endDate)
-        : null;
+  const InputSearch = () => {   
+      const inputSerch = formSerch.values.inputSerch;
+      let startDate = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
+      let endDate = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
     if (inputSerch === "" && startDate === null && endDate === null) {
-      setListCampaign(
-        listSearch.sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
-      );
+       setListCampaign(listSearch.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
     } else {
-      setListCampaign(
-        listSearch
-          .filter((x) => {
-            const _startDate =
-              x.startDate !== "" ? convertToDate(x.startDate) : null;
-            const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
-            let isDate = false;
-            if (x.startDate !== "" && x.endDate !== "") {
+     
+       setListCampaign(
+        listSearch.filter(
+        (x) => {
+          const _startDate = x.startDate !== "" ? convertToDate(x.startDate) : null;
+          const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
+          let isDate = false;
+            if(x.startDate !== '' && x.endDate !== '') {             
               isDate = true;
-            }
-            if (
-              (inputSerch !== ""
-                ? Search(x.CampaignName, inputSerch) ||
-                  Search(x.redemptionType, inputSerch) ||
-                  Search(x.points, inputSerch) ||
-                  Search(x.rewardType, inputSerch) ||
-                  Search(
-                    x.startDate == null
-                      ? ""
-                      : moment(x.startDate).format("DD/MM/YYYY"),
-                    inputSerch
-                  ) ||
-                  Search(
-                    x.endDate == null
-                      ? ""
-                      : moment(x.endDate).format("DD/MM/YYYY"),
-                    inputSerch
-                  ) ||
-                  Search(
-                    x.expireDate == null
-                      ? ""
-                      : moment(x.expireDate).format("DD/MM/YYYY"),
-                    inputSerch
-                  ) ||
-                  Search(x.count, inputSerch) ||
-                  Search(x.use, inputSerch) ||
-                  Search(x.count - x.use, inputSerch)
-                : true) &&
-              SearchByDate(_startDate, _endDate)
-            ) {
-              return true;
+            }            
+            if((inputSerch !== "" ? 
+            (Search(x.redemptionName, inputSerch) ||
+            Search(x.redemptionTypeStr, inputSerch) ||
+            Search(x.points, inputSerch) ||
+            Search(x.rewardTypeStr, inputSerch) ||
+            Search(x.rewardTota, inputSerch) ||
+            Search(x.exchangedTotal, inputSerch) ||
+            Search(x.toTal, inputSerch)) : true) &&
+            SearchByDate(_startDate, _endDate)) {
+                return true;
             }
             return false;
-          })
-          .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
-      );
+          }            
+        ).sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate))
+     );
       setPageNumber(0);
       setForcePage(0);
     }
   };
-  const Search = (val, inputSerch) => {
+  const Search = (val, inputSerch) =>  {
     let status = false;
-    if (val !== "" && val !== null && val !== undefined) {
-      status = val.toString().toLowerCase().includes(inputSerch);
+    if(val !== '' && val !== null && val !== undefined) {
+      status =  val.toString().toLowerCase().includes(inputSerch);
     }
     return status;
-  };
-  const SearchByDate = (dataST_Date, dataED_Date) => {
+  }
+  const SearchByDate = (dataST_Date, dataED_Date) =>  {
     let isSearch = false;
-    let st_Date =
-      formSerch.values.startDate !== null
-        ? convertToDate(formSerch.values.startDate)
-        : null;
-    let ed_Date =
-      formSerch.values.endDate !== null
-        ? convertToDate(formSerch.values.endDate)
-        : null;
-    if (
-      (st_Date !== null &&
-        ed_Date !== null &&
-        ((st_Date <= dataST_Date &&
-          st_Date <= dataED_Date &&
-          ed_Date >= dataST_Date &&
-          ed_Date >= dataED_Date) ||
-          (st_Date <= dataST_Date &&
-            ed_Date >= dataST_Date &&
-            !(st_Date <= dataED_Date && ed_Date >= dataED_Date)) ||
-          (!(st_Date <= dataST_Date && ed_Date >= dataST_Date) &&
-            st_Date <= dataED_Date &&
-            ed_Date >= dataED_Date))) ||
-      (st_Date !== null &&
-        ed_Date === null &&
-        (st_Date <= dataST_Date || st_Date <= dataED_Date)) ||
-      (st_Date === null &&
-        ed_Date !== null &&
-        (ed_Date >= dataST_Date || ed_Date >= dataED_Date)) ||
-      (st_Date === null && ed_Date === null)
-    ) {
-      isSearch = true;
+    let st_Date = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
+    let ed_Date = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
+    if(((st_Date !== null && ed_Date !== null) && 
+        ((st_Date <= dataST_Date  && st_Date <= dataED_Date && ed_Date >= dataST_Date && ed_Date >= dataED_Date) || 
+         (st_Date <= dataST_Date  && ed_Date >= dataST_Date && !(st_Date <= dataED_Date  && ed_Date >= dataED_Date)) ||
+         (!(st_Date <= dataST_Date  && ed_Date >= dataST_Date) && st_Date <= dataED_Date  && ed_Date >= dataED_Date))) 
+         
+         
+         || ((st_Date !== null && ed_Date === null) && (st_Date <= dataST_Date || st_Date <= dataED_Date))
+         || ((st_Date === null && ed_Date !== null) && (ed_Date >= dataST_Date || ed_Date >= dataED_Date))
+         || (st_Date === null && ed_Date === null)) {
+          isSearch = true;
     }
     return isSearch;
-  };
-  const convertToDate = (e) => {
-    const date = new Date(e);
-    date.setHours(0, 0, 0, 0);
-    return date;
+  }
+  const convertToDate = (e) => {    
+   const date = new Date(e);
+         date.setHours(0,0,0,0);
+   return date;
   };
 
-  const setDataSearch = (e, type) => {
+  const setDataSearch = (e, type) => {    
     const s_Date = formSerch.values.startDate;
     const e_Date = formSerch.values.endDate;
     if (type === "s_input") {
       formSerch.values.inputSerch = e.toLowerCase();
-      InputSearch();
-    } else if (type === "s_stdate") {
+      InputSearch();      
+    } else if(type === "s_stdate") {  
       formSerch.setFieldValue("startDate", e);
-      if (e > e_Date && e_Date !== null) {
+      if(e > e_Date && e_Date !== null) {
         formSerch.setFieldValue("startDate", e_Date);
       }
-    } else if (type === "s_eddate") {
+    } else if(type === "s_eddate") {  
       formSerch.setFieldValue("endDate", e);
-      if (e < s_Date && s_Date !== null) {
+      if(e < s_Date && s_Date !== null) {
         formSerch.setFieldValue("endDate", s_Date);
-      }
-    }
+      }  
+    } 
   };
 
+ 
   const pageCount = Math.ceil(listCampaign.length / usersPerPage);
 
   const changePage = ({ selected }) => {
@@ -179,7 +133,6 @@ export default function CampaignRewardReport() {
   const Excel = async (sheetname) => {
     setIsLoading(true);
     const TitleColumns = [
-      "ลำดับที่",
       "แคมเปญ",
       "คะแนน",
       "วันที่เริ่มต้น",
@@ -189,10 +142,9 @@ export default function CampaignRewardReport() {
       "ประเภทรางวัล",
       "จำนวนรางวัล",
       "แลกแล้ว",
-      "คงเหลือ",
+      "คงเหลือ"
     ];
     const columns = [
-      "listNo",
       "redemptionName",
       "points",
       "startDate",
@@ -205,12 +157,12 @@ export default function CampaignRewardReport() {
       "toTal",
     ];
     let count = 0;
-    listCampaign.forEach((el) => {
-      count++;
-      el.listNo = count;
+    listCampaign.forEach(el => { 
+        count++; 
+        el.listNo = count;
     });
     exportExcel(
-      listCampaign,
+        listCampaign,
       "รายงานข้อมูลแคมเปญรางวัล",
       TitleColumns,
       columns,
@@ -223,14 +175,18 @@ export default function CampaignRewardReport() {
     axios.get("report/ShowCampaignReward").then((response) => {
       if (response.data.error) {
       } else {
-        if (response.data.status) {
-          let data = response.data.points;
+        if (response.data !== null) {
+          response.data.forEach(e => {
+            e.redemptionTypeStr = redemptionType.find(el => el.value === e.redemptionType).label; 
+            e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : "");             
+          });
 
-          setListCampaign(data);
-          setListSerch(data);
+          setListCampaign(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
+          setListSerch(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
         }
       }
     });
+   
   }, []);
 
   return (
@@ -243,23 +199,21 @@ export default function CampaignRewardReport() {
       ) : (
         <></>
       )}
-      <div className="flex flex-warp">
+       <div className="flex flex-warp">
         <span className="text-sm margin-auto-t-b font-bold ">
           <i className="fas fa-cog"></i>&nbsp;&nbsp;
         </span>
         <span className="text-base margin-auto-t-b font-bold">
           รายงาน&nbsp;&nbsp;/&nbsp;&nbsp;
         </span>
-        <span className="text-base margin-auto font-bold">
-          รายงานข้อมูลแคมเปญรางวัล
-        </span>
+        <span className="text-base margin-auto font-bold">รายงานข้อมูลแคมเปญรางวัล</span>
       </div>
       <div className="w-full px-4">
-        <div className="flex flex-warp py-2 mt-6 ">
-          <span className="text-lg  text-green-mbk margin-auto font-bold">
+         <div className="flex flex-warp py-2 mt-6 ">
+            <span className="text-lg  text-green-mbk margin-auto font-bold">
             รายงานข้อมูลแคมเปญรางวัล
-          </span>
-        </div>
+            </span>
+          </div>
         <div
           className={
             "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white Overflow-list "
@@ -282,22 +236,22 @@ export default function CampaignRewardReport() {
               </div>
               <div className="lg:w-1/12 px-2 margin-auto-t-b ">
                 <label
-                  className="text-blueGray-600 text-sm font-bold "
-                  htmlFor="grid-password"
+                className="text-blueGray-600 text-sm font-bold "
+                htmlFor="grid-password"
                 >
-                  วันที่เริ่มต้น
-                </label>
-              </div>
-              <div className="w-full lg:w-3/12 px-4 margin-auto-t-b">
+                วันที่เริ่มต้น
+                </label>                
+            </div>
+            <div className="w-full lg:w-3/12 px-4 margin-auto-t-b">
                 <div className="relative">
-                  <ConfigProvider>
+                <ConfigProvider >
                     <DatePicker
-                      inputReadOnly={true}
-                      format={"DD/MM/yyyy"}
-                      placeholder="เลือกวันที่"
-                      showToday={false}
-                      //defaultValue={startDateCode}
-                      style={{
+                    inputReadOnly={true}
+                    format={"DD/MM/yyyy"}
+                    placeholder="เลือกวันที่"
+                    showToday={false}
+                    //defaultValue={startDateCode}
+                    style={{
                         height: "100%",
                         width: "100%",
                         borderRadius: "0.25rem",
@@ -307,93 +261,89 @@ export default function CampaignRewardReport() {
                         paddingBottom: "0.5rem",
                         paddingLeft: "0.5rem",
                         paddingRight: "0.5rem",
-                      }}
-                      value={
-                        formSerch.values.startDate !== null
-                          ? moment(
-                              new Date(formSerch.values.startDate),
-                              "DD/MM/YYYY"
-                            )
-                          : ""
-                      }
-                      onChange={(e) => {
-                        setDataSearch(e, "s_stdate");
-                      }}
+                    }}
+                    value={ 
+                      formSerch.values.startDate !== null 
+                      ? moment(new Date(formSerch.values.startDate),"DD/MM/YYYY") : ""
+                    }
+                    onChange={(e) => {
+                      setDataSearch(e, "s_stdate");
+                    }}
                     />
-                  </ConfigProvider>
+                </ConfigProvider> 
                 </div>
-              </div>
-              <div
-                className={"w-full mb-4" + (width < 764 ? " block" : " hidden")}
-              ></div>
-              <div className="lg\:w-auto  margin-auto-t-b ">
+            </div>
+            <div
+                className={
+                "w-full mb-4" +
+                (width < 764 ? " block" : " hidden")
+                }
+            ></div>
+            <div className="lg\:w-auto  margin-auto-t-b ">
                 <label
-                  className="text-blueGray-600 text-sm font-bold "
-                  htmlFor="grid-password"
-                >
-                  ถึง
-                </label>
-              </div>
+                className="text-blueGray-600 text-sm font-bold "
+                htmlFor="grid-password"
+                >ถึง</label>                
+            </div>
 
-              <div className="w-full lg:w-3/12 px-4 margin-auto-t-b">
-                <ConfigProvider>
-                  <DatePicker
+            <div className="w-full lg:w-3/12 px-4 margin-auto-t-b">
+                <ConfigProvider >
+                <DatePicker
                     inputReadOnly={true}
                     format={"DD/MM/yyyy"}
                     placeholder="เลือกวันที่"
                     showToday={false}
                     //defaultValue={endDateCode}
                     style={{
-                      height: "100%",
-                      width: "100%",
-                      borderRadius: "0.25rem",
-                      cursor: "pointer",
-                      margin: "0px",
-                      paddingTop: "0.5rem",
-                      paddingBottom: "0.5rem",
-                      paddingLeft: "0.5rem",
-                      paddingRight: "0.5rem",
+                    height: "100%",
+                    width: "100%",
+                    borderRadius: "0.25rem",
+                    cursor: "pointer",
+                    margin: "0px",
+                    paddingTop: "0.5rem",
+                    paddingBottom: "0.5rem",
+                    paddingLeft: "0.5rem",
+                    paddingRight: "0.5rem",
                     }}
-                    value={
-                      formSerch.values.endDate !== null
-                        ? moment(
-                            new Date(formSerch.values.endDate),
-                            "DD/MM/YYYY"
-                          )
-                        : ""
+                    value={ 
+                      formSerch.values.endDate !== null 
+                      ? moment(new Date(formSerch.values.endDate),"DD/MM/YYYY") : ""
                     }
                     onChange={(e) => {
-                      setDataSearch(e, "s_eddate");
-                    }}
-                  />
+                      setDataSearch(e, "s_eddate");                         
+                    }}                    
+                />
                 </ConfigProvider>
-              </div>
-              <div className="lg\:w-auto text-right">
-                <button
-                  className="bg-gold-mbk text-black active:bg-gold-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
-                  type="button"
-                  onClick={() => {
-                    InputSearch();
-                  }}
-                >
-                  <span className="text-white text-sm px-2">ค้นหา</span>
-                </button>
-              </div>
-              <div className="lg:w-1/12">
-                <div className="flex p-2 float-right">
-                  <img
-                    src={require("assets/img/mbk/excel.png").default}
-                    alt="..."
-                    onClick={() => Excel()}
-                    className="imgExcel margin-auto-t-b cursor-pointer "
-                  ></img>
+            </div>
+            <div className="lg\:w-auto text-right">
+                    <button
+                      className="bg-gold-mbk text-black active:bg-gold-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                      type="button"
+                      onClick={() => {
+                        InputSearch();
+                      }}
+                    >
+                      <span className="text-white text-sm px-2">
+                        ค้นหา
+                      </span>
+                    </button>
                 </div>
-              </div>
+              <div className="lg:w-1/12">
+                  <div className="flex p-2 float-right">
+                    <img
+                      src={require("assets/img/mbk/excel.png").default}
+                      alt="..."
+                      onClick={() => Excel()}
+                      className="imgExcel margin-auto-t-b cursor-pointer "
+                    ></img>
+                  </div>
+                </div>
               <div
                 className={
                   "lg:w-6/12 text-right" + (width < 764 ? " block" : " hidden")
                 }
-              ></div>
+              >  
+              </div>             
             </div>
           </div>
           <div className="block w-full overflow-x-auto  px-4 py-2">
@@ -413,7 +363,7 @@ export default function CampaignRewardReport() {
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    แคมเปญ
+                   แคมเปญ
                   </th>
                   <th
                     className={
@@ -421,7 +371,7 @@ export default function CampaignRewardReport() {
                     }
                   >
                     คะแนน
-                  </th>
+                  </th> 
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
@@ -457,7 +407,7 @@ export default function CampaignRewardReport() {
                     }
                   >
                     ประเภทรางวัล
-                  </th>
+                  </th>                 
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
@@ -471,14 +421,14 @@ export default function CampaignRewardReport() {
                     }
                   >
                     แลกแล้ว
-                  </th>
+                  </th> 
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
                     คงเหลือ
-                  </th>
+                  </th>                               
                 </tr>
               </thead>
               <tbody>
@@ -489,67 +439,77 @@ export default function CampaignRewardReport() {
                     return (
                       <tr key={key}>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
-                          <span className="px-4 margin-a">{value.listNo}</span>
+                          <span className="px-4 margin-a">
+                            {value.listNo}
+                          </span>
                         </td>
-                        <td className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                        <td                         
+                          className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
+                        >
                           <span
-                            title={value.CampaignName}
+                            title={value.redemptionName}
                             className="text-gray-mbk  hover:text-gray-mbk "
                           >
-                            {value.CampaignName}
+                            {value.redemptionName}
                           </span>
                           <span className="details">more info here</span>
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
+                        <td                         
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                        >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.points}
+                          { value.points}
                           </span>
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
+                        <td                         
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                        >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {moment(value.startDate).format("DD/MM/YYYY")}
+                          { moment(value.startDate).format("DD/MM/YYYY")}
                           </span>
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
+                        <td                          
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                        >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {moment(value.endDate).format("DD/MM/YYYY")}
+                          { moment(value.endDate).format("DD/MM/YYYY")}
                           </span>
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
+                        <td                         
+                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
+                        >
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.expireDate == null
-                              ? "-"
-                              : moment(value.expiredDate).format("DD/MM/YYYY")}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.redemptionType}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.rewardType == null ? "-" : value.rewardType}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.count}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.use}
+                          { value.expiredDate !== "" ?  moment(value.expiredDate).format("DD/MM/YYYY") : ""}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {value.count - value.use}
+                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                            {value.redemptionTypeStr}
+                          </span>
+                        </td>                       
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
+                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                            {value.rewardTypeStr}
+                          </span>
+                        </td>
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
+                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                            {value.rewardTotal}
+                          </span>
+                        </td>
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
+                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                            {value.exchangedTotal}
+                          </span>
+                        </td>
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
+                          {value.toTal}
                         </td>
                       </tr>
                     );
                   })}
               </tbody>
-            </table>
+            </table>           
           </div>
           <div className="px-4">
             <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">

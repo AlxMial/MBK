@@ -197,7 +197,6 @@ export default function PointHistoryReport() {
   const Excel = async (sheetname) => {
     setIsLoading(true);
     const TitleColumns = [
-      "ลำดับที่",
       "แคมเปญ",
       "รหัสแคมเปญ",
       "จำนวนตัวอักษร",
@@ -210,7 +209,6 @@ export default function PointHistoryReport() {
       "สถานะ",
     ];
     const columns = [
-      "listNo",
       "pointCodeName",
       "pointCodeSymbol",
       "pointCodeLengthSymbol",
@@ -240,8 +238,8 @@ export default function PointHistoryReport() {
   const ExportFile = async (id, name) => {
     setIsLoading(true);
    await axios.get(`report/exportExcel/${id}`).then((response) => {
-      const TitleColumns = ["รหัส Coupon", "สถานะใช้งาน", "สถานะหมดอายุ", "ชื่อผู้ที่แลก", "วันที่แลก"];
-      const columns = ["code", "isUse", "isExpire", "memberName", "dateUseCode"];
+      const TitleColumns = ["รหัส Coupon", "สถานะใช้งาน", "สถานะหมดอายุ", "ชื่อผู้ที่แลก", "วันที่แลก", "ร้านค้า", "สาขา"];
+      const columns = ["code", "isUse", "isExpire", "memberName", "dateUseCode", "dateUseCode", "dateUseCode"];
       if (!response.data.error) {
         exportExcel(response.data, name, TitleColumns, columns, "Coupon");
       }     
