@@ -88,7 +88,7 @@ const DetailModel = ({ data, freebies, _static }) => {
                       <div
                         style={{
                           color: "red",
-                          textDecoration: "line-through",
+                          // textDecoration: "line-through",
                         }}
                       >
                         {"Free"}

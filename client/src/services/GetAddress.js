@@ -38,8 +38,6 @@ export const getDistrict = async () => {
 
 export const getAddress = async (type, id) => {
   var Json = [];
-  console.log(id)
-  console.log(type)
   if (type === "district") {
     await api_amphure
       .filter((e) => e.province_id.toString() === id)

@@ -28,6 +28,7 @@ const GetReward = () => {
   const [valueStore, setvalueStore] = useState(null);
   const [valueBranch, setvalueBranch] = useState(null);
   const [isbranch, setisbranch] = useState(false);
+  const [deploy,setdeploy] = useState("");
 
   const [optionsStore, setoptionsStore] = useState([]);
   const [optionsbranch, setoptionsbranch] = useState([]);
@@ -56,9 +57,11 @@ const GetReward = () => {
         .then((res) => {
           let _rewardCode = rewardCode;
           let data = res.data.data;
+      
           data.map((e, i) => {
             _rewardCode.map((ee, i) => {
-              if (e.coupon === ee.code.toUpperCase()) {
+      
+              if (e.coupon === ee.code) {
                 e.isInvalid
                   ? (ee.state = false)
                   : e.isExpire
@@ -69,7 +72,9 @@ const GetReward = () => {
               }
             });
           });
+          setdeploy('reward');
           setrewardCode(_rewardCode);
+          console.log(res.data.data)
           setsucceedData(res.data.data);
           let succeed = true;
           _rewardCode.map((e, i) => {
@@ -236,10 +241,10 @@ const GetReward = () => {
                     }}
                   >
                     {[...rewardCode].map((e, i) => {
+  
                       let _succeedData = succeedData.find(
                         (item) =>
-                          item.coupon ==
-                          e.code.replaceAll(" ", "").toUpperCase()
+                          item.coupon == e.code
                       );
                       let msg = {
                         msg: "",
@@ -251,6 +256,7 @@ const GetReward = () => {
                           icon: "fas fa-check-circle text-green-mbk",
                         };
                       } else {
+         
                         if (!IsNullOrEmpty(_succeedData)) {
                           _succeedData.isInvalid
                             ? (msg.msg = "ไม่ถูกต้อง")

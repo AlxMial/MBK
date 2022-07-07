@@ -539,7 +539,7 @@ const ShowCart = () => {
               history.push(path.shopList);
             }}
           >
-            {"กลับไปที่ร้านค้า"}
+            {"ไปหน้าร้านค้า"}
           </div>
         </div>
       </div>

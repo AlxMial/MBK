@@ -9,7 +9,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
     "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
   const tdClass =
     "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
-  const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
+  const tdSpan = "text-gray-mbk ";
 
   const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 10;
@@ -72,7 +72,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
 
   return (
     <>
-      <div className="block w-full overflow-x-auto  px-4 py-2">
+            <div className="block w-full overflow-x-auto  px-4 py-2">
         {/* Projects table */}
         <table className="items-center w-full border ">
           <thead>
@@ -130,7 +130,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
                             value.cancelStatus
                           )}
                           isDisabled={value.cancelStatus != 1}
-                          customStyles={getCss(value.cancelStatus)}
+                          // customStyles={getCss(value.cancelStatus)}
                         />
                       </span>
                     </td>

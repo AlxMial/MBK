@@ -52,7 +52,7 @@ const TabCancel = () => {
     if (e === "") {
       setListData(listSearch);
     } else {
-      console.log(listSearch)
+      console.log(listSearch);
       setListData(
         listSearch.filter(
           (x) =>
@@ -60,10 +60,16 @@ const TabCancel = () => {
             x.orderDate.toLowerCase().includes(e) ||
             x.memberName.toLowerCase().includes(e) ||
             x.sumPrice.toString().toLowerCase().includes(e) ||
-            (x.cancelStatus === "1" ? "รอการยกเลิก" : x.cancelStatus === "2" ? "คืนเงิน" : "ไม่คืนเงิน" ).toLowerCase().includes(e) ||
+            (x.cancelStatus === "1"
+              ? "รอการยกเลิก"
+              : x.cancelStatus === "2"
+              ? "คืนเงิน"
+              : "ไม่คืนเงิน"
+            )
+              .toLowerCase()
+              .includes(e) ||
             x.cancelDetail.toString().toLowerCase().includes(e) ||
             x.cancelOtherRemark.toString().toLowerCase().includes(e)
-
         )
       );
     }
@@ -151,6 +157,26 @@ const TabCancel = () => {
   return (
     <>
       {/* <PageTitle page='order' /> */}
+      {/* <div className="w-full">
+        <div
+          className={
+            "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white "
+          }
+        >
+          <div className="rounded-t mb-0 px-4 py-3 border-0">
+            <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
+              <div className="w-full lg:w-6/12">
+                <InputSearchUC onChange={(e) => InputSearch(e.target.value)} />
+              </div>
+            </div>
+          </div>
+          <CancelList
+            listData={listData}
+            handleChangeStatus={handleChangeStatus}
+          />
+        </div>
+      </div> */}
+
       <div className="w-full">
         <div
           className={
@@ -162,6 +188,7 @@ const TabCancel = () => {
               <div className="w-full lg:w-6/12">
                 <InputSearchUC onChange={(e) => InputSearch(e.target.value)} />
               </div>
+              <div className="w-full lg:w-6/12"></div>
             </div>
           </div>
           <CancelList
