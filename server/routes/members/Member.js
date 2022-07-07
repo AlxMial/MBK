@@ -171,7 +171,55 @@ router.get("/byId/:id", validateToken, async (req, res) => {
       res.json({ status: true, message: "success", tbMember: listMembers });
     } else {
       res
-        .status(404)
+        .json({ status: false, message: "email not found", tbMember: null });
+    }
+  } else {
+    res.json({ status: true, message: "success", tbMember: null });
+  }
+});
+
+router.get("/byIdOrder/:id", validateToken, async (req, res) => {
+  if (req.params.id !== "undefined") {
+    const id = req.params.id;
+    const listMembers = await tbMember.findOne({
+      attributes: [
+        "id",
+        "memberCard",
+        "firstName",
+        "lastName",
+        "phone",
+        "email",
+        "sex",
+        "birthDate",
+        "registerDate",
+        "address",
+        "subDistrict",
+        "district",
+        "province",
+        "country",
+        "postcode",
+        "isDeleted",
+        "uid",
+        "isMemberType",
+        "memberPoint",
+        "memberPointExpire",
+        "memberType",
+        "consentDate",
+        "isPolicy1",
+        "isPolicy2",
+      ],
+      where: { id: id },
+    });
+    if (listMembers) {
+      Encrypt.decryptAllData(listMembers);
+      Encrypt.encryptValueId(listMembers);
+      if (Encrypt.DecodeKey(req.user.role) === "3") {
+        Encrypt.encryptPhone(listMembers);
+        Encrypt.encryptEmail(listMembers);
+      }
+      res.json({ status: true, message: "success", tbMember: listMembers });
+    } else {
+      res
         .json({ status: false, message: "email not found", tbMember: null });
     }
   } else {
@@ -509,7 +557,7 @@ router.delete("/:memberId", validateToken, async (req, res) => {
   });
 
   client
-    .linkRichMenuToUser(req.body.uid, config.lineConfig.menuMember)
+    .linkRichMenuToUser(req.body.uid, config.lineConfig.menuRegister)
     .then((e) => {
       console.log(e);
     });

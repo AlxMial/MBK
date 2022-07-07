@@ -50,7 +50,7 @@ const Register = () => {
   const [OptionDay, setOptionDay] = useState([]);
   const [sameEmail, setSameEmail] = useState(false);
   const [samePhone, setSamePhone] = useState(false);
-  const [page, setpage] = useState("register");
+  const [page, setpage] = useState("privacypolicy");
   const [enableButton, setEnableButton] = useState(true);
   const [scroll, setScroll] = useState("");
   const useStyle = styleSelect();
@@ -791,7 +791,7 @@ const Register = () => {
             style={{
               width: "90%",
               backgroundColor: "#FFF",
-              height: "calc(100% - 320px)",
+              height: "calc(100% - 345px)",
               padding: "20px",
               margin: "auto",
               borderRadius: "10px",
@@ -801,12 +801,12 @@ const Register = () => {
             className="heightPolicy text-xs line-scroll"
           >
             <div className="text-center mt-2 mb-1">
-              <span className="text-green-mbk font-bold text-sm">
+              <span className="text-green-mbk font-bold text-12px">
                 ข้อกำหนดและเงื่อนไข
               </span>
             </div>
             <strong>
-              <span data-contrast="none" className="text-sm">
+              <span data-contrast="none" className="text-12px">
                 ข้อกำหนดและเงื่อนไข : สำหรับสมาชิกข้าวมาบุญครอง
               </span>
             </strong>
@@ -835,7 +835,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1. ข้าพเจ้าตกลงให้ บริษัท พี
+                  1. ข้าพเจ้าตกลงให้ บริษัท พี
                   อาร์ จี คอร์ปอเรชั่น จำกัด (มหาชน) (เรียกว่า &ldquo;
                 </span>
                 <strong>
@@ -866,7 +866,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.
+                  2.
                   ข้าพเจ้ารับทราบว่าการเก็บรวบรวม ใช้ เปิดเผย
                   หรือโอนข้อมูลส่วนบุคคลของข้าพเจ้าไปต่างประเทศจะเป็นไปตามนโยบายความเป็นส่วนตัว
                 </span>
@@ -886,7 +886,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="auto">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3. ข้าพเจ้ารับทราบว่า
+                  3. ข้าพเจ้ารับทราบว่า
                   คะแนนจากการเป็นสมาชิกแต่ละคะแนนมีอายุตามที่บริษัทกำหนดไว้ในเงื่อนไขของแต่ละโปรโมชั่น
                   (
                 </span>
@@ -916,7 +916,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;4.
+                  4.
                   ในกรณีที่มีข้อโต้แย้งเกี่ยวกับคะแนนจากการเป็นสมาชิก
                   ข้าพเจ้าตกลงและยอมรับให้บริษัทมีอำนาจในการตรวจสอบและระงับข้อโต้แย้ง
                   โดยการตัดสินของบริษัทถือเป็นที่สุด
@@ -937,7 +937,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;5.
+                  5.
                   ข้าพเจ้ายอมรับว่าสิทธิประโยชน์ที่ทางบริษัทเสนอให้แก่สมาชิกแต่ละรายอาจแตกต่างกัน
                   ขึ้นอยู่กับประวัติการซื้อสินค้าของสมาชิกแต่ละราย
                   รายการโปรโมชั่นสินค้าแต่ละประเภท
@@ -959,7 +959,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;6. ข้าพเจ้าตกลงและยอมรับว่า
+                  6. ข้าพเจ้าตกลงและยอมรับว่า
                   หากข้าพเจ้าคืนสินค้าที่ซื้อจากร้านค้าที่ร่วมโครงการกับบริษัทแล้ว
                   ข้าพเจ้าต้องคืนคะแนนสะสมที่ได้รับและรวมทั้งของรางวัลที่แลกรับจากคะแนนสะสมไปแล้ว
                   หรือคืนเป็นเงินสดตามมูลค่าของของรางวัล
@@ -980,7 +980,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;7.
+                  7.
                   ข้าพเจ้าตกลงและยอมรับว่าบริษัทมีสิทธิ์ปฏิเสธการให้บริการแพลตฟอร์มและการสมัครนี้
                   หรือสามารถยกเลิกการเป็นสมาชิกได้โดยไม่จำเป็นต้องระบุสาเหตุการปฏิเสธ/ยกเลิกดังกล่าว
                 </span>
@@ -1000,7 +1000,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;8.
+                  8.
                   ข้าพเจ้ายอมรับและผูกพันตามข้อกำหนดและเงื่อนไขของการเป็นสมาชิกที่บริษัทกำหนดไว้ขณะลงทะเบียนใช้บริการแพลตฟอร์มและรวมทั้งการเปลี่ยนแปลงแก้ไขที่อาจมีขึ้นในภายหน้า
                   โดยบริษัทมิต้องแจ้งให้ทราบล่วงหน้า
                 </span>
@@ -1020,7 +1020,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;9.
+                  9.
                   ข้าพเจ้าตกลงและยอมรับว่าบริษัทมีสิทธิ์เด็ดขาดฝ่ายเดียวในการเปลี่ยนแปลงเงื่อนไขการเป็นสมาชิก/ของกำนัลที่จัดให้แลกและสิทธิพิเศษต่าง
                   ๆ โดยมิต้องแจ้งให้ทราบล่วงหน้า
                 </span>
@@ -1040,7 +1040,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;10.
+                  10.
                   กรณีที่มีปัญหาขัดแย้งจากการเป็นสมาชิก
                   คำชี้ขาดของบริษัทถือเป็นที่สิ้นสุด
                 </span>
@@ -1060,7 +1060,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;11. บริษัทฯ
+                  11. บริษัทฯ
                   ขอสงวนสิทธิ์ในการยกเลิกการเป็นสมาชิก
                   หรือเปลี่ยนแปลงเงื่อนไขสิทธิประโยชน์โดยไม่ต้องแจ้งให้ทราบล่วงหน้า
                 </span>
@@ -1080,7 +1080,7 @@ const Register = () => {
                 data-aria-level="1"
               >
                 <span data-contrast="none">
-                  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;12.
+                  12.
                   หากคุณไม่ประสงค์ที่จะรับการติดต่อสื่อสารทางการตลาดจากบริษัท
                   และ/หรือ บริษัทในกลุ่มอ็มบีเค และ/หรือ บริษัทในเครือ และ/หรือ
                   บริษัทที่เป็นพันธมิตรทางการค้ากับบริษัท โปรดติดต่อบริษัทมาที่{" "}
@@ -1100,7 +1100,7 @@ const Register = () => {
             </ol>
             <p>
               <strong>
-                <span data-contrast="none" className="text-sm">
+                <span data-contrast="none" className="text-12px">
                   ข้อกำหนดและเงื่อนไขการใช้แพลตฟอร์ม
                 </span>
               </strong>
@@ -1110,7 +1110,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;บริษัท พี อาร์ จี คอร์ปอเรชั่น
+                บริษัท พี อาร์ จี คอร์ปอเรชั่น
                 จำกัด (มหาชน){" "}
               </span>
               <span data-contrast="none">(&ldquo;</span>
@@ -1139,7 +1139,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;ผู้ใช้งานแพลตฟอร์ม (&ldquo;
+                ผู้ใช้งานแพลตฟอร์ม (&ldquo;
               </span>
               <strong>
                 <span data-contrast="none">ผู้ใช้งาน</span>
@@ -1163,11 +1163,8 @@ const Register = () => {
             </p>
             <p>
               <strong>
-                <span data-contrast="none">1.    </span>
-              </strong>
-              <strong>
                 <span data-contrast="none">
-                  ขอบเขตการใช้งานแพลตฟอร์ม และข้อกำหนดทั่วไป
+                  1. ขอบเขตการใช้งานแพลตฟอร์ม และข้อกำหนดทั่วไป
                 </span>
               </strong>
               <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
@@ -1176,7 +1173,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.1{" "}
+                1.1{" "}
               </span>
               <span data-contrast="none">
                 บริษัทขอสงวนสิทธิไว้สำหรับสมาชิกที่ลงทะเบียนเป็นสมาชิกบนแพลตฟอร์มเพื่อตรวจสอบคะแนนคงเหลือและคะแนนที่จะหมดอายุ
@@ -1193,7 +1190,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.2
+                1.2{" "}
               </span>
               <span data-contrast="none">
                 ผู้ใช้งานรับรองว่าบรรดาข้อมูลที่ได้ให้ไว้แก่บริษัทในแพลตฟอร์มเป็นข้อมูลของผู้ใช้งานที่ถูกต้องครบถ้วน
@@ -1206,7 +1203,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.3
+                1.3{" "}
               </span>
               <span data-contrast="none">
                 ผู้ใช้งานตกลงและรับทราบว่า
@@ -1220,7 +1217,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.4
+                1.4{" "}
               </span>
               <span data-contrast="none">
                 ก่อนจะทำรายการใด ๆ ผ่านแพลตฟอร์ม
@@ -1235,7 +1232,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.5
+                1.5{" "}
               </span>
               <span data-contrast="none">
                 ผู้ใช้งานจะตรวจสอบเงื่อนไขเกี่ยวกับสิทธิประโยชน์
@@ -1252,7 +1249,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.6
+                1.6{" "}
               </span>
               <span data-contrast="none">
                 การใช้งานแพลตฟอร์มในแต่ละครั้ง
@@ -1266,7 +1263,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.7 &nbsp;{" "}
+                1.7{" "}
               </span>
               <span data-contrast="none">
                 ในแพลตฟอร์มจะมีโฆษณา ไฮเปอร์ลิงก์ หรือดีพลิงก์
@@ -1292,7 +1289,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.8
+                1.8{" "}
               </span>
               <span data-contrast="none">
                 ในกรณีที่มีเหตุอันสมควร บริษัทอาจระงับหรือยกเลิกการให้บริการ
@@ -1305,7 +1302,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.9
+                1.9{" "}
               </span>
               <span data-contrast="none">
                 คะแนนสะสมที่ปรากฏเมื่อมีการตรวจสอบคะแนน
@@ -1321,7 +1318,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.10
+                1.10{" "}
               </span>
               <span data-contrast="none">
                 คะแนนสะสมที่แลกผ่านทางแพลตฟอร์ม
@@ -1333,7 +1330,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.11
+                1.11{" "}
               </span>
               <span data-contrast="none">
                 ในการแลกคะแนนบนแพลตฟอร์ม
@@ -1346,7 +1343,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.12
+                1.12{" "}
               </span>
               <span data-contrast="none">
                 เมื่อผู้ใช้งานทำการยืนยันการแลกคะแนนหรือโอนคะแนนบนแพลตฟอร์มเรียบร้อยแล้ว
@@ -1358,7 +1355,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.13  {" "}
+                1.13{" "}
               </span>
               <span data-contrast="none">
                 กรณีที่มีข้อโต้แย้งเกี่ยวกับคะแนน
@@ -1377,7 +1374,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.14   {" "}
+                1.14{" "}
               </span>
               <span data-contrast="none">
                 คะแนนสะสมที่แลกหรือโอน จะถูกหักจากคะแนนที่ใกล้หมดอายุที่สุดก่อน
@@ -1389,7 +1386,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.15
+                1.15{" "}
               </span>
               <span data-contrast="none">คะแนนสะสมจะมีอายุ </span>
               <span data-contrast="none">1 (</span>
@@ -1405,7 +1402,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.16   {" "}
+                1.16{" "}
               </span>
               <span data-contrast="none">
                 บริษัทฯ ไม่สนับสนุนการซื้อ-ขายคะแนนทุกรูปแบบ
@@ -1423,13 +1420,13 @@ const Register = () => {
               <li>
                 <strong> </strong>
                 <strong>
-                  <span data-contrast="none">การสมัครเป็นสมาชิก</span>
+                  <span data-contrast="none">2. การสมัครเป็นสมาชิก</span>
                 </strong>
               </li>
             </ol>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.1
+                2.1{" "}
               </span>
               <span data-contrast="none">
                 ผู้ขอใช้บริการสามารถสมัครสมาชิกได้โดยจะต้องทำการให้รายละเอียดข้อมูลตามที่บริษัทกำหนด
@@ -1442,7 +1439,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.2
+                2.2{" "}
               </span>
               <span data-contrast="none">
                 ผู้สมัครตกลงและยอมรับตามข้อกำหนดและเงื่อนไขต่าง ๆ
@@ -1455,7 +1452,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.3
+                2.3{" "}
               </span>
               <span data-contrast="none">
                 ผู้สมัครรับรองว่าบรรดาข้อมูลที่ได้ให้ไว้แก่บริษัทในการลงทะเบียนเป็นสมาชิกถูกต้องครบถ้วน
@@ -1468,7 +1465,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.4  {" "}
+                2.4{" "}
               </span>
               <span data-contrast="none">
                 ผู้สมัครเป็นสมาชิกต้องไม่เป็นผู้เยาว์และมีอายุตั้งแต่{" "}
@@ -1488,7 +1485,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.5{" "}
+                2.5{" "}
               </span>
               <span data-contrast="none">
                 บริษัทขอสงวนสิทธิในการยกเลิกการเป็นสมาชิก
@@ -1500,11 +1497,8 @@ const Register = () => {
             </p>
             <p>
               <strong>
-                <span data-contrast="none">3. </span>
-              </strong>
-              <strong>
                 <span data-contrast="none">
-                  การลงทะเบียนเพื่อเข้าใช้งานแพลตฟอร์ม
+                  3. การลงทะเบียนเพื่อเข้าใช้งานแพลตฟอร์ม
                 </span>
               </strong>
               <span data-ccp-props='{"134233118":true,"201341983":0,"335559739":160,"335559740":240}'>
@@ -1513,7 +1507,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3.1
+                3.1{" "}
               </span>
               <span data-contrast="none">
                 ผู้ขอใช้บริการสามารถลงทะเบียนเข้าใช้งานแพลตฟอร์มได้โดยจะต้องทำการให้รายละเอียดข้อมูลตามที่บริษัทกำหนด
@@ -1536,7 +1530,7 @@ const Register = () => {
             </p>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3.2
+                3.2{" "}
               </span>
               <span data-contrast="none">
                 สมาชิกรับรองว่าบรรดาข้อมูลที่ได้ให้ไว้แก่บริษัทในการลงทะเบียนเข้าใช้แพลตฟอร์มนี้ถูกต้องครบถ้วน
@@ -1550,30 +1544,32 @@ const Register = () => {
               <li>
                 <strong> </strong>
                 <strong>
-                  <span data-contrast="none" className="text-sm">
-                    การปรับเปลี่ยนข้อมูลส่วนตัวของสมาชิก
+                  <span data-contrast="none" className="text-12px">
+                    4. การปรับเปลี่ยนข้อมูลส่วนตัวของสมาชิก
                   </span>
                 </strong>
               </li>
             </ol>
             <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;4.1  {" "}
+                4.1{" "}
               </span>
               <span data-contrast="none">
                 สมาชิกสามารถทำการปรับเปลี่ยนผ่านทางแพลตฟอร์ม
-              </span>{" "}
-              &nbsp;
-              <br />
-              <br />
+              </span>
+              <span data-ccp-props='{"134233118":true,"201341983":0,"335559731":720,"335559739":160,"335559740":240}'>
+                &nbsp;
+              </span>
+            </p>
+            <p>
               <span data-contrast="none">
-                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;4.2  {" "}
+                4.2{" "}
               </span>
               <span data-contrast="none">
                 สมาชิกรับรองว่า หากมีการเปลี่ยนแปลงข้อมูลส่วนตัวของสมาชิก
                 สมาชิกจะปรับปรุงข้อมูลส่วนตัวของสมาชิกให้ทันสมัยอยู่ตลอดเวลา
               </span>
-              <span data-ccp-props='{"134233118":true,"201341983":0,"335559685":720,"335559739":160,"335559740":240}'>
+              <span data-ccp-props='{"134233118":true,"201341983":0,"335559731":720,"335559739":160,"335559740":240}'>
                 &nbsp;
               </span>
             </p>
@@ -1600,7 +1596,7 @@ const Register = () => {
                   id="isPolicy1"
                   type="checkbox"
                   name="isPolicy1"
-                  className="form-checkbox text-xs border-2 rounded text-gold-mbk ml-1 w-5 h-5 ease-linear transition-all duration-150"
+                  className="form-checkbox text-xs border-2 rounded text-gold-mbk w-5 h-5 ease-linear transition-all duration-150"
                   onChange={policyChange}
                   checked={Data.isPolicy1}
                   style={{ alignSelf: "stretch" }}
@@ -1621,7 +1617,7 @@ const Register = () => {
                   id="isPolicy2"
                   type="checkbox"
                   name="isPolicy2"
-                  className="form-checkbox text-xs border-2 rounded text-gold-mbk ml-1 w-5 h-5 ease-linear transition-all duration-150"
+                  className="form-checkbox text-xs border-2 rounded text-gold-mbk w-5 h-5 ease-linear transition-all duration-150"
                   onChange={policyChange}
                   checked={Data.isPolicy2}
                   style={{ alignSelf: "stretch" }}

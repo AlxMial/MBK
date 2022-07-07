@@ -106,7 +106,7 @@ const OrderDetail = ({
                 <div className="w-full flex-auto mt-2">
                     <ModalHeader title="รายละเอียดการสั่งซื้อ" handleModal={() => handleModal('close')} />
                     <div className="flex flex-wrap justify-center  Overflow-info">
-                    <div className="flex w-full justify-end">
+                        <div className="flex w-full justify-end">
                             <ExportPdf props={propsPurchaseOrder} dataExport={dataExport} />
                             <ButtonUCSaveModal
                                 // showExport={true}
@@ -124,9 +124,7 @@ const OrderDetail = ({
                         <div className="w-full p-4 margin-auto-t-b flex flex-wrap ">
                             <div className="w-full lg:w-8/12 px-4  flex flex-col">
                                 <div className="w-full" id='purchaseOrder'>
-                                    {/* {!openExport && <LabelUC label='รายการคำสั่งซื้อ' moreClassName='border-b py-2' />}
-                                    {openExport && (<ExportHeader dataExport={dataExport} />)} */}
-                                    {/* <LabelUC label='รายการคำสั่งซื้อ' moreClassName='border-b py-2' /> */}
+           
                                     <div className='flex'>
                                         <div className='font-bold' style={{ width: "100px" }}>รายการคำสั่งซื้อ</div>
                                         <div style={{ width: "calc(100% - 100px)", textAlign: "end" }}>{"หมายเลขคำสั่งซื้อ " + orderHD.orderNumber}</div>

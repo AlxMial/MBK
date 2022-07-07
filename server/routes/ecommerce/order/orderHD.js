@@ -843,6 +843,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
 
   try {
     let { data } = req.body;
+    console.log(data)
     const uid = Encrypt.DecodeKey(req.user.uid);
     Member = await tbMember.findOne({
       attributes: ["id"],
@@ -867,7 +868,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         status = _getorderDT.status;
         msg = _getorderDT.msg;
       }
-
+      console.log(status)
       // โปรร้าน
       let DiscountStorePromotion = 0;
       let _getStorePromotion = await getStorePromotion(total);
@@ -885,7 +886,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         status = _getStorePromotion.status;
         msg = _getStorePromotion.msg;
       }
-
+      console.log(status)
       //ข้อมูลวิธีการจัดส่ง
       let deliveryCost = 0; //ค่าส่ง
       let discountDelivery = 0; //โปรค่าส่ง
@@ -901,7 +902,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         status = _getDelivery.status;
         msg = _getDelivery.msg;
       }
-
+      console.log(status)
       // ส่วนลดCoupon
       let DiscountCoupon = 0;
       if (status) {
@@ -920,7 +921,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         }
       }
       total = total - DiscountCoupon;
-
+      console.log(status)
       //บวกค้าส่งทีหลัง
       total = total + (discountDelivery > 0 ? discountDelivery : deliveryCost);
       //ที่อยู่ปัจจุบัน
@@ -942,21 +943,20 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           msg = _getAddress.msg;
         }
       }
-
+  
       if (status) {
         try {
-          console.log(Encrypt.DecodeKey(data.paymentId))
+       
           const updtbOrderHD = await tbOrderHD.update(
             {
               logisticId: Encrypt.DecodeKey(data.logisticId),
-              // paymentId: (data.orderHd.paymentType == 2)  ? null :Encrypt.DecodeKey(data.paymentId),
+              paymentId: (data.orderHd.paymentType == 2)  ? null :Encrypt.DecodeKey(data.paymentId),
               paymentType: data.paymentType,
               otherAddressId:
                 Encrypt.DecodeKey(data.isAddress) == "memberId"
                   ? null
                   : Encrypt.DecodeKey(data.isAddress),
               memberRewardId: data.memberRewardId,
-
               firstName: data.firstName,
               lastName: data.lastName,
               phone: data.phone,
@@ -966,7 +966,6 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
               province: data.province,
               country: data.country,
               postcode: data.postcode,
-
               discountStorePromotion: DiscountStorePromotion,
               deliveryCost: deliveryCost,
               discountDelivery: discountDelivery,
@@ -977,7 +976,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             },
             { where: { id: Encrypt.DecodeKey(data.id) } }
           );
-
+          console.log(updtbOrderHD)
           const dataDel = await tbOrderDT.destroy({
             where: {
               orderId: Encrypt.DecodeKey(data.id),
@@ -998,7 +997,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         }
 
         //#region 2c2p
-        if (data.orderHd.paymentType == 2) {
+        if (data.paymentType == 2) {
           // orderId = 6
           let secretKey =
             "0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22";
@@ -1569,7 +1568,7 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
           "bankBranchName",
           "bankName",
         ],
-        where: { isDeleted: false, id: OrderHDData.dataValues.paymentId },
+        where: { isDeleted: false, id: (OrderHDData.dataValues.paymentId === null ) ? 1 : OrderHDData.dataValues.paymentId },
       });
       if (_tbPayment) {
         _tbPayment.dataValues.id = Encrypt.EncodeKey(_tbPayment.dataValues.id);
@@ -1910,7 +1909,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         // , paymentType: type == "update" ? hd.paymentType : null
         logisticId: type == "update" ? Encrypt.EncodeKey(hd.logisticId) : null,
         paymentId: type == "update" ? Encrypt.EncodeKey(hd.paymentId) : null,
-
+    
         memberRewardId:
           type == "update"
             ? hd.memberRewardId == null
@@ -1938,15 +1937,12 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         points: hd.points,
         netTotal: hd.netTotal,
       };
-      console.log(hd.hddeliveryCost)
-      console.log(hd.discountDelivery)
       // เช็คการจ่ายเงิน
     }
   } catch (e) {
     status = false;
     msg = e.message;
   }
-
   return res.json({
     status: status,
     msg: msg,

@@ -82,10 +82,10 @@ const Order = () => {
     if (e === "") {
       setOrderList(listSearch);
     } else {
-
       setOrderList(
         listSearch.filter(
-          (x) =>
+          (x) => 
+
             x.orderNumber.toLowerCase().includes(e) ||
             x.memberName.toLowerCase().includes(e) ||
             (x.orderDate ?? '').toString().includes(e) ||
@@ -102,12 +102,12 @@ const Order = () => {
             ? "อยู่ระหว่างจัดส่ง"
             : "ส่งแล้ว"
           ).includes(e) || 
-            (e.tbCancelOrder != null
-              ? e.tbCancelOrder.cancelDetail
-              : e.tbReturnOrder != null
-              ? e.tbReturnOrder.returnDetail
+            (x.tbCancelOrder != null
+              ? x.tbCancelOrder.cancelDetail
+              : x.tbReturnOrder != null
+              ? x.tbReturnOrder.returnDetail
               : "").includes(e) ||
-            (x.isCancel.toString() === "true" ? "ยกเลิกคำสั่งซื้อ" : "").includes(e)
+            (x.tbCancelOrder != null ? "ยกเลิกคำสั่งซื้อ" : "").includes(e)
         )
       );
     }
@@ -117,6 +117,7 @@ const Order = () => {
     dispatch(fetchLoading());
     settbCancelOrder(null);
     setOrderImage(null);
+
     const data = orderList.filter((x) => x.id === id);
     if (data && data.length > 0) {
       setOrderHD(data[0]);
@@ -149,7 +150,13 @@ const Order = () => {
           })
         );
       }
-
+      
+      const resMember = await axios.get("/members/byIdOrder/" + data[0].memberId);
+      if (!resMember.data.error && resMember.data.tbMember) {
+        const _tbMember = resMember.data.tbMember;
+        setMemberData(_tbMember);
+      }
+    
       const _orderImage = await axios.get(`image/byRelated/${id}/tbOrderHD`);
       if (_orderImage && _orderImage.data.tbImage) {
         const image = FilesService.buffer64UTF8(_orderImage.data.tbImage.image);

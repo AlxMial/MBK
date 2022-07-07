@@ -55,7 +55,8 @@ const MakeOrderById = () => {
             let OrderHD = res.data.OrderHD;
             if (OrderHD.tbCancelOrder == null) {
               setOrderHD(OrderHD);
-              setpaymentID(OrderHD.paymentId);
+              console.log(OrderHD.paymentId)
+              setpaymentID((OrderHD.paymentId === null) ? '1' : null );
               setisLogistic(OrderHD.logisticId);
               setdeliveryCost(OrderHD.olddeliveryCost);
               setisAddress(OrderHD.otherAddressId);
@@ -159,9 +160,9 @@ const MakeOrderById = () => {
     doSaveUpdateOrder({ data: updatrOrder }, (res) => {
       if (res.status) {
         if (RadioPayment === 1) {
+
           history.push(path.paymentInfo.replace(":id", id));
         } else {
-          console.log( res.data)
           window.location.href = res.data.url.webPaymentUrl
         }
       } else {
@@ -227,7 +228,7 @@ const MakeOrderById = () => {
 
         pro.map((e, i) => {
           let discount = 0;
-          if (e.condition == 1) {
+          if (e.condition === 1) {
             discount = e.discount;
           } else {
             discount = (e.percentDiscount / 100) * totel;

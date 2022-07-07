@@ -203,6 +203,7 @@ export default function MemberList() {
       if (response.data.error) {
         console.log(response.data.error);
       } else {
+        console.log(response.data.tbMember)
         setListUser(response.data.tbMember);
         setListSerch(response.data.tbMember);
       }

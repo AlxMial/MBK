@@ -21,8 +21,6 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCance
     const [delay, setDalay] = useState("");
     const [isChangeTrackNo, setisChangeTrackNo] = useState(false);
 
-
-
     const logisticTypeList = [
         { label: "Kerry Express", value: 'kerry' },
         // { label: "Flash Express", value: 'flash' },

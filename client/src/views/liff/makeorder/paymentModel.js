@@ -24,6 +24,7 @@ const PaymentModel = ({
         for (var i = 0; i < option.length; i++) {
           option[i].value = option[i].id;
         }
+        console.log(option)
         setPayment(option);
         setpaymentID(option[0].id);
       }
@@ -64,6 +65,8 @@ const PaymentModel = ({
                 //   appearance: "success",
                 //   autoDismiss: true,
                 // });
+         
+                gettbpayment(e.target.value);
                 setRadio(e.target.value);
               } else {
                 addToast("ยอดรวมสินค้าต้องมากกว่า 500 บาท", {
@@ -76,6 +79,8 @@ const PaymentModel = ({
               //   appearance: "success",
               //   autoDismiss: true,
               // });
+
+              gettbpayment(e.target.value);
               setRadio(e.target.value);
             }
           }}
