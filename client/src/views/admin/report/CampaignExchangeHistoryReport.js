@@ -35,7 +35,7 @@ export default function CampaignExchangeHistoryReport() {
   ];
   const rewardType = [
     { value: "1", label: "E-Coupon" },
-    { value: "2", label: "สินค้า" },
+    { value: "2", label: "ของสมนาคุณ" },
   ];
   const rewardStatus = [
     { value: "0", label: "เรียกคืน" },
@@ -215,38 +215,50 @@ export default function CampaignExchangeHistoryReport() {
   const Excel = async (sheetname) => {
     setIsLoading(true);
     const TitleColumns = [
-      "ลำดับที่",
       "แคมเปญ",
       "วันที่เริ่มต้น",
       "วันที่สิ้นสุด",
       "ประเภทแคมเปญ",
       "ประเภทรางวัล",
-      "ชื่อลูกค้า",
-      "เบอร์โทรศัพท์",
-      "Code",
-      "คะแนน",
       "สถานะ",
-      "วันที่แลก",
-      "สถานะการส่ง",
-      "หมายเหตุเลขพัสดุ",
-      "ที่อยู"
+      "วันที่แลกรับรางวัล",
+      "ชื่อลูกค้า",
+      "นามสกุล",
+      "รหัสสมาชิก",
+      "เบอร์โทรศัพท์",
+      "รหัสคูปอง",
+      "สถานะคูปอง",
+      "วันที่ใช้คูปอง",
+      "สถานะการขนส่ง",
+      "หมายเลขพัสดุ",
+      "ที่อยู่",
+      "จังหวัด",
+      "อำเภอ",
+      "ตำบล",
+      "รหัสไปรษณีย์",
     ];
     const columns = [
-      "listNo",      
       "redemptionName",
       "startDate",
       "endDate",
       "redemptionTypeStr",
       "rewardTypeStr",
-      "memberName",
-      "phone",
-      "code",
-      "points",
       "statusStr",
       "redeemDate",
+      "firstName",
+      "lastName",
+      "memberCard",
+      "phone",
+      "coupon",
+      "couponStatus",
+      "couponUseDate",
       "deliverStatusStr",
       "trackingNo",
-      "addressMember"
+      "address",
+      "provinceStr",
+      "districtStr",
+      "subDistrictStr",     
+      "postcode"
     ];
     let count = 0;
     listCampaignExchange.forEach(el => { 

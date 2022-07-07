@@ -184,31 +184,33 @@ export default function CollectPointsReport() {
 
   const Excel = async (sheetname) => {
     setIsLoading(true);
-    const TitleColumns = [
-      "ลำดับที่",
-      "แคมเปญ",
-      "วันที่เริ่มต้น",
-      "วันที่สิ้นสุด",
-      "ประเภท",
+    const TitleColumns = [      
+      "รหัสสมาชิก",
       "ชื่อลูกค้า",
+      "นามสกุล",
       "เบอร์โทรศัพท์",
-      "Code",
+      "แคมเปญ",
+      "ประเภท",  
       "คะแนน",
       "สถานะ",
-      "วันที่แลก",
+      "วันที่ได้รับคะแนน",
+      "วันที่เริ่มต้น",
+      "วันที่สิ้นสุด",
+      "Code",
     ];
     const columns = [
-      "listNo",
-      "pointCodeName",
-      "startDate",
-      "endDate",
-      "pointType",
-      "memberName",
+      "memberCard",
+      "firstName",
+      "lastName",
       "phone",
-      "code",
+      "pointCodeName",
+      "pointType",
       "point",
       "status",
       "exchangedate",
+      "startDate",
+      "endDate",     
+      "code",
     ];
     let count = 0;
     listPoint.forEach((el) => {

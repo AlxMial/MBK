@@ -133,7 +133,6 @@ export default function CampaignRewardReport() {
   const Excel = async (sheetname) => {
     setIsLoading(true);
     const TitleColumns = [
-      "ลำดับที่",
       "แคมเปญ",
       "คะแนน",
       "วันที่เริ่มต้น",
@@ -146,7 +145,6 @@ export default function CampaignRewardReport() {
       "คงเหลือ"
     ];
     const columns = [
-      "listNo",      
       "redemptionName",
       "points",
       "startDate",
