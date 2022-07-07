@@ -98,7 +98,7 @@ const Paymentsucceed = () => {
                     history.push(path.shopList);
                   }}
                 >
-                  {"กลับไปที่ร้านค้า"}
+                  {"ไปหน้าร้านค้า"}
                 </div>
                 <div
                   className="flex text-green-mbk text-center text-sm  font-bold bg-gold-mbk text-white rounded px-4"
@@ -152,7 +152,7 @@ const Paymentsucceed = () => {
                       history.push(path.shopList);
                     }}
                   >
-                    {"กลับไปที่ร้านค้า"}
+                    {"ไปหน้าร้านค้า"}
                   </div>
                   <div
                     className="flex text-green-mbk text-center text-sm  font-bold bg-gold-mbk text-white rounded px-4"

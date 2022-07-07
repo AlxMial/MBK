@@ -239,7 +239,7 @@ const Logistic = ({ props, setOrderHD, cancelStatus, setcancelStatus, settbCance
                             maxLength={255}
                             disabled={!isCanEdit ? true : (orderHD.paymentStatus === 3) ? true : !isCancel ? true : false}
                             onChange={(e) => {
-                                console.log(e.target.value)
+                    
                                 if (tbCancelOrder == null) {
                                     tbCancelOrder = { cancelOtherRemark: e.target.value }
                                 } else {

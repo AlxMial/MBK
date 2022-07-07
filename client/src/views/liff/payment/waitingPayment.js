@@ -50,7 +50,7 @@ const WaitingPayment = ({ price }) => {
                   history.push(path.shopList);
                 }}
               >
-                {"กลับไปที่ร้านค้า"}
+                {"ไปหน้าร้านค้า"}
               </div>
             </div>
             <div className="px-2" style={{ width: "50%" }}>

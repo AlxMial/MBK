@@ -75,23 +75,30 @@ router.post("/", async (req, res) => {
           "tbPointCodeHDId",
         ],
         where: {
-          [Op.or]: [{ code: Encrypt.EncodeKey(redeemCode[x].toLowerCase()) }, { codeNone: Encrypt.EncodeKey(redeemCode[x].toLowerCase()) }],
-          isDeleted: false,
-          isUse: false,
-        },
-      });
-
-      const Point = await tbPointCodeHD.findOne({
-        attributes: [
-          "pointCodePoint"
-        ],
-        where: {
-          id: PointDt.dataValues.tbPointCodeHDId,
+          [Op.or]: [
+            { code: Encrypt.EncodeKey(redeemCode[x].toLowerCase()) },
+            { codeNone: Encrypt.EncodeKey(redeemCode[x].toLowerCase()) },
+          ],
           isDeleted: false,
         },
       });
 
+   
+      let Point = [];
       if (PointDt) {
+        try{
+          Point = await tbPointCodeHD.findOne({
+            attributes: ["id","pointCodePoint"],
+            where: {
+              id: PointDt.dataValues.tbPointCodeHDId,
+              isDeleted: false,
+            },
+          });
+        }catch (err) { console.log(err.message)}  
+      }
+
+      
+      if (PointDt && Point) {
         if (PointDt.dataValues.isExpire) {
           status = {
             coupon: redeemCode[x],
@@ -102,7 +109,7 @@ router.post("/", async (req, res) => {
           };
         } else if (PointDt.dataValues.isUse) {
           status = {
-            coupon: edeemCode[x],
+            coupon: redeemCode[x],
             isValid: false,
             isInvalid: false,
             isExpire: false,
@@ -142,9 +149,8 @@ router.post("/", async (req, res) => {
           //     };
           //   }
           // }
-       
+
           status = {
- 
             coupon: redeemCode[x],
             isValid: true,
             isInvalid: false,
@@ -172,7 +178,7 @@ router.post("/", async (req, res) => {
             expireDate: new Date(new Date().getFullYear() + 2, 11, 31),
             isDeleted: false,
             tbMemberId: req.body.memberId,
-            tbPointCodeHDId: PointDt.dataValues.tbPointCodeHDId
+            tbPointCodeHDId: PointDt.dataValues.tbPointCodeHDId,
           };
 
           const memberPoint = await tbMemberPoint.create(historyPoint);
@@ -204,19 +210,17 @@ router.post("/", async (req, res) => {
       }
       statusRedeem.push(status);
     }
-    for (var i = 0; i < redeemCode.length; i++) {
-      
-    }
+    // for (var i = 0; i < redeemCode.length; i++) {
+
+    // }
     return res.status(200).json({ data: statusRedeem });
   } catch (err) {
-    res.status(500).json({
-      message: {
+    res.status(200).json({
         coupon: err.message,
         isValid: false,
         isInvalid: true,
         isExpire: false,
         isUse: false,
-      },
     });
   }
 });

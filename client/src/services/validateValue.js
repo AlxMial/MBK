@@ -68,7 +68,7 @@ class ValidateService {
     let val = "";
     let result = e.replaceAll("-", "");
     let ArrayStr = result.split("");
-    console.log(e);
+
     if (result === "" || re.test(result)) {
       for (var i = 0; i < ArrayStr.length; i++) {
         if (i === 0 && ArrayStr.length >= 2) {

@@ -39,7 +39,7 @@ const generateCoupon = async (req, res) => {
         codeCoupon += splitEncrypt[numEncrypt];
       } else codeCoupon += splitVar[i];
     }
-    codeCoupon =  req.body.couponId + codeCoupon
+    codeCoupon =  req.body.id + codeCoupon
     let ArrayCoupon = {
       codeCoupon: Encrypt.EncodeKey(codeCoupon.toLocaleLowerCase()),
       isUse: 0,
