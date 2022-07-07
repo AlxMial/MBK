@@ -1622,6 +1622,7 @@ router.get(
           });
         }
         //#endregion สินค้า productName
+      
       } else {
         const _tbMemberPoint = await tbMemberPoint.findAll({
           attributes: [
