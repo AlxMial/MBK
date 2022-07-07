@@ -789,7 +789,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
             paymentChannel: ["CC"],
             backendReturnUrl: "",
             frontendReturnUrl:
-              "https://mbk.hopeagro.co.th/line/paymentsucceed/" +
+              "https://mbk-whale.web.app/line/paymentsucceed/" +
               Encrypt.EncodeKey(orderId + "," + orderhd.orderNumber),
           };
 
@@ -1012,7 +1012,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             paymentChannel: ["CC"],
             backendReturnUrl: "",
             frontendReturnUrl:
-              "https://mbk.hopeagro.co.th/line/paymentsucceed/" +
+              "https://mbk-whale.web.app/line/paymentsucceed/" +
               Encrypt.EncodeKey(data.orderHd.id + "," + data.orderHd.orderNumber),
           };
 
@@ -1529,6 +1529,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
     OrderHD: OrderHD,
   });
 });
+
 //หน้าจอ ชำระเงิน
 router.post("/getOrder", validateLineToken, async (req, res) => {
   let status = true;
@@ -1937,7 +1938,8 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         points: hd.points,
         netTotal: hd.netTotal,
       };
-
+      console.log(hd.hddeliveryCost)
+      console.log(hd.discountDelivery)
       // เช็คการจ่ายเงิน
     }
   } catch (e) {

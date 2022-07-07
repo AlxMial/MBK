@@ -3,7 +3,7 @@
     "username": "jerry",
     "password": "jerrypassword",
     "database": "mbk_temp",
-    "host": "hopeagro.co.th",
+    "host": "undefined.ddns.net",
     "port":"3306",
     "dialect": "mysql",
     "pool" : {

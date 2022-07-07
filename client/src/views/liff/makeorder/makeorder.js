@@ -165,7 +165,7 @@ const MakeOrder = () => {
         if (RadioPayment === 1) {
           order.orderhd.paymentId = paymentID;
         }
-
+        
         doSaveOrder(order, async (res) => {
           if (res.status) {
             // ลบข้อมูล

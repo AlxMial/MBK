@@ -10,11 +10,11 @@ let routes = (app) => {
   router.get("/tutorials", excelController.getTutorials);
   router.get("/download/:id", excelController.download);
   router.delete("/delete/:id", excelController.deleteCode);
-  app.use("/mahboonkrongimport/api/excel", router);
+  app.use("/mbkimport/api/excel", router);
 
   router.post("/uploadCoupon", upload.single("file"), couponController.upload);
   router.post("/generateCoupon", couponController.generateCoupon)
-  app.use("/mahboonkrongimport/api/coupon", router);
+  app.use("/mbkimport/api/coupon", router);
 
 };
 
