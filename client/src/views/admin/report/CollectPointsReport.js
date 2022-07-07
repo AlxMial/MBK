@@ -549,7 +549,11 @@ export default function CollectPointsReport() {
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.point == null ? "-" : value.point}
+                            {value.points == null
+                              ? "-"
+                              : ("123".includes(value.campaignType)
+                                  ? "+"
+                                  : "-") + value.points}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
