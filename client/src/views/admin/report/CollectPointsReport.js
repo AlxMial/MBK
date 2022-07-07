@@ -17,14 +17,7 @@ export default function CollectPointsReport() {
   const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const listPointType = [
-    { value: "1", type: "Code", status: "สะสมคะแนน" },
-    { value: "2", type: "E-Commerce", status: "สะสมคะแนน" },
-    { value: "3", type: "Register", status: "สะสมคะแนน" },
-    { value: "4", type: "E-Coupon", status: "ใช้คะแนน" },
-    { value: "5", type: "ของสมมนาคุณ", status: "ใช้คะแนน" },
-    { value: "6", type: "Game", status: "ใช้คะแนน" },
-  ];
+
   const formSerch = useFormik({
     initialValues: {
       inputSerch: "",
@@ -47,60 +40,94 @@ export default function CollectPointsReport() {
         listSearch.sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
       );
     } else {
-      setListPoint(
-        listSearch
-          .filter((x) => {
-            const _startDate =
-              x.startDate !== "" ? convertToDate(x.startDate) : null;
-            const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
-            let isDate = false;
-            if (x.startDate !== "" && x.endDate !== "") {
-              isDate = true;
-            }
-            if (
-              (inputSerch !== ""
-                ? Search(x.CampaignName, inputSerch) ||
-                  Search(x.code, inputSerch) ||
-                  Search(x.firstName, inputSerch) ||
-                  Search(x.lastName, inputSerch) ||
-                  Search(x.phone, inputSerch) ||
-                  Search(x.points, inputSerch) ||
-                  Search(moment(x.endDate).format("DD/MM/YYYY"), inputSerch) ||
-                  Search(
-                    moment(x.startDate).format("DD/MM/YYYY"),
-                    inputSerch
-                  ) ||
-                  Search(
-                    moment(x.redeemDate).format("DD/MM/YYYY"),
-                    inputSerch
-                  ) ||
-                  Search(
-                    x.campaignType == "1"
-                      ? "กรอก Code จากสินค้า"
-                      : x.campaignType == "2"
-                      ? "ซื้อสินค้าออนไลน์"
-                      : x.campaignType == "3"
-                      ? "สมัครสมาชิก"
-                      : x.campaignType == "4"
-                      ? "แลกคูปอง"
-                      : x.campaignType == "5"
-                      ? "แลกของสมนาคุณ"
-                      : "เล่นเกมส์",
-                    inputSerch
-                  ) ||
-                  Search(
-                    "123".includes(x.campaignType) ? "รับคะแนน" : "แลกคะแนน",
-                    inputSerch
-                  )
-                : true) &&
-              SearchByDate(_startDate, _endDate)
-            ) {
-              return true;
-            }
-            return false;
-          })
-          .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
-      );
+      if (inputSerch == null) {
+        setListPoint(listSearch);
+      } else {
+        const _startDate =
+          formSerch.values.startDate == null
+            ? null
+            : new Date(moment(formSerch.values.startDate).format("yyy-MM-DD"));
+        const _endDate =
+          formSerch.values.endDate == null
+            ? null
+            : new Date(moment(formSerch.values.endDate).format("yyy-MM-DD"));
+        setListPoint(
+          listSearch
+            .filter((x) => {
+              let startDate =
+                x.startDate == null
+                  ? null
+                  : new Date(moment(new Date(x.startDate)).format("yyy-MM-DD"));
+              let endDate =
+                x.startDate == null
+                  ? null
+                  : new Date(moment(new Date(x.endDate)).format("yyy-MM-DD"));
+
+                  let isdate =  (startDate != null && endDate==null && startDate < _startDate) 
+                  ||
+                  (startDate != null && endDate!=null && _endDate !=null && _startDate !=null &&(
+                    (startDate >= _startDate &&startDate <= _endDate) ||
+                    ( endDate >= _startDate && endDate < _endDate) 
+                  )) 
+                  ||
+                  (startDate == null && endDate!=null && endDate > _startDate)
+                  ||
+                  (_startDate != null && _endDate ==null &&(_startDate >=startDate && _startDate <=endDate ))
+                  ||
+                  (_startDate == null && _endDate !=null && (_endDate >=startDate && _endDate <=endDate ))
+
+              if (
+                isdate && (
+                Search(x.CampaignName, inputSerch) ||
+                Search(x.code, inputSerch) ||
+                Search(x.firstName, inputSerch) ||
+                Search(x.lastName, inputSerch) ||
+                Search(x.phone, inputSerch) ||
+                Search(x.points, inputSerch) ||
+                Search(
+                  x.endDate == null
+                    ? ""
+                    : moment(x.endDate).format("DD/MM/YYYY"),
+                  inputSerch
+                ) ||
+                Search(
+                  x.startDate == null
+                    ? ""
+                    : moment(x.startDate).format("DD/MM/YYYY"),
+                  inputSerch
+                ) ||
+                Search(
+                  x.redeemDate == null
+                    ? ""
+                    : moment(x.redeemDate).format("DD/MM/YYYY"),
+                  inputSerch
+                ) ||
+                Search(
+                  x.campaignType == "1"
+                    ? "กรอก Code จากสินค้า"
+                    : x.campaignType == "2"
+                    ? "ซื้อสินค้าออนไลน์"
+                    : x.campaignType == "3"
+                    ? "สมัครสมาชิก"
+                    : x.campaignType == "4"
+                    ? "แลกคูปอง"
+                    : x.campaignType == "5"
+                    ? "แลกของสมนาคุณ"
+                    : "เล่นเกมส์",
+                  inputSerch
+                ) ||
+                Search(
+                  "123".includes(x.campaignType) ? "รับคะแนน" : "แลกคะแนน",
+                  inputSerch
+                ) )
+              ) {
+                return x;
+              }
+            })
+            .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+        );
+      }
+
       setPageNumber(0);
       setForcePage(0);
     }
@@ -114,41 +141,41 @@ export default function CollectPointsReport() {
     return status;
   };
 
-  const SearchByDate = (dataST_Date, dataED_Date) => {
-    let isSearch = false;
-    let st_Date =
-      formSerch.values.startDate !== null
-        ? convertToDate(formSerch.values.startDate)
-        : null;
-    let ed_Date =
-      formSerch.values.endDate !== null
-        ? convertToDate(formSerch.values.endDate)
-        : null;
-    if (
-      (st_Date !== null &&
-        ed_Date !== null &&
-        ((st_Date <= dataST_Date &&
-          st_Date <= dataED_Date &&
-          ed_Date >= dataST_Date &&
-          ed_Date >= dataED_Date) ||
-          (st_Date <= dataST_Date &&
-            ed_Date >= dataST_Date &&
-            !(st_Date <= dataED_Date && ed_Date >= dataED_Date)) ||
-          (!(st_Date <= dataST_Date && ed_Date >= dataST_Date) &&
-            st_Date <= dataED_Date &&
-            ed_Date >= dataED_Date))) ||
-      (st_Date !== null &&
-        ed_Date === null &&
-        (st_Date <= dataST_Date || st_Date <= dataED_Date)) ||
-      (st_Date === null &&
-        ed_Date !== null &&
-        (ed_Date >= dataST_Date || ed_Date >= dataED_Date)) ||
-      (st_Date === null && ed_Date === null)
-    ) {
-      isSearch = true;
-    }
-    return isSearch;
-  };
+  // const SearchByDate = (dataST_Date, dataED_Date) => {
+  //   let isSearch = false;
+  //   let st_Date =
+  //     formSerch.values.startDate !== null
+  //       ? convertToDate(formSerch.values.startDate)
+  //       : null;
+  //   let ed_Date =
+  //     formSerch.values.endDate !== null
+  //       ? convertToDate(formSerch.values.endDate)
+  //       : null;
+  //   if (
+  //     (st_Date !== null &&
+  //       ed_Date !== null &&
+  //       ((st_Date <= dataST_Date &&
+  //         st_Date <= dataED_Date &&
+  //         ed_Date >= dataST_Date &&
+  //         ed_Date >= dataED_Date) ||
+  //         (st_Date <= dataST_Date &&
+  //           ed_Date >= dataST_Date &&
+  //           !(st_Date <= dataED_Date && ed_Date >= dataED_Date)) ||
+  //         (!(st_Date <= dataST_Date && ed_Date >= dataST_Date) &&
+  //           st_Date <= dataED_Date &&
+  //           ed_Date >= dataED_Date))) ||
+  //     (st_Date !== null &&
+  //       ed_Date === null &&
+  //       (st_Date <= dataST_Date || st_Date <= dataED_Date)) ||
+  //     (st_Date === null &&
+  //       ed_Date !== null &&
+  //       (ed_Date >= dataST_Date || ed_Date >= dataED_Date)) ||
+  //     (st_Date === null && ed_Date === null)
+  //   ) {
+  //     isSearch = true;
+  //   }
+  //   return isSearch;
+  // };
 
   const convertToDate = (e) => {
     const date = new Date(e);
@@ -367,6 +394,15 @@ export default function CollectPointsReport() {
                     }
                     onChange={(e) => {
                       setDataSearch(e, "s_eddate");
+                    }}
+                    disabledDate={(current) => {
+                      if (formSerch.values.startDate != null) {
+                        let day = formSerch.values.startDate;
+                        return (
+                          current &&
+                          current <= moment(new Date(day)).endOf("day")
+                        );
+                      }
                     }}
                   />
                 </ConfigProvider>

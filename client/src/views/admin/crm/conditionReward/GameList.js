@@ -38,11 +38,11 @@ const GameList = ({ id, setListGame, listGame }) => {
         listSearch.filter((x) => {
           if (x.rewardType === "1") {
             if (x.couponName.toLowerCase().includes(e)) {
-              return x
+              return x;
             }
           } else if (x.rewardType === "2") {
             if (x.productName.toLowerCase().includes(e)) {
-              return x
+              return x;
             }
           }
         })
@@ -85,7 +85,7 @@ const GameList = ({ id, setListGame, listGame }) => {
   };
 
   const handleSubmitModal = (data) => {
-    if (data['index'] !== undefined) {
+    if (data["index"] !== undefined) {
       setListGame((s) => {
         const newArr = s.slice();
         newArr[index] = data;
@@ -97,8 +97,8 @@ const GameList = ({ id, setListGame, listGame }) => {
         return newArr;
       });
     } else {
-      data['index'] = listGame.length;
-      console.log(data)
+      data["index"] = listGame.length;
+      console.log(data);
       setListGame((s) => {
         return [...s, data];
       });
@@ -141,7 +141,7 @@ const GameList = ({ id, setListGame, listGame }) => {
                     }
                     type="button"
                     onClick={() => {
-                      setModalData({couponName:""})
+                      setModalData({ couponName: "" });
                       setOpen(true);
                     }}
                   >
@@ -179,7 +179,7 @@ const GameList = ({ id, setListGame, listGame }) => {
                     <div className="flex flex-wrap" id="save">
                       <span
                         id="save"
-                        onClick={() => { }}
+                        onClick={() => {}}
                         className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
                       >
                         <i className="fas fa-save mr-2"></i>
@@ -190,7 +190,7 @@ const GameList = ({ id, setListGame, listGame }) => {
                   <li>
                     <div className="flex flex-wrap" id="back">
                       <span
-                        onClick={() => { }}
+                        onClick={() => {}}
                         id="back"
                         className="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white font-bold text-sm w-8/12"
                       >
@@ -207,13 +207,13 @@ const GameList = ({ id, setListGame, listGame }) => {
             <table className="items-center w-full border ">
               <thead>
                 <tr>
-                  <th
+                  {/* <th
                     className={
                       "px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 w-8"
                     }
                   >
                     เลือก
-                  </th>
+                  </th> */}
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
@@ -230,37 +230,39 @@ const GameList = ({ id, setListGame, listGame }) => {
               </thead>
 
               <tbody>
-                {null ??  listGame
-                  .slice(pagesVisited, pagesVisited + usersPerPage)
-                  .map((value, key) => {
-                    return (
-                      <tr key={key}>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 " style={{ paddingLeft: '25px' }}>
+                {null ??
+                  listGame
+                    .slice(pagesVisited, pagesVisited + usersPerPage)
+                    .map((value, key) => {
+                      return (
+                        <tr key={key}>
+                          {/* <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 " style={{ paddingLeft: '25px' }}>
 
                           <CheckBoxUC onChange={(e) => { handleChange(e, key) }} checked={value.isSelect} name="isSelect" />
 
-                        </td>
-                        <td
-                          onClick={() => {
-                            OpenModal(value, key);
-                          }}
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
-                        >
-                          {value.rewardType === "1"
-                            ? value.couponName
-                            : value.productName}
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <i
-                            className="fas fa-trash text-red-500 cursor-pointer"
+                        </td> */}
+                          <td
+                            style={{ height: "35px" }}
                             onClick={() => {
-                              openModalSubject(value.id, value.rewardType);
+                              OpenModal(value, key);
                             }}
-                          ></i>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                            className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
+                          >
+                            {value.rewardType === "1"
+                              ? value.couponName
+                              : value.productName}
+                          </td>
+                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
+                            <i
+                              className="fas fa-trash text-red-500 cursor-pointer"
+                              onClick={() => {
+                                openModalSubject(value.id, value.rewardType);
+                              }}
+                            ></i>
+                          </td>
+                        </tr>
+                      );
+                    })}
               </tbody>
             </table>
           </div>
