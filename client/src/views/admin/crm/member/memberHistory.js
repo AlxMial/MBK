@@ -17,8 +17,10 @@ const MemberHistory = ({
   modalData,
   memberId,
   handleSubmitModal,
+  textSearch,
+  settextSearch,
 }) => {
-    console.log(memberId)
+  console.log(memberId);
   Modal.setAppElement("#root");
   const useStyle = customStyles();
   const useStyleMobile = customStylesMobile();
@@ -27,6 +29,9 @@ const MemberHistory = ({
 
   const onClose = () => {
     handleSubmitModal();
+  };
+  const onChangeTab = () => {
+    settextSearch("");
   };
 
   useEffect(() => {}, []);
@@ -50,17 +55,33 @@ const MemberHistory = ({
             </span>
           </div>
           <div>
-            <span className="text-base margin-auto font-bold text-red-600 cursor-pointer" onClick={()=>onClose()}>
+            <span
+              className="text-base margin-auto font-bold text-red-600 cursor-pointer"
+              onClick={() => onClose()}
+            >
               X
             </span>
           </div>
         </div>
-        <Tabs defaultActiveKey="1" type="card" className="mt-6">
+        <Tabs
+          defaultActiveKey="1"
+          type="card"
+          className="mt-6"
+          onChange={onChangeTab}
+        >
           <TabPane tab="การรับคะแนน" key="1">
-            <MemberReward memberId={memberId} />
+            <MemberReward
+              memberId={memberId}
+              textSearch={textSearch}
+              settextSearch={settextSearch}
+            />
           </TabPane>
-          <TabPane tab="การแลกของรางวัล" key="2" >
-            <MemberRedemption memberId={memberId}/>
+          <TabPane tab="การแลกของรางวัล" key="2">
+            <MemberRedemption
+              memberId={memberId}
+              textSearch={textSearch}
+              settextSearch={settextSearch}
+            />
           </TabPane>
         </Tabs>
       </div>

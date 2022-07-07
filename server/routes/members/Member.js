@@ -16,7 +16,7 @@ const {
   tbCancelOrder,
   tbReturnOrder,
   tbPointCodeHD,
-  tbPointCodeDT
+  tbPointCodeDT,
 } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
@@ -29,10 +29,15 @@ const Encrypt = new ValidateEncrypt();
 const line = require("@line/bot-sdk");
 const config = require("../../services/config.line");
 const { sign } = require("jsonwebtoken");
-const sequelize = new Sequelize(config.database.database,config.database.username, config.database.password, {
-  host: config.database.host,
-  dialect:config.database.dialect,
-});
+const sequelize = new Sequelize(
+  config.database.database,
+  config.database.username,
+  config.database.password,
+  {
+    host: config.database.host,
+    dialect: config.database.dialect,
+  }
+);
 
 // import moment from "moment";
 router.get("/", validateToken, async (req, res) => {
@@ -426,7 +431,7 @@ router.put("/", async (req, res) => {
       },
     },
   });
-  console.log(member)
+  console.log(member);
   if (
     !Encrypt.IsNullOrEmpty(req.body.firstName) &&
     !Encrypt.IsNullOrEmpty(req.body.lastName) &&
@@ -495,7 +500,6 @@ router.delete("/:memberId", validateToken, async (req, res) => {
       .json({ status: false, message: "not found id", tbMember: null });
   }
 
-
   const client = new line.Client({
     channelAccessToken: config.lineConfig.bearerToken,
     channelSecret: config.lineConfig.channelSecret,
@@ -518,7 +522,6 @@ router.post("/checkRegister", async (req, res) => {
   let accessToken;
 
   try {
-
     // const [results, data] = await sequelize.query(`update  tbpointcodedts set isExpire = 1 where tbPointCodeHDId in (select id from tbpointcodehds where endDate < now() and isDeleted = 0 )`);
 
     let member = await tbMember.findOne({
@@ -776,12 +779,12 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
         "netTotal",
         "stockNumber",
         "isCancel",
-        "isReturn"
+        "isReturn",
       ],
       where: {
         memberId: memberId,
         isCancel: false,
-        isReturn: false
+        isReturn: false,
       },
       include: [
         {
@@ -837,10 +840,10 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
             let discount =
               dt.discount > 0
                 ? // ? dt.discountType == 1
-                //   ? parseFloat(dt.price) - parseFloat(dt.discount)
-                //   : parseFloat(dt.price) -
-                //   (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
-                parseFloat(dt.price) - parseFloat(dt.discount)
+                  //   ? parseFloat(dt.price) - parseFloat(dt.discount)
+                  //   : parseFloat(dt.price) -
+                  //   (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
+                  parseFloat(dt.price) - parseFloat(dt.discount)
                 : 0;
 
             if (j < 2) {
@@ -1001,8 +1004,8 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
                 deliverStatus == "Wait"
                   ? 1
                   : deliverStatus == "InTransit"
-                    ? 2
-                    : 3,
+                  ? 2
+                  : 3,
             };
             if (product.length < 2) {
               product.push(data);
@@ -1187,8 +1190,8 @@ router.get("/getMyProduct", validateLineToken, async (req, res) => {
                 deliverStatus == "Wait"
                   ? 1
                   : deliverStatus == "InTransit"
-                    ? 2
-                    : 3,
+                  ? 2
+                  : 3,
             };
             product.push(data);
           }
@@ -1372,8 +1375,8 @@ router.post("/getMyProductById", validateLineToken, async (req, res) => {
               deliverStatus == "Wait"
                 ? 1
                 : deliverStatus == "InTransit"
-                  ? 2
-                  : 3,
+                ? 2
+                : 3,
           };
         }
       }
@@ -1434,247 +1437,319 @@ router.post("/checkDuplicate", async (req, res) => {
     });
   }
 });
-router.get("/getMemberpointsByMemberID/:id", validateLineToken, async (req, res) => {
-  let status = true;
-  let msg;
-  let MemberPoint = [];
-  let Campaign = []
-  // let product;
-  try {
-    const id = Encrypt.DecodeKey(req.params.id);
-    const _tbMemberPoint = await tbMemberPoint.findAll({
-      attributes: ["id", "campaignType",
-        "campaignType"
-        , "code", "redeemDate", "expireDate", "point"],
-      where: { tbMemberId: id, campaignType: [1, 2, 3] },
-    });
+router.get(
+  "/getMemberpointsByMemberID/:type/:id",
+  validateToken,
+  async (req, res) => {
+    let status = true;
+    let msg;
+    let MemberPoint = [];
+    let Campaign = [];
+    // let product;
+    try {
+      const id = Encrypt.DecodeKey(req.params.id);
+      if (req.params.type != "earnPoints") {
+        tbRedemptionConditionsHD.hasMany(tbRedemptionCoupon, {
+          foreignKey: "redemptionConditionsHDId",
+        });
+        tbRedemptionConditionsHD.hasMany(tbRedemptionProduct, {
+          foreignKey: "redemptionConditionsHDId",
+        });
 
+        tbRedemptionProduct.hasMany(tbMemberReward, {
+          foreignKey: "TableHDId",
+        });
+        tbRedemptionCoupon.hasMany(tbCouponCode, {
+          foreignKey: "redemptionCouponId",
+        });
 
-    tbRedemptionConditionsHD.hasMany(tbRedemptionCoupon, {
-      foreignKey: "redemptionConditionsHDId",
-    });
-    tbRedemptionConditionsHD.hasMany(tbRedemptionProduct, {
-      foreignKey: "redemptionConditionsHDId",
-    });
+        tbCouponCode.hasMany(tbMemberReward, {
+          foreignKey: "TableHDId",
+        });
 
+        //#region คูปอง
 
-    tbRedemptionProduct.hasMany(tbMemberReward, {
-      foreignKey: "TableHDId",
-    });
-    tbRedemptionCoupon.hasMany(tbCouponCode, {
-      foreignKey: "redemptionCouponId",
-    });
-
-    tbCouponCode.hasMany(tbMemberReward, {
-      foreignKey: "TableHDId",
-    });
-
-    //#region คูปอง
-
-    const CouponData = await tbRedemptionConditionsHD.findAll({
-      attributes: [["redemptionName", "CampaignName"], "redemptionType", "rewardType", "points"],
-      include: [{
-        attributes: ["couponName", "expiredDate"],
-        model: tbRedemptionCoupon,
-        where: {
-          isDeleted: false,
-        },
-        include: [
-          {
-            attributes: [
-              "id",
-            ],
-            model: tbCouponCode,
-            where: {
-              isDeleted: false,
-            },
-            required: true,
-            include: [
-              {
-                attributes: [
-                  "id",
-                  // "rewardType",
-                  "redeemDate",
-                ],
-                model: tbMemberReward,
-                where: {
-                  isDeleted: false,
-                  memberId: id
-                },
-                required: true,
-              },
-
-            ],
-
-          },
-
-        ],
-      }
-      ]
-
-    })
-    if (CouponData) {
-      CouponData.map((e, i) => {
-        let CampaignName = e.dataValues.CampaignName
-        let redemptionType = e.dataValues.redemptionType == 1 ? "Standard" : "Game"
-        let rewardType = e.dataValues.rewardType == 1 ? "E-Coupon" : "Product"
-        let points = e.dataValues.points
-        let campaignType = e.dataValues.redemptionType == 1 ? e.dataValues.rewardType == 1 ? 4 : 5 : 6
-        if (e.tbRedemptionCoupons.length > 0) {
-          e.tbRedemptionCoupons.map((rc, rcii) => {
-            let expiredDate = rc.dataValues.expiredDate
-            if (rc.tbCouponCodes.length > 0) {
-              rc.tbCouponCodes.map((cc, cci) => {
-                if (cc.tbMemberRewards) {
-                  let redeemDate = cc.tbMemberRewards[0].dataValues.redeemDate
-
-                  Campaign.push({ CampaignName: CampaignName, campaignType: campaignType, redemptionType: redemptionType, rewardType: rewardType, points: points, redeemDate: redeemDate, expiredDate: expiredDate })
-                }
-              })
-            }
-          })
-
-        }
-      })
-    }
-    //#endregion คูปอง
-    //#region สินค้า productName
-    const productNameData = await tbRedemptionConditionsHD.findAll({
-      attributes: [["redemptionName", "CampaignName"], "redemptionType", "rewardType", "points"],
-      include: [
-        {
-          attributes: ["productName"],
-          model: tbRedemptionProduct,
-          where: {
-            isDeleted: false,
-          },
+        const CouponData = await tbRedemptionConditionsHD.findAll({
+          attributes: [
+            ["redemptionName", "CampaignName"],
+            "redemptionType",
+            "rewardType",
+            "points",
+          ],
           include: [
             {
-              attributes: [
-                "id",
-                // "rewardType",
-                "redeemDate",
-              ],
-              model: tbMemberReward,
+              attributes: ["couponName", "expiredDate"],
+              model: tbRedemptionCoupon,
               where: {
                 isDeleted: false,
-                memberId: id
+              },
+              include: [
+                {
+                  attributes: ["id", "codeCoupon"],
+                  model: tbCouponCode,
+                  where: {
+                    isDeleted: false,
+                  },
+                  required: true,
+                  include: [
+                    {
+                      attributes: ["id", "redeemDate"],
+                      model: tbMemberReward,
+                      where: {
+                        isDeleted: false,
+                        memberId: id,
+                      },
+                      required: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        });
+        if (CouponData) {
+          CouponData.map((e, i) => {
+            let CampaignName = e.dataValues.CampaignName;
+            let redemptionType =
+              e.dataValues.redemptionType == 1 ? "Standard" : "Game";
+            let rewardType =
+              e.dataValues.rewardType == 1 ? "E-Coupon" : "Product";
+            let points = e.dataValues.points;
+            let campaignType =
+              e.dataValues.redemptionType == 1
+                ? e.dataValues.rewardType == 1
+                  ? 4
+                  : 5
+                : 6;
+            if (e.tbRedemptionCoupons.length > 0) {
+              e.tbRedemptionCoupons.map((rc, rcii) => {
+                let expiredDate = rc.dataValues.expiredDate;
+                if (rc.tbCouponCodes.length > 0) {
+                  rc.tbCouponCodes.map((cc, cci) => {
+                    let codeCoupon = Encrypt.DecodeKey(
+                      cc.codeCoupon
+                    ).toLocaleUpperCase();
+                    if (cc.tbMemberRewards) {
+                      let redeemDate =
+                        cc.tbMemberRewards[0].dataValues.redeemDate;
+
+                      Campaign.push({
+                        CampaignName: CampaignName,
+                        campaignType: campaignType,
+                        redemptionType: redemptionType,
+                        rewardType: rewardType,
+                        code: codeCoupon,
+                        points: points,
+                        redeemDate: redeemDate,
+                        expiredDate: expiredDate,
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }
+        //#endregion คูปอง
+        //#region สินค้า productName
+        const productNameData = await tbRedemptionConditionsHD.findAll({
+          attributes: [
+            ["redemptionName", "CampaignName"],
+            "redemptionType",
+            "rewardType",
+            "points",
+          ],
+          include: [
+            {
+              attributes: ["productName"],
+              model: tbRedemptionProduct,
+              where: {
+                isDeleted: false,
+              },
+              include: [
+                {
+                  attributes: [
+                    "id",
+                    // "rewardType",
+                    "redeemDate",
+                  ],
+                  model: tbMemberReward,
+                  where: {
+                    isDeleted: false,
+                    memberId: id,
+                  },
+                  required: true,
+                },
+              ],
+            },
+          ],
+        });
+        if (productNameData) {
+          productNameData.map((e, i) => {
+            let CampaignName = e.dataValues.CampaignName;
+            let redemptionType =
+              e.dataValues.redemptionType == 1 ? "Standard" : "Game";
+            let rewardType =
+              e.dataValues.rewardType == 1 ? "E-Coupon" : "Product";
+            let points = e.dataValues.points;
+            let campaignType =
+              e.dataValues.redemptionType == 1
+                ? e.dataValues.rewardType == 1
+                  ? 4
+                  : 5
+                : 6;
+            if (e.tbRedemptionProducts) {
+              let expiredDate = "";
+              e.tbRedemptionProducts.map((rp, rpi) => {
+                if (rp.tbMemberRewards) {
+                  let redeemDate = rp.tbMemberRewards[0].dataValues.redeemDate;
+
+                  Campaign.push({
+                    CampaignName: CampaignName,
+                    campaignType: campaignType,
+                    redemptionType: redemptionType,
+                    rewardType: rewardType,
+                    points: points,
+                    redeemDate: redeemDate,
+                    expiredDate: expiredDate,
+                  });
+                }
+              });
+            }
+          });
+        }
+        //#endregion สินค้า productName
+      } else {
+        const _tbMemberPoint = await tbMemberPoint.findAll({
+          attributes: [
+            "id",
+            "campaignType",
+            "campaignType",
+            "code",
+            "redeemDate",
+            "expireDate",
+            "point",
+          ],
+          where: { tbMemberId: id, campaignType: [1, 2, 3] },
+          order: [["redeemDate", "DESC"]],
+        });
+
+        if (_tbMemberPoint) {
+          MemberPoint = _tbMemberPoint;
+          _tbMemberPoint.map((e, i) => {
+            if (e.campaignType == 2) {
+              let CampaignName = "คะแนนจากซื้อสินค้า";
+              let redemptionType = "E-commerce";
+              let rewardType = "";
+              let points = e.point;
+              let campaignType = e.campaignType;
+              Campaign.push({
+                CampaignName: CampaignName,
+                campaignType: campaignType,
+                redemptionType: redemptionType,
+                rewardType: rewardType,
+                points: points,
+                redeemDate: e.redeemDate,
+                expiredDate: e.expireDate,
+              });
+            } else if (e.campaignType == 3) {
+              let CampaignName = "ลงทะเบียน";
+              let redemptionType = "Register";
+              let rewardType = "";
+              let points = e.point;
+              let campaignType = e.campaignType;
+              Campaign.push({
+                CampaignName: CampaignName,
+                campaignType: campaignType,
+                redemptionType: redemptionType,
+                rewardType: rewardType,
+                points: points,
+                redeemDate: e.redeemDate,
+                expiredDate: e.expireDate,
+              });
+            }
+
+            //
+          });
+
+          let _pointcode = [];
+          let _point = [];
+
+          _tbMemberPoint.filter((e) => {
+            if (e.campaignType == 1) {
+              // return e
+              _pointcode.push(e.code);
+              _point.push(e.point);
+            }
+          });
+
+          if (_point.length > 0) {
+            tbPointCodeHD.hasMany(tbPointCodeDT, {
+              foreignKey: "tbPointCodeHDId",
+            });
+            const _tbPointCodeHD = await tbPointCodeHD.findAll({
+              attributes: [["pointCodeName", "CampaignName"]],
+              include: [
+                {
+                  attributes: ["id", "code"],
+                  model: tbPointCodeDT,
+                  where: {
+                    isDeleted: false,
+                    code: _pointcode,
+                    isUse: true,
+                    memberId: id,
+                  },
+                  order: [
+                    ["id", "DESC"],
+                    ["isUse", "DESC"],
+                  ],
+                  required: true,
+                },
+              ],
+              order: [["id", "DESC"]],
+              where: {
+                pointCodePoint: _point,
               },
               required: true,
-            },
-
-          ],
-        }
-      ]
-
-    })
-    if (productNameData) {
-      productNameData.map((e, i) => {
-        let CampaignName = e.dataValues.CampaignName
-        let redemptionType = e.dataValues.redemptionType == 1 ? "Standard" : "Game"
-        let rewardType = e.dataValues.rewardType == 1 ? "E-Coupon" : "Product"
-        let points = e.dataValues.points
-        let campaignType = e.dataValues.redemptionType == 1 ? e.dataValues.rewardType == 1 ? 4 : 5 : 6
-        if (e.tbRedemptionProducts) {
-          let expiredDate = ""
-          e.tbRedemptionProducts.map((rp, rpi) => {
-            if (rp.tbMemberRewards) {
-              let redeemDate = rp.tbMemberRewards[0].dataValues.redeemDate
-
-              Campaign.push({ CampaignName: CampaignName, campaignType: campaignType, redemptionType: redemptionType, rewardType: rewardType, points: points, redeemDate: redeemDate, expiredDate: expiredDate })
+            });
+            if (_tbPointCodeHD) {
+              _tbPointCodeHD.map((e, i) => {
+                let CampaignName = e.dataValues.CampaignName;
+                let redemptionType = "";
+                let rewardType = "";
+                // let points = ""
+                let campaignType = 1;
+                if (e.tbPointCodeDTs) {
+                  e.tbPointCodeDTs.map((pc, i) => {
+                    let code = pc.code;
+                    let item = _tbMemberPoint.find((e) => e.code == code);
+                    Campaign.push({
+                      CampaignName: CampaignName,
+                      campaignType: campaignType,
+                      redemptionType: redemptionType,
+                      rewardType: rewardType,
+                      points: item.dataValues.point,
+                      redeemDate: item.dataValues.redeemDate,
+                      expiredDate: item.dataValues.expireDate,
+                    });
+                  });
+                }
+              });
             }
-          })
-
-        }
-      })
-    }
-    //#endregion สินค้า productName
-
-
-    if (_tbMemberPoint) {
-      MemberPoint = _tbMemberPoint
-      _tbMemberPoint.map((e, i) => {
-        if (e.campaignType == 2) {
-          let CampaignName = "คะแนนจากซื้อสินค้า"
-          let redemptionType = "E-commerce"
-          let rewardType = ""
-          let points = e.point
-          let campaignType = e.campaignType
-          Campaign.push({ CampaignName: CampaignName, campaignType: campaignType, redemptionType: redemptionType, rewardType: rewardType, points: points, redeemDate: e.redeemDate, expiredDate: e.expireDate })
-        } else if (e.campaignType == 3) {
-          let CampaignName = "ลงทะเบียน"
-          let redemptionType = "Register"
-          let rewardType = ""
-          let points = e.point
-          let campaignType = e.campaignType
-          Campaign.push({ CampaignName: CampaignName, campaignType: campaignType, redemptionType: redemptionType, rewardType: rewardType, points: points, redeemDate: e.redeemDate, expiredDate: e.expireDate })
-        }
-
-        //
-
-      })
-
-      let _point = []
-      _tbMemberPoint.filter(e => {
-        if (e.campaignType == 1) {
-          // return e
-          _point.push(e.code)
-        }
-      })
-      if (_point.length > 0) {
-        tbPointCodeHD.hasMany(tbPointCodeDT, {
-          foreignKey: "tbPointCodeHDId",
-        });
-        const _tbPointCodeHD = await tbPointCodeHD.findAll({
-          attributes: [["pointCodeName", "CampaignName"]],
-          include: [{
-            attributes: ["id", "code"],
-            model: tbPointCodeDT,
-            where: {
-              isDeleted: false,
-              code: _point,
-              isUse: true,
-              memberId: id
-            },
-            required: true,
           }
-          ],
-          required: true,
-
-        })
-        if (_tbPointCodeHD) {
-          _tbPointCodeHD.map((e, i) => {
-            let CampaignName = e.dataValues.CampaignName
-            let redemptionType = ""
-            let rewardType = ""
-            // let points = ""
-            let campaignType = 1
-            if (e.tbPointCodeDTs) {
-              e.tbPointCodeDTs.map((pc, i) => {
-                let code = pc.code
-                let item = _tbMemberPoint.find(e => e.code == code)
-                Campaign.push({
-                  CampaignName: CampaignName, campaignType: campaignType, redemptionType: redemptionType, rewardType: rewardType, points: item.dataValues.point,
-                  redeemDate: item.dataValues.redeemDate, expiredDate: item.dataValues.expireDate
-                })
-              })
-            }
-          })
-
         }
       }
+    } catch (e) {
+      status = false;
+      msg = e.message;
     }
 
-  } catch (e) {
-    status = false;
-    msg = e.message;
+    return res.json({
+      status: status,
+      msg: msg,
+      Campaign: Campaign,
+    });
   }
-
-  return res.json({
-    status: status,
-    msg: msg,
-    Campaign: Campaign
-  });
-});
+);
 
 module.exports = router;

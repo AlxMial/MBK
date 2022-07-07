@@ -60,7 +60,7 @@ export default function MemberInfo() {
   const [isClick, setIsClick] = useState(false);
   const [isClickRegister, setIsClickRegister] = useState(false);
   const [open, setOpen] = useState(false);
-
+  const [textSearch, settextSearch] = useState("");
   let history = useHistory();
   const { addToast } = useToasts();
   /* Method Condition */
@@ -348,8 +348,7 @@ export default function MemberInfo() {
     formik.values.lastName = "";
     formik.values.email = "";
     formik.values.phone = "";
-    formik.values.address =
-      "";
+    formik.values.address = "";
     formik.values.province =
       formik.values.province === "" ? "1" : formik.values.province;
     formik.values.district =
@@ -503,15 +502,20 @@ export default function MemberInfo() {
                 <div className="flex flex-wrap">
                   <div className="w-full lg:w-2/12 px-4 margin-auto-t-b"></div>
                   <div className="w-full lg:w-8/12 px-4 mb-2 text-right">
-                    {/* <div className="flex flex-wrap w-full justify-content-right">
+                    <div className="flex flex-wrap w-full justify-content-right">
                       <img
+                        className="cursor-pointer"
                         src={require("assets/img/mbk/giftReward.png").default}
                         alt="..."
+                        onClick={() => OpenModal()}
                       ></img>
-                      <span className="text-green-mbk text-lg font-bold cursor-pointer margin-auto-t-b" onClick={() => OpenModal()}>
+                      <span
+                        className="text-green-mbk text-lg font-bold cursor-pointer margin-auto-t-b"
+                        onClick={() => OpenModal()}
+                      >
                         &nbsp;{formik.values.memberPoint}&nbsp;คะแนน
                       </span>
-                    </div> */}
+                    </div>
                   </div>
                   <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
                     <div className="relative w-full margin-a">
@@ -1146,6 +1150,8 @@ export default function MemberInfo() {
           handleSubmitModal={handleSubmitModal}
           memberId={id}
           handleModal={() => setOpen(false)}
+          textSearch={textSearch}
+          settextSearch={settextSearch}
         />
       )}
     </>
