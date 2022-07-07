@@ -1,6 +1,6 @@
 const config = {
   dev: true,
-  UID: "Ubfcc855b6a6dae691da8sasdfsdfdfsdfa98801d1ec206",
+  UID: "Ubfcc855b6a6dae691da898801d1ec206",
   liffId: "1657109260-L0jrqxlN", //whale
   // liffId: "1657238460-gz9m6Wkn", //undefined
   // otp
@@ -11,13 +11,13 @@ const config = {
   otpvalidate: "https://portal-otp.smsmkt.com/api/otp-validate",
 
   _baseURL: "http://localhost:3001/mbkserver/",
-  _baseURLImport: "http://localhost:3002/mbkimport/",
+  // _baseURLImport: "http://localhost:3002/mbkimport/",
 
   // _baseURL: "https://undefined.ddns.net/mahboonkrongserver/",
   // _baseURLImport: "https://undefined.ddns.net/mahboonkrongimport/",
 
   // _baseURL: "https://undefined.ddns.net/mbkserver/",
-  // _baseURLImport: "https://undefined.ddns.net/mbkimport/",
+  _baseURLImport: "https://undefined.ddns.net/mbkimport/",
 
   forgotpassword: "https://mbk-whale.web.app"
   // forgotpassword: "https://mbk.hopeagro.co.th"

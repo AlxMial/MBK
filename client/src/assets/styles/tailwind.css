@@ -107,6 +107,13 @@ body {
   src: url("../../assets/fonts/NotoSansThai-Regular.ttf");
 }
 
+@font-face {
+  font-family: "Noto Sans thai";
+  src: url("../../assets/fonts/NotoSansThai-VariableFont_wdth,wght.ttf");
+}
+
+
+
 .THSarabun {
   font-family: "THSarabun";
 }

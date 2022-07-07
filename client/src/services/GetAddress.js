@@ -38,6 +38,8 @@ export const getDistrict = async () => {
 
 export const getAddress = async (type, id) => {
   var Json = [];
+  console.log(id)
+  console.log(type)
   if (type === "district") {
     await api_amphure
       .filter((e) => e.province_id.toString() === id)
@@ -59,9 +61,11 @@ export const getAddress = async (type, id) => {
           label: field.label,
         });
       });
+
     SortValue(Json);
     return Json;
   } else if (type === "postcode") {
+
     await api_tombon
       .filter((e) => e.value.toString() === id)
       .forEach((field) => {

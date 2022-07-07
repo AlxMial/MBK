@@ -8,6 +8,7 @@ const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
 router.get("/", validateToken, async (req, res) => {
+
   const menu = await tbMenu.findAll();
   const menuShow = [];
   const listMenu = await tbPermission.findAll({

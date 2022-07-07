@@ -378,7 +378,7 @@ router.post("/", async (req, res) => {
         code: null,
         point: point.dataValues.pointRegisterScore,
         redeemDate: new Date(),
-        expireDate: new Date(new Date().getFullYear() + 2, 11, 32),
+        expireDate: new Date(new Date().getFullYear() + 2, 11, 31),
         isDeleted: false,
         tbMemberId: members.id,
         tbPointCodeHDId: null,
@@ -446,6 +446,8 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/", async (req, res) => {
+
+  
   req.body.id = Encrypt.DecodeKey(req.body.id);
 
   const ConstMember = await tbMember.findOne({ where: { id: req.body.id } });

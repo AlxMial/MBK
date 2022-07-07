@@ -17,6 +17,7 @@ import configureStore, { history } from "redux/store";
 import { ConnectedRouter } from "connected-react-router";
 import { GetPermissionByUserName } from "services/Permission";
 
+
 export const store = configureStore();
 
 const getPermission = async () => {
@@ -24,7 +25,11 @@ const getPermission = async () => {
   // const session = sessionStorage.getItem("linkPage");
   // console.log(role)
   const value = window.location.pathname.toString().toLowerCase();
-  if (role === undefined && !value.includes('line') && !value.includes('auth')) {
+  if (
+    role === undefined &&
+    !value.includes("line") &&
+    !value.includes("auth")
+  ) {
     history.push("/auth/login");
     // if (!role.data.error)
     //   if (role.data.data.filter((e) => e.id === 10).length > 0) {
@@ -69,22 +74,24 @@ function App() {
   }, []);
 
   return (
-    <Provider store={store}>
-      <ConnectedRouter history={history}>
-        <div className="App">
-          <AuthContext.Provider value={{ authState, setAuthState }}>
-            <ToastProvider>
-              <Switch>
-                <Route path="/admin" component={Admin} />
-                <Route path="/auth" component={Auth} />
-                <Route path="/line" component={Liff} />
-                <Redirect from="*/" to="/auth/login" />
-              </Switch>
-            </ToastProvider>
-          </AuthContext.Provider>
-        </div>
-      </ConnectedRouter>
-    </Provider>
+    <>
+      <Provider store={store}>
+        <ConnectedRouter history={history}>
+          <div className="App">
+            <AuthContext.Provider value={{ authState, setAuthState }}>
+              <ToastProvider>
+                <Switch>
+                  <Route path="/admin" component={Admin} />
+                  <Route path="/auth" component={Auth} />
+                  <Route path="/line" component={Liff} />
+                  <Redirect from="*/" to="/auth/login" />
+                </Switch>
+              </ToastProvider>
+            </AuthContext.Provider>
+          </div>
+        </ConnectedRouter>
+      </Provider>
+    </>
   );
 }
 

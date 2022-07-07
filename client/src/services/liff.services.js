@@ -429,6 +429,21 @@ export const sendEmailSuccess = (data, s, e = () => {}, f = () => {}) => {
     });
 };
 
+
+export const cancelSuccess = (data, s, e = () => {}, f = () => {}) => {
+  axios
+    .post("mails/cancelsuccess", data)
+    .then((res) => {
+      s(res);
+    })
+    .catch((error) => {
+      e(error);
+    })
+    .finally((final) => {
+      f();
+    });
+};
+
 export const sendEmailWaiting = (data, s, e = () => {}, f = () => {}) => {
   axios
     .post("mails/paymentwatiting", data)
