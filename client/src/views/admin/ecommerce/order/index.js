@@ -55,7 +55,7 @@ const Order = () => {
             const member = res.data.tbMember.filter(
               (member) => member.id === EncodeKey(order.memberId)
             );
-          
+
             if (member && member.length > 0) {
               order.memberName = member[0].firstName + " " + member[0].lastName;
               order.phone = member[0].phone;
@@ -65,7 +65,7 @@ const Order = () => {
           });
           dispatch(fetchSuccess());
         });
-     
+
         setOrderList(_orderData);
         setListSearch(_orderData);
       }
@@ -84,29 +84,29 @@ const Order = () => {
     } else {
       setOrderList(
         listSearch.filter(
-          (x) => 
-
+          (x) =>
             x.orderNumber.toLowerCase().includes(e) ||
             x.memberName.toLowerCase().includes(e) ||
-            (x.orderDate ?? '').toString().includes(e) ||
-            (x.netTotal ?? '').toString().includes(e) ||
+            (x.orderDate ?? "").toString().includes(e) ||
+            (x.netTotal ?? "").toString().includes(e) ||
             (x.paymentStatus === "1"
               ? "รอการชำระเงิน"
               : x.paymentStatus === "2"
               ? "รอตรวจสอบ"
               : "ชำระเงินแล้ว"
-            ).includes(e) || 
+            ).includes(e) ||
             (x.transportStatus === "1"
-            ? "เตรียมส่ง"
-            : x.transportStatus === "2"
-            ? "อยู่ระหว่างจัดส่ง"
-            : "ส่งแล้ว"
-          ).includes(e) || 
+              ? "เตรียมส่ง"
+              : x.transportStatus === "2"
+              ? "อยู่ระหว่างจัดส่ง"
+              : "ส่งแล้ว"
+            ).includes(e) ||
             (x.tbCancelOrder != null
               ? x.tbCancelOrder.cancelDetail
               : x.tbReturnOrder != null
               ? x.tbReturnOrder.returnDetail
-              : "").includes(e) ||
+              : ""
+            ).includes(e) ||
             (x.tbCancelOrder != null ? "ยกเลิกคำสั่งซื้อ" : "").includes(e)
         )
       );
@@ -150,13 +150,15 @@ const Order = () => {
           })
         );
       }
-      
-      const resMember = await axios.get("/members/byIdOrder/" + data[0].memberId);
+
+      const resMember = await axios.get(
+        "/members/byIdOrder/" + data[0].memberId
+      );
       if (!resMember.data.error && resMember.data.tbMember) {
         const _tbMember = resMember.data.tbMember;
         setMemberData(_tbMember);
       }
-    
+
       const _orderImage = await axios.get(`image/byRelated/${id}/tbOrderHD`);
       if (_orderImage && _orderImage.data.tbImage) {
         const image = FilesService.buffer64UTF8(_orderImage.data.tbImage.image);
@@ -217,11 +219,34 @@ const Order = () => {
                     updateBy: sessionStorage.getItem("user"),
                     isDeleted: false,
                   };
-                  console.log(_dataCancel);
+
                   await axios
                     .post("cancelOrder", _dataCancel)
                     .then(async (res) => {
                       if (res.data.status) {
+                        console.log(_dataHD)
+                        axios
+                          .post("mails/cancelsuccess", {
+                            // frommail: "noreply@undefined.co.th",
+                            // password: "Has88149*",
+                            frommail: "no-reply@prg.co.th",
+                            password: "Tus92278",
+                            tomail: _dataHD.email,
+                            orderNumber: _dataHD.orderNumber,
+                            memberName:_dataHD.firstName + ' ' + _dataHD.lastName,
+                            cancelOtherRemark: tbCancelOrder.cancelOtherRemark,
+                            cancelDetail:
+                              tbCancelOrder.cancelDetail === undefined
+                                ? ""
+                                : tbCancelOrder.cancelDetail,
+                            orderDate: moment(_dataHD.orderDate).format(
+                              "DD/MM/YYYY"
+                            ),
+                          })
+                          .then((res) => {})
+                          .catch((error) => {})
+                          .finally((final) => {});
+
                         addToast("บันทึกข้อมูลสำเร็จ", {
                           appearance: "success",
                           autoDismiss: true,

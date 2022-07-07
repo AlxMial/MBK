@@ -5,6 +5,7 @@ import * as Session from "@services/Session.service";
 import { useHistory } from "react-router-dom";
 import liff from "@line/liff";
 import { IsNullOrEmpty } from "@services/default.service";
+// import DeviceOrientation, { Orientation } from "react-screen-orientation";
 
 import {
   path,
@@ -51,7 +52,7 @@ const runApp = (callback, setView, pathname) => {
         let lifdata = {
           uid: config.UID,
           pictureUrl: null,
-        }
+        };
         if (res.data.code === 200) {
           if (res.data.isRegister) {
             Session.setaccessToken(res.data.accessToken);
@@ -135,7 +136,11 @@ const LiffAPP = () => {
       (e) => {
         let checkRegister = Session.getcheckRegister();
         if (checkRegister.isRegister !== true) {
-          if (pathname.toLowerCase().includes("shoplist") || pathname.toLowerCase().includes("showProducts") || pathname.toLowerCase().includes("showCart")) {
+          if (
+            pathname.toLowerCase().includes("shoplist") ||
+            pathname.toLowerCase().includes("showProducts") ||
+            pathname.toLowerCase().includes("showCart")
+          ) {
           } else {
             if (!pathname.includes("register")) {
               history.push(path.register);
@@ -157,77 +162,95 @@ const LiffAPP = () => {
   return (
     <>
       {!isInClient ? (
-        <div style={{ height: "100vh" }}>
-          <div
-            className={"noselect bg-green-mbk flex"}
-            style={{ height: "100px" }}
-          >
-            <div className="w-full">
-              <img
-                src="https://www.prg.co.th/images/logo.png"
-                alt="logo_mbk"
-                className=" mt-6 "
+            <div style={{ height: "100vh" }}>
+              <div
+                className={"noselect bg-green-mbk flex"}
+                style={{ height: "100px" }}
+              >
+                <div className="w-full">
+                  <img
+                    src="https://www.prg.co.th/images/logo.png"
+                    alt="logo_mbk"
+                    className=" mt-6 "
+                    style={{
+                      display: "block",
+                      marginLeft: "auto",
+                      marginRight: "auto",
+                    }}
+                  ></img>
+                </div>
+              </div>
+              <div
+                className="mt-2 text-xl"
                 style={{
-                  display: "block",
+                  width: "90%",
                   marginLeft: "auto",
                   marginRight: "auto",
                 }}
-              ></img>
+              >
+                {
+                  "สามารถเข้าร่วมกิจกรรมได้ผ่าน Line Application บนมือถือเท่านั่น"
+                }
+              </div>
             </div>
-          </div>
-          <div
-            className="mt-2 text-xl"
-            style={{ width: "90%", marginLeft: "auto", marginRight: "auto" }}
-          >
-            {"สามารถเข้าร่วมกิจกรรมได้ผ่าน Line Application บนมือถือเท่านั่น"}
-          </div>
-        </div>
-      ) : !view ? (
-        <Spinner customText={"Loading"} />
-      ) : (
-        <div className="noselect" style={{ display: !view ? "none" : "", height: "100vh" }}>
-          <div
-            className={"noselect " + (!ismemberpage || pathname.includes("/line/coupon") || pathname.includes("/line/product") ? "bg-green-mbk flex" : "")}
-            style={{ height: bg }}
-          >
-            <div className="w-full h-full">
-              {pathname
-                .toLowerCase()
-                .includes("shoplist") ? null : (ismemberpage && !pathname.includes("/line/coupon") && !pathname.includes("/line/product")) ? (
-                  <img
-                    className="w-full h-full"
-                    src={
-                      pathname.includes("point") ||
+          ) : !view ? (
+            <Spinner customText={"Loading"} />
+          ) : (
+            <div
+              className="noselect"
+              style={{ display: !view ? "none" : "", height: "100vh" }}
+            >
+              <div
+                className={
+                  "noselect " +
+                  (!ismemberpage ||
+                  pathname.includes("/line/coupon") ||
+                  pathname.includes("/line/product")
+                    ? "bg-green-mbk flex"
+                    : "")
+                }
+                style={{ height: bg }}
+              >
+                <div className="w-full h-full">
+                  {pathname
+                    .toLowerCase()
+                    .includes("shoplist") ? null : ismemberpage &&
+                    !pathname.includes("/line/coupon") &&
+                    !pathname.includes("/line/product") ? (
+                    <img
+                      className="w-full h-full"
+                      src={
+                        pathname.includes("point") ||
                         pathname.toLowerCase().includes("/reward")
-                        ? require("assets/img/mbk/line_head_img.jpg").default
-                        : require("assets/img/mbk/line_head_img.jpg").default
-                    }
-                    alt="line_head_img"
-                    style={{
-                      objectFit: "cover"
-                      // maxHeight: "220px"
-                    }}
-                  ></img>
-                ) : (
-                <img
-                  src="https://www.prg.co.th/images/logo.png"
-                  alt="logo_mbk"
-                  className=" mt-6 "
-                  style={{
-                    display: "block",
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                  }}
-                ></img>
-              )}
+                          ? require("assets/img/mbk/line_head_img.jpg").default
+                          : require("assets/img/mbk/line_head_img.jpg").default
+                      }
+                      alt="line_head_img"
+                      style={{
+                        objectFit: "cover",
+                        // maxHeight: "220px"
+                      }}
+                    ></img>
+                  ) : (
+                    <img
+                      src="https://www.prg.co.th/images/logo.png"
+                      alt="logo_mbk"
+                      className=" mt-6 "
+                      style={{
+                        display: "block",
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                      }}
+                    ></img>
+                  )}
+                </div>
+              </div>
+              <Switch>
+                {getRoutes()}
+                {/* <Redirect from="/line/" to="/line/register" /> */}
+              </Switch>
             </div>
-          </div>
-          <Switch>
-            {getRoutes()}
-            {/* <Redirect from="/line/" to="/line/register" /> */}
-          </Switch>
-        </div>
-      )}
+          )}
     </>
   );
 };
