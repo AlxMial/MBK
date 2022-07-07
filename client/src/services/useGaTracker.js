@@ -7,8 +7,8 @@ const useGaTracker = () => {
     const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
-        if (!window.location.href.includes("undefined.ddns.net")) {
-        ReactGA.initialize("G-ZHDK5E89FQ");
+        if (!window.location.href.includes("mbk-whale.web.app")) {
+        ReactGA.initialize("G-89M60GX4GB");
         }
         setInitialized(true);
     }, []);

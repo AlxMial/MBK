@@ -165,24 +165,30 @@ const MakeOrder = () => {
         if (RadioPayment === 1) {
           order.orderhd.paymentId = paymentID;
         }
-        
-        doSaveOrder(order, async (res) => {
-          if (res.status) {
-            // ลบข้อมูล
-            if (id == "cart") {
-              item = Storage.remove_cart();
+        setIsLoading(true);
+        doSaveOrder(
+          order,
+          async (res) => {
+            if (res.status) {
+              // ลบข้อมูล
+              if (id == "cart") {
+                item = Storage.remove_cart();
+              } else {
+                item = Storage.remove_byorder();
+              }
+              if (RadioPayment === 1) {
+                history.push(path.paymentInfo.replace(":id", res.data.orderId));
+              } else {
+                window.location.href = res.data.url.webPaymentUrl;
+              }
             } else {
-              item = Storage.remove_byorder();
             }
-            if (RadioPayment === 1) {
-
-              history.push(path.paymentInfo.replace(":id", res.data.orderId));
-            } else {
-              window.location.href = res.data.url.webPaymentUrl;
-            }
-          } else {
+          },
+          () => {},
+          () => {
+            setIsLoading(false);
           }
-        });
+        );
       };
       if (pageID === "cart") {
         get_shopcart({ uid: Session.getLiff().uid }, async (res) => {
@@ -215,7 +221,7 @@ const MakeOrder = () => {
     // มีโปรร้าน
     let total = 0;
     if (sumprice > 0) {
-      total = sumprice
+      total = sumprice;
       let _prodiscstro = calcprodiscount(sumprice);
       let _prodiscount = _prodiscstro;
       // if (_prodiscstro.type == "discount") {
@@ -223,7 +229,10 @@ const MakeOrder = () => {
       // }
 
       if (usecoupon != null) {
-        total = (usecoupon.discountType === "1") ? total - usecoupon.discount : total - (usecoupon.discount / 100) * total;
+        total =
+          usecoupon.discountType === "1"
+            ? total - usecoupon.discount
+            : total - (usecoupon.discount / 100) * total;
       }
 
       total = total - _prodiscount;
@@ -240,20 +249,15 @@ const MakeOrder = () => {
   };
   const calcprodiscount = (totel) => {
     let _prodiscount = 0;
-    let typeValue = ""
+    let typeValue = "";
     let data = { data: 0 };
     if (promotionstores.length > 0 && totel > 0) {
       let prodiscountList = promotionstores.find(
-        (e) =>
-          (e.condition == 1 || e.condition == 2) &&
-          e.buy <= totel
+        (e) => (e.condition == 1 || e.condition == 2) && e.buy <= totel
       );
       if (prodiscountList != null) {
         let pro = promotionstores.filter((e) => {
-          if (
-            (e.condition == 1 || e.condition == 2) &&
-            e.buy <= totel
-          ) {
+          if ((e.condition == 1 || e.condition == 2) && e.buy <= totel) {
             return e;
           }
         });
@@ -292,9 +296,8 @@ const MakeOrder = () => {
       if (typeValue === "product") {
         return 0;
       } else {
-        return data.data
+        return data.data;
       }
-
     } catch {
       return 0;
     }
@@ -327,7 +330,6 @@ const MakeOrder = () => {
         _prodiscount = _prodiscstro.data;
       }
       total = total - _prodiscount;
-
 
       if (tbPromotionDelivery != null && deliveryCost > 0) {
         if (total >= tbPromotionDelivery.buy) {
@@ -376,10 +378,16 @@ const MakeOrder = () => {
                   className="w-32 border-2 border-blueGray-50"
                 ></img>
               </div>
-              <div className="px-2 font-bold line-clamp-1" style={{ left: "50px", width: "calc(100% - 180px)" }}>
+              <div
+                className="px-2 font-bold line-clamp-1"
+                style={{ left: "50px", width: "calc(100% - 180px)" }}
+              >
                 {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
               </div>
-              <div className="flex" style={{ right: "10px", width: "130px", justifyContent: "end" }}>
+              <div
+                className="flex"
+                style={{ right: "10px", width: "130px", justifyContent: "end" }}
+              >
                 <div className="flex">
                   <div
                     style={{
@@ -397,11 +405,11 @@ const MakeOrder = () => {
                   >
                     {usecoupon != null
                       ? "-฿ " +
-                      fn.formatMoney(
-                        usecoupon.discountType === "2"
-                          ? (usecoupon.discount / 100) * sumprice
-                          : usecoupon.discount
-                      )
+                        fn.formatMoney(
+                          usecoupon.discountType === "2"
+                            ? (usecoupon.discount / 100) * sumprice
+                            : usecoupon.discount
+                        )
                       : "ใช้ส่วนลด >"}
                   </div>
                   <div className="px-2">
@@ -471,20 +479,38 @@ const MakeOrder = () => {
                   </div>
                   <div className="flex relative mb-2">
                     <div>ส่วนลดร้านค้า : </div>
-                    <div className={"absolute" + (calcprodiscount(sumprice) > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
-                      {(calcprodiscount(sumprice) > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice))}
+                    <div
+                      className={
+                        "absolute" +
+                        (calcprodiscount(sumprice) > 0 ? " text-gold-mbk" : "")
+                      }
+                      style={{ right: "0" }}
+                    >
+                      {(calcprodiscount(sumprice) > 0 ? "-฿ " : "฿ ") +
+                        fn.formatMoney(calcprodiscount(sumprice))}
                     </div>
                   </div>
                   <div className="flex relative mb-2">
                     <div>ค่าจัดส่ง : </div>
-                    <div className={"absolute" + (deliveryCost > 0 ? " " : "")} style={{ right: "0" }}>
-                      {(deliveryCost > 0 ? "฿ " : "฿ ") + fn.formatMoney(deliveryCost)}
+                    <div
+                      className={"absolute" + (deliveryCost > 0 ? " " : "")}
+                      style={{ right: "0" }}
+                    >
+                      {(deliveryCost > 0 ? "฿ " : "฿ ") +
+                        fn.formatMoney(deliveryCost)}
                     </div>
                   </div>
                   <div className="flex relative mb-2">
                     <div>ส่วนลดค่าจัดส่ง : </div>
-                    <div className={"absolute" + (calcdeliveryCost(sumprice) > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
-                      {(calcdeliveryCost(sumprice) > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcdeliveryCost(sumprice))}
+                    <div
+                      className={
+                        "absolute" +
+                        (calcdeliveryCost(sumprice) > 0 ? " text-gold-mbk" : "")
+                      }
+                      style={{ right: "0" }}
+                    >
+                      {(calcdeliveryCost(sumprice) > 0 ? "-฿ " : "฿ ") +
+                        fn.formatMoney(calcdeliveryCost(sumprice))}
                     </div>
                   </div>
                   <div className="flex relative mb-2">
@@ -521,7 +547,11 @@ const MakeOrder = () => {
             </div>
             <div
               className="w-full  relative mt-2"
-              style={{ alignItems: "center", justifyContent: "center", height: "30px" }}
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                height: "30px",
+              }}
             ></div>
             <FooterButton sendOrder={sendOrder} text={"สั่งสินค้า"} />
           </div>

@@ -91,7 +91,6 @@ const LogisticModal = ({ open, formik, handleModal }) => {
         setDelayValue("setvalue");
         setIsLoadingSelect(false);
         setCategoryValue(newOption);
-        console.log(res.data.tbLogisticCategory);
         formik.setFieldValue("logisticCategoryId", newOption.value);
       } else {
         setIsLoadingSelect(false);
