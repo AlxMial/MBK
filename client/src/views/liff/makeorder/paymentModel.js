@@ -12,7 +12,6 @@ const PaymentModel = ({
   paymentID,
   disabled,
 }) => {
-
   const { addToast } = useToasts();
   const [optionPayment, setPayment] = useState([]);
   const [resetRadio, setresetRadio] = useState(false);
@@ -24,7 +23,7 @@ const PaymentModel = ({
         for (var i = 0; i < option.length; i++) {
           option[i].value = option[i].id;
         }
-        console.log(option)
+        console.log(option);
         setPayment(option);
         setpaymentID(option[0].id);
       }
@@ -65,7 +64,7 @@ const PaymentModel = ({
                 //   appearance: "success",
                 //   autoDismiss: true,
                 // });
-         
+
                 gettbpayment(e.target.value);
                 setRadio(e.target.value);
               } else {
@@ -172,27 +171,6 @@ const PaymentModel = ({
                 ></i>
                 <div className="font-bold px-2">ผ่านบัตรเครดิต</div>
               </div>
-              {/* <div
-                className="w-full flex mt-2"
-                style={{
-                  border: "1px solid var(--mq-txt-color, rgb(170, 170, 170))",
-                  borderRadius: "10px",
-                  height: "50px",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  display: RadioPayment == 1 ? "none" : "",
-                }}
-              >
-                <div className="mb-2 flex">
-                  <i
-                    className="fas fa-plus-circle flex "
-                    style={{ alignItems: "center" }}
-                  ></i>
-                  <div className="px-2 w-full font-bold">
-                    เพิ่มบัตรเครดิต/เดบิต
-                  </div>
-                </div>
-              </div> */}
             </div>
           </Radio>
         </Radio.Group>

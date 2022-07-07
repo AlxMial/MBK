@@ -55,7 +55,7 @@ const PaymentInfo = () => {
           setstatuspayment(false);
         }
       },
-      () => { },
+      () => {},
       () => {
         setIsLoading(false);
       }
@@ -75,41 +75,49 @@ const PaymentInfo = () => {
   };
   const saveSlip = () => {
     if (SlipImage != null) {
-      doSaveSlip({ data: { id: id, Image: SlipImage } }, (res) => {
-        if (res.status === 200) {
-          if (res.data.status) {
-            sendEmailWaiting(
-              {
-                // frommail: "noreply@undefined.co.th",
-                // password: "Has88149*",
-                frommail: "no-reply@prg.co.th",
-                password: "Tus92278",
-                tomail: OrderHD.email,
-                orderNumber: OrderHD.orderNumber,
-                memberName: OrderHD.memberName,
-              },
-              (res) => {
-                console.log(res);
-              }
-            );
-            addToast("บันทึกสลิปเรียบร้อยแล้ว", {
-              appearance: "success",
-              autoDismiss: true,
-            });
-            history.push(path.myorder.replace(":id", "1"));
+      setIsLoading(true);
+      doSaveSlip(
+        { data: { id: id, Image: SlipImage } },
+        (res) => {
+          if (res.status === 200) {
+            if (res.data.status) {
+              sendEmailWaiting(
+                {
+                  // frommail: "noreply@undefined.co.th",
+                  // password: "Has88149*",
+                  frommail: "no-reply@prg.co.th",
+                  password: "Tus92278",
+                  tomail: OrderHD.email,
+                  orderNumber: OrderHD.orderNumber,
+                  memberName: OrderHD.memberName,
+                },
+                (res) => {
+                  console.log(res);
+                }
+              );
+              addToast("บันทึกสลิปเรียบร้อยแล้ว", {
+                appearance: "success",
+                autoDismiss: true,
+              });
+              history.push(path.myorder.replace(":id", "1"));
+            } else {
+              addToast("เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง", {
+                appearance: "warning",
+                autoDismiss: true,
+              });
+            }
           } else {
             addToast("เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง", {
               appearance: "warning",
               autoDismiss: true,
             });
           }
-        } else {
-          addToast("เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้ง", {
-            appearance: "warning",
-            autoDismiss: true,
-          });
+        },
+        () => {},
+        () => {
+          setIsLoading(true);
         }
-      });
+      );
     } else {
       addToast("กรุณาอัพโหลดสลิปโอนเงิน", {
         appearance: "warning",
@@ -164,7 +172,6 @@ const PaymentInfo = () => {
           >
             <div className="w-full" style={{ width: "90%", margin: "auto" }}>
               {OrderHD != null ? (
-
                 <div className="w-full  relative">
                   <div
                     className="flex w-full font-bold text-sm"
@@ -285,9 +292,13 @@ const PaymentInfo = () => {
                                         [
                                           {
                                             type: "image",
-                                            originalContentUrl: config._baseURL + "image/getImgQrCode/" +
+                                            originalContentUrl:
+                                              config._baseURL +
+                                              "image/getImgQrCode/" +
                                               OrderHD.Payment.id,
-                                            previewImageUrl: config._baseURL + "image/getImgQrCode/" +
+                                            previewImageUrl:
+                                              config._baseURL +
+                                              "image/getImgQrCode/" +
                                               OrderHD.Payment.id,
                                           },
                                         ],
@@ -345,7 +356,6 @@ const PaymentInfo = () => {
                         <div className="px-2" style={{ width: "50%" }}>
                           <div
                             className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
-
                             onClick={() => {
                               liff.init(
                                 { liffId: config.liffId },
@@ -362,20 +372,27 @@ const PaymentInfo = () => {
                                       .sendMessages([
                                         {
                                           type: "image",
-                                          originalContentUrl: config._baseURL + "image/getImgQrCode/" +
+                                          originalContentUrl:
+                                            config._baseURL +
+                                            "image/getImgQrCode/" +
                                             OrderHD.Payment.id,
-                                          previewImageUrl: config._baseURL + "image/getImgQrCode/" +
+                                          previewImageUrl:
+                                            config._baseURL +
+                                            "image/getImgQrCode/" +
                                             OrderHD.Payment.id,
                                         },
                                         {
                                           type: "text",
-                                          text: OrderHD.Payment.bankName + " สาขา : " + OrderHD.Payment.bankBranchName + " เลขบัญชี : " + OrderHD.Payment.accountNumber,
+                                          text:
+                                            OrderHD.Payment.bankName +
+                                            " สาขา : " +
+                                            OrderHD.Payment.bankBranchName +
+                                            " เลขบัญชี : " +
+                                            OrderHD.Payment.accountNumber,
                                         },
-
                                       ])
                                       .then(() => {
                                         console.log("message sent");
-
                                       })
                                       .catch((err) => {
                                         console.log("error", err);
@@ -386,7 +403,6 @@ const PaymentInfo = () => {
                                 },
                                 (err) => console.error(err)
                               );
-
                             }}
                           >
                             {"บันทึก QR"}

@@ -9,7 +9,8 @@ import * as fn from "@services/default.service";
 import {
   doSaveUpdateOrder,
   getOrderHDById,
-  getPromotionstores, cancelOrder
+  getPromotionstores,
+  cancelOrder,
 } from "@services/liff.services";
 import moment from "moment";
 import AddressModel from "./addressModel";
@@ -55,8 +56,8 @@ const MakeOrderById = () => {
             let OrderHD = res.data.OrderHD;
             if (OrderHD.tbCancelOrder == null) {
               setOrderHD(OrderHD);
-              console.log(OrderHD.paymentId)
-              setpaymentID((OrderHD.paymentId === null) ? '1' : null );
+              console.log(OrderHD.paymentId);
+              setpaymentID(OrderHD.paymentId === null ? "1" : null);
               setisLogistic(OrderHD.logisticId);
               setdeliveryCost(OrderHD.olddeliveryCost);
               setisAddress(OrderHD.otherAddressId);
@@ -85,7 +86,6 @@ const MakeOrderById = () => {
                 .post("stock/getStock", { id: idlist })
                 .then((response) => {
                   if (response.data.status) {
-
                     let tbStock = response.data.tbStock;
                     let price = 0;
                     let amount = 0;
@@ -93,10 +93,11 @@ const MakeOrderById = () => {
                       let item = shop_orders.find((o) => o.id == e.id);
                       if (!item.isFree) {
                         let quantity = item.amount;
-                        amount += quantity
+                        amount += quantity;
                         e.quantity = quantity;
                         if (e.priceDiscount > 0) {
-                          price += parseFloat(e.priceDiscount) * parseInt(quantity);
+                          price +=
+                            parseFloat(e.priceDiscount) * parseInt(quantity);
                         } else {
                           price += parseFloat(e.price) * parseInt(quantity);
                         }
@@ -105,7 +106,7 @@ const MakeOrderById = () => {
 
                     price = price;
                     setsumprice(price < 1 ? 0 : price);
-                    setamount(amount)
+                    setamount(amount);
                   }
                 })
                 .finally(() => {
@@ -118,7 +119,7 @@ const MakeOrderById = () => {
             history.push(path.shopList);
           }
         },
-        () => { },
+        () => {},
         () => {
           setIsLoading(false);
         }
@@ -137,7 +138,6 @@ const MakeOrderById = () => {
   };
   //สั่งสินค้า
   const sendOrder = () => {
-    
     let updatrOrder = {
       id: id,
       // "Money Transfer" : "Credit" 1,2
@@ -146,28 +146,33 @@ const MakeOrderById = () => {
       logisticId: isLogistic,
       isAddress: isAddress,
       usecouponid: usecoupon == null ? null : usecoupon.id,
-      orderdt: OrderHD.dt.filter(e => {
+      orderdt: OrderHD.dt.filter((e) => {
         if (e.isFree == false) {
-          return e
+          return e;
         }
       }),
     };
- 
+
     if (RadioPayment === 1) {
-      updatrOrder.paymentId = paymentID
+      updatrOrder.paymentId = paymentID;
     }
-
-    doSaveUpdateOrder({ data: updatrOrder }, (res) => {
-      if (res.status) {
-        if (RadioPayment === 1) {
-
-          history.push(path.paymentInfo.replace(":id", id));
-        } else {
-          window.location.href = res.data.url.webPaymentUrl
+    setIsLoading(true);
+    doSaveUpdateOrder(
+      { data: updatrOrder },
+      (res) => {
+        if (res.status) {
+          if (RadioPayment === 1) {
+            history.push(path.paymentInfo.replace(":id", id));
+          } else {
+            window.location.href = res.data.url.webPaymentUrl;
+          }
         }
-      } else {
+      },
+      () => {},
+      () => {
+        setIsLoading(false);
       }
-    });
+    );
   };
   //โปรร้าน
   const GetPromotionstores = (getProducts) => {
@@ -190,7 +195,10 @@ const MakeOrderById = () => {
     // }
 
     if (usecoupon != null) {
-      total = (usecoupon.discountType === "1") ? total - usecoupon.discount : total - (usecoupon.discount / 100) * total;
+      total =
+        usecoupon.discountType === "1"
+          ? total - usecoupon.discount
+          : total - (usecoupon.discount / 100) * total;
     }
 
     total = total - _prodiscount;
@@ -207,21 +215,16 @@ const MakeOrderById = () => {
   };
   const calcprodiscount = (totel) => {
     let _prodiscount = 0;
-    let valueType = '';
+    let valueType = "";
     let data = { data: 0 };
     if (promotionstores.length > 0 && totel > 0) {
       let prodiscountList = promotionstores.find(
-        (e) =>
-          (e.condition == 1 || e.condition == 2) &&
-          e.buy <= totel
+        (e) => (e.condition == 1 || e.condition == 2) && e.buy <= totel
       );
       if (prodiscountList != null) {
-        valueType = 'coupon';
+        valueType = "coupon";
         let pro = promotionstores.filter((e) => {
-          if (
-            (e.condition == 1 || e.condition == 2) &&
-            e.buy <= totel
-          ) {
+          if ((e.condition == 1 || e.condition == 2) && e.buy <= totel) {
             return e;
           }
         });
@@ -243,8 +246,10 @@ const MakeOrderById = () => {
         data = { type: "discount", data: _prodiscount };
       } else {
         //สินค้า
-        valueType = 'product';
-        let productList = promotionstores.find((e) => e.condition == 3 && e.buy <= totel);
+        valueType = "product";
+        let productList = promotionstores.find(
+          (e) => e.condition == 3 && e.buy <= totel
+        );
         if (productList != null) {
           data = { type: "product", data: productList.stockId };
           // if (freebies.length < 1) {
@@ -254,26 +259,10 @@ const MakeOrderById = () => {
       }
     }
     if (valueType === "product") {
-      return 0
-    } else return data.data
+      return 0;
+    } else return data.data;
   };
 
-  // const getfreebies = async (productList) => {
-  //   await axios
-  //     .post("stock/getStock", { id: [productList.stockId] })
-  //     .then((response) => {
-  //       if (response.data.status) {
-  //         let tbStock = response.data.tbStock;
-  //         tbStock[0].campaignName = productList.campaignName;
-  //         setfreebies(tbStock);
-  //       } else {
-  //         setfreebies([]);
-  //       }
-  //     })
-  //     .finally(() => {
-  //       setIsLoading(false);
-  //     });
-  // };
   const calcdeliveryCost = () => {
     // มีโปรร้าน
     let _promotionDelivery = 0;
@@ -285,7 +274,6 @@ const MakeOrderById = () => {
         _prodiscount = _prodiscstro.data;
       }
       total = total - _prodiscount;
-
 
       if (tbPromotionDelivery != null && deliveryCost > 0) {
         if (total >= tbPromotionDelivery.buy) {
@@ -305,9 +293,9 @@ const MakeOrderById = () => {
       (res) => {
         setisOpenmodel(false);
         // getProducts();
-        history.push(path.orderpaymentdone.replace(":id", id))
+        history.push(path.orderpaymentdone.replace(":id", id));
       },
-      () => { },
+      () => {},
       () => {
         setIsLoading(false);
       }
@@ -355,10 +343,16 @@ const MakeOrderById = () => {
                   className="w-32 border-2 border-blueGray-50"
                 ></img>
               </div>
-              <div className="px-2 font-bold line-clamp-1" style={{ left: "50px", width: "calc(100% - 180px)" }}>
+              <div
+                className="px-2 font-bold line-clamp-1"
+                style={{ left: "50px", width: "calc(100% - 180px)" }}
+              >
                 {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
               </div>
-              <div className="flex" style={{ right: "10px", width: "130px", justifyContent: "end" }}>
+              <div
+                className="flex"
+                style={{ right: "10px", width: "130px", justifyContent: "end" }}
+              >
                 {OrderHD != null ? (
                   <div className="flex">
                     <div
@@ -369,27 +363,24 @@ const MakeOrderById = () => {
                             : "var(--mq-txt-color, rgb(192, 192, 192))",
                       }}
                       onClick={() => {
-                        if (
-                          OrderHD.paymentStatus != 3 &&
-                          !OrderHD.isCancel
-                        ) {
+                        if (OrderHD.paymentStatus != 3 && !OrderHD.isCancel) {
                           setopenCoupon(true);
                         }
                       }}
                     >
                       {usecoupon != null
                         ? "-฿ " +
-                        fn.formatMoney(
-                          usecoupon.discountType === "2"
-                            ? (usecoupon.discount / 100) * sumprice
-                            : usecoupon.discount
-                        )
+                          fn.formatMoney(
+                            usecoupon.discountType === "2"
+                              ? (usecoupon.discount / 100) * sumprice
+                              : usecoupon.discount
+                          )
                         : "ใช้ส่วนลด >"}
                     </div>
                     <div className="px-2">
                       {usecoupon != null &&
-                        OrderHD.paymentStatus != 3 &&
-                        !OrderHD.isCancel ? (
+                      OrderHD.paymentStatus != 3 &&
+                      !OrderHD.isCancel ? (
                         <i
                           className="fas fa-times-circle"
                           style={{ color: "red" }}
@@ -456,20 +447,38 @@ const MakeOrderById = () => {
 
                   <div className="flex relative mb-2">
                     <div>ส่วนลดร้านค้า : </div>
-                    <div className={"absolute" + (calcprodiscount(sumprice) > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
-                      {(calcprodiscount(sumprice) > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcprodiscount(sumprice))}
+                    <div
+                      className={
+                        "absolute" +
+                        (calcprodiscount(sumprice) > 0 ? " text-gold-mbk" : "")
+                      }
+                      style={{ right: "0" }}
+                    >
+                      {(calcprodiscount(sumprice) > 0 ? "-฿ " : "฿ ") +
+                        fn.formatMoney(calcprodiscount(sumprice))}
                     </div>
                   </div>
                   <div className="flex relative mb-2">
                     <div>ค่าจัดส่ง : </div>
-                    <div className={"absolute" + (deliveryCost > 0 ? " " : "")} style={{ right: "0" }}>
-                      {(deliveryCost > 0 ? "฿ " : "฿ ") + fn.formatMoney(deliveryCost)}
+                    <div
+                      className={"absolute" + (deliveryCost > 0 ? " " : "")}
+                      style={{ right: "0" }}
+                    >
+                      {(deliveryCost > 0 ? "฿ " : "฿ ") +
+                        fn.formatMoney(deliveryCost)}
                     </div>
                   </div>
                   <div className="flex relative mb-2">
                     <div>ส่วนลดค่าจัดส่ง : </div>
-                    <div className={"absolute" + (calcdeliveryCost(sumprice) > 0 ? " text-gold-mbk" : "")} style={{ right: "0" }}>
-                      {(calcdeliveryCost(sumprice) > 0 ? "-฿ " : "฿ ") + fn.formatMoney(calcdeliveryCost(sumprice))}
+                    <div
+                      className={
+                        "absolute" +
+                        (calcdeliveryCost(sumprice) > 0 ? " text-gold-mbk" : "")
+                      }
+                      style={{ right: "0" }}
+                    >
+                      {(calcdeliveryCost(sumprice) > 0 ? "-฿ " : "฿ ") +
+                        fn.formatMoney(calcdeliveryCost(sumprice))}
                     </div>
                   </div>
                   <div className="flex relative mb-2">
@@ -515,7 +524,7 @@ const MakeOrderById = () => {
                     style={{
                       backgroundColor: "red",
                       border: "red",
-                      color: "#FFFFFF"
+                      color: "#FFFFFF",
                     }}
                     onClick={() => {
                       if (
@@ -534,7 +543,11 @@ const MakeOrderById = () => {
             </div>
             <div
               className="w-full  relative mt-2"
-              style={{ alignItems: "center", justifyContent: "center", height: "30px" }}
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                height: "30px",
+              }}
             ></div>
             <FooterButton sendOrder={sendOrder} text={"ชำระเงิน"} />
           </div>
@@ -546,7 +559,6 @@ const MakeOrderById = () => {
           id={id}
         />
       )}
-
 
       <CancelModel
         isOpenmodel={isOpenmodel}
