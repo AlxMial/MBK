@@ -38,8 +38,8 @@ export default function CampaignExchangeHistoryReport() {
     { value: "2", label: "ของสมนาคุณ" },
   ];
   const rewardStatus = [
-    { value: "0", label: "เรียกคืน" },
-    { value: "1", label: "แลกแล้ว" },
+    { value: "0", label: "ยังไม่ได้ใช้" },
+    { value: "1", label: "ใช้แล้ว" },
   ];
   const dropdown = [
     { label: "ส่งแล้ว", value: "Done" },
@@ -654,7 +654,7 @@ export default function CampaignExchangeHistoryReport() {
                           </span>
                         </td>
                         <td className =  { (item.status === 1 ? "text-green-500 " : "text-red-700 ") + "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "}>
-                          {item.statusStr}
+                          { item.isShowControl ? "" : item.statusStr }
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           {moment(item.redeemDate).format("DD/MM/YYYY")}
