@@ -11,12 +11,16 @@ const Encrypt = new ValidateEncrypt();
 const jwt = require("jsonwebtoken");
 const axios = require("axios").default;
 const config = require("../../../services/config.line");
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize(config.database.database, config.database.username, config.database.password, {
-  host: config.database.host,
-  dialect: config.database.dialect,
-});
-
+const Sequelize = require("sequelize");
+const sequelize = new Sequelize(
+  config.database.database,
+  config.database.username,
+  config.database.password,
+  {
+    host: config.database.host,
+    dialect: config.database.dialect,
+  }
+);
 
 const {
   tbOrderHD,
@@ -38,7 +42,7 @@ const {
   tbPointEcommerce,
   tbProductCategory,
   tbMemberPoint,
-  tbOtherAddress
+  tbOtherAddress,
 } = require("../../../models");
 const e = require("express");
 const { parseWithoutProcessing } = require("handlebars");
@@ -131,7 +135,7 @@ router.get("/byId/:id", async (req, res) => {
     include: [
       {
         model: tbMember,
-        attributes: ['email'],
+        attributes: ["email"],
         where: {
           isDeleted: false,
         },
@@ -154,14 +158,14 @@ router.put("/", validateToken, async (req, res) => {
   const data = await tbOrderHD.findOne({
     where: {
       isDeleted: false,
-      id: req.body.id
+      id: req.body.id,
     },
   });
 
   let hd = data.dataValues;
   //รอตรวจสอบ
   //จ่ายเงินสำเร็จ
-  let addPoint = false
+  let addPoint = false;
   if (req.body.paymentStatus == 3 || hd.paymentStatus == 3) {
     // สถานะขนส่ง
     if (req.body.transportStatus == 1) {
@@ -182,7 +186,7 @@ router.put("/", validateToken, async (req, res) => {
       }
       if (req.body.doneDate == null) {
         req.body.doneDate = new Date();
-        addPoint = true
+        addPoint = true;
       }
     }
   }
@@ -191,24 +195,22 @@ router.put("/", validateToken, async (req, res) => {
     where: { id: req.body.id },
   });
   if (addPoint) {
-
     let Member = await tbMember.findOne({
       attributes: ["id", "memberPoint"],
       where: { id: data.memberId },
     });
     const _tbMemberPoint = await tbMemberPoint.create({
-      campaignType: 2
-      , point: data.points
-      , redeemDate: new Date()
-      , expireDate: new Date().setFullYear(new Date().getFullYear() + 2)
-      , tbMemberId: Member.id
-      , isDeleted: false
-
+      campaignType: 2,
+      point: data.points,
+      redeemDate: new Date(),
+      expireDate: new Date().setFullYear(new Date().getFullYear() + 2),
+      tbMemberId: Member.id,
+      isDeleted: false,
     });
     const dataMember = await tbMember.update(
       { memberPoint: Member.memberPoint + data.points },
-      { where: { id: Member.id } })
-
+      { where: { id: Member.id } }
+    );
   }
   res.json({
     status: true,
@@ -379,7 +381,9 @@ const getStorePromotion = async (total) => {
       } else {
         //แถมสินค้า
 
-        let productList = _tbPromotionStore.find((e) => e.condition == 3 && e.buy <= total);
+        let productList = _tbPromotionStore.find(
+          (e) => e.condition == 3 && e.buy <= total
+        );
         if (productList) {
           type = "product";
           let _tbStock = await tbStock.findOne({
@@ -560,7 +564,7 @@ const getAddress = async (addressId, memberID) => {
         attributes: attributes,
         where: {
           memberID: memberID,
-          id: addressId
+          id: addressId,
         },
       });
       if (Member) {
@@ -707,23 +711,37 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       //#region รันรหัสสินค้า
       const genorderNumber = async () => {
         const today = moment().format("YYYYMM");
-        let data = await tbOrderHD.count({
+        // let data = await tbOrderHD.count({
+        //   where: {
+        //     orderNumber: {
+        //       [Op.like]: "%" + today + "%",
+        //     },
+        //   },
+        // });
+        let data = await tbOrderHD.findOne({
+          attributes: ["orderNumber"],
           where: {
             orderNumber: {
               [Op.like]: "%" + today + "%",
             },
           },
+          order: [["id", "DESC"]],
         });
-        let num = "";
-        data = data + 1;
-        if (data < 10) {
-          num = "000" + data.toString();
-        } else if (data < 100) {
-          num = "00" + data.toString();
-        } else if (data < 1000) {
-          num = "0" + data.toString();
+        if (data) {
+          let str = data.dataValues.orderNumber.split("-")[2];
+          let num = parseInt(str);
+          num = num + 1;
+          if (num < 10) {
+            num = "000" + num.toString();
+          } else if (num < 100) {
+            num = "00" + num.toString();
+          } else if (num < 1000) {
+            num = "0" + num.toString();
+          }
+          return "LOA-" + today + "-" + num;
+        } else {
+          return "LOA-" + today + "-0001";
         }
-        return "LOA-" + today + "-" + num;
       };
       //#endregion รันรหัสสินค้า
       orderhd.orderNumber = await genorderNumber();
@@ -843,7 +861,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
 
   try {
     let { data } = req.body;
-    console.log(data)
+    console.log(data);
     const uid = Encrypt.DecodeKey(req.user.uid);
     Member = await tbMember.findOne({
       attributes: ["id"],
@@ -868,7 +886,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         status = _getorderDT.status;
         msg = _getorderDT.msg;
       }
-      console.log(status)
+      console.log(status);
       // โปรร้าน
       let DiscountStorePromotion = 0;
       let _getStorePromotion = await getStorePromotion(total);
@@ -886,7 +904,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         status = _getStorePromotion.status;
         msg = _getStorePromotion.msg;
       }
-      console.log(status)
+      console.log(status);
       //ข้อมูลวิธีการจัดส่ง
       let deliveryCost = 0; //ค่าส่ง
       let discountDelivery = 0; //โปรค่าส่ง
@@ -902,7 +920,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         status = _getDelivery.status;
         msg = _getDelivery.msg;
       }
-      console.log(status)
+      console.log(status);
       // ส่วนลดCoupon
       let DiscountCoupon = 0;
       if (status) {
@@ -921,7 +939,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         }
       }
       total = total - DiscountCoupon;
-      console.log(status)
+      console.log(status);
       //บวกค้าส่งทีหลัง
       total = total + (discountDelivery > 0 ? discountDelivery : deliveryCost);
       //ที่อยู่ปัจจุบัน
@@ -943,14 +961,16 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           msg = _getAddress.msg;
         }
       }
-  
+
       if (status) {
         try {
-       
           const updtbOrderHD = await tbOrderHD.update(
             {
               logisticId: Encrypt.DecodeKey(data.logisticId),
-              paymentId: (data.orderHd.paymentType == 2)  ? null :Encrypt.DecodeKey(data.paymentId),
+              paymentId:
+                data.orderHd.paymentType == 2
+                  ? null
+                  : Encrypt.DecodeKey(data.paymentId),
               paymentType: data.paymentType,
               otherAddressId:
                 Encrypt.DecodeKey(data.isAddress) == "memberId"
@@ -976,7 +996,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             },
             { where: { id: Encrypt.DecodeKey(data.id) } }
           );
-          console.log(updtbOrderHD)
+          console.log(updtbOrderHD);
           const dataDel = await tbOrderDT.destroy({
             where: {
               orderId: Encrypt.DecodeKey(data.id),
@@ -1012,7 +1032,9 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             backendReturnUrl: "",
             frontendReturnUrl:
               "https://mbk-whale.web.app/line/paymentsucceed/" +
-              Encrypt.EncodeKey(data.orderHd.id + "," + data.orderHd.orderNumber),
+              Encrypt.EncodeKey(
+                data.orderHd.id + "," + data.orderHd.orderNumber
+              ),
           };
 
           const token = jwt.sign(payload, secretKey);
@@ -1568,7 +1590,13 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
           "bankBranchName",
           "bankName",
         ],
-        where: { isDeleted: false, id: (OrderHDData.dataValues.paymentId === null ) ? 1 : OrderHDData.dataValues.paymentId },
+        where: {
+          isDeleted: false,
+          id:
+            OrderHDData.dataValues.paymentId === null
+              ? 1
+              : OrderHDData.dataValues.paymentId,
+        },
       });
       if (_tbPayment) {
         _tbPayment.dataValues.id = Encrypt.EncodeKey(_tbPayment.dataValues.id);
@@ -1585,8 +1613,8 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         email: member ? Encrypt.DecodeKey(member.dataValues.email) : null,
         memberName: member
           ? Encrypt.DecodeKey(member.dataValues.firstName) +
-          " " +
-          Encrypt.DecodeKey(member.dataValues.lastName)
+            " " +
+            Encrypt.DecodeKey(member.dataValues.lastName)
           : null,
         price: OrderHDData.dataValues.netTotal,
         Payment: _tbPayment,
@@ -1909,7 +1937,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         // , paymentType: type == "update" ? hd.paymentType : null
         logisticId: type == "update" ? Encrypt.EncodeKey(hd.logisticId) : null,
         paymentId: type == "update" ? Encrypt.EncodeKey(hd.paymentId) : null,
-    
+
         memberRewardId:
           type == "update"
             ? hd.memberRewardId == null
@@ -2201,19 +2229,19 @@ router.get("/export", async (req, res) => {
   // });
 
   // const data = await sequelize.query(
-  //   `select tborderhds.orderNumber 
+  //   `select tborderhds.orderNumber
   // ,tborderhds.orderDate
-  // ,tbmembers.memberCard  
-  // ,tbmembers.firstName 
+  // ,tbmembers.memberCard
+  // ,tbmembers.firstName
   // ,tbmembers.lastName
-  // ,tbproductcategories.categoryName 
+  // ,tbproductcategories.categoryName
   // ,tbstocks.productName
   // ,tborderdts.amount
   // ,tborderdts.price
-  // ,tborderhds.deliveryCost 
-  // ,tborderhds.netTotal 
-  // ,tborderdts.isFlashSale 
-  // ,tborderhds.discountStorePromotion 
+  // ,tborderhds.deliveryCost
+  // ,tborderhds.netTotal
+  // ,tborderdts.isFlashSale
+  // ,tborderhds.discountStorePromotion
   // ,tbstocks.discount
   // ,tborderhds.discountCoupon
   // ,tborderhds.paymentStatus
@@ -2221,18 +2249,18 @@ router.get("/export", async (req, res) => {
   // ,tborderhds.transportStatus
   // ,tborderhds.trackNo
   // ,tborderhds.points
-  // ,tborderhds.phone 
+  // ,tborderhds.phone
   // ,tbmembers.email
   // ,tborderhds.address
-  // ,tborderhds.province 
-  // ,tborderhds.district 
-  // ,tborderhds.subDistrict 
-  // ,tborderhds.postcode 
-  // from tborderhds 
-  // left join tborderdts on tborderdts.orderId  = tborderhds.id 
-  // left join tbmembers on tbmembers.id = tborderhds.memberId 
-  // left join tbstocks on tbstocks.id = tborderdts.stockId 
-  // left join tbproductcategories on tbproductcategories.id = tbstocks.productCategoryId 
+  // ,tborderhds.province
+  // ,tborderhds.district
+  // ,tborderhds.subDistrict
+  // ,tborderhds.postcode
+  // from tborderhds
+  // left join tborderdts on tborderdts.orderId  = tborderhds.id
+  // left join tbmembers on tbmembers.id = tborderhds.memberId
+  // left join tbstocks on tbstocks.id = tborderdts.stockId
+  // left join tbproductcategories on tbproductcategories.id = tbstocks.productCategoryId
   // where tborderhds.isDeleted = 0
   // order by orderNumber`,
   //   { type: QueryTypes.SELECT }

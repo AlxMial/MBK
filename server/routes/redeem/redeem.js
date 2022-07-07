@@ -45,113 +45,72 @@ router.post("/", async (req, res) => {
   try {
     let statusRedeem = [];
     let status;
-    for (var x = 0; x < redeemCode.length; x++) {
-      // redeemCode[x] = ;
-      // try {
-      //   const splitValue = redeemCode[x].split("-");
-      //   if (splitValue.length > 1) {
-      //     redeemCode[x] = Encrypt.EncodeKey(
-      //       splitValue[0] + "-" + splitValue[1].toLowerCase()
-      //     );
-      //   }
-      // } catch {
-      //   status = {
-      //     coupon: redeemCode[x],
-      //     isValid: false,
-      //     isInvalid: false,
-      //     isExpire: true,
-      //     isUse: false,
-      //   };
-      //   statusRedeem.push(status);
-      // }
-      const PointDt = await tbPointCodeDT.findOne({
-        attributes: [
-          "id",
-          "code",
-          "codeNone",
-          "isUse",
-          "isExpire",
-          "isDeleted",
-          "tbPointCodeHDId",
-        ],
-        where: {
-          [Op.or]: [
-            { code: Encrypt.EncodeKey(redeemCode[x].toLowerCase()) },
-            { codeNone: Encrypt.EncodeKey(redeemCode[x].toLowerCase()) },
+
+    let _redeemCode = [];
+    redeemCode.filter((e) => {
+      _redeemCode.push(Encrypt.EncodeKey(e.toLowerCase()));
+    });
+    tbPointCodeHD.hasMany(tbPointCodeDT, {
+      foreignKey: "tbPointCodeHDId",
+    });
+    const productNameData = await tbPointCodeHD.findAll({
+      attributes: ["id", "pointCodePoint"],
+      where: {
+        isDeleted: false,
+      },
+      order: [["id", "DESC"]],
+      include: [
+        {
+          attributes: [
+            "id",
+            "code",
+            "codeNone",
+            "isUse",
+            "isExpire",
+            "isDeleted",
+            "tbPointCodeHDId",
           ],
-          isDeleted: false,
+          
+          model: tbPointCodeDT,
+          where: {
+            [Op.or]: [{ code: _redeemCode }, { codeNone: _redeemCode }],
+          },
+          order: [["id", "DESC"]],
         },
-      });
-
-   
-      let Point = [];
-      if (PointDt) {
-        try{
-          Point = await tbPointCodeHD.findOne({
-            attributes: ["id","pointCodePoint"],
-            where: {
-              id: PointDt.dataValues.tbPointCodeHDId,
-              isDeleted: false,
-            },
-          });
-        }catch (err) { console.log(err.message)}  
-      }
-
-      
-      if (PointDt && Point) {
-        if (PointDt.dataValues.isExpire) {
+      ],
+      required: false,
+    });
+    // มีโคด
+    // let status = [];
+    if (productNameData) {
+      for (var i = 0; i < productNameData.length; i++) {
+        let hd = productNameData[i].dataValues;
+        let dt = productNameData[i].dataValues.tbPointCodeDTs[0].dataValues;
+        if (dt.isExpire) {
           status = {
-            coupon: redeemCode[x],
+            coupon: Encrypt.DecodeKey(
+              _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
+            ),
             isValid: false,
             isInvalid: false,
             isExpire: true,
             isUse: false,
           };
-        } else if (PointDt.dataValues.isUse) {
+        } else if (dt.isUse) {
           status = {
-            coupon: redeemCode[x],
+            coupon: Encrypt.DecodeKey(
+              _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
+            ),
             isValid: false,
             isInvalid: false,
             isExpire: false,
             isUse: true,
           };
         } else {
-          // if (Point) {
-          //   if (Point.dataValues.isType === "1") {
-          //     var isMatch = decode.decryptCoupon(
-          //       Encrypt.DecodeKey(redeemCode[i]),
-          //       Encrypt.DecodeKey(redeemCode[i]).length
-          //     );
-          //     if (isMatch) {
-          //       status = {
-          //         coupon: Encrypt.DecodeKey(redeemCode[i]).toLocaleUpperCase(),
-          //         isValid: true,
-          //         isInvalid: false,
-          //         isExpire: false,
-          //         isUse: false,
-          //       };
-          //     } else {
-          //       status = {
-          //         coupon: Encrypt.DecodeKey(redeemCode[i]).toLocaleUpperCase(),
-          //         isValid: false,
-          //         isInvalid: true,
-          //         isExpire: false,
-          //         isUse: false,
-          //       };
-          //     }
-          //   } else if (Point.dataValues.isType === "2") {
-          //     status = {
-          //       coupon: Encrypt.DecodeKey(redeemCode[i]).toLocaleUpperCase(),
-          //       isValid: true,
-          //       isInvalid: false,
-          //       isExpire: false,
-          //       isUse: false,
-          //     };
-          //   }
-          // }
-
           status = {
-            coupon: redeemCode[x],
+            coupon: Encrypt.DecodeKey(
+              _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
+            ),
             isValid: true,
             isInvalid: false,
             isExpire: false,
@@ -160,25 +119,24 @@ router.post("/", async (req, res) => {
         }
 
         if (status.isValid) {
-          PointDt.dataValues.isUse = true;
-          PointDt.dataValues.memberId = req.body.memberId;
-
+          dt.isUse = true;
+          dt.memberId = req.body.memberId;
           const updatePointCode = await tbPointCodeDT.update(
-            PointDt.dataValues,
+            { isUse: true, memberId: req.body.memberId },
             {
-              where: { id: PointDt.dataValues.id },
+              where: { id: dt.id },
             }
           );
-
+          let code = _redeemCode.find((e) => e == dt.code || e == dt.codeNone);
           let historyPoint = {
             campaignType: "1",
-            code: Encrypt.EncodeKey(redeemCode[x].toLowerCase()),
-            point: Point.dataValues.pointCodePoint,
+            code: code,
+            point: hd.pointCodePoint,
             redeemDate: new Date(),
             expireDate: new Date(new Date().getFullYear() + 2, 11, 31),
             isDeleted: false,
             tbMemberId: req.body.memberId,
-            tbPointCodeHDId: PointDt.dataValues.tbPointCodeHDId,
+            tbPointCodeHDId: dt.tbPointCodeHDId,
           };
 
           const memberPoint = await tbMemberPoint.create(historyPoint);
@@ -187,40 +145,186 @@ router.post("/", async (req, res) => {
             where: { id: req.body.memberId },
           });
 
-          member.dataValues.memberPointExpire = new Date(
-            new Date().getFullYear() + 2,
-            11,
-            31
-          );
           member.dataValues.memberPoint =
-            member.dataValues.memberPoint + Point.dataValues.pointCodePoint;
+            member.dataValues.memberPoint + hd.pointCodePoint;
 
           const updateMember = await tbMember.update(member.dataValues, {
             where: { id: member.dataValues.id },
           });
         }
-      } else {
+        statusRedeem.push(status);
+      }
+    } else {
+      //ไม่มีเลย
+      _redeemCode.map((e, i) => {
         status = {
-          coupon: redeemCode[x],
+          coupon: Encrypt.DecodeKey(e),
           isValid: false,
           isInvalid: true,
           isExpire: false,
           isUse: false,
         };
-      }
-      statusRedeem.push(status);
+        statusRedeem.push(status);
+      });
     }
+    if (statusRedeem.length != _redeemCode.length) {
+      _redeemCode.map((e, i) => {
+        let code = Encrypt.DecodeKey(e);
+        let find = statusRedeem.find((e) => e.coupon == code);
+        if (find == null) {
+          status = {
+            coupon: code,
+            isValid: false,
+            isInvalid: true,
+            isExpire: false,
+            isUse: false,
+          };
+          statusRedeem.push(status);
+        }
+      });
+    }
+    // for (var x = 0; x < redeemCode.length; x++) {
+    //   // redeemCode[x] = ;
+    //   // try {
+    //   //   const splitValue = redeemCode[x].split("-");
+    //   //   if (splitValue.length > 1) {
+    //   //     redeemCode[x] = Encrypt.EncodeKey(
+    //   //       splitValue[0] + "-" + splitValue[1].toLowerCase()
+    //   //     );
+    //   //   }
+    //   // } catch {
+    //   //   status = {
+    //   //     coupon: redeemCode[x],
+    //   //     isValid: false,
+    //   //     isInvalid: false,
+    //   //     isExpire: true,
+    //   //     isUse: false,
+    //   //   };
+    //   //   statusRedeem.push(status);
+    //   // }
+    //   const PointDt = await tbPointCodeDT.findOne({
+    //     attributes: [
+    //       "id",
+    //       "code",
+    //       "codeNone",
+    //       "isUse",
+    //       "isExpire",
+    //       "isDeleted",
+    //       "tbPointCodeHDId",
+    //     ],
+    //     where: {
+    //       [Op.or]: [
+    //         { code: Encrypt.EncodeKey(redeemCode[x].toLowerCase()) },
+    //         { codeNone: Encrypt.EncodeKey(redeemCode[x].toLowerCase()) },
+    //       ],
+    //       isDeleted: false,
+    //     },
+    //   });
+
+    //   let Point = [];
+    //   if (PointDt) {
+    //     try {
+    //       Point = await tbPointCodeHD.findOne({
+    //         attributes: ["id", "pointCodePoint"],
+    //         where: {
+    //           id: PointDt.dataValues.tbPointCodeHDId,
+    //           isDeleted: false,
+    //         },
+    //       });
+    //     } catch (err) {
+    //       console.log(err.message);
+    //     }
+    //   }
+
+    //   if (PointDt && Point) {
+    //     if (PointDt.dataValues.isExpire) {
+    //       status = {
+    //         coupon: redeemCode[x],
+    //         isValid: false,
+    //         isInvalid: false,
+    //         isExpire: true,
+    //         isUse: false,
+    //       };
+    //     } else if (PointDt.dataValues.isUse) {
+    //       status = {
+    //         coupon: redeemCode[x],
+    //         isValid: false,
+    //         isInvalid: false,
+    //         isExpire: false,
+    //         isUse: true,
+    //       };
+    //     } else {
+    //       status = {
+    //         coupon: redeemCode[x],
+    //         isValid: true,
+    //         isInvalid: false,
+    //         isExpire: false,
+    //         isUse: false,
+    //       };
+    //     }
+
+    //     if (status.isValid) {
+    //       PointDt.dataValues.isUse = true;
+    //       PointDt.dataValues.memberId = req.body.memberId;
+
+    //       // const updatePointCode = await tbPointCodeDT.update(
+    //       //   PointDt.dataValues,
+    //       //   {
+    //       //     where: { id: PointDt.dataValues.id },
+    //       //   }
+    //       // );
+
+    //       let historyPoint = {
+    //         campaignType: "1",
+    //         code: Encrypt.EncodeKey(redeemCode[x].toLowerCase()),
+    //         point: Point.dataValues.pointCodePoint,
+    //         redeemDate: new Date(),
+    //         expireDate: new Date(new Date().getFullYear() + 2, 11, 31),
+    //         isDeleted: false,
+    //         tbMemberId: req.body.memberId,
+    //         tbPointCodeHDId: PointDt.dataValues.tbPointCodeHDId,
+    //       };
+
+    //       const memberPoint = await tbMemberPoint.create(historyPoint);
+
+    //       const member = await tbMember.findOne({
+    //         where: { id: req.body.memberId },
+    //       });
+
+    //       member.dataValues.memberPointExpire = new Date(
+    //         new Date().getFullYear() + 2,
+    //         11,
+    //         31
+    //       );
+    //       member.dataValues.memberPoint =
+    //         member.dataValues.memberPoint + Point.dataValues.pointCodePoint;
+
+    //       const updateMember = await tbMember.update(member.dataValues, {
+    //         where: { id: member.dataValues.id },
+    //       });
+    //     }
+    //   } else {
+    //     status = {
+    //       coupon: redeemCode[x],
+    //       isValid: false,
+    //       isInvalid: true,
+    //       isExpire: false,
+    //       isUse: false,
+    //     };
+    //   }
+    //   statusRedeem.push(status);
+    // }
     // for (var i = 0; i < redeemCode.length; i++) {
 
     // }
     return res.status(200).json({ data: statusRedeem });
   } catch (err) {
     res.status(200).json({
-        coupon: err.message,
-        isValid: false,
-        isInvalid: true,
-        isExpire: false,
-        isUse: false,
+      coupon: err.message,
+      isValid: false,
+      isInvalid: true,
+      isExpire: false,
+      isUse: false,
     });
   }
 });

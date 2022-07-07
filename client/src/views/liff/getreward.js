@@ -3,10 +3,7 @@ import Select from "react-select";
 import axios from "services/axios";
 import InputMask from "react-input-mask";
 import { useHistory } from "react-router-dom";
-import {
-  getMember,
-  listPointStore,
-} from "@services/liff.services";
+import { getMember, listPointStore } from "@services/liff.services";
 import { IsNullOrEmpty } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
@@ -28,7 +25,7 @@ const GetReward = () => {
   const [valueStore, setvalueStore] = useState(null);
   const [valueBranch, setvalueBranch] = useState(null);
   const [isbranch, setisbranch] = useState(false);
-  const [deploy,setdeploy] = useState("");
+  const [deploy, setdeploy] = useState("");
 
   const [optionsStore, setoptionsStore] = useState([]);
   const [optionsbranch, setoptionsbranch] = useState([]);
@@ -57,10 +54,9 @@ const GetReward = () => {
         .then((res) => {
           let _rewardCode = rewardCode;
           let data = res.data.data;
-      
+
           data.map((e, i) => {
             _rewardCode.map((ee, i) => {
-      
               if (e.coupon === ee.code) {
                 e.isInvalid
                   ? (ee.state = false)
@@ -72,9 +68,9 @@ const GetReward = () => {
               }
             });
           });
-          setdeploy('reward');
+          setdeploy("reward");
           setrewardCode(_rewardCode);
-          console.log(res.data.data)
+          console.log(res.data.data);
           setsucceedData(res.data.data);
           let succeed = true;
           _rewardCode.map((e, i) => {
@@ -241,10 +237,9 @@ const GetReward = () => {
                     }}
                   >
                     {[...rewardCode].map((e, i) => {
-  
                       let _succeedData = succeedData.find(
                         (item) =>
-                          item.coupon == e.code
+                          item.coupon.toLowerCase() == e.code.toLowerCase()
                       );
                       let msg = {
                         msg: "",
@@ -256,7 +251,6 @@ const GetReward = () => {
                           icon: "fas fa-check-circle text-green-mbk",
                         };
                       } else {
-         
                         if (!IsNullOrEmpty(_succeedData)) {
                           _succeedData.isInvalid
                             ? (msg.msg = "ไม่ถูกต้อง")
@@ -318,7 +312,14 @@ const GetReward = () => {
                             {!IsNullOrEmpty(_succeedData) || e.state ? (
                               <div className="text-xs pt-2 px-2 Noto Sans">
                                 <i className={msg.icon}></i>
-                                <span className={"font-bold " + ((msg.msg === "กรอก Code สำเร็จ") ? " text-green-mbk" : " text-red-500")}>
+                                <span
+                                  className={
+                                    "font-bold " +
+                                    (msg.msg === "กรอก Code สำเร็จ"
+                                      ? " text-green-mbk"
+                                      : " text-red-500")
+                                  }
+                                >
                                   {" "}
                                   {msg.msg}
                                 </span>
@@ -330,7 +331,7 @@ const GetReward = () => {
                     })}
                     <div className="noselect relative  px-4  flex-grow flex-1 mt-4">
                       <div
-                       className={(rewardCode.length === 10) ? " hidden" : " "}
+                        className={rewardCode.length === 10 ? " hidden" : " "}
                         style={{
                           width: "40px",
                           height: "40px",
@@ -378,7 +379,10 @@ const GetReward = () => {
           ) : (
             <>
               <div className="noselect text-lg text-white font-bold text-center ">
-                <i className="fas fa-check-circle" style={{ fontSize: "3rem" }}></i>
+                <i
+                  className="fas fa-check-circle"
+                  style={{ fontSize: "3rem" }}
+                ></i>
               </div>
 
               <div className="noselect text-lg text-white font-bold text-center mt-2">
