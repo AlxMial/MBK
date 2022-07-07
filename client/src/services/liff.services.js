@@ -268,6 +268,9 @@ export const getMyCoupon = (s, e = () => {}, f = () => {}) => {
 export const getCouponByID = (data, s, e = () => {}, f = () => {}) => {
   httpPost("/members/getCouponByID", data, s, e, f);
 };
+export const useCouponByID = (data, s, e = () => {}, f = () => {}) => {
+  httpPost("/members/useCouponByID", data, s, e, f);
+};
 export const getMyProduct = (s, e = () => {}, f = () => {}) => {
   httpGet("/members/getMyProduct", s, e, f);
 };

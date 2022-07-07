@@ -170,8 +170,7 @@ router.get("/byId/:id", validateToken, async (req, res) => {
       }
       res.json({ status: true, message: "success", tbMember: listMembers });
     } else {
-      res
-        .json({ status: false, message: "email not found", tbMember: null });
+      res.json({ status: false, message: "email not found", tbMember: null });
     }
   } else {
     res.json({ status: true, message: "success", tbMember: null });
@@ -219,8 +218,7 @@ router.get("/byIdOrder/:id", validateToken, async (req, res) => {
       }
       res.json({ status: true, message: "success", tbMember: listMembers });
     } else {
-      res
-        .json({ status: false, message: "email not found", tbMember: null });
+      res.json({ status: false, message: "email not found", tbMember: null });
     }
   } else {
     res.json({ status: true, message: "success", tbMember: null });
@@ -1293,16 +1291,16 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
         },
       });
       if (_coupon) {
-        const _updateCoupon = await tbMemberReward.update(
-          { isUsedCoupon: true },
-          {
-            where: {
-              memberId: Member.id,
-              rewardType: "Coupon",
-              TableHDId: CouponCodeId,
-            },
-          }
-        );
+        // const _updateCoupon = await tbMemberReward.update(
+        //   { isUsedCoupon: true },
+        //   {
+        //     where: {
+        //       memberId: Member.id,
+        //       rewardType: "Coupon",
+        //       TableHDId: CouponCodeId,
+        //     },
+        //   }
+        // );
 
         let data = _coupon.dataValues;
         tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
@@ -1372,6 +1370,59 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
     msg: msg,
     coupon: coupon,
     product: product,
+  });
+});
+router.post("/useCouponByID", validateLineToken, async (req, res) => {
+  let status = true;
+  let msg;
+  let Member;
+
+  try {
+    const uid = Encrypt.DecodeKey(req.user.uid);
+    const CouponCodeId = Encrypt.DecodeKey(req.body.Id);
+    Member = await tbMember.findOne({
+      attributes: ["id"],
+      where: { uid: uid },
+    });
+    if (Member) {
+      //Coupon
+      let _coupon = await tbMemberReward.findOne({
+        attributes: [
+          "id",
+          "rewardType",
+          "TableHDId",
+          "deliverStatus",
+          "redeemDate",
+          "isUsedCoupon",
+          "trackingNo",
+        ],
+        where: {
+          memberId: Member.id,
+          rewardType: "Coupon",
+          TableHDId: CouponCodeId,
+        },
+      });
+      if (_coupon) {
+        const _updateCoupon = await tbMemberReward.update(
+          { isUsedCoupon: true },
+          {
+            where: {
+              memberId: Member.id,
+              rewardType: "Coupon",
+              TableHDId: CouponCodeId,
+            },
+          }
+        );
+      }
+    }
+  } catch (e) {
+    status = false;
+    msg = e.message;
+  }
+
+  return res.json({
+    status: status,
+    msg: msg,
   });
 });
 
@@ -1670,7 +1721,6 @@ router.get(
           });
         }
         //#endregion สินค้า productName
-      
       } else {
         const _tbMemberPoint = await tbMemberPoint.findAll({
           attributes: [
