@@ -446,8 +446,6 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/", async (req, res) => {
-
-  
   req.body.id = Encrypt.DecodeKey(req.body.id);
 
   const ConstMember = await tbMember.findOne({ where: { id: req.body.id } });
@@ -501,8 +499,7 @@ router.put("/", async (req, res) => {
       });
       res.json({ status: true, message: "success", tbMember: members });
     } else {
-      if (member.email === Encrypt.EncodeKey(req.body.email.toLowerCase()))
-      {
+      if (member.email === Encrypt.EncodeKey(req.body.email.toLowerCase())) {
         res.json({
           status: false,
           isEmail: true,
@@ -511,8 +508,7 @@ router.put("/", async (req, res) => {
           message: "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Email ซ้ำภายในระบบ",
           tbMember: null,
         });
-      }
-      else if (member.phone === Encrypt.EncodeKey(req.body.phone))
+      } else if (member.phone === Encrypt.EncodeKey(req.body.phone))
         res.json({
           status: false,
           isEmail: false,
@@ -1253,102 +1249,96 @@ router.get("/getMyProduct", validateLineToken, async (req, res) => {
 router.post("/getCouponByID", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
-  let Member;
   let coupon;
   let product;
   try {
-    const uid = Encrypt.DecodeKey(req.user.uid);
+    const memberId = Encrypt.DecodeKey(req.user.id);
     const CouponCodeId = Encrypt.DecodeKey(req.body.Id);
-    Member = await tbMember.findOne({
-      attributes: ["id"],
-      where: { uid: uid },
+
+    let _coupon = await tbMemberReward.findOne({
+      attributes: [
+        "id",
+        "rewardType",
+        "TableHDId",
+        "deliverStatus",
+        "redeemDate",
+        "isUsedCoupon",
+        "trackingNo",
+      ],
+      where: {
+        memberId: memberId,
+        rewardType: "Coupon",
+        TableHDId: CouponCodeId,
+      },
     });
-    if (Member) {
-      //Coupon
-      let _coupon = await tbMemberReward.findOne({
-        attributes: [
-          "id",
-          "rewardType",
-          "TableHDId",
-          "deliverStatus",
-          "redeemDate",
-          "isUsedCoupon",
-          "trackingNo",
-        ],
-        where: {
-          memberId: Member.id,
-          rewardType: "Coupon",
-          TableHDId: CouponCodeId,
-        },
+    if (_coupon) {
+      let data = _coupon.dataValues;
+      tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+      tbCouponCode.belongsTo(tbRedemptionCoupon, {
+        foreignKey: "redemptionCouponId",
       });
-      if (_coupon) {
-        // const _updateCoupon = await tbMemberReward.update(
-        //   { isUsedCoupon: true },
-        //   {
-        //     where: {
-        //       memberId: Member.id,
-        //       rewardType: "Coupon",
-        //       TableHDId: CouponCodeId,
-        //     },
-        //   }
-        // );
+      tbRedemptionCoupon.belongsTo(tbRedemptionConditionsHD, {
+        foreignKey: "redemptionConditionsHDId",
+      });
+      // tbRedemptionConditionsHD.hasMany(tbRedemptionCoupon, { foreignKey: "redemptionConditionsHDId" });
 
-        let data = _coupon.dataValues;
-        tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
-        tbCouponCode.belongsTo(tbRedemptionCoupon, {
-          foreignKey: "redemptionCouponId",
-        });
-
-        const _tbCouponCode = await tbCouponCode.findOne({
-          attributes: ["id", "codeCoupon"],
-          where: {
-            isDeleted: false,
-            id: data.TableHDId,
-          },
-          include: [
-            {
-              model: tbRedemptionCoupon,
-              attributes: [
-                "id",
-                "couponName",
-                "description",
-                "redemptionConditionsHDId",
-              ],
-              where: { isDeleted: false },
-            },
-          ],
-        });
-        if (_tbCouponCode) {
-          let _RedemptionCoupon =
-            _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues;
-
-          const _tbRedemptionConditionsHD =
-            await tbRedemptionConditionsHD.findOne({
-              attributes: ["points"],
-              where: {
-                isDeleted: false,
-                id: _RedemptionCoupon.redemptionConditionsHDId,
+      const _tbCouponCode = await tbCouponCode.findOne({
+        attributes: ["id", "codeCoupon"],
+        where: {
+          isDeleted: false,
+          id: data.TableHDId,
+        },
+        include: [
+          {
+            model: tbRedemptionCoupon,
+            attributes: [
+              "id",
+              "couponName",
+              "description",
+              "redemptionConditionsHDId",
+            ],
+            where: { isDeleted: false },
+            include: [
+              {
+                model: tbRedemptionConditionsHD,
+                attributes: ["id", "couponType"],
+                where: { isDeleted: false },
               },
-            });
-          let points = 0;
-          if (_tbRedemptionConditionsHD) {
-            points = _tbRedemptionConditionsHD.dataValues.points;
-          }
-          let codeCoupon = Encrypt.DecodeKey(
-            _tbCouponCode.dataValues.codeCoupon
-          );
-          let couponName = _RedemptionCoupon.couponName;
-          let description = _RedemptionCoupon.description;
-          let redemptionCouponId = Encrypt.EncodeKey(_RedemptionCoupon.id);
-          coupon = {
-            id: req.body.Id,
-            redemptionCouponId: redemptionCouponId,
-            couponName: couponName,
-            description: description,
-            points: points,
-            codeCoupon: codeCoupon,
-          };
+            ],
+          },
+        ],
+      });
+      if (_tbCouponCode) {
+        let _RedemptionCoupon =
+          _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues;
+
+        const _tbRedemptionConditionsHD =
+          await tbRedemptionConditionsHD.findOne({
+            attributes: ["points"],
+            where: {
+              isDeleted: false,
+              id: _RedemptionCoupon.redemptionConditionsHDId,
+            },
+          });
+        let points = 0;
+        if (_tbRedemptionConditionsHD) {
+          points = _tbRedemptionConditionsHD.dataValues.points;
         }
+        let codeCoupon = Encrypt.DecodeKey(_tbCouponCode.dataValues.codeCoupon);
+        let couponName = _RedemptionCoupon.couponName;
+        let description = _RedemptionCoupon.description;
+        let redemptionCouponId = Encrypt.EncodeKey(_RedemptionCoupon.id);
+        coupon = {
+          id: req.body.Id,
+          redemptionCouponId: redemptionCouponId,
+          couponName: couponName,
+          description: description,
+          points: points,
+          codeCoupon: codeCoupon,
+          couponType:
+            _tbCouponCode.tbRedemptionCoupon.tbRedemptionConditionsHD
+              .couponType,
+        };
       }
     }
   } catch (e) {

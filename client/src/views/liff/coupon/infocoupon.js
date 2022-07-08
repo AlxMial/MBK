@@ -70,7 +70,7 @@ const InfoCoupon = () => {
       {/* card */}
       <div style={{ height: "calc(50% - 160px)", backgroundColor: "#007a40" }}>
         {MyCoupon != null ? (
-          <div className="w-full absolute" style={{ height: "100%" }}>
+          <div className="w-full h-full absolute">
             <div className="mb-4" style={{ height: "150px" }}>
               <div style={{ width: "220px", height: "150px", margin: "auto" }}>
                 <ImageUC
@@ -120,35 +120,33 @@ const InfoCoupon = () => {
             </div>
           </div>
         ) : null}
-
-        <div className="absolute w-full flex" style={{ bottom: "10px" }}>
-          <div
-            className=" w-full"
-            style={{
-              padding: "10px",
-              margin: "auto",
-              width: "50%",
-            }}
-          >
+        {MyCoupon != null ? (
+          <div className="absolute w-full flex" style={{ bottom: "10px" }}>
             <div
-              className="flex bg-green-mbk text-white text-center text-lg  font-bold "
+              className=" w-full"
               style={{
+                padding: "10px",
                 margin: "auto",
-                height: "45px",
-                borderRadius: "10px",
-                padding: "5px",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              onClick={() => {
-                // history.push(path.usecouponUC.replace(":id", id))
-                setIsOpenDialog(true);
+                width: "50%",
               }}
             >
-              {"ใช้คูปอง"}
+              <div
+                className="flex bg-green-mbk text-white text-center text-lg  font-bold bt-line"
+                style={{
+                  filter: MyCoupon.couponType ? "" : "grayscale(1)",
+                  opacity: "0.5",
+                }}
+                onClick={() => {
+                  if (MyCoupon.couponType) {
+                    setIsOpenDialog(true);
+                  }
+                }}
+              >
+                {"ใช้คูปอง"}
+              </div>
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
     </>
   );

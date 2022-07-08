@@ -351,7 +351,7 @@ router.post("/game", validateToken, async (req, res) => {
         if (req.body.listGame[i].rewardType === "1") {
           coupon = await tbRedemptionCoupon.create(req.body.listGame[i]);
           req.body.listGame[i].id = coupon.dataValues.id;
-          console.log(coupon.dataValues.couponCount)
+          console.log(coupon.dataValues.couponCount);
           const generateCode = await axiosInstance
             .post("api/coupon/generateCoupon", coupon)
             .then(async (resGenerate) => {
@@ -363,10 +363,16 @@ router.post("/game", validateToken, async (req, res) => {
                     const deleteqry = `DELETE FROM mbk_temp.tbcouponcodes WHERE mbk_temp.tbcouponcodes.redemptionCouponId IN (select redemptionCouponId from mbk_database.tbcouponcodes)`;
                     db.sequelize
                       .query(deleteqry, null, { raw: true })
-                      .then((result) => {console.log(result)})
-                      .catch((error) => {console.log(error)});
+                      .then((result) => {
+                        console.log(result);
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                      });
                   })
-                  .catch((error) => {console.log(error)});
+                  .catch((error) => {
+                    console.log(error);
+                  });
               }
             });
         } else if (req.body.listGame[i].rewardType === "2") {
@@ -708,7 +714,9 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
             tbCouponCode.belongsTo(tbRedemptionCoupon, {
               foreignKey: "redemptionCouponId",
             });
-
+            tbRedemptionCoupon.belongsTo(tbRedemptionConditionsHD, {
+              foreignKey: "redemptionConditionsHDId",
+            });
             let _tbCouponCode = await tbCouponCode.findOne({
               where: { isDeleted: !1, id: _tbMemberReward[i].TableHDId },
               attributes: ["id", "redemptionCouponId"],
@@ -727,7 +735,15 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
                   where: {
                     isDeleted: !1,
                     id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
+                    // couponType: false,
                   },
+                  include: [
+                    {
+                      model: tbRedemptionConditionsHD,
+                      attributes: ["id", "couponType"],
+                      where: { couponType: false },
+                    },
+                  ],
                 },
               ],
             });
