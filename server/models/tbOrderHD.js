@@ -145,6 +145,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
       default: null
+    },
+    creditCard: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      default: null
     }
   });
   tbOrderHD.associate = (models) => {

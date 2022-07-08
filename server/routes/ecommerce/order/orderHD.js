@@ -75,6 +75,10 @@ router.get("/", validateToken, async (req, res) => {
       foreignKey: "otherAddressId",
     });
 
+    tbOrderHD.belongsTo(tbMember, {
+      foreignKey: "memberId",
+    });
+
     const data = await tbOrderHD.findAll({
       where: { isDeleted: false },
       include: [
@@ -99,13 +103,19 @@ router.get("/", validateToken, async (req, res) => {
           },
           required: false,
         },
+        {
+          model: tbMember,
+          where: {
+            isDeleted: false,
+          },
+          required: false,
+        },
       ],
       order: [["orderNumber", "DESC"]],
     });
     if (data) {
       data.map((e, i) => {
         let hd = e.dataValues;
-     
         //เป็นการโอนและมีการแนบสลิปแล้ว
         if (hd.paymentType == 1 && hd.paymentStatus >= 2) {
           hd.isImage = true; //มี image
@@ -132,10 +142,14 @@ router.get("/", validateToken, async (req, res) => {
           hd.lastName = Encrypt.DecodeKey(hd.lastName);
           hd.address = Encrypt.DecodeKey( hd.address);
         }
+
+        if(e.dataValues.tbMember) {
+          hd.email = Encrypt.DecodeKey( e.dataValues.tbMember.email);
+        }
+
         // hd.tbImages = null
         hd.tbCancelOrders = null;
         hd.tbReturnOrders = null;
-        console.log(hd)
         orderHD.push(hd);
       });
     }
@@ -721,7 +735,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         orderhd.firstName = address.firstName;
         orderhd.lastName = address.lastName;
         orderhd.phone = address.phone;
-        orderhd.address = address.firstName;
+        orderhd.address = address.address;
         orderhd.subDistrict = address.subDistrict;
         orderhd.district = address.district;
         orderhd.province = address.province;
@@ -977,7 +991,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           data.firstName = address.firstName;
           data.lastName = address.lastName;
           data.phone = address.phone;
-          data.address = address.firstName;
+          data.address = address.address;
           data.subDistrict = address.subDistrict;
           data.district = address.district;
           data.province = address.province;
@@ -1131,6 +1145,7 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
       const _tbOrderHDupd = await tbOrderHD.update(
         {
           paymentStatus: 2,
+          paymentDate:new Date(),
         },
         {
           where: {

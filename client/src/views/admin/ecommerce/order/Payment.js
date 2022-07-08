@@ -65,17 +65,18 @@ const Payment = ({ props, setOrderHD }) => {
         <div className='mt-2 px-4'>
             <div className="w-full">
                 <div className='flex justify-between'>
-                    <div className='py-2 margin-auto-t-b lg:w-7/12'>
+                    <div className='py-2 margin-auto-t-b lg:w-6/12'>
                         <LabelUC label={payment && payment.bankName} />
+                        <LabelUC label={orderHD && (orderHD.paymentType == 2 ? "ผ่านบัตรเครดิต" : "" )} />
+                        {/* <div className='text-blueGray-400 text-sm mt-1 font-bold' >{orderHD && (orderHD.paymentType == 2 ? "ผ่านบัตรเครดิต" : "" )}</div> */}
+                        <div className='text-blueGray-400 text-sm mt-1' >{orderHD && (orderHD.paymentType == 2 ? "หมายเลข " + orderHD.creditCard : "" )}</div>
                         <div className='text-blueGray-400 text-sm mt-1' >{payment && payment.accountNumber}</div>
-                        <div className='text-blueGray-400 text-sm mt-1' >{orderHD && orderHD.memberName}</div>
+                        {/* <div className='text-blueGray-400 text-sm mt-1' >{orderHD && orderHD.memberName}</div> */}
                         <div className='text-blueGray-400 text-sm mt-1' >
-                            {orderHD && moment(orderHD.orderDate).format("DD/MM/YYYY HH:mm:ss") + ' น.'}
+                            {orderHD && (orderHD.paymentDate) ?   'วันที่ชำระ ' +  moment(orderHD.paymentDate).format("DD/MM/YYYY HH:mm") + ' น.' : "ยังไม่ได้ชำระ"}
                         </div>
-
                     </div>
                     <div style={{ minWidth: "100px" }} >
-
                         <div className={'p-2 rounded '}>
                             <SelectUC
                                 name="transportType"

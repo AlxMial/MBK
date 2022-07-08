@@ -12,7 +12,7 @@ export const customStyles = (width = '') => ({
     backgroundColor: "white",
     border: "1px solid #047a40",
     //   height:"80vh",
-    width: width ? width : "65vw",
+    width: width ? width : "70vw",
     maxWidth: "75vw",
   }, overlay: { zIndex: 100, backgroundColor: 'rgba(70, 70, 70, 0.5)', }
 });
