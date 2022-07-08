@@ -11,7 +11,7 @@ const Encrypt = new ValidateEncrypt();
 const Op = Sequelize.Op;
 
 router.post("/", validateToken, async (req, res) => {
-  console.log(req.body)
+  console.log(req.body);
   const data = await tbStock.create(req.body);
   res.json({
     status: true,
@@ -94,9 +94,10 @@ router.delete("/:id", validateToken, async (req, res) => {
 
 //#region line liff
 
-router.post("/getStock"
+router.post(
+  "/getStock",
   // , validateLineToken // ดูได้โดยไม่ต้อง login
-  , async (req, res) => {
+  async (req, res) => {
     let id = req.body.id;
     let status = true;
     let _tbStock = [];
@@ -140,18 +141,8 @@ router.post("/getStock"
             productCategoryId: Encrypt.EncodeKey(e.productCategoryId),
             percent: e.percent,
             priceDiscount: e.price - e.discount,
-            // percent:
-            //   e.discount > 0
-            //     ? e.discountType.toString().toLowerCase().includes("percent")
-            //       ? e.discount
-            //       : (e.discount / e.price) * 100
-            //     : 0,
-            // priceDiscount:
-            //   e.discount > 0
-            //     ? e.discountType.toString().toLowerCase().includes("thb")
-            //       ? e.price - e.discount
-            //       : e.price - (e.discount / 100) * e.price
-            //     : 0,
+            salePercent: e.salePercent,
+            saleDiscount: e.saleDiscount,
           });
         });
       }
@@ -166,11 +157,13 @@ router.post("/getStock"
       msg: msg,
       tbStock: _tbStock,
     });
-  });
+  }
+);
 // รูป Banner
-router.get("/getImgBanner"
+router.get(
+  "/getImgBanner",
   // , validateLineToken
-  , async (req, res) => {
+  async (req, res) => {
     let status = !0,
       msg,
       data = [],
@@ -217,10 +210,12 @@ router.get("/getImgBanner"
       msg: msg,
       ImgBanner: data,
     });
-  });
-router.post("/getImg"
+  }
+);
+router.post(
+  "/getImg",
   // , validateLineToken
-  , async (req, res) => {
+  async (req, res) => {
     let status = true;
     let msg = null;
     let data = [];
@@ -250,6 +245,7 @@ router.post("/getImg"
       msg: msg,
       data: data,
     });
-  });
+  }
+);
 //#endregion line liff
 module.exports = router;

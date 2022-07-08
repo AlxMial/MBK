@@ -75,7 +75,15 @@ module.exports = (sequelize, DataTypes) => {
     isBestSeller: {
       type: DataTypes.BOOLEAN,
       allowNull: true,
-    }
+    },
+    salePercent: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    saleDiscount: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   });
   tbStock.associate = (models) => {
     tbStock.hasMany(models.tbBanner, {

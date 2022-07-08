@@ -190,6 +190,38 @@ const StockInfo = ({
       }
     }
   };
+  const calculateSaleValue = (value, type) => {
+    var Calculate = 0;
+    if (formik.values.price == 0) {
+      formik.setFieldValue("salePercent", "");
+      formik.setFieldValue("saleDiscount", "");
+    } else {
+      if (type === "percent") {
+        if (value !== "" && value > 0) {
+          if (formik.values.price !== "" && formik.values.price > 0) {
+            Calculate = formik.values.price * (value / 100);
+            formik.setFieldValue("saleDiscount", Calculate.toFixed(2));
+          }
+        } else {
+          formik.setFieldValue("saleDiscount", "0");
+        }
+      } else if (type === "discount") {
+        if (value !== "" && value > 0) {
+          if (formik.values.price !== "" && formik.values.price > 0) {
+            Calculate = (value / formik.values.price) * 100;
+            formik.setFieldValue("salePercent", Calculate.toFixed(2));
+          }
+        } else {
+          formik.setFieldValue("salePercent", "0");
+        }
+      } else {
+        if (value !== "" && value > 0) {
+          formik.setFieldValue("salePercent", "");
+          formik.setFieldValue("saleDiscount", "");
+        }
+      }
+    }
+  };
 
   return (
     <>
@@ -390,7 +422,7 @@ const StockInfo = ({
                   </div>
                   <div className="flex flex-wrap mt-4">
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                      <LabelUC label="ส่วนลด"  />
+                      <LabelUC label="ส่วนลด" />
                       <div className="relative w-full px-4">
                         {/* {formik.touched.discount && formik.errors.discount ? (
                           <div className="text-sm py-2 px-2  text-red-500">
@@ -631,6 +663,8 @@ const StockInfo = ({
                             //   formik.setFieldValue("isFlashSale", value);
                             // }
                             formik.setFieldValue("isFlashSale", value);
+                            formik.setFieldValue("salepercent", "");
+                            formik.setFieldValue("saleDiscount", "");
                           }}
                           checked={formik.values.isFlashSale}
                         />
@@ -731,6 +765,130 @@ const StockInfo = ({
                       </div>
                     </div>
                   </div>
+
+                  <div className="flex flex-wrap mt-4">
+                    <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
+                      <LabelUC label="ราคา" />
+                      <div className="relative w-full px-4"></div>
+                    </div>
+                    <div className="w-full lg:w-2/12 margin-auto-t-b">
+                      <div className="relative w-full px-4">
+                        <InputUC
+                          type="text"
+                          className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                          id="saleDiscount"
+                          name="saleDiscount"
+                          onBlur={formik.handleBlur}
+                          value={formik.values.saleDiscount}
+                          disabled={!formik.values.isFlashSale}
+                          onChange={(e) => {
+                            var start = e.target.selectionStart;
+                            setDelayValue(
+                              ValidateService.onHandleDecimalChange(e)
+                            );
+                            formik.values.saleDiscount =
+                              ValidateService.onHandleDecimalChange(e);
+                            if (
+                              formik.values.saleDiscount !== "" &&
+                              formik.values.price !== ""
+                            ) {
+                              if (
+                                parseInt(formik.values.saleDiscount) >
+                                parseInt(formik.values.price)
+                              ) {
+                                formik.values.saleDiscount =
+                                  formik.values.price;
+                              }
+                            }
+                            e.target.setSelectionRange(start, start);
+                            calculateSaleValue(
+                              formik.values.saleDiscount,
+                              "discount"
+                            );
+                          }}
+                        />
+                      </div>
+                      <div className="relative w-full px-4">
+                        {formik.touched.saleDiscount &&
+                        formik.errors.saleDiscount ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            {formik.errors.saleDiscount}
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="w-full lg:w-1/12 px-4 margin-auto-t-b flex justify-between">
+                      <LabelUC label="บาท" />
+                      <div className="relative w-full px-4">
+                        {formik.touched.saleDiscount &&
+                        formik.errors.saleDiscount ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            &nbsp;
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                    {/* ส่วนลด */}
+                    <div className="w-full lg:w-1/12 margin-auto-t-b">
+                      <div className="relative w-full px-4">
+                        <InputUC
+                          type="text"
+                          className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                          id="salePercent"
+                          name="salePercent"
+                          onBlur={formik.handleBlur}
+                          value={formik.values.salePercent}
+                          disabled={!formik.values.isFlashSale}
+                          onChange={(e) => {
+                            var start = e.target.selectionStart;
+                            if (
+                              ValidateService.onHandleDecimalChange(e) > 100.0
+                            )
+                              e.target.value = 100;
+                            setDelayValue(
+                              ValidateService.onHandleDecimalChange(e)
+                            );
+                            formik.values.salePercent =
+                              ValidateService.onHandleDecimalChange(e);
+                            if (
+                              formik.values.salePercent !== "" &&
+                              formik.values.price !== ""
+                            ) {
+                              if (
+                                parseInt(formik.values.salePercent) >
+                                parseInt(formik.values.price)
+                              ) {
+                                formik.values.salePercent = formik.values.price;
+                              }
+                            }
+                            e.target.setSelectionRange(start, start);
+                            calculateSaleValue(
+                              formik.values.salePercent,
+                              "percent"
+                            );
+                          }}
+                        />
+                      </div>
+                      <div className="relative w-full px-4">
+                        {formik.touched.discount && formik.errors.discount ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            &nbsp;
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                    <div className="w-full lg:w-1/12 pl-4 margin-auto-t-b ">
+                      <LabelUC label="เปอร์เซ็นต์" />
+                      <div className="relative w-full px-4">
+                        {formik.touched.discount && formik.errors.discount ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            &nbsp;
+                          </div>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+
                   <div className="flex flex-wrap mt-4 ">
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
                       <LabelUC label="" />

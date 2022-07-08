@@ -100,12 +100,13 @@ const encrypt = (val) => {
 };
 
 export const formatMoney = (val) => {
-  return parseFloat(val).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,");
+  return parseFloat(val)
+    .toFixed(2)
+    .replace(/\d(?=(\d{3})+\.)/g, "$&,");
 };
 
-
 export const DecodeKey = (id) => {
-  try{
+  try {
     if (this.IsNullOrEmpty(id)) {
       return "";
     }
@@ -113,13 +114,50 @@ export const DecodeKey = (id) => {
     // console.log(buff)
     id = buff.toString("ascii");
     return this.decrypt(id);
-  }catch{
+  } catch {
     return id;
   }
-}
+};
 
 export const decrypt = (encrypted) => {
   let decipher = crypto.createDecipheriv("aes-256-cbc", ENC_KEY, IV);
   let decrypted = decipher.update(encrypted, "base64", "utf8");
   return decrypted + decipher.final("utf8");
+};
+
+export const isFlashSale = (e) => {
+  let isFlash = false;
+  let startDateCampaign = new Date(
+    new Date(e.startDateCampaign).toISOString().split("T")[0].replace(/-/g, "/")
+  );
+  let endDateCampaign = new Date(
+    new Date(e.endDateCampaign).toISOString().split("T")[0].replace(/-/g, "/")
+  );
+  let _today = new Date();
+  let today = new Date(
+    _today.getFullYear() +
+      "/" +
+      (_today.getMonth() + 1) +
+      "/" +
+      _today.getDate()
+  );
+  if (today >= startDateCampaign && today <= endDateCampaign) {
+    let startTimeCampaign = new Date(
+      new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+        " " +
+        e.startTimeCampaign
+    );
+    let endTimeCampaign = new Date(
+      new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+        " " +
+        e.endTimeCampaign
+    );
+    today = new Date();
+    // อยู่ในเวลา
+    if (today > startTimeCampaign && today < endTimeCampaign) {
+      isFlash = true;
+    }
+  }
+
+  return isFlash;
 };

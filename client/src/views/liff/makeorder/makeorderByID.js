@@ -91,6 +91,14 @@ const MakeOrderById = () => {
                     let amount = 0;
                     tbStock.map((e, i) => {
                       let item = shop_orders.find((o) => o.id == e.id);
+                      item.discount = e.price - e.discount;
+                      if (e.isFlashSale) {
+                        if (fn.isFlashSale(e)) {
+                          item.discount = e.saleDiscount;
+                          e.priceDiscount = e.saleDiscount;
+                        }
+                      }
+
                       if (!item.isFree) {
                         let quantity = item.amount;
                         amount += quantity;

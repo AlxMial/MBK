@@ -145,8 +145,8 @@ router.get("/", validateToken, async (req, res) => {
           hd.address = Encrypt.DecodeKey(hd.address);
         }
 
-        if(e.dataValues.tbMember) {
-          hd.email = Encrypt.DecodeKey( e.dataValues.tbMember.email);
+        if (e.dataValues.tbMember) {
+          hd.email = Encrypt.DecodeKey(e.dataValues.tbMember.email);
         }
 
         // hd.tbImages = null
@@ -270,7 +270,45 @@ router.delete("/:id", validateToken, async (req, res) => {
 });
 
 //#region line liff
+//#region ตรวจสอบ FlashSale
+const isFlashSale = (e) => {
+  let isFlash = false;
+  let startDateCampaign = new Date(
+    new Date(e.startDateCampaign).toISOString().split("T")[0].replace(/-/g, "/")
+  );
+  let endDateCampaign = new Date(
+    new Date(e.endDateCampaign).toISOString().split("T")[0].replace(/-/g, "/")
+  );
+  let _today = new Date();
+  let today = new Date(
+    _today.getFullYear() +
+      "/" +
+      (_today.getMonth() + 1) +
+      "/" +
+      _today.getDate()
+  );
+  if (today >= startDateCampaign && today <= endDateCampaign) {
+    let startTimeCampaign = new Date(
+      new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+        " " +
+        e.startTimeCampaign
+    );
+    let endTimeCampaign = new Date(
+      new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+        " " +
+        e.endTimeCampaign
+    );
+    today = new Date();
+    // อยู่ในเวลา
+    if (today > startTimeCampaign && today < endTimeCampaign) {
+      isFlash = true;
+    }
+  }
 
+  return isFlash;
+};
+
+//#endregionregion ตรวจสอบ FlashSale
 //ข้อมูลสินค้า
 const getorderDT = async (DT) => {
   let orderDT = [];
@@ -289,6 +327,12 @@ const getorderDT = async (DT) => {
           "discount",
           "discountType",
           "productCount",
+          "salePercent",
+          "saleDiscount",
+          "startDateCampaign",
+          "endDateCampaign",
+          "startTimeCampaign",
+          "endTimeCampaign",
         ],
         where: {
           id: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
@@ -297,17 +341,23 @@ const getorderDT = async (DT) => {
           },
         },
       });
-
+      let discount = _tbStock.discount;
       if (_tbStock) {
-        //มีสินค้า
+        if (_tbStock.isFlashSale) {
+          //อยู่ในเงือนไข
+          if (isFlashSale(_tbStock)) {
+            discount = _tbStock.saleDiscount;
+          }
+        }
 
-        total = total + (_tbStock.price - _tbStock.discount) * DT[i].amount;
+        total =
+          total + (_tbStock.price - discount) * DT[i].amount;
         stockNumber += DT[i].amount;
         orderDT.push({
           stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
           amount: DT[i].amount,
           price: _tbStock.price,
-          discount: _tbStock.discount,
+          discount: discount,
           discountType: _tbStock.discountType,
           isFlashSale: _tbStock.isFlashSale,
           isFree: false,
@@ -1147,7 +1197,7 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
       const _tbOrderHDupd = await tbOrderHD.update(
         {
           paymentStatus: 2,
-          paymentDate:new Date(),
+          paymentDate: new Date(),
         },
         {
           where: {
@@ -1426,7 +1476,8 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             OrderHDData.push(_OrderHDData[i]);
           } else {
             if (_OrderHDData[i].tbReturnOrders[0].returnStatus == 3) {
-              _OrderHDData[i].dataValues.returnStatus =_OrderHDData[i].tbReturnOrders[0].returnStatus;
+              _OrderHDData[i].dataValues.returnStatus =
+                _OrderHDData[i].tbReturnOrders[0].returnStatus;
               OrderHDData.push(_OrderHDData[i]);
             }
           }

@@ -52,11 +52,80 @@ const ShowCart = () => {
                     tbStock.filter((e) => {
                       let quantity = cart.find((o) => o.id === e.id).quantity;
                       e.quantity = quantity;
-                      if (e.priceDiscount > 0) {
-                        price +=
-                          parseFloat(e.priceDiscount) * parseInt(quantity);
+                      if (e.isFlashSale) {
+                        let startDateCampaign = new Date(
+                          new Date(e.startDateCampaign)
+                            .toISOString()
+                            .split("T")[0]
+                            .replace(/-/g, "/")
+                        );
+                        let endDateCampaign = new Date(
+                          new Date(e.endDateCampaign)
+                            .toISOString()
+                            .split("T")[0]
+                            .replace(/-/g, "/")
+                        );
+                        let _today = new Date();
+                        let today = new Date(
+                          _today.getFullYear() +
+                            "/" +
+                            (_today.getMonth() + 1) +
+                            "/" +
+                            _today.getDate()
+                        );
+                        if (
+                          today >= startDateCampaign &&
+                          today <= endDateCampaign
+                        ) {
+                          let startTimeCampaign = new Date(
+                            new Date()
+                              .toISOString()
+                              .split("T")[0]
+                              .replace(/-/g, "/") +
+                              " " +
+                              e.startTimeCampaign
+                          );
+                          let endTimeCampaign = new Date(
+                            new Date()
+                              .toISOString()
+                              .split("T")[0]
+                              .replace(/-/g, "/") +
+                              " " +
+                              e.endTimeCampaign
+                          );
+                          today = new Date();
+                          if (
+                            today > startTimeCampaign &&
+                            today < endTimeCampaign
+                          ) {
+                            price +=
+                              parseFloat(e.saleDiscount) * parseInt(quantity);
+
+                            e.priceDiscount = e.saleDiscount;
+                          } else {
+                            if (e.priceDiscount > 0) {
+                              price +=
+                                parseFloat(e.priceDiscount) *
+                                parseInt(quantity);
+                            } else {
+                              price += parseFloat(e.price) * parseInt(quantity);
+                            }
+                          }
+                        } else {
+                          if (e.priceDiscount > 0) {
+                            price +=
+                              parseFloat(e.priceDiscount) * parseInt(quantity);
+                          } else {
+                            price += parseFloat(e.price) * parseInt(quantity);
+                          }
+                        }
                       } else {
-                        price += parseFloat(e.price) * parseInt(quantity);
+                        if (e.priceDiscount > 0) {
+                          price +=
+                            parseFloat(e.priceDiscount) * parseInt(quantity);
+                        } else {
+                          price += parseFloat(e.price) * parseInt(quantity);
+                        }
                       }
 
                       if (e.productCount < quantity) {
@@ -68,7 +137,6 @@ const ShowCart = () => {
                           uid: Session.getLiff().uid,
                         });
                       }
-
                       return e;
                     });
                     if (!fn.IsNullOrEmpty(cart.usecoupon)) {
@@ -112,7 +180,6 @@ const ShowCart = () => {
     Storage.removeconpon_cart();
     Storage.upd_cart(cart);
     getProducts();
-
   };
   //ลบ
   const deleteCart = () => {

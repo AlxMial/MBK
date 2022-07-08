@@ -41,7 +41,6 @@ const ShopList = () => {
   };
 
   const setselectMenu = (e) => {
-
     setselectmenu(e);
     setcategoryview(category, e);
   };
@@ -52,12 +51,13 @@ const ShopList = () => {
     useInterval(() => {
       const current_date = new Date().getTime();
       let _endTimeCampaign = new Date(
-        new Date().toISOString().split("T")[0].replace(/-/g, '/') +
-        " " +
-        endTimeCampaign
+        new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+          " " +
+          endTimeCampaign
       );
 
-      let seconds_left = (new Date(_endTimeCampaign).getTime() - current_date) / 1000;
+      let seconds_left =
+        (new Date(_endTimeCampaign).getTime() - current_date) / 1000;
 
       let hours = pad(parseInt(seconds_left / 3600));
       seconds_left = seconds_left % 3600;
@@ -91,7 +91,7 @@ const ShopList = () => {
   };
   const setcategoryview = (id, e) => {
     setcategory(id);
-    setisLoadingData(true)
+    setisLoadingData(true);
     setTimeout(() => {
       if (id === 0) {
         let tbStockiewNominal = [];
@@ -110,21 +110,33 @@ const ShopList = () => {
             tbStockiewNominal.push(e);
           } else {
             let startDateCampaign = new Date(
-              new Date(e.startDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
+              new Date(e.startDateCampaign)
+                .toISOString()
+                .split("T")[0]
+                .replace(/-/g, "/")
             );
             let endDateCampaign = new Date(
-              new Date(e.endDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
+              new Date(e.endDateCampaign)
+                .toISOString()
+                .split("T")[0]
+                .replace(/-/g, "/")
             );
-            let today = new Date(new Date().toISOString().split("T")[0].replace(/-/g, '/'));
+            let today = new Date(
+              new Date().toISOString().split("T")[0].replace(/-/g, "/")
+            );
             if (today >= startDateCampaign && today <= endDateCampaign) {
               let startTimeCampaign = new Date(
-                new Date().toISOString().split("T")[0].replace(/-/g, '/') + " " + e.startTimeCampaign
+                new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+                  " " +
+                  e.startTimeCampaign
               );
               let endTimeCampaign = new Date(
-                new Date().toISOString().split("T")[0].replace(/-/g, '/') + " " + e.endTimeCampaign
+                new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+                  " " +
+                  e.endTimeCampaign
               );
               today = new Date();
-              if (today > startTimeCampaign && today < endTimeCampaign) {
+              if (today >= startTimeCampaign && today <= endTimeCampaign) {
                 tbStockiewFlashSale.push(e);
               } else {
                 tbStockiewNominal.push(e);
@@ -136,7 +148,7 @@ const ShopList = () => {
         });
         settbStockiewNominal(tbStockiewNominal);
         settbStockiewFlashSale(tbStockiewFlashSale);
-        setisLoadingData(false)
+        setisLoadingData(false);
       } else {
         let dataTemp = tbStock;
         if (e == 2) {
@@ -160,18 +172,30 @@ const ShopList = () => {
             tbStockiewNominal.push(e);
           } else {
             let startDateCampaign = new Date(
-              new Date(e.startDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
+              new Date(e.startDateCampaign)
+                .toISOString()
+                .split("T")[0]
+                .replace(/-/g, "/")
             );
             let endDateCampaign = new Date(
-              new Date(e.endDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
+              new Date(e.endDateCampaign)
+                .toISOString()
+                .split("T")[0]
+                .replace(/-/g, "/")
             );
-            let today = new Date(new Date().toISOString().split("T")[0].replace(/-/g, '/'));
+            let today = new Date(
+              new Date().toISOString().split("T")[0].replace(/-/g, "/")
+            );
             if (today >= startDateCampaign && today <= endDateCampaign) {
               let startTimeCampaign = new Date(
-                new Date().toISOString().split("T")[0].replace(/-/g, '/') + " " + e.startTimeCampaign
+                new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+                  " " +
+                  e.startTimeCampaign
               );
               let endTimeCampaign = new Date(
-                new Date().toISOString().split("T")[0].replace(/-/g, '/') + " " + e.endTimeCampaign
+                new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+                  " " +
+                  e.endTimeCampaign
               );
               today = new Date();
               if (today > startTimeCampaign && today < endTimeCampaign) {
@@ -186,7 +210,7 @@ const ShopList = () => {
         });
         settbStockiewNominal(tbStockiewNominal);
         settbStockiewFlashSale(tbStockiewFlashSale);
-        setisLoadingData(false)
+        setisLoadingData(false);
       }
     }, 100);
   };
@@ -222,7 +246,7 @@ const ShopList = () => {
         url: base64,
         typeLink: ImgBanner[i].typeLink,
         stockId: ImgBanner[i].stockId,
-        productCategoryId: ImgBanner[i].productCategoryId
+        productCategoryId: ImgBanner[i].productCategoryId,
       });
     }
     setImgBanner(dataImg);
@@ -237,45 +261,20 @@ const ShopList = () => {
       .then((response) => {
         if (response.data.status) {
           let tbStock = response.data.tbStock;
-          tbStock = tbStock.filter(e => {
+          tbStock = tbStock.filter((e) => {
             if (e.productCount > 0) {
-              return e
+              return e;
             }
-          })
+          });
           settbStock(tbStock);
           let tbStockiewNominal = [];
           let tbStockiewFlashSale = [];
           tbStock.filter((e) => {
-
             if (e.isFlashSale === false) {
               tbStockiewNominal.push(e);
             } else {
-              let startDateCampaign = new Date(
-                new Date(e.startDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
-              );
-              let endDateCampaign = new Date(
-                new Date(e.endDateCampaign).toISOString().split("T")[0].replace(/-/g, '/')
-              );
-              // let today = new Date(new Date().toISOString().split("T")[0]);
-              let _today = new Date();
-              let today = new Date(_today.getFullYear() + "/" + (_today.getMonth() + 1) + "/" + _today.getDate());
-              if (today >= startDateCampaign && today <= endDateCampaign) {
-                let startTimeCampaign = new Date(
-                  new Date().toISOString().split("T")[0].replace(/-/g, '/') +
-                  " " +
-                  e.startTimeCampaign
-                );
-                let endTimeCampaign = new Date(
-                  new Date().toISOString().split("T")[0].replace(/-/g, '/') +
-                  " " +
-                  e.endTimeCampaign
-                );
-                today = new Date();
-                if (today > startTimeCampaign && today < endTimeCampaign) {
-                  tbStockiewFlashSale.push(e);
-                } else {
-                  tbStockiewNominal.push(e);
-                }
+              if (fn.isFlashSale(e)) {
+                tbStockiewFlashSale.push(e);
               } else {
                 tbStockiewNominal.push(e);
               }
@@ -331,8 +330,12 @@ const ShopList = () => {
           className={"wfull animated-SlideShow "}
         >
           {ImgBanner.length > 0 && IsImgBanner ? (
-            <SlideShow img={ImgBanner} duration={5000} setcategoryview={setcategoryview}
-              selectMenu={selectMenu} />
+            <SlideShow
+              img={ImgBanner}
+              duration={5000}
+              setcategoryview={setcategoryview}
+              selectMenu={selectMenu}
+            />
           ) : !IsImgBanner ? (
             <div
               className="flex w-full text-green-mbk font-bold"
@@ -417,7 +420,7 @@ const ShopList = () => {
           </div>
         </div>
         <div className="liff-inline" />
-        {isLoadingData ? null :
+        {isLoadingData ? null : (
           <div
             id="scroll"
             className="product-scroll "
@@ -463,8 +466,10 @@ const ShopList = () => {
                             <div
                               key={i}
                               className="relative"
-                              // style={{ minWidth: "150px", width: "200px" }}
-                              style={{ minWidth: "calc(50vw - 9px - 5%)", padding: "0px 10px" }}
+                              style={{
+                                minWidth: "calc(50vw - 9px - 5%)",
+                                padding: "0px 10px",
+                              }}
                               onClick={() => {
                                 history.push(
                                   path.showProducts.replace(":id", e.id)
@@ -495,7 +500,11 @@ const ShopList = () => {
                                 </div>
 
                                 <ImageUC
-                                  style={{ margin: "auto", minHeight: "120px", height: '100%' }}
+                                  style={{
+                                    margin: "auto",
+                                    minHeight: "120px",
+                                    height: "100%",
+                                  }}
                                   find={1}
                                   relatedid={e.id}
                                   relatedtable={["stock1"]}
@@ -551,9 +560,12 @@ const ShopList = () => {
                                 </div>
                                 {e.discount > 0 ? (
                                   <div
-                                    style={{ color: "red", paddingLeft: "10px" }}
+                                    style={{
+                                      color: "red",
+                                      paddingLeft: "10px",
+                                    }}
                                   >
-                                    {"฿ " + fn.formatMoney(e.priceDiscount)}
+                                    {"฿ " + fn.formatMoney(e.saleDiscount)}
                                   </div>
                                 ) : null}
                                 <div
@@ -591,8 +603,8 @@ const ShopList = () => {
                         history.push(path.showProducts.replace(":id", e.id));
                       }}
                     >
-                      <div className="line-card relative" >
-                        <div className="relative" >
+                      <div className="line-card relative">
+                        <div className="relative">
                           <ImageUC
                             style={{
                               margin: "auto",
@@ -630,7 +642,9 @@ const ShopList = () => {
                                 top: "0",
                                 right: "0",
                               }}
-                              src={require("assets/img/mbk/icon_hot.png").default}
+                              src={
+                                require("assets/img/mbk/icon_hot.png").default
+                              }
                               alt="icon_hot"
                               className="w-32 absolute"
                             ></img>
@@ -650,7 +664,11 @@ const ShopList = () => {
                         </div>
                         <div
                           className="flex mb-1 "
-                          style={{ bottom: "0", left: "10px", fontSize: "10px" }}
+                          style={{
+                            bottom: "0",
+                            left: "10px",
+                            fontSize: "10px",
+                          }}
                         >
                           <div
                             style={{
@@ -683,7 +701,7 @@ const ShopList = () => {
               </div>
             </div>
           </div>
-        }
+        )}
       </div>
     </>
   );

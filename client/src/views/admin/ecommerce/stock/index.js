@@ -179,6 +179,9 @@ const Stock = () => {
       isDeleted: false,
       addBy: "",
       updateBy: "",
+
+      saleDiscount: "",
+      salePercent: "",
     },
     validationSchema: yup.object({
       productName: yup.string().required("* กรุณากรอก ชื่อสินค้า"),

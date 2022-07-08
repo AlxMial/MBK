@@ -72,6 +72,15 @@ const MakeOrder = () => {
               tbStock.map((e, i) => {
                 let quantity = shop_orders.find((o) => o.id == e.id).quantity;
                 e.quantity = quantity;
+                //#region ตรวจสอบ isFlashSale
+                if (e.isFlashSale) {
+                  // อยู่ในเวลา
+                  if (fn.isFlashSale(e)) {
+                    e.priceDiscount = e.saleDiscount;
+                  }
+                }
+
+                //#endregion ตรวจสอบ isFlashSale
                 if (e.priceDiscount > 0) {
                   price += parseFloat(e.priceDiscount) * parseInt(quantity);
                 } else {

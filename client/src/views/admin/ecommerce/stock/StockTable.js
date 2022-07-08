@@ -64,12 +64,12 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                             <th className={thClass} >
                                 จำนวนสินค้าในคลัง
                             </th>
-                            <th className={thClass} >
+                            {/* <th className={thClass} >
                                 ซื้อ
                             </th>
                             <th className={thClass} >
                                 เหลือ
-                            </th>
+                            </th> */}
                             <th className={thClass + " text-center"}  >
                                 สถานะ
                             </th>
@@ -128,7 +128,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                                 {value.productCount}
                                             </span>
                                         </td>
-                                        <td className={tdClass + " text-right cursor-pointer"} onClick={() => {
+                                        {/* <td className={tdClass + " text-right cursor-pointer"} onClick={() => {
                                             openModal(value.id);
                                         }}>
                                             <span className={tdSpan}>
@@ -141,7 +141,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
                                             <span className={tdSpan}>
                                                 {value.productCount - value.buy}
                                             </span>
-                                        </td>
+                                        </td> */}
                                         <td className={tdClass + " text-center cursor-pointer "} onClick={() => {
                                             openModal(value.id);
                                         }}>
