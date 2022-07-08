@@ -24,7 +24,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.BOOLEAN,
         allowNull: true,
       },
- 
+      pointsStoreHdId:{
+        type: DataTypes.STRING,
+        allowNull:true
+      }
     });
     return tbMemberPoint;
   };

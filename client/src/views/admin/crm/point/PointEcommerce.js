@@ -51,6 +51,7 @@ export default function PointEcommerce() {
   const [endDateCode, setEndDateCode] = useState("");
   const [listProduct, setListProduct] = useState([]);
   const [isChange, setIsChange] = useState(false);
+  const [delay,setDelay] = useState("");
   const { addToast } = useToasts();
   const changePage = ({ selected }) => {
     setPageNumber(selected);
@@ -264,12 +265,11 @@ export default function PointEcommerce() {
 
       if (!isError && !errorEndDate && !errorStartDate) {
         if (isNew) {
-          axios.post("pointEcommerce", values).then((res) => {
+          axios.post("pointEcommerce", values).then( (res) => {
             if (res.data.status) {
               formik.values.id = res.data.tbPointEcommerce.id;
-              closeModal();
-              fetchData();
               setIsChange(false);
+              setDelay("set");
               setErrorPoint(false);
               setErrorPrice(false);
               setErrorUnitProduct(false);
@@ -279,6 +279,8 @@ export default function PointEcommerce() {
                   : "Save data successfully",
                 { appearance: "success", autoDismiss: true }
               );
+              setIsOpen(false);
+              fetchData();
             } else {
               if (res.data.isCampaignName) {
                 addToast(
@@ -290,6 +292,7 @@ export default function PointEcommerce() {
                 );
               }
             }
+          
             dispatch(fetchSuccess());
           });
         } else {
@@ -336,7 +339,8 @@ export default function PointEcommerce() {
   };
 
   const setStatus = (dateValue) => {
-    if (new Date(dateValue.endDate) < new Date()) return "Expire";
+    
+    if (new Date(new Date(dateValue.endDate).setUTCHours(0,0,0,0)) < new Date(new Date().setUTCHours(0,0,0,0))) return "Expire";
     else if (dateValue.isActive) return "Active";
     else return "Inactive";
   };

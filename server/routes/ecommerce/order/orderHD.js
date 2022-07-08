@@ -43,6 +43,7 @@ const {
   tbProductCategory,
   tbMemberPoint,
   tbOtherAddress,
+  tbLogisticCategory,
 } = require("../../../models");
 const e = require("express");
 const { parseWithoutProcessing } = require("handlebars");
@@ -79,6 +80,14 @@ router.get("/", validateToken, async (req, res) => {
       foreignKey: "memberId",
     });
 
+    tbOrderHD.belongsTo(tbLogistic,{
+      foreignKey: "logisticId",
+    });
+
+    tbLogistic.hasMany(tbLogisticCategory, {
+      foreignKey: "logisticCategoryId",
+    });
+
     const data = await tbOrderHD.findAll({
       where: { isDeleted: false },
       include: [
@@ -108,6 +117,14 @@ router.get("/", validateToken, async (req, res) => {
           where: {
             isDeleted: false,
           },
+          required: false,
+        },
+        {
+          model: tbLogistic,
+          where: {
+            isDeleted: false,
+          },
+     
           required: false,
         },
       ],

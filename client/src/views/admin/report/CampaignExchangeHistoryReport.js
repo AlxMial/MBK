@@ -8,7 +8,8 @@ import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
 import useWindowDimensions from "services/useWindowDimensions";
 import ReactTooltip from 'react-tooltip';
-import Select from "react-select";
+//import Select from "react-select";
+import SelectUC from "components/SelectUC";
 import { useToasts } from "react-toast-notifications";
 import ValidateService from "services/validateValue";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
@@ -53,6 +54,30 @@ export default function CampaignExchangeHistoryReport() {
       endDate: null, 
     }
   });
+
+  const getCss = (value) => {
+    if (value && value == "Done")
+      return {
+        control: (base, state) => ({
+          ...base,
+          background: "hsl(148deg 48% 83%)",         
+        }),
+      };
+    else if (value && value == "Wait")
+      return {
+        control: (base, state) => ({
+          ...base,
+          background: "hsl(0, 0%, 94%)",
+        }),
+      };
+    else
+      return {
+        control: (base, state) => ({
+          ...base,
+          background: "hsl(57deg 87% 91%)",
+        }),
+      };
+  };
   const InputSearch = () => {   
       const inputSerch = formSerch.values.inputSerch;
       let startDate = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
@@ -249,8 +274,8 @@ export default function CampaignExchangeHistoryReport() {
       "lastName",
       "memberCard",
       "phone",
-      "coupon",
-      "couponStatus",
+      "code",
+      "statusStr",
       "couponUseDate",
       "deliverStatusStr",
       "trackingNo",
@@ -291,8 +316,8 @@ export default function CampaignExchangeHistoryReport() {
             response.data.forEach(e => {
               e.redemptionTypeStr = (e.redemptionType !== "" ? (redemptionType.find(el => el.value === e.redemptionType).label) : ""); 
               e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : ""); 
-              e.statusStr =  ((e.status !== '' &&  e.status !== undefined) ? rewardStatus.find(el => el.value === e.status.toString()).label : ""); 
-              e.deliverStatusStr = e.deliverStatus !=='' ? dropdown.find(el => el.value === e.deliverStatus).label : "";                
+              e.statusStr =  ((e.rewardType === '1') ? rewardStatus.find(el => el.value === e.isUsedCoupon.toString()).label : ""); 
+              e.deliverStatusStr = (e.isShowControl && e.deliverStatus !=='') ? dropdown.find(el => el.value === e.deliverStatus).label : "";                
              
               e.subDistrictStr = (e.subDistrict > 0 ? dataSubDistrict.find(el => el.value === e.subDistrict).label : "");
               e.districtStr = (e.district > 0 ? dataDistrict.find(el => el.value === e.district).label : "");
@@ -653,17 +678,17 @@ export default function CampaignExchangeHistoryReport() {
                             {item.points}
                           </span>
                         </td>
-                        <td className =  { (item.status === 1 ? "text-green-500 " : "text-red-700 ") + "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "}>
-                          { item.isShowControl ? "" : item.statusStr }
+                        <td className =  { (item.isUsedCoupon === 1 ? "text-green-500 " : "text-red-700 ") + "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "}>
+                          { item.rewardType === '2' ? "" : item.statusStr }
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           {moment(item.redeemDate).format("DD/MM/YYYY")}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                            {/* {item.deliverStatus} */}
-                           <div className="relative w-full mt-2 mb-2">
+                           <div className="relative w-32 mt-2 mb-2">
                             { item.isShowControl ?
-                              <Select
+                              <SelectUC
                                 id={key}
                                 name="dropdown"
                                 onChange={(e) => {
@@ -681,7 +706,7 @@ export default function CampaignExchangeHistoryReport() {
                                       )
                                     : ""
                                 }
-                                styles={UseStyleSelect}
+                                customStyles={getCss(item.deliverStatus)}
                               /> : <div></div>
                             }
                             </div>

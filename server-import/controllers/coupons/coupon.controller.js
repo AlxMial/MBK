@@ -119,8 +119,6 @@ const upload = async (req, res) => {
         rowx++;
       });
 
-      console.log(tutorials)
-
       try {
         var result = chunkArray(tutorials, 100);
         for (var i = 0; i < result.length; i++) {

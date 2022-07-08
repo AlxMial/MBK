@@ -902,7 +902,7 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
         let deliverStatus = "",
           trackingNo = "",
           code = "",
-          status = "",
+          //status = "",
           isShowControl = false;
         let redemptionName = "",
           rewardType = "",
@@ -924,21 +924,22 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
           );
           if (lCouponCode.length > 0) {
             const rdCupon = lCouponCode[0].tbRedemptionCoupon;
-            status =
-              rdCupon !== null && !rdCupon.iscancel && lCouponCode[0].isUse
-                ? 1
-                : 0;
+            // status =
+            //   rdCupon !== null && !rdCupon.iscancel && lCouponCode[0].isUse
+            //     ? 1
+            //     : 0;
             code = Encrypt.DecodeKey(lCouponCode[0].codeCoupon);
             if (rdCupon !== null && rdCupon.tbRedemptionConditionsHD !== null) {
               redemptionName = rdCupon.tbRedemptionConditionsHD.redemptionName;
               redemptionType = rdCupon.tbRedemptionConditionsHD.redemptionType;
-              rewardType = "1";
+             
               points = rdCupon.tbRedemptionConditionsHD.points;
               startDate = rdCupon.tbRedemptionConditionsHD.startDate;
               endDate = rdCupon.tbRedemptionConditionsHD.endDate;
             }
           }
           isShowControl = false;
+          rewardType = "1";
         } else {
           const lRedemptionProduct = listRedemptionProduct.filter(
             (e) => e.id.toString() === obj.TableHDId
@@ -947,17 +948,18 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
             const rwHD = lRedemptionProduct[0].tbRedemptionConditionsHD;
             deliverStatus = obj.deliverStatus;
             trackingNo = obj.trackingNo === null ? "" : obj.trackingNo;
-            status = 1;
+            //status = 1;
             if (rwHD !== null) {
               redemptionName = rwHD.redemptionName;
               redemptionType = rwHD.redemptionType;
-              rewardType = "2";
+              
               points = rwHD.points;
               startDate = rwHD.startDate;
               endDate = rwHD.endDate;
             }
           }
           isShowControl = true;
+          rewardType = "2";
         }
         tutorials.push({
           id: Encrypt.EncodeKey(obj.id),
@@ -989,8 +991,9 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
           points: points,
           redeemDate: obj.redeemDate,
           isShowControl: isShowControl,
+          isUsedCoupon: obj.isUsedCoupon ? 1 : 0,
           isShowTKNo: false,
-          status: status,
+          //status: status,
         });
       });
       res.json(tutorials);

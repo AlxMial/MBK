@@ -176,8 +176,9 @@ export default function ResetPassword() {
                       >
                         <li
                           className={
-                            "bg-green-500 w-full lg:w-4/12 " +
-                            (poorPassword ? " " : " hidden")
+                            " w-full lg:w-4/12 " +
+                            (poorPassword ? " " : " hidden" ) +
+                            (strongPassword ? " bg-green-500" : weakPassword ? " bg-yellow-500" : " bg-red-500")
                           }
                           style={{
                             height: "0.5rem",
@@ -189,8 +190,9 @@ export default function ResetPassword() {
                         </li>
                         <li
                           className={
-                            "bg-yellow-500 w-full lg:w-4/12 " +
-                            (weakPassword && poorPassword ? " " : " hidden ")
+                            " w-full lg:w-4/12 " +
+                            (weakPassword && poorPassword ? " " : " hidden ")+
+                            (strongPassword ? " bg-green-500" : weakPassword ? " bg-yellow-500" : " bg-red-500")
                           }
                           style={{ height: "0.5rem" }}
                         >
@@ -198,10 +200,11 @@ export default function ResetPassword() {
                         </li>
                         <li
                           className={
-                            "bg-red-500 w-full lg:w-4/12" +
+                            " w-full lg:w-4/12" +
                             (strongPassword && weakPassword && poorPassword
                               ? " "
-                              : " hidden ")
+                              : " hidden ")+
+                            (strongPassword ? " bg-green-500" : weakPassword ? " bg-yellow-500" : " bg-red-500")
                           }
                           style={{
                             height: "0.5rem",
