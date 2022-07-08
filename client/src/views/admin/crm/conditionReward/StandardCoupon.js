@@ -4,7 +4,7 @@ import useWindowDimensions from "services/useWindowDimensions";
 import "antd/dist/antd.css";
 import moment from "moment";
 import "moment/locale/th";
-import { Space, Radio } from "antd";
+import { Space, Radio, Input } from "antd";
 import InputUC from "components/InputUC";
 import LabelUC from "components/LabelUC";
 import DatePickerUC from "components/DatePickerUC";
@@ -308,19 +308,33 @@ const StandardCoupon = ({ formik }) => {
           </div>
           <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
             <div className="relative">
-              <InputUC
+              {/* <InputUC
                 name="couponCount"
-                type="number"
+                type="type"
                 disabled={(formik.values.id !== "") ? true : false}
                 maxLength={7}
                 onBlur={formik.handleBlur}
                 value={formik.values.couponCount}
                 onChange={(e) => {
-                  //   formik.handleChange(e);
                   setDelay(ValidateService.onHandleNumber(e));
                   formik.values.couponCount = ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
+              /> */}
+              <input
+                type="text"
+                className="border-0 text-right px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                id="couponCount"
+                name="couponCount"
+                maxLength={7}
+                disabled={(formik.values.id !== "") ? true : false}
+                onChange={(e) => {
+                  setDelay(ValidateService.onHandleNumber(e));
+                  formik.values.couponCount = ValidateService.onHandleNumberValue(e);
+                }}
+                onBlur={formik.handleBlur}
+                value={formik.values.couponCount}
+                autoComplete="couponCount"
               />
               {formik.touched.couponCount && formik.errors.couponCount ? (
                 <div className="text-sm py-2 px-2  text-red-500">

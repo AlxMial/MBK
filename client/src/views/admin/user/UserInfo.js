@@ -708,7 +708,7 @@ export default function UserInfo() {
                       >
                         <li
                           className={
-                            "bg-green-500 w-full lg:w-4/12 " +
+                            "bg-red-500 w-full lg:w-4/12 " +
                             (poorPassword ? " " : " hidden")
                           }
                           style={{
@@ -730,7 +730,7 @@ export default function UserInfo() {
                         </li>
                         <li
                           className={
-                            "bg-red-500 w-full lg:w-4/12" +
+                            "bg-green-500 w-full lg:w-4/12" +
                             (strongPassword && weakPassword && poorPassword
                               ? " "
                               : " hidden ")

@@ -4,7 +4,7 @@ const InputUC = ({ name, onChange, onBlur, disabled, value, min, type = 'text', 
     const className = "border-0 px-2 py-2 placeholder-blueGray-300 " +
         " text-blueGray-600 bg-white rounded text-sm shadow " +
         "focus:outline-none focus:ring w-full ease-linear " +
-        "transition-all duration-150 " + (type === 'number' || min === '0' ? 'text-right' : '');
+        "transition-all duration-150  " + (type === 'number' || min === '0' ? 'text-right' : '');
     return (
         <input
             type={type}

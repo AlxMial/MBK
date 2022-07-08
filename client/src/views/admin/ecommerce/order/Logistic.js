@@ -141,11 +141,7 @@ const Logistic = ({
         <div className="flex justify-between">
           <div className="py-2 margin-auto-t-b lg:w-7/12">
             <LabelUC
-              label={
-                logisticTypeList.filter(
-                  (e) => e.value === orderHD.logisticType
-                )[0]?.label
-              }
+              label={orderHD.tbLogistic.deliveryName}
             />
           </div>
           <div style={{ minWidth: "100px" }}>
@@ -174,7 +170,7 @@ const Logistic = ({
             </div>
           </div>
         </div>
-        <div className="py-2 margin-auto-t-b w-full">
+        <div className=" margin-auto-t-b w-full">
           <LabelUC label={orderHD.firstName + " " + orderHD.lastName} />
           <div className="text-blueGray-400 text-sm mt-1">
             {orderHD && orderHD.address + " "}
