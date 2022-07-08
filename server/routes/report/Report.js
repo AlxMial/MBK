@@ -345,7 +345,9 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
             points: points,
             redeemDate: e.redeemDate,
             expiredDate: e.expireDate,
-            ...Encrypt.decryptAllData(e.tbMember.dataValues).dataValues,
+            firstName: Encrypt.DecodeKey(e.tbMember.dataValues.firstName),
+            lastName: Encrypt.DecodeKey(e.tbMember.dataValues.lastName),
+            phone: Encrypt.DecodeKey(e.tbMember.dataValues.phone),
           });
         } else if (e.campaignType == 3) {
           let CampaignName = "ลงทะเบียน";
@@ -363,7 +365,9 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
             points: points,
             redeemDate: e.redeemDate,
             expiredDate: e.expireDate,
-            ...Encrypt.decryptAllData(e.tbMember).dataValues,
+            firstName: Encrypt.DecodeKey(e.tbMember.dataValues.firstName),
+            lastName: Encrypt.DecodeKey(e.tbMember.dataValues.lastName),
+            phone: Encrypt.DecodeKey(e.tbMember.dataValues.phone),
           });
         }
 
@@ -928,7 +932,7 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
             if (rdCupon !== null && rdCupon.tbRedemptionConditionsHD !== null) {
               redemptionName = rdCupon.tbRedemptionConditionsHD.redemptionName;
               redemptionType = rdCupon.tbRedemptionConditionsHD.redemptionType;
-              rewardType = '1';
+              rewardType = "1";
               points = rdCupon.tbRedemptionConditionsHD.points;
               startDate = rdCupon.tbRedemptionConditionsHD.startDate;
               endDate = rdCupon.tbRedemptionConditionsHD.endDate;
@@ -943,11 +947,11 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
             const rwHD = lRedemptionProduct[0].tbRedemptionConditionsHD;
             deliverStatus = obj.deliverStatus;
             trackingNo = obj.trackingNo === null ? "" : obj.trackingNo;
-            status = 1;           
+            status = 1;
             if (rwHD !== null) {
               redemptionName = rwHD.redemptionName;
               redemptionType = rwHD.redemptionType;
-              rewardType = '2';
+              rewardType = "2";
               points = rwHD.points;
               startDate = rwHD.startDate;
               endDate = rwHD.endDate;
@@ -963,9 +967,12 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
           rewardType: rewardType,
           startDate: startDate,
           endDate: endDate,
-          firstName: tb_member !== null ? Encrypt.DecodeKey(tb_member.firstName) : 0,
-          lastName: tb_member !== null ? Encrypt.DecodeKey(tb_member.lastName) : 0,
-          memberCard: tb_member !== null ? Encrypt.DecodeKey(tb_member.memberCard) : "",
+          firstName:
+            tb_member !== null ? Encrypt.DecodeKey(tb_member.firstName) : 0,
+          lastName:
+            tb_member !== null ? Encrypt.DecodeKey(tb_member.lastName) : 0,
+          memberCard:
+            tb_member !== null ? Encrypt.DecodeKey(tb_member.memberCard) : "",
           memberName: fullname,
           address: isShowControl ? address : "",
           subDistrict:
@@ -976,8 +983,7 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
             tb_member !== null && isShowControl ? tb_member.postcode : 0,
           province:
             tb_member !== null && isShowControl ? tb_member.province : 0,
-          phone:
-            tb_member !== null  ? Encrypt.DecodeKey(tb_member.phone): "",
+          phone: tb_member !== null ? Encrypt.DecodeKey(tb_member.phone) : "",
           deliverStatus: deliverStatus,
           trackingNo: trackingNo,
           points: points,

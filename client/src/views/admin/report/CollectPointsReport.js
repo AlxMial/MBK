@@ -63,63 +63,72 @@ export default function CollectPointsReport() {
                   ? null
                   : new Date(moment(new Date(x.endDate)).format("yyy-MM-DD"));
 
-                  let isdate =  (startDate != null && endDate==null && startDate < _startDate) 
-                  ||
-                  (startDate != null && endDate!=null && _endDate !=null && _startDate !=null &&(
-                    (startDate >= _startDate &&startDate <= _endDate) ||
-                    ( endDate >= _startDate && endDate < _endDate) 
-                  )) 
-                  ||
-                  (startDate == null && endDate!=null && endDate > _startDate)
-                  ||
-                  (_startDate != null && _endDate ==null &&(_startDate >=startDate && _startDate <=endDate ))
-                  ||
-                  (_startDate == null && _endDate !=null && (_endDate >=startDate && _endDate <=endDate ))
+              let isdate =
+                (startDate != null &&
+                  endDate == null &&
+                  startDate < _startDate) ||
+                (startDate != null &&
+                  endDate != null &&
+                  _endDate != null &&
+                  _startDate != null &&
+                  ((startDate >= _startDate && startDate <= _endDate) ||
+                    (endDate >= _startDate && endDate < _endDate))) ||
+                (startDate == null &&
+                  endDate != null &&
+                  endDate > _startDate) ||
+                (_startDate != null &&
+                  _endDate == null &&
+                  _startDate >= startDate &&
+                  _startDate <= endDate) ||
+                (_startDate == null &&
+                  _endDate != null &&
+                  _endDate >= startDate &&
+                  _endDate <= endDate);
 
               if (
-                isdate && (
-                Search(x.CampaignName, inputSerch) ||
-                Search(x.code, inputSerch) ||
-                Search(x.firstName, inputSerch) ||
-                Search(x.lastName, inputSerch) ||
-                Search(x.phone, inputSerch) ||
-                Search(x.points, inputSerch) ||
-                Search(
-                  x.endDate == null
-                    ? ""
-                    : moment(x.endDate).format("DD/MM/YYYY"),
-                  inputSerch
-                ) ||
-                Search(
-                  x.startDate == null
-                    ? ""
-                    : moment(x.startDate).format("DD/MM/YYYY"),
-                  inputSerch
-                ) ||
-                Search(
-                  x.redeemDate == null
-                    ? ""
-                    : moment(x.redeemDate).format("DD/MM/YYYY"),
-                  inputSerch
-                ) ||
-                Search(
-                  x.campaignType == "1"
-                    ? "กรอก Code จากสินค้า"
-                    : x.campaignType == "2"
-                    ? "ซื้อสินค้าออนไลน์"
-                    : x.campaignType == "3"
-                    ? "สมัครสมาชิก"
-                    : x.campaignType == "4"
-                    ? "แลกคูปอง"
-                    : x.campaignType == "5"
-                    ? "แลกของสมนาคุณ"
-                    : "เล่นเกมส์",
-                  inputSerch
-                ) ||
-                Search(
-                  "123".includes(x.campaignType) ? "รับคะแนน" : "แลกคะแนน",
-                  inputSerch
-                ) )
+                isdate &&
+                (Search(x.CampaignName, inputSerch) ||
+                  Search(x.code, inputSerch) ||
+                  Search(x.firstName, inputSerch) ||
+                  Search(x.lastName, inputSerch) ||
+                  Search(x.phone, inputSerch) ||
+                  Search(x.points, inputSerch) ||
+                  Search(
+                    x.endDate == null
+                      ? ""
+                      : moment(x.endDate).format("DD/MM/YYYY"),
+                    inputSerch
+                  ) ||
+                  Search(
+                    x.startDate == null
+                      ? ""
+                      : moment(x.startDate).format("DD/MM/YYYY"),
+                    inputSerch
+                  ) ||
+                  Search(
+                    x.redeemDate == null
+                      ? ""
+                      : moment(x.redeemDate).format("DD/MM/YYYY"),
+                    inputSerch
+                  ) ||
+                  Search(
+                    x.campaignType == "1"
+                      ? "กรอก Code จากสินค้า"
+                      : x.campaignType == "2"
+                      ? "ซื้อสินค้าออนไลน์"
+                      : x.campaignType == "3"
+                      ? "สมัครสมาชิก"
+                      : x.campaignType == "4"
+                      ? "แลกคูปอง"
+                      : x.campaignType == "5"
+                      ? "แลกของสมนาคุณ"
+                      : "เล่นเกมส์",
+                    inputSerch
+                  ) ||
+                  Search(
+                    "123".includes(x.campaignType) ? "รับคะแนน" : "แลกคะแนน",
+                    inputSerch
+                  ))
               ) {
                 return x;
               }
@@ -140,42 +149,6 @@ export default function CollectPointsReport() {
     }
     return status;
   };
-
-  // const SearchByDate = (dataST_Date, dataED_Date) => {
-  //   let isSearch = false;
-  //   let st_Date =
-  //     formSerch.values.startDate !== null
-  //       ? convertToDate(formSerch.values.startDate)
-  //       : null;
-  //   let ed_Date =
-  //     formSerch.values.endDate !== null
-  //       ? convertToDate(formSerch.values.endDate)
-  //       : null;
-  //   if (
-  //     (st_Date !== null &&
-  //       ed_Date !== null &&
-  //       ((st_Date <= dataST_Date &&
-  //         st_Date <= dataED_Date &&
-  //         ed_Date >= dataST_Date &&
-  //         ed_Date >= dataED_Date) ||
-  //         (st_Date <= dataST_Date &&
-  //           ed_Date >= dataST_Date &&
-  //           !(st_Date <= dataED_Date && ed_Date >= dataED_Date)) ||
-  //         (!(st_Date <= dataST_Date && ed_Date >= dataST_Date) &&
-  //           st_Date <= dataED_Date &&
-  //           ed_Date >= dataED_Date))) ||
-  //     (st_Date !== null &&
-  //       ed_Date === null &&
-  //       (st_Date <= dataST_Date || st_Date <= dataED_Date)) ||
-  //     (st_Date === null &&
-  //       ed_Date !== null &&
-  //       (ed_Date >= dataST_Date || ed_Date >= dataED_Date)) ||
-  //     (st_Date === null && ed_Date === null)
-  //   ) {
-  //     isSearch = true;
-  //   }
-  //   return isSearch;
-  // };
 
   const convertToDate = (e) => {
     const date = new Date(e);
@@ -211,41 +184,65 @@ export default function CollectPointsReport() {
 
   const Excel = async (sheetname) => {
     setIsLoading(true);
-    const TitleColumns = [      
-      "รหัสสมาชิก",
-      "ชื่อลูกค้า",
-      "นามสกุล",
-      "เบอร์โทรศัพท์",
+    const TitleColumns = [
+      "ลำดับ",
       "แคมเปญ",
-      "ประเภท",  
-      "คะแนน",
-      "สถานะ",
-      "วันที่ได้รับคะแนน",
       "วันที่เริ่มต้น",
       "วันที่สิ้นสุด",
+      "ประเภท",
+      "ชื่อลูกค้า",
+      "เบอร์โทรศัพท์",
       "Code",
+      "สถานะ",
+      "วันที่แลก",
     ];
     const columns = [
-      "memberCard",
-      "firstName",
-      "lastName",
+      "listno",
+      "CampaignName",
+      "start",
+      "end",
+      "campaignType",
+      "member",
       "phone",
-      "pointCodeName",
-      "pointType",
-      "point",
-      "status",
-      "exchangedate",
-      "startDate",
-      "endDate",     
       "code",
+      "status",
+      "redeem",
     ];
     let count = 0;
-    listPoint.forEach((el) => {
-      count++;
-      el.listNo = count;
+    let _listPoint = [];
+
+    listPoint.map((e, i) => {
+      _listPoint.push({
+        listno: i + 1,
+        CampaignName: e.CampaignName,
+        start:
+          e.startDate == null ? "-" : moment(e.startDate).format("DD/MM/YYYY"),
+        end: e.endDate == null ? "-" : moment(e.endDate).format("DD/MM/YYYY"),
+        campaignType:
+          e.campaignType == "1"
+            ? "กรอก Code จากสินค้า"
+            : e.campaignType == "2"
+            ? "ซื้อสินค้าออนไลน์"
+            : e.campaignType == "3"
+            ? "สมัครสมาชิก"
+            : e.campaignType == "4"
+            ? "แลกคูปอง"
+            : e.campaignType == "5"
+            ? "แลกของสมนาคุณ"
+            : "เล่นเกมส์",
+        member: e.firstName + " " + e.lastName,
+        phone: e.phone,
+        code: e.code,
+        point: e.points,
+        status: "123".includes(e.campaignType) ? "รับคะแนน" : "แลกคะแนน",
+        redeem:
+          e.redeemDate == null
+            ? "-"
+            : moment(e.redeemDate).format("DD/MM/YYYY"),
+      });
     });
     exportExcel(
-      listPoint,
+      _listPoint,
       "รายงานสะสมคะแนน",
       TitleColumns,
       columns,
