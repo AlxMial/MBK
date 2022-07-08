@@ -57,7 +57,8 @@ const GetReward = () => {
 
           data.map((e, i) => {
             _rewardCode.map((ee, i) => {
-              if (e.coupon === ee.code) {
+              console.log(e.isExpire)
+              if (e.coupon === ee.code.toLowerCase()) {
                 e.isInvalid
                   ? (ee.state = false)
                   : e.isExpire
@@ -70,12 +71,12 @@ const GetReward = () => {
           });
           setdeploy("reward");
           setrewardCode(_rewardCode);
-          console.log(res.data.data);
+ 
           setsucceedData(res.data.data);
           let succeed = true;
           _rewardCode.map((e, i) => {
             if (!IsNullOrEmpty(e.code)) {
-              if (e.state == false) {
+              if (e.state === false) {
                 succeed = false;
               }
             }
@@ -239,7 +240,7 @@ const GetReward = () => {
                     {[...rewardCode].map((e, i) => {
                       let _succeedData = succeedData.find(
                         (item) =>
-                          item.coupon.toLowerCase() == e.code.toLowerCase()
+                          item.coupon.toLowerCase() === e.code.toLowerCase()
                       );
                       let msg = {
                         msg: "",
@@ -251,6 +252,7 @@ const GetReward = () => {
                           icon: "fas fa-check-circle text-green-mbk",
                         };
                       } else {
+                        console.log(_succeedData)
                         if (!IsNullOrEmpty(_succeedData)) {
                           _succeedData.isInvalid
                             ? (msg.msg = "ไม่ถูกต้อง")

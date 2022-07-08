@@ -127,6 +127,10 @@ router.get("/", validateToken, async (req, res) => {
           hd.district = e.dataValues.tbOtherAddress.district;
           hd.province = e.dataValues.tbOtherAddress.province;
           hd.postcode = e.dataValues.tbOtherAddress.postcode;
+        } else {
+          hd.firstName = Encrypt.DecodeKey(hd.firstName);
+          hd.lastName = Encrypt.DecodeKey(hd.lastName);
+          hd.address = Encrypt.DecodeKey( hd.address);
         }
         // hd.tbImages = null
         hd.tbCancelOrders = null;

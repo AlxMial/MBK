@@ -45,7 +45,6 @@ const ShowCart = () => {
       Storage.addconpon_cart(e);
     } else if (id === "byorder") {
       let item = Storage.getbyorder()
-      console.log(item)
       item.usecoupon = e
       Storage.updbyorder(item)
     } else {
@@ -137,7 +136,7 @@ const ShowCart = () => {
                     <div className="flex absolute w-full" style={{ bottom: "0" }}>
 
                       <div className="flex" style={{ width: "110px", color: "var(--mq-txt-color, rgb(122, 122, 122))", fontSize: "12px", alignItems: "end" }}>
-                        {!e.isNotExpired ? "ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add(543, "years").format("DD MMM yyyy") : ""}
+                        {!e.isNotExpired ? "ใช้ได้ถึง " + moment(e.expireDate).locale("th").add(543, "years").format("DD MMM yyyy") : ""}
                       </div>
                       <div className="bg-green-mbk text-white text-center text-lg  font-bold"
                         style={{

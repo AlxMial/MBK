@@ -221,6 +221,77 @@ router.post("/paymentwatiting", async (req, res) => {
   );
 });
 
+router.post("/paymentwatitingadmin", async (req, res) => {
+  const frommail = req.body.frommail;
+  const password = req.body.password;
+  let tomail = "";
+  const orderNumber = req.body.orderNumber;
+  const memberName = req.body.memberName;
+
+  const shop = await tbShop.findAll();
+  shop.map((e, i) => {
+    if (shop.length - 1 === i)
+      tomail =
+        e.dataValues["email1"] +
+        "," +
+        e.dataValues["email2"] +
+        "," +
+        e.dataValues["email3"] +
+        "," +
+        e.dataValues["email4"] +
+        "," +
+        e.dataValues["email5"] +
+        "," +
+        e.dataValues["email6"];
+  });
+
+  var transporter = nodemailer.createTransport({
+    // service: 'Outlook365',
+    host: "smtp.office365.com",
+    port: 587,
+    auth: {
+      user: frommail,
+      pass: password,
+    },
+    secureConnection: true,
+    // tls: { ciphers: 'SSLv3' }
+  });
+
+  ejs.renderFile(
+    __dirname + "/paymentWattingAdmin.ejs",
+    {
+      memberName: memberName,
+      orderNumber: orderNumber
+     },
+    function (err, data) {
+      if (err) {
+        console.log(err);
+      } else {
+
+        var mailOptions = {
+          from: frommail,
+          to: tomail,
+          text: "เราได้รับแจ้งการโอนเงินสำหรับ " + orderNumber + " แล้ว",
+          subject: "เราได้รับแจ้งการโอนเงินสำหรับ " + orderNumber + " แล้ว",
+          html: data,
+        };
+
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            res.json({
+              msg: error,
+            });
+          } else {
+            res.json({
+              msg: "success",
+            });
+          }
+        });
+      }
+    }
+  );
+});
+
 router.post("/cancelsuccess", async (req, res) => {
   const frommail = req.body.frommail;
   const password = req.body.password;
@@ -242,9 +313,6 @@ router.post("/cancelsuccess", async (req, res) => {
     secureConnection: true,
     // tls: { ciphers: 'SSLv3' }
   });
-
-  console.log(req.body)
-
   ejs.renderFile(
     __dirname + "/cancelSuccess.ejs",
     {

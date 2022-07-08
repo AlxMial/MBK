@@ -26,7 +26,7 @@ const upload = async (req, res) => {
       let tutorials = [];
       var rowx = 0;
       await rows.forEach((row) => {
-        if(row[0] !== null && rowx > 2 && row[0].toString().length > 5) {
+        if(row[0] !== null && rowx > 1) {
           let tutorial = {
             code:  Encrypt.EncodeKey(row[0].toString().toLowerCase()),
             codeNone:  Encrypt.EncodeKey(row[0].toString().toLowerCase()),

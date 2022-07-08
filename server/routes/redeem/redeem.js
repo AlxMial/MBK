@@ -54,7 +54,7 @@ router.post("/", async (req, res) => {
       foreignKey: "tbPointCodeHDId",
     });
     const productNameData = await tbPointCodeHD.findAll({
-      attributes: ["id", "pointCodePoint"],
+      attributes: ["id", "pointCodePoint", "endDate"],
       where: {
         isDeleted: false,
       },
@@ -70,7 +70,7 @@ router.post("/", async (req, res) => {
             "isDeleted",
             "tbPointCodeHDId",
           ],
-          
+
           model: tbPointCodeDT,
           where: {
             [Op.or]: [{ code: _redeemCode }, { codeNone: _redeemCode }],
@@ -83,76 +83,84 @@ router.post("/", async (req, res) => {
     // มีโคด
     // let status = [];
     if (productNameData) {
-      for (var i = 0; i < productNameData.length; i++) {
-        let hd = productNameData[i].dataValues;
-        let dt = productNameData[i].dataValues.tbPointCodeDTs[0].dataValues;
-        if (dt.isExpire) {
-          status = {
-            coupon: Encrypt.DecodeKey(
-              _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
-            ),
-            isValid: false,
-            isInvalid: false,
-            isExpire: true,
-            isUse: false,
-          };
-        } else if (dt.isUse) {
-          status = {
-            coupon: Encrypt.DecodeKey(
-              _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
-            ),
-            isValid: false,
-            isInvalid: false,
-            isExpire: false,
-            isUse: true,
-          };
-        } else {
-          status = {
-            coupon: Encrypt.DecodeKey(
-              _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
-            ),
-            isValid: true,
-            isInvalid: false,
-            isExpire: false,
-            isUse: false,
-          };
+      for (var x = 0; x < productNameData.length; x++) {
+        let hd = productNameData[x].dataValues;
+        for (
+          var i = 0;
+          i < productNameData[x].dataValues.tbPointCodeDTs.length;
+          i++
+        ) {
+          let dt = productNameData[x].dataValues.tbPointCodeDTs[i].dataValues;
+          if (new Date(hd.endDate) < new Date()) {
+            status = {
+              coupon: Encrypt.DecodeKey(
+                _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
+              ),
+              isValid: false,
+              isInvalid: false,
+              isExpire: true,
+              isUse: false,
+            };
+          } else if (dt.isUse) {
+            status = {
+              coupon: Encrypt.DecodeKey(
+                _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
+              ),
+              isValid: false,
+              isInvalid: false,
+              isExpire: false,
+              isUse: true,
+            };
+          } else {
+            status = {
+              coupon: Encrypt.DecodeKey(
+                _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
+              ),
+              isValid: true,
+              isInvalid: false,
+              isExpire: false,
+              isUse: false,
+            };
+          }
+
+          if (status.isValid) {
+            dt.isUse = true;
+            dt.memberId = req.body.memberId;
+            const updatePointCode = await tbPointCodeDT.update(
+              { isUse: true, memberId: req.body.memberId },
+              {
+                where: { id: dt.id },
+              }
+            );
+            let code = _redeemCode.find(
+              (e) => e == dt.code || e == dt.codeNone
+            );
+            let historyPoint = {
+              campaignType: "1",
+              code: code,
+              point: hd.pointCodePoint,
+              redeemDate: new Date(),
+              expireDate: new Date(new Date().getFullYear() + 2, 11, 31),
+              isDeleted: false,
+              tbMemberId: req.body.memberId,
+              tbPointCodeHDId: dt.tbPointCodeHDId,
+            };
+
+            const memberPoint = await tbMemberPoint.create(historyPoint);
+
+            const member = await tbMember.findOne({
+              where: { id: req.body.memberId },
+            });
+
+            member.dataValues.memberPoint =
+              member.dataValues.memberPoint + hd.pointCodePoint;
+
+            const updateMember = await tbMember.update(member.dataValues, {
+              where: { id: member.dataValues.id },
+            });
+          }
+          statusRedeem.push(status);
         }
-
-        if (status.isValid) {
-          dt.isUse = true;
-          dt.memberId = req.body.memberId;
-          const updatePointCode = await tbPointCodeDT.update(
-            { isUse: true, memberId: req.body.memberId },
-            {
-              where: { id: dt.id },
-            }
-          );
-          let code = _redeemCode.find((e) => e == dt.code || e == dt.codeNone);
-          let historyPoint = {
-            campaignType: "1",
-            code: code,
-            point: hd.pointCodePoint,
-            redeemDate: new Date(),
-            expireDate: new Date(new Date().getFullYear() + 2, 11, 31),
-            isDeleted: false,
-            tbMemberId: req.body.memberId,
-            tbPointCodeHDId: dt.tbPointCodeHDId,
-          };
-
-          const memberPoint = await tbMemberPoint.create(historyPoint);
-
-          const member = await tbMember.findOne({
-            where: { id: req.body.memberId },
-          });
-
-          member.dataValues.memberPoint =
-            member.dataValues.memberPoint + hd.pointCodePoint;
-
-          const updateMember = await tbMember.update(member.dataValues, {
-            where: { id: member.dataValues.id },
-          });
-        }
-        statusRedeem.push(status);
       }
     } else {
       //ไม่มีเลย

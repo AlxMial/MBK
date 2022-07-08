@@ -20,11 +20,9 @@ import { GetPermissionByUserName } from "services/Permission";
 import packageJson from "../package.json";
 import { getBuildDate } from "./utils/untils";
 
-
 import withClearCache from "./services/ClearCache";
 
 const ClearCacheComponent = withClearCache(MainApp);
-
 
 export const store = configureStore();
 
@@ -59,7 +57,6 @@ const getPermission = async () => {
 function App() {
   return <ClearCacheComponent />;
 }
-
 
 function MainApp() {
   const [authState, setAuthState] = useState({

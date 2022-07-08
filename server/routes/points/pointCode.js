@@ -157,22 +157,35 @@ router.delete("/delete/:tbPointCodeHDId", validateToken, async (req, res) => {
 router.get("/exportExcel/:id", validateToken, async (req, res) => {
   const id = req.params.id;
 
-  tbPointCodeDT.findAll({ where: { tbPointCodeHDId: id } }).then(async (objs) => {
-    let tutorials = [];
-    const pointCodeHD = await tbPointCodeHD.findOne({ where: { id: id }});
-    objs.forEach((obj) => {
-      tutorials.push({
-        name: pointCodeHD.dataValues.pointCodeName,
-        point:  pointCodeHD.dataValues.pointCodePoint,
-        startDate:  pointCodeHD.dataValues.startDate,
-        endDate:  pointCodeHD.dataValues.endDate,
-        code: Encrypt.DecodeKey(obj.code).toUpperCase(),
-        isUse: obj.isUse ? "ใช้งาน" : "ยังไม่ได้ใช้งาน",
-        isExpire: obj.isExpire ? "หมดอายุ" : "ยังไม่หมดอายุ",
-      });
+  tbPointCodeDT
+    .findAll({ where: { tbPointCodeHDId: id } })
+    .then(async (objs) => {
+      let tutorials = [];
+      const pointCodeHD = await tbPointCodeHD.findOne({ where: { id: id } });
+      let setExpire = false;
+      if (pointCodeHD) {
+        if (new Date(pointCodeHD.dataValues.endDate) < new Date()) {
+          setExpire = true;
+          await tbPointCodeDT.update(
+            { isExpire: true },
+            { where: { tbPointCodeHDId: pointCodeHD.dataValues.id } }
+          );
+        }
+
+        objs.forEach((obj) => {
+          tutorials.push({
+            name: pointCodeHD.dataValues.pointCodeName,
+            point: pointCodeHD.dataValues.pointCodePoint,
+            startDate: pointCodeHD.dataValues.startDate,
+            endDate: pointCodeHD.dataValues.endDate,
+            code: Encrypt.DecodeKey(obj.code).toUpperCase(),
+            isUse: obj.isUse ? "ใช้งาน" : "ยังไม่ได้ใช้งาน",
+            isExpire: setExpire ? "หมดอายุ" : "ยังไม่หมดอายุ",
+          });
+        });
+        res.json(tutorials);
+      }
     });
-    res.json(tutorials);
-  });
 });
 
 module.exports = router;

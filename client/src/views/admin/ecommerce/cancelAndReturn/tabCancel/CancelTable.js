@@ -130,7 +130,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
                             value.cancelStatus
                           )}
                           isDisabled={value.cancelStatus != 1}
-                          // customStyles={getCss(value.cancelStatus)}
+                          customStyles={getCss(value.cancelStatus)}
                         />
                       </span>
                     </td>
