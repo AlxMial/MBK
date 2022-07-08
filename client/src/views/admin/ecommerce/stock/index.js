@@ -199,6 +199,8 @@ const Stock = () => {
       } else {
         values.updateBy = sessionStorage.getItem("user");
         if (values.id) {
+          values.discount = (values.discount === undefined) ? 0 : values.discount;
+          values.percent = (values.percent === undefined) ? 0 : values.percent;
           axios.put("stock", values).then(async (res) => {
             if (res.data.status) {
               await saveImage(values.id);

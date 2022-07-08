@@ -71,6 +71,7 @@ export default function MemberRedemption({
       .then((response) => {
         if (response.data.error) {
         } else {
+          console.log(response.data.Campaign)
           setlistStore(response.data.Campaign);
           setListSerch(response.data.Campaign);
         }

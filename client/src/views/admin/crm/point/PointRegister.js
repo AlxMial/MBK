@@ -61,6 +61,7 @@ export default function PointRegister({ setModified, setData }) {
           if (res.data.status) {
             formik.values.id = res.data.tbPointRegister.id;
             fetchData();
+            setModified(false);
             addToast(
               Storage.GetLanguage() === "th"
                 ? "บันทึกข้อมูลสำเร็จ"
@@ -75,6 +76,7 @@ export default function PointRegister({ setModified, setData }) {
         axios.put("pointRegister", values).then((res) => {
           if (res.data.status) {
             formik.values.id = res.data.tbPointRegister.id;
+            setModified(false);
             fetchData();
             addToast(
               Storage.GetLanguage() === "th"

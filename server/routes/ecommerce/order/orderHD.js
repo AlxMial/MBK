@@ -263,7 +263,7 @@ router.put("/", validateToken, async (req, res) => {
       campaignType: 2,
       point: data.points,
       redeemDate: new Date(),
-      expireDate: new Date().setFullYear(new Date().getFullYear() + 2),
+      expireDate: new Date(new Date().getFullYear() + 2, 11, 31),
       tbMemberId: Member.id,
       isDeleted: false,
     });
@@ -391,6 +391,7 @@ const getorderDT = async (DT) => {
             isDeleted: false,
             type: 2,
           },
+        
         });
         if (_tbPointEcommerce) {
           _tbPointEcommerce.map((e, i) => {

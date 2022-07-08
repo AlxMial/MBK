@@ -27,7 +27,7 @@ export const validationSchema = Yup.object({
     .required("* กรุณากรอก Email"),
   address: Yup.string().required("* โปรดระบุที่อยู่"),
   postcode: Yup.string().required("* โปรดระบุรหัสไปรษณีย์"),
-  eating: Yup.string().required("* โปรดระบุ ปัจจุบันทานข้าวแบรด์"),
+  eating: Yup.string().required("* โปรดระบุ ปัจจุบันทานข้าวแบรนด์"),
 });
 
 export const validateShopUpdate = Yup.object({

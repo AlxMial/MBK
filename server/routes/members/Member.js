@@ -1761,6 +1761,7 @@ router.get(
           _tbMemberPoint.filter((e) => {
             if (e.campaignType == 1) {
               // return e
+             
               _pointcode.push(e.code);
               _point.push(e.point);
             }
@@ -1811,10 +1812,14 @@ router.get(
                       campaignType: campaignType,
                       redemptionType: redemptionType,
                       rewardType: rewardType,
+                      code:Encrypt.DecodeKey(code),
                       points: item.dataValues.point,
                       redeemDate: item.dataValues.redeemDate,
                       expiredDate: item.dataValues.expireDate,
                     });
+                  });
+                  Campaign.sort(function(a,b){
+                    return new Date(b.redeemDate) - new Date(a.redeemDate);
                   });
                 }
               });

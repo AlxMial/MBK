@@ -35,6 +35,10 @@ export default function PointManage() {
     setIsOpenEdit(false);
   }
 
+  const changeMo = () => {
+   setModified(false);
+  }
+
   const onEditValue = async () => {
     if (data.id === "") {
       setData((prevState) => {
@@ -51,6 +55,7 @@ export default function PointManage() {
               id: res.data.tbPointRegister.id,
             };
           });
+          
           setModified(false);
           addToast(
             "บันทึกข้อมูลสำเร็จ",
@@ -63,6 +68,7 @@ export default function PointManage() {
       axios.put("pointRegister", data).then((res) => {
         if (res.data.status) {
           setModified(false);
+          setModified(...isModified,false);
           addToast("บันทึกข้อมูลสำเร็จ", {
             appearance: "success",
             autoDismiss: true,
@@ -84,7 +90,8 @@ export default function PointManage() {
   const changeTab = (activeKey) => {
     setActiveConfirmTab(activeKey);
     if (isModified) openModalSubject();
-    else setActiveTab(activeKey);
+    else
+     setActiveTab(activeKey);
   };
 
   const fetchPermission = async () => {

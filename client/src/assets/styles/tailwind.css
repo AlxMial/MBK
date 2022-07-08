@@ -84,7 +84,7 @@ body {
 }
 
 * {
-  font-family: "Noto Sans", sans-serif;
+  font-family: "Noto Sans","DB-Adman-X", sans-serif ;
 }
 
 @font-face {
@@ -112,6 +112,10 @@ body {
   src: url("../../assets/fonts/NotoSansThai-VariableFont_wdth,wght.ttf");
 }
 
+@font-face {
+  font-family: "DB-Adman-X";
+  src: url("../../assets/fonts/DB-Adman-X.ttf");
+}
 
 
 .THSarabun {
