@@ -49,6 +49,9 @@ export default function UserInfo() {
   const [errorPassword3, setErrorPassword3] = useState(false);
   const [errorPassword4, setErrorPassword4] = useState(false);
   const [errorPassword5, setErrorPassword5] = useState(false);
+  const [poorPassword, setPoorPassword] = useState(false);
+  const [weakPassword, setWeakPassword] = useState(false);
+  const [strongPassword, setStrongPassword] = useState(false);
   // const [isMenu, setIsMenu] = useState(false);
   const [isNew, setIsNew] = useState(false);
   const useStyle = styleSelect();
@@ -237,6 +240,9 @@ export default function UserInfo() {
           axios.put("users", values).then((res) => {
             if (res.data.status) {
               setenablePassword(true);
+              setPoorPassword(false);
+              setWeakPassword(false);
+              setStrongPassword(false);
               setIsModified(false);
               formik.resetForm();
               fetchData();
@@ -627,6 +633,9 @@ export default function UserInfo() {
                         Password
                       </label>
                       <span className="text-sm ml-2 text-red-500">*</span>
+                      <div className={(strongPassword || weakPassword || poorPassword
+                            ? " "
+                            : " hidden ")}>&nbsp;</div>
                     </div>
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
@@ -657,6 +666,11 @@ export default function UserInfo() {
                           const whitespace = whitespaceRegExp.test(
                             e.target.value
                           );
+
+                          setPoorPassword(poorRegExp.test(e.target.value)|| weakRegExp.test(e.target.value));
+                          setWeakPassword(weakRegExp.test(e.target.value) && poorRegExp.test(e.target.value));
+                          setStrongPassword(strongRegExp.test(e.target.value));
+
                           setErrorPassword1(!poorPassword);
                           setErrorPassword2(!weakPassword);
                           setErrorPassword3(!strongPassword);
@@ -664,8 +678,6 @@ export default function UserInfo() {
                             e.target.value.length < 8 ? true : false
                           );
                           setErrorPassword5(whitespace);
-
-                          console.log(whitespace);
                           if (e.target.value !== valueConfirm) {
                             setConfirmPassword(true);
                           } else if (
@@ -686,6 +698,52 @@ export default function UserInfo() {
                         autoComplete="password"
                         disabled={enablePassword}
                       />
+                      <ul
+                        className={
+                          "flex flex-wrap mt-2 " +
+                          (strongPassword || weakPassword || poorPassword
+                            ? " "
+                            : " hidden ")
+                        }
+                      >
+                        <li
+                          className={
+                            "bg-green-500 w-full lg:w-4/12 " +
+                            (poorPassword ? " " : " hidden")
+                          }
+                          style={{
+                            height: "0.5rem",
+                            borderTopLeftRadius: "0.25rem",
+                            borderBottomLeftRadius: "0.25rem",
+                          }}
+                        >
+                          &nbsp;
+                        </li>
+                        <li
+                          className={
+                            "bg-yellow-500 w-full lg:w-4/12 " +
+                            (weakPassword && poorPassword ? " " : " hidden ")
+                          }
+                          style={{ height: "0.5rem" }}
+                        >
+                          &nbsp;
+                        </li>
+                        <li
+                          className={
+                            "bg-red-500 w-full lg:w-4/12" +
+                            (strongPassword && weakPassword && poorPassword
+                              ? " "
+                              : " hidden ")
+                          }
+                          style={{
+                            height: "0.5rem",
+                            borderTopRightRadius: "0.25rem",
+                            borderBottomRightRadius: "0.25rem",
+                          }}
+                        >
+                          &nbsp;
+                        </li>
+                      </ul>
                     </div>
                   </div>
                   <div className="w-full lg:w-2/12 px-4 mb-4 ">

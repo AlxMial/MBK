@@ -247,7 +247,7 @@ const LiffAPP = () => {
               </div>
               <Switch>
                 {getRoutes()}
-                {/* <Redirect from="/line/" to="/line/register" /> */}
+                <Redirect from="/line/" to="/line/register" />
               </Switch>
             </div>
           )}

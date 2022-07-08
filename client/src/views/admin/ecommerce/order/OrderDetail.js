@@ -33,7 +33,7 @@ const OrderDetail = ({
     tbCancelOrder, settbCancelOrder, paymentStatus, setpaymentStatus }) => {
     Modal.setAppElement("#root");
     const dispatch = useDispatch();
-    const useStyle = customStyles({ width: '70vw' });
+    const useStyle = customStyles();
     const useStyleMobile = customStylesMobile();
     const [isCanEdit, setIsCanEdit] = useState(true);
     const { width } = useWindowDimensions();
@@ -98,7 +98,7 @@ const OrderDetail = ({
         <Modal
             isOpen={open}
             onRequestClose={() => handleModal('save')}
-            style={width <= 1180 ? useStyleMobile : useStyle}
+            style={(width <= 1180 ? useStyleMobile : useStyle )}
             contentLabel="Example Modal"
             shouldCloseOnOverlayClick={false}
         >

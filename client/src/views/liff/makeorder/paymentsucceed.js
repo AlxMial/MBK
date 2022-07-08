@@ -15,7 +15,6 @@ const Paymentsucceed = () => {
   const fetchDataOreder = () => {
     getPaymentsucceed({ id: id, uid: Session.getLiff().uid }, (res) => {
       if (res.status) {
-        console.log(res);
         sendEmailSuccess(
           {
             // frommail: "noreply@undefined.co.th",

@@ -50,7 +50,7 @@ const Order = () => {
     await axios.get("order/orderHD").then(async (response) => {
       if (!response.data.error && response.data.tbOrderHD) {
         let _orderData = response.data.tbOrderHD;
-
+        console.log(_orderData)
         await response.data.tbOrderHD.map(async (e, i) => {
           e.province = await Address.getAddressName("province", e.province);
           e.subDistrict = await Address.getAddressName("subDistrict", e.subDistrict);
@@ -478,6 +478,7 @@ const Order = () => {
           className={
             "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white Overflow-list "
           }
+  
         >
           <div className="rounded-t mb-0 px-4 py-3 border-0">
             <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">

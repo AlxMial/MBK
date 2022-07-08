@@ -196,6 +196,7 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
                   transetionId: referenceNo,
                   paymentDate: new Date(),
                   paymentStatus: 3,
+                  creditCard:decoded.cardNo
                 },
                 {
                   where: {

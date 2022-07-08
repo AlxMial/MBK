@@ -106,9 +106,9 @@ const upload = async (req, res) => {
       let tutorials = [];
       var rowx = 0;
       rows.forEach((row) => {
-        if(row[0] !== null && rowx > 2){
+        if(row[0] !== null){
           let tutorial = {
-            codeCoupon: Encrypt.EncodeKey(row[0].toLocaleLowerCase()),
+            codeCoupon: Encrypt.EncodeKey(row[0].toString().toLocaleLowerCase()),
             isUse: 0,
             isDeleted: 0,
             addBy: req.body.addBy,

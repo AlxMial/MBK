@@ -402,6 +402,7 @@ const PaymentInfo = () => {
                                         console.log("error", err);
                                       });
                                   } else {
+                                    console.log("Login" + config.liffId)
                                     liff.login();
                                   }
                                 },
