@@ -62,11 +62,11 @@ const Paymentsucceed = () => {
                 style={{ justifyContent: "center" }}
               >
                 {/* <i class="fas fa-times-circle"></i> */}
-                <div className="icon mr-4">
+                {/* <div className="icon mr-4">
                   <i
                     className={"text-lg fas fa-check-circle" }
                   ></i>
-                </div>
+                </div> */}
                 <div className="text-status mr-4">คุณได้ชำระเงินจำนวน</div>
                 <div className="pay-amount font-bold">
                   {"฿ " + fn.formatMoney(OrderHD.netTotal)}
@@ -125,9 +125,9 @@ const Paymentsucceed = () => {
                   style={{ justifyContent: "center" }}
                 >
                   {/* <i class="fas fa-times-circle"></i> */}
-                  <div className={"icon mr-4" + (OrderHD === null ? ' ' : ' hidden')} >
+                  {/* <div className={"icon mr-4" + (OrderHD === null ? ' ' : ' hidden')} >
                     <i className={"text-lg fas fa-times-circle"}></i>
-                  </div>
+                  </div> */}
                   <div className="text-status mr-4">
                     คุณได้ทำการยกเลิกการชำระเงิน
                   </div>

@@ -1322,6 +1322,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             required: false,
           },
         ],
+        order: [["orderNumber", "DESC"]],
       });
       if (_OrderHDData) {
         for (var i = 0; i < _OrderHDData.length; i++) {

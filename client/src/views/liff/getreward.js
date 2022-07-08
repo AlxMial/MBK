@@ -252,7 +252,6 @@ const GetReward = () => {
                           icon: "fas fa-check-circle text-green-mbk",
                         };
                       } else {
-                        console.log(_succeedData)
                         if (!IsNullOrEmpty(_succeedData)) {
                           _succeedData.isInvalid
                             ? (msg.msg = "ไม่ถูกต้อง")

@@ -91,7 +91,7 @@ router.post("/", async (req, res) => {
           i++
         ) {
           let dt = productNameData[x].dataValues.tbPointCodeDTs[i].dataValues;
-          if (new Date(hd.endDate) < new Date()) {
+          if (new Date(new Date(hd.endDate).setUTCHours(0,0,0,0)) < new Date(new Date().setUTCHours(0,0,0,0))) {
             status = {
               coupon: Encrypt.DecodeKey(
                 _redeemCode.find((e) => e == dt.code || e == dt.codeNone)

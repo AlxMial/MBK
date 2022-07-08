@@ -375,7 +375,7 @@ router.get("/getemail/:email", async (req, res) => {
   }
 });
 
-router.put("/updatePassword", validateToken, (req, res) => {
+router.put("/updatePassword", (req, res) => {
   bcrypt.hash(req.body.password, 10).then((hash) => {
     req.body.password = hash;
     req.body.id = Encrypt.DecodeKey(req.body.id);
