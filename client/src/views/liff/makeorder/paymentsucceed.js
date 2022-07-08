@@ -64,12 +64,7 @@ const Paymentsucceed = () => {
                 {/* <i class="fas fa-times-circle"></i> */}
                 <div className="icon mr-4">
                   <i
-                    className={
-                      "text-lg " +
-                      (OrderHD.status
-                        ? "fas fa-check-circle"
-                        : "fas fa-times-circle")
-                    }
+                    className={"text-lg fas fa-check-circle" }
                   ></i>
                 </div>
                 <div className="text-status mr-4">คุณได้ชำระเงินจำนวน</div>
@@ -130,7 +125,7 @@ const Paymentsucceed = () => {
                   style={{ justifyContent: "center" }}
                 >
                   {/* <i class="fas fa-times-circle"></i> */}
-                  <div className="icon mr-4">
+                  <div className={"icon mr-4" + (OrderHD === null ? ' ' : ' hidden')} >
                     <i className={"text-lg fas fa-times-circle"}></i>
                   </div>
                   <div className="text-status mr-4">

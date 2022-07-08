@@ -392,6 +392,10 @@ const PaymentInfo = () => {
                                         },
                                       ])
                                       .then(() => {
+                                        addToast("บันทึก QR Code เรียบร้อยแล้ว", {
+                                          appearance: "success",
+                                          autoDismiss: true,
+                                        });
                                         console.log("message sent");
                                       })
                                       .catch((err) => {
