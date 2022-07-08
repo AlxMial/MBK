@@ -19,7 +19,7 @@ import DetailModel from "./detailModel";
 import PaymentModel from "./paymentModel";
 import FooterButton from "./footerButton";
 import CouponModel from "./couponModel";
-import CancelModel from "./ordeDone/cancelModel";
+import CancelModel from "../components/cancelModel";
 // components
 
 const MakeOrderById = () => {
