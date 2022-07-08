@@ -56,7 +56,6 @@ const MakeOrderById = () => {
             let OrderHD = res.data.OrderHD;
             if (OrderHD.tbCancelOrder == null) {
               setOrderHD(OrderHD);
-              console.log(OrderHD.paymentId);
               setpaymentID(OrderHD.paymentId === null ? "1" : null);
               setisLogistic(OrderHD.logisticId);
               setdeliveryCost(OrderHD.olddeliveryCost);

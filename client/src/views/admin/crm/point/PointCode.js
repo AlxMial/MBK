@@ -175,6 +175,8 @@ export default function PointCode() {
     formikImport.resetForm();
     fetchData();
     setIsError(false);
+    setFile();
+    setFileName();
     setIsOpenImport(true);
   }
 

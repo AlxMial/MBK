@@ -263,7 +263,7 @@ export default function PointEcommerce() {
         setErrorPoint(false);
       }
 
-      if (!isError && !errorEndDate && !errorStartDate) {
+      if (!isError && !errorEndDate && !errorStartDate && !errorDate) {
         if (isNew) {
           axios.post("pointEcommerce", values).then( (res) => {
             if (res.data.status) {
@@ -783,7 +783,7 @@ export default function PointEcommerce() {
                                   <span className="text-sm ml-2 text-red-500">
                                     *
                                   </span>
-                                  {errorStartDate || errorEndDate ? (
+                                  {errorStartDate || errorEndDate || errorDate ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       &nbsp;
                                     </div>
@@ -853,6 +853,11 @@ export default function PointEcommerce() {
                                         )}
                                       </div>
                                     ) : null}
+                                         {errorDate ? (
+                                      <div className="text-sm py-2 px-2 text-red-500">
+                                           <>&nbsp;</>
+                                      </div>
+                                    ) : null}
                                   </div>
                                 </div>
                                 <div
@@ -875,7 +880,7 @@ export default function PointEcommerce() {
                                   <span className="text-sm ml-2 text-red-500">
                                     *
                                   </span>
-                                  {errorEndDate || errorStartDate ? (
+                                  {errorEndDate || errorStartDate || errorDate ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       &nbsp;
                                     </div>
@@ -911,6 +916,14 @@ export default function PointEcommerce() {
                                             false
                                           );
                                         } else {
+                                          if (
+                                            ValidateService.withOutTime(e) <
+                                            ValidateService.withOutTime(
+                                              formik.values.startDate
+                                            )
+                                          )
+                                            setErrorDate(true);
+                                          else setErrorDate(false);
                                           setErrorEndDate(false);
                                           formik.setFieldValue(
                                             "endDate",
@@ -934,6 +947,12 @@ export default function PointEcommerce() {
                                       )}
                                     </div>
                                   ) : null}
+                                  {errorDate ? (
+                                      <div className="text-sm py-2 px-2 text-red-500">
+                                        * วันที่เริ่มต้น
+                                        ต้องน้อยกว่าวันที่สิ้นสุด
+                                      </div>
+                                    ) : null}
                                 </div>
                                 <div className="w-full lg:w-1/12 px-4 mb-2">
                                   <label

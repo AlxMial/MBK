@@ -749,7 +749,7 @@ const Register = () => {
               <div className="mt-4"></div>
               <InputUC
                 name="eating"
-                lbl="ปัจจุบันทานข้าวแบรนด์"
+                lbl="ปัจจุบันทานข้าวแบรนด์อะไร"
                 type="text"
                 valid={true}
                 onChange={handleChange}
@@ -759,7 +759,7 @@ const Register = () => {
 
               {/* <InputUC
                 name="eating"
-                lbl="ปัจจุบันทานข้าวแบรด์"
+                lbl="ปัจจุบันทานข้าวแแบรนด์"
                 type="description"
                 onChange={handleChange}
                 value={Data.eating}
@@ -1610,9 +1610,7 @@ const Register = () => {
                     target="_blank"
                   >
                     นโยบายคุ้มครองข้อมูลส่วนบุคคล (Privacy Policy)
-                  </a>
-                  <br />
-                  ของบริษัทฯ
+                  </a> ของบริษัทฯ
                 </span>
               </label>
             </div>

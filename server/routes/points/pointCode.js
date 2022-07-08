@@ -87,6 +87,7 @@ router.get("/", validateToken, async (req, res) => {
       },
     ],
     group: ["tbPointCodeHD.id"],
+    order: ["id"]
   });
   res.json({
     status: true,
