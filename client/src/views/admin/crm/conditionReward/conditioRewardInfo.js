@@ -125,6 +125,7 @@ export default function ConditioRewardInfo() {
       redemptionName: "",
       redemptionType: "",
       rewardType: "",
+      couponType:false,
       points: 0,
       isNotExpired: false,
       rewardGameAmount: 0,
@@ -170,6 +171,7 @@ export default function ConditioRewardInfo() {
     onSubmit: (values) => {
       let ImageSave = {};
       if (formik.values.redemptionType === "2") {
+
         values["listGame"] = listGame;
         if (isNew) {
           dispatch(fetchLoading());
@@ -231,6 +233,7 @@ export default function ConditioRewardInfo() {
         let formData = new FormData();
         if (isImport) {
           values["coupon"] = formikCouponImport.values;
+          formik.values.couponType = true;
           formData.append("file", file);
           ImageSave = {
             ...imageCoupon,
