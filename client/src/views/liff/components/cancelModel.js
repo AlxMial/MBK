@@ -1,8 +1,5 @@
 import React from "react";
-import { useHistory } from "react-router-dom";
 import Select from "react-select";
-import moment from "moment";
-import { getOrderHDById, cancelOrder } from "@services/liff.services";
 import Modal from "react-modal";
 import ModalHeader from "views/admin/ModalHeader";
 const CancelModel = ({
@@ -13,7 +10,6 @@ const CancelModel = ({
   Cancelvalue,
   setremark,
 }) => {
-  //   const history = useHistory();
   const OpenmodelCancel = [
     {
       value: "ต้องการเปลี่ยนแปลงที่อยู่ในการจัดส่งสินค้า",
@@ -74,7 +70,7 @@ const CancelModel = ({
                 backgroundColor: "#f7f6f6",
                 padding: "10px",
                 borderRadius: "10px",
-                height: "calc(100% - 360px)"
+                height: "calc(100% - 360px)",
               }}
             >
               <div className="font-bold">
@@ -108,7 +104,6 @@ const CancelModel = ({
               onClick={Cancelorder}
             >
               <div style={{ width: "80%" }}>{"ตกลง"}</div>
-
             </div>
           </div>
         </div>

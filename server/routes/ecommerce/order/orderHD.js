@@ -105,7 +105,7 @@ router.get("/", validateToken, async (req, res) => {
     if (data) {
       data.map((e, i) => {
         let hd = e.dataValues;
-     
+
         //เป็นการโอนและมีการแนบสลิปแล้ว
         if (hd.paymentType == 1 && hd.paymentStatus >= 2) {
           hd.isImage = true; //มี image
@@ -119,8 +119,10 @@ router.get("/", validateToken, async (req, res) => {
         if (hd.tbReturnOrders.length > 0) {
           hd.tbReturnOrder = hd.tbReturnOrders[0];
         }
-        if(e.dataValues.tbOtherAddress) {
-          hd.firstName = Encrypt.DecodeKey(e.dataValues.tbOtherAddress.firstName);
+        if (e.dataValues.tbOtherAddress) {
+          hd.firstName = Encrypt.DecodeKey(
+            e.dataValues.tbOtherAddress.firstName
+          );
           hd.lastName = Encrypt.DecodeKey(e.dataValues.tbOtherAddress.lastName);
           hd.address = Encrypt.DecodeKey(e.dataValues.tbOtherAddress.address);
           hd.subDistrict = e.dataValues.tbOtherAddress.subDistrict;
@@ -130,12 +132,12 @@ router.get("/", validateToken, async (req, res) => {
         } else {
           hd.firstName = Encrypt.DecodeKey(hd.firstName);
           hd.lastName = Encrypt.DecodeKey(hd.lastName);
-          hd.address = Encrypt.DecodeKey( hd.address);
+          hd.address = Encrypt.DecodeKey(hd.address);
         }
         // hd.tbImages = null
         hd.tbCancelOrders = null;
         hd.tbReturnOrders = null;
-        console.log(hd)
+        console.log(hd);
         orderHD.push(hd);
       });
     }
@@ -1409,8 +1411,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             OrderHDData.push(_OrderHDData[i]);
           } else {
             if (_OrderHDData[i].tbReturnOrders[0].returnStatus == 3) {
-              _OrderHDData[i].dataValues.returnStatus =
-                __OrderHDData[i].tbReturnOrders[0].returnStatus;
+              _OrderHDData[i].dataValues.returnStatus =_OrderHDData[i].tbReturnOrders[0].returnStatus;
               OrderHDData.push(_OrderHDData[i]);
             }
           }

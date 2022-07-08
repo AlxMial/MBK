@@ -7,12 +7,11 @@ import ImageUC from "components/Image/index";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import moment from "moment";
 import { getOrderHDById, cancelOrder } from "@services/liff.services";
-import CancelModel from "./cancelModel";
+import CancelModel from "../../components/cancelModel"; //popup ยกเลิก
+import ReturnModel from "../../components/returnModel"; //popup คืนสินค้า
 import CancelDetail from "./cancelDetail";
 import ReturnDetail from "./returnDetail";
-import {
-  path
-} from "@services/liff.services";
+import { path } from "@services/liff.services";
 // components
 
 const OrderPaymentDone = () => {
@@ -21,12 +20,12 @@ const OrderPaymentDone = () => {
   const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
   const [OrderHD, setOrderHD] = useState(null);
-  const [discount, setdiscount] = useState(null);
   const [remark, setremark] = useState("");
   const [isOpenmodel, setisOpenmodel] = useState(false);
   const [Cancelvalue, setCancelvalue] = useState(
     "ต้องการเปลี่ยนแปลงที่อยู่ในการจัดส่งสินค้า"
   );
+  const [returnModel, setReturnModel] = useState({ isOpen: false });
   const getProducts = async () => {
     if (!fn.IsNullOrEmpty(id)) {
       getOrderHDById(
@@ -36,9 +35,9 @@ const OrderPaymentDone = () => {
             let OrderHD = res.data.OrderHD;
             console.log(OrderHD);
             setOrderHD(OrderHD);
-            if (!fn.IsNullOrEmpty(OrderHD.couponCodeId)) {
-              setdiscount(OrderHD.RedemptionCoupon.tbRedemptionCoupon.discount);
-            }
+            // if (!fn.IsNullOrEmpty(OrderHD.couponCodeId)) {
+            //   setdiscount(OrderHD.RedemptionCoupon.tbRedemptionCoupon.discount);
+            // }
           }
         },
         () => {},
@@ -355,9 +354,8 @@ const OrderPaymentDone = () => {
                     className="flex text-sm"
                     style={{ width: "50%", alignItems: "end" }}
                   >
-                    ยอดสุทธิ :{" "}
+                    ยอดสุทธิ :
                   </div>
-                  {/* <i className="flex fas fa-receipt text-gold-mbk text-xl" style={{ alignItems: "center" }}></i> */}
                   <div
                     className="flex text-green-mbk font-blod text-xl"
                     style={{ right: "0", justifyContent: "end", width: "50%" }}
@@ -408,58 +406,99 @@ const OrderPaymentDone = () => {
                 ) : null
               ) : null}
             </div>
-            <div
-              className="w-full  relative mt-2"
-              style={{ alignItems: "center", justifyContent: "center" }}
-            >
-              <div className="flex">
-                <div style={{ width: "100%", padding: "10px" }}>
+            {/* จ่ายเงินสำเร็จ  */}
+            {OrderHD.paymentStatus == 3 && OrderHD.transportStatus == 3 ? (
+              <div
+                className="w-full  relative mt-2"
+                style={{ alignItems: "center", justifyContent: "center" }}
+              >
+                <div className="w-full" style={{ padding: "10px" }}>
                   <div
-                    className="flex  text-center text-lg  font-bold bt-line"
+                    className="flex outline-gold-mbk text-gold-mbk text-center text-sm justify-center"
                     style={{
-                      backgroundColor:
-                        OrderHD != null
-                          ? OrderHD.transportStatus == 1
-                            ? OrderHD.tbCancelOrder == null
-                              ? "red"
-                              : ""
-                            : ""
-                          : "",
-                      border:
-                        "1px solid " +
-                        (OrderHD != null
-                          ? OrderHD.transportStatus == 1
-                            ? OrderHD.tbCancelOrder == null
-                              ? "red"
-                              : "#ddd"
-                            : "#ddd"
-                          : "#ddd"),
-                      color:
-                        OrderHD != null
-                          ? OrderHD.transportStatus == 1
-                            ? OrderHD.tbCancelOrder == null
-                              ? "#FFFFFF"
-                              : "#ddd"
-                            : "#ddd"
-                          : "#ddd",
+                      margin: "auto",
+                      height: "35px",
+                      borderRadius: "5px",
+                      padding: "5px",
+                      alignItems: "center",
+                      filter:
+                        OrderHD.tbReturnOrder != null ? "grayscale(1)" : "",
                     }}
                     onClick={() => {
-                      if (
-                        OrderHD.transportStatus == 1 &&
-                        OrderHD.tbCancelOrder == null
-                      ) {
-                        setisOpenmodel(true);
+                      if (OrderHD.tbReturnOrder == null) {
+                        setReturnModel({
+                          isOpen: true,
+                          orderId: OrderHD.id,
+                          Callback: () => {
+                            setReturnModel({ isOpen: false });
+                            getProducts();
+                          },
+                          onClose: () => {
+                            setReturnModel({ isOpen: false });
+                          },
+                        });
                       }
                     }}
                   >
-                    <i className="fas fa-backspace"></i>
-                    <div className="px-2">ยกเลิกคำสั่งซื้อ</div>
+                    <i className="fas fa-reply"></i>
+                    <div className="px-2">{"คืนสินค้า"}</div>
                   </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div
+                className="w-full  relative mt-2"
+                style={{ alignItems: "center", justifyContent: "center" }}
+              >
+                <div className="flex">
+                  <div className="w-full" style={{ padding: "10px" }}>
+                    <div
+                      className="flex  text-center text-lg  font-bold bt-line"
+                      style={{
+                        backgroundColor:
+                          OrderHD != null
+                            ? OrderHD.transportStatus == 1
+                              ? OrderHD.tbCancelOrder == null
+                                ? "red"
+                                : ""
+                              : ""
+                            : "",
+                        border:
+                          "1px solid " +
+                          (OrderHD != null
+                            ? OrderHD.transportStatus == 1
+                              ? OrderHD.tbCancelOrder == null
+                                ? "red"
+                                : "#ddd"
+                              : "#ddd"
+                            : "#ddd"),
+                        color:
+                          OrderHD != null
+                            ? OrderHD.transportStatus == 1
+                              ? OrderHD.tbCancelOrder == null
+                                ? "#FFFFFF"
+                                : "#ddd"
+                              : "#ddd"
+                            : "#ddd",
+                      }}
+                      onClick={() => {
+                        if (
+                          OrderHD.transportStatus == 1 &&
+                          OrderHD.tbCancelOrder == null
+                        ) {
+                          setisOpenmodel(true);
+                        }
+                      }}
+                    >
+                      <i className="fas fa-backspace"></i>
+                      <div className="px-2">ยกเลิกคำสั่งซื้อ</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
             {/* // "Money Transfer" : "Credit" 1,2 */}
-            {OrderHD.paymentType === 1 && OrderHD.paymentStatus > 1 ? (
+            {OrderHD.paymentType == 1 && OrderHD.paymentStatus > 1 ? (
               <div style={{ width: "90%", margin: "auto" }}>
                 <ImageUC
                   style={{ margin: "auto" }}
@@ -479,7 +518,7 @@ const OrderPaymentDone = () => {
             <div
               className="flex bg-green-mbk text-white text-center text-base  font-bold bt-line"
               onClick={() => {
-                history.push(path.shopList)
+                history.push(path.shopList);
               }}
             >
               {"กลับไปที่ร้านค้า"}
@@ -498,6 +537,7 @@ const OrderPaymentDone = () => {
         setremark={setremark}
         Cancelorder={Cancelorder}
       />
+      <ReturnModel returnModel={returnModel} />
     </>
   );
 };
