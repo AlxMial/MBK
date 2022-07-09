@@ -5084,3 +5084,20 @@ button.bt-quantity.broder-plus {
     transform: rotate(360deg);
   }
 }
+
+
+
+.time-picker-input .rc-time-picker-input {
+  height: 35px;
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+  border: none;
+  font-size: 0.875rem;
+  line-height: 1.2rem;
+}
+.time-picker-input .rc-time-picker-clear {
+  top: 6px;
+}
+span.rc-time-picker.time-picker-input.hidtext .rc-time-picker-input {
+  color:  transparent;
+}

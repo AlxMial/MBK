@@ -30,6 +30,7 @@
     "moment": "^2.29.3",
     "postcss": "8.2.8",
     "react": "17.0.1",
+    "react-awesome-time-picker": "^1.0.1",
     "react-barcode": "^1.4.1",
     "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "17.0.1",

@@ -27,6 +27,9 @@ import ButtonModalUC from "components/ButtonModalUC";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import Categorylist from "./Categorylist";
 
+import TimePicker from "react-awesome-time-picker";
+import "react-awesome-time-picker/assets/index.css";
+
 const StockInfo = ({
   handleModal,
   formik,
@@ -731,7 +734,7 @@ const StockInfo = ({
                     </div>
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
-                        <InputUC
+                        {/* <InputUC
                           disabled={!formik.values.isFlashSale}
                           type="time"
                           name="startTimeCampaign"
@@ -742,6 +745,71 @@ const StockInfo = ({
                           onChange={(e) => {
                             formik.handleChange(e);
                           }}
+                        /> */}
+                        <TimePicker
+                          className={
+                            "time-picker-input w-full " +
+                            (formik.values.startTimeCampaign == null ||
+                            formik.values.startTimeCampaign == "" ||
+                            formik.values.startTimeCampaign == undefined
+                              ? "hidtext"
+                              : "")
+                          }
+                          value={
+                            formik.values.startTimeCampaign == null
+                              ? ""
+                              : moment(
+                                  new Date(
+                                    "1990-01-01 " +
+                                      formik.values.startTimeCampaign
+                                  )
+                                )
+                          }
+                          format={"HH:mm:ss"}
+                          use12Hours={false}
+                          disabled={!formik.values.isFlashSale}
+                          onChange={(e) => {
+                            if (e == null) {
+                              formik.handleChange({
+                                target: {
+                                  name: "startTimeCampaign",
+                                  value: "",
+                                },
+                              });
+                              formik.handleChange({
+                                target: {
+                                  name: "endTimeCampaign",
+                                  value: "",
+                                },
+                              });
+                            } else {
+                              formik.handleChange({
+                                target: {
+                                  name: "startTimeCampaign",
+                                  value: moment(e).format("HH:mm:ss"),
+                                },
+                              });
+                              if (formik.values.endTimeCampaign != null) {
+                                let start = moment(e);
+                                let end = moment(
+                                  new Date(
+                                    "1990-01-01 " +
+                                      formik.values.endTimeCampaign
+                                  )
+                                );
+                                if (start > end) {
+                                  formik.handleChange({
+                                    target: {
+                                      name: "endTimeCampaign",
+                                      value: moment(e)
+                                        .add(1, "seconds")
+                                        .format("HH:mm:ss"),
+                                    },
+                                  });
+                                }
+                              }
+                            }
+                          }}
                         />
                       </div>
                     </div>
@@ -750,7 +818,7 @@ const StockInfo = ({
                     </div>
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
-                        <InputUC
+                        {/* <InputUC
                           disabled={!formik.values.isFlashSale}
                           type="time"
                           name="endTimeCampaign"
@@ -760,6 +828,46 @@ const StockInfo = ({
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
                             formik.handleChange(e);
+                          }}
+                        /> */}
+                        <TimePicker
+                          className={
+                            "time-picker-input w-full " +
+                            (formik.values.endTimeCampaign == null ||
+                            formik.values.endTimeCampaign == "" ||
+                            formik.values.endTimeCampaign == undefined
+                              ? "hidtext"
+                              : "")
+                          }
+                          value={
+                            formik.values.endTimeCampaign == null
+                              ? ""
+                              : moment(
+                                  new Date(
+                                    "1990-01-01 " +
+                                      formik.values.endTimeCampaign
+                                  )
+                                )
+                          }
+                          format={"HH:mm:ss"}
+                          use12Hours={false}
+                          disabled={!formik.values.isFlashSale}
+                          onChange={(e) => {
+                            if (e == null) {
+                              formik.handleChange({
+                                target: {
+                                  name: "endTimeCampaign",
+                                  value: "",
+                                },
+                              });
+                            } else {
+                              formik.handleChange({
+                                target: {
+                                  name: "endTimeCampaign",
+                                  value: moment(e).format("HH:mm:ss"),
+                                },
+                              });
+                            }
                           }}
                         />
                       </div>
