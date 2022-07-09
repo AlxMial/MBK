@@ -8,16 +8,28 @@ import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
 import useWindowDimensions from "services/useWindowDimensions";
 
-export default function CollectPointsReport() {
+export default function CampaignRewardReport() {
   const [listSearch, setListSerch] = useState([]);
-  const [listPoint, setListPoint] = useState([]);
+  const [listCampaign, setListCampaign] = useState([]);
   const { width } = useWindowDimensions();
   const [forcePage, setForcePage] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-
+  const listCampaignType = [
+    { value: "1", type: "Code", status: "แลกคะแนน" },
+    { value: "2", type: "E-Commerce", status: "รับคะแนน" },
+    { value: "3", type: "Register", status: "รับคะแนน" },
+  ];
+  const redemptionType = [
+    { value: "1", label: "Standard" },
+    { value: "2", label: "Game" },
+  ];
+  const rewardType = [
+    { value: "1", label: "E-Coupon" },
+    { value: "2", label: "สินค้า" },
+  ];
   const formSerch = useFormik({
     initialValues: {
       inputSerch: "",
@@ -36,69 +48,26 @@ export default function CollectPointsReport() {
         ? convertToDate(formSerch.values.endDate)
         : null;
     if (inputSerch === "" && startDate === null && endDate === null) {
-      setListPoint(
+      setListCampaign(
         listSearch.sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
       );
     } else {
-      if (inputSerch == null) {
-        setListPoint(listSearch);
-      } else {
-        const _startDate =
-          formSerch.values.startDate == null
-            ? null
-            : new Date(moment(formSerch.values.startDate).format("yyy-MM-DD"));
-        const _endDate =
-          formSerch.values.endDate == null
-            ? null
-            : new Date(moment(formSerch.values.endDate).format("yyy-MM-DD"));
-        setListPoint(
-          listSearch
-            .filter((x) => {
-              let startDate =
-                x.startDate == null
-                  ? null
-                  : new Date(moment(new Date(x.startDate)).format("yyy-MM-DD"));
-              let endDate =
-                x.startDate == null
-                  ? null
-                  : new Date(moment(new Date(x.endDate)).format("yyy-MM-DD"));
-
-              let isdate =
-                (startDate != null &&
-                  endDate == null &&
-                  startDate < _startDate) ||
-                (startDate != null &&
-                  endDate != null &&
-                  _endDate != null &&
-                  _startDate != null &&
-                  ((startDate >= _startDate && startDate <= _endDate) ||
-                    (endDate >= _startDate && endDate < _endDate))) ||
-                (startDate == null &&
-                  endDate != null &&
-                  endDate > _startDate) ||
-                (_startDate != null &&
-                  _endDate == null &&
-                  _startDate >= startDate &&
-                  _startDate <= endDate) ||
-                (_startDate == null &&
-                  _endDate != null &&
-                  _endDate >= startDate &&
-                  _endDate <= endDate);
-
-              if (
-                isdate &&
-                (Search(x.CampaignName, inputSerch) ||
-                  Search(x.code, inputSerch) ||
-                  Search(x.firstName, inputSerch) ||
-                  Search(x.lastName, inputSerch) ||
-                  Search(x.phone, inputSerch) ||
+      setListCampaign(
+        listSearch
+          .filter((x) => {
+            const _startDate =
+              x.startDate !== "" ? convertToDate(x.startDate) : null;
+            const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
+            let isDate = false;
+            if (x.startDate !== "" && x.endDate !== "") {
+              isDate = true;
+            }
+            if (
+              (inputSerch !== ""
+                ? Search(x.CampaignName, inputSerch) ||
+                  Search(x.redemptionType, inputSerch) ||
                   Search(x.points, inputSerch) ||
-                  Search(
-                    x.endDate == null
-                      ? ""
-                      : moment(x.endDate).format("DD/MM/YYYY"),
-                    inputSerch
-                  ) ||
+                  Search(x.rewardType, inputSerch) ||
                   Search(
                     x.startDate == null
                       ? ""
@@ -106,42 +75,33 @@ export default function CollectPointsReport() {
                     inputSerch
                   ) ||
                   Search(
-                    x.redeemDate == null
+                    x.endDate == null
                       ? ""
-                      : moment(x.redeemDate).format("DD/MM/YYYY"),
+                      : moment(x.endDate).format("DD/MM/YYYY"),
                     inputSerch
                   ) ||
                   Search(
-                    x.campaignType == "1"
-                      ? "กรอก Code จากสินค้า"
-                      : x.campaignType == "2"
-                      ? "ซื้อสินค้าออนไลน์"
-                      : x.campaignType == "3"
-                      ? "สมัครสมาชิก"
-                      : x.campaignType == "4"
-                      ? "แลกคูปอง"
-                      : x.campaignType == "5"
-                      ? "แลกของสมนาคุณ"
-                      : "เล่นเกมส์",
+                    x.expireDate == null
+                      ? ""
+                      : moment(x.expireDate).format("DD/MM/YYYY"),
                     inputSerch
                   ) ||
-                  Search(
-                    "123".includes(x.campaignType) ? "รับคะแนน" : "แลกคะแนน",
-                    inputSerch
-                  ))
-              ) {
-                return x;
-              }
-            })
-            .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
-        );
-      }
-
+                  Search(x.count, inputSerch) ||
+                  Search(x.use, inputSerch) ||
+                  Search(x.count - x.use, inputSerch)
+                : true) &&
+              SearchByDate(_startDate, _endDate)
+            ) {
+              return true;
+            }
+            return false;
+          })
+          .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+      );
       setPageNumber(0);
       setForcePage(0);
     }
   };
-
   const Search = (val, inputSerch) => {
     let status = false;
     if (val !== "" && val !== null && val !== undefined) {
@@ -149,7 +109,41 @@ export default function CollectPointsReport() {
     }
     return status;
   };
-
+  const SearchByDate = (dataST_Date, dataED_Date) => {
+    let isSearch = false;
+    let st_Date =
+      formSerch.values.startDate !== null
+        ? convertToDate(formSerch.values.startDate)
+        : null;
+    let ed_Date =
+      formSerch.values.endDate !== null
+        ? convertToDate(formSerch.values.endDate)
+        : null;
+    if (
+      (st_Date !== null &&
+        ed_Date !== null &&
+        ((st_Date <= dataST_Date &&
+          st_Date <= dataED_Date &&
+          ed_Date >= dataST_Date &&
+          ed_Date >= dataED_Date) ||
+          (st_Date <= dataST_Date &&
+            ed_Date >= dataST_Date &&
+            !(st_Date <= dataED_Date && ed_Date >= dataED_Date)) ||
+          (!(st_Date <= dataST_Date && ed_Date >= dataST_Date) &&
+            st_Date <= dataED_Date &&
+            ed_Date >= dataED_Date))) ||
+      (st_Date !== null &&
+        ed_Date === null &&
+        (st_Date <= dataST_Date || st_Date <= dataED_Date)) ||
+      (st_Date === null &&
+        ed_Date !== null &&
+        (ed_Date >= dataST_Date || ed_Date >= dataED_Date)) ||
+      (st_Date === null && ed_Date === null)
+    ) {
+      isSearch = true;
+    }
+    return isSearch;
+  };
   const convertToDate = (e) => {
     const date = new Date(e);
     date.setHours(0, 0, 0, 0);
@@ -175,7 +169,7 @@ export default function CollectPointsReport() {
     }
   };
 
-  const pageCount = Math.ceil(listPoint.length / usersPerPage);
+  const pageCount = Math.ceil(listCampaign.length / usersPerPage);
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
@@ -187,62 +181,51 @@ export default function CollectPointsReport() {
     const TitleColumns = [
       "ลำดับที่",
       "แคมเปญ",
+      "คะแนน",
       "วันที่เริ่มต้น",
       "วันที่สิ้นสุด",
-      "ประเภท",
-      "ชื่อลูกค้า",
-      "เบอร์โทรศัพท์",
-      "คะแนน",
-      "สถานะ",
-      "วันที่แลก",
+      "วันที่หมดอายุ",
+      "ประเภทแคมเปญ",
+      "ประเภทรางวัล",
+      "จำนวนรางวัล",
+      "แลกแล้ว",
+      "คงเหลือ",
     ];
     const columns = [
       "listNo",
       "CampaignName",
+      "points",
       "start",
       "end",
-      "campaignType",
-      "memberName",
-      "phone",
-      "point",
-      "status",
-      "redeem",
+      "expired",
+      "redemptionType",
+      "rewardType",
+      "count",
+      "use",
+      "toTal",
     ];
-    let count = 0;
-    let _listPoint = [];
-    listPoint.map((e, i) => {
-      _listPoint.push({
+    let _listCampaign = [];
+    listCampaign.map((e, i) => {
+      _listCampaign.push({
         listNo: i + 1,
         CampaignName: e.CampaignName,
+        points: e.points,
         start:
           e.startDate == null ? "-" : moment(e.startDate).format("DD/MM/YYYY"),
-        end:
-          e.endDate == null ? "-" : moment(e.endDate).format("DD/MM/YYYY"),
-        campaignType:
-          e.campaignType == "1"
-            ? "กรอก Code จากสินค้า"
-            : e.campaignType == "2"
-            ? "ซื้อสินค้าออนไลน์"
-            : e.campaignType == "3"
-            ? "สมัครสมาชิก"
-            : e.campaignType == "4"
-            ? "แลกคูปอง"
-            : e.campaignType == "5"
-            ? "แลกของสมนาคุณ"
-            : "เล่นเกมส์",
-        memberName: e.firstName + " " + e.lastName,
-        phone: e.phone,
-        code: e.code,
-        point: e.points,
-        status: "123".includes(e.campaignType) ? "รับคะแนน" : "แลกคะแนน",
-        redeem:
-          e.redeemDate == null
+        end: e.endDate == null ? "-" : moment(e.endDate).format("DD/MM/YYYY"),
+        expired:
+          e.expireDate == null
             ? "-"
-            : moment(e.redeemDate).format("DD/MM/YYYY"),
+            : moment(e.expireDate).format("DD/MM/YYYY"),
+        redemptionType: e.redemptionType,
+        rewardType: e.rewardType,
+        count: e.count,
+        use: e.use,
+        toTal: e.count - e.use,
       });
     });
     exportExcel(
-      _listPoint,
+      _listCampaign,
       "รายงานข้อมูลแคมเปญรางวัล",
       TitleColumns,
       columns,
@@ -251,31 +234,30 @@ export default function CollectPointsReport() {
     setIsLoading(false);
   };
 
-  const fetchData = async () => {
-    setIsLoading(true);
-    await axios
-      .get("report/ShowCollectPoints")
-      .then((response) => {
-        if (response.data.status) {
-          let _points = response.data.points.sort(
-            (a, b) => new Date(b.redeemDate) - new Date(a.redeemDate)
-          );
-          setListSerch(_points);
-          setListPoint(_points);
-        }
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  };
-
   useEffect(() => {
-    fetchData();
+    axios.get("report/ShowCampaignReward").then((response) => {
+      if (response.data.error) {
+      } else {
+        if (response.data.status) {
+          let data = response.data.points;
+
+          setListCampaign(data);
+          setListSerch(data);
+        }
+      }
+    });
   }, []);
 
   return (
     <>
-      {isLoading ? <Spinner customText={"Loading"} /> : null}
+      {isLoading ? (
+        <>
+          {" "}
+          <Spinner customText={"Loading"} />
+        </>
+      ) : (
+        <></>
+      )}
       <div className="flex flex-warp">
         <span className="text-sm margin-auto-t-b font-bold ">
           <i className="fas fa-cog"></i>&nbsp;&nbsp;
@@ -283,12 +265,14 @@ export default function CollectPointsReport() {
         <span className="text-base margin-auto-t-b font-bold">
           รายงาน&nbsp;&nbsp;/&nbsp;&nbsp;
         </span>
-        <span className="text-base margin-auto font-bold">รายงานข้อมูลแคมเปญรางวัล</span>
+        <span className="text-base margin-auto font-bold">
+          รายงานข้อมูลแคมเปญรางวัล
+        </span>
       </div>
       <div className="w-full px-4">
         <div className="flex flex-warp py-2 mt-6 ">
           <span className="text-lg  text-green-mbk margin-auto font-bold">
-          รายงานข้อมูลแคมเปญรางวัล
+            รายงานข้อมูลแคมเปญรางวัล
           </span>
         </div>
         <div
@@ -327,6 +311,7 @@ export default function CollectPointsReport() {
                       format={"DD/MM/yyyy"}
                       placeholder="เลือกวันที่"
                       showToday={false}
+                      //defaultValue={startDateCode}
                       style={{
                         height: "100%",
                         width: "100%",
@@ -372,6 +357,7 @@ export default function CollectPointsReport() {
                     format={"DD/MM/yyyy"}
                     placeholder="เลือกวันที่"
                     showToday={false}
+                    //defaultValue={endDateCode}
                     style={{
                       height: "100%",
                       width: "100%",
@@ -393,15 +379,6 @@ export default function CollectPointsReport() {
                     }
                     onChange={(e) => {
                       setDataSearch(e, "s_eddate");
-                    }}
-                    disabledDate={(current) => {
-                      if (formSerch.values.startDate != null) {
-                        let day = formSerch.values.startDate;
-                        return (
-                          current &&
-                          current <= moment(new Date(day)).endOf("day")
-                        );
-                      }
                     }}
                   />
                 </ConfigProvider>
@@ -458,6 +435,13 @@ export default function CollectPointsReport() {
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
+                    คะแนน
+                  </th>
+                  <th
+                    className={
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
+                    }
+                  >
                     วันที่เริ่มต้น
                   </th>
                   <th
@@ -472,7 +456,7 @@ export default function CollectPointsReport() {
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    ประเภท
+                    วันที่หมดอายุ
                   </th>
 
                   <th
@@ -480,47 +464,40 @@ export default function CollectPointsReport() {
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    ชื่อลูกค้า
+                    ประเภทแคมเปญ
                   </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    เบอร์โทรศัพท์
+                    ประเภทรางวัล
                   </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    Code
+                    จำนวนรางวัล
                   </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    คะแนน
+                    แลกแล้ว
                   </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                    สถานะ
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    วันที่แลก
+                    คงเหลือ
                   </th>
                 </tr>
               </thead>
               <tbody>
-                {listPoint
+                {listCampaign
                   .slice(pagesVisited, pagesVisited + usersPerPage)
                   .map(function (value, key) {
                     value.listNo = pagesVisited + key + 1;
@@ -540,68 +517,48 @@ export default function CollectPointsReport() {
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.startDate == null
+                            {value.points}
+                          </span>
+                        </td>
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
+                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                            {moment(value.startDate).format("DD/MM/YYYY")}
+                          </span>
+                        </td>
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
+                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                            {moment(value.endDate).format("DD/MM/YYYY")}
+                          </span>
+                        </td>
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
+                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                            {value.expireDate == null
                               ? "-"
-                              : moment(value.startDate).format("DD/MM/YYYY")}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.endDate == null
-                              ? "-"
-                              : moment(value.endDate).format("DD/MM/YYYY")}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.campaignType == "1"
-                              ? "กรอก Code จากสินค้า"
-                              : value.campaignType == "2"
-                              ? "ซื้อสินค้าออนไลน์"
-                              : value.campaignType == "3"
-                              ? "สมัครสมาชิก"
-                              : value.campaignType == "4"
-                              ? "แลกคูปอง"
-                              : value.campaignType == "5"
-                              ? "แลกของสมนาคุณ"
-                              : "เล่นเกมส์"}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.firstName + " " + value.lastName}
+                              : moment(value.expiredDate).format("DD/MM/YYYY")}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.phone}
+                            {value.redemptionType}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.code == null ? "-" : value.code}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-right">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.points == null
-                              ? "-"
-                              : ("123".includes(value.campaignType)
-                                  ? "+"
-                                  : "-") + value.points}
+                            {value.rewardType == null ? "-" : value.rewardType}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {"123".includes(value.campaignType)
-                              ? "รับคะแนน"
-                              : "แลกคะแนน"}
+                            {value.count}
+                          </span>
+                        </td>
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
+                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                            {value.use}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {value.redeemDate == null
-                            ? "-"
-                            : moment(value.redeemDate).format("DD/MM/YYYY")}
+                          {value.count - value.use}
                         </td>
                       </tr>
                     );
@@ -615,11 +572,11 @@ export default function CollectPointsReport() {
                 className="lg:w-6/12 font-bold"
                 style={{ alignSelf: "stretch" }}
               >
-                {pagesVisited + 10 > listPoint.length
-                  ? listPoint.length
+                {pagesVisited + 10 > listCampaign.length
+                  ? listCampaign.length
                   : pagesVisited + 10}{" "}
                 {"/"}
-                {listPoint.length} รายการ
+                {listCampaign.length} รายการ
               </div>
               <div className="lg:w-6/12">
                 <ReactPaginate

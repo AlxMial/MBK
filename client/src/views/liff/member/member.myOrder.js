@@ -60,9 +60,10 @@ const MyOrder = () => {
         {OrderHD && OrderHD.length > 0 ? (
           <div className="line-scroll">
             {OrderHD.filter((e) => {
-              return (
-                e.tbCancelOrders.length === 0 && e.tbReturnOrders.length === 0
-              );
+              return e;
+              // return (
+              //   e.tbCancelOrders.length === 0 && e.tbReturnOrders.length === 0
+              // );
             }).map((hd, index) => {
               return (
                 <div
@@ -91,15 +92,37 @@ const MyOrder = () => {
                     <div className="px-2 line-clamp-1  text-12">
                       {hd.orderNumber}{" "}
                     </div>
-                    {hd.isPaySlip && (
+                    {hd.paymentStatus < 3 && (
                       <div
                         className="absolute px-2 text-white border right-0"
                         style={{
                           borderRadius: "10px",
                           background: "red",
+                          border: "none",
                         }}
                       >
-                        {"รอการตรวจสอบ"}
+                        {hd.paymentStatus == 1 ? "รอชําระเงิน" : "รอการตรวจสอบ"}
+                      </div>
+                    )}
+                    {hd.paymentStatus == 3 && (
+                      <div
+                        className="absolute px-2 text-white border right-0"
+                        style={{
+                          borderRadius: "10px",
+                          border: "none",
+                          background:
+                            hd.transportStatus == 1
+                              ? "rgb(255, 168, 52)"
+                              : hd.transportStatus == 1
+                              ? "rgb(255, 168, 52)"
+                              : "#047738",
+                        }}
+                      >
+                        {hd.transportStatus == 1
+                          ? "เตรียมส่ง"
+                          : hd.transportStatus == 2
+                          ? "กำลังส่ง"
+                          : "ส่งแล้ว"}
                       </div>
                     )}
                   </div>
@@ -144,7 +167,6 @@ const MyOrder = () => {
                                   color: e.discount > 0 ? "#ddd" : "#047738",
                                 }}
                               >
-                                {" "}
                                 {"฿ " + fn.formatMoney(e.price)}
                               </div>
                               {e.discount > 0 ? (
@@ -152,7 +174,6 @@ const MyOrder = () => {
                                   className=" text-12"
                                   style={{ color: "red", marginLeft: "5px" }}
                                 >
-                                  {" "}
                                   {"฿ " + fn.formatMoney(e.discount)}
                                 </div>
                               ) : null}
@@ -166,12 +187,7 @@ const MyOrder = () => {
                     className="w-full flex mb-2 text-liff-gray-mbk"
                     style={{ fontSize: "12px", justifyContent: "end" }}
                   >
-                    <div
-                      className="font-bold  text-12"
-                      // onClick={() => {
-                      //   history.push(hd.paymentStatus == 1 ? path.makeorderbyid.replace(":id", hd.id) : path.orderpaymentdone.replace(":id", hd.id))
-                      // }}
-                    >
+                    <div className="font-bold  text-12">
                       {"ดูรายละเอียดคำสั่งซื้อ >"}
                     </div>
                   </div>

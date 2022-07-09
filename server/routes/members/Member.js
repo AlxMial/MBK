@@ -805,6 +805,55 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
     tbOrderHD.hasMany(tbOrderDT, {
       foreignKey: "orderId",
     });
+    //#region คำสั่งซื้อที่ยกเลิก
+    const _tbCancelOrder = await tbOrderHD.findAll({
+      attributes: ["id"],
+      where: {
+        memberId: memberId,
+      },
+      include: [
+        {
+          attributes: ["orderId"],
+          model: tbCancelOrder,
+          where: {
+            isDeleted: false,
+          },
+          required: true,
+        },
+      ],
+    });
+    let notInId = [];
+    if (_tbCancelOrder) {
+      _tbCancelOrder.map((e, i) => {
+        notInId.push(e.tbCancelOrders[0].orderId);
+      });
+    }
+    //#endregion คำสั่งซื้อที่ยกเลิก
+
+    //#region คำสั่งซื้อที่คืน
+    const _tbReturnOrder = await tbOrderHD.findAll({
+      attributes: ["id"],
+      where: {
+        memberId: memberId,
+      },
+      include: [
+        {
+          attributes: ["orderId"],
+          model: tbReturnOrder,
+          where: {
+            isDeleted: false,
+          },
+          required: true,
+        },
+      ],
+    });
+
+    if (_tbReturnOrder) {
+      _tbReturnOrder.map((e, i) => {
+        notInId.push(e.tbReturnOrders[0].orderId);
+      });
+    }
+    //#endregion คำสั่งซื้อที่คืน
 
     const _tbOrderHD = await tbOrderHD.findAll({
       limit: 5,
@@ -812,15 +861,18 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
         "id",
         "orderNumber",
         "paymentStatus",
+        "transportStatus",
         "netTotal",
         "stockNumber",
         "isCancel",
         "isReturn",
+        "orderDate",
       ],
       where: {
         memberId: memberId,
         isCancel: false,
         isReturn: false,
+        id: { [Op.not]: notInId },
       },
       include: [
         {
@@ -840,22 +892,25 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
           },
           required: false,
         },
-        {
-          model: tbCancelOrder,
-          where: {
-            isDeleted: false,
-          },
-          required: false,
-        },
-        {
-          model: tbReturnOrder,
-          where: {
-            isDeleted: false,
-          },
-          required: false,
-        },
+        // {
+        //   model: tbCancelOrder,
+        //   where: {
+        //     isDeleted: false,
+        //     // id: 0,
+        //   },
+        //   required: false,
+        // },
+        // {
+        //   model: tbReturnOrder,
+        //   where: {
+        //     isDeleted: false,
+        //     // id: 0,
+        //   },
+        //   required: false,
+        // },
       ],
-      order: [["orderNumber", "DESC"]],
+      order: [["orderDate", "DESC"]],
+      required: true,
     });
 
     if (_tbOrderHD && _tbOrderHD.length > 0) {
@@ -1761,7 +1816,7 @@ router.get(
           _tbMemberPoint.filter((e) => {
             if (e.campaignType == 1) {
               // return e
-             
+
               _pointcode.push(e.code);
               _point.push(e.point);
             }
@@ -1770,12 +1825,12 @@ router.get(
             tbPointCodeHD.hasMany(tbPointCodeDT, {
               foreignKey: "tbPointCodeHDId",
             });
-     
+
             const _tbPointCodeHD = await tbPointCodeHD.findAll({
               attributes: [["pointCodeName", "CampaignName"]],
               include: [
                 {
-                  attributes: ["id", "code","codeNone"],
+                  attributes: ["id", "code", "codeNone"],
                   model: tbPointCodeDT,
                   where: {
                     isDeleted: false,
@@ -1807,26 +1862,28 @@ router.get(
                 let redemptionType = "";
                 let rewardType = "";
                 // let points = ""
-          
+
                 let campaignType = 1;
                 if (e.tbPointCodeDTs) {
                   e.tbPointCodeDTs.map((pc, i) => {
                     let code = pc.code;
-                    let codeNone = pc.codeNone
-       
-                    let item = _tbMemberPoint.find((p) => p.code == code || p.code == codeNone);
+                    let codeNone = pc.codeNone;
+
+                    let item = _tbMemberPoint.find(
+                      (p) => p.code == code || p.code == codeNone
+                    );
                     Campaign.push({
                       CampaignName: CampaignName,
                       campaignType: campaignType,
                       redemptionType: redemptionType,
                       rewardType: rewardType,
-                      code:Encrypt.DecodeKey(code),
+                      code: Encrypt.DecodeKey(code),
                       points: item.dataValues.point,
                       redeemDate: item.dataValues.redeemDate,
                       expiredDate: item.dataValues.expireDate,
                     });
                   });
-                  Campaign.sort(function(a,b){
+                  Campaign.sort(function (a, b) {
                     return new Date(b.redeemDate) - new Date(a.redeemDate);
                   });
                 }
