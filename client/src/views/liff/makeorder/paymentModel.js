@@ -110,6 +110,7 @@ const PaymentModel = ({
                       formatOptionLabel={({
                         id,
                         bankName,
+                        accountName,
                         accountNumber,
                         bankBranchName,
                       }) => (
@@ -122,6 +123,12 @@ const PaymentModel = ({
                               {id != null ? <GetImageUC id={id} /> : null}
                             </div>
                             <div className="px-2 font-bold"> {bankName} </div>
+                          </div>
+                          <div
+                            className="text-liff-gray-mbk"
+                            style={{ fontWeight: "100" }}
+                          >
+                            {"เลขบัญชี : " + accountName}
                           </div>
                           <div
                             className="text-liff-gray-mbk"

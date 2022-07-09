@@ -48,6 +48,7 @@ const Order = () => {
     setOrderImage(null);
 
     await axios.get("order/orderHD").then(async (response) => {
+
       if (!response.data.error && response.data.tbOrderHD) {
         let _orderData = response.data.tbOrderHD;
         console.log(_orderData)
