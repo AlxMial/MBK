@@ -125,7 +125,7 @@ export default function ConditioRewardInfo() {
       redemptionName: "",
       redemptionType: "",
       rewardType: "",
-      couponType:false,
+      couponType: false,
       points: 0,
       isNotExpired: false,
       rewardGameAmount: 0,
@@ -171,7 +171,6 @@ export default function ConditioRewardInfo() {
     onSubmit: (values) => {
       let ImageSave = {};
       if (formik.values.redemptionType === "2") {
-
         values["listGame"] = listGame;
         if (isNew) {
           dispatch(fetchLoading());
@@ -233,6 +232,7 @@ export default function ConditioRewardInfo() {
         let formData = new FormData();
         if (isImport) {
           values["coupon"] = formikCouponImport.values;
+          values["couponType"] = true;
           formik.values.couponType = true;
           formData.append("file", file);
           ImageSave = {
@@ -242,6 +242,7 @@ export default function ConditioRewardInfo() {
           };
         } else if (formik.values.rewardType === "1") {
           values["coupon"] = formikCoupon.values;
+          values["couponType"] = false;
           ImageSave = {
             ...imageCoupon,
             image: formikCoupon.values.pictureCoupon,
@@ -571,7 +572,7 @@ export default function ConditioRewardInfo() {
 
             if (reademptionType === "2") {
               for (var i = 0; i < response.data.listGame.length; i++) {
-                response.data.listGame[i]['index'] = i;
+                response.data.listGame[i]["index"] = i;
                 if (response.data.listGame[i].rewardType === "1") {
                   if (response.data.listGame[i]["pictureCoupon"] !== null) {
                     response.data.listGame[i]["pictureCoupon"] =
