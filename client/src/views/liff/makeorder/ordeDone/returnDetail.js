@@ -81,7 +81,7 @@ const ReturnDetail = ({ OrderHD }) => {
             </div>
           </div>
         </div>
-        <div className="liff-inline" />
+        {/* <div className="liff-inline" /> */}
         <div className="w-full flex mb-2">
           <i
             className="flex fas fa-clipboard"
