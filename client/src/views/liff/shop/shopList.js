@@ -551,14 +551,14 @@ const ShopList = () => {
                               >
                                 <div
                                   style={{
-                                    color: e.discount > 0 ? "#ddd" : "#000",
+                                    color: e.saleDiscount > 0 ? "#ddd" : "#000",
                                     textDecoration:
-                                      e.discount > 0 ? "line-through" : "none",
+                                      e.saleDiscount > 0 ? "line-through" : "none",
                                   }}
                                 >
                                   {"฿ " + fn.formatMoney(e.price)}
                                 </div>
-                                {e.discount > 0 ? (
+                                {e.saleDiscount > 0 ? (
                                   <div
                                     style={{
                                       color: "red",
