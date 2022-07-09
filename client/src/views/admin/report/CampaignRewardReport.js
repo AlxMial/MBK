@@ -380,6 +380,16 @@ export default function CampaignRewardReport() {
                     onChange={(e) => {
                       setDataSearch(e, "s_eddate");
                     }}
+                    disabledDate={(current) => {
+                      if (formSerch.values.startDate != null) {
+                        let day = formSerch.values.startDate;
+                        return (
+                          current &&
+                          current <
+                            moment(new Date(day)).add(-1, "days").endOf("day")
+                        );
+                      }
+                    }}
                   />
                 </ConfigProvider>
               </div>

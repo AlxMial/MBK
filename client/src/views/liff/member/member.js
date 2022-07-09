@@ -12,8 +12,7 @@ import { IsNullOrEmpty, liff_dateToString } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import * as Session from "@services/Session.service";
 import ModelPolicy from "./modelpolicy";
-import './index.scss';
-
+import "./index.scss";
 
 // components
 
@@ -21,7 +20,7 @@ const Member = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const { TabPane } = Tabs;
-  const tabsChange = () => { };
+  const tabsChange = () => {};
   const [tbMember, settbMember] = useState({});
   const [Memberpoints, setMemberpoints] = useState({});
   const [isOpenPolicy, setisOpenPolicy] = useState(false);
@@ -31,12 +30,12 @@ const Member = () => {
     getMember(
       (res) => {
         if (res.data.code === 200) {
-          console.log(res)
+          console.log(res);
           settbMember(res.data.tbMember);
           getMemberpoints({ id: res.data.tbMember.id });
         }
       },
-      () => { },
+      () => {},
       () => {
         setIsLoading(false);
       }
@@ -46,17 +45,18 @@ const Member = () => {
     setIsLoading(true);
     getPoint(
       (res) => {
-        console.log(res)
+        console.log(res);
         if (res.data.code === 200) {
           setMemberpoints(res.data);
         }
       },
-      () => { },
+      () => {},
       () => {
         setIsLoading(false);
       }
     );
   };
+
   useEffect(() => {
     getMembers();
     getMemberpoints();
@@ -75,15 +75,16 @@ const Member = () => {
             borderRadius: "15px",
             backgroundColor: "#007A40",
             border: "2px solid white",
-            backgroundImage: `url(${IsNullOrEmpty(tbMember)
-              ? null
-              : require("assets/img/mbk/Green.png").default
+            backgroundImage: `url(${
+              IsNullOrEmpty(tbMember)
+                ? null
+                : require("assets/img/mbk/Green.png").default
               // : require(tbMember.memberType === "1"
               //     ? "assets/img/mbk/Green.png"
               //     : tbMember.memberType === "2"
               //     ? "assets/img/mbk/Silver.png"
               //     : "assets/img/mbk/Gold.png").default
-              })`,
+            })`,
             // backgroundSize: "cover",
             // objectFit: "cover",
           }}
@@ -111,14 +112,14 @@ const Member = () => {
                       tbMember.memberType === "1"
                         ? "#cbe8ba"
                         : tbMember.memberType === "2"
-                          ? "#ebebeb"
-                          : "#f3eac1",
+                        ? "#ebebeb"
+                        : "#f3eac1",
                     color:
                       tbMember.memberType === "1"
                         ? "#047738"
                         : tbMember.memberType === "2"
-                          ? "#929292"
-                          : "#d0af2c",
+                        ? "#929292"
+                        : "#d0af2c",
                     borderRadius: "20px",
                     padding: "2px 10px",
                     textAlign: "center",
@@ -127,8 +128,8 @@ const Member = () => {
                   {tbMember.memberType === "1"
                     ? "GREEN MEMBER"
                     : tbMember.memberType === "2"
-                      ? "SLIVER MEMBER"
-                      : "GOLD MEMBER"}
+                    ? "SLIVER MEMBER"
+                    : "GOLD MEMBER"}
                 </div>
                 <div className="text-white font-bold text-xs mt-2">
                   {tbMember.firstName + " " + tbMember.lastName}
