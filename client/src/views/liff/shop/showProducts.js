@@ -42,6 +42,7 @@ const ShowProducts = () => {
         (res) => {
           if (res.data.status) {
             if (res.data.shop_orders) {
+              console.log(res.data.shop_orders)
               setcartNumberBadge(res.data.shop_orders.length);
               addToast("คุณได้เพิ่มสินค้าลงในรถเข็นเรียบร้อยแล้ว", {
                 appearance: "success",

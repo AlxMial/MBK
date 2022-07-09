@@ -24,6 +24,11 @@ export default function ConditionRewardList() {
     { value: "1", label: "Standard" },
     { value: "2", label: "Game" },
   ];
+
+  const rewardType = [
+    { value: "1", label: "E-Coupon" },
+    { value: "2", label: "สินค้า" },
+  ];
   /* Modal */
   function openModalSubject(id) {
     setDeleteValue(id);
@@ -40,20 +45,28 @@ export default function ConditionRewardList() {
       setListRedemption(listSearch);
     } else {
       setListRedemption(
-        listSearch.filter(
-          (x) => {
-            if (x.redemptionName.includes(e)
-              || moment(x.startDate).format("DD/MM/YYYY").includes(e)
-              || moment(x.endDate).format("DD/MM/YYYY").includes(e)
-              || (x.points).toString().includes(e)
-              || (x.redemptionType == 1 ? "Standard" : "Game").includes(e)
-              ||(new Date(x.endDate) < new Date() ? "หมดอายุ" :
-              x.isActive ? "เปิดการใช้งาน" : "ปิดการใช้งาน").includes(e)
-            ) {
-              return x
-            }
+        listSearch.filter((x) => {
+          if (
+            x.redemptionName.includes(e) ||
+            moment(x.startDate).format("DD/MM/YYYY").includes(e) ||
+            moment(x.endDate).format("DD/MM/YYYY").includes(e) ||
+            x.points.toString().includes(e) ||
+            (x.redemptionType == 1 ? "Standard" : "Game")
+              .toLowerCase()
+              .includes(e) ||
+            (x.rewardType == 1 ? "E-Coupon" : "สินค้า")
+              .toLowerCase()
+              .includes(e) ||
+            (new Date(x.endDate) < new Date()
+              ? "หมดอายุ"
+              : x.isActive
+              ? "เปิดการใช้งาน"
+              : "ปิดการใช้งาน"
+            ).includes(e)
+          ) {
+            return x;
           }
-        )
+        })
       );
       setPageNumber(0);
     }
@@ -73,9 +86,9 @@ export default function ConditionRewardList() {
       let tempRedemption = listRedemption.map((Redemption) =>
         Redemption.id.toString() === name
           ? {
-            ...Redemption,
-            isDeleted: checked,
-          }
+              ...Redemption,
+              isDeleted: checked,
+            }
           : Redemption
       );
       setListRedemption(tempRedemption);
@@ -244,7 +257,14 @@ export default function ConditionRewardList() {
                         "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                       }
                     >
-                      ประเภท
+                      ประเภทเงื่อนไข
+                    </th>
+                    <th
+                      className={
+                        "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
+                      }
+                    >
+                      ประเภทรางวัล
                     </th>
                     <th
                       className={
@@ -299,7 +319,7 @@ export default function ConditionRewardList() {
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-150">
+                              <div className="TextWordWarp-200">
                                 {value.redemptionName}
                               </div>
                             </Link>
@@ -309,7 +329,7 @@ export default function ConditionRewardList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-150">
+                              <div className="TextWordWarp-100">
                                 {ValidateService.defaultValueText(
                                   redemptionType,
                                   value.redemptionType
@@ -319,10 +339,30 @@ export default function ConditionRewardList() {
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link
+                              className="text-gray-mbk hover:text-gray-mbk "
+                              to={`/admin/redemptionsInfo/${value.id}`}
+                            >
+                              <div
+                                className={
+                                  "TextWordWarp-100" +
+                                  (value.redemptionType == 2 ? " hidden" : " ")
+                                }
+                              >
+                                {ValidateService.defaultValueText(
+                                  rewardType,
+                                  value.rewardType
+                                )}
+                              </div>
+                            </Link>
+                          </td>
+                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                            <Link
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              {value.points}
+                              <div className="TextWordWarp-100">
+                                {value.points}
+                              </div>
                             </Link>
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
@@ -330,12 +370,12 @@ export default function ConditionRewardList() {
                               className="text-gray-mbk  hover:text-gray-mbk"
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200">
+                              <div className="TextWordWarp-100">
                                 {moment(value.startDate).format("DD/MM/YYYY")}
                               </div>
                             </Link>
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
+                          <td className="border-t-0 px-2 w-1 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
                             <Link
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
@@ -343,31 +383,34 @@ export default function ConditionRewardList() {
                               {moment(value.endDate).format("DD/MM/YYYY")}
                             </Link>
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
+                          <td className="border-t-0 px-2 w-1 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
                             <Link
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200">
-                                {new Date(value.endDate) < new Date() ? "หมดอายุ" :
-                                  value.isActive ? "เปิดการใช้งาน" : "ปิดการใช้งาน"
-                                }
+                              <div className="TextWordWarp-100">
+                                {new Date(value.endDate) < new Date()
+                                  ? "หมดอายุ"
+                                  : value.isActive
+                                  ? "เปิดการใช้งาน"
+                                  : "ปิดการใช้งาน"}
                               </div>
-
                             </Link>
                           </td>
 
                           <td
                             className={
-                              "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center"
+                              "border-t-0 px-2 w-1 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center"
                             }
                           >
-                            <i
-                              className="fas fa-trash text-red-500 cursor-pointer"
-                              onClick={() => {
-                                openModalSubject(value.id);
-                              }}
-                            ></i>
+                            <div className="TextWordWarp-100">
+                              <i
+                                className="fas fa-trash text-red-500 cursor-pointer"
+                                onClick={() => {
+                                  openModalSubject(value.id);
+                                }}
+                              ></i>
+                            </div>
                           </td>
                         </tr>
                       );

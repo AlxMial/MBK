@@ -363,6 +363,7 @@ router.get(
           ],
           where: {
             isDeleted: false,
+            isActive:true
           },
         });
         if (_RedemptionConditionsHD) {

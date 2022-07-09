@@ -58,6 +58,7 @@ export default function UserInfo() {
   let history = useHistory();
   const { addToast } = useToasts();
   const [isModefied, setIsModified] = useState(false);
+  const [isBack, setIsBack] = useState(false);
 
   const poorRegExp = /[a-zA-Z]/;
   const weakRegExp = /(?=.*?[0-9])/;
@@ -103,11 +104,14 @@ export default function UserInfo() {
   }
 
   const onEditValue = () => {
-    formik.handleSubmit();
-    const valueError = JSON.stringify(formik.errors);
-    if (valueError.length > 2) {
+    if (isModefied) {
+      setIsBack(true)
+      formik.handleSubmit();
+      if (formik.values.password === "" && !enablePassword ) 
+      {  
+        setErrorPassword(true);
+      }
       setIsOpenEdit(false);
-      if (formik.values.password === "") setErrorPassword(true);
     } else {
       if (!isModefied) history.push("/admin/users");
     }
@@ -187,6 +191,7 @@ export default function UserInfo() {
       if (values.userName.split(" ").length > 1) {
         setIsUserSpace(true);
       }
+      setIsBack(false);
       if (
         !errorCurrentPassword &&
         !errorPassword &&
@@ -209,7 +214,7 @@ export default function UserInfo() {
               formik.setFieldValue("confirmPassword", "");
               formik.setFieldValue("password", "");
               setIsModified(false);
-
+              if(isBack) history.push("/admin/users");
               if (modalIsOpenEdit) history.push("/admin/users");
               else history.push(`/admin/usersinfo/${res.data.tbUser.id}`);
 
@@ -248,8 +253,9 @@ export default function UserInfo() {
               fetchData();
               setConfirmPassword(false);
               setIsOpenEdit(false);
-
-              if (modalIsOpenEdit) history.push("/admin/members");
+              
+              if(isBack) history.push("/admin/users");
+              if (modalIsOpenEdit) history.push("/admin/users");
               // formik.setFieldValue("confirmPassword", "");
               // formik.setFieldValue("password", "");
               // formik.setFieldValue("currentPassword", "");
@@ -290,9 +296,8 @@ export default function UserInfo() {
         if (columns !== "password") {
           formik.setFieldValue(columns, response.data.tbUser[columns], false);
         }
-        if(columns === "role") {
-          console.log(response.data);
-        }
+        // if(columns === "role") {
+        // }
       }
       setIsNew(false);
       // setValueConfirm(response.data.tbUser.password);

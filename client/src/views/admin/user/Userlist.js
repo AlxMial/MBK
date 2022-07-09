@@ -15,7 +15,7 @@ export default function UserList() {
   const [listUser, setListUser] = useState([]);
   const [listSearch, setListSerch] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
-  const [deleteNumber, setDeleteNumber] = useState(0);
+  // const [deleteNumber, setDeleteNumber] = useState(0);
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
   const usersPerPage = 10;

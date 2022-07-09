@@ -630,10 +630,16 @@ const ShowCart = () => {
           className={" liff-Dialog "}
           showModal={productCountError.open}
           message={"จำนวนสินค้ามีการเปลี่ยนแปลง"}
-          confirmModal={() => {
-            productCountError.action.map((e, i) => {
-              upd_shopcart(e);
-            });
+          confirmModal={async () => {
+            // await productCountError.action.map((e, i) => {
+            //   upd_shopcart(e);
+            // });
+
+
+            for(var i = 0 ; i < productCountError.action.length ; i++){
+              upd_shopcart(productCountError.action[i]);
+            }
+
             setproductCountError({ open: false });
             getProducts();
           }}
