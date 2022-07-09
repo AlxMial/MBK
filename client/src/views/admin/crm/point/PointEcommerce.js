@@ -339,7 +339,6 @@ export default function PointEcommerce() {
   };
 
   const setStatus = (dateValue) => {
-    
     if (new Date(new Date(dateValue.endDate).setUTCHours(0,0,0,0)) < new Date(new Date().setUTCHours(0,0,0,0))) return "Expire";
     else if (dateValue.isActive) return "Active";
     else return "Inactive";

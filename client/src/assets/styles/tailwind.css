@@ -84,13 +84,20 @@ body {
 }
 
 * {
-  font-family: "Noto Sans","DB-Adman-X", sans-serif ;
+  font-family: "Noto Sans","Noto-Sans-Bold","AnekMalayalam", sans-serif;
 }
 
 @font-face {
   font-family: "TATSana Chon";
   src: url("../../assets/fonts/TATSANA CHON-REG.OTF") format("opentype");
 }
+
+
+@font-face {
+  font-family: "AnekMalayalam";
+  src: url("../../assets/fonts/AnekMalayalam-VariableFont_wdth,wght.ttf");
+}
+
 
 @font-face {
   font-family: "THSarabun";
@@ -104,7 +111,12 @@ body {
 
 @font-face {
   font-family: "Noto Sans";
-  src: url("../../assets/fonts/NotoSansThai-Regular.ttf");
+  src: url("../../assets/fonts/NotoSansThai-Regular.ttf") format("opentype");;
+} 
+
+@font-face {
+  font-family: "Noto-Sans-Bold";
+  src: url("../../assets/fonts/NotoSansThai-Bold.ttf") format("opentype");;
 }
 
 @font-face {
@@ -1706,6 +1718,7 @@ select {
 }
 
 .font-bold {
+  
   font-weight: 700;
 }
 

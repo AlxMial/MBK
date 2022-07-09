@@ -1766,20 +1766,24 @@ router.get(
               _point.push(e.point);
             }
           });
-
           if (_point.length > 0) {
             tbPointCodeHD.hasMany(tbPointCodeDT, {
               foreignKey: "tbPointCodeHDId",
             });
+     
             const _tbPointCodeHD = await tbPointCodeHD.findAll({
               attributes: [["pointCodeName", "CampaignName"]],
               include: [
                 {
-                  attributes: ["id", "code"],
+                  attributes: ["id", "code","codeNone"],
                   model: tbPointCodeDT,
                   where: {
                     isDeleted: false,
-                    code: _pointcode,
+                    [Op.or]: [
+                      { code: _pointcode },
+                      { codeNone: _pointcode },
+                      // { memberCard: Encrypt.EncodeKey(req.body.memberCard.toLowerCase()) },
+                    ],
                     isUse: true,
                     memberId: id,
                   },
@@ -1796,17 +1800,21 @@ router.get(
               },
               required: true,
             });
+
             if (_tbPointCodeHD) {
               _tbPointCodeHD.map((e, i) => {
                 let CampaignName = e.dataValues.CampaignName;
                 let redemptionType = "";
                 let rewardType = "";
                 // let points = ""
+          
                 let campaignType = 1;
                 if (e.tbPointCodeDTs) {
                   e.tbPointCodeDTs.map((pc, i) => {
                     let code = pc.code;
-                    let item = _tbMemberPoint.find((e) => e.code == code);
+                    let codeNone = pc.codeNone
+       
+                    let item = _tbMemberPoint.find((p) => p.code == code || p.code == codeNone);
                     Campaign.push({
                       CampaignName: CampaignName,
                       campaignType: campaignType,

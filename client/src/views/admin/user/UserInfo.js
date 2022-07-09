@@ -484,6 +484,14 @@ export default function UserInfo() {
                             seterrorCurrentPassword(false);
                             setErrorPassword(false);
                             setConfirmPassword(false);
+                            setErrorPassword1(false);
+                            setErrorPassword2(false);
+                            setErrorPassword3(false);
+                            setErrorPassword4(false);
+                            setErrorPassword5(false);
+                            setWeakPassword(false);
+                            setPoorPassword(false);
+                            setStrongPassword(false);
                             formik.values.currentPassword = "";
                             formik.values.confirmPassword = "";
                             formik.values.password = "";

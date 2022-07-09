@@ -27,7 +27,7 @@ export const validationSchema = Yup.object({
     .required("* กรุณากรอก Email"),
   address: Yup.string().required("* โปรดระบุที่อยู่"),
   postcode: Yup.string().required("* โปรดระบุรหัสไปรษณีย์"),
-  eating: Yup.string().required("* โปรดระบุ ปัจจุบันทานข้าวแบรนด์"),
+  eating: Yup.string().required("* โปรดระบุ"),
 });
 
 export const validateShopUpdate = Yup.object({
@@ -141,7 +141,7 @@ export const InputUC = ({
           />
         )}
         {error == true ? (
-          <div className="text-sm py-2 px-2 text-red-500">
+          <div className="text-xs py-2 px-2 text-red-500">
             {validationSchema.fields[name].tests[0].OPTIONS.message}
           </div>
         ) : null}
@@ -177,7 +177,7 @@ export const RadioUC = ({
           />
         }
         {error == true ? (
-          <div className="text-sm py-2 px-2 text-red-500">
+          <div className="text-xs py-2 px-2 text-red-500">
             {validationSchema.fields[name].tests[0].OPTIONS.message}
           </div>
         ) : null}

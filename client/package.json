@@ -1,6 +1,6 @@
 {
   "name": "notus-react",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Notus React - A free Tailwind CSS and React UI Kit and Admin by Creative Tim.",
   "repository": "https://github.com/creativetimofficial/notus-react",
   "license": "MIT",
@@ -102,5 +102,5 @@
     "react-app-rewired": "^2.2.1",
     "vite": "^2.9.13"
   },
-  "buildDate": 1657296525983
+  "buildDate": 1657303877819
 }

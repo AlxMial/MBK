@@ -52,6 +52,7 @@ const MakeOrderById = () => {
       getOrderHDById(
         { Id: id, type: "update" },
         async (res) => {
+          console.log(res)
           if (res.status) {
             let OrderHD = res.data.OrderHD;
             if (OrderHD.tbCancelOrder == null) {

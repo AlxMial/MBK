@@ -455,7 +455,7 @@ const Register = () => {
               />
               <InputUC
                 name="phone"
-                lbl="เบอร์โทร"
+                lbl="เบอร์โทรศัพท์"
                 type="tel"
                 id=""
                 length={10}
@@ -749,7 +749,7 @@ const Register = () => {
               <div className="mt-4"></div>
               <InputUC
                 name="eating"
-                lbl="ปัจจุบันทานข้าวแบรนด์อะไร"
+                lbl="ปัจจุบันทานข้าวแบรนด์อะไร ?"
                 type="text"
                 valid={true}
                 onChange={handleChange}
