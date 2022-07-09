@@ -50,6 +50,7 @@ const MakeOrder = () => {
     const setData = async () => {
       if (!fn.IsNullOrEmpty(item)) {
         let shop_orders = item.shop_orders;
+
         shop_orders.map((e, i) => {
           idlist.push(e.id);
         });
@@ -66,7 +67,7 @@ const MakeOrder = () => {
           .then((response) => {
             if (response.data.status) {
               let tbStock = response.data.tbStock;
-
+     
               setCartItem(tbStock);
               let price = 0;
               tbStock.map((e, i) => {
@@ -87,7 +88,7 @@ const MakeOrder = () => {
                   price += parseFloat(e.price) * parseInt(quantity);
                 }
               });
-
+   
               price = price;
               setsumprice(price < 1 ? 0 : price);
             } else {

@@ -52,12 +52,11 @@ const MakeOrderById = () => {
       getOrderHDById(
         { Id: id, type: "update" },
         async (res) => {
-          console.log(res)
           if (res.status) {
             let OrderHD = res.data.OrderHD;
             if (OrderHD.tbCancelOrder == null) {
               setOrderHD(OrderHD);
-              setpaymentID(OrderHD.paymentId === null ? "1" : null);
+              setpaymentID(OrderHD.paymentId == null ? "1" : OrderHD.paymentId);
               setisLogistic(OrderHD.logisticId);
               setdeliveryCost(OrderHD.olddeliveryCost);
               setisAddress(OrderHD.otherAddressId);
@@ -90,6 +89,7 @@ const MakeOrderById = () => {
                     let price = 0;
                     let amount = 0;
                     tbStock.map((e, i) => {
+                      console.log(e)
                       let item = shop_orders.find((o) => o.id == e.id);
                       item.discount = e.price - e.discount;
                       if (e.isFlashSale) {
