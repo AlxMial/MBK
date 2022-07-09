@@ -885,6 +885,7 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
             "discountType",
             "stockId",
             "orderId",
+            "isFree",
           ],
           model: tbOrderDT,
           where: {
@@ -944,6 +945,7 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
                 discount: parseFloat(discount),
                 productName: dt.productName,
                 amount: dt.amount,
+                isFree: dt.isFree,
               });
             }
           }

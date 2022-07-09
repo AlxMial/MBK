@@ -152,7 +152,6 @@ const MyOrder = () => {
                               className="text-liff-gray-mbk"
                               style={{ width: "26%" }}
                             >
-                              {" "}
                               {"x" + e.amount}
                             </div>
                             <div
@@ -164,10 +163,16 @@ const MyOrder = () => {
                                 style={{
                                   textDecoration:
                                     e.discount > 0 ? "line-through" : "none",
-                                  color: e.discount > 0 ? "#ddd" : "#047738",
+                                  color: e.isFree
+                                    ? "red"
+                                    : e.discount > 0
+                                    ? "#ddd"
+                                    : "#047738",
                                 }}
                               >
-                                {"฿ " + fn.formatMoney(e.price)}
+                                {e.isFree
+                                  ? "Free"
+                                  : "฿ " + fn.formatMoney(e.price)}
                               </div>
                               {e.discount > 0 ? (
                                 <div

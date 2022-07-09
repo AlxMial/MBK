@@ -227,7 +227,8 @@ router.put("/", validateToken, async (req, res) => {
   //จ่ายเงินสำเร็จ
   let addPoint = false;
   if (req.body.paymentStatus == 3 || hd.paymentStatus == 3) {
-    addPoint = (req.body.prepareDate == null && req.body.paymentType == 1) ? true : false;
+    addPoint =
+      req.body.prepareDate == null && req.body.paymentType == 1 ? true : false;
     // สถานะขนส่ง
     if (req.body.transportStatus == 1) {
       if (req.body.prepareDate == null) {
@@ -1261,7 +1262,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
   let { PaymentStatus, TransportStatus, isCancel, isReturn } = req.body;
   let OrderHDData = [];
   let OrderHD = [];
-  let attributesOrderHD = [
+  const attributesOrderHD = [
     "id",
     "orderNumber",
     "logisticId",
@@ -1275,6 +1276,15 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
     "discountCoupon",
     "discountStorePromotion",
     "netTotal",
+  ];
+  const attributesOrderDT = [
+    "id",
+    "amount",
+    "price",
+    "discount",
+    "discountType",
+    "stockId",
+    "isFree",
   ];
   try {
     const memberId = Encrypt.DecodeKey(req.user.id);
@@ -1313,15 +1323,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             required: false,
           },
           {
-            attributes: [
-              "id",
-              "amount",
-              "price",
-              "discount",
-              "discountType",
-              "stockId",
-              "isFree",
-            ],
+            attributes: attributesOrderDT,
             model: tbOrderDT,
             where: {
               isDeleted: false,
@@ -1390,14 +1392,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
             required: false,
           },
           {
-            attributes: [
-              "id",
-              "amount",
-              "price",
-              "discount",
-              "discountType",
-              "stockId",
-            ],
+            attributes: attributesOrderDT,
             model: tbOrderDT,
             where: {
               isDeleted: false,
@@ -1430,14 +1425,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         },
         include: [
           {
-            attributes: [
-              "id",
-              "amount",
-              "price",
-              "discount",
-              "discountType",
-              "stockId",
-            ],
+            attributes: attributesOrderDT,
             model: tbOrderDT,
             where: {
               isDeleted: false,
@@ -1461,14 +1449,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         },
         include: [
           {
-            attributes: [
-              "id",
-              "amount",
-              "price",
-              "discount",
-              "discountType",
-              "stockId",
-            ],
+            attributes: attributesOrderDT,
             model: tbOrderDT,
             where: {
               isDeleted: false,
@@ -1523,6 +1504,16 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
               id: _tbCancelOrder[i].orderId,
               memberId: memberId,
             },
+            include: [
+              {
+                attributes: attributesOrderDT,
+                model: tbOrderDT,
+                where: {
+                  isDeleted: false,
+                },
+                required: false,
+              },
+            ],
           });
           if (_tbOrderHD != null) {
             _tbOrderHD.dataValues.cancelStatus = _tbCancelOrder[i].cancelStatus;
@@ -1555,6 +1546,16 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
               id: _tbReturnOrder[i].orderId,
               memberId: memberId,
             },
+            include: [
+              {
+                attributes: attributesOrderDT,
+                model: tbOrderDT,
+                where: {
+                  isDeleted: false,
+                },
+                required: false,
+              },
+            ],
           });
           if (_tbOrderHD != null) {
             _tbOrderHD.dataValues.returnStatus = _tbReturnOrder[i].returnStatus;
@@ -1575,15 +1576,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         let OrderDTData = [];
         if (hd.tbOrderDTs == null) {
           const _OrderDTData = await tbOrderDT.findAll({
-            attributes: [
-              "id",
-              "amount",
-              "price",
-              "discount",
-              "discountType",
-              "stockId",
-              // , "orderId"
-            ],
+            attributes: attributesOrderDT,
             where: {
               IsDeleted: false,
               orderId: hd.id,
