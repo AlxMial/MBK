@@ -227,8 +227,7 @@ router.put("/", validateToken, async (req, res) => {
   //จ่ายเงินสำเร็จ
   let addPoint = false;
   if (req.body.paymentStatus == 3 || hd.paymentStatus == 3) {
-    addPoint =
-      req.body.prepareDate == null && req.body.paymentType == 1 ? true : false;
+    // addPoint = (req.body.prepareDate == null && req.body.paymentType == 1) ? true : false;
     // สถานะขนส่ง
     if (req.body.transportStatus == 1) {
       if (req.body.prepareDate == null) {
@@ -248,6 +247,7 @@ router.put("/", validateToken, async (req, res) => {
       }
       if (req.body.doneDate == null) {
         req.body.doneDate = new Date();
+        addPoint = true;
       }
     }
   }
@@ -2104,7 +2104,6 @@ router.post("/upd_shopcart", async (req, res) => {
         },
       });
       //#endregion ข้อมูลมีตระกร้า
-
       if (_tbCartDT) {
         //ดึงจำนวนคงเหลือ
         const _tbStock = await tbStock.findOne({
@@ -2154,31 +2153,52 @@ router.post("/upd_shopcart", async (req, res) => {
               },
             });
           } else if (type == "quantity") {
+    
             if (quantity <= productCount) {
               ///upd จำนวน
-              const dataupd = await tbCartDT.update(
-                {
-                  amount: quantity,
-                },
-                { where: { strockId: Encrypt.DecodeKey(id) } }
-              );
+
+              if(parseInt(productCount) <= 0)
+              {
+                const dataupd = await tbCartDT.destroy({
+                  where: {
+                    id: _tbCartDT.id,
+                  },
+                });
+              }else {
+                const dataupd = await tbCartDT.update(
+                  {
+                    amount: quantity,
+                  },
+                  { where: { strockId: Encrypt.DecodeKey(id) } }
+                );
+              }
             } else {
-              const dataupd = await tbCartDT.update(
-                {
-                  amount: productCount,
-                },
-                { where: { strockId: Encrypt.DecodeKey(id) } }
-              );
+              if (productCount <= 0) {
+                const dataupd = await tbCartDT.destroy({
+                  where: {
+                    strockId: Encrypt.DecodeKey(id),
+                  },
+                });
+              } else {
+                const dataupd = await tbCartDT.update(
+                  {
+                    amount: productCount,
+                  },
+                  { where: { strockId: Encrypt.DecodeKey(id) } }
+                );
+              }
             }
           }
         }
       } else {
         //ไม่มีให้เพิ่ม
-        const addtbCartDT = await tbCartDT.create({
-          carthdId: _tbCartHD.id,
-          strockId: Encrypt.DecodeKey(id),
-          amount: quantity,
-        });
+        if(quantity > 0){
+          const addtbCartDT = await tbCartDT.create({
+            carthdId: _tbCartHD.id,
+            strockId: Encrypt.DecodeKey(id),
+            amount: quantity,
+          });
+        }
       }
     } else {
       //ไม่มีให้เพิ่ม

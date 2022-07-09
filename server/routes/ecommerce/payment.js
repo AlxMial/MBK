@@ -223,24 +223,24 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
                     orderNumber: id.split(",")[1],
                   },
                 });
-                if (_tbOrderHD) {
-                  let Member = await tbMember.findOne({
-                    attributes: ["id", "memberPoint"],
-                    where: { id: _tbOrderHD.memberId },
-                  });
-                  const _tbMemberPoint = await tbMemberPoint.create({
-                    campaignType: 2,
-                    point: _tbOrderHD.points,
-                    redeemDate: new Date(),
-                    expireDate: new Date(new Date().getFullYear() + 2, 11, 31),
-                    tbMemberId: Member.id,
-                    isDeleted: false,
-                  });
-                  const dataMember = await tbMember.update(
-                    { memberPoint: Member.memberPoint + _tbOrderHD.points },
-                    { where: { id: Member.id } }
-                  );
-                }
+                // if (_tbOrderHD) {
+                //   let Member = await tbMember.findOne({
+                //     attributes: ["id", "memberPoint"],
+                //     where: { id: _tbOrderHD.memberId },
+                //   });
+                //   const _tbMemberPoint = await tbMemberPoint.create({
+                //     campaignType: 2,
+                //     point: _tbOrderHD.points,
+                //     redeemDate: new Date(),
+                //     expireDate: new Date(new Date().getFullYear() + 2, 11, 31),
+                //     tbMemberId: Member.id,
+                //     isDeleted: false,
+                //   });
+                //   const dataMember = await tbMember.update(
+                //     { memberPoint: Member.memberPoint + _tbOrderHD.points },
+                //     { where: { id: Member.id } }
+                //   );
+                // }
                 res.json({
                   status: true,
                   orderNumber: id.split(",")[1],

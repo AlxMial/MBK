@@ -24,13 +24,13 @@ export const exportExcel = async (
       } else {
         if (valueColumns.includes("Policy")) {
           GenerateData +=
-            "," + (val[valueColumns] !== "0" ? "ยินยอม" : "ไม่ยินยอม");
+            "," + (val[valueColumns] != "0" ? "ยินยอม" : "ไม่ยินยอม");
         } else if (valueColumns.includes("Customer")) {
           GenerateData +=
-          "," + (val[valueColumns] !== "0" ? "เคย" : "ไม่เคย");
+          "," + (val[valueColumns] != "0" ? "เคย" : "ไม่เคย");
         } else if (valueColumns.includes("sex")) {
           GenerateData +=
-          "," + (val[valueColumns] === "1" ? "ชาย" : val[valueColumns] === "2" ? "หญิง"  : "ไม่ระบุ");
+          "," + (val[valueColumns] == "1" ? "ชาย" : val[valueColumns] == "2" ? "หญิง"  : "ไม่ระบุ");
         }  else if (valueColumns.toLocaleLowerCase().includes("date"))
           GenerateData +=
             "," +

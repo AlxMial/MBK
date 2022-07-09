@@ -83,6 +83,8 @@ body {
 		'Segoe UI Emoji'; */
 }
 
+
+/*font-bold*/
 * {
   font-family: "Noto Sans","Noto-Sans-Bold","AnekMalayalam", sans-serif;
 }
@@ -95,7 +97,7 @@ body {
 
 @font-face {
   font-family: "AnekMalayalam";
-  src: url("../../assets/fonts/AnekMalayalam-VariableFont_wdth,wght.ttf");
+  src: url("../../assets/fonts/AnekMalayalam-VariableFont_wdth,wght.ttf") format("opentype");
 }
 
 
@@ -116,7 +118,7 @@ body {
 
 @font-face {
   font-family: "Noto-Sans-Bold";
-  src: url("../../assets/fonts/NotoSansThai-Bold.ttf") format("opentype");;
+  src: url("../../assets/fonts/NotoSansThai-Bold.ttf") format("opentype");
 }
 
 @font-face {
@@ -1717,7 +1719,7 @@ select {
 }
 
 .font-bold {
-  
+  font-family: "Noto Sans";
   font-weight: 700;
 }
 
@@ -2861,6 +2863,10 @@ select {
 
 .break-words {
   overflow-wrap: break-word;
+}
+
+.w-1 {
+  width: 0.5rem;
 }
 
 .w-5 {

@@ -314,14 +314,15 @@ export default function CampaignExchangeHistoryReport() {
       axios.get("report/ShowCampaignExchange").then((response) => {
         if (response.data.length > 0) {
             response.data.forEach(e => {
-              e.redemptionTypeStr = (e.redemptionType !== "" ? (redemptionType.find(el => el.value === e.redemptionType).label) : ""); 
-              e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value === e.rewardType).label : ""); 
-              e.statusStr =  ((e.rewardType === '1') ? rewardStatus.find(el => el.value === e.isUsedCoupon.toString()).label : ""); 
-              e.deliverStatusStr = (e.isShowControl && e.deliverStatus !=='') ? dropdown.find(el => el.value === e.deliverStatus).label : "";                
-             
-              e.subDistrictStr = (e.subDistrict > 0 ? dataSubDistrict.find(el => el.value === e.subDistrict).label : "");
-              e.districtStr = (e.district > 0 ? dataDistrict.find(el => el.value === e.district).label : "");
-              e.provinceStr = (e.province > 0 ? dataProvice.find(el => el.value === e.province).label : "");
+              console.log(dropdown)
+              e.redemptionTypeStr = (e.redemptionType !== "" ? (redemptionType.find(el => el.value == e.redemptionType).label) : ""); 
+              e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value == e.rewardType).label : ""); 
+              e.statusStr =  ((e.rewardType === '1') ? rewardStatus.find(el => el.value == e.isUsedCoupon.toString()).label : ""); 
+              e.deliverStatusStr = (e.isShowControl && e.deliverStatus !=='' &&  e.deliverStatus) ? dropdown.find(el => el.value == e.deliverStatus).label : "";                
+
+              e.subDistrictStr = (e.subDistrict > 0 ? dataSubDistrict.find(el => el.value == e.subDistrict).label : "");
+              e.districtStr = (e.district > 0 ? dataDistrict.find(el => el.value == e.district).label : "");
+              e.provinceStr = (e.province > 0 ? dataProvice.find(el => el.value == e.province).label : "");
               e.addressMember = e.address.concat(" ").concat(e.subDistrictStr).concat(" ").concat(e.districtStr).concat(" ")
                                 .concat(e.provinceStr).concat(" ").concat(e.postcode);            
           });                  

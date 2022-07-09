@@ -260,6 +260,7 @@ export default function CollectPointsReport() {
           let _points = response.data.points.sort(
             (a, b) => new Date(b.redeemDate) - new Date(a.redeemDate)
           );
+          console.log(_points)
           setListSerch(_points);
           setListPoint(_points);
         }

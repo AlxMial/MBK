@@ -175,6 +175,7 @@ class ValidateEncrypt {
         columns !== "consentDate" &&
         columns !== "isPolicy1" &&
         columns !== "isPolicy2" &&
+        columns !== "isCustomer" &&
         list[columns] !== ""
       ) {
         list[columns] = this.EncodeKey(list[columns]);
@@ -206,6 +207,7 @@ class ValidateEncrypt {
         columns !== "consentDate" &&
         columns !== "isPolicy1" &&
         columns !== "isPolicy2" &&
+        columns !== "isCustomer" &&
         columns !== "role" &&
         list[columns] !== ""
       ) {
@@ -240,6 +242,7 @@ class ValidateEncrypt {
         columns !== "consentDate" &&        
         columns !== "isPolicy1" &&
         columns !== "isPolicy2" &&
+        columns !== "isCustomer" &&
         columns !== "role" &&
         list[columns] !== ""
       ) {

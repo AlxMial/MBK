@@ -367,10 +367,12 @@ router.post("/", async (req, res) => {
     !Encrypt.IsNullOrEmpty(req.body.memberType)
   ) {
     if (!member) {
+
       req.body.email = req.body.email.toLowerCase();
       req.body.memberCard = MemberCards;
       req.body.memberPoint = point.dataValues.pointRegisterScore;
       const ValuesEncrypt = Encrypt.encryptAllData(req.body);
+
       const members = await tbMember.create(ValuesEncrypt);
 
       let MemberPoint = {

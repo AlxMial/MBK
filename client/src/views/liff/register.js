@@ -98,7 +98,7 @@ const Register = () => {
     consentDate: new Date(),
     isPolicy1: false,
     isPolicy2: false,
-    isCustomer: "1",
+    isCustomer:"1",
     eating: "",
   });
 
@@ -374,6 +374,8 @@ const Register = () => {
     setIsLoading(true);
     let _Data = Data;
     _Data.uid = Session.getLiff().uid;
+    _Data.isCustomer = (_Data.isCustomer == 1) ? true : false;
+
     axios
       .post("members", _Data)
       .then((res) => {
