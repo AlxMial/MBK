@@ -80,7 +80,7 @@ router.get("/", validateToken, async (req, res) => {
       foreignKey: "memberId",
     });
 
-    tbOrderHD.belongsTo(tbLogistic,{
+    tbOrderHD.belongsTo(tbLogistic, {
       foreignKey: "logisticId",
     });
 
@@ -124,7 +124,7 @@ router.get("/", validateToken, async (req, res) => {
           where: {
             isDeleted: false,
           },
-     
+
           required: false,
         },
       ],
@@ -227,6 +227,7 @@ router.put("/", validateToken, async (req, res) => {
   //จ่ายเงินสำเร็จ
   let addPoint = false;
   if (req.body.paymentStatus == 3 || hd.paymentStatus == 3) {
+    addPoint = (req.body.prepareDate == null && req.body.paymentType == 1) ? true : false;
     // สถานะขนส่ง
     if (req.body.transportStatus == 1) {
       if (req.body.prepareDate == null) {
@@ -246,7 +247,6 @@ router.put("/", validateToken, async (req, res) => {
       }
       if (req.body.doneDate == null) {
         req.body.doneDate = new Date();
-        addPoint = true;
       }
     }
   }
@@ -367,8 +367,7 @@ const getorderDT = async (DT) => {
           }
         }
 
-        total =
-          total + (_tbStock.price - discount) * DT[i].amount;
+        total = total + (_tbStock.price - discount) * DT[i].amount;
         stockNumber += DT[i].amount;
         orderDT.push({
           stockId: Encrypt.DecodeKey(DT[i].stockId || DT[i].id),
@@ -391,7 +390,6 @@ const getorderDT = async (DT) => {
             isDeleted: false,
             type: 2,
           },
-        
         });
         if (_tbPointEcommerce) {
           _tbPointEcommerce.map((e, i) => {
@@ -2247,10 +2245,12 @@ router.post(
           where: { carthdId: _tbCartHD.id },
         });
         _tbCartDT.map((e, i) => {
-          shop_orders.push({
-            id: Encrypt.EncodeKey(e.strockId),
-            quantity: e.amount,
-          });
+          if (e.amount > 0) {
+            shop_orders.push({
+              id: Encrypt.EncodeKey(e.strockId),
+              quantity: e.amount,
+            });
+          }
         });
       }
     } catch (e) {

@@ -23,7 +23,6 @@ const PaymentModel = ({
         for (var i = 0; i < option.length; i++) {
           option[i].value = option[i].id;
         }
-        console.log(option);
         setPayment(option);
         setpaymentID(option[0].id);
       }

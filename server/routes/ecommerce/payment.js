@@ -7,6 +7,7 @@ const {
   tbOrderHD,
   tb2c2p,
   tbMember,
+  tbMemberPoint,
 } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -196,7 +197,7 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
                   transetionId: referenceNo,
                   paymentDate: new Date(),
                   paymentStatus: 3,
-                  creditCard:decoded.cardNo
+                  creditCard: decoded.cardNo,
                 },
                 {
                   where: {
@@ -207,18 +208,39 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
                 }
               )
               .then(async () => {
+                console.log(id)
                 const _tbOrderHD = await tbOrderHD.findOne({
                   attributes: [
                     "orderNumber",
                     "paymentStatus",
                     "netTotal",
                     "orderDate",
+                    "memberId",
+                    "points"
                   ],
                   where: {
                     id: Encrypt.DecodeKey(id.split(",")[0]),
                     orderNumber: id.split(",")[1],
                   },
                 });
+                if (_tbOrderHD) {
+                  let Member = await tbMember.findOne({
+                    attributes: ["id", "memberPoint"],
+                    where: { id: _tbOrderHD.memberId },
+                  });
+                  const _tbMemberPoint = await tbMemberPoint.create({
+                    campaignType: 2,
+                    point: _tbOrderHD.points,
+                    redeemDate: new Date(),
+                    expireDate: new Date(new Date().getFullYear() + 2, 11, 31),
+                    tbMemberId: Member.id,
+                    isDeleted: false,
+                  });
+                  const dataMember = await tbMember.update(
+                    { memberPoint: Member.memberPoint + _tbOrderHD.points },
+                    { where: { id: Member.id } }
+                  );
+                }
                 res.json({
                   status: true,
                   orderNumber: id.split(",")[1],
