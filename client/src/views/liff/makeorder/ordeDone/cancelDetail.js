@@ -69,7 +69,7 @@ const CancelDetail = ({ OrderHD }) => {
                 .format("DD MMM YYYY")}
           </div>
         </div>
-        <div className="liff-inline" />
+        {/* <div className="liff-inline" /> */}
         <div className="w-full flex mb-2 text-liff-gray-mbk">
           <i
             className="flex fas fa-clipboard"
