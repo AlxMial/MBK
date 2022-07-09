@@ -236,12 +236,16 @@ const OrderPaymentDone = () => {
                         <div className="flex relative font-bold">
                           <div
                             style={{
-                              color: e.discount > 0 ? "rgba(0,0,0,.54)" : "",
+                              color: e.isFree
+                                ? "red"
+                                : e.discount > 0
+                                ? "rgba(0,0,0,.54)"
+                                : "",
                               textDecoration:
                                 e.discount > 0 ? "line-through" : "none",
                             }}
                           >
-                            {"฿ " + fn.formatMoney(e.price)}
+                            {e.isFree ? "Free" : "฿ " + fn.formatMoney(e.price)}
                           </div>
                           {e.discount > 0 ? (
                             <div style={{ color: "red", paddingLeft: "10px" }}>

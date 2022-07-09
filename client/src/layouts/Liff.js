@@ -161,7 +161,8 @@ const LiffAPP = () => {
 
   useEffect(() => {
     window.addEventListener("popstate", function (event) {
-      if (window.location.pathname.includes("line/member")) {
+      console.log(window.location.pathname);
+      if (window.location.pathname.includes("line/register")) {
         liff.closeWindow();
       } else {
         return event;
