@@ -208,12 +208,15 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
                 }
               )
               .then(async () => {
+                console.log(id)
                 const _tbOrderHD = await tbOrderHD.findOne({
                   attributes: [
                     "orderNumber",
                     "paymentStatus",
                     "netTotal",
                     "orderDate",
+                    "memberId",
+                    "points"
                   ],
                   where: {
                     id: Encrypt.DecodeKey(id.split(",")[0]),
