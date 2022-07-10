@@ -226,20 +226,44 @@ const LiffAPP = () => {
                 .includes("shoplist") ? null : ismemberpage &&
                 !pathname.includes("/line/coupon") &&
                 !pathname.includes("/line/product") ? (
-                <img
-                  className="w-full h-full"
-                  src={
-                    pathname.includes("point") ||
-                    pathname.toLowerCase().includes("/reward")
-                      ? require("assets/img/mbk/line_head_img.jpg").default
-                      : require("assets/img/mbk/line_head_img.jpg").default
-                  }
-                  alt="line_head_img"
-                  style={{
-                    objectFit: "cover",
-                    // maxHeight: "220px"
-                  }}
-                ></img>
+                // <img
+                //   className="w-full h-full"
+                //   src={
+                //     pathname.includes("point") ||
+                //     pathname.toLowerCase().includes("/reward")
+                //       ? require("assets/img/mbk/line_head_img.jpg").default
+                //       : require("assets/img/mbk/line_head_img.jpg").default
+                //   }
+                //   alt="line_head_img"
+                //   style={{
+                //     objectFit: "cover",
+                //     // maxHeight: "220px"
+                //   }}
+                // ></img>
+                <div className="w-full " style={{ position: "relative" }}>
+                  <img
+                    className="w-full h-full"
+                    src={require("assets/img/mbk/Header.jpg").default}
+                    alt="line_head_img"
+                    style={{
+                      objectFit: "cover",
+                      maxHeight: "220px",
+                    }}
+                  ></img>
+                  <div className="flex" style={{ justifyContent: "center" }}>
+                    <img
+                      className="w-full h-full absolute flex"
+                      src={require("assets/img/mbk/Logo.png").default}
+                      alt="line_head_img"
+                      style={{
+                        objectFit: "fill",
+                        maxWidth: "150px",
+                        height: "auto",
+                        top: "1.75rem",
+                      }}
+                    ></img>
+                  </div>
+                </div>
               ) : (
                 <img
                   src="https://www.prg.co.th/images/logo.png"

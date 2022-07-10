@@ -80,7 +80,7 @@ const Member = () => {
           className=" flex margin-a shadow-2xl"
           style={{
             width: "90%",
-            padding: "20px",
+            padding: "20px 15px",
             height: "180px",
             borderRadius: "15px",
             backgroundColor: "#007A40",
@@ -99,7 +99,7 @@ const Member = () => {
             // objectFit: "cover",
           }}
         >
-          <div className="relative liff-member">
+          <div className="relative liff-member" style={{ maxWidth: "150px" }}>
             <div className="flex">
               <div style={{ width: "30%" }}>
                 <img
