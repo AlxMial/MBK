@@ -132,13 +132,15 @@ const InfoCoupon = () => {
             >
               <div
                 className="flex bg-green-mbk text-white text-center text-lg  font-bold bt-line"
-                style={{
-                  filter: MyCoupon.couponType ? "" : "grayscale(1)",
-                  opacity: MyCoupon.couponType ? "" : "0.5",
-                }}
+                // style={{
+                //   filter: MyCoupon.couponType ? "" : "grayscale(1)",
+                //   opacity: MyCoupon.couponType ? "" : "0.5",
+                // }}
                 onClick={() => {
                   if (MyCoupon.couponType) {
                     setIsOpenDialog(true);
+                  } else {
+                    history.push(path.shopList);
                   }
                 }}
               >

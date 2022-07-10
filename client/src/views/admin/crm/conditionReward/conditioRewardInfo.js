@@ -250,7 +250,10 @@ export default function ConditioRewardInfo() {
             };
           } else if (formik.values.rewardType === "1") {
             values["coupon"] = formikCoupon.values;
-            values["couponType"] = false;
+            values["couponType"] =
+              formik.values.couponType != null
+                ? formik.values.couponType
+                : false;
             ImageSave = {
               ...imageCoupon,
               image: formikCoupon.values.pictureCoupon,
@@ -258,6 +261,7 @@ export default function ConditioRewardInfo() {
             };
           } else if (formik.values.rewardType === "2") {
             values["product"] = formikProduct.values;
+            values["couponType"] = false;
             ImageSave = {
               ...imageProduct,
               image: formikProduct.values.pictureProduct,
@@ -274,10 +278,10 @@ export default function ConditioRewardInfo() {
             }
           }
           if (
-            (
-            (formik.values.rewardType === "1" && formikCoupon.isValid) ||
-            (formik.values.rewardType === "2" && formikProduct.isValid) ||
-            (formikCouponImport.isValid && isImport) ) && !errorValue
+            ((formik.values.rewardType === "1" && formikCoupon.isValid) ||
+              (formik.values.rewardType === "2" && formikProduct.isValid) ||
+              (formikCouponImport.isValid && isImport)) &&
+            !errorValue
           ) {
             if (isNew) {
               dispatch(fetchLoading());
@@ -545,13 +549,12 @@ export default function ConditioRewardInfo() {
     },
     validationSchema: Yup.object({
       productName: Yup.string().required("* กรุณากรอก ชื่อสินค้าสัมนาคุณ"),
-      rewardCount: Yup.number()
-        .required("* กรุณากรอก จำนวนสูงสุด"),
-        // .test(
-        //   "Is positive?",
-        //   "* จำนวนสูงสุดต้องมากกว่า 0",
-        //   (value) => value > 0
-        // ),
+      rewardCount: Yup.number().required("* กรุณากรอก จำนวนสูงสุด"),
+      // .test(
+      //   "Is positive?",
+      //   "* จำนวนสูงสุดต้องมากกว่า 0",
+      //   (value) => value > 0
+      // ),
       pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสัมนาคุณ"),
     }),
   });
