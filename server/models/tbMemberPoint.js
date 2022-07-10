@@ -25,7 +25,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       pointsStoreHdId:{
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
+        allowNull:true
+      },
+      pointsStoreDtId:{
+        type: DataTypes.INTEGER,
         allowNull:true
       }
     });

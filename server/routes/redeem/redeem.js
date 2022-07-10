@@ -54,7 +54,7 @@ router.post("/", validateLineToken, async (req, res) => {
       foreignKey: "tbPointCodeHDId",
     });
     const productNameData = await tbPointCodeHD.findAll({
-      attributes: ["id", "pointCodePoint", "endDate"],
+      attributes: ["id", "pointCodePoint", "endDate","isActive"],
       where: {
         isDeleted: false,
       },
@@ -69,6 +69,7 @@ router.post("/", validateLineToken, async (req, res) => {
             "isExpire",
             "isDeleted",
             "tbPointCodeHDId",
+            
           ],
 
           model: tbPointCodeDT,
@@ -80,6 +81,7 @@ router.post("/", validateLineToken, async (req, res) => {
       ],
       required: false,
     });
+
     // มีโคด
     // let status = [];
     if (productNameData) {
@@ -104,16 +106,19 @@ router.post("/", validateLineToken, async (req, res) => {
               isInvalid: false,
               isExpire: true,
               isUse: false,
+              isDuplicate:false,
             };
           } else if (dt.isUse) {
             status = {
               coupon: Encrypt.DecodeKey(
                 _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
               ),
+
               isValid: false,
               isInvalid: false,
               isExpire: false,
               isUse: true,
+              isDuplicate:false,
             };
           } else {
             status = {
@@ -124,6 +129,7 @@ router.post("/", validateLineToken, async (req, res) => {
               isInvalid: false,
               isExpire: false,
               isUse: false,
+              isDuplicate:false,
             };
           }
 
@@ -148,6 +154,8 @@ router.post("/", validateLineToken, async (req, res) => {
               isDeleted: false,
               tbMemberId: req.body.memberId,
               tbPointCodeHDId: dt.tbPointCodeHDId,
+              pointsStoreHdId: req.body.storeId ,
+              pointsStoreDtId: req.body.branchId
             };
 
             const memberPoint = await tbMemberPoint.create(historyPoint);
@@ -175,6 +183,7 @@ router.post("/", validateLineToken, async (req, res) => {
           isInvalid: true,
           isExpire: false,
           isUse: false,
+          isDuplicate:false,
         };
         statusRedeem.push(status);
       });
@@ -190,6 +199,7 @@ router.post("/", validateLineToken, async (req, res) => {
             isInvalid: true,
             isExpire: false,
             isUse: false,
+            isDuplicate:false,
           };
           statusRedeem.push(status);
         }
@@ -329,10 +339,11 @@ router.post("/", validateLineToken, async (req, res) => {
     // for (var i = 0; i < redeemCode.length; i++) {
 
     // }
-    return res.status(200).json({ data: statusRedeem });
+    return res.status(200).json({ data: statusRedeem,status:true });
   } catch (err) {
     res.status(200).json({
       coupon: err.message,
+      status:false,
       isValid: false,
       isInvalid: true,
       isExpire: false,

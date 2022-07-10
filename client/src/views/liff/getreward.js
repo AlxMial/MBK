@@ -51,6 +51,10 @@ const GetReward = () => {
     });
   };
 
+  const checkIfDuplicateExists = (arr) => {
+    return new Set(arr).size !== arr.length;
+  };
+
   const confirmreward = () => {
     /// check api
     let code = [];
@@ -76,7 +80,6 @@ const GetReward = () => {
 
               data.map((e, i) => {
                 _rewardCode.map((ee, i) => {
-                  console.log(e.isExpire);
                   if (e.coupon === ee.code.toLowerCase()) {
                     e.isInvalid
                       ? (ee.state = false)
@@ -89,8 +92,26 @@ const GetReward = () => {
                 });
               });
               setdeploy("reward");
+              let alreadySeen = [];
+              var index = 0;
+              _rewardCode.forEach(function (str) {
+                if(!IsNullOrEmpty(str.code ))
+                {
+                  const value = alreadySeen.filter((e) => {
+                    return e == str.code
+                  });
+                  alreadySeen.push(str.code);
+                  if (value.length > 0) {
+                    _rewardCode[index]["isDuplicate"] = true;
+                  } else {
+                    _rewardCode[index]["isDuplicate"] = false;
+                  }
+                }else{
+                  _rewardCode[index]["isDuplicate"] = false;
+                }
+                index++;
+              });
               setrewardCode(_rewardCode);
-
               setsucceedData(res.data.data);
               let succeed = true;
               _rewardCode.map((e, i) => {
@@ -281,6 +302,11 @@ const GetReward = () => {
                         msg = {
                           msg: "กรอก Code สำเร็จ",
                           icon: "fas fa-check-circle text-green-mbk",
+                        };
+                      } else if (e.isDuplicate === true) {
+                        msg = {
+                          msg: "กรอกรหัสซ้ำ",
+                          icon: "fas fa-times-circle text-red-500",
                         };
                       } else {
                         if (!IsNullOrEmpty(_succeedData)) {

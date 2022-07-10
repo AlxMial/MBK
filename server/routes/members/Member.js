@@ -1041,7 +1041,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
                   "startDate",
                   "expireDate",
                 ],
-                where: { isDeleted: false },
+                where: { isDeleted: false, isCancel: false },
               },
             ],
           });
@@ -1163,7 +1163,6 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
           rewardType: "Coupon",
         },
       });
-      console.log(_coupon);
       if (_coupon) {
         for (var i = 0; i < _coupon.length; i++) {
           tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
@@ -1188,6 +1187,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
                   "startDate",
                   "expireDate",
                   "isDeleted",
+                  "isCancel"
                 ],
                 // where: { isDeleted: false },
               },
@@ -1220,6 +1220,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
               points: _tbRedemptionConditionsHD.dataValues.points,
               expiredDate: _RedemptionCoupon.expireDate,
               isDeleted: _RedemptionCoupon.isDeleted,
+              isCancel: _RedemptionCoupon.isCancel,
               CouponCodeId: Encrypt.EncodeKey(_coupon[i].TableHDId),
             };
             coupon.push(data);

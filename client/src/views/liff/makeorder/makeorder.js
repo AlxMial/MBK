@@ -429,7 +429,6 @@ const MakeOrder = () => {
               </div>
             </div>
             <div className="liff-inline" />
-
             <AddressModel
               isAddress={isAddress}
               onChange={(e) => {

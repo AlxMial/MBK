@@ -11,7 +11,7 @@ const Expire = ({ data }) => {
         <div className="flex relative h-full" style={{ padding: '10px' }}>
           {data.length > 0 ?
             <div className="my-2 mx-auto text-green-mbk font-bold text-xs h-full">
-              {[...data].filter((e) => { return new Date(e.expiredDate) < new Date() || e.isUsedCoupon === true }).map((e, i) => {
+              {[...data].filter((e) => { return new Date(e.expiredDate) < new Date() || e.isUsedCoupon === true || e.isCancel === true  }).map((e, i) => {
                 return (
                   <div key={i} className="w-full  mb-4" >
                     <div className="w-full" style={{
@@ -38,7 +38,7 @@ const Expire = ({ data }) => {
                             width: "100px",
                             height: "25px",
                             color: "#FFFFFF"
-                          }}>{e.isUsedCoupon ? "ถูกใช้ไปแล้ว" : "หมดอายุ"}</div>
+                          }}>{e.isUsedCoupon ? "ถูกใช้ไปแล้ว" : e.isCancel ? "ยกเลิก" :  "หมดอายุ"}</div>
                         </div>
                       </div>
                       <div className="w-full font-bold flex my-2 mx-auto" style={{ width: "80%", fontSize: "14px", color: "#000000" }}>

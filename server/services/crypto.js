@@ -81,7 +81,7 @@ class ValidateEncrypt {
   encryptPhoneArray(list) {
     for (var i = 0; i < list.length; i++) {
       list[i].dataValues.phone =
-        "xxxxxx" +
+        "xxx-xxx-" +
         list[i].dataValues.phone.substring(
           list[i].dataValues.phone.length - 4,
           list[i].dataValues.phone.length
@@ -93,13 +93,13 @@ class ValidateEncrypt {
   encryptPhone(list) {
     try {
       list.dataValues.phone =
-        "xxxxxx" +
+        "xxx-xxx-" +
         list.dataValues.phone.substring(
           list.dataValues.phone.length - 4,
           list.dataValues.phone.length
         );
     } catch {
-      list = "xxxxxx" + list.substring(list.length - 4, list.length);
+      list = "xxx-xxx-" + list.substring(list.length - 4, list.length);
     }
     return list;
   }

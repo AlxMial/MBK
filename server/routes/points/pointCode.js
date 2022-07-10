@@ -64,10 +64,10 @@ router.get("/", validateToken, async (req, res) => {
     where: { isDeleted: false },
     attributes: {
       include: [
-        [
-          Sequelize.fn("COUNT", Sequelize.col("tbpointcodedts.id")),
-          "codeCount",
-        ],
+        // [
+        //   Sequelize.fn("COUNT", Sequelize.col("tbpointcodedts.id")),
+        //   "codeCount",
+        // ],
         [
           Sequelize.literal(`(
               SELECT COUNT(id)
