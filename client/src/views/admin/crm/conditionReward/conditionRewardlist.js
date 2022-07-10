@@ -309,10 +309,10 @@ export default function ConditionRewardList() {
                     .map(function (value, key) {
                       return (
                         <tr key={key}>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
-                            <span className="px-4 margin-a">
+                          <td className=" w-10 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
+        
                               {pagesVisited + key + 1}
-                            </span>
+                       
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link
@@ -324,12 +324,12 @@ export default function ConditionRewardList() {
                               </div>
                             </Link>
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                          <td className="w-24 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-100">
+                              <div className="">
                                 {ValidateService.defaultValueText(
                                   redemptionType,
                                   value.redemptionType
@@ -337,14 +337,13 @@ export default function ConditionRewardList() {
                               </div>
                             </Link>
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                          <td className=" w-24 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
                               <div
                                 className={
-                                  "TextWordWarp-100" +
                                   (value.redemptionType == 2 ? " hidden" : " ")
                                 }
                               >
@@ -355,27 +354,23 @@ export default function ConditionRewardList() {
                               </div>
                             </Link>
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                          <td className="w-24 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-100">
-                                {value.points}
-                              </div>
+                              {value.points}
                             </Link>
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                          <td className="w-24 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link
                               className="text-gray-mbk  hover:text-gray-mbk"
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-100">
-                                {moment(value.startDate).format("DD/MM/YYYY")}
-                              </div>
+                              {moment(value.startDate).format("DD/MM/YYYY")}
                             </Link>
                           </td>
-                          <td className="border-t-0 px-2 w-1 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
+                          <td className="w-24 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
                             <Link
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
@@ -383,34 +378,30 @@ export default function ConditionRewardList() {
                               {moment(value.endDate).format("DD/MM/YYYY")}
                             </Link>
                           </td>
-                          <td className="border-t-0 px-2 w-1 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
+                          <td className="w-24 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
                             <Link
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-100">
-                                {new Date(value.endDate) < new Date()
-                                  ? "หมดอายุ"
-                                  : value.isActive
-                                  ? "เปิดการใช้งาน"
-                                  : "ปิดการใช้งาน"}
-                              </div>
+                              {new Date(value.endDate) < new Date()
+                                ? "หมดอายุ"
+                                : value.isActive
+                                ? "เปิดการใช้งาน"
+                                : "ปิดการใช้งาน"}
                             </Link>
                           </td>
 
                           <td
                             className={
-                              "border-t-0 px-2 w-1 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center"
+                              " w-24 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center"
                             }
                           >
-                            <div className="TextWordWarp-100">
-                              <i
-                                className="fas fa-trash text-red-500 cursor-pointer"
-                                onClick={() => {
-                                  openModalSubject(value.id);
-                                }}
-                              ></i>
-                            </div>
+                            <i
+                              className="fas fa-trash text-red-500 cursor-pointer"
+                              onClick={() => {
+                                openModalSubject(value.id);
+                              }}
+                            ></i>
                           </td>
                         </tr>
                       );

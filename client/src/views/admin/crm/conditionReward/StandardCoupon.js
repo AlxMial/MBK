@@ -285,7 +285,9 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
                   if (formik.values.startDate != null) {
                     let day = formik.values.startDate;
                     return (
-                      current && current <= moment(new Date(day)).endOf("day")
+                      current &&
+                      current <
+                        moment(new Date(day)).add(-1, "days").endOf("day")
                     );
                   }
                 }}
