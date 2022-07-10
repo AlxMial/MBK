@@ -2288,6 +2288,8 @@ router.post(
               "endDateCampaign",
               "startTimeCampaign",
               "endTimeCampaign",
+              "salePercent",
+              "saleDiscount",
             ],
             where: { id: strockId },
           });

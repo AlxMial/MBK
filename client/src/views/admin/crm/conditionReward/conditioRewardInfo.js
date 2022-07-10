@@ -1068,7 +1068,6 @@ export default function ConditioRewardInfo() {
                         disabledValue={
                           formik.values.isNotExpired ? true : false
                         }
-                        disabled={formik.values.isNotExpired ? true:false}
                         onClick={(e) => {
                           setIsClick({
                             ...isClick,

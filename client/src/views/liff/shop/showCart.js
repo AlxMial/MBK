@@ -59,8 +59,10 @@ const ShowCart = () => {
 
                     e.priceDiscount = e.price - e.saleDiscount;
                   } else {
-                    if (e.priceDiscount > 0) {
-                      price += parseFloat(e.priceDiscount) * parseInt(quantity);
+                 
+                    if (e.discount > 0) {
+                      e.priceDiscount = e.price - e.discount;
+                      price += parseFloat(e.price - e.discount) * parseInt(quantity);
                     } else {
                       price += parseFloat(e.price) * parseInt(quantity);
                     }
