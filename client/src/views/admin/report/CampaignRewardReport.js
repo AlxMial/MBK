@@ -219,9 +219,9 @@ export default function CampaignRewardReport() {
             : moment(e.expireDate).format("DD/MM/YYYY"),
         redemptionType: e.redemptionType,
         rewardType: e.rewardType,
-        count: e.count,
-        use: e.use,
-        toTal: e.count - e.use,
+        count: e.count == null ? "-" : e.count,
+        use: e.use == null ? "-" : e.use,
+        toTal: e.count == null ? "-" : e.count - e.use,
       });
     });
     exportExcel(
