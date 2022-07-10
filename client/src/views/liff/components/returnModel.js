@@ -70,7 +70,7 @@ const ReturnModel = ({ returnModel, Callback }) => {
         className="Modal-line"
         style={{ borderRadius: "10px" }}
       >
-        <div className="w-full flex flex-wrap">
+        <div className="w-full flex flex-wrap" style={{ minHeight: "350px" }}>
           <div className="w-full flex-auto mt-2 h-full">
             <div className="w-full flex-auto relative">
               <div className=" flex justify-between align-middle ">
