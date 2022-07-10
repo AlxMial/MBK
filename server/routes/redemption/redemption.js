@@ -735,7 +735,7 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
                   where: {
                     isDeleted: !1,
                     id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
-                    isCancel:false,
+                    isCancel: false,
                     // couponType: false,
                   },
                   include: [
@@ -743,6 +743,7 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
                       model: tbRedemptionConditionsHD,
                       attributes: ["id", "couponType"],
                       where: { couponType: false },
+                      required: true,
                     },
                   ],
                 },
