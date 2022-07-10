@@ -219,9 +219,9 @@ export default function CampaignRewardReport() {
             : moment(e.expireDate).format("DD/MM/YYYY"),
         redemptionType: e.redemptionType,
         rewardType: e.rewardType,
-        count: e.count,
-        use: e.use,
-        toTal: e.count - e.use,
+        count: e.count == null ? "-" : e.count,
+        use: e.use == null ? "-" : e.use,
+        toTal: e.count == null ? "-" : e.count - e.use,
       });
     });
     exportExcel(
@@ -568,7 +568,7 @@ export default function CampaignRewardReport() {
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {value.count - value.use}
+                          {value.count == null ? "" : value.count - value.use}
                         </td>
                       </tr>
                     );

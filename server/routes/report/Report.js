@@ -647,6 +647,7 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
               model: tbCouponCode,
               where: {
                 isDeleted: false,
+                isUse :true
               },
               required: true,
               include: [
