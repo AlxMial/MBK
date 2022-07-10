@@ -11,15 +11,21 @@ import TextAreaUC from "components/InputUC/TextAreaUC";
 import FilesService from "../../../../services/files";
 import ValidateService from "services/validateValue";
 
-const StandardProduct = ({ formik }) => {
+const StandardProduct = ({ formik, errorImage, setErrorImage }) => {
   const { width } = useWindowDimensions();
   const [delay, setDelay] = useState();
 
   const handleChangeImage = async (e) => {
     const image = document.getElementById("eProductImage");
-    image.src = URL.createObjectURL(e.target.files[0]);
-    const base64 = await FilesService.convertToBase64(e.target.files[0]);
-    formik.setFieldValue("pictureProduct", base64);
+    if (e.target.files.length > 0) {
+      const dataImage = ValidateService.validateImage(e.target.files[0].name);
+      setErrorImage(dataImage);
+      if (!dataImage) {
+        image.src = URL.createObjectURL(e.target.files[0]);
+        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        formik.setFieldValue("pictureProduct", base64);
+      }
+    }
   };
 
   return (
@@ -42,6 +48,11 @@ const StandardProduct = ({ formik }) => {
                 onChange={handleChangeImage}
                 src={formik.values.pictureProduct}
               />
+              {errorImage ? (
+                <div className="text-sm py-2 px-2  text-red-500">
+                  * ประเภทไฟล์รูปภาพไม่ถูกต้อง
+                </div>
+              ) : null}
 
               {formik.touched.pictureProduct && formik.errors.pictureProduct ? (
                 <div className="text-sm py-2 px-2  text-red-500">
@@ -110,7 +121,8 @@ const StandardProduct = ({ formik }) => {
                 }
                 onChange={(e) => {
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.rewardCount = ValidateService.onHandleNumberValue(e);
+                  formik.values.rewardCount =
+                    ValidateService.onHandleNumberValue(e);
                 }}
                 disabled={formik.values.isNoLimitReward ? true : false}
                 min="0"
@@ -128,13 +140,10 @@ const StandardProduct = ({ formik }) => {
                 name="isNoLimitReward"
                 onChange={(e) => {
                   formik.setFieldValue("isNoLimitReward", e.target.checked);
-                  if(e.target.checked)
-                    formik.setFieldValue("rewardCount", 1);
-                  else  
-                    formik.setFieldValue("rewardCount", 0);
+                  if (e.target.checked) formik.setFieldValue("rewardCount", 1);
+                  else formik.setFieldValue("rewardCount", 0);
                   if (formik.values.rewardCount === "")
                     formik.setFieldValue("rewardCount", 0);
-                  
                 }}
                 onBlur={formik.handleBlur}
                 checked={formik.values.isNoLimitReward}

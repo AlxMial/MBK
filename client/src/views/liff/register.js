@@ -299,8 +299,12 @@ const Register = () => {
 
   const setScrollToEnd = (element) => {
     if (element !== null) {
-      if (element.currentTarget.scrollTop > 2000) {
+      if (element.currentTarget.scrollTop > 1000) {
         setEnableButton(false);
+      }else {
+        if (element.currentTarget.offsetHeight + element.currentTarget.scrollTop >= element.currentTarget.scrollHeight) {
+          setEnableButton(false);
+        }
       }
     }
   };

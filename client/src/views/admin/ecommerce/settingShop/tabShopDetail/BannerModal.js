@@ -23,6 +23,8 @@ const BannerModal = ({
   modalData,
   handleSubmitModal,
   setRemoveBanner,
+  errorImage,
+  setErrorImage,
 }) => {
   Modal.setAppElement("#root");
   const useStyle = customStyles();
@@ -61,7 +63,7 @@ const BannerModal = ({
   ]);
   //   const [dropdownId, setDropdownId] = useState(null);
   const [showErr, setShowErr] = useState(false);
-
+  const [indexShow, setIndexShow] = useState(0);
   const typeLinkList = [
     { label: "ไม่กำหนด", value: 0 },
     { label: "หมวดหมู่สินค้า", value: 1 },
@@ -79,7 +81,7 @@ const BannerModal = ({
       picture: "",
       option: 0,
       categoryId: "",
-      imageId:"",
+      imageId: "",
       id: "",
     },
   ];
@@ -169,7 +171,7 @@ const BannerModal = ({
               picture: e.picture,
               option: e.option,
               categoryId: e.categoryId,
-              imageId:e.imageId,
+              imageId: e.imageId,
               id: e.id,
             },
           ];
@@ -292,12 +294,19 @@ const BannerModal = ({
 
   const handleSeletectImage = async (e) => {
     const index = e.target.id.replace("file", "");
-    const base64 = await FilesService.convertToBase64(e.target.files[0]);
-    setArr((s) => {
-      const newArr = s.slice();
-      newArr[index].picture = base64;
-      return newArr;
-    });
+    if (e.target.files.length > 0) {
+      const dataImage = ValidateService.validateImage(e.target.files[0].name);
+      setErrorImage(dataImage);
+      setIndexShow(index);
+      if (!dataImage) {
+        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        setArr((s) => {
+          const newArr = s.slice();
+          newArr[index].picture = base64;
+          return newArr;
+        });
+      }
+    }
   };
 
   const setOption = (e) => {
@@ -333,9 +342,11 @@ const BannerModal = ({
     //   setShowErr(true);
     //   return false;
     // } else {
-    setShowErr(false);
-    const data = { arr };
-    handleSubmitModal(data);
+    if (!errorImage) {
+      setShowErr(false);
+      const data = { arr };
+      handleSubmitModal(data);
+    }
     // }
   };
 
@@ -365,7 +376,14 @@ const BannerModal = ({
                         onChange={(e) => handleSeletectImage(e)}
                         src={item.picture}
                       />
-                      <div className="text-red-500 text-xs text-center">1140*460 px</div>
+                      <div className="text-red-500 text-xs text-center">
+                        1140*460 px
+                      </div>
+                      {errorImage && indexShow == i ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          * ประเภทไฟล์รูปภาพไม่ถูกต้อง
+                        </div>
+                      ) : null}
                     </div>
                     <div className="w-full lg:w-10/12 px-4 margin-auto-t-b">
                       <div className="w-full text-right">

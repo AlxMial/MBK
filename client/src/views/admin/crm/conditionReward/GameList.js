@@ -29,6 +29,7 @@ const GameList = ({ id, setListGame, listGame }) => {
   const [rewardValue, setRewardValue] = useState("");
   const [index, setIndex] = useState();
   const { addToast } = useToasts();
+  const [errorImage, setErrorImage] = useState();
   const InputSearch = (e) => {
     e = e.toLowerCase();
     if (e === "") {
@@ -285,6 +286,8 @@ const GameList = ({ id, setListGame, listGame }) => {
           modalData={modalData}
           handleSubmitModal={handleSubmitModal}
           handleModal={() => setOpen(false)}
+          errorImage={errorImage}
+          setErrorImage={setErrorImage}
         />
       )}
     </>

@@ -15,7 +15,7 @@ import FilesService from "../../../../services/files";
 import ValidateService from "services/validateValue";
 import SelectUC from "components/SelectUC";
 
-const StandardCoupon = ({ formik }) => {
+const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
   const { width } = useWindowDimensions();
   const [isCancel, setIsCancel] = useState(false);
   const [delay, setDelay] = useState();
@@ -34,13 +34,19 @@ const StandardCoupon = ({ formik }) => {
 
   const handleChangeImage = async (e) => {
     const image = document.getElementById("eCouponImage");
-    image.src = URL.createObjectURL(e.target.files[0]);
-    const base64 = await FilesService.convertToBase64(e.target.files[0]);
-    formik.setFieldValue("pictureCoupon", base64);
+    if (e.target.files.length > 0) {
+      const dataImage = ValidateService.validateImage(e.target.files[0].name);
+      setErrorImage(dataImage);
+      if (!dataImage) {
+        image.src = URL.createObjectURL(e.target.files[0]);
+        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        formik.setFieldValue("pictureCoupon", base64);
+      }
+    }
   };
 
   useEffect(() => {
-    setDisableCountCoupon(formik.values.id !== "" ? true : false)
+    setDisableCountCoupon(formik.values.id !== "" ? true : false);
     /* Default Value for Testing */
   }, []);
 
@@ -65,8 +71,11 @@ const StandardCoupon = ({ formik }) => {
                 onChange={handleChangeImage}
                 src={formik.values.pictureCoupon}
               />
-
-
+              {errorImage ? (
+                <div className="text-sm py-2 px-2  text-red-500">
+                  * ประเภทไฟล์รูปภาพไม่ถูกต้อง
+                </div>
+              ) : null}
               {formik.touched.pictureCoupon && formik.errors.pictureCoupon ? (
                 <div className="text-sm py-2 px-2  text-red-500">
                   {formik.errors.pictureCoupon}
@@ -123,7 +132,8 @@ const StandardCoupon = ({ formik }) => {
                   if (formik.values.discountType === "2")
                     if (e.target.value > 100) e.target.value = 100;
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.discount = ValidateService.onHandleNumberValue(e);
+                  formik.values.discount =
+                    ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />
@@ -176,15 +186,12 @@ const StandardCoupon = ({ formik }) => {
 
                     if (!formik.values.isNotExpired) {
                       formik.setFieldValue("expireDate", "", false);
-                      formik.setFieldValue(
-                        "expireDate",
-                        "",
-                        false
-                      );
+                      formik.setFieldValue("expireDate", "", false);
                     }
-
                   } else {
-                    formik.handleChange({ target: { name: 'startDate', value: e } });
+                    formik.handleChange({
+                      target: { name: "startDate", value: e },
+                    });
                     formik.setFieldValue(
                       "startDate",
                       moment(e).toDate(),
@@ -194,35 +201,31 @@ const StandardCoupon = ({ formik }) => {
                       if (moment(e).toDate() >= formik.values.expireDate) {
                         formik.setFieldValue(
                           "expireDate",
-                          moment(e).add('days', 1).toDate(),
+                          moment(e).add("days", 1).toDate(),
                           false
                         );
                       }
                     }
-
                   }
                 }}
                 value={
                   !isClick.couponStart
-                    ? formik.values.startDate == "" ? null : moment(new Date(formik.values.startDate), "DD/MM/YYYY")
+                    ? formik.values.startDate == ""
+                      ? null
+                      : moment(new Date(formik.values.startDate), "DD/MM/YYYY")
                     : null
                 }
-
-
-
               />
               <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
             </div>
 
             <div className="relative w-full px-4">
-              {formik.touched.startDate &&
-                formik.errors.startDate ? (
+              {formik.touched.startDate && formik.errors.startDate ? (
                 <div className="text-sm py-2 px-2  text-red-500">
                   {formik.errors.startDate}
                 </div>
               ) : null}
             </div>
-
           </div>
           <div className={"w-full" + (width < 764 ? " block" : " hidden")}>
             &nbsp;
@@ -254,7 +257,9 @@ const StandardCoupon = ({ formik }) => {
                   if (e === null) {
                     formik.setFieldValue("expireDate", "", false);
                   } else {
-                    formik.handleChange({ target: { name: 'expireDate', value: e } });
+                    formik.handleChange({
+                      target: { name: "expireDate", value: e },
+                    });
                     formik.setFieldValue(
                       "expireDate",
                       moment(e).toDate(),
@@ -264,20 +269,24 @@ const StandardCoupon = ({ formik }) => {
                 }}
                 value={
                   !isClick.expireDate
-                    ? formik.values.expireDate === "" ? null : moment(
-                      new Date(
-                        formik.values.expireDate
-                          ? formik.values.expireDate
-                          : new Date()
-                      ),
-                      "DD/MM/YYYY"
-                    )
+                    ? formik.values.expireDate === ""
+                      ? null
+                      : moment(
+                          new Date(
+                            formik.values.expireDate
+                              ? formik.values.expireDate
+                              : new Date()
+                          ),
+                          "DD/MM/YYYY"
+                        )
                     : null
                 }
                 disabledDate={(current) => {
                   if (formik.values.startDate != null) {
-                    let day = formik.values.startDate
-                    return current && current <= moment(new Date(day)).endOf('day');
+                    let day = formik.values.startDate;
+                    return (
+                      current && current <= moment(new Date(day)).endOf("day")
+                    );
                   }
                 }}
               />
@@ -291,8 +300,7 @@ const StandardCoupon = ({ formik }) => {
               />
             </div>
             <div className="relative w-full px-4">
-              {formik.touched.expireDate &&
-                formik.errors.expireDate ? (
+              {formik.touched.expireDate && formik.errors.expireDate ? (
                 <div className="text-sm py-2 px-2  text-red-500">
                   {formik.errors.expireDate}
                 </div>
@@ -327,10 +335,11 @@ const StandardCoupon = ({ formik }) => {
                 id="couponCount"
                 name="couponCount"
                 maxLength={7}
-                disabled={(formik.values.id !== "") ? true : false}
+                disabled={formik.values.id !== "" ? true : false}
                 onChange={(e) => {
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.couponCount = ValidateService.onHandleNumberValue(e);
+                  formik.values.couponCount =
+                    ValidateService.onHandleNumberValue(e);
                 }}
                 onBlur={formik.handleBlur}
                 value={formik.values.couponCount}

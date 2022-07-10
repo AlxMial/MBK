@@ -21,6 +21,8 @@ const PaymentModal = ({
   setPaymentImage,
   paymentImageQrCode,
   setPaymentImageQrCode,
+  errorImage,
+  setErrorImage,
 }) => {
   Modal.setAppElement("#root");
   const useStyle = customStyles();
@@ -28,20 +30,30 @@ const PaymentModal = ({
   const { width } = useWindowDimensions();
 
   const handleChangeImage = async (e) => {
-    if (e.target.id === "filebankImageQrCode") {
-      const base64 = await FilesService.convertToBase64(e.target.files[0]);
-      setPaymentImageQrCode({
-        ...paymentImageQrCode,
-        image: base64,
-        relatedTable: "paymentQrCode",
-      });
-    } else {
-      const base64 = await FilesService.convertToBase64(e.target.files[0]);
-      setPaymentImage({
-        ...paymentImage,
-        image: base64,
-        relatedTable: "payment",
-      });
+    if (e.target.files.length > 0) {
+      if (e.target.id === "filebankImageQrCode") {
+        const dataImage = ValidateService.validateImage(e.target.files[0].name);
+        setErrorImage({ ...errorImage, qr: dataImage });
+        if (!dataImage) {
+          const base64 = await FilesService.convertToBase64(e.target.files[0]);
+          setPaymentImageQrCode({
+            ...paymentImageQrCode,
+            image: base64,
+            relatedTable: "paymentQrCode",
+          });
+        }
+      } else {
+        const dataImage = ValidateService.validateImage(e.target.files[0].name);
+        setErrorImage({ ...errorImage, logo: dataImage });
+        if (!dataImage) {
+          const base64 = await FilesService.convertToBase64(e.target.files[0]);
+          setPaymentImage({
+            ...paymentImage,
+            image: base64,
+            relatedTable: "payment",
+          });
+        }
+      }
     }
   };
 
@@ -183,6 +195,11 @@ const PaymentModal = ({
                           src={paymentImageQrCode.image}
                           onChange={handleChangeImage}
                         />
+                        {errorImage.qr ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            * ประเภทไฟล์รูปภาพไม่ถูกต้อง
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -194,6 +211,11 @@ const PaymentModal = ({
                     src={paymentImage.image}
                     onChange={handleChangeImage}
                   />
+                  {errorImage.logo ? (
+                    <div className="text-sm py-2 px-2  text-red-500">
+                      * ประเภทไฟล์รูปภาพไม่ถูกต้อง
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>

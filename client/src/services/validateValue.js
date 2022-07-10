@@ -115,6 +115,37 @@ class ValidateService {
     date.setHours(0, 0, 0, 0);
     return date;
   };
+
+  validateImage = (e) => {
+    var ext = this.getExtension(e);
+    switch (ext.toLowerCase()) {
+      case 'jpg':
+      case 'gif':
+      case 'bmp':
+      case 'png':
+      case 'ico':
+        //etc
+        return false;
+    }
+    return true;
+  }
+
+  getExtension = (filename) => {
+    var parts = filename.split('.');
+    return parts[parts.length - 1];
+  }
+
+
+  validateExcel = (e) => {
+    var ext = this.getExtension(e);
+    switch (ext.toLowerCase()) {
+      case 'xls':
+      case 'xlsx':
+        //etc
+        return false;
+    }
+    return true;
+  }
 }
 
 export default new ValidateService();

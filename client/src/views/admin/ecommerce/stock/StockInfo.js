@@ -37,6 +37,7 @@ const StockInfo = ({
   handleChangeImage,
   stockImage,
   isImageCoverNull = false,
+  errorImage
 }) => {
   Modal.setAppElement("#root");
   const useStyleCreate = styleSelect();
@@ -292,6 +293,11 @@ const StockInfo = ({
                           );
                         })}
                       </div>
+                      {errorImage ? (
+                        <div className="text-sm py-2 px-2  text-red-500">
+                          * ประเภทไฟล์รูปภาพไม่ถูกต้อง
+                        </div>
+                      ) : null}
                       {isImageCoverNull && (
                         <div className="relative w-full px-4">
                           <div className="text-sm py-2 px-2  text-red-500">

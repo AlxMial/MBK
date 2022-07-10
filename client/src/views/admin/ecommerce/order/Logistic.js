@@ -7,6 +7,7 @@ import InputUC from "components/InputUC";
 import CheckBoxUC from "components/CheckBoxUC";
 import TextAreaUC from "components/InputUC/TextAreaUC";
 import { EncodeKey, DecodeKey } from "@services/default.service";
+import { Radio } from "antd";
 
 const Logistic = ({
   props,
@@ -40,7 +41,10 @@ const Logistic = ({
   const [isChange, setIsChange] = useState(false);
   const [delay, setDalay] = useState("");
   const [isChangeTrackNo, setisChangeTrackNo] = useState(false);
-
+  const optionsPayment = [
+    { label: "ไม่คืนเงิน", value: "3" },
+    { label: "คืนเงิน", value: "2" },
+  ];
   const logisticTypeList = [
     { label: "Kerry Express", value: "kerry" },
     // { label: "Flash Express", value: 'flash' },
@@ -140,9 +144,7 @@ const Logistic = ({
       <div className="w-full">
         <div className="flex justify-between">
           <div className="py-2 margin-auto-t-b lg:w-7/12">
-            <LabelUC
-              label={orderHD.tbLogistic.deliveryName}
-            />
+            <LabelUC label={orderHD.tbLogistic.deliveryName} />
           </div>
           <div style={{ minWidth: "100px" }}>
             <div className={"p-2 rounded "}>
@@ -178,7 +180,8 @@ const Logistic = ({
             {orderHD && orderHD.district + " "}
           </div>
           <div className="text-blueGray-400 text-sm mt-1">
-            {orderHD && orderHD.province} {orderHD && orderHD.postcode}
+            {orderHD && orderHD.province} {orderHD && orderHD.postcode + " "}{" "}
+            {"โทร "} {orderHD && orderHD.phone + " "}
           </div>
           <div className="text-blueGray-400 text-sm mt-1">
             {orderHD && orderHD.email}
@@ -266,7 +269,7 @@ const Logistic = ({
         </div>
         {/* {orderHD.isCancel && ( */}
         <>
-          <div className={"p-2 rounded "}>
+          <div className={"py-2 pl-6 rounded "}>
             <SelectUC
               name="cancelDetail"
               onChange={(value) => {
@@ -299,13 +302,20 @@ const Logistic = ({
               // bgColor={getStatus(transportStatus).bg}
             />
           </div>
-          <div className="py-2 margin-auto-t-b ">
+          <div className="py-2 pl-6 margin-auto-t-b ">
             <LabelUC label={"สาเหตุที่ยกเลิก"} />
           </div>
-          <div className="py-2 margin-auto-t-b w-full flex mt-2">
+          <div className="py-2 pl-6 margin-auto-t-b w-full flex mt-2">
             <TextAreaUC
-              name="cancelReason"
-              value={!isCancel ? "" : tbCancelOrder.cancelOtherRemark}
+              id="cancelOtherRemark"
+              name="cancelOtherRemark"
+              value={
+                !isCancel
+                  ? ""
+                  : tbCancelOrder
+                  ? tbCancelOrder.cancelOtherRemark
+                  : ""
+              }
               rows={3}
               maxLength={255}
               disabled={
@@ -319,7 +329,7 @@ const Logistic = ({
               }
               onChange={(e) => {
                 if (tbCancelOrder == null) {
-                  tbCancelOrder = { cancelOtherRemark: e.target.value };
+                  tbCancelOrder = { cancelOtherRemark: e.target.value,cancelStatus: "3" };
                 } else {
                   setDalay(e.target.value);
                   tbCancelOrder.cancelOtherRemark = e.target.value;
@@ -328,14 +338,25 @@ const Logistic = ({
               }}
             />
           </div>
-          <div className="py-2 margin-auto-t-b w-full flex">
-            <CheckBoxUC
+          <div className="py-2 pl-6 margin-auto-t-b w-full flex">
+            {cancelReason && (
+              <div className=" margin-auto-t-b w-full flex">
+                <div className="w-full">
+                  <div className="text-sm py-2 px-2  text-red-500">
+                    * กรุณากรอกสาเหตุที่ยกเลิกคำสั่งซื้อ
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="py-2 pl-6 margin-auto-t-b w-full flex">
+            {/* <CheckBoxUC
               text="คืนเงิน"
               name="isCancel"
               classLabel="mt-2 text-green-mbk"
               // classSpan='text-cancel'
               onChange={(e) => {
-                if (tbCancelOrder === undefined) {
+                if (tbCancelOrder === null || tbCancelOrder === undefined) {
                   tbCancelOrder = { cancelStatus: e.target.checked };
                 } else {
                   tbCancelOrder.cancelStatus = e.target.checked;
@@ -359,18 +380,30 @@ const Logistic = ({
                   ? false
                   : tbCancelOrder.cancelStatus
               }
+            /> */}
+
+            <Radio.Group
+              options={optionsPayment}
+              onChange={(e) => {
+                if (tbCancelOrder === null || tbCancelOrder === undefined) {
+                  tbCancelOrder = { cancelStatus: e.target.value };
+                } else {
+                  tbCancelOrder.cancelStatus = e.target.value;
+                }
+
+                setDalay(tbCancelOrder.cancelStatus);
+                settbCancelOrder(tbCancelOrder);
+              }}
+              disabled={isCancel && isCanEdit  ? false : true}
+              value={
+                !isCancel
+                  ? ""
+                  : tbCancelOrder == null
+                  ? "3"
+                  : tbCancelOrder.cancelStatus
+              }
             />
           </div>
-
-          {!cancelReason && (
-            <div className="py-2 margin-auto-t-b w-full flex">
-              <div className="w-full">
-                <div className="text-sm py-2 px-2  text-red-500">
-                  * กรุณากรอกสาเหตุที่ยกเลิกคำสั่งซื้อ
-                </div>
-              </div>
-            </div>
-          )}
         </>
         {/* )} */}
       </div>

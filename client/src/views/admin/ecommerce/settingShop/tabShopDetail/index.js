@@ -17,6 +17,7 @@ import FilesService from "services/files";
 import { onSaveImage } from "services/ImageService";
 import { useDispatch } from "react-redux";
 import ButtonModalUC from "components/ButtonModalUC";
+import ValidateService from "services/validateValue";
 
 const ShopDetail = () => {
   const _defaultImage = {
@@ -36,9 +37,10 @@ const ShopDetail = () => {
   const [modalData, setModalData] = useState({});
   const [shopImage, setShopImage] = useState(_defaultImage);
   const [dataBanner, setDataBanner] = useState([]);
-  const [ removeBanner ,setRemoveBanner] = useState([]);
-  const [ delayValue ,setDelayValue] = useState("");
-
+  const [removeBanner, setRemoveBanner] = useState([]);
+  const [delayValue, setDelayValue] = useState("");
+  const [errorImage, setErrorImage] = useState("");
+  const [errorImageMain, setErrorImageMain] = useState("");
 
   async function fetchData() {
     dispatch(fetchLoading());
@@ -48,7 +50,7 @@ const ShopDetail = () => {
       for (const columns in shop) {
         formik.setFieldValue(columns, shop[columns], false);
       }
-      localStorage.setItem('shop',shop.id);
+      localStorage.setItem("shop", shop.id);
       const _shopImage = await axios.get(`image/byRelated/${shop.id}/shop`);
       if (_shopImage && _shopImage.data.tbImage) {
         if (_shopImage.data.tbImage.image !== null) {
@@ -63,7 +65,6 @@ const ShopDetail = () => {
 
       const resBanner = await axios.get(`banner/byShopId/${shop.id}`);
       if (resBanner.data.tbBanner && resBanner.data.tbBanner.length > 0) {
-        
         let Banner = [];
         await resBanner.data.tbBanner.forEach(async (e) => {
           const resImg = await axios.get(
@@ -77,7 +78,7 @@ const ShopDetail = () => {
           setDelayValue("delay");
           if (image) {
             Banner.push({
-              imageId:resImg.data.tbImage.id,
+              imageId: resImg.data.tbImage.id,
               categoryId: e.stockId === null ? e.productCategoryId : e.stockId,
               id: e.id,
               option: e.typeLink === false ? 2 : e.typeLink === true ? 1 : 0,
@@ -89,7 +90,7 @@ const ShopDetail = () => {
             setDataBanner(Banner);
           } else {
             Banner.push({
-              imageId:null,
+              imageId: null,
               categoryId: e.stockId === null ? e.productCategoryId : e.stockId,
               id: e.id,
               option: e.typeLink === false ? 2 : e.typeLink === true ? 1 : 0,
@@ -100,7 +101,6 @@ const ShopDetail = () => {
             setModalData(Banner);
             setDataBanner(Banner);
           }
-     
           dispatch(fetchSuccess());
         });
       } else {
@@ -117,8 +117,14 @@ const ShopDetail = () => {
   }, []);
 
   const handleChangeImg = async (e) => {
-    const base64 = await FilesService.convertToBase64(e.target.files[0]);
-    setShopImage({ ...shopImage, image: base64 });
+    if (e.target.files.length > 0) {
+      const dataImage = ValidateService.validateImage(e.target.files[0].name);
+      setErrorImageMain(dataImage);
+      if (!dataImage) {
+        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        setShopImage({ ...shopImage, image: base64 });
+      }
+    }
   };
 
   const handleOpenModal = (name) => {
@@ -129,9 +135,9 @@ const ShopDetail = () => {
   const handleSubmitModal = (data) => {
     setDataBanner(data.arr);
     setModalData(data.arr);
-    const shopId = localStorage.getItem('shop');
-    if(shopId){
-      saveBannerAuto(shopId,data.arr);
+    const shopId = localStorage.getItem("shop");
+    if (shopId) {
+      saveBannerAuto(shopId, data.arr);
     }
     setOpen(false);
   };
@@ -169,33 +175,35 @@ const ShopDetail = () => {
       email6: yup.string().isValidateEmail(),
     }),
     onSubmit: (values) => {
-      dispatch(fetchLoading());
-      values.updateBy = sessionStorage.getItem("user");
-      if (values.id) {
-        axios.put("shop", values).then(async (res) => {
-          if (res.data.status) {
-            await saveAfterShop(values.id);
-          } else {
-            addToast("บันทึกข้อมูลไม่สำเร็จ", {
-              appearance: "warning",
-              autoDismiss: true,
-            });
-          }
-          dispatch(fetchSuccess());
-        });
-      } else {
-        values.addBy = sessionStorage.getItem("user");
-        axios.post("shop", values).then(async (res) => {
-          if (res.data.status) {
-            await saveAfterShop(res.data.tbShop.id);
-          } else {
-            addToast("บันทึกข้อมูลไม่สำเร็จ", {
-              appearance: "warning",
-              autoDismiss: true,
-            });
-          }
-          dispatch(fetchSuccess());
-        });
+      if (!errorImageMain) {
+        dispatch(fetchLoading());
+        values.updateBy = sessionStorage.getItem("user");
+        if (values.id) {
+          axios.put("shop", values).then(async (res) => {
+            if (res.data.status) {
+              await saveAfterShop(values.id);
+            } else {
+              addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                appearance: "warning",
+                autoDismiss: true,
+              });
+            }
+            dispatch(fetchSuccess());
+          });
+        } else {
+          values.addBy = sessionStorage.getItem("user");
+          axios.post("shop", values).then(async (res) => {
+            if (res.data.status) {
+              await saveAfterShop(res.data.tbShop.id);
+            } else {
+              addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                appearance: "warning",
+                autoDismiss: true,
+              });
+            }
+            dispatch(fetchSuccess());
+          });
+        }
       }
     },
   });
@@ -250,11 +258,11 @@ const ShopDetail = () => {
     });
   };
 
-  const saveBannerAuto = async (id,data) => {
+  const saveBannerAuto = async (id, data) => {
     let success = true;
 
     data.map(async (e, i) => {
-      console.log(e)
+      console.log(e);
       success = await saveBanners(e, id, i);
     });
 
@@ -292,7 +300,7 @@ const ShopDetail = () => {
     let success = true;
 
     dataBanner.map(async (e, i) => {
-      console.log(e)
+      console.log(e);
       success = await saveBanners(e, id, i);
     });
 
@@ -330,7 +338,7 @@ const ShopDetail = () => {
     axios.delete(`/banner/${data}`).then(() => {
       return true;
     });
-  }
+  };
 
   const saveBanners = async (data, id, i) => {
     let SaveBanner = {
@@ -341,8 +349,8 @@ const ShopDetail = () => {
       shopId: id,
       addBy: data.id ? null : sessionStorage.getItem("user"),
       updateBy: data.id ? sessionStorage.getItem("user") : null,
-      id:null,
-      isDeleted: 0
+      id: null,
+      isDeleted: 0,
     };
 
     dispatch(fetchLoading());
@@ -350,7 +358,7 @@ const ShopDetail = () => {
       SaveBanner.id = data.id;
       axios.put("banner", SaveBanner).then(async (res) => {
         if (res.data.status) {
-          const success = await saveBannerImage(data,data.id, data.imageId);
+          const success = await saveBannerImage(data, data.id, data.imageId);
           return success;
         } else {
           // dispatch(fetchSuccess());
@@ -361,7 +369,11 @@ const ShopDetail = () => {
       data.addBy = sessionStorage.getItem("user");
       axios.post("banner", SaveBanner).then(async (res) => {
         if (res.data.status) {
-          const success = await saveBannerImage(data, res.data.tbBanner.id , null);
+          const success = await saveBannerImage(
+            data,
+            res.data.tbBanner.id,
+            null
+          );
           return success;
         } else {
           // dispatch(fetchSuccess());
@@ -372,10 +384,10 @@ const ShopDetail = () => {
     return true;
   };
 
-  const saveBannerImage = async (data,id, imageId) => {
+  const saveBannerImage = async (data, id, imageId) => {
     // Save Image Banner
     let image = {
-      id:imageId,
+      id: imageId,
       relatedId: id,
       relatedTable: "banner" + id,
       isDeleted: false,
@@ -442,6 +454,21 @@ const ShopDetail = () => {
                     />
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className={"flex flex-wrap "}>
+              <div className="w-full px-4 lg:w-2/12 ">
+                {errorImageMain ? (
+                  <div className="text-sm py-2 px-2  text-red-500">
+                    * ประเภทไฟล์รูปภาพไม่ถูกต้อง
+                  </div>
+                ) : null}
+              </div>
+              <div className={"w-full lg:w-10/12 px-2 "}>
+                {errorImageMain ? (
+                  <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
+                ) : null}
               </div>
             </div>
             <div className="flex flex-wrap mt-4">
@@ -537,6 +564,8 @@ const ShopDetail = () => {
           handleSubmitModal={handleSubmitModal}
           handleModal={() => setOpen(false)}
           setRemoveBanner={setRemoveBanner}
+          errorImage={errorImage}
+          setErrorImage={setErrorImage}
         />
       )}
     </>
