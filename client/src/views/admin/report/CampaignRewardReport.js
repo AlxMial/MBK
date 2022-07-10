@@ -568,7 +568,7 @@ export default function CampaignRewardReport() {
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {value.count - value.use}
+                          {value.count == null ? "" : value.count - value.use}
                         </td>
                       </tr>
                     );
