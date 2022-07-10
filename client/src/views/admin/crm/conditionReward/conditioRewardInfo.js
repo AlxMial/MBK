@@ -826,12 +826,19 @@ export default function ConditioRewardInfo() {
             <div className="relative flex flex-col min-w-0 break-words w-full mb-6 border bg-white rounded-lg Overflow-info ">
               <div className="flex-auto lg:px-10 py-10">
                 <div className="flex flex-wrap">
+                  <div className="w-full lg:w-12/12 margin-auto-t-b">
+                    <div className="flex" style={{ justifyContent: "end" }}>
+                      <CheckBoxUC
+                        text="Partner"
+                        checked={isImport ? true : false}
+                        classLabel="mt-2 mb-4 w-full justify-end"
+                        disabled={true}
+                      />
+                    </div>
+                  </div>
                   <div className="w-full lg:w-1/12 margin-auto-t-b">
                     <div className="relative w-full">
-                      <LabelUC
-                        label="ชื่อเงื่อนไขการแลกรางวัล"
-                        isRequired={true}
-                      />
+                      <LabelUC label="ชื่อแคมเปญ" isRequired={true} />
 
                       {formik.touched.redemptionName &&
                       formik.errors.redemptionName ? (
@@ -865,10 +872,7 @@ export default function ConditioRewardInfo() {
                   <div className="w-full">&nbsp;</div>
                   <div className="w-full lg:w-1/12 margin-auto-t-b">
                     <div className="relative w-full">
-                      <LabelUC
-                        label="ประเภทเงื่อนไขการแลกรางวัล"
-                        isRequired={true}
-                      />
+                      <LabelUC label="ประเภทแคมเปญ" isRequired={true} />
                     </div>
                   </div>
                   <div className="w-full lg:w-11/12 margin-auto-t-b">
@@ -1120,11 +1124,17 @@ export default function ConditioRewardInfo() {
                     </div>
                   </div>
                   <div className="w-full">&nbsp;</div>
-                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                  <div
+                    className="w-full lg:w-1/12 margin-auto-t-b "
+                    style={{ display: "none" }}
+                  >
                     <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
                   </div>
 
-                  <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
+                  <div
+                    className="w-full lg:w-11/12 px-4 margin-auto-t-b"
+                    style={{ display: "none" }}
+                  >
                     <div className="relative">
                       <TextAreaUC
                         name="description"
