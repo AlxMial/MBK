@@ -1056,6 +1056,7 @@ export default function ConditioRewardInfo() {
                             ? "ไม่มีวันหมดอายุ"
                             : "เลือกวันที่"
                         }
+                        disabled={formik.values.isNotExpired ==true ?true : false}
                         disabledValue={
                           formik.values.isNotExpired ? true : false
                         }

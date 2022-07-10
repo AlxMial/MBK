@@ -228,6 +228,7 @@ router.post(
           relatedId: Encrypt.DecodeKey(id),
           relatedTable: relatedTable,
         },
+        order :[['relatedTable', 'ASC']]
       });
       _tbImage.filter((e) => {
         data.push({
