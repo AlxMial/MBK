@@ -8,6 +8,7 @@ const {
   tb2c2p,
   tbMember,
   tbMemberPoint,
+  tbStock
 } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -135,6 +136,9 @@ router.get("/getPromotionstores", validateLineToken, async (req, res) => {
   let status = true;
   let promotionStore = [];
   try {
+    tbPromotionStore.belongsTo(tbStock, {
+      foreignKey: "stockId",
+    });
     const _tbPromotionStore = await tbPromotionStore.findAll({
       attributes: [
         "id",
@@ -150,6 +154,13 @@ router.get("/getPromotionstores", validateLineToken, async (req, res) => {
         isDeleted: false,
         isInactive: true,
       },
+      include: [
+        {
+          model: tbStock,
+          attributes: ["id", "productCount"],
+          where: {productCount : {[Op.gt] : 0}}
+        },
+      ],
     });
     if (_tbPromotionStore) {
       _tbPromotionStore.map((e, i) => {
@@ -208,7 +219,7 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
                 }
               )
               .then(async () => {
-                console.log(id)
+                console.log(id);
                 const _tbOrderHD = await tbOrderHD.findOne({
                   attributes: [
                     "orderNumber",
@@ -216,7 +227,7 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
                     "netTotal",
                     "orderDate",
                     "memberId",
-                    "points"
+                    "points",
                   ],
                   where: {
                     id: Encrypt.DecodeKey(id.split(",")[0]),

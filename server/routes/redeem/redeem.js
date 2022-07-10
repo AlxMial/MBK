@@ -364,6 +364,7 @@ router.get(
             "points",
             "startDate",
             "endDate",
+            "isActive",
           ],
           where: {
             isDeleted: false,

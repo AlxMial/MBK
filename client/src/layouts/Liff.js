@@ -118,6 +118,7 @@ const LiffAPP = () => {
   let ismemberpage = false;
   if (pathname.includes("register")) {
     Session.removecheckRegister();
+    Session.removeaccessToken();
   }
 
   if (
@@ -178,15 +179,16 @@ const LiffAPP = () => {
             className={"noselect bg-green-mbk flex"}
             style={{ height: "100px" }}
           >
-            <div className="w-full">
+            <div className="w-full flex" style={{ justifyContent: "center" }}>
               <img
-                src="https://www.prg.co.th/images/logo.png"
+                src={require("assets/img/mbk/Logo.png").default}
                 alt="logo_mbk"
                 className=" mt-6 "
                 style={{
-                  display: "block",
-                  marginLeft: "auto",
-                  marginRight: "auto",
+                  objectFit: "fill",
+                  maxWidth: "150px",
+                  height: "auto",
+                  top: "1.75rem",
                 }}
               ></img>
             </div>
@@ -247,7 +249,7 @@ const LiffAPP = () => {
                     alt="line_head_img"
                     style={{
                       objectFit: "cover",
-                      maxHeight: "220px",
+                      height: "250px",
                     }}
                   ></img>
                   <div className="flex" style={{ justifyContent: "center" }}>
@@ -265,16 +267,19 @@ const LiffAPP = () => {
                   </div>
                 </div>
               ) : (
-                <img
-                  src="https://www.prg.co.th/images/logo.png"
-                  alt="logo_mbk"
-                  className=" mt-6 "
-                  style={{
-                    display: "block",
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                  }}
-                ></img>
+                <div className="flex"  style={{justifyContent: "center" }}>
+                  <img
+                    src={require("assets/img/mbk/Logo.png").default}
+                    alt="logo_mbk"
+                    className=" mt-6 "
+                    style={{
+                      objectFit: "fill",
+                      maxWidth: "150px",
+                      height: "auto",
+                      top: "1.75rem",
+                    }}
+                  ></img>
+                </div>
               )}
             </div>
           </div>

@@ -1367,12 +1367,12 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
               "description",
               "redemptionConditionsHDId",
             ],
-            where: { isDeleted: false },
+            // where: { isDeleted: false },
             include: [
               {
                 model: tbRedemptionConditionsHD,
                 attributes: ["id", "couponType"],
-                where: { isDeleted: false },
+                // where: { isDeleted: false },
               },
             ],
           },

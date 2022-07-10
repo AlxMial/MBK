@@ -134,7 +134,7 @@ const InfoCoupon = () => {
                 className="flex bg-green-mbk text-white text-center text-lg  font-bold bt-line"
                 style={{
                   filter: MyCoupon.couponType ? "" : "grayscale(1)",
-                  opacity: "0.5",
+                  opacity: MyCoupon.couponType ? "" : "0.5",
                 }}
                 onClick={() => {
                   if (MyCoupon.couponType) {

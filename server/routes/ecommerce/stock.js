@@ -247,5 +247,30 @@ router.post(
     });
   }
 );
+
+router.get("/getImg/:relatedTable/:id", async (req, res) => {
+  const id = req.params.id;
+  const relatedTable = req.params.relatedTable;
+  const _tbImage = await tbImage.findOne({
+    where: {
+      isDeleted: !1,
+      relatedId: Encrypt.DecodeKey(id),
+      relatedTable: relatedTable,
+    },
+  });
+  const imgBuffer = Buffer.from(_tbImage.dataValues.image, "base64").toString(
+    "utf8"
+  );
+  var im = Buffer(_tbImage.dataValues.image.toString("binary"), "base64");
+  var base64Data = imgBuffer.replace(/^data:image\/png;base64,/, "");
+  
+  var img = Buffer.from(base64Data, "base64");
+  res.writeHead(200, {
+    "Content-Type": imgBuffer.split(";")[0].split(":")[1],
+    "Content-Length": img.length,
+  });
+  res.end(img);
+});
+
 //#endregion line liff
 module.exports = router;

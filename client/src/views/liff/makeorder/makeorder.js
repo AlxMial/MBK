@@ -234,18 +234,18 @@ const MakeOrder = () => {
       total = sumprice;
       let _prodiscstro = calcprodiscount(sumprice);
       let _prodiscount = _prodiscstro;
-      // if (_prodiscstro.type == "discount") {
-      //   _prodiscount = _prodiscstro.data;
-      // }
 
+      let discount = 0;
       if (usecoupon != null) {
-        total =
+        discount =
           usecoupon.discountType === "1"
-            ? total - usecoupon.discount
-            : total - (usecoupon.discount / 100) * total;
+            ? usecoupon.discount
+            : (usecoupon.discount / 100) * total;
       }
 
-      total = total - _prodiscount;
+      total =
+        parseFloat(total) - parseFloat(discount) - parseFloat(_prodiscount);
+      total = total < 0 ? 0 : total;
       //มีโปรส่ง
       let _deliveryCost = deliveryCost;
       if (tbPromotionDelivery != null) {
@@ -296,9 +296,9 @@ const MakeOrder = () => {
         );
         if (productList != null) {
           data = { type: "product", data: productList.stockId };
-          // if (freebies.length < 1) {
-          //   getfreebies(productList);
-          // }
+          if (freebies.length < 1) {
+            getfreebies(productList);
+          }
         }
       }
     }

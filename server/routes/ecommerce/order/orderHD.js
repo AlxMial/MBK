@@ -691,17 +691,11 @@ const getAddress = async (addressId, memberID) => {
 router.post("/doSaveOrder", validateLineToken, async (req, res) => {
   let status = true;
   let msg;
-
-  let Member;
   let orderId;
   let { orderhd, orderdt, cart } = req.body;
   let orderDT = [];
   let url2c2p;
   try {
-    // Member = await tbMember.findOne({
-    //   attributes: ["id"],
-    //   where: { uid: uid },
-    // });
     const memberId = Encrypt.DecodeKey(req.user.id);
     const uid = Encrypt.DecodeKey(req.user.uid);
     //#region ถอดรหัส
@@ -791,7 +785,8 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         }
       }
     }
-    total = total - DiscountCoupon;
+    total = total - parseFloat(DiscountCoupon);
+    total = total < 0 ? 0 : total;
     //บวกค้าส่งทีหลัง
     total =
       total +
@@ -1032,7 +1027,6 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
         status = _getDelivery.status;
         msg = _getDelivery.msg;
       }
-      console.log(status);
       // ส่วนลดCoupon
       let DiscountCoupon = 0;
       if (status) {
@@ -1050,8 +1044,8 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           }
         }
       }
-      total = total - DiscountCoupon;
-      console.log(status);
+      total = total - parseFloat(DiscountCoupon);
+      total = total < 0 ? 0 : total;
       //บวกค้าส่งทีหลัง
       total =
         total +
@@ -2250,23 +2244,62 @@ router.post(
     const { uid } = req.body;
     let shop_orders = [];
     try {
+      tbCartHD.hasMany(tbCartDT, { foreignKey: "carthdId" });
+      // tbStock.hasMany(tbCartDT, { foreignKey: "strockId" });
       const _tbCartHD = await tbCartHD.findOne({
         attributes: ["id"],
         where: { uid: uid },
+        include: [
+          {
+            attributes: ["strockId", "amount"],
+            model: tbCartDT,
+            // include: [
+            //   {
+            //     attributes: [
+            //       "price",
+            //       "discount",
+            //       "productCount",
+            //       "isFlashSale",
+            //       "startDateCampaign",
+            //       "endDateCampaign",
+            //       "startTimeCampaign",
+            //       "endTimeCampaign",
+            //     ],
+            //     model: tbStock,
+            //   },
+            // ],
+          },
+        ],
       });
+
       if (_tbCartHD) {
-        const _tbCartDT = await tbCartDT.findAll({
-          attributes: ["strockId", "amount"],
-          where: { carthdId: _tbCartHD.id },
-        });
-        _tbCartDT.map((e, i) => {
-          if (e.amount > 0) {
+        let dtList = _tbCartHD.tbCartDTs;
+        for (var i = 0; i < dtList.length; i++) {
+          const strockId = dtList[i].strockId;
+          const amount = dtList[i].amount;
+          const _tbStock = await tbStock.findOne({
+            attributes: [
+              "id",
+              "price",
+              "discount",
+              "productCount",
+              "isFlashSale",
+              "startDateCampaign",
+              "endDateCampaign",
+              "startTimeCampaign",
+              "endTimeCampaign",
+            ],
+            where: { id: strockId },
+          });
+          if (_tbStock) {
+            _tbStock.dataValues.id = Encrypt.EncodeKey(_tbStock.dataValues.id);
             shop_orders.push({
-              id: Encrypt.EncodeKey(e.strockId),
-              quantity: e.amount,
+              id: Encrypt.EncodeKey(strockId),
+              quantity: amount,
+              tbStock: _tbStock.dataValues,
             });
           }
-        });
+        }
       }
     } catch (e) {
       status = false;

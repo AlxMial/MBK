@@ -39,74 +39,67 @@ const ShowCart = () => {
             });
             if (id.length > 0) {
               setusecoupon(Storage.getconpon_cart());
+              let tbStockall = [];
+              cart.map((e, i) => {
+                let tbStock = e.tbStock;
+                tbStockall.push(tbStock);
+              });
 
-              await axios
-                .post("stock/getStock", { id: id })
-                .then((response) => {
-                  let _productCountError = false;
-                  let productAction = [];
-                  if (response.data.status) {
-                    let tbStock = response.data.tbStock;
-                    setCartItem(tbStock);
-                    let price = 0;
-                    tbStock.filter((e) => {
-                      let quantity = cart.find((o) => o.id === e.id).quantity;
-                      e.quantity = quantity;
-                      if (e.isFlashSale) {
-                        if (fn.isFlashSale(e)) {
-                          price +=
-                            parseFloat(e.price - e.saleDiscount) *
-                            parseInt(quantity);
+              let _productCountError = false;
+              let productAction = [];
+              setCartItem(tbStockall);
+              let price = 0;
+              tbStockall.filter((e) => {
+                let quantity = cart.find((o) => o.id === e.id).quantity;
+                e.quantity = quantity;
+                if (e.isFlashSale) {
+                  if (fn.isFlashSale(e)) {
+                    price +=
+                      parseFloat(e.price - e.saleDiscount) * parseInt(quantity);
 
-                          e.priceDiscount = e.price - e.saleDiscount;
-                        } else {
-                          if (e.priceDiscount > 0) {
-                            price +=
-                              parseFloat(e.priceDiscount) * parseInt(quantity);
-                          } else {
-                            price += parseFloat(e.price) * parseInt(quantity);
-                          }
-                        }
-                      } else {
-                        if (e.priceDiscount > 0) {
-                          price +=
-                            parseFloat(e.priceDiscount) * parseInt(quantity);
-                        } else {
-                          price += parseFloat(e.price) * parseInt(quantity);
-                        }
-                      }
-
-                      if (e.productCount < quantity) {
-                        _productCountError = true;
-                        productAction.push({
-                          id: e.id,
-                          quantity: e.productCount,
-                          type: "quantity",
-                          uid: Session.getLiff().uid,
-                        });
-                      }
-                      return e;
-                    });
-                    if (!fn.IsNullOrEmpty(cart.usecoupon)) {
-                      price = price - cart.usecoupon.discount;
-                    }
-                    price = price < 1 ? 0 : price;
-                    setsumprice(price);
-
-                    if (_productCountError) {
-                      setproductCountError({
-                        open: _productCountError,
-                        action: productAction,
-                      });
-                    }
+                    e.priceDiscount = e.price - e.saleDiscount;
                   } else {
-                    setCartItem([]);
-                    setsumprice(0);
+                    if (e.priceDiscount > 0) {
+                      price += parseFloat(e.priceDiscount) * parseInt(quantity);
+                    } else {
+                      price += parseFloat(e.price) * parseInt(quantity);
+                    }
                   }
-                })
-                .finally((e) => {
-                  setIsLoading(false);
+                } else {
+                  if (e.discount > 0) {
+                    e.priceDiscount = e.price - e.discount;
+                  }
+                  if (e.priceDiscount > 0) {
+                    price += parseFloat(e.priceDiscount) * parseInt(quantity);
+                  } else {
+                    price += parseFloat(e.price) * parseInt(quantity);
+                  }
+                }
+
+                if (e.productCount < quantity) {
+                  _productCountError = true;
+                  productAction.push({
+                    id: e.id,
+                    quantity: e.productCount,
+                    type: "quantity",
+                    uid: Session.getLiff().uid,
+                  });
+                }
+                return e;
+              });
+              if (!fn.IsNullOrEmpty(cart.usecoupon)) {
+                price = price - cart.usecoupon.discount;
+              }
+              price = price < 1 ? 0 : price;
+              setsumprice(price);
+
+              if (_productCountError) {
+                setproductCountError({
+                  open: _productCountError,
+                  action: productAction,
                 });
+              }
+              setIsLoading(false);
             }
           }
         } else {
@@ -297,7 +290,7 @@ const ShowCart = () => {
                           </div>
                           {fn.isFlashSale(e) ? (
                             <div style={{ color: "red", paddingLeft: "10px" }}>
-                              {"฿ " + fn.formatMoney( e.priceDiscount)}
+                              {"฿ " + fn.formatMoney(e.priceDiscount)}
                             </div>
                           ) : e.discount > 0 ? (
                             <div style={{ color: "red", paddingLeft: "10px" }}>
@@ -585,16 +578,16 @@ const ShowCart = () => {
           showModal={productCountError.open}
           message={"จำนวนสินค้ามีการเปลี่ยนแปลง"}
           confirmModal={async () => {
-            // await productCountError.action.map((e, i) => {
-            //   upd_shopcart(e);
-            // });
-
-            for (var i = 0; i < productCountError.action.length; i++) {
-              upd_shopcart(productCountError.action[i]);
-            }
-
             setproductCountError({ open: false });
-            getProducts();
+            setIsLoading(false);
+            for (var i = 0; i < productCountError.action.length; i++) {
+              upd_shopcart(productCountError.action[i], () => {
+                getProducts();
+                if (i == productCountError.action.length - 1) {
+                  setIsLoading(false);
+                }
+              });
+            }
           }}
         />
       )}

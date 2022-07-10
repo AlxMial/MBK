@@ -93,12 +93,12 @@ const MakeOrderById = () => {
                       item.discount = e.price - e.discount;
                       if (e.isFlashSale) {
                         if (fn.isFlashSale(e)) {
-                          item.discount =  e.price -e.saleDiscount;
+                          item.discount = e.price - e.saleDiscount;
                           item.priceDiscount = e.price - e.saleDiscount;
-                        }else{
+                        } else {
                           item.priceDiscount = e.price - e.discount;
                         }
-                      }else{
+                      } else {
                         item.priceDiscount = e.price - e.discount;
                       }
 
@@ -201,15 +201,17 @@ const MakeOrderById = () => {
 
     let _prodiscstro = calcprodiscount(sumprice);
     let _prodiscount = _prodiscstro;
-  
+
+    let discount = 0;
     if (usecoupon != null) {
-      total =
+      discount =
         usecoupon.discountType === "1"
-          ? total - usecoupon.discount
-          : total - (usecoupon.discount / 100) * total;
+          ? usecoupon.discount
+          : (usecoupon.discount / 100) * total;
     }
 
-    total = total - _prodiscount;
+    total = parseFloat(total) - parseFloat(discount) - parseFloat(_prodiscount);
+    total = total < 0 ? 0 : total;
     //มีโปรส่ง
     let _deliveryCost = deliveryCost;
     if (tbPromotionDelivery != null) {
