@@ -243,16 +243,20 @@ const MakeOrder = () => {
             : (usecoupon.discount / 100) * total;
       }
 
-      total =
-        parseFloat(total) - parseFloat(discount) - parseFloat(_prodiscount);
+      total = parseFloat(total) - parseFloat(_prodiscount);
       total = total < 0 ? 0 : total;
       //มีโปรส่ง
       let _deliveryCost = deliveryCost;
       if (tbPromotionDelivery != null) {
-        if (total >= tbPromotionDelivery.buy && deliveryCost > 0) {
+        if (
+          total >= parseFloat(tbPromotionDelivery.buy) &&
+          parseFloat(deliveryCost) > 0
+        ) {
           _deliveryCost = tbPromotionDelivery.deliveryCost;
         }
       }
+      total = total - parseFloat(discount);
+      total = total < 0 ? 0 : total;
       total = total + parseFloat(_deliveryCost);
     }
     return total;

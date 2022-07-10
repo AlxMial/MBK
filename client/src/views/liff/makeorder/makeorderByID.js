@@ -199,30 +199,36 @@ const MakeOrderById = () => {
   };
   const calctotel = () => {
     // มีโปรร้าน
-    let total = sumprice;
+    let total = 0;
+    if (sumprice > 0) {
+      total = sumprice;
+      let _prodiscstro = calcprodiscount(sumprice);
+      let _prodiscount = _prodiscstro;
 
-    let _prodiscstro = calcprodiscount(sumprice);
-    let _prodiscount = _prodiscstro;
-
-    let discount = 0;
-    if (usecoupon != null) {
-      discount =
-        usecoupon.discountType === "1"
-          ? usecoupon.discount
-          : (usecoupon.discount / 100) * total;
-    }
-
-    total = parseFloat(total) - parseFloat(discount) - parseFloat(_prodiscount);
-    total = total < 0 ? 0 : total;
-    //มีโปรส่ง
-    let _deliveryCost = deliveryCost;
-    if (tbPromotionDelivery != null) {
-      if (total >= tbPromotionDelivery.buy && deliveryCost > 0) {
-        _deliveryCost = tbPromotionDelivery.deliveryCost;
+      let discount = 0;
+      if (usecoupon != null) {
+        discount =
+          usecoupon.discountType === "1"
+            ? usecoupon.discount
+            : (usecoupon.discount / 100) * total;
       }
-    }
-    total = total + parseFloat(_deliveryCost);
 
+      total = parseFloat(total) - parseFloat(_prodiscount);
+      total = total < 0 ? 0 : total;
+      //มีโปรส่ง
+      let _deliveryCost = deliveryCost;
+      if (tbPromotionDelivery != null) {
+        if (
+          total >= parseFloat(tbPromotionDelivery.buy) &&
+          parseFloat(deliveryCost) > 0
+        ) {
+          _deliveryCost = tbPromotionDelivery.deliveryCost;
+        }
+      }
+      total = total - parseFloat(discount);
+      total = total < 0 ? 0 : total;
+      total = total + parseFloat(_deliveryCost);
+    }
     return total;
   };
   const calcprodiscount = (totel) => {
