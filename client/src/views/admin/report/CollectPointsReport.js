@@ -190,6 +190,7 @@ export default function CollectPointsReport() {
       "วันที่เริ่มต้น",
       "วันที่สิ้นสุด",
       "ประเภท",
+      "รหัสสมาชิก",
       "ชื่อลูกค้า",
       "เบอร์โทรศัพท์",
       "Code",
@@ -202,6 +203,7 @@ export default function CollectPointsReport() {
       "start",
       "end",
       "campaignType",
+      "memberCard",
       "member",
       "phone",
       "code",
@@ -232,13 +234,14 @@ export default function CollectPointsReport() {
             : "เล่นเกมส์",
         member: e.firstName + " " + e.lastName,
         phone: e.phone,
-        code: e.code,
+        code: e.code == null ? "-" : e.code,
         point: e.points,
         status: "123".includes(e.campaignType) ? "รับคะแนน" : "แลกคะแนน",
         redeem:
           e.redeemDate == null
             ? "-"
             : moment(e.redeemDate).format("DD/MM/YYYY"),
+        memberCard: e.memberCard,
       });
     });
     exportExcel(

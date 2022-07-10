@@ -153,7 +153,7 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
                   required: true,
                   include: [
                     {
-                      attributes: ["phone", "firstName", "lastName"],
+                      attributes: ["phone", "firstName", "lastName","memberCard"],
                       model: tbMember,
                       where: {
                         isDeleted: false,
@@ -246,7 +246,7 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
               required: true,
               include: [
                 {
-                  attributes: ["phone", "firstName", "lastName"],
+                  attributes: ["phone", "firstName", "lastName","memberCard"],
                   model: tbMember,
                   where: {
                     isDeleted: false,
@@ -316,7 +316,7 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
       order: [["redeemDate", "DESC"]],
       include: [
         {
-          attributes: ["phone", "firstName", "lastName"],
+          attributes: ["phone", "firstName", "lastName","memberCard"],
           model: tbMember,
           where: {
             isDeleted: false,
@@ -348,6 +348,7 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
             firstName: Encrypt.DecodeKey(e.tbMember.dataValues.firstName),
             lastName: Encrypt.DecodeKey(e.tbMember.dataValues.lastName),
             phone: Encrypt.DecodeKey(e.tbMember.dataValues.phone),
+            memberCard :Encrypt.DecodeKey(e.tbMember.dataValues.memberCard)
           });
         } else if (e.campaignType == 3) {
           let CampaignName = "ลงทะเบียน";
@@ -368,6 +369,7 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
             firstName: Encrypt.DecodeKey(e.tbMember.dataValues.firstName),
             lastName: Encrypt.DecodeKey(e.tbMember.dataValues.lastName),
             phone: Encrypt.DecodeKey(e.tbMember.dataValues.phone),
+            memberCard :Encrypt.DecodeKey(e.tbMember.dataValues.memberCard)
           });
         }
 
