@@ -380,7 +380,7 @@ const ShopList = () => {
           >
             สินค้าขายดี
           </div>
-          <div className="px-2" style={{ width: "150px" }}>
+          <div className="px-2" style={{ width: "15rem" }}>
             {productCategory.length > 0 ? (
               <Select
                 className="text-gray-mbk  text-sm w-full border-none"

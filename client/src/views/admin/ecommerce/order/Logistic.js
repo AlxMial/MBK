@@ -329,7 +329,7 @@ const Logistic = ({
               }
               onChange={(e) => {
                 if (tbCancelOrder == null) {
-                  tbCancelOrder = { cancelOtherRemark: e.target.value,cancelStatus: "3" };
+                  tbCancelOrder = { cancelOtherRemark: e.target.value };
                 } else {
                   setDalay(e.target.value);
                   tbCancelOrder.cancelOtherRemark = e.target.value;
