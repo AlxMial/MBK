@@ -99,7 +99,7 @@ const Member = () => {
             // objectFit: "cover",
           }}
         >
-          <div className="relative liff-member" style={{ maxWidth: "150px" }}>
+          <div className="relative liff-member" style={{ maxWidth: "170px" }}>
             <div className="flex">
               <div style={{ width: "30%" }}>
                 <img
