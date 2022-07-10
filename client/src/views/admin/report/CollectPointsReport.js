@@ -184,32 +184,39 @@ export default function CollectPointsReport() {
 
   const Excel = async (sheetname) => {
     setIsLoading(true);
+
     const TitleColumns = [
       "ลำดับ",
-      "แคมเปญ",
-      "วันที่เริ่มต้น",
-      "วันที่สิ้นสุด",
-      "ประเภท",
       "รหัสสมาชิก",
       "ชื่อลูกค้า",
+      "นามสกุล",
       "เบอร์โทรศัพท์",
-      "Code",
+      "แคมเปญ",
+      "ประเภท",
+      "คะแนน",
       "สถานะ",
-      "วันที่แลก",
+      "วันที่ได้รับคะแนน",
+      "วันที่เริ่มต้น",
+      "วันที่สิ้นสุด",
+      "Code",
     ];
+
     const columns = [
       "listno",
-      "CampaignName",
-      "start",
-      "end",
-      "campaignType",
       "memberCard",
-      "member",
+      "firstName",
+      "lastName",
       "phone",
-      "code",
+      "campaignType",
+      "rewardType",
+      "point",
       "status",
       "redeem",
+      "start",
+      "end",
+      "code",
     ];
+
     let count = 0;
     let _listPoint = [];
 
@@ -231,8 +238,9 @@ export default function CollectPointsReport() {
             ? "แลกคูปอง"
             : e.campaignType == "5"
             ? "แลกของสมนาคุณ"
-            : "เล่นเกมส์",
-        member: e.firstName + " " + e.lastName,
+            : "เล่นเกม",
+        firstName: e.firstName,
+        lastName: e.lastName,
         phone: e.phone,
         code: e.code == null ? "-" : e.code,
         point: e.points,
@@ -242,6 +250,7 @@ export default function CollectPointsReport() {
             ? "-"
             : moment(e.redeemDate).format("DD/MM/YYYY"),
         memberCard: e.memberCard,
+        rewardType: e.rewardType == null ? "-" : e.rewardType,
       });
     });
     exportExcel(
@@ -557,8 +566,11 @@ export default function CollectPointsReport() {
                               : moment(value.endDate).format("DD/MM/YYYY")}
                           </span>
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                          <span
+                            className="text-gray-mbk  hover:text-gray-mbk "
+                            style={{ textAlign: "left" }}
+                          >
                             {value.campaignType == "1"
                               ? "กรอก Code จากสินค้า"
                               : value.campaignType == "2"
@@ -569,16 +581,22 @@ export default function CollectPointsReport() {
                               ? "แลกคูปอง"
                               : value.campaignType == "5"
                               ? "แลกของสมนาคุณ"
-                              : "เล่นเกมส์"}
+                              : "เล่นเกม"}
                           </span>
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
+                          <span
+                            className="text-gray-mbk  hover:text-gray-mbk "
+                            style={{ textAlign: "left" }}
+                          >
                             {value.firstName + " " + value.lastName}
                           </span>
                         </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
+                          <span
+                            className="text-gray-mbk  hover:text-gray-mbk "
+                            style={{ textAlign: "left" }}
+                          >
                             {value.phone}
                           </span>
                         </td>

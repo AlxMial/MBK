@@ -406,6 +406,7 @@ const StockInfo = ({
                               ValidateService.onHandleDecimalChange(e);
                             e.target.setSelectionRange(start, start);
                             calculateValue(formik.values.price, "price");
+                            calculateSaleValue(formik.values.price, "price")
                           }}
                         />
                       </div>
@@ -672,8 +673,8 @@ const StockInfo = ({
                             //   formik.setFieldValue("isFlashSale", value);
                             // }
                             formik.setFieldValue("isFlashSale", value);
-                            formik.setFieldValue("salepercent", "");
-                            formik.setFieldValue("saleDiscount", "");
+                            // formik.setFieldValue("salepercent", "");
+                            // formik.setFieldValue("saleDiscount", "");
                           }}
                           checked={formik.values.isFlashSale}
                         />
@@ -690,11 +691,28 @@ const StockInfo = ({
                         <DatePickerUC
                           disabled={!formik.values.isFlashSale}
                           onChange={(e) => {
-                            formik.setFieldValue(
-                              "startDateCampaign",
-                              moment(e).toDate(),
-                              false
-                            );
+                            if (e === null) {
+                              formik.setFieldValue("startDateCampaign", "", false);
+                              formik.setFieldValue("endDateCampaign", "", false);
+                            } else {
+                              formik.handleChange({
+                                target: {
+                                  name: "startDateCampaign",
+                                  value: moment(e).toDate(),
+                                },
+                              });
+                              if (formik.values.endDateCampaign != null) {
+                                if (moment(e).toDate() >= formik.values.endDateCampaign) {
+                                  formik.handleChange({
+                                    target: {
+                                      name: "endDateCampaign",
+                                      value: moment(e).toDate(),
+                                    },
+                                  });
+                                }
+                              }
+                            }
+                         
                           }}
                           value={
                             formik.values.startDateCampaign
@@ -704,6 +722,7 @@ const StockInfo = ({
                                 )
                               : null
                           }
+                         
                         />
                       </div>
                     </div>
@@ -715,11 +734,19 @@ const StockInfo = ({
                         <DatePickerUC
                           disabled={!formik.values.isFlashSale}
                           onChange={(e) => {
-                            formik.setFieldValue(
-                              "endDateCampaign",
-                              moment(e).toDate(),
-                              false
-                            );
+                            if (e === null) {
+                              formik.setFieldValue("endDateCampaign", "", false);
+                            } else {
+                              formik.handleChange({
+                                target: { name: "endDateCampaign", value: e },
+                              });
+                              formik.setFieldValue(
+                                "endDateCampaign",
+                                moment(e).toDate(),
+                                false
+                              );
+                            }
+                           
                           }}
                           value={
                             formik.values.endDateCampaign
@@ -729,6 +756,15 @@ const StockInfo = ({
                                 )
                               : null
                           }
+                          disabledDate={(current) => {
+                            if (formik.values.endDateCampaign != null) {
+                              let day = formik.values.endDateCampaign;
+                              return (
+                                current &&
+                                current <= moment(new Date(day)).endOf("day")
+                              );
+                            }
+                          }}
                         />
                       </div>
                     </div>
@@ -882,7 +918,7 @@ const StockInfo = ({
 
                   <div className="flex flex-wrap mt-4">
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                      <LabelUC label="ราคา" />
+                      <LabelUC label="ส่วนลด" />
                       <div className="relative w-full px-4"></div>
                     </div>
                     <div className="w-full lg:w-2/12 margin-auto-t-b">

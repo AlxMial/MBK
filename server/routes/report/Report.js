@@ -153,7 +153,12 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
                   required: true,
                   include: [
                     {
-                      attributes: ["phone", "firstName", "lastName","memberCard"],
+                      attributes: [
+                        "phone",
+                        "firstName",
+                        "lastName",
+                        "memberCard",
+                      ],
                       model: tbMember,
                       where: {
                         isDeleted: false,
@@ -246,7 +251,7 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
               required: true,
               include: [
                 {
-                  attributes: ["phone", "firstName", "lastName","memberCard"],
+                  attributes: ["phone", "firstName", "lastName", "memberCard"],
                   model: tbMember,
                   where: {
                     isDeleted: false,
@@ -291,9 +296,19 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
                 points: points,
                 redeemDate: redeemDate,
                 expiredDate: expiredDate,
-                ...Encrypt.decryptAllData(
-                  rp.tbMemberRewards[0].dataValues.tbMember
-                ).dataValues,
+                firstName: Encrypt.DecodeKey(
+                  rp.tbMemberRewards[0].dataValues.tbMember.dataValues.firstName
+                ),
+                lastName: Encrypt.DecodeKey(
+                  rp.tbMemberRewards[0].dataValues.tbMember.dataValues.lastName
+                ),
+                phone: Encrypt.DecodeKey(
+                  rp.tbMemberRewards[0].dataValues.tbMember.dataValues.phone
+                ),
+                memberCard: Encrypt.DecodeKey(
+                  rp.tbMemberRewards[0].dataValues.tbMember.dataValues
+                    .memberCard
+                ),
               });
             }
           });
@@ -316,7 +331,7 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
       order: [["redeemDate", "DESC"]],
       include: [
         {
-          attributes: ["phone", "firstName", "lastName","memberCard"],
+          attributes: ["phone", "firstName", "lastName", "memberCard"],
           model: tbMember,
           where: {
             isDeleted: false,
@@ -348,7 +363,7 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
             firstName: Encrypt.DecodeKey(e.tbMember.dataValues.firstName),
             lastName: Encrypt.DecodeKey(e.tbMember.dataValues.lastName),
             phone: Encrypt.DecodeKey(e.tbMember.dataValues.phone),
-            memberCard :Encrypt.DecodeKey(e.tbMember.dataValues.memberCard)
+            memberCard: Encrypt.DecodeKey(e.tbMember.dataValues.memberCard),
           });
         } else if (e.campaignType == 3) {
           let CampaignName = "ลงทะเบียน";
@@ -369,7 +384,7 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
             firstName: Encrypt.DecodeKey(e.tbMember.dataValues.firstName),
             lastName: Encrypt.DecodeKey(e.tbMember.dataValues.lastName),
             phone: Encrypt.DecodeKey(e.tbMember.dataValues.phone),
-            memberCard :Encrypt.DecodeKey(e.tbMember.dataValues.memberCard)
+            memberCard: Encrypt.DecodeKey(e.tbMember.dataValues.memberCard),
           });
         }
 
@@ -446,6 +461,9 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
                     item.tbMember.dataValues.lastName
                   ),
                   phone: Encrypt.DecodeKey(item.tbMember.dataValues.phone),
+                  memberCard: Encrypt.DecodeKey(
+                    item.tbMember.dataValues.memberCard
+                  ),
                 });
               });
             }
@@ -934,7 +952,7 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
             if (rdCupon !== null && rdCupon.tbRedemptionConditionsHD !== null) {
               redemptionName = rdCupon.tbRedemptionConditionsHD.redemptionName;
               redemptionType = rdCupon.tbRedemptionConditionsHD.redemptionType;
-             
+
               points = rdCupon.tbRedemptionConditionsHD.points;
               startDate = rdCupon.tbRedemptionConditionsHD.startDate;
               endDate = rdCupon.tbRedemptionConditionsHD.endDate;
@@ -954,7 +972,7 @@ router.get("/ShowCampaignExchange", validateToken, async (req, res) => {
             if (rwHD !== null) {
               redemptionName = rwHD.redemptionName;
               redemptionType = rwHD.redemptionType;
-              
+
               points = rwHD.points;
               startDate = rwHD.startDate;
               endDate = rwHD.endDate;

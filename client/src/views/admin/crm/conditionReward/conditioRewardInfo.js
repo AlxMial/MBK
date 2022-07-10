@@ -836,7 +836,9 @@ export default function ConditioRewardInfo() {
                     <div className="flex" style={{ justifyContent: "end" }}>
                       <CheckBoxUC
                         text="Partner"
-                        checked={isImport ? true : false}
+                        checked={
+                          isImport || formik.values.couponType ? true : false
+                        }
                         classLabel="mt-2 mb-4 w-full justify-end"
                         disabled={true}
                       />
@@ -968,7 +970,9 @@ export default function ConditioRewardInfo() {
                       />
                       <span
                         className="margin-auto-t-b font-bold"
-                        style={{ marginLeft: width < 764 ? "1rem" : "2rem" }}
+                        style={{
+                          marginLeft: width < 764 ? "1rem" : "2rem",
+                        }}
                       >
                         คะแนน
                       </span>
@@ -1021,7 +1025,6 @@ export default function ConditioRewardInfo() {
                             }
                           }
                         }}
-                       
                         value={
                           !isClick.redemptionStart
                             ? formik.values.startDate == ""
@@ -1064,7 +1067,9 @@ export default function ConditioRewardInfo() {
                             ? "ไม่มีวันหมดอายุ"
                             : "เลือกวันที่"
                         }
-                        disabled={formik.values.isNotExpired ==true ?true : false}
+                        disabled={
+                          formik.values.isNotExpired == true ? true : false
+                        }
                         disabledValue={
                           formik.values.isNotExpired ? true : false
                         }
