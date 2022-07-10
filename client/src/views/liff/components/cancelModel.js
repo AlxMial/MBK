@@ -30,7 +30,7 @@ const CancelModel = ({
         className="Modal-line-cancel"
         style={{ borderRadius: "10px" }}
       >
-        <div className="w-full flex flex-wrap">
+        <div className="w-full flex flex-wrap" style={{ minHeight: "350px" }}>
           <div className="h-full w-full flex-auto mt-2 relative ">
             <ModalHeader
               title="ยกเลิกสินค้า"
@@ -99,7 +99,7 @@ const CancelModel = ({
             </div>
 
             <div
-              className="w-full flex outline-gold-mbk text-gold-mbk text-center text-lg  font-bold bt-line absolute"
+              className="w-full flex outline-gold-mbk text-gold-mbk text-center text-lg  font-bold bt-line "
               style={{ bottom: "0" }}
               onClick={Cancelorder}
             >
