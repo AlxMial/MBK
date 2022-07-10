@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       buy: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL(11, 2),
         allowNull: true,
       },
       condition: {
@@ -13,15 +13,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
       discount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL(11, 2),
         allowNull: true,
       },
       percentDiscount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL(11, 2),
         allowNull: true,
       },
       percentDiscountAmount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL(11, 2),
         allowNull: true,
       },
       description: {

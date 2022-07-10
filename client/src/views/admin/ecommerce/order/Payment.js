@@ -9,13 +9,13 @@ const Payment = ({ props, setOrderHD }) => {
     const [payment, setPayment] = useState(null);
 
     const getoption = () => {
-        if (orderHDold.paymentStatus === 1) {
+        if (orderHDold.paymentStatus == 1) {
             return [
                 { value: 1, label: 'รอชำระเงิน' },
                 { value: 2, label: 'รอตรวจสอบ' },
                 { value: 3, label: 'ชำระเงินแล้ว' },
             ]
-        } else if (orderHDold.paymentStatus === 2) {
+        } else if (orderHDold.paymentStatus == 2) {
             return [
                 { value: 1, label: 'รอชำระเงิน', isDisabled: true },
                 { value: 2, label: 'รอตรวจสอบ' },
@@ -56,9 +56,7 @@ const Payment = ({ props, setOrderHD }) => {
     useEffect(async () => {
         const response = await axios.get(`/payment/byId/${orderHD.paymentId}`);
         if (response.data.status) {
-            console.log(response.data)
             setPayment(response.data.tbPayment);
-
         }
     }, []);
 
@@ -95,7 +93,7 @@ const Payment = ({ props, setOrderHD }) => {
                                     paymentStatus
                                 )}
                                 isOptionDisabled={(option) => option.disabled}
-                                isDisabled={!isCanEdit}
+                                isDisabled={orderHD && (orderHD.paymentDate == null) ? true :  !isCanEdit}
                             // customStyles={getCss( orderHD.paymentStatus)}
                             />
                         </div>

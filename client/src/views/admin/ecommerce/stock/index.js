@@ -13,6 +13,7 @@ import FilesService from "../../../../services/files";
 import { onSaveImage } from "services/ImageService";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
+import ValidateService from "services/validateValue";
 
 const Stock = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const Stock = () => {
   const [listStock, setListStock] = useState([]);
   const [listSearch, setListSearch] = useState([]);
   const [open, setOpen] = useState(false);
+  const [errorImage, setErrorImage] = useState(false);
   let history = useHistory();
 
   const _defaultImage = {
@@ -140,21 +142,27 @@ const Stock = () => {
 
   const handleChangeImage = async (e) => {
     e.preventDefault();
-    dispatch(fetchLoading());
-    const base64 = await FilesService.convertToBase64(e.target.files[0]);
-    const index = parseInt(e.target.id.replace("file", ""));
-    setStockImage(
-      stockImage.map((x, i) => {
-        if (i + 1 === index) {
-          return { ...x, image: base64 };
+    if (e.target.files.length > 0) {
+      const dataImage = ValidateService.validateImage(e.target.files[0].name);
+      setErrorImage(dataImage);
+      if (!dataImage) {
+        dispatch(fetchLoading());
+        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        const index = parseInt(e.target.id.replace("file", ""));
+        setStockImage(
+          stockImage.map((x, i) => {
+            if (i + 1 === index) {
+              return { ...x, image: base64 };
+            }
+            return x;
+          })
+        );
+        if (index === 1) {
+          setIsImageCoverNull(false);
         }
-        return x;
-      })
-    );
-    if (index === 1) {
-      setIsImageCoverNull(false);
+        dispatch(fetchSuccess());
+      }
     }
-    dispatch(fetchSuccess());
   };
 
   const formik = useFormik({
@@ -190,43 +198,46 @@ const Stock = () => {
       // discount: yup.string().required("* กรุณากรอก ส่วนลด"),
     }),
     onSubmit: (values) => {
-      dispatch(fetchLoading());
-      const cover = stockImage.filter((x) => x.relatedTable === "stock1")[0]
-        .image;
-      if (!cover) {
-        setIsImageCoverNull(true);
-        dispatch(fetchSuccess());
-      } else {
-        values.updateBy = sessionStorage.getItem("user");
-        if (values.id) {
-          values.discount = (values.discount === undefined) ? 0 : values.discount;
-          values.percent = (values.percent === undefined) ? 0 : values.percent;
-          axios.put("stock", values).then(async (res) => {
-            if (res.data.status) {
-              await saveImage(values.id);
-              afterSaveSuccess();
-            } else {
-              dispatch(fetchSuccess());
-              addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                appearance: "warning",
-                autoDismiss: true,
-              });
-            }
-          });
+      if (!errorImage) {
+        dispatch(fetchLoading());
+        const cover = stockImage.filter((x) => x.relatedTable === "stock1")[0]
+          .image;
+        if (!cover) {
+          setIsImageCoverNull(true);
+          dispatch(fetchSuccess());
         } else {
-          values.addBy = sessionStorage.getItem("user");
-          axios.post("stock", values).then(async (res) => {
-            if (res.data.status) {
-              await saveImage(res.data.tbStock.id);
-              afterSaveSuccess();
-            } else {
-              dispatch(fetchSuccess());
-              addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                appearance: "warning",
-                autoDismiss: true,
-              });
-            }
-          });
+          values.updateBy = sessionStorage.getItem("user");
+          if (values.id) {
+            values.discount =
+              values.discount === undefined ? 0 : values.discount;
+            values.percent = values.percent === undefined ? 0 : values.percent;
+            axios.put("stock", values).then(async (res) => {
+              if (res.data.status) {
+                await saveImage(values.id);
+                afterSaveSuccess();
+              } else {
+                dispatch(fetchSuccess());
+                addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                  appearance: "warning",
+                  autoDismiss: true,
+                });
+              }
+            });
+          } else {
+            values.addBy = sessionStorage.getItem("user");
+            axios.post("stock", values).then(async (res) => {
+              if (res.data.status) {
+                await saveImage(res.data.tbStock.id);
+                afterSaveSuccess();
+              } else {
+                dispatch(fetchSuccess());
+                addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                  appearance: "warning",
+                  autoDismiss: true,
+                });
+              }
+            });
+          }
         }
       }
     },
@@ -294,6 +305,7 @@ const Stock = () => {
           isImageCoverNull={isImageCoverNull}
           stockImage={stockImage}
           handleModal={() => setOpen(false)}
+          errorImage={errorImage}
         />
       )}
     </>

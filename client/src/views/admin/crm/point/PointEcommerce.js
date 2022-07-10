@@ -61,6 +61,7 @@ export default function PointEcommerce() {
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
+  const [startDateValue,setStartDateValue] = useState("");
   /* Method Condition */
   const options = [
     { label: "เปิดการใช้งาน", value: true },
@@ -102,7 +103,10 @@ export default function PointEcommerce() {
       setErrorPrice(false);
       setErrorUnitProduct(false);
       setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
-      setEndDateCode(moment(new Date(), "DD/MM/YYYY"));
+      const dt = new Date();
+      dt.setDate(dt.getDate() + 1)
+      setEndDateCode(moment(dt, "DD/MM/YYYY"));
+      formik.values.points = 0;
       formik.resetForm();
       setIsNew(true);
     }
@@ -816,6 +820,7 @@ export default function PointEcommerce() {
                                               new Date(),
                                               false
                                             );
+                                            setStartDateCode(moment(new Date(), "DD/MM/YYYY"))
                                             setErrorStartDate(true);
                                           } else {
                                             if (
@@ -826,7 +831,7 @@ export default function PointEcommerce() {
                                             )
                                               setErrorDate(true);
                                             else setErrorDate(false);
-
+                                            setStartDateCode(moment(e).toDate())
                                             setErrorStartDate(false);
                                             formik.setFieldValue(
                                               "startDate",
@@ -931,12 +936,31 @@ export default function PointEcommerce() {
                                           );
                                         }
                                       }}
+
+                                      // disabledDate={(current) => {
+                                      //   if (formik.values.startDate != null) {
+                                      //     let day = formik.values.startDate
+                                      //     console.log(day)
+                                      //     return current && current <= moment(new Date(day)).endOf('day');
+                                      //   }
+                                      // }}
+                                      disabledDate={(current) => {
+                                        if (startDateCode != null) {
+                               
+                                          let day = startDateCode;
+                                          return (
+                                            current &&
+                                            current <= moment(new Date(day)).endOf("day")
+                                          );
+                                        }
+                                      }}
                                       // value={moment(
                                       //   new Date(formikImport.values.endDate),
                                       //   "DD/MM/YYYY"
                                       // )}
                                     />
                                   </ConfigProvider>
+                    
                                   {errorEndDate || errorStartDate ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       {errorEndDate ? (

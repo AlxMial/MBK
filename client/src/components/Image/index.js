@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "services/axios";
 import FilesService from "../../services/files";
-const ImageUC = (prop) => {
+const ImageUC = (prop,{setErrorFile}) => {
   const [Img, setImg] = useState(null);
   const [ImgisLoading, setImgisLoading] = useState(false);
   const { ...other } = prop;

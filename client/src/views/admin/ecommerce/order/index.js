@@ -34,6 +34,7 @@ const Order = () => {
   const [isCancel, setIsCancel] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelStatus, setcancelStatus] = useState(null);
+  const [block, setBlock] = useState(false);
   const [ismodalIsOpenEdit, setmodalIsOpenEdit] = useState({
     open: false,
     callback: () => {},
@@ -48,13 +49,14 @@ const Order = () => {
     setOrderImage(null);
 
     await axios.get("order/orderHD").then(async (response) => {
-
       if (!response.data.error && response.data.tbOrderHD) {
         let _orderData = response.data.tbOrderHD;
-        console.log(_orderData)
         await response.data.tbOrderHD.map(async (e, i) => {
           e.province = await Address.getAddressName("province", e.province);
-          e.subDistrict = await Address.getAddressName("subDistrict", e.subDistrict);
+          e.subDistrict = await Address.getAddressName(
+            "subDistrict",
+            e.subDistrict
+          );
           e.district = await Address.getAddressName("district", e.district);
         });
 
@@ -190,116 +192,128 @@ const Order = () => {
           orderNumber !== "") ||
           !isChangeOrderNumber)
       ) {
-        const res = await axios.get("order/orderHD/ById/" + orderHD.id);
-        if (!res.data.error && res.data.tbOrderHD) {
-          dispatch(fetchSuccess());
-          setmodalIsOpenEdit({
-            open: true,
-            callback: async () => {
-              const _dataHD = res.data.tbOrderHD;
-              _dataHD.transportStatus = transportStatus;
-              _dataHD.paymentStatus = paymentStatus;
-              _dataHD.trackNo = orderHD.trackNo;
-              _dataHD.isCancel = isCancel;
-              // _dataHD.transportStatus = orderHD.transportStatus;
-
-              await axios.put("order/orderHD", _dataHD).then(async (res) => {
-                if (res.data.error) {
-                  dispatch(fetchSuccess());
-                  addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                    appearance: "warning",
-                    autoDismiss: true,
-                  });
-                } else if (isCancel) {
-                  // insert into tbCancelOrder
-                  const _dataCancel = {
-                    id: "",
-                    orderId: orderHD.id,
-                    cancelStatus: cancelStatus ? 2 : 3,
-                    cancelDetail:
-                      tbCancelOrder.cancelDetail == undefined
-                        ? ""
-                        : tbCancelOrder.cancelDetail,
-                    description: tbCancelOrder.description,
-                    cancelOtherRemark: tbCancelOrder.cancelOtherRemark,
-                    cancelType: 1,
-                    addBy: sessionStorage.getItem("user"),
-                    updateBy: sessionStorage.getItem("user"),
-                    isDeleted: false,
-                  };
-
-                  await axios
-                    .post("cancelOrder", _dataCancel)
-                    .then(async (res) => {
-                      if (res.data.status) {
-                        console.log(_dataHD);
-                        axios
-                          .post("mails/cancelsuccess", {
-                            // frommail: "noreply@undefined.co.th",
-                            // password: "Has88149*",
-                            frommail: "no-reply@prg.co.th",
-                            password: "Tus92278",
-                            tomail: _dataHD.email,
-                            orderNumber: _dataHD.orderNumber,
-                            memberName:
-                              _dataHD.firstName + " " + _dataHD.lastName,
-                            cancelOtherRemark: tbCancelOrder.cancelOtherRemark,
-                            cancelDetail:
-                              tbCancelOrder.cancelDetail === undefined
-                                ? ""
-                                : tbCancelOrder.cancelDetail,
-                            orderDate: moment(_dataHD.orderDate).format(
-                              "DD/MM/YYYY"
-                            ),
-                          })
-                          .then((res) => {})
-                          .catch((error) => {})
-                          .finally((final) => {});
-
-                        addToast("บันทึกข้อมูลสำเร็จ", {
-                          appearance: "success",
-                          autoDismiss: true,
-                        });
-                      } else {
-                        addToast("บันทึกข้อมูลไม่สำเร็จ", {
-                          appearance: "warning",
-                          autoDismiss: true,
-                        });
-                      }
-                      dispatch(fetchSuccess());
-                    });
-                } else {
-                  if (paymentStatus.toString() === "3") {
-                    axios
-                      .post("mails/paymentsuccessadmin", {
-                        // frommail: "noreply@undefined.co.th",
-                        // password: "Has88149*",
-                        frommail: "no-reply@prg.co.th",
-                        password: "Tus92278",
-                        tomail: _dataHD.email,
-                        orderNumber: _dataHD.orderNumber,
-                        memberName: _dataHD.firstName + " " + _dataHD.lastName,
-                        orderPrice: _dataHD.netTotal,
-                        orderDate: moment(_dataHD.orderDate).format(
-                          "DD/MM/YYYY"
-                        ),
-                      })
-                      .then((res) => {})
-                      .catch((error) => {})
-                      .finally((final) => {});
-                  }
-                }
-              });
-
-              await fetchData();
-              setOpen(false);
-            },
-          });
+        let Error = false;
+        if (tbCancelOrder != null) {
+          if (tbCancelOrder.cancelOtherRemark == "") {setCancelReason(true); Error = true;}
+        } else {
+          setCancelReason(false);
         }
-      } else {
-        dispatch(fetchSuccess());
-      }
+        if (!Error) {
+          const res = await axios.get("order/orderHD/ById/" + orderHD.id);
+          if (!res.data.error && res.data.tbOrderHD) {
+            dispatch(fetchSuccess());
+            setmodalIsOpenEdit({
+              open: true,
+              callback: async () => {
+                const _dataHD = res.data.tbOrderHD;
+                _dataHD.transportStatus = transportStatus;
+                _dataHD.paymentStatus = paymentStatus;
+                _dataHD.trackNo = orderHD.trackNo;
+                _dataHD.isCancel = isCancel;
+                // _dataHD.transportStatus = orderHD.transportStatus;
 
+                await axios.put("order/orderHD", _dataHD).then(async (res) => {
+                  if (res.data.error) {
+                    dispatch(fetchSuccess());
+                    addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                      appearance: "warning",
+                      autoDismiss: true,
+                    });
+                  } else if (isCancel) {
+                    // insert into tbCancelOrder
+                    const _dataCancel = {
+                      id: "",
+                      orderId: orderHD.id,
+                      cancelStatus:
+                        tbCancelOrder.cancelStatus == undefined
+                          ? "3"
+                          : tbCancelOrder.cancelStatus,
+                      cancelDetail:
+                        tbCancelOrder.cancelDetail == undefined
+                          ? "ต้องการเปลี่ยนแปลงที่อยู่ในการจัดส่งสินค้า"
+                          : tbCancelOrder.cancelDetail,
+                      description: tbCancelOrder.description,
+                      cancelOtherRemark: tbCancelOrder.cancelOtherRemark,
+                      cancelType: 1,
+                      addBy: sessionStorage.getItem("user"),
+                      updateBy: sessionStorage.getItem("user"),
+                      isDeleted: false,
+                    };
+
+                    await axios
+                      .post("cancelOrder", _dataCancel)
+                      .then(async (res) => {
+                        if (res.data.status) {
+                          console.log(_dataHD);
+                          axios
+                            .post("mails/cancelsuccess", {
+                              // frommail: "noreply@undefined.co.th",
+                              // password: "Has88149*",
+                              frommail: "no-reply@prg.co.th",
+                              password: "Tus92278",
+                              tomail: _dataHD.email,
+                              orderNumber: _dataHD.orderNumber,
+                              memberName:
+                                _dataHD.firstName + " " + _dataHD.lastName,
+                              cancelOtherRemark:
+                                tbCancelOrder.cancelOtherRemark,
+                              cancelDetail:
+                                tbCancelOrder.cancelDetail === undefined
+                                  ? ""
+                                  : tbCancelOrder.cancelDetail,
+                              orderDate: moment(_dataHD.orderDate).format(
+                                "DD/MM/YYYY"
+                              ),
+                            })
+                            .then((res) => {})
+                            .catch((error) => {})
+                            .finally((final) => {});
+
+                          addToast("บันทึกข้อมูลสำเร็จ", {
+                            appearance: "success",
+                            autoDismiss: true,
+                          });
+                        } else {
+                          addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                            appearance: "warning",
+                            autoDismiss: true,
+                          });
+                        }
+                        dispatch(fetchSuccess());
+                      });
+                  } else {
+                    if (paymentStatus.toString() === "3") {
+                      axios
+                        .post("mails/paymentsuccessadmin", {
+                          // frommail: "noreply@undefined.co.th",
+                          // password: "Has88149*",
+                          frommail: "no-reply@prg.co.th",
+                          password: "Tus92278",
+                          tomail: _dataHD.email,
+                          orderNumber: _dataHD.orderNumber,
+                          memberName:
+                            _dataHD.firstName + " " + _dataHD.lastName,
+                          orderPrice: _dataHD.netTotal,
+                          orderDate: moment(_dataHD.orderDate).format(
+                            "DD/MM/YYYY"
+                          ),
+                        })
+                        .then((res) => {})
+                        .catch((error) => {})
+                        .finally((final) => {});
+                    }
+                  }
+                });
+
+                await fetchData();
+                setOpen(false);
+              },
+            });
+          }
+        } else {
+          dispatch(fetchSuccess());
+        }
+      }
       // await saveImage(orderHD.id);
     } else {
       setOpen(false);
@@ -479,7 +493,6 @@ const Order = () => {
           className={
             "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white Overflow-list "
           }
-  
         >
           <div className="rounded-t mb-0 px-4 py-3 border-0">
             <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">

@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ModalHeader = ({ title, handleModal }) => {
+const ModalHeader = ({ title, handleModal,isClose = true }) => {
     return (
         <>
             <div className=" flex justify-between align-middle ">
@@ -10,7 +10,7 @@ const ModalHeader = ({ title, handleModal }) => {
                     </div>
                 </div>
 
-                <div className="  text-right align-middle  mb-3">
+                <div className= {"  text-right align-middle  mb-3" +((!isClose) ? " hidden" : "")}>
                     <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
                         <label
                             className="cursor-pointer"

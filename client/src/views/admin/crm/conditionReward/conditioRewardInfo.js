@@ -84,6 +84,7 @@ export default function ConditioRewardInfo() {
   const [isRedemptionType, setIsRedemptionType] = useState(false);
   const [isDisableType, setIsDisableType] = useState(false);
   const [listGame, setListGame] = useState([]);
+  const [errorImage, setErrorImage] = useState(false);
   const dispatch = useDispatch();
   let history = useHistory();
 
@@ -127,7 +128,7 @@ export default function ConditioRewardInfo() {
       rewardType: "",
       couponType: false,
       points: 0,
-      isNotExpired: false,
+      isNotExpired: true,
       rewardGameAmount: 0,
       startDate: new Date(),
       endDate: moment(new Date()).add(1, "days").toDate(),
@@ -170,211 +171,21 @@ export default function ConditioRewardInfo() {
     }),
     onSubmit: (values) => {
       let ImageSave = {};
-      if (formik.values.redemptionType === "2") {
-        values["listGame"] = listGame;
-        if (isNew) {
-          dispatch(fetchLoading());
-          formik.values.addBy = sessionStorage.getItem("user");
-          axios.post("redemptions/game", values).then(async (res) => {
-            if (res.data.status) {
-              setIsNew(false);
-              formik.values.id = res.data.tbRedemptionConditionsHD.id;
-              history.push(
-                `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
-              );
-              dispatch(fetchSuccess());
-              formik.setTouched({});
-              addToast(
-                Storage.GetLanguage() === "th"
-                  ? "บันทึกข้อมูลสำเร็จ"
-                  : "Save data successfully",
-                { appearance: "success", autoDismiss: true }
-              );
-            } else {
-              dispatch(fetchSuccess());
-              formik.setTouched({});
-              addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
-              );
-            }
-          });
-        } else {
-          dispatch(fetchLoading());
-          formik.values.updateBy = sessionStorage.getItem("user");
-          axios.put("redemptions/game", values).then(async (res) => {
-            if (res.data.status) {
-              dispatch(fetchSuccess());
-              formik.setTouched({});
-              addToast(
-                Storage.GetLanguage() === "th"
-                  ? "บันทึกข้อมูลสำเร็จ"
-                  : "Save data successfully",
-                { appearance: "success", autoDismiss: true }
-              );
-            } else {
-              dispatch(fetchSuccess());
-              formik.setTouched({});
-              addToast(
-                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
-                {
-                  appearance: "warning",
-                  autoDismiss: true,
-                }
-              );
-            }
-          });
-        }
-      } else {
-        let formData = new FormData();
-        if (isImport) {
-          values["coupon"] = formikCouponImport.values;
-          values["couponType"] = true;
-          formik.values.couponType = true;
-          formData.append("file", file);
-          ImageSave = {
-            ...imageCoupon,
-            image: formikCouponImport.values.pictureCoupon,
-            relatedTable: "tbRedemptionCoupon",
-          };
-        } else if (formik.values.rewardType === "1") {
-          values["coupon"] = formikCoupon.values;
-          values["couponType"] = false;
-          ImageSave = {
-            ...imageCoupon,
-            image: formikCoupon.values.pictureCoupon,
-            relatedTable: "tbRedemptionCoupon",
-          };
-        } else if (formik.values.rewardType === "2") {
-          values["product"] = formikProduct.values;
-          ImageSave = {
-            ...imageProduct,
-            image: formikProduct.values.pictureProduct,
-            relatedTable: "tbRedemptionProduct",
-          };
-        }
-        if (
-          (formik.values.rewardType === "1" && formikCoupon.isValid) ||
-          (formik.values.rewardType === "2" && formikProduct.isValid) ||
-          (formikCouponImport.isValid && isImport)
-        ) {
+      if (!errorImage) {
+        if (formik.values.redemptionType === "2") {
+          values["listGame"] = listGame;
           if (isNew) {
             dispatch(fetchLoading());
             formik.values.addBy = sessionStorage.getItem("user");
-            axios.post("redemptions", values).then(async (res) => {
+            axios.post("redemptions/game", values).then(async (res) => {
               if (res.data.status) {
                 setIsNew(false);
                 formik.values.id = res.data.tbRedemptionConditionsHD.id;
-                formikCoupon.setFieldValue(
-                  "pictureCoupon",
-                  isImport
-                    ? formikCouponImport.values.pictureCoupon
-                    : formikCoupon.values.pictureCoupon
+                history.push(
+                  `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
                 );
-                if (isImport) {
-                  for (var columns in res.data.tbRedemptionCoupon) {
-                    formikCoupon.setFieldValue(
-                      columns,
-                      res.data.tbRedemptionCoupon[columns]
-                    );
-                  }
-                }
-                ImageSave = {
-                  ...ImageSave,
-                  relatedId:
-                    formik.values.rewardType === "1"
-                      ? res.data.tbRedemptionCoupon.id
-                      : res.data.tbRedemptionProduct.id,
-                };
-                await onSaveImage(ImageSave, async (resImages) => {
-                  if (formik.values.rewardType === "1") {
-                    formikCoupon.values.id = res.data.tbRedemptionCoupon.id;
-                    if (isImport) {
-                      formData.append("id", res.data.tbRedemptionCoupon.id);
-                      formData.append("addBy", sessionStorage.getItem("user"));
-                      await axiosUpload
-                        .post("api/coupon/uploadCoupon", formData)
-                        .then(async (resExcel) => {
-                          if (resExcel.data.status) {
-                            await axios
-                              .post("/uploadExcel/coupon", {
-                                couponId: res.data.tbRedemptionCoupon.id,
-                              })
-                              .then((resUpload) => {
-                                dispatch(fetchSuccess());
-                                addToast(
-                                  Storage.GetLanguage() === "th"
-                                    ? "บันทึกข้อมูลสำเร็จ"
-                                    : "Save data successfully",
-                                  { appearance: "success", autoDismiss: true }
-                                );
-                              });
-                          } else {
-                            dispatch(fetchSuccess());
-                            addToast(
-                              Storage.GetLanguage() === "th"
-                                ? "บันทึกข้อมูลไม่สำเร็จ"
-                                : "Unsuccessfully",
-                              { appearance: "error", autoDismiss: true }
-                            );
-                          }
-                        });
-                    } else {
-                      addToast(
-                        Storage.GetLanguage() === "th"
-                          ? "บันทึกข้อมูลสำเร็จ"
-                          : "Save data successfully",
-                        { appearance: "success", autoDismiss: true }
-                      );
-                      dispatch(fetchSuccess());
-                    }
-                  } else if (formik.values.rewardType === "2") {
-                    formikProduct.values.id = res.data.tbRedemptionProduct.id;
-                    dispatch(fetchSuccess());
-                    addToast(
-                      Storage.GetLanguage() === "th"
-                        ? "บันทึกข้อมูลสำเร็จ"
-                        : "Save data successfully",
-                      { appearance: "success", autoDismiss: true }
-                    );
-                  }
-                  dispatch(fetchSuccess());
-                  history.push(
-                    `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
-                  );
-                  // window.location.href( `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`);
-                  setIsImport(false);
-                });
-              } else {
                 dispatch(fetchSuccess());
-                addToast(
-                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
-                  {
-                    appearance: "warning",
-                    autoDismiss: true,
-                  }
-                );
-              }
-              formik.setTouched({});
-            });
-          } else {
-            formik.values.updateBy = sessionStorage.getItem("user");
-            dispatch(fetchLoading());
-            console.log(values);
-            // formik.setFieldValue("expired", null);
-            axios.put("redemptions", values).then(async (res) => {
-              if (res.data.status) {
-                ImageSave = {
-                  ...ImageSave,
-                  relatedId:
-                    formik.values.rewardType === "1"
-                      ? formikCoupon.values.id
-                      : formikProduct.values.id,
-                };
-                await onSaveImage(ImageSave, async (res) => {});
+                formik.setTouched({});
                 addToast(
                   Storage.GetLanguage() === "th"
                     ? "บันทึกข้อมูลสำเร็จ"
@@ -382,6 +193,8 @@ export default function ConditioRewardInfo() {
                   { appearance: "success", autoDismiss: true }
                 );
               } else {
+                dispatch(fetchSuccess());
+                formik.setTouched({});
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
                   {
@@ -390,9 +203,202 @@ export default function ConditioRewardInfo() {
                   }
                 );
               }
-              formik.setTouched({});
-              dispatch(fetchSuccess());
             });
+          } else {
+            dispatch(fetchLoading());
+            formik.values.updateBy = sessionStorage.getItem("user");
+            axios.put("redemptions/game", values).then(async (res) => {
+              if (res.data.status) {
+                dispatch(fetchSuccess());
+                formik.setTouched({});
+                addToast(
+                  Storage.GetLanguage() === "th"
+                    ? "บันทึกข้อมูลสำเร็จ"
+                    : "Save data successfully",
+                  { appearance: "success", autoDismiss: true }
+                );
+              } else {
+                dispatch(fetchSuccess());
+                formik.setTouched({});
+                addToast(
+                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
+                  {
+                    appearance: "warning",
+                    autoDismiss: true,
+                  }
+                );
+              }
+            });
+          }
+        } else {
+          let formData = new FormData();
+          if (isImport) {
+            values["coupon"] = formikCouponImport.values;
+            values["couponType"] = true;
+            formik.values.couponType = true;
+            formData.append("file", file);
+            ImageSave = {
+              ...imageCoupon,
+              image: formikCouponImport.values.pictureCoupon,
+              relatedTable: "tbRedemptionCoupon",
+            };
+          } else if (formik.values.rewardType === "1") {
+            values["coupon"] = formikCoupon.values;
+            values["couponType"] = false;
+            ImageSave = {
+              ...imageCoupon,
+              image: formikCoupon.values.pictureCoupon,
+              relatedTable: "tbRedemptionCoupon",
+            };
+          } else if (formik.values.rewardType === "2") {
+            values["product"] = formikProduct.values;
+            ImageSave = {
+              ...imageProduct,
+              image: formikProduct.values.pictureProduct,
+              relatedTable: "tbRedemptionProduct",
+            };
+          }
+          if (
+            (formik.values.rewardType === "1" && formikCoupon.isValid) ||
+            (formik.values.rewardType === "2" && formikProduct.isValid) ||
+            (formikCouponImport.isValid && isImport)
+          ) {
+            if (isNew) {
+              dispatch(fetchLoading());
+              formik.values.addBy = sessionStorage.getItem("user");
+              axios.post("redemptions", values).then(async (res) => {
+                if (res.data.status) {
+                  setIsNew(false);
+                  formik.values.id = res.data.tbRedemptionConditionsHD.id;
+                  formikCoupon.setFieldValue(
+                    "pictureCoupon",
+                    isImport
+                      ? formikCouponImport.values.pictureCoupon
+                      : formikCoupon.values.pictureCoupon
+                  );
+                  if (isImport) {
+                    for (var columns in res.data.tbRedemptionCoupon) {
+                      formikCoupon.setFieldValue(
+                        columns,
+                        res.data.tbRedemptionCoupon[columns]
+                      );
+                    }
+                  }
+                  ImageSave = {
+                    ...ImageSave,
+                    relatedId:
+                      formik.values.rewardType === "1"
+                        ? res.data.tbRedemptionCoupon.id
+                        : res.data.tbRedemptionProduct.id,
+                  };
+                  await onSaveImage(ImageSave, async (resImages) => {
+                    if (formik.values.rewardType === "1") {
+                      formikCoupon.values.id = res.data.tbRedemptionCoupon.id;
+                      if (isImport) {
+                        formData.append("id", res.data.tbRedemptionCoupon.id);
+                        formData.append(
+                          "addBy",
+                          sessionStorage.getItem("user")
+                        );
+                        await axiosUpload
+                          .post("api/coupon/uploadCoupon", formData)
+                          .then(async (resExcel) => {
+                            if (resExcel.data.status) {
+                              await axios
+                                .post("/uploadExcel/coupon", {
+                                  couponId: res.data.tbRedemptionCoupon.id,
+                                })
+                                .then((resUpload) => {
+                                  dispatch(fetchSuccess());
+                                  addToast(
+                                    Storage.GetLanguage() === "th"
+                                      ? "บันทึกข้อมูลสำเร็จ"
+                                      : "Save data successfully",
+                                    { appearance: "success", autoDismiss: true }
+                                  );
+                                });
+                            } else {
+                              dispatch(fetchSuccess());
+                              addToast(
+                                Storage.GetLanguage() === "th"
+                                  ? "บันทึกข้อมูลไม่สำเร็จ"
+                                  : "Unsuccessfully",
+                                { appearance: "error", autoDismiss: true }
+                              );
+                            }
+                          });
+                      } else {
+                        addToast(
+                          Storage.GetLanguage() === "th"
+                            ? "บันทึกข้อมูลสำเร็จ"
+                            : "Save data successfully",
+                          { appearance: "success", autoDismiss: true }
+                        );
+                        dispatch(fetchSuccess());
+                      }
+                    } else if (formik.values.rewardType === "2") {
+                      formikProduct.values.id = res.data.tbRedemptionProduct.id;
+                      dispatch(fetchSuccess());
+                      addToast(
+                        Storage.GetLanguage() === "th"
+                          ? "บันทึกข้อมูลสำเร็จ"
+                          : "Save data successfully",
+                        { appearance: "success", autoDismiss: true }
+                      );
+                    }
+                    dispatch(fetchSuccess());
+                    history.push(
+                      `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
+                    );
+                    // window.location.href( `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`);
+                    setIsImport(false);
+                  });
+                } else {
+                  dispatch(fetchSuccess());
+                  addToast(
+                    "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
+                    {
+                      appearance: "warning",
+                      autoDismiss: true,
+                    }
+                  );
+                }
+                formik.setTouched({});
+              });
+            } else {
+              formik.values.updateBy = sessionStorage.getItem("user");
+              dispatch(fetchLoading());
+              console.log(values);
+              // formik.setFieldValue("expired", null);
+              axios.put("redemptions", values).then(async (res) => {
+                if (res.data.status) {
+                  ImageSave = {
+                    ...ImageSave,
+                    relatedId:
+                      formik.values.rewardType === "1"
+                        ? formikCoupon.values.id
+                        : formikProduct.values.id,
+                  };
+                  await onSaveImage(ImageSave, async (res) => {});
+                  addToast(
+                    Storage.GetLanguage() === "th"
+                      ? "บันทึกข้อมูลสำเร็จ"
+                      : "Save data successfully",
+                    { appearance: "success", autoDismiss: true }
+                  );
+                } else {
+                  addToast(
+                    "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
+                    {
+                      appearance: "warning",
+                      autoDismiss: true,
+                    }
+                  );
+                }
+                formik.setTouched({});
+                dispatch(fetchSuccess());
+              });
+            }
           }
         }
       }
@@ -407,7 +413,7 @@ export default function ConditioRewardInfo() {
       discount: 0,
       discountType: "1",
       startDate: new Date(),
-      isNotExpired: false,
+      isNotExpired: true,
       expired: moment(new Date()).add(1, "days").toDate(),
       expireDate: moment(new Date()).add(1, "days").toDate(),
       couponCount: 0,
@@ -464,7 +470,7 @@ export default function ConditioRewardInfo() {
       discount: 0,
       discountType: "1",
       startDate: new Date(),
-      isNotExpired: false,
+      isNotExpired: true,
       expired: moment(new Date()).add(1, "days").toDate(),
       expireDate: moment(new Date()).add(1, "days").toDate(),
       couponCount: "",
@@ -512,7 +518,7 @@ export default function ConditioRewardInfo() {
       pictureProduct: "",
       productName: "",
       rewardCount: 0,
-      isNoLimitReward: false,
+      isNoLimitReward: true,
       description: "",
       isSelect: false,
       isDeleted: false,
@@ -1152,12 +1158,22 @@ export default function ConditioRewardInfo() {
                     <ImportCoupon
                       formik={formikCouponImport}
                       setFile={setFile}
+                      errorImage={errorImage}
+                      setErrorImage={setErrorImage}
                     />
                   ) : !isRedemptionType ? (
                     !isRewardType ? (
-                      <StandardCoupon formik={formikCoupon} />
+                      <StandardCoupon
+                        formik={formikCoupon}
+                        errorImage={errorImage}
+                        setErrorImage={setErrorImage}
+                      />
                     ) : (
-                      <StandardProduct formik={formikProduct} />
+                      <StandardProduct
+                        formik={formikProduct}
+                        errorImage={errorImage}
+                        setErrorImage={setErrorImage}
+                      />
                     )
                   ) : (
                     <GameList

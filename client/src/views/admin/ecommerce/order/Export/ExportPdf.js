@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import ReactToPrint from 'react-to-print';
 import { ComponentToPrint } from './ComponentToPrint';
 
-const ExportPdf = ({ props, dataExport }) => {
+const ExportPdf = ({ props, dataExport,onClick,setClickExport }) => {
     const componentRef = useRef();
     const [openExport, setOpenExport] = useState(false);
     const propsExport = { props, dataExport };
@@ -17,13 +17,13 @@ const ExportPdf = ({ props, dataExport }) => {
             </div>
             <ReactToPrint
                 trigger={() =>
-                    <button className={btnClassName} type="button" >
+                    <button className={btnClassName} onClick={onClick} type="button" >
                         Export คำสั่งซื้อ
                     </button>
                 }
                 content={() => componentRef.current}
-                onBeforePrint={() => { setOpenExport(true) }}
-                onAfterPrint={() => { setOpenExport(false) }}
+                onBeforePrint={() => { setOpenExport(true); setClickExport(true); }}
+                onAfterPrint={() => { setOpenExport(false); setClickExport(false);}}
             />
         </div>
     );

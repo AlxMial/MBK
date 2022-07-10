@@ -77,11 +77,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true,
     },
     salePercent: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
     },
     saleDiscount: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
     },
   });

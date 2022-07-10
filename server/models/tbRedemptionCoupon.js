@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
       },
       discount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL(11, 2),
         allowNull: true,
       },
       discountType: {
