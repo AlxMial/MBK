@@ -354,13 +354,14 @@ const ShopList = () => {
         </div>
         <div
           className="flex relative  mt-2"
-          style={{ height: "40px", alignItems: "center" }}
+          style={{ height: "40px", alignItems: "center", fontSize: "12px" }}
         >
           <div
             className="px-2"
             style={{
               textDecoration: selectMenu == 1 ? "underline" : "",
               textUnderlineOffset: "5px",
+              width: "80px",
             }}
             onClick={() => {
               setselectMenu(1);
@@ -373,6 +374,7 @@ const ShopList = () => {
             style={{
               textDecoration: selectMenu == 2 ? "underline" : "",
               textUnderlineOffset: "5px",
+              width: "70px",
             }}
             onClick={() => {
               setselectMenu(2);
@@ -380,10 +382,10 @@ const ShopList = () => {
           >
             สินค้าขายดี
           </div>
-          <div className="px-2" style={{ width: "15rem" }}>
+          <div className="px-2" style={{ width: "calc(100% - 185px)" }}>
             {productCategory.length > 0 ? (
               <Select
-                className="text-gray-mbk  text-sm w-full border-none"
+                className="text-gray-mbk   w-full border-none"
                 isSearchable={false}
                 // style={{ margin: "0" }}
                 id={"category"}
