@@ -68,27 +68,27 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 0
     },
     netTotal: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
       defaultValue: 0
     },
     deliveryCost: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
       defaultValue: 0
     },
     discountDelivery: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
       defaultValue: 0
     },
     discountCoupon: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
       defaultValue: 0
     },
     discountStorePromotion: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(11, 2),
       allowNull: false,
       defaultValue: 0
     },
