@@ -68,6 +68,8 @@ export default function ConditioRewardInfo() {
 
   const [isCancel, setIsCancel] = useState(false);
 
+  const [errorProductCount, setErrorProductCount] = useState(false);
+
   const imageData = {
     id: null,
     image: null,
@@ -235,6 +237,7 @@ export default function ConditioRewardInfo() {
           }
         } else {
           let formData = new FormData();
+          let errorValue = false;
           if (isImport) {
             values["coupon"] = formikCouponImport.values;
             values["couponType"] = true;
@@ -260,11 +263,21 @@ export default function ConditioRewardInfo() {
               image: formikProduct.values.pictureProduct,
               relatedTable: "tbRedemptionProduct",
             };
+
+            if (formikProduct.values.isNoLimitReward)
+              setErrorProductCount(false);
+            else if (formikProduct.values.rewardCount <= 0) {
+              setErrorProductCount(true);
+              errorValue = true;
+            } else {
+              setErrorProductCount(false);
+            }
           }
           if (
+            (
             (formik.values.rewardType === "1" && formikCoupon.isValid) ||
             (formik.values.rewardType === "2" && formikProduct.isValid) ||
-            (formikCouponImport.isValid && isImport)
+            (formikCouponImport.isValid && isImport) ) && !errorValue
           ) {
             if (isNew) {
               dispatch(fetchLoading());
@@ -435,13 +448,12 @@ export default function ConditioRewardInfo() {
     },
     validationSchema: Yup.object({
       couponName: Yup.string().required("* กรุณากรอก ชื่อคูปอง"),
-      couponCount: Yup.number()
-        .required("* กรุณากรอก จำนวนคูปอง")
-        .test(
-          "Is positive?",
-          "* จำนวนคูปองต้องมากกว่า 0",
-          (value) => value > 0
-        ),
+      couponCount: Yup.number().required("* กรุณากรอก จำนวนคูปอง"),
+      // .test(
+      //   "Is positive?",
+      //   "* จำนวนคูปองต้องมากกว่า 0",
+      //   (value) => value > 0
+      // ),
       discount: Yup.number()
         .required("* กรุณากรอก ส่วนลด")
         .test(
@@ -534,12 +546,12 @@ export default function ConditioRewardInfo() {
     validationSchema: Yup.object({
       productName: Yup.string().required("* กรุณากรอก ชื่อสินค้าสัมนาคุณ"),
       rewardCount: Yup.number()
-        .required("* กรุณากรอก จำนวนสูงสุด")
-        .test(
-          "Is positive?",
-          "* จำนวนสูงสุดต้องมากกว่า 0",
-          (value) => value > 0
-        ),
+        .required("* กรุณากรอก จำนวนสูงสุด"),
+        // .test(
+        //   "Is positive?",
+        //   "* จำนวนสูงสุดต้องมากกว่า 0",
+        //   (value) => value > 0
+        // ),
       pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสัมนาคุณ"),
     }),
   });
@@ -1197,6 +1209,8 @@ export default function ConditioRewardInfo() {
                         formik={formikProduct}
                         errorImage={errorImage}
                         setErrorImage={setErrorImage}
+                        errorProductCount={errorProductCount}
+                        setErrorProductCount={setErrorProductCount}
                       />
                     )
                   ) : (

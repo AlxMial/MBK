@@ -136,7 +136,11 @@ export default function PointCode() {
     if (modalIsOpenImport) {
       formikImport.handleSubmit();
       const valueError = JSON.stringify(formikImport.errors);
-      if (valueError.length <= 2 && !errorEndDateImport && !errorStartDateImport) {
+      if (
+        valueError.length <= 2 &&
+        !errorEndDateImport &&
+        !errorStartDateImport
+      ) {
         setIsOpenImport(false);
       }
     } else {
@@ -235,20 +239,24 @@ export default function PointCode() {
     setErrorPointCodeSymbol(false);
     setErrorPointCodeQuantityCode(false);
     setErrorPointCodeLengthSymbol(false);
-    if (formik.values.pointCodeSymbol === "") {
-      setErrorPointCodeSymbol(true);
-    }
-    if (formik.values.pointCodeQuantityCode === "") {
-      setErrorPointCodeQuantityCode(true);
-    }
-    if (formik.values.pointCodeLengthSymbol === "") {
-      setErrorPointCodeLengthSymbol(true);
-    }
-    if (
-      formik.values.pointCodeLengthSymbol < 10 ||
-      formik.values.pointCodeLengthSymbol > 16
-    ) {
-      setErrorPointCodeLengthSymbol(true);
+    console.log(formik.values);
+    if (formik.values.isType == 1) {
+      if (formik.values.pointCodeSymbol === "") {
+        setErrorPointCodeSymbol(true);
+      }
+      if (formik.values.pointCodeQuantityCode === "") {
+        setErrorPointCodeQuantityCode(true);
+      }
+      if (formik.values.pointCodeLengthSymbol === "") {
+        setErrorPointCodeLengthSymbol(true);
+      }
+
+      if (
+        formik.values.pointCodeLengthSymbol < 10 ||
+        formik.values.pointCodeLengthSymbol > 16
+      ) {
+        setErrorPointCodeLengthSymbol(true);
+      }
     }
   };
 
@@ -268,11 +276,27 @@ export default function PointCode() {
     }
   };
 
-  const ExportFile = async (id, name, point,startDate,endDate) => {
+  const ExportFile = async (id, name, point, startDate, endDate) => {
     setIsLoading(true);
     let coupon = await axios.get(`pointCode/exportExcel/${id}`);
-    const TitleColumns = ["ชื่อแคมเปญ", "จำนวนคะแนน", "วันที่เริ่มต้น", "วันที่สิ้นสุด", "Code", "สถานะใช้งาน", "สถานะหมดอายุ"];
-    const columns = ["name", "point", "startDate", "endDate", "code", "isUse", "isExpire"];
+    const TitleColumns = [
+      "ชื่อแคมเปญ",
+      "จำนวนคะแนน",
+      "วันที่เริ่มต้น",
+      "วันที่สิ้นสุด",
+      "Code",
+      "สถานะใช้งาน",
+      "สถานะหมดอายุ",
+    ];
+    const columns = [
+      "name",
+      "point",
+      "startDate",
+      "endDate",
+      "code",
+      "isUse",
+      "isExpire",
+    ];
     exportExcel(coupon.data, name, TitleColumns, columns, "Coupon");
     setIsLoading(false);
   };
@@ -373,42 +397,43 @@ export default function PointCode() {
                 await axiosUpload
                   .post("api/excel/generateCode", values)
                   .then(async (resGenerate) => {
-             
-                    await axios.post("/uploadExcel",{id:res.data.tbPointCodeHD.id}).then((resUpload) => {
-                      if (resUpload.data.error) {
-                        axios
-                          .delete(
-                            `pointCode/delete/${res.data.tbPointCodeHD.id}`
-                          )
-                          .then(async (resDelete) => {
-                            await axiosUpload
-                              .delete(
-                                `api/excel/delete/${res.data.tbPointCodeHD.id}`
-                              )
-                              .then(() => {});
-                            fetchData();
-                            setIsLoading(false);
-                            addToast(
-                              "บันทึกข้อมูลไม่สำเร็จ เนื่องจากการ Generate มีปัญหา",
-                              {
-                                appearance: "warning",
-                                autoDismiss: true,
-                              }
-                            );
-                          });
-                      } else {
-                        fetchData();
-                        setIsOpen(false);
-                        setIsLoading(false);
-                        setIsModified(false);
-                        addToast(
-                          Storage.GetLanguage() === "th"
-                            ? "บันทึกข้อมูลสำเร็จ"
-                            : "Save data successfully",
-                          { appearance: "success", autoDismiss: true }
-                        );
-                      }
-                    });
+                    await axios
+                      .post("/uploadExcel", { id: res.data.tbPointCodeHD.id })
+                      .then((resUpload) => {
+                        if (resUpload.data.error) {
+                          axios
+                            .delete(
+                              `pointCode/delete/${res.data.tbPointCodeHD.id}`
+                            )
+                            .then(async (resDelete) => {
+                              await axiosUpload
+                                .delete(
+                                  `api/excel/delete/${res.data.tbPointCodeHD.id}`
+                                )
+                                .then(() => {});
+                              fetchData();
+                              setIsLoading(false);
+                              addToast(
+                                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากการ Generate มีปัญหา",
+                                {
+                                  appearance: "warning",
+                                  autoDismiss: true,
+                                }
+                              );
+                            });
+                        } else {
+                          fetchData();
+                          setIsOpen(false);
+                          setIsLoading(false);
+                          setIsModified(false);
+                          addToast(
+                            Storage.GetLanguage() === "th"
+                              ? "บันทึกข้อมูลสำเร็จ"
+                              : "Save data successfully",
+                            { appearance: "success", autoDismiss: true }
+                          );
+                        }
+                      });
                   });
               } else {
                 if (res.data.isPointCodeName) {
@@ -510,34 +535,36 @@ export default function PointCode() {
                   await axiosUpload
                     .post("api/excel/upload", formData)
                     .then(async (resExcel) => {
-                      await axios.post("/uploadExcel",{id:res.data.tbPointCodeHD.id}).then((resUpload) => {
-                        if (resUpload.data.error) {
-                          axios
-                            .delete(
-                              `pointCode/delete/${res.data.tbPointCodeHD.id}`
-                            )
-                            .then((resDelete) => {
-                              fetchData();
-                              addToast(
-                                "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
-                                {
-                                  appearance: "warning",
-                                  autoDismiss: true,
-                                }
-                              );
-                            });
-                        } else {
-                          closeModalImport();
-                          fetchData();
-                          setIsModified(false);
-                          addToast(
-                            Storage.GetLanguage() === "th"
-                              ? "บันทึกข้อมูลสำเร็จ"
-                              : "Save data successfully",
-                            { appearance: "success", autoDismiss: true }
-                          );
-                        }
-                      });
+                      await axios
+                        .post("/uploadExcel", { id: res.data.tbPointCodeHD.id })
+                        .then((resUpload) => {
+                          if (resUpload.data.error) {
+                            axios
+                              .delete(
+                                `pointCode/delete/${res.data.tbPointCodeHD.id}`
+                              )
+                              .then((resDelete) => {
+                                fetchData();
+                                addToast(
+                                  "บันทึกข้อมูลไม่สำเร็จ เนื่องจาก Code เคยมีการ Import เรียบร้อยแล้ว",
+                                  {
+                                    appearance: "warning",
+                                    autoDismiss: true,
+                                  }
+                                );
+                              });
+                          } else {
+                            closeModalImport();
+                            fetchData();
+                            setIsModified(false);
+                            addToast(
+                              Storage.GetLanguage() === "th"
+                                ? "บันทึกข้อมูลสำเร็จ"
+                                : "Save data successfully",
+                              { appearance: "success", autoDismiss: true }
+                            );
+                          }
+                        });
                     });
                 } else {
                   if (res.data.isPointCodeName) {
@@ -1070,10 +1097,14 @@ export default function PointCode() {
                                             );
                                             setErrorStartDateImport(true);
                                           } else {
-                                            if(ValidateService.withOutTime(e) > ValidateService.withOutTime(formikImport.values.endDate))
+                                            if (
+                                              ValidateService.withOutTime(e) >
+                                              ValidateService.withOutTime(
+                                                formikImport.values.endDate
+                                              )
+                                            )
                                               setErrorDate(true);
-                                            else  
-                                              setErrorDate(false);
+                                            else setErrorDate(false);
 
                                             setErrorStartDateImport(false);
                                             formikImport.setFieldValue(
@@ -1293,7 +1324,12 @@ export default function PointCode() {
                               <div className=" flex justify-between align-middle ">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>{(formik.values.id !== "") ? "แก้ไข" : "เพิ่ม"}แคมเปญ</label>
+                                    <label>
+                                      {formik.values.id !== ""
+                                        ? "แก้ไข"
+                                        : "เพิ่ม"}
+                                      แคมเปญ
+                                    </label>
                                   </div>
                                 </div>
 
@@ -2095,7 +2131,13 @@ export default function PointCode() {
                         </td>
                         <td
                           onClick={() => {
-                            ExportFile(value.id, value.pointCodeName,value.pointCodePoint,value.startDate,value.endDate);
+                            ExportFile(
+                              value.id,
+                              value.pointCodeName,
+                              value.pointCodePoint,
+                              value.startDate,
+                              value.endDate
+                            );
                           }}
                           className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
                         >

@@ -29,7 +29,7 @@ const upload = async (req, res) => {
         if(row[0] !== null && rowx > 1) {
           let tutorial = {
             code:  Encrypt.EncodeKey(row[0].toString().toLowerCase()),
-            codeNone:  Encrypt.EncodeKey(row[0].toString().toLowerCase()),
+            codeNone:  Encrypt.EncodeKey(row[0].toString().toLowerCase().replace('-','')),
             tbPointCodeHDId: req.body.tbPointCodeHDId,
             memberId: null,
             isUse: 0,
