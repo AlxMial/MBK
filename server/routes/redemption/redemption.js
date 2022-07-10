@@ -735,6 +735,7 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
                   where: {
                     isDeleted: !1,
                     id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
+                    isCancel:false,
                     // couponType: false,
                   },
                   include: [

@@ -84,6 +84,7 @@ export default function ConditioRewardInfo() {
   const [isRedemptionType, setIsRedemptionType] = useState(false);
   const [isDisableType, setIsDisableType] = useState(false);
   const [listGame, setListGame] = useState([]);
+  const [listGameSearch, setListGameSearch] = useState([]);
   const [errorImage, setErrorImage] = useState(false);
   const dispatch = useDispatch();
   let history = useHistory();
@@ -368,7 +369,6 @@ export default function ConditioRewardInfo() {
             } else {
               formik.values.updateBy = sessionStorage.getItem("user");
               dispatch(fetchLoading());
-              console.log(values);
               // formik.setFieldValue("expired", null);
               axios.put("redemptions", values).then(async (res) => {
                 if (res.data.status) {
@@ -597,6 +597,7 @@ export default function ConditioRewardInfo() {
               }
 
               setListGame(response.data.listGame);
+              setListGameSearch(response.data.listGame);
             } else {
               for (var columnsCoupon in response.data.tbRedemptionCoupon) {
                 if (response.data.tbRedemptionCoupon[columnsCoupon] === null) {
@@ -1010,6 +1011,7 @@ export default function ConditioRewardInfo() {
                             }
                           }
                         }}
+                       
                         value={
                           !isClick.redemptionStart
                             ? formik.values.startDate == ""
@@ -1055,6 +1057,7 @@ export default function ConditioRewardInfo() {
                         disabledValue={
                           formik.values.isNotExpired ? true : false
                         }
+                        disabled={formik.values.isNotExpired ? true:false}
                         onClick={(e) => {
                           setIsClick({
                             ...isClick,
@@ -1180,6 +1183,8 @@ export default function ConditioRewardInfo() {
                       id={id}
                       setListGame={setListGame}
                       listGame={listGame}
+                      setListGameSearch={setListGameSearch}
+                      listGameSearch={listGameSearch}
                     />
                   )}
                 </div>

@@ -22,6 +22,7 @@ import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 import SelectUC from "components/SelectUC";
 import DatePickerUC from "components/DatePickerUC";
 import MemberHistory from "./memberHistory";
+import InputMaskUC from "components/InputUC/InputMaskUC";
 
 export default function MemberInfo() {
   const useStyle = styleSelect();
@@ -296,9 +297,7 @@ export default function MemberInfo() {
     //   response = await axios.get(`/members/Show/byId/${id}`);
     // else
     response = await axios.get(`/members/byId/${id}`);
-
     let member = await response.data.tbMember;
-    console.log(member)
     if (member !== null) {
       var provinceId = response.data.tbMember["province"];
       var districtId = response.data.tbMember["district"];
@@ -699,21 +698,32 @@ export default function MemberInfo() {
                     <div className="relative w-full ">
                       <input
                         type="text"
-                        className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        className={"border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" + (typePermission == "1" ? " hidden" : " ")}
                         id="phone"
                         name="phone"
                         maxLength={10}
                         onChange={(event) => {
                           const value = onHandleTelephoneChange(event);
-                          // console.log(value)
                           if (value !== undefined) formik.handleChange(value);
-
                           setIsModified(true);
                         }}
                         // onBlur={formik.handleBlur}
                         value={formik.values.phone}
                         autoComplete="phoneaddress"
                         disabled={typePermission === "1" ? false : true}
+                      />
+                      <InputMaskUC 
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.phone}
+                        disabled={typePermission == "1" ? false : true}
+                        classValue={typePermission == "1" ? " " : " hidden"}
                       />
                     </div>
                   </div>

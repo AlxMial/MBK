@@ -5110,3 +5110,8 @@ button.bt-quantity.broder-plus {
 span.rc-time-picker.time-picker-input.hidtext .rc-time-picker-input {
   color:  transparent;
 }
+
+.input-mark:focus{
+  --tw-ring-color: #d0b027;
+  border-color: #d0b027;
+}

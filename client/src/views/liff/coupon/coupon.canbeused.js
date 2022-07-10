@@ -14,7 +14,7 @@ const Canbeused = ({ data }) => {
           {data.length > 0 ?
             <div className="w-full mt-2 mb-2 text-green-mbk font-bold text-xs">
               {[...data].filter((e) => {
-                return e.isUsedCoupon === false && new Date(e.expiredDate) > new Date()
+                return e.isCancel === false && e.isUsedCoupon === false && new Date(e.expiredDate) > new Date()
               }).map((e, i) => {
                 return (
                   <div key={i} className="w-full  mb-4" >

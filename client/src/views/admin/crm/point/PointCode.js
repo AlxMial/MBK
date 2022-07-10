@@ -373,7 +373,8 @@ export default function PointCode() {
                 await axiosUpload
                   .post("api/excel/generateCode", values)
                   .then(async (resGenerate) => {
-                    await axios.post("/uploadExcel").then((resUpload) => {
+             
+                    await axios.post("/uploadExcel",{id:res.data.tbPointCodeHD.id}).then((resUpload) => {
                       if (resUpload.data.error) {
                         axios
                           .delete(
@@ -509,7 +510,7 @@ export default function PointCode() {
                   await axiosUpload
                     .post("api/excel/upload", formData)
                     .then(async (resExcel) => {
-                      await axios.post("/uploadExcel").then((resUpload) => {
+                      await axios.post("/uploadExcel",{id:res.data.tbPointCodeHD.id}).then((resUpload) => {
                         if (resUpload.data.error) {
                           axios
                             .delete(
@@ -2084,7 +2085,7 @@ export default function PointCode() {
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.codeCount}
+                            {value.pointCodeQuantityCode}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">

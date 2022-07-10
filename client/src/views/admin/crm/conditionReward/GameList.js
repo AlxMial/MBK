@@ -12,11 +12,11 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import FilesService from "services/files";
 import CheckBoxUC from "components/CheckBoxUC";
 
-const GameList = ({ id, setListGame, listGame }) => {
+const GameList = ({ id, setListGame, listGame ,listGameSearch, setListGameSearch }) => {
   const { width } = useWindowDimensions();
   const [delay, setDelay] = useState();
   // const [listGame, setlistGame] = useState([]);
-  const [listSearch, setListSerch] = useState([]);
+
   const [pageNumber, setPageNumber] = useState(0);
   const [open, setOpen] = useState(false);
   const [modalName, setModalName] = useState("");
@@ -27,16 +27,17 @@ const GameList = ({ id, setListGame, listGame }) => {
   const [deleteValue, setDeleteValue] = useState("");
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [rewardValue, setRewardValue] = useState("");
+  const [keyValue, setKeyValue] = useState("");
   const [index, setIndex] = useState();
   const { addToast } = useToasts();
   const [errorImage, setErrorImage] = useState();
   const InputSearch = (e) => {
     e = e.toLowerCase();
     if (e === "") {
-      setListGame(listSearch);
+      setListGame(listGameSearch);
     } else {
       setListGame(
-        listSearch.filter((x) => {
+        listGameSearch.filter((x) => {
           if (x.rewardType === "1") {
             if (x.couponName.toLowerCase().includes(e)) {
               return x;
@@ -51,27 +52,37 @@ const GameList = ({ id, setListGame, listGame }) => {
     }
   };
 
-  const deleteGame = (e, type) => {
-    axios
-      .post("redemptions/redemptionsGame", { rewardId: e, rewardType: type })
-      .then(() => {
-        setListGame(
-          listGame.filter((val) => {
-            return val.id !== e;
-          })
-        );
-        addToast("ลบข้อมูลสำเร็จ", {
-          appearance: "success",
-          autoDismiss: true,
+  const deleteGame = (e, type, key) => {
+    if (e) {
+      axios
+        .post("redemptions/redemptionsGame", { rewardId: e, rewardType: type })
+        .then(() => {
+          setListGame(
+            listGame.filter((val) => {
+              return val.id !== e;
+            })
+          );
+          addToast("ลบข้อมูลสำเร็จ", {
+            appearance: "success",
+            autoDismiss: true,
+          });
+          closeModalSubject();
         });
-        closeModalSubject();
+    } else {
+      listGame.splice(key, 1);
+      addToast("ลบข้อมูลสำเร็จ", {
+        appearance: "success",
+        autoDismiss: true,
       });
+      closeModalSubject();
+    }
   };
 
   /* Modal */
-  function openModalSubject(id, type) {
+  function openModalSubject(id, type, key) {
     setDeleteValue(id);
     setRewardValue(type);
+    setKeyValue(key);
     setIsOpenSubject(true);
   }
 
@@ -92,7 +103,7 @@ const GameList = ({ id, setListGame, listGame }) => {
         newArr[index] = data;
         return newArr;
       });
-      setListSerch((s) => {
+      setListGameSearch((s) => {
         const newArr = s.slice();
         newArr[index] = data;
         return newArr;
@@ -103,7 +114,7 @@ const GameList = ({ id, setListGame, listGame }) => {
       setListGame((s) => {
         return [...s, data];
       });
-      setListSerch((s) => {
+      setListGameSearch((s) => {
         return [...s, data];
       });
     }
@@ -208,13 +219,13 @@ const GameList = ({ id, setListGame, listGame }) => {
             <table className="items-center w-full border ">
               <thead>
                 <tr>
-                  {/* <th
+                  <th
                     className={
                       "px-6 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 w-8"
                     }
                   >
-                    เลือก
-                  </th> */}
+                    ลำดับ
+                  </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
@@ -237,11 +248,13 @@ const GameList = ({ id, setListGame, listGame }) => {
                     .map((value, key) => {
                       return (
                         <tr key={key}>
-                          {/* <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 " style={{ paddingLeft: '25px' }}>
-
-                          <CheckBoxUC onChange={(e) => { handleChange(e, key) }} checked={value.isSelect} name="isSelect" />
-
-                        </td> */}
+                          <td
+                            className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 "
+                
+                          >
+                            {key+1}
+                            {/* <CheckBoxUC onChange={(e) => { handleChange(e, key) }} checked={value.isSelect} name="isSelect" /> */}
+                          </td>
                           <td
                             style={{ height: "35px" }}
                             onClick={() => {
@@ -257,7 +270,11 @@ const GameList = ({ id, setListGame, listGame }) => {
                             <i
                               className="fas fa-trash text-red-500 cursor-pointer"
                               onClick={() => {
-                                openModalSubject(value.id, value.rewardType);
+                                openModalSubject(
+                                  value.id,
+                                  value.rewardType,
+                                  key
+                                );
                               }}
                             ></i>
                           </td>
@@ -276,7 +293,7 @@ const GameList = ({ id, setListGame, listGame }) => {
           closeModalSubject();
         }}
         confirmModal={() => {
-          deleteGame(deleteValue, rewardValue);
+          deleteGame(deleteValue, rewardValue, keyValue);
         }}
       />
       {open && (

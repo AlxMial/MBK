@@ -7,11 +7,19 @@ router.post("/", async (req, res) => {
   db.sequelize
     .query(qry, null, { raw: true })
     .then((result) => {
-      const deleteqry = `DELETE FROM mbk_temp.tbpointcodedts WHERE mbk_temp.tbpointcodedts.tbPointCodeHDId IN (select tbPointCodeHDId from mbk_database.tbpointcodedts)`;
+      const updateHdQry = `update mbk_database.tbpointcodehds set pointcodequantitycode = (select count(mbk_database.tbpointcodedts.id)  from mbk_database.tbpointcodedts where mbk_database.tbpointcodedts.tbpointcodehdid = ${req.body.id}   ) where mbk_database.tbpointcodehds.id = ${req.body.id}  `;
       db.sequelize
-        .query(deleteqry, null, { raw: true })
+        .query(updateHdQry, null, { raw: true })
         .then((result) => {
-          res.json({ message: "success" });
+          const deleteqry = `DELETE FROM mbk_temp.tbpointcodedts WHERE mbk_temp.tbpointcodedts.tbPointCodeHDId IN (select tbPointCodeHDId from mbk_database.tbpointcodedts)`;
+          db.sequelize
+            .query(deleteqry, null, { raw: true })
+            .then((result) => {
+              res.json({ message: "success" });
+            })
+            .catch((error) => {
+              res.json({ error: "error insert" });
+            });
         })
         .catch((error) => {
           res.json({ error: "error insert" });
