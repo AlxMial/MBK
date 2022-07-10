@@ -669,7 +669,7 @@ export default function PointCode() {
           formik.setFieldValue(
             columns,
             response.data.tbPointCodeHD["isType"] === "2"
-              ? ""
+              ? response.data.tbPointCodeHD[columns]
               : response.data.tbPointCodeHD[columns],
             false
           );
@@ -1113,6 +1113,17 @@ export default function PointCode() {
                                               false
                                             );
                                           }
+                                          if (formik.values.endDate != null) {
+                                            if (moment(e).toDate() >= formik.values.endDate) {
+                                              setEndDateCode(moment(e).add(1, "days").toDate())
+                                              formik.handleChange({
+                                                target: {
+                                                  name: "endDate",
+                                                  value: moment(e).add(1, "days").toDate(),
+                                                },
+                                              });
+                                            }
+                                          }
                                         }}
                                         // value={moment(
                                         //   new Date(
@@ -1186,10 +1197,31 @@ export default function PointCode() {
                                           );
                                         }
                                       }}
+                                      disabledDate={(current) => {
+                                        if (startDateCode != null) {
+                                          let day = startDateCode
+                                          return (
+                                            current &&
+                                            current <
+                                              moment(new Date(day)).add(-1, "days").endOf("day")
+                                          );
+                                        }
+                                      }}
+                                      // value={
+                                      //   !isClick.redemptionStart
+                                      //     ? formik.values.startDate == ""
+                                      //       ? null
+                                      //       : moment(
+                                      //           new Date(formik.values.startDate),
+                                      //           "DD/MM/YYYY"
+                                      //         )
+                                      //     : null
+                                      // }
                                       // value={moment(
                                       //   new Date(formikImport.values.endDate),
                                       //   "DD/MM/YYYY"
                                       // )}
+
                                     />
                                   </ConfigProvider>
                                   {formikImport.touched.endDate &&
@@ -1780,12 +1812,27 @@ export default function PointCode() {
                                               false
                                             );
                                           } else {
+                                            setStartDateCode(moment(e).toDate());
                                             setErrorStartDate(false);
                                             formik.setFieldValue(
                                               "startDate",
                                               moment(e).toDate(),
                                               false
                                             );
+                                          }
+
+                                          if (endDateCode != null) {
+                                            if (moment(e).toDate() >= endDateCode) {
+                                              console.log('enddate')
+                                              setEndDateCode(moment(e).add(1, "days").toDate())
+                                              console.log(moment(e).add(1, "days").toDate())
+                                              formik.handleChange({
+                                                target: {
+                                                  name: "endDate",
+                                                  value: moment(e).add(1, "days").toDate(),
+                                                },
+                                              });
+                                            }
                                           }
                                         }}
                                         // value={moment(
@@ -1850,6 +1897,7 @@ export default function PointCode() {
                                             false
                                           );
                                         } else {
+                                          setEndDateCode(moment(e).toDate());
                                           setErrorEndDate(false);
                                           formik.setFieldValue(
                                             "endDate",
@@ -1862,6 +1910,16 @@ export default function PointCode() {
                                       //   new Date(formik.values.endDate),
                                       //   "DD/MM/YYYY"
                                       // )}
+                                      disabledDate={(current) => {
+                                        if (startDateCode != null) {
+                                          let day = startDateCode;
+                                          return (
+                                            current &&
+                                            current <
+                                              moment(new Date(day)).add(-1, "days").endOf("day")
+                                          );
+                                        }
+                                      }}
                                     />
                                   </ConfigProvider>
                                   {errorEndDate && width < 764 ? (

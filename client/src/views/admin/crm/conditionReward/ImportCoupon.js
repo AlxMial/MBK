@@ -333,6 +333,16 @@ const ImportCoupon = ({ formik, setFile, errorImage, setErrorImage }) => {
                         )
                     : null
                 }
+                disabledDate={(current) => {
+                  if (formik.values.startDate != null) {
+                    let day = formik.values.startDate;
+                    return (
+                      current &&
+                      current <
+                        moment(new Date(day)).add(-1, "days").endOf("day")
+                    );
+                  }
+                }}
               />
               <CheckBoxUC
                 text="ไม่มีวันหมดอายุ"

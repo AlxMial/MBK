@@ -865,6 +865,17 @@ export default function PointEcommerce() {
                                               moment(e).toDate(),
                                               false
                                             );
+                                            if (formik.values.endDate != null) {
+                                              if (moment(e).toDate() >= formik.values.endDate) {
+                                                setEndDateCode(moment(e).add(1, "days").toDate())
+                                                formik.handleChange({
+                                                  target: {
+                                                    name: "endDate",
+                                                    value: moment(e).add(1, "days").toDate(),
+                                                  },
+                                                });
+                                              }
+                                            }
                                           }
                                         }}
                                         // value={moment(
@@ -972,12 +983,12 @@ export default function PointEcommerce() {
                                       //   }
                                       // }}
                                       disabledDate={(current) => {
-                                        if (startDateCode != null) {
-                               
+                                        if (formik.values.startDate != null) {
                                           let day = startDateCode;
                                           return (
                                             current &&
-                                            current <= moment(new Date(day)).endOf("day")
+                                            current <
+                                              moment(new Date(day)).add(-1, "days").endOf("day")
                                           );
                                         }
                                       }}

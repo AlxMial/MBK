@@ -607,7 +607,8 @@ const GameInfo = ({
                         let day = formikCoupon.values.startDate;
                         return (
                           current &&
-                          current <= moment(new Date(day)).endOf("day")
+                          current <
+                            moment(new Date(day)).add(-1, "days").endOf("day")
                         );
                       }
                     }}

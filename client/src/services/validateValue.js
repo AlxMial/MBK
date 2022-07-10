@@ -146,6 +146,11 @@ class ValidateService {
     }
     return true;
   }
+
+
+  validateStartEndDate =(e) =>{
+    
+  }
 }
 
 export default new ValidateService();
