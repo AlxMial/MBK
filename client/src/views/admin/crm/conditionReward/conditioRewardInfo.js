@@ -1149,14 +1149,14 @@ export default function ConditioRewardInfo() {
                   <div className="w-full">&nbsp;</div>
                   <div
                     className="w-full lg:w-1/12 margin-auto-t-b "
-                    style={{ display: "none" }}
+                    // style={{ display: "none" }}
                   >
                     <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
                   </div>
 
                   <div
                     className="w-full lg:w-11/12 px-4 margin-auto-t-b"
-                    style={{ display: "none" }}
+                    // style={{ display: "none" }}
                   >
                     <div className="relative">
                       <TextAreaUC
