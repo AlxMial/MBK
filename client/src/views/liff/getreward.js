@@ -8,6 +8,7 @@ import { IsNullOrEmpty } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
+import Error from "./error";
 // components
 
 const GetReward = () => {
@@ -34,6 +35,22 @@ const GetReward = () => {
 
   const [confirmsucceed, setconfirmsucceed] = useState(false);
   const useStyle = styleSelectLine();
+  const [modeldata, setmodeldata] = useState({
+    open: false,
+    title: "",
+    msg: "",
+  }); // error ต่าง
+  const [isError, setisError] = useState(false);
+  const setDataError = () => {
+    setisError(true);
+    setmodeldata({
+      open: true,
+      title: "เกิดข้อผิดพลาด",
+      msg: "กรุณาลองใหม่อีกครั้ง",
+      actionCallback: getpointStore,
+    });
+  };
+
   const confirmreward = () => {
     /// check api
     let code = [];
@@ -52,41 +69,49 @@ const GetReward = () => {
           branchId: valueBranch,
         })
         .then((res) => {
-          let _rewardCode = rewardCode;
-          let data = res.data.data;
+          if (res.status) {
+            if (res.data.status) {
+              let _rewardCode = rewardCode;
+              let data = res.data.data;
 
-          data.map((e, i) => {
-            _rewardCode.map((ee, i) => {
-              console.log(e.isExpire)
-              if (e.coupon === ee.code.toLowerCase()) {
-                e.isInvalid
-                  ? (ee.state = false)
-                  : e.isExpire
-                  ? (ee.state = false)
-                  : e.isUse
-                  ? (ee.state = false)
-                  : (ee.state = true);
+              data.map((e, i) => {
+                _rewardCode.map((ee, i) => {
+                  console.log(e.isExpire);
+                  if (e.coupon === ee.code.toLowerCase()) {
+                    e.isInvalid
+                      ? (ee.state = false)
+                      : e.isExpire
+                      ? (ee.state = false)
+                      : e.isUse
+                      ? (ee.state = false)
+                      : (ee.state = true);
+                  }
+                });
+              });
+              setdeploy("reward");
+              setrewardCode(_rewardCode);
+
+              setsucceedData(res.data.data);
+              let succeed = true;
+              _rewardCode.map((e, i) => {
+                if (!IsNullOrEmpty(e.code)) {
+                  if (e.state === false) {
+                    succeed = false;
+                  }
+                }
+              });
+              if (succeed) {
+                setconfirmsucceed(true);
               }
-            });
-          });
-          setdeploy("reward");
-          setrewardCode(_rewardCode);
- 
-          setsucceedData(res.data.data);
-          let succeed = true;
-          _rewardCode.map((e, i) => {
-            if (!IsNullOrEmpty(e.code)) {
-              if (e.state === false) {
-                succeed = false;
-              }
+            } else {
+              setDataError();
             }
-          });
-          if (succeed) {
-            setconfirmsucceed(true);
+          } else {
+            setDataError();
           }
         })
         .catch((error) => {
-          addToast(error.message, { appearance: "warning", autoDismiss: true });
+          setDataError();
         })
         .finally((e) => {
           setIsLoading(false);
@@ -112,21 +137,26 @@ const GetReward = () => {
     listPointStore(
       (res) => {
         if (res.status) {
-          let list = res.data.list;
-          setoptionsStore(list);
-          if (!IsNullOrEmpty(list)) {
-            setvalueStore(list[0].value);
-            if (list[0].DT.length > 0) {
-              setoptionsbranch(list[0].DT);
-              setvalueBranch(list[0].DT[0].value);
-              setisbranch(true);
+          if (res.data.status) {
+            let list = res.data.list;
+            setoptionsStore(list);
+            if (!IsNullOrEmpty(list)) {
+              setvalueStore(list[0].value);
+              if (list[0].DT.length > 0) {
+                setoptionsbranch(list[0].DT);
+                setvalueBranch(list[0].DT[0].value);
+                setisbranch(true);
+              }
             }
+          } else {
+            setDataError();
           }
         } else {
+          setDataError();
         }
       },
       (e) => {
-        addToast(e.message, { appearance: "warning", autoDismiss: true });
+        setDataError();
       },
       () => {
         setIsLoading(false);
@@ -139,6 +169,7 @@ const GetReward = () => {
   }, []);
   return (
     <>
+      <Error data={modeldata} setmodeldata={setmodeldata} />
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="bg-green-mbk " style={{ height: "calc(100vh - 100px)" }}>
         <div

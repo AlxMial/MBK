@@ -89,25 +89,28 @@ const MakeOrderById = () => {
                     let price = 0;
                     let amount = 0;
                     tbStock.map((e, i) => {
-                      console.log(e)
                       let item = shop_orders.find((o) => o.id == e.id);
                       item.discount = e.price - e.discount;
                       if (e.isFlashSale) {
                         if (fn.isFlashSale(e)) {
-                          item.discount = e.saleDiscount;
-                          e.priceDiscount = e.saleDiscount;
+                          item.discount =  e.price -e.saleDiscount;
+                          item.priceDiscount = e.price - e.saleDiscount;
+                        }else{
+                          item.priceDiscount = e.price - e.discount;
                         }
+                      }else{
+                        item.priceDiscount = e.price - e.discount;
                       }
 
                       if (!item.isFree) {
                         let quantity = item.amount;
                         amount += quantity;
                         e.quantity = quantity;
-                        if (e.priceDiscount > 0) {
+                        if (item.priceDiscount > 0) {
                           price +=
-                            parseFloat(e.priceDiscount) * parseInt(quantity);
+                            parseFloat(item.priceDiscount) * parseInt(quantity);
                         } else {
-                          price += parseFloat(e.price) * parseInt(quantity);
+                          price += parseFloat(item.price) * parseInt(quantity);
                         }
                       }
                     });
@@ -198,10 +201,7 @@ const MakeOrderById = () => {
 
     let _prodiscstro = calcprodiscount(sumprice);
     let _prodiscount = _prodiscstro;
-    // if (_prodiscstro.type === "discount") {
-    //   _prodiscount = _prodiscstro.data;
-    // }
-
+  
     if (usecoupon != null) {
       total =
         usecoupon.discountType === "1"
@@ -217,7 +217,7 @@ const MakeOrderById = () => {
         _deliveryCost = tbPromotionDelivery.deliveryCost;
       }
     }
-    total = total + _deliveryCost;
+    total = total + parseFloat(_deliveryCost);
 
     return total;
   };

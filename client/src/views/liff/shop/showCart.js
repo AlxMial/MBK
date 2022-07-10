@@ -53,64 +53,12 @@ const ShowCart = () => {
                       let quantity = cart.find((o) => o.id === e.id).quantity;
                       e.quantity = quantity;
                       if (e.isFlashSale) {
-                        let startDateCampaign = new Date(
-                          new Date(e.startDateCampaign)
-                            .toISOString()
-                            .split("T")[0]
-                            .replace(/-/g, "/")
-                        );
-                        let endDateCampaign = new Date(
-                          new Date(e.endDateCampaign)
-                            .toISOString()
-                            .split("T")[0]
-                            .replace(/-/g, "/")
-                        );
-                        let _today = new Date();
-                        let today = new Date(
-                          _today.getFullYear() +
-                            "/" +
-                            (_today.getMonth() + 1) +
-                            "/" +
-                            _today.getDate()
-                        );
-                        if (
-                          today >= startDateCampaign &&
-                          today <= endDateCampaign
-                        ) {
-                          let startTimeCampaign = new Date(
-                            new Date()
-                              .toISOString()
-                              .split("T")[0]
-                              .replace(/-/g, "/") +
-                              " " +
-                              e.startTimeCampaign
-                          );
-                          let endTimeCampaign = new Date(
-                            new Date()
-                              .toISOString()
-                              .split("T")[0]
-                              .replace(/-/g, "/") +
-                              " " +
-                              e.endTimeCampaign
-                          );
-                          today = new Date();
-                          if (
-                            today > startTimeCampaign &&
-                            today < endTimeCampaign
-                          ) {
-                            price +=
-                              parseFloat(e.saleDiscount) * parseInt(quantity);
+                        if (fn.isFlashSale(e)) {
+                          price +=
+                            parseFloat(e.price - e.saleDiscount) *
+                            parseInt(quantity);
 
-                            e.priceDiscount = e.saleDiscount;
-                          } else {
-                            if (e.priceDiscount > 0) {
-                              price +=
-                                parseFloat(e.priceDiscount) *
-                                parseInt(quantity);
-                            } else {
-                              price += parseFloat(e.price) * parseInt(quantity);
-                            }
-                          }
+                          e.priceDiscount = e.price - e.saleDiscount;
                         } else {
                           if (e.priceDiscount > 0) {
                             price +=
@@ -329,23 +277,29 @@ const ShowCart = () => {
                         bottom: "0",
                       }}
                     >
-                      <div
-                        style={{
-                          /*width: "calc(100% - 100px)",*/ height: "15px",
-                        }}
-                      >
+                      <div style={{ height: "15px" }}>
                         <div className="flex text-xs">
                           <div
                             style={{
-                              color:
-                                e.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
-                              textDecoration:
-                                e.discount > 0 ? "line-through" : "none",
+                              color: fn.isFlashSale(e)
+                                ? "rgba(0,0,0,.54)"
+                                : e.discount > 0
+                                ? "rgba(0,0,0,.54)"
+                                : "#000",
+                              textDecoration: fn.isFlashSale(e)
+                                ? "line-through"
+                                : e.discount > 0
+                                ? "line-through"
+                                : "none",
                             }}
                           >
                             {"฿ " + fn.formatMoney(e.price)}
                           </div>
-                          {e.discount > 0 ? (
+                          {fn.isFlashSale(e) ? (
+                            <div style={{ color: "red", paddingLeft: "10px" }}>
+                              {"฿ " + fn.formatMoney( e.priceDiscount)}
+                            </div>
+                          ) : e.discount > 0 ? (
                             <div style={{ color: "red", paddingLeft: "10px" }}>
                               {"฿ " + fn.formatMoney(e.priceDiscount)}
                             </div>
@@ -635,8 +589,7 @@ const ShowCart = () => {
             //   upd_shopcart(e);
             // });
 
-
-            for(var i = 0 ; i < productCountError.action.length ; i++){
+            for (var i = 0; i < productCountError.action.length; i++) {
               upd_shopcart(productCountError.action[i]);
             }
 

@@ -13,7 +13,7 @@ import {
   SelectUC,
   validationSchema,
   validateShopAddress,
-  validateShopUpdate
+  validateShopUpdate,
   // DatePickerContainer,
   // monthMap,
 } from "./profile";
@@ -28,7 +28,7 @@ import {
 import Select from "react-select";
 import ValidateService from "services/validateValue";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
-
+import Error from "./error";
 const Updateprofile = () => {
   const useStyle = styleSelect();
   const [isLoading, setIsLoading] = useState(false);
@@ -41,6 +41,21 @@ const Updateprofile = () => {
   const [dataSubDistrict, setSubDistrict] = useState([]);
   const [optionYears, setOptionYears] = useState([]);
   const [OptionDay, setOptionDay] = useState([]);
+  const [modeldata, setmodeldata] = useState({
+    open: false,
+    title: "",
+    msg: "",
+  }); // error ต่าง
+  const [isError, setisError] = useState(false);
+  const setDataError = () => {
+    setisError(true);
+    setmodeldata({
+      open: true,
+      title: "เกิดข้อผิดพลาด",
+      msg: "กรุณาลองใหม่อีกครั้ง",
+      actionCallback: getMembers,
+    });
+  };
   const address = async () => {
     const province = await Address.getProvince();
     const district = await Address.getAddress("district", "1");
@@ -92,53 +107,61 @@ const Updateprofile = () => {
     setIsLoading(true);
     getMember(
       async (res) => {
-        if (res.data.code === 200) {
-          const province = await Address.getProvince();
-          const district = await Address.getAddress(
-            "district",
-            res.data.tbMember.province
-          );
-          const subDistrict = await Address.getAddress(
-            "subDistrict",
-            res.data.tbMember.district
-          );
+        if (res.status) {
+          if (res.data.status) {
+            const province = await Address.getProvince();
+            const district = await Address.getAddress(
+              "district",
+              res.data.tbMember.province
+            );
+            const subDistrict = await Address.getAddress(
+              "subDistrict",
+              res.data.tbMember.district
+            );
 
-          setDataProvice(province);
-          setDataDistrict(district);
-          setSubDistrict(subDistrict);
-          res.data.tbMember.district = district.filter(
-            (e) => e.value === res.data.tbMember.district
-          )[0].value;
-          res.data.tbMember.subDistrict = subDistrict.filter(
-            (e) => e.value === res.data.tbMember.subDistrict
-          )[0].value;
-          settbMember(res.data.tbMember);
-          settbMember((prevState) => {
-            return {
-              ...prevState,
-              day: new Date(res.data.tbMember.birthDate)
-                .getDate()
-                .toString()
-                .padStart(2, "0"),
-            };
-          });
-          settbMember((prevState) => {
-            return {
-              ...prevState,
-              month: (new Date(res.data.tbMember.birthDate).getMonth() + 1)
-                .toString()
-                .padStart(2, "0"),
-            };
-          });
-          settbMember((prevState) => {
-            return {
-              ...prevState,
-              year: new Date(res.data.tbMember.birthDate).getFullYear(),
-            };
-          });
+            setDataProvice(province);
+            setDataDistrict(district);
+            setSubDistrict(subDistrict);
+            res.data.tbMember.district = district.filter(
+              (e) => e.value === res.data.tbMember.district
+            )[0].value;
+            res.data.tbMember.subDistrict = subDistrict.filter(
+              (e) => e.value === res.data.tbMember.subDistrict
+            )[0].value;
+            settbMember(res.data.tbMember);
+            settbMember((prevState) => {
+              return {
+                ...prevState,
+                day: new Date(res.data.tbMember.birthDate)
+                  .getDate()
+                  .toString()
+                  .padStart(2, "0"),
+              };
+            });
+            settbMember((prevState) => {
+              return {
+                ...prevState,
+                month: (new Date(res.data.tbMember.birthDate).getMonth() + 1)
+                  .toString()
+                  .padStart(2, "0"),
+              };
+            });
+            settbMember((prevState) => {
+              return {
+                ...prevState,
+                year: new Date(res.data.tbMember.birthDate).getFullYear(),
+              };
+            });
+          } else {
+            setDataError();
+          }
+        } else {
+          setDataError();
         }
       },
-      () => { },
+      () => {
+        setDataError();
+      },
       () => {
         setIsLoading(false);
       }
@@ -205,18 +228,20 @@ const Updateprofile = () => {
     membersDpd(
       _Data,
       (res) => {
-        console.log()
+        console.log();
         let msg = { msg: "", appearance: "warning" };
         res.data.status
           ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
           : res.data.isPhone
-            ? (msg.msg =
+          ? (msg.msg =
               "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-            : res.data.isEmail ? (msg.msg =
-              "บันทึกข้อมูลไม่สำเร็จ เนื่องจากอีเมลเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว") : res.data.isMemberCard
-              ? (msg.msg =
-                "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
-              : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
+          : res.data.isEmail
+          ? (msg.msg =
+              "บันทึกข้อมูลไม่สำเร็จ เนื่องจากอีเมลเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
+          : res.data.isMemberCard
+          ? (msg.msg =
+              "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+          : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
         addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
       },
@@ -230,6 +255,7 @@ const Updateprofile = () => {
   };
   return (
     <>
+      <Error data={modeldata} setmodeldata={setmodeldata} />
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
         <div
@@ -239,7 +265,6 @@ const Updateprofile = () => {
             margin: "auto",
           }}
         >
-
           <div
             className="line-scroll"
             style={{
@@ -378,7 +403,6 @@ const Updateprofile = () => {
                         target: { name: "year", value: e.value },
                       });
                     }}
-
                     value={ValidateService.defaultValue(optionYears, Data.year)}
                     options={optionYears}
                     styles={useStyle}
@@ -479,12 +503,10 @@ const Updateprofile = () => {
               name="district"
               lbl={"อำเภอ"}
               onChange={async (e) => {
-
                 const subDistrict = await Address.getAddress(
                   "subDistrict",
                   e.value
                 );
-
 
                 const postcode = await Address.getAddress(
                   "postcode",
@@ -530,7 +552,8 @@ const Updateprofile = () => {
               className="relative  px-4  flex-grow flex-1 flex mt-5 text-sm"
               style={{ color: "red" }}
             >
-              หมายเหตุ หากท่านต้องการแก้ไขข้อมูลเพิ่มเติม โปรดติดต่อเจ้าหน้าที่แจ้งความประสงค์ทางช่องแชท
+              หมายเหตุ หากท่านต้องการแก้ไขข้อมูลเพิ่มเติม
+              โปรดติดต่อเจ้าหน้าที่แจ้งความประสงค์ทางช่องแชท
             </div>
 
             <div className="relative  px-4  flex-grow flex-1 flex mt-5">
@@ -547,8 +570,15 @@ const Updateprofile = () => {
               <button
                 className=" w-6\/12 bg-gold-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                 type="button"
-                style={{ width: "50%" }}
-                onClick={validation}
+                style={{
+                  width: "50%",
+                  filter: isError ? "grayscale(1)" : "",
+                }}
+                onClick={() => {
+                  if (!isError) {
+                    validation();
+                  }
+                }}
               >
                 {"บันทึก"}
               </button>

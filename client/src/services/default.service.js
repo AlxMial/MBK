@@ -127,35 +127,40 @@ export const decrypt = (encrypted) => {
 
 export const isFlashSale = (e) => {
   let isFlash = false;
-  let startDateCampaign = new Date(
-    new Date(e.startDateCampaign).toISOString().split("T")[0].replace(/-/g, "/")
-  );
-  let endDateCampaign = new Date(
-    new Date(e.endDateCampaign).toISOString().split("T")[0].replace(/-/g, "/")
-  );
-  let _today = new Date();
-  let today = new Date(
-    _today.getFullYear() +
-      "/" +
-      (_today.getMonth() + 1) +
-      "/" +
-      _today.getDate()
-  );
-  if (today >= startDateCampaign && today <= endDateCampaign) {
-    let startTimeCampaign = new Date(
-      new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-        " " +
-        e.startTimeCampaign
+  if (e.isFlashSale && e.startDateCampaign && e.startDateCampaign) {
+    let startDateCampaign = new Date(
+      new Date(e.startDateCampaign)
+        .toISOString()
+        .split("T")[0]
+        .replace(/-/g, "/")
     );
-    let endTimeCampaign = new Date(
-      new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-        " " +
-        e.endTimeCampaign
+    let endDateCampaign = new Date(
+      new Date(e.endDateCampaign).toISOString().split("T")[0].replace(/-/g, "/")
     );
-    today = new Date();
-    // อยู่ในเวลา
-    if (today > startTimeCampaign && today < endTimeCampaign) {
-      isFlash = true;
+    let _today = new Date();
+    let today = new Date(
+      _today.getFullYear() +
+        "/" +
+        (_today.getMonth() + 1) +
+        "/" +
+        _today.getDate()
+    );
+    if (today >= startDateCampaign && today <= endDateCampaign) {
+      let startTimeCampaign = new Date(
+        new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+          " " +
+          e.startTimeCampaign
+      );
+      let endTimeCampaign = new Date(
+        new Date().toISOString().split("T")[0].replace(/-/g, "/") +
+          " " +
+          e.endTimeCampaign
+      );
+      today = new Date();
+      // อยู่ในเวลา
+      if (today > startTimeCampaign && today < endTimeCampaign) {
+        isFlash = true;
+      }
     }
   }
 

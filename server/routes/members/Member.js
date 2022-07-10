@@ -367,7 +367,6 @@ router.post("/", async (req, res) => {
     !Encrypt.IsNullOrEmpty(req.body.memberType)
   ) {
     if (!member) {
-
       req.body.email = req.body.email.toLowerCase();
       req.body.memberCard = MemberCards;
       req.body.memberPoint = point.dataValues.pointRegisterScore;
@@ -568,8 +567,17 @@ router.post("/checkRegister", async (req, res) => {
     if (member) {
       accessToken = sign(
         {
-          id: Encrypt.EncodeKey(member.id),
-          uid: Encrypt.EncodeKey(member.uid),
+          keyWord: Encrypt.EncodeKey(
+            JSON.stringify({
+              id: Encrypt.EncodeKey(member.id),
+              uid: Encrypt.EncodeKey(member.uid),
+              keyWord: Encrypt.EncodeKey(
+                Encrypt.EncodeKey(req.headers["user-agent"]) +
+                  "," +
+                  Encrypt.EncodeKey(req.headers["host"])
+              ),
+            })
+          ),
         },
         "LINEMBKPROJECT",
         { expiresIn: "1440m" }
@@ -606,6 +614,7 @@ router.post("/checkRegister", async (req, res) => {
 router.get("/getMember", validateLineToken, async (req, res) => {
   let code = 500;
   let members;
+  let status = true;
   try {
     const uid = Encrypt.DecodeKey(req.user.uid);
     let member = await tbMember.findOne({
@@ -618,10 +627,12 @@ router.get("/getMember", validateLineToken, async (req, res) => {
       members = member;
     }
   } catch (e) {
-    code = 300;
+    // code = 300;
+    status = false;
   }
 
   res.json({
+    status: status,
     code: code,
     tbMember: members,
   });

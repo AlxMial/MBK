@@ -376,7 +376,7 @@ const getorderDT = async (DT) => {
           price: _tbStock.price,
           discount: discount,
           discountType: _tbStock.discountType,
-          isFlashSale: _tbStock.isFlashSale,
+          isFlashSale: _tbStock.isFlashSale ? isFlashSale(_tbStock) : false,
           isFree: false,
         });
 
@@ -762,7 +762,7 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     let deliveryCost = 0; //ค่าส่ง
     let discountDelivery = 0; //โปรค่าส่ง
     if (status) {
-      let _getDelivery = await getDelivery(orderhd.logisticId, sumprice);
+      let _getDelivery = await getDelivery(orderhd.logisticId, total);
       if (_getDelivery.status) {
         deliveryCost = _getDelivery.deliveryCost; //ค่าส่ง
         discountDelivery = _getDelivery.discountDelivery; //โปรค่าส่ง
@@ -793,7 +793,9 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
     }
     total = total - DiscountCoupon;
     //บวกค้าส่งทีหลัง
-    total = total + (discountDelivery > 0 ? discountDelivery : deliveryCost);
+    total =
+      total +
+      parseFloat(discountDelivery > 0 ? discountDelivery : deliveryCost);
     //#endregion ส่วนลด Coupon
 
     //#region ที่อยู่ปัจจุบัน
@@ -1051,7 +1053,9 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       total = total - DiscountCoupon;
       console.log(status);
       //บวกค้าส่งทีหลัง
-      total = total + (discountDelivery > 0 ? discountDelivery : deliveryCost);
+      total =
+        total +
+        parseFloat(discountDelivery > 0 ? discountDelivery : deliveryCost);
       //ที่อยู่ปัจจุบัน
       if (status) {
         let _getAddress = await getAddress(data.otherAddressId, Member.id);
@@ -2153,18 +2157,16 @@ router.post("/upd_shopcart", async (req, res) => {
               },
             });
           } else if (type == "quantity") {
-    
             if (quantity <= productCount) {
               ///upd จำนวน
 
-              if(parseInt(productCount) <= 0)
-              {
+              if (parseInt(productCount) <= 0) {
                 const dataupd = await tbCartDT.destroy({
                   where: {
                     id: _tbCartDT.id,
                   },
                 });
-              }else {
+              } else {
                 const dataupd = await tbCartDT.update(
                   {
                     amount: quantity,
@@ -2192,7 +2194,7 @@ router.post("/upd_shopcart", async (req, res) => {
         }
       } else {
         //ไม่มีให้เพิ่ม
-        if(quantity > 0){
+        if (quantity > 0) {
           const addtbCartDT = await tbCartDT.create({
             carthdId: _tbCartHD.id,
             strockId: Encrypt.DecodeKey(id),

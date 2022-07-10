@@ -6,7 +6,6 @@ const DetailModel = ({ data, freebies, _static }) => {
     <div
       className="mt-2 line-scroll"
       style={{
-        // maxHeight: "calc(100% - 420px)",
         width: "95%",
         marginLeft: "auto",
         marginRight: "auto",
@@ -45,14 +44,25 @@ const DetailModel = ({ data, freebies, _static }) => {
                     <div className="flex relative text-sm">
                       <div
                         style={{
-                          color: e.discount > 0 ? "#ddd" : "#000",
+                          color: fn.isFlashSale(e)
+                            ? "#ddd"
+                            : e.discount > 0
+                            ? "#ddd"
+                            : "#000",
                           textDecoration:
                             e.discount > 0 ? "line-through" : "none",
                         }}
                       >
                         {"฿ " + fn.formatMoney(e.price)}
                       </div>
-                      {e.discount > 0 ? (
+                      {fn.isFlashSale(e) ? (
+                        <div style={{ color: "red", paddingLeft: "10px" }}>
+                          {"฿ " +
+                            fn.formatMoney(
+                              _static == true ? e.discount : e.priceDiscount
+                            )}
+                        </div>
+                      ) : e.discount > 0 ? (
                         <div style={{ color: "red", paddingLeft: "10px" }}>
                           {"฿ " +
                             fn.formatMoney(

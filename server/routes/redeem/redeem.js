@@ -38,7 +38,7 @@ router.post("/lowLevel", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", validateLineToken, async (req, res) => {
   const decode = new decodeCoupon();
   let redeemCode = req.body.redeemCode;
   req.body.memberId = Encrypt.DecodeKey(req.body.memberId);
@@ -91,7 +91,11 @@ router.post("/", async (req, res) => {
           i++
         ) {
           let dt = productNameData[x].dataValues.tbPointCodeDTs[i].dataValues;
-          if (new Date(new Date(hd.endDate).setUTCHours(0,0,0,0)) < new Date(new Date().setUTCHours(0,0,0,0)) || !productNameData[x].dataValues.isActive) {
+          if (
+            new Date(new Date(hd.endDate).setUTCHours(0, 0, 0, 0)) <
+              new Date(new Date().setUTCHours(0, 0, 0, 0)) ||
+            !productNameData[x].dataValues.isActive
+          ) {
             status = {
               coupon: Encrypt.DecodeKey(
                 _redeemCode.find((e) => e == dt.code || e == dt.codeNone)
@@ -363,7 +367,7 @@ router.get(
           ],
           where: {
             isDeleted: false,
-            isActive:true
+            isActive: true,
           },
         });
         if (_RedemptionConditionsHD) {

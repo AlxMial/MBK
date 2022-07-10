@@ -4,21 +4,46 @@ import { path, getMemberPointsList } from "@services/liff.services";
 import { liff_dateToString } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import MyPoint from "./myPointUC";
+import Error from "./error";
 // components
 
 const Point = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [dataPoints, setDataPoints] = useState([]);
+  const [modeldata, setmodeldata] = useState({
+    open: false,
+    title: "",
+    msg: "",
+  }); // error ต่าง
+  const [isError, setisError] = useState(false);
+  const setDataError = () => {
+    setisError(true);
+    setmodeldata({
+      open: true,
+      title: "เกิดข้อผิดพลาด",
+      msg: "กรุณาลองใหม่อีกครั้ง",
+      actionCallback: GetMemberPointsList,
+    });
+  };
+
   const GetMemberPointsList = () => {
     setIsLoading(true);
     getMemberPointsList(
       (res) => {
-        if (res.data.status) {
-          setDataPoints(res.data.tbMemberPoint);
+        if (res.status) {
+          if (res.data.status) {
+            setDataPoints(res.data.tbMemberPoint);
+          } else {
+            setDataError();
+          }
+        } else {
+          setDataError();
         }
       },
-      () => { },
+      () => {
+        setDataError();
+      },
       () => {
         setIsLoading(false);
       }
@@ -29,6 +54,7 @@ const Point = () => {
   }, []);
   return (
     <>
+      <Error data={modeldata} setmodeldata={setmodeldata} />
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
       <div className="h-full absolute" style={{ top: "90px", width: "100%" }}>
@@ -98,9 +124,10 @@ const Point = () => {
                       {e.campaignType == "1"
                         ? "กรอก Code จากสินค้า"
                         : e.campaignType == "2"
-                          ? "ซื้อสินค้าออนไลน์"
-                          : e.campaignType == "3" ? "สมัครสมาชิก"
-                            : "แลกรางวัล"}
+                        ? "ซื้อสินค้าออนไลน์"
+                        : e.campaignType == "3"
+                        ? "สมัครสมาชิก"
+                        : "แลกรางวัล"}
                     </div>
                     <div className="absolute" style={{ right: "0" }}>
                       <div

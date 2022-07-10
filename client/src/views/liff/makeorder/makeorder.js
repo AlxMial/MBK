@@ -67,7 +67,7 @@ const MakeOrder = () => {
           .then((response) => {
             if (response.data.status) {
               let tbStock = response.data.tbStock;
-     
+
               setCartItem(tbStock);
               let price = 0;
               tbStock.map((e, i) => {
@@ -77,7 +77,7 @@ const MakeOrder = () => {
                 if (e.isFlashSale) {
                   // อยู่ในเวลา
                   if (fn.isFlashSale(e)) {
-                    e.priceDiscount = e.saleDiscount;
+                    e.priceDiscount = e.price - e.saleDiscount;
                   }
                 }
 
@@ -88,7 +88,7 @@ const MakeOrder = () => {
                   price += parseFloat(e.price) * parseInt(quantity);
                 }
               });
-   
+
               price = price;
               setsumprice(price < 1 ? 0 : price);
             } else {
@@ -253,19 +253,20 @@ const MakeOrder = () => {
           _deliveryCost = tbPromotionDelivery.deliveryCost;
         }
       }
-      total = total + _deliveryCost;
+      total = total + parseFloat(_deliveryCost);
     }
     return total;
   };
   const calcprodiscount = (totel) => {
     let _prodiscount = 0;
-    let typeValue = "";
+    let valueType = "";
     let data = { data: 0 };
     if (promotionstores.length > 0 && totel > 0) {
       let prodiscountList = promotionstores.find(
         (e) => (e.condition == 1 || e.condition == 2) && e.buy <= totel
       );
       if (prodiscountList != null) {
+        valueType = "coupon";
         let pro = promotionstores.filter((e) => {
           if ((e.condition == 1 || e.condition == 2) && e.buy <= totel) {
             return e;
@@ -274,7 +275,7 @@ const MakeOrder = () => {
 
         pro.map((e, i) => {
           let discount = 0;
-          if (e.condition == 1) {
+          if (e.condition === 1) {
             discount = e.discount;
           } else {
             discount = (e.percentDiscount / 100) * totel;
@@ -287,30 +288,23 @@ const MakeOrder = () => {
           }
         });
         data = { type: "discount", data: _prodiscount };
-        typeValue = "discount";
       } else {
         //สินค้า
-        typeValue = "product";
+        valueType = "product";
         let productList = promotionstores.find(
           (e) => e.condition == 3 && e.buy <= totel
         );
         if (productList != null) {
           data = { type: "product", data: productList.stockId };
-          if (freebies.length < 1) {
-            getfreebies(productList);
-          }
+          // if (freebies.length < 1) {
+          //   getfreebies(productList);
+          // }
         }
       }
     }
-    try {
-      if (typeValue === "product") {
-        return 0;
-      } else {
-        return data.data;
-      }
-    } catch {
+    if (valueType === "product") {
       return 0;
-    }
+    } else return data.data;
   };
 
   const getfreebies = async (productList) => {
@@ -336,8 +330,8 @@ const MakeOrder = () => {
       let total = sumprice;
       let _prodiscstro = calcprodiscount(sumprice);
       let _prodiscount = 0;
-      if (_prodiscstro.type == "discount") {
-        _prodiscount = _prodiscstro.data;
+      if (_prodiscstro > 0) {
+        _prodiscount = _prodiscstro;
       }
       total = total - _prodiscount;
 

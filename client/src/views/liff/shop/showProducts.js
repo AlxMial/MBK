@@ -42,7 +42,7 @@ const ShowProducts = () => {
         (res) => {
           if (res.data.status) {
             if (res.data.shop_orders) {
-              console.log(res.data.shop_orders)
+              console.log(res.data.shop_orders);
               setcartNumberBadge(res.data.shop_orders.length);
               addToast("คุณได้เพิ่มสินค้าลงในรถเข็นเรียบร้อยแล้ว", {
                 appearance: "success",
@@ -87,7 +87,8 @@ const ShowProducts = () => {
           let stock = tbStock[0];
           if (stock.isFlashSale) {
             if (fn.isFlashSale(stock)) {
-              stock.priceDiscount = stock.saleDiscount;
+              stock.priceDiscount = stock.price - stock.saleDiscount;
+              stock.discount = stock.saleDiscount;
               stock.percent = stock.salePercent;
               settbStock(stock);
             } else {
@@ -199,7 +200,10 @@ const ShowProducts = () => {
             </div>
           </div>
 
-          <div className="line-scroll" style={{ height: "calc(100% - 245px)" ,overflowY:"auto"}}>
+          <div
+            className="line-scroll"
+            style={{ height: "calc(100% - 245px)", overflowY: "auto" }}
+          >
             <div
               className="flex relative mt-2 "
               style={{ height: "35px", alignItems: "center" }}
@@ -309,7 +313,7 @@ const ShowProducts = () => {
             </div>
 
             <div className="liff-inline" />
-            <div style={{ width: "95%", margin: "auto" ,overflowY:"auto"}}>
+            <div style={{ width: "95%", margin: "auto", overflowY: "auto" }}>
               <div className="mt-2 font-bold text-base"> รายละเอียดสินค้า </div>
               <div className="mt-2 ">&emsp;&emsp;{tbStock.description} </div>
             </div>

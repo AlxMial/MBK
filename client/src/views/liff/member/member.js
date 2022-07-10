@@ -20,22 +20,33 @@ const Member = () => {
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const { TabPane } = Tabs;
-  const tabsChange = () => {};
+  const tabsChange = (e) => {
+    settabKey(e);
+  };
+  const [tabKey, settabKey] = useState(1);
+
   const [tbMember, settbMember] = useState({});
   const [Memberpoints, setMemberpoints] = useState({});
   const [isOpenPolicy, setisOpenPolicy] = useState(false);
-
+  const [isError, setisError] = useState(false);
   const getMembers = async () => {
     setIsLoading(true);
     getMember(
       (res) => {
-        if (res.data.code === 200) {
-          console.log(res);
-          settbMember(res.data.tbMember);
-          getMemberpoints({ id: res.data.tbMember.id });
+        if (res.status) {
+          if (res.data.status) {
+            settbMember(res.data.tbMember);
+            getMemberpoints({ id: res.data.tbMember.id });
+          } else {
+            setisError(true);
+          }
+        } else {
+          setisError(true);
         }
       },
-      () => {},
+      () => {
+        setisError(true);
+      },
       () => {
         setIsLoading(false);
       }
@@ -45,7 +56,6 @@ const Member = () => {
     setIsLoading(true);
     getPoint(
       (res) => {
-        console.log(res);
         if (res.data.code === 200) {
           setMemberpoints(res.data);
         }
@@ -108,31 +118,35 @@ const Member = () => {
                   style={{
                     // fontSize: "0.7rem",
                     minWidth: "120px",
-                    backgroundColor:
-                      tbMember.memberType === "1"
-                        ? "#cbe8ba"
-                        : tbMember.memberType === "2"
-                        ? "#ebebeb"
-                        : "#f3eac1",
-                    color:
-                      tbMember.memberType === "1"
-                        ? "#047738"
-                        : tbMember.memberType === "2"
-                        ? "#929292"
-                        : "#d0af2c",
+                    backgroundColor: isError
+                      ? "#ffffff"
+                      : tbMember.memberType === "1"
+                      ? "#cbe8ba"
+                      : tbMember.memberType === "2"
+                      ? "#ebebeb"
+                      : "#f3eac1",
+                    color: isError
+                      ? "#000000"
+                      : tbMember.memberType === "1"
+                      ? "#047738"
+                      : tbMember.memberType === "2"
+                      ? "#929292"
+                      : "#d0af2c",
                     borderRadius: "20px",
                     padding: "2px 10px",
                     textAlign: "center",
                   }}
                 >
-                  {tbMember.memberType === "1"
+                  {isError
+                    ? "-"
+                    : tbMember.memberType === "1"
                     ? "GREEN MEMBER"
                     : tbMember.memberType === "2"
                     ? "SLIVER MEMBER"
                     : "GOLD MEMBER"}
                 </div>
                 <div className="text-white font-bold text-xs mt-2">
-                  {tbMember.firstName + " " + tbMember.lastName}
+                  {isError ? "-" : tbMember.firstName + " " + tbMember.lastName}
                 </div>
                 <div className="flex">
                   <div>
@@ -149,7 +163,7 @@ const Member = () => {
             </div>
             <div className="absolute bottom-0 text-white font-bold text-xs ">
               {/* {"รหัสสมาชิก : " + tbMember.memberCard + " "+ width  + " "+ height } */}
-              {"รหัสสมาชิก : " + tbMember.memberCard}
+              {"รหัสสมาชิก : " + (isError ? "-" : tbMember.memberCard)}
             </div>
           </div>
           <div className="relative" style={{ width: "50%", height: "100%" }}>
@@ -157,7 +171,9 @@ const Member = () => {
               className="absolute right-0"
               onClick={() => {
                 // updateprofile
-                history.push(path.updateprofile);
+                if (!isError) {
+                  history.push(path.updateprofile);
+                }
               }}
             >
               <i className="fas fa-solid fa-pen text-white"></i>
@@ -178,7 +194,7 @@ const Member = () => {
               <div className="text-right mt-2 "></div>
               <div className="text-right mt-2">
                 <span className=" text-2xs text-white ">
-                  {tbMember.memberPoint + " คะแนน  "}
+                  {(isError ? "-" : tbMember.memberPoint) + " คะแนน  "}
                 </span>
               </div>
               <div className="text-right ">
@@ -230,10 +246,10 @@ const Member = () => {
           onChange={tabsChange}
         >
           <TabPane tab="รางวัลของฉัน" key="1" className="tab-my-award">
-            <MyAward />
+            {tabKey == 1 ? <MyAward /> : null}
           </TabPane>
           <TabPane tab="คำสั่งชื้อของฉัน" key="2" className="tab-my-order">
-            <MyOrder />
+            {tabKey == 2 ? <MyOrder /> : null}
           </TabPane>
         </Tabs>
         <div
