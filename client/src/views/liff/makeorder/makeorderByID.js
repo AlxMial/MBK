@@ -167,10 +167,12 @@ const MakeOrderById = () => {
     if (RadioPayment === 1) {
       updatrOrder.paymentId = paymentID;
     }
+
     setIsLoading(true);
     doSaveUpdateOrder(
       { data: updatrOrder },
       (res) => {
+        console.log(res)
         if (res.status) {
           if (RadioPayment === 1) {
             history.push(path.paymentInfo.replace(":id", id));

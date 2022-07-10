@@ -107,6 +107,11 @@ export default function PointEcommerce() {
       dt.setDate(dt.getDate() + 1)
       setEndDateCode(moment(dt, "DD/MM/YYYY"));
       formik.values.points = 0;
+      formik.values.productAmount = "";
+      formik.values.purchaseAmount = 0;
+      formik.setFieldValue('points',0);
+      formik.setFieldValue('productAmount',"");
+      formik.setFieldValue('purchaseAmount',0);
       formik.resetForm();
       setIsNew(true);
     }
@@ -433,10 +438,32 @@ export default function PointEcommerce() {
                         <div className={"flex-auto "}>
                           <div className="w-full mt-2">
                             <form onSubmit={formik.handleSubmit}>
-                              <div className="relative w-full mb-3">
+                              {/* <div className="relative w-full mb-3">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
                                     <label>เพิ่มแคมเปญ E-Commerce</label>
+                                  </div>
+                                </div>
+                              </div> */}
+
+
+                              <div className=" flex justify-between align-middle ">
+                                <div className=" align-middle  mb-3">
+                                  <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
+                                    <label>{(formik.values.id !== "") ? "แก้ไข" : "เพิ่ม"}เพิ่มแคมเปญ E-Commerce</label>
+                                  </div>
+                                </div>
+
+                                <div className="  text-right align-middle  mb-3">
+                                  <div className=" border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap p-4">
+                                    <label
+                                      className="cursor-pointer"
+                                      onClick={() => {
+                                        closeModal();
+                                      }}
+                                    >
+                                      X
+                                    </label>
                                   </div>
                                 </div>
                               </div>
@@ -1002,7 +1029,7 @@ export default function PointEcommerce() {
                                 <div className=" flex justify-between align-middle ">
                                   <div></div>
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-sm whitespace-nowrap p-4">
-                                    <button
+                                    {/* <button
                                       className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                       type="button"
                                       onClick={() => {
@@ -1010,7 +1037,7 @@ export default function PointEcommerce() {
                                       }}
                                     >
                                       ย้อนกลับ
-                                    </button>
+                                    </button> */}
                                     <button
                                       className={
                                         "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"

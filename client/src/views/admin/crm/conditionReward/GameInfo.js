@@ -36,6 +36,7 @@ const GameInfo = ({
   const [isClick, setIsClick] = useState(false);
   const [delay, setDelay] = useState();
   const [productNumber,setProductNumber] = useState();
+  const [errorProductCount, setProductCount] = useState();
   const formikCoupon = useFormik({
     initialValues: {
       id: "",
@@ -124,7 +125,7 @@ const GameInfo = ({
     }),
     onSubmit: (values) => {
       if (formikProduct.isValid) {
-        console.log(formikProduct.values.isNoLimitReward)
+       
         if(formikProduct.values.isNoLimitReward){
           setProductNumber(false);
           formikProduct.values.rewardType = data.rewardType;
@@ -966,7 +967,7 @@ const GameInfo = ({
                 }
               >
                 <div className="relative">
-                  {productNumber ? (
+                  {((productNumber || formikProduct.values.rewardCount <= 0) &&  !formikProduct.values.isNoLimitReward ) ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       * จำนวนสูงสุดต้องมากกว่า 0
                     </div>

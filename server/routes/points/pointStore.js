@@ -167,7 +167,7 @@ router.delete("/:pointStoreId", validateToken, async (req, res) => {
 
 router.get("/listPointStore", validateLineToken, async (req, res) => {
   let listPointStore = await tbPointStoreHD.findAll({
-    where: { isDeleted: false },  order: ["ordering"]
+    where: { isDeleted: false },  order: ["pointStoreName","ordering"]
   });
   const listPointStoreDT = await tbPointStoreDT.findAll({
     where: { isDeleted: false },

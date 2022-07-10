@@ -1104,7 +1104,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             },
             { where: { id: Encrypt.DecodeKey(data.id) } }
           );
-          console.log(updtbOrderHD);
+     
           const dataDel = await tbOrderDT.destroy({
             where: {
               orderId: Encrypt.DecodeKey(data.id),
@@ -1123,7 +1123,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           status = false;
           msg = e.message;
         }
-
+        console.log(data.paymentType);
         //#region 2c2p
         if (data.paymentType == 2) {
           // orderId = 6
@@ -1131,7 +1131,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             "0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22";
           let payload = {
             merchantID: "764764000011180",
-            invoiceNo: data.orderHd.id + "-" + data.orderHd.orderNumber,
+            invoiceNo: data.orderHd.id + "-" + data.orderHd.orderNumber+1,
             description: "item 1",
             amount: data.orderHd.netTotal,
             currencyCode: "THB",
@@ -1146,6 +1146,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           };
 
           const token = jwt.sign(payload, secretKey);
+          console.log(token)
 
           await axios
             .post("https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken", {
@@ -1153,6 +1154,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             })
             .then(async function (res) {
               // handle success
+              console.log(res.data)
               let payload = res.data.payload;
               const decoded = jwt.decode(payload);
               const _2c2p = await tb2c2p.create({

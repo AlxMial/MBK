@@ -31,6 +31,7 @@ const GameList = ({ id, setListGame, listGame ,listGameSearch, setListGameSearch
   const [index, setIndex] = useState();
   const { addToast } = useToasts();
   const [errorImage, setErrorImage] = useState();
+
   const InputSearch = (e) => {
     e = e.toLowerCase();
     if (e === "") {

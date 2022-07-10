@@ -266,7 +266,13 @@ const OrderTable = ({ orderList, openModal }) => {
                       </span>
                     </td>
                     <td className={tdClass}>
-                      <span>{value.remark}</span>
+                      <span>
+                        {value.tbCancelOrder != null
+                          ? value.tbCancelOrder.cancelOtherRemark
+                          : value.tbReturnOrder != null
+                          ? value.tbReturnOrder.returnOtherRemark
+                          : ""}
+                      </span>
                     </td>
                     {/* <td
                           onClick={() => {
