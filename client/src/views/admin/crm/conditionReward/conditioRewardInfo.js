@@ -187,6 +187,7 @@ export default function ConditioRewardInfo() {
                 );
                 dispatch(fetchSuccess());
                 formik.setTouched({});
+                fetchData();
                 addToast(
                   Storage.GetLanguage() === "th"
                     ? "บันทึกข้อมูลสำเร็จ"
@@ -212,6 +213,7 @@ export default function ConditioRewardInfo() {
               if (res.data.status) {
                 dispatch(fetchSuccess());
                 formik.setTouched({});
+                fetchData();
                 addToast(
                   Storage.GetLanguage() === "th"
                     ? "บันทึกข้อมูลสำเร็จ"
@@ -311,6 +313,7 @@ export default function ConditioRewardInfo() {
                                 })
                                 .then((resUpload) => {
                                   dispatch(fetchSuccess());
+                                  fetchData();
                                   addToast(
                                     Storage.GetLanguage() === "th"
                                       ? "บันทึกข้อมูลสำเร็จ"
@@ -329,6 +332,7 @@ export default function ConditioRewardInfo() {
                             }
                           });
                       } else {
+                        fetchData();
                         addToast(
                           Storage.GetLanguage() === "th"
                             ? "บันทึกข้อมูลสำเร็จ"
@@ -339,6 +343,7 @@ export default function ConditioRewardInfo() {
                       }
                     } else if (formik.values.rewardType === "2") {
                       formikProduct.values.id = res.data.tbRedemptionProduct.id;
+                      fetchData();
                       dispatch(fetchSuccess());
                       addToast(
                         Storage.GetLanguage() === "th"
@@ -380,6 +385,7 @@ export default function ConditioRewardInfo() {
                         : formikProduct.values.id,
                   };
                   await onSaveImage(ImageSave, async (res) => {});
+                  fetchData();
                   addToast(
                     Storage.GetLanguage() === "th"
                       ? "บันทึกข้อมูลสำเร็จ"

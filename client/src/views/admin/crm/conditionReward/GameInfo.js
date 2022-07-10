@@ -113,17 +113,18 @@ const GameInfo = ({
     },
     validationSchema: Yup.object({
       productName: Yup.string().required("* กรุณากรอก ชื่อสินค้าสัมนาคุณ"),
-      rewardCount: Yup.number()
-        .required("* กรุณากรอก จำนวนสูงสุด")
-        .test(
-          "Is positive?",
-          "* จำนวนสูงสุดต้องมากกว่า 0",
-          (value) => value > 0
-        ),
-      // pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสัมนาคุณ"),
+      // rewardCount: Yup.number()
+      //   .required("* กรุณากรอก จำนวนสูงสุด")
+      //   .test(
+      //     "Is positive?",
+      //     "* จำนวนสูงสุดต้องมากกว่า 0",
+      //     (value) => value > 0
+      //   ),
+      pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสัมนาคุณ"),
     }),
     onSubmit: (values) => {
       if (formikProduct.isValid) {
+        console.log(formikProduct.values.isNoLimitReward)
         if(formikProduct.values.isNoLimitReward){
           setProductNumber(false);
           formikProduct.values.rewardType = data.rewardType;
