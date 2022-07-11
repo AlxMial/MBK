@@ -71,7 +71,7 @@ const GameInfo = ({
         .required("* กรุณากรอก ส่วนลด")
         .test(
           "Is positive?",
-          "* จำนวนคูปองต้องมากกว่า 0",
+          "* ส่วนลดต้องมากกว่า 0",
           (value) => value > 0
         ),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
