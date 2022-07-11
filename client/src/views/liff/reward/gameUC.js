@@ -15,10 +15,10 @@ const GameUC = ({ UseGame }) => {
                         justifyContent: "center"
                         , color: "#FFFFFF"
                         , fontSize: "50px"
-                        , height: "350px"
+                        , height: "270px"
                         // , border: "1px solid "
                     }}>
-                        <div className="relative flex justify-center items-center" style={{ width: "350px", height: "350px" }} >
+                        <div className="relative flex justify-center items-center" style={{ width: "350px", height: "250px" }} >
                             <div className="absolute" style={{ width: "320px", height: "320px" }}>
                                 <img
                                     style={{
