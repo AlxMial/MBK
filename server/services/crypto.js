@@ -29,7 +29,7 @@ class ValidateEncrypt {
   }
 
   DecodeKey(id) {
-    try{
+    try {
       if (this.IsNullOrEmpty(id)) {
         return "";
       }
@@ -37,10 +37,9 @@ class ValidateEncrypt {
       // console.log(buff)
       id = buff.toString("ascii");
       return this.decrypt(id);
-    }catch{
+    } catch {
       return id;
     }
-
   }
 
   IsNullOrEmpty = (obj) => {
@@ -117,7 +116,7 @@ class ValidateEncrypt {
   }
 
   encryptEmail(list) {
-    try{
+    try {
       const splitEmail = list.dataValues.email.split("@");
       if (splitEmail.length > 1) {
         1;
@@ -128,8 +127,7 @@ class ValidateEncrypt {
       const splitEmail = list.split("@");
       if (splitEmail.length > 1) {
         1;
-        list =
-          splitEmail[0].substring(0, 3) + "xxxx.xxx@" + splitEmail[1];
+        list = splitEmail[0].substring(0, 3) + "xxxx.xxx@" + splitEmail[1];
       }
     }
     return list;
@@ -213,7 +211,6 @@ class ValidateEncrypt {
         columns !== "remark" &&
         list[columns] !== ""
       ) {
-
         list.dataValues[columns] = this.DecodeKey(list.dataValues[columns]);
       }
     }
@@ -241,24 +238,23 @@ class ValidateEncrypt {
         columns !== "uid" &&
         columns !== "country" &&
         columns !== "memberPoint" &&
-        columns !== "consentDate" &&        
+        columns !== "consentDate" &&
         columns !== "isPolicy1" &&
         columns !== "isPolicy2" &&
         columns !== "isCustomer" &&
         columns !== "role" &&
+        columns !== "remark" &&
         list[columns] !== ""
       ) {
-
         for (var i = 0; i < list.length; i++) {
-          try{
-          list[i].dataValues[columns] = this.DecodeKey(
-            list[i].dataValues[columns]
-          );
-          }catch{
-            console.log(list[i].dataValues[columns])
+          try {
+            list[i].dataValues[columns] = this.DecodeKey(
+              list[i].dataValues[columns]
+            );
+          } catch {
+            console.log(list[i].dataValues[columns]);
           }
         }
-
       }
     }
     return list;
@@ -266,11 +262,10 @@ class ValidateEncrypt {
 
   decodePointCode(list) {
     for (var i = 0; i < list.length; i++) {
-     list[i].code = this.DecodeKey(list[i].code).toUpperCase();
+      list[i].code = this.DecodeKey(list[i].code).toUpperCase();
     }
     return list;
   }
-
 }
 
 module.exports = ValidateEncrypt;

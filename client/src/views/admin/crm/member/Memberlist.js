@@ -41,7 +41,7 @@ export default function MemberList() {
     e = e.toLowerCase();
     if (e === "") {
       setListUser(listSearch);
-    } else {  
+    } else {
       setListUser(
         listSearch.filter(
           (x) =>
@@ -53,8 +53,8 @@ export default function MemberList() {
             x.registerDate.toString().includes(e) ||
             x.memberCard.toString().toLowerCase().includes(e) ||
             x.memberPoint.toString().toLowerCase().includes(e) ||
-            (moment(x.birthDate).format("DD/MM/YYYY")).toString().includes(e) ||
-            (moment(x.registerDate).format("DD/MM/YYYY")).includes(e)
+            moment(x.birthDate).format("DD/MM/YYYY").toString().includes(e) ||
+            moment(x.registerDate).format("DD/MM/YYYY").includes(e)
         )
       );
       setPageNumber(0);
@@ -147,6 +147,7 @@ export default function MemberList() {
       "วันหมดอายุคะแนนสะสม",
       "ยอมรับ Consent เพื่อการติดต่อสื่อสาร",
       "ยอมรับ Consent เพื่อวิเคราะห์ข้อมูล",
+      "หมายเหตุ",
       "เคยเป็นลูกค้าข้าวมาบุญครอง",
       "ปัจจุบันทานข้าวแบรนด์",
     ];
@@ -170,6 +171,7 @@ export default function MemberList() {
       "memberPointExpire",
       "isPolicy1",
       "isPolicy2",
+      "remark",
       "isCustomer",
       "eating",
     ];
@@ -187,8 +189,13 @@ export default function MemberList() {
         member.data.tbMember[i]["subDistrict"]
       );
       member.data.tbMember[i]["memberType"] = "GREEN MEMBER";
-      member.data.tbMember[i]["expirePoint"] = member.data.tbMember[i]["memberPoint"];
+      member.data.tbMember[i]["expirePoint"] =
+        member.data.tbMember[i]["memberPoint"];
       member.data.tbMember[i]["memberPointExpire"] = "31/12/2024";
+      member.data.tbMember[i]["remark"] =
+        member.data.tbMember[i]["remark"] == null
+          ? ""
+          : member.data.tbMember[i]["remark"];
     }
     exportExcel(
       member.data.tbMember,

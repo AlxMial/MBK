@@ -66,6 +66,7 @@ router.get("/", validateToken, async (req, res) => {
       "consentDate",
       "isPolicy1",
       "isPolicy2",
+      "remark"
     ],
     where: { isDeleted: false },
   });
@@ -118,6 +119,7 @@ router.get("/export", validateToken, async (req, res) => {
       "isPolicy2",
       "isCustomer",
       "eating",
+      "remark"
     ],
     where: { isDeleted: false },
   });
