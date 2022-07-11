@@ -100,7 +100,11 @@ const Stock = () => {
             x.status.toString().toLowerCase().includes(e) ||
             x.price.toString().toLowerCase().includes(e) ||
             x.buy.toString().toLowerCase().includes(e) ||
-            x.productCount.toString().toLowerCase().includes(e)
+            x.productCount.toString().toLowerCase().includes(e) ||
+            (x.isInactive ? "แสดง" : "ไม่แสดง")
+              .toString()
+              .toLowerCase()
+              .includes(e)
         )
       );
     }
@@ -217,7 +221,7 @@ const Stock = () => {
                 afterSaveSuccess();
               } else {
                 dispatch(fetchSuccess());
-                addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                addToast("บันทึกข้อมูลไม่สำเร็จ" + res.data.message, {
                   appearance: "warning",
                   autoDismiss: true,
                 });
@@ -231,7 +235,7 @@ const Stock = () => {
                 afterSaveSuccess();
               } else {
                 dispatch(fetchSuccess());
-                addToast("บันทึกข้อมูลไม่สำเร็จ", {
+                addToast("บันทึกข้อมูลไม่สำเร็จ" + res.data.message, {
                   appearance: "warning",
                   autoDismiss: true,
                 });

@@ -11,11 +11,22 @@ const Encrypt = new ValidateEncrypt();
 const Op = Sequelize.Op;
 
 router.post("/", validateToken, async (req, res) => {
-  console.log(req.body);
-  const data = await tbStock.create(req.body);
+  let status = true;
+  let msg = "";
+  let data;
+  const _tbStock = await tbStock.findOne({
+    where: { productName: req.body.productName },
+  });
+  if (!_tbStock) {
+    data = await tbStock.create(req.body);
+  } else {
+    status = false;
+    msg = "ซื่อสินค้าซ้ำ";
+  }
+
   res.json({
-    status: true,
-    message: "success",
+    status: status,
+    message: msg,
     tbStock: data,
   });
 });
@@ -47,6 +58,7 @@ router.get("/", validateToken, async (req, res) => {
         ],
       ],
     },
+    order: [["createdAt", "DESC"]],
   });
   res.json({
     status: true,
@@ -66,21 +78,32 @@ router.get("/byId/:id", validateToken, async (req, res) => {
 });
 
 router.put("/", validateToken, async (req, res) => {
-  const data = await tbStock.findOne({
-    where: {
-      isDeleted: false,
-      id: {
-        [Op.ne]: req.body.id,
+  let status = true;
+  let msg = "";
+  let dataUpdate;
+  const _tbStock = await tbStock.findOne({
+    where: { productName: req.body.productName, id: { [Op.not]: req.body.id } },
+  });
+  if (!_tbStock) {
+    const data = await tbStock.findOne({
+      where: {
+        isDeleted: false,
+        id: {
+          [Op.ne]: req.body.id,
+        },
       },
-    },
-  });
+    });
 
-  const dataUpdate = await tbStock.update(req.body, {
-    where: { id: req.body.id },
-  });
+    dataUpdate = await tbStock.update(req.body, {
+      where: { id: req.body.id },
+    });
+  } else {
+    status = false;
+    msg = "ซื่อสินค้าซ้ำ";
+  }
   res.json({
-    status: true,
-    message: "success",
+    status: status,
+    message: msg,
     tbStock: dataUpdate,
   });
 });
@@ -228,7 +251,7 @@ router.post(
           relatedId: Encrypt.DecodeKey(id),
           relatedTable: relatedTable,
         },
-        order :[['relatedTable', 'ASC']]
+        order: [["relatedTable", "ASC"]],
       });
       _tbImage.filter((e) => {
         data.push({
@@ -264,7 +287,7 @@ router.get("/getImg/:relatedTable/:id", async (req, res) => {
   );
   var im = Buffer(_tbImage.dataValues.image.toString("binary"), "base64");
   var base64Data = imgBuffer.replace(/^data:image\/png;base64,/, "");
-  
+
   var img = Buffer.from(base64Data, "base64");
   res.writeHead(200, {
     "Content-Type": imgBuffer.split(";")[0].split(":")[1],
