@@ -12,18 +12,19 @@ const {
   tbOrderHD,
 } = require("../../models");
 const Op = Sequelize.Op;
+const db = require("../../models");
 const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
 router.post("/", validateToken, async (req, res) => {
-  let status = true
-  let msg = "success"
+  let status = true;
+  let msg = "success";
   let data;
   try {
     data = await tbCancelOrder.create(req.body);
     //#region update ราคาสินค้า
     if (data) {
-      const orderId = req.body.orderId
+      const orderId = req.body.orderId;
       const OrderDTData = await tbOrderDT.findAll({
         attributes: ["amount", "stockId"],
         where: {
@@ -41,7 +42,9 @@ router.post("/", validateToken, async (req, res) => {
           });
           if (_tbStockData) {
             let _tbStock = await tbStock.update(
-              { productCount: _tbStockData.productCount + OrderDTData[i].amount },
+              {
+                productCount: _tbStockData.productCount + OrderDTData[i].amount,
+              },
               {
                 where: {
                   id: OrderDTData[i].stockId,
@@ -54,8 +57,8 @@ router.post("/", validateToken, async (req, res) => {
     }
     //#region update ราคาสินค้า
   } catch (e) {
-    status = false
-    msg = e.message
+    status = false;
+    msg = e.message;
   }
 
   res.json({
@@ -103,7 +106,8 @@ router.get("/", validateToken, async (req, res) => {
           "orderDate",
         ],
       ],
-    },order: [["createdAt", "DESC"]],
+    },
+    order: [["createdAt", "DESC"]],
   });
   res.json({
     status: true,
@@ -201,7 +205,9 @@ router.post("/cancelOrder", validateLineToken, async (req, res) => {
   let { orderId, cancelDetail, description } = req.body;
   let status = true;
   let msg = "";
+  let t
   try {
+    t = await db.sequelize.transaction();
     //#region add tb Cancel
     const data = await tbCancelOrder.create({
       orderId: Encrypt.DecodeKey(orderId),
@@ -242,9 +248,22 @@ router.post("/cancelOrder", validateLineToken, async (req, res) => {
       }
     }
     //#region update ราคาสินค้า
+    //#region เอาคูปองออก
+    const _tbOrderHD = await tbOrderHD.update(
+      { memberRewardId: null },
+      {
+        where: { id: Encrypt.DecodeKey(orderId) },
+      }
+    );
+    //#endregion เอาคูปองออก
+    await t.commit();
   } catch (e) {
     status = false;
     msg = e.message;
+    if (t) {
+      await t.rollback();
+    }
+
   }
 
   res.json({
