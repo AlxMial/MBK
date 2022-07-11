@@ -262,6 +262,7 @@ export default function PointHistoryReport() {
   const ExportFile = async (id, name) => {
     setIsLoading(true);
     await axios.get(`report/exportExcel/${id}`).then((response) => {
+      console.log(response)
       const TitleColumns = [
         "รหัส Coupon",
         "สถานะใช้งาน",

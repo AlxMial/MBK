@@ -154,8 +154,8 @@ router.post("/", validateLineToken, async (req, res) => {
               isDeleted: false,
               tbMemberId: req.body.memberId,
               tbPointCodeHDId: dt.tbPointCodeHDId,
-              pointsStoreHdId: req.body.storeId ,
-              pointsStoreDtId: req.body.branchId
+              pointsStoreHdId: Encrypt.DecodeKey(req.body.storeId) ,
+              pointsStoreDtId: (req.body.branchId) ? Encrypt.DecodeKey(req.body.branchId) : null
             };
 
             const memberPoint = await tbMemberPoint.create(historyPoint);

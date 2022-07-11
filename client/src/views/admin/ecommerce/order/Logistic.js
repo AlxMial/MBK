@@ -253,8 +253,21 @@ const Logistic = ({
               if (tbCancelOrder === undefined) {
                 let tbCancelOrder = {
                   cancelDetail: OpenmodelCancel[0].value,
+                  cancelStatus:"3"
+                };
+                setCancelReason(true);
+                settbCancelOrder(tbCancelOrder);
+              }
+
+              if(!e.target.checked)
+              {  
+                let tbCancelOrder = {
+                  cancelDetail: OpenmodelCancel[0].value,
+                  cancelOtherRemark: "",
+                  cancelStatus:"3"
                 };
                 settbCancelOrder(tbCancelOrder);
+                setCancelReason(false);
               }
             }}
             disabled={
@@ -274,7 +287,7 @@ const Logistic = ({
               name="cancelDetail"
               onChange={(value) => {
                 if (tbCancelOrder == null) {
-                  tbCancelOrder = { cancelDetail: value.value };
+                  tbCancelOrder = { cancelDetail: value.value ,cancelStatus: "3"};
                 } else {
                   tbCancelOrder.cancelDetail = value.value;
                 }
@@ -286,19 +299,10 @@ const Logistic = ({
                 OpenmodelCancel,
                 tbCancelOrder == null
                   ? null
-                  : tbCancelOrder.cancelDetail == null
-                  ? null
-                  : delay
+                  : tbCancelOrder.cancelDetail
+      
               )}
-              isDisabled={
-                !isCanEdit
-                  ? true
-                  : paymentStatus == 3
-                  ? true
-                  : !isCancel
-                  ? true
-                  : false
-              }
+              isDisabled={isCancel && orderHD.transportStatus == 1  && isCanEdit ? false : true}
               // bgColor={getStatus(transportStatus).bg}
             />
           </div>
@@ -318,23 +322,21 @@ const Logistic = ({
               }
               rows={3}
               maxLength={255}
-              disabled={
-                !isCanEdit
-                  ? true
-                  : orderHD.paymentStatus === 3
-                  ? true
-                  : !isCancel
-                  ? true
-                  : false
-              }
+              disabled={isCancel && orderHD.transportStatus == 1 && isCanEdit ? false : true}
               onChange={(e) => {
                 if (tbCancelOrder == null) {
-                  tbCancelOrder = { cancelOtherRemark: e.target.value };
+                  tbCancelOrder = { cancelOtherRemark: e.target.value,cancelStatus: "3"  };
                 } else {
                   setDalay(e.target.value);
                   tbCancelOrder.cancelOtherRemark = e.target.value;
                 }
                 settbCancelOrder(tbCancelOrder);
+                if( e.target.value == '')
+                  setCancelReason(true);
+                else
+                  setCancelReason(false);
+                // settbCancelOrder({ ...tbCancelOrder, cancelOtherRemark: e.target.value });
+
               }}
             />
           </div>

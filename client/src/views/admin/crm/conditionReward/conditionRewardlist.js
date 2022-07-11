@@ -375,7 +375,7 @@ export default function ConditionRewardList() {
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              {moment(value.endDate).format("DD/MM/YYYY")}
+                              { value.isNotExpired} { value.isNotExpired ? "ไม่มีวันหมดอายุ" : moment(value.endDate).format("DD/MM/YYYY")}
                             </Link>
                           </td>
                           <td className="w-24 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">

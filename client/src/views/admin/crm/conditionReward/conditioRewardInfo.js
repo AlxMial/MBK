@@ -131,7 +131,7 @@ export default function ConditioRewardInfo() {
       rewardType: "",
       couponType: false,
       points: 0,
-      isNotExpired: true,
+      isNotExpired: false,
       rewardGameAmount: 0,
       startDate: new Date(),
       endDate: moment(new Date()).add(1, "days").toDate(),
@@ -1003,9 +1003,9 @@ export default function ConditioRewardInfo() {
                   <div className="w-full">&nbsp;</div>
                   <div className="w-full lg:w-1/12 margin-auto-t-b ">
                     <LabelUC label="วันที่เริ่มต้น" isRequired={true} />
-                    <div className="text-sm py-2 px-2  text-red-500">
+                    {/* <div className="text-sm py-2 px-2  text-red-500">
                       &nbsp;
-                    </div>
+                    </div> */}
                   </div>
                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                     <div className="relative">
@@ -1051,9 +1051,9 @@ export default function ConditioRewardInfo() {
                             : null
                         }
                       />
-                      <div className="text-sm py-2 px-2  text-red-500">
+                      {/* <div className="text-sm py-2 px-2  text-red-500">
                         &nbsp;
-                      </div>
+                      </div> */}
                     </div>
                     <div className="relative w-full px-4">
                       {formik.touched.startDate && formik.errors.startDate ? (
@@ -1070,9 +1070,7 @@ export default function ConditioRewardInfo() {
                   </div>
                   <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
                     <LabelUC label="สิ้นสุด" isRequired={true} />
-                    <div className="text-sm py-2 px-2  text-red-500">
-                      &nbsp;
-                    </div>
+  
                   </div>
                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                     <div className="relative">
@@ -1133,14 +1131,14 @@ export default function ConditioRewardInfo() {
                           }
                         }}
                       />
-                      <CheckBoxUC
+                      {/* <CheckBoxUC
                         text="ไม่มีวันหมดอายุ"
                         name="isNotExpired"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         checked={formik.values.isNotExpired}
                         classLabel="mt-2 w-full"
-                      />
+                      /> */}
                       <div className="relative w-full px-4">
                         {formik.touched.endDate && formik.errors.endDate ? (
                           <div className="text-sm py-2 px-2  text-red-500">

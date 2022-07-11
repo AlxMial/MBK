@@ -163,6 +163,7 @@ const GetReward = () => {
             setoptionsStore(list);
             if (!IsNullOrEmpty(list)) {
               setvalueStore(list[0].value);
+              console.log(list[0].value)
               if (list[0].DT.length > 0) {
                 setoptionsbranch(list[0].DT);
                 setvalueBranch(list[0].DT[0].value);

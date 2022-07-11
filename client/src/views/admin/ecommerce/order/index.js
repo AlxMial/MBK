@@ -32,7 +32,7 @@ const Order = () => {
   const [isChangeOrderNumber, setIsChangeOrderNumber] = useState(false);
   const [orderNumber, setOrderNumber] = useState(null);
   const [isCancel, setIsCancel] = useState(false);
-  const [cancelReason, setCancelReason] = useState("");
+  const [cancelReason, setCancelReason] = useState(false);
   const [cancelStatus, setcancelStatus] = useState(null);
   const [block, setBlock] = useState(false);
   const [ismodalIsOpenEdit, setmodalIsOpenEdit] = useState({
@@ -140,7 +140,7 @@ const Order = () => {
       if (data[0].isCancel) {
         const res = await axios.get("cancelOrder/byOrderId/" + id);
         if (!res.data.error && res.data.tbCancelOrder) {
-          setCancelReason(res.data.tbCancelOrder.cancelOtherRemark);
+          // setCancelReason(res.data.tbCancelOrder.cancelOtherRemark);
           setcancelStatus(
             res.data.tbCancelOrder.cancelStatus == 2 ? true : false
           );
