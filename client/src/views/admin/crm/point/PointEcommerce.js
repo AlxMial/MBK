@@ -149,9 +149,11 @@ export default function PointEcommerce() {
   }
 
   const onEditValue = async () => {
-    closeModalEdit();
     formik.handleSubmit();
-    setIsOpen(false);
+    closeModalEdit();
+    if (formik.errors.length == 0) {
+      setIsOpen(false);
+    }
   };
 
   const onReturn = () => {
@@ -912,6 +914,7 @@ export default function PointEcommerce() {
                                               false
                                             );
                                             if (formik.values.endDate != null) {
+                                              let s = moment(e).toDate();
                                               if (
                                                 moment(e).toDate() >=
                                                 formik.values.endDate
