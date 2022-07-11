@@ -22,6 +22,7 @@ const db = require("../../models");
 router.get("/", validateToken, async (req, res) => {
   const listRedemption = await tbRedemptionConditionsHD.findAll({
     where: { isDeleted: false },
+    order: [["createdAt", "DESC"]],
   });
   if (listRedemption.length > 0) {
     Encrypt.encryptValueIdArray(listRedemption);
