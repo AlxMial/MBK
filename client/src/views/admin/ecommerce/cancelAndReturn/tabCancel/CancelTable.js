@@ -12,7 +12,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
   const tdSpan = "text-gray-mbk ";
 
   const [pageNumber, setPageNumber] = useState(0);
-  const usersPerPage = 5;
+  const usersPerPage = 8;
   const pagesVisited = pageNumber * usersPerPage;
   const pageCount = Math.ceil(listData.length / usersPerPage);
 
@@ -82,7 +82,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
                   <th
                     key={index}
                     className={
-                      thClass + (item === "ลำดับที่" ? " text-center" : "")
+                      thClass + (item === "ลำดับที่" ? " text-center" : (item === "ยอดสุทธิ") ? " text-right pr-8" : "")
                     }
                   >
                     {item}
@@ -114,7 +114,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
                     <td className={tdClass}>
                       <span className={tdSpan}>{value.memberName}</span>
                     </td>
-                    <td className={tdClass}>
+                    <td className={tdClass +" text-right pr-8"}>
                       <span className={tdSpan}>{value.sumPrice}</span>
                     </td>
                     <td className={tdClass}>
@@ -149,9 +149,9 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
       <div className="px-4">
         <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
           <div className="lg:w-6/12 font-bold" style={{ alignSelf: "stretch" }}>
-            {pagesVisited + 10 > listData.length
+            {pagesVisited + 8 > listData.length
               ? listData.length
-              : pagesVisited + 10}{" "}
+              : pagesVisited + 8}{" "}
             {"/"}
             {listData.length} รายการ
           </div>

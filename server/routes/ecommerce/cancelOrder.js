@@ -72,10 +72,9 @@ router.get("/", validateToken, async (req, res) => {
       include: [
         [
           Sequelize.literal(`(
-                        select sum(price) from tbstocks t 
-                            where id in (select stockId from tborderdts t2 
+                        select netTotal from tborderhds
 				                            where isDeleted=0
-				                            and orderId = tbCancelOrder.orderId)
+				                            and id = tbCancelOrder.orderId
                     )`),
           "sumPrice",
         ],
@@ -104,7 +103,7 @@ router.get("/", validateToken, async (req, res) => {
           "orderDate",
         ],
       ],
-    },
+    },order: [["createdAt", "DESC"]],
   });
   res.json({
     status: true,
