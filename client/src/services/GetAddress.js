@@ -84,7 +84,11 @@ export const getAddressName = async (type, id) => {
   } else if (type === "district") {
     valueAddress = await api_amphure.filter((e) => e.value.toString() === id)[0].label;
   } else if (type === "subDistrict") {
-    valueAddress = await api_tombon.filter((e) => e.value.toString() === id)[0].label;
+    try {
+      valueAddress = await api_tombon.filter((e) => e.value.toString() === id)[0].label;
+    } catch {
+      valueAddress =""
+    }
   }
   return valueAddress;
 };

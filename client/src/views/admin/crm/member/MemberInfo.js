@@ -309,10 +309,12 @@ export default function MemberInfo() {
             districtId
           );
           setSubDistrict(subDistrict);
-          formik.setFieldValue(
-            "subDistrict",
-            subDistrict.filter((e) => e.value === subDistrictId)[0].value
-          );
+          if (subDistrict.length > 0) {
+            formik.setFieldValue(
+              "subDistrict",
+              subDistrict.filter((e) => e.value === subDistrictId)[0].value
+            );
+          }
         } else if (columns === "district") {
           const district = await Address.getAddress("district", provinceId);
           setDataDistrict(district);
@@ -698,7 +700,10 @@ export default function MemberInfo() {
                     <div className="relative w-full ">
                       <input
                         type="text"
-                        className={"border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" + (typePermission == "1" ? " hidden" : " ")}
+                        className={
+                          "border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150" +
+                          (typePermission == "1" ? " hidden" : " ")
+                        }
                         id="phone"
                         name="phone"
                         maxLength={10}
@@ -712,7 +717,7 @@ export default function MemberInfo() {
                         autoComplete="phoneaddress"
                         disabled={typePermission === "1" ? false : true}
                       />
-                      <InputMaskUC 
+                      <InputMaskUC
                         type="tel"
                         id="phone"
                         name="phone"
@@ -1071,10 +1076,10 @@ export default function MemberInfo() {
                             ? dataSubDistrict
                             : dataSubDistrict
                         }
-                        value={ValidateService.defaultValue(
+                        value={formik.values.subDistrict !== null ? ValidateService.defaultValue(
                           dataSubDistrict,
                           formik.values.subDistrict
-                        )}
+                        ) : "100101"}
                       />
                     </div>
                   </div>
