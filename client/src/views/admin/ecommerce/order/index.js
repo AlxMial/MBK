@@ -194,7 +194,10 @@ const Order = () => {
       ) {
         let Error = false;
         if (tbCancelOrder != null) {
-          if (tbCancelOrder.cancelOtherRemark == "") {setCancelReason(true); Error = true;}
+          if (tbCancelOrder.cancelOtherRemark == "") {
+            setCancelReason(true);
+            Error = true;
+          }
         } else {
           setCancelReason(false);
         }
@@ -411,10 +414,12 @@ const Order = () => {
         "district",
         order.data.tbOrder[i]["district"]
       );
-      order.data.tbOrder[i]["subDistrict"] = await Address.getAddressName(
-        "subDistrict",
-        order.data.tbOrder[i]["subDistrict"]
-      );
+      if (order.data.tbOrder[i]["subDistrict"] !== "") {
+        order.data.tbOrder[i]["subDistrict"] = await Address.getAddressName(
+          "subDistrict",
+          order.data.tbOrder[i]["subDistrict"]
+        );
+      }
 
       order.data.tbOrder[i]["isFlashSale"] =
         order.data.tbOrder[i]["isFlashSale"] === "1" ? "Flash Sale" : "";

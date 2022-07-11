@@ -22,7 +22,6 @@ const TabCancel = () => {
     dispatch(fetchLoading());
     await axios.get("cancelOrder").then(async (response) => {
       if (!response.data.error && response.data.tbCancelOrder) {
-        console.log("response.data.tbCancelOrder", response.data.tbCancelOrder);
         let _cancelData = response.data.tbCancelOrder;
         await axios.get("members").then((res) => {
           _cancelData = _cancelData.map((order) => {

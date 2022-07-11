@@ -1057,15 +1057,17 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
                   model: tbMember,
                   where: { isDeleted: false },
                   required: false,
-                },
+                }
               ],
             },
           ],
-        },
+        }
       ],
     })
     .then((objs) => {
+
       let tutorials = [];
+      
       objs.forEach((obj) => {
         let fullname = "";
         let redeemDate = "";
@@ -1095,6 +1097,7 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
                }
             }
           }
+    
         }
         tutorials.push({
           code: Encrypt.DecodeKey(obj.code).toUpperCase(),

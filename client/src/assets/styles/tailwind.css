@@ -2389,6 +2389,10 @@ select {
   padding-left: 2.5rem;
 }
 
+.pr-8 {
+  padding-right: 2rem;
+}
+
 .pl-11 {
   padding-left: 2.75rem;
 }
