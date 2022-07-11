@@ -113,7 +113,7 @@ const GameInfo = ({
       updateBy: "",
     },
     validationSchema: Yup.object({
-      productName: Yup.string().required("* กรุณากรอก ชื่อสินค้าสัมนาคุณ"),
+      productName: Yup.string().required("* กรุณากรอก ชื่อสินค้าสมนาคุณ"),
       // rewardCount: Yup.number()
       //   .required("* กรุณากรอก จำนวนสูงสุด")
       //   .test(
@@ -121,7 +121,7 @@ const GameInfo = ({
       //     "* จำนวนสูงสุดต้องมากกว่า 0",
       //     (value) => value > 0
       //   ),
-      pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสัมนาคุณ"),
+      pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสมนาคุณ"),
     }),
     onSubmit: (values) => {
       if (formikProduct.isValid) {
@@ -245,7 +245,7 @@ const GameInfo = ({
             <div className=" flex justify-between align-middle ">
               <div className=" align-middle  mb-3">
                 <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                  <label>เพิ่มของสัมนาคุณ</label>
+                  <label>เพิ่มของสมนาคุณ</label>
                 </div>
               </div>
               <div className="  text-right align-middle  mb-3">
@@ -787,7 +787,7 @@ const GameInfo = ({
                 }
               >
                 <div className="relative w-full">
-                  <LabelUC label="รูปสินค้าสัมนาคุณ" isRequired={true} />
+                  <LabelUC label="รูปสินค้าสมนาคุณ" isRequired={true} />
                   {formikProduct.touched.pictureProduct &&
                   formikProduct.errors.pictureProduct ? (
                     <div className="text-sm py-2 px-2 text-red-500">&nbsp;</div>
@@ -803,7 +803,7 @@ const GameInfo = ({
                 <div className="relative w-full px-4">
                   <ProfilePictureUC
                     id="eProductImage"
-                    hoverText="เลือกรูปสินค้าสัมนาคุณ"
+                    hoverText="เลือกรูปสินค้าสมนาคุณ"
                     onChange={handleSeletectImage}
                     src={formikProduct.values.pictureProduct}
                   />
@@ -834,7 +834,7 @@ const GameInfo = ({
                 }
               >
                 <div className="relative w-full">
-                  <LabelUC label="ชื่อสินค้าสัมนาคุณ" isRequired={true} />
+                  <LabelUC label="ชื่อสินค้าสมนาคุณ" isRequired={true} />
                   {formikProduct.touched.productName &&
                   formikProduct.errors.productName ? (
                     <div className="text-sm py-2 px-2  text-red-500">

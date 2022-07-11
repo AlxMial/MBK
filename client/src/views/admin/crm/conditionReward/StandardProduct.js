@@ -34,7 +34,7 @@ const StandardProduct = ({ formik, errorImage, setErrorImage,errorProductCount,s
         <div className="flex flex-wrap">
           <div className="w-full lg:w-1/12 margin-auto-t-b">
             <div className="relative w-full">
-              <LabelUC label="รูปสินค้าสัมนาคุณ" isRequired={true} />
+              <LabelUC label="รูปสินค้าสมนาคุณ" isRequired={true} />
               {formik.touched.pictureProduct && formik.errors.pictureProduct ? (
                 <div className="text-sm py-2 px-2 text-red-500">&nbsp;</div>
               ) : null}
@@ -44,7 +44,7 @@ const StandardProduct = ({ formik, errorImage, setErrorImage,errorProductCount,s
             <div className="relative w-full px-4">
               <ProfilePictureUC
                 id="eProductImage"
-                hoverText="เลือกรูปสินค้าสัมนาคุณ"
+                hoverText="เลือกรูปสินค้าสมนาคุณ"
                 onChange={handleChangeImage}
                 src={formik.values.pictureProduct}
               />
@@ -64,7 +64,7 @@ const StandardProduct = ({ formik, errorImage, setErrorImage,errorProductCount,s
           <div className="w-full">&nbsp;</div>
           <div className="w-full lg:w-1/12 margin-auto-t-b">
             <div className="relative w-full">
-              <LabelUC label="ชื่อสินค้าสัมนาคุณ" isRequired={true} />
+              <LabelUC label="ชื่อสินค้าสมนาคุณ" isRequired={true} />
               {formik.touched.productName && formik.errors.productName ? (
                 <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
               ) : null}

@@ -548,14 +548,14 @@ export default function ConditioRewardInfo() {
       updateBy: "",
     },
     validationSchema: Yup.object({
-      productName: Yup.string().required("* กรุณากรอก ชื่อสินค้าสัมนาคุณ"),
+      productName: Yup.string().required("* กรุณากรอก ชื่อสินค้าสมนาคุณ"),
       rewardCount: Yup.number().required("* กรุณากรอก จำนวนสูงสุด"),
       // .test(
       //   "Is positive?",
       //   "* จำนวนสูงสุดต้องมากกว่า 0",
       //   (value) => value > 0
       // ),
-      pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสัมนาคุณ"),
+      pictureProduct: Yup.string().required("* กรุณาเลือก รูปสินค้าสมนาคุณ"),
     }),
   });
 
@@ -1188,7 +1188,7 @@ export default function ConditioRewardInfo() {
                       {!isRedemptionType
                         ? !isRewardType
                           ? "กำหนดคูปอง"
-                          : "กำหนดสินค้าสัมนาคุณ"
+                          : "กำหนดสินค้าสมนาคุณ"
                         : "กำหนด Game"}
                     </div>
                   </span>

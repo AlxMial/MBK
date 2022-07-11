@@ -158,7 +158,7 @@ const GameList = ({ id, setListGame, listGame ,listGameSearch, setListGameSearch
                       setOpen(true);
                     }}
                   >
-                    เพิ่มของสัมนาคุณ
+                    เพิ่มของสมนาคุณ
                   </button>
                 </div>
               </div>
