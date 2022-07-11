@@ -10,6 +10,7 @@ import PointStore from "./PointStore";
 import { GetPermissionControl } from "services/Permission";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 import { useToasts } from "react-toast-notifications";
+import { set } from "react-ga";
 
 export default function PointManage() {
   const { TabPane } = Tabs;
@@ -19,6 +20,10 @@ export default function PointManage() {
   const [activeTab, setActiveTab] = useState("1");
   const [activeConfirmTab, setActiveConfirmTab] = useState();
   const { addToast } = useToasts();
+
+  const [callbackSettab, setcallbackSettab] = useState(null);
+  const [reload, setreload] = useState(false);
+
   const [data, setData] = useState({
     id: "",
     pointRegisterScore: "",
@@ -33,11 +38,17 @@ export default function PointManage() {
 
   function closeModalSubject() {
     setIsOpenEdit(false);
+    setActiveTab(callbackSettab);
+    setModified(false);
+    setreload(true);
+    setTimeout(() => {
+      setreload(false);
+    }, 500);
   }
 
   const changeMo = () => {
-   setModified(false);
-  }
+    setModified(false);
+  };
 
   const onEditValue = async () => {
     if (data.id === "") {
@@ -55,7 +66,7 @@ export default function PointManage() {
               id: res.data.tbPointRegister.id,
             };
           });
-          
+
           setModified(false);
           addToast(
             "บันทึกข้อมูลสำเร็จ",
@@ -68,7 +79,7 @@ export default function PointManage() {
       axios.put("pointRegister", data).then((res) => {
         if (res.data.status) {
           setModified(false);
-          setModified(...isModified,false);
+          // setModified(...isModified, false);
           addToast("บันทึกข้อมูลสำเร็จ", {
             appearance: "success",
             autoDismiss: true,
@@ -89,19 +100,19 @@ export default function PointManage() {
   /* Method Condition */
   const changeTab = (activeKey) => {
     setActiveConfirmTab(activeKey);
-    if (isModified) openModalSubject();
-    else
-     setActiveTab(activeKey);
+    if (isModified) {
+      setcallbackSettab(activeKey);
+      openModalSubject();
+    } else setActiveTab(activeKey);
   };
 
   const fetchPermission = async () => {
     const role = await GetPermissionControl(2);
     if (role.data.data !== null) {
-      if(role.data.data.length > 0)
-      {
-        setTypePermission(role.data.data[0].isEnable)
+      if (role.data.data.length > 0) {
+        setTypePermission(role.data.data[0].isEnable);
       } else {
-        setTypePermission(false)
+        setTypePermission(false);
       }
     }
   };
@@ -131,17 +142,14 @@ export default function PointManage() {
         className="mt-6"
       >
         <TabPane id="tbRegister" tab="Register" key="1">
-          <PointRegister setModified={setModified} setData={setData} />
+          {reload ? null : (
+            <PointRegister setModified={setModified} setData={setData} />
+          )}
         </TabPane>
         <TabPane tab="E-Commerce" key="2">
           <PointEcommerce />
         </TabPane>
-        <TabPane
-          tab="Code"
-          id="tabCode"
-          key="3"
-          disabled={typePermission}
-        >
+        <TabPane tab="Code" id="tabCode" key="3" disabled={typePermission}>
           <PointCode />
         </TabPane>
         <TabPane id="tabStore" tab="Store" key="4">
@@ -153,6 +161,7 @@ export default function PointManage() {
         message={"คะแนนสำหรับสมาชิกใหม่"}
         hideModal={() => {
           closeModalSubject();
+          callbackSettab();
         }}
         confirmModal={() => {
           onEditValue();
