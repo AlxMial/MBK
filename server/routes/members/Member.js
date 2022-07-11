@@ -158,6 +158,7 @@ router.get("/byId/:id", validateToken, async (req, res) => {
         "consentDate",
         "isPolicy1",
         "isPolicy2",
+        "remark",
       ],
       where: { id: id },
     });
@@ -206,6 +207,7 @@ router.get("/byIdOrder/:id", validateToken, async (req, res) => {
         "consentDate",
         "isPolicy1",
         "isPolicy2",
+        "remark",
       ],
       where: { id: id },
     });
@@ -1187,7 +1189,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
                   "startDate",
                   "expireDate",
                   "isDeleted",
-                  "isCancel"
+                  "isCancel",
                 ],
                 // where: { isDeleted: false },
               },

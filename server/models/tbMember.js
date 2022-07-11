@@ -92,6 +92,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BOOLEAN,
       allowNull: true,
     },
+    remark: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+
     isCustomer: {
       type: DataTypes.BOOLEAN,
       allowNull: true,

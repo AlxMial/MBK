@@ -23,7 +23,7 @@ import SelectUC from "components/SelectUC";
 import DatePickerUC from "components/DatePickerUC";
 import MemberHistory from "./memberHistory";
 import InputMaskUC from "components/InputUC/InputMaskUC";
-
+import CheckBoxUC from "components/CheckBoxUC";
 export default function MemberInfo() {
   const useStyle = styleSelect();
   /* Service Function */
@@ -1076,10 +1076,14 @@ export default function MemberInfo() {
                             ? dataSubDistrict
                             : dataSubDistrict
                         }
-                        value={formik.values.subDistrict !== null ? ValidateService.defaultValue(
-                          dataSubDistrict,
-                          formik.values.subDistrict
-                        ) : "100101"}
+                        value={
+                          formik.values.subDistrict !== null
+                            ? ValidateService.defaultValue(
+                                dataSubDistrict,
+                                formik.values.subDistrict
+                              )
+                            : "100101"
+                        }
                       />
                     </div>
                   </div>
@@ -1120,27 +1124,63 @@ export default function MemberInfo() {
                       />
                     </div>
                   </div>
-                  {/* <div className="w-full px-4">
-                    <div className="relative w-full text-right">
-                      <button
-                        className="bg-rose-mbk text-white active:bg-rose-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                        type="button"
-                        onClick={() => {
-                          OnBack();
-                        }}
+
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b mt-2">
+                    <div className="relative w-full">
+                      <label
+                        className="text-blueGray-600 text-sm font-bold"
+                        htmlFor="grid-password"
                       >
-                        ย้อนกลับ
-                      </button>
-                      <button
-                        className={
-                          "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                        }
-                        type="submit"
-                      >
-                        บันทึกข้อมูล
-                      </button>
+                        ยอมรับ Consent
+                      </label>
                     </div>
-                  </div> */}
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <CheckBoxUC
+                        text="เพื่อติดต่อสื่อสาร"
+                        checked={formik.values.isPolicy1 ? true : false}
+                        classLabel="mt-2 mb-4 lg:w-6/12 "
+                        disabled={true}
+                      />
+                      <CheckBoxUC
+                        text="เพื่อวิเคราะห์ข้อมูล"
+                        checked={formik.values.isPolicy2 ? true : false}
+                        classLabel="mt-2 mb-4 lg:w-6/12 "
+                        disabled={true}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="w-full lg:w-2/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <label
+                        className="text-blueGray-600 text-sm font-bold"
+                        htmlFor="grid-password"
+                      >
+                        หมายเหตุ
+                      </label>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <textarea
+                        type="text"
+                        className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                        rows="5"
+                        id="remark"
+                        name="remark"
+                        onChange={(e) => {
+                          formik.handleChange(e);
+                          setIsModified(true);
+                        }}
+                        onBlur={formik.handleBlur}
+                        value={formik.values.remark}
+                        autoComplete="new-password"
+                        disabled={typePermission === "1" ? false : true}
+                      ></textarea>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
