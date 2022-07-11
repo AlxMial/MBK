@@ -51,7 +51,7 @@ export default function PointEcommerce() {
   const [endDateCode, setEndDateCode] = useState("");
   const [listProduct, setListProduct] = useState([]);
   const [isChange, setIsChange] = useState(false);
-  const [delay,setDelay] = useState("");
+  const [delay, setDelay] = useState("");
   const { addToast } = useToasts();
   const changePage = ({ selected }) => {
     setPageNumber(selected);
@@ -61,7 +61,7 @@ export default function PointEcommerce() {
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
-  const [startDateValue,setStartDateValue] = useState("");
+  const [startDateValue, setStartDateValue] = useState("");
   /* Method Condition */
   const options = [
     { label: "เปิดการใช้งาน", value: true },
@@ -91,7 +91,7 @@ export default function PointEcommerce() {
           formik.setFieldValue("stockId", "");
           formik.setFieldValue("purchaseAmount", value.purchaseAmount);
         }
-  
+
         formik.setFieldValue("type", value.type);
         setStartDateCode(moment(new Date(value.startDate), "DD/MM/YYYY"));
         setEndDateCode(moment(new Date(value.endDate), "DD/MM/YYYY"));
@@ -104,14 +104,14 @@ export default function PointEcommerce() {
       setErrorUnitProduct(false);
       setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
       const dt = new Date();
-      dt.setDate(dt.getDate() + 1)
+      dt.setDate(dt.getDate() + 1);
       setEndDateCode(moment(dt, "DD/MM/YYYY"));
       formik.values.points = 0;
       formik.values.productAmount = "";
       formik.values.purchaseAmount = 0;
-      formik.setFieldValue('points',0);
-      formik.setFieldValue('productAmount',"");
-      formik.setFieldValue('purchaseAmount',0);
+      formik.setFieldValue("points", 0);
+      formik.setFieldValue("productAmount", "");
+      formik.setFieldValue("purchaseAmount", 0);
       formik.resetForm();
       setIsNew(true);
     }
@@ -140,7 +140,6 @@ export default function PointEcommerce() {
     setIsOpenSubject(false);
   }
 
-  
   function openModalEdit() {
     setIsOpenEdit(true);
   }
@@ -274,7 +273,7 @@ export default function PointEcommerce() {
 
       if (!isError && !errorEndDate && !errorStartDate && !errorDate) {
         if (isNew) {
-          axios.post("pointEcommerce", values).then( (res) => {
+          axios.post("pointEcommerce", values).then((res) => {
             if (res.data.status) {
               formik.values.id = res.data.tbPointEcommerce.id;
               setIsChange(false);
@@ -301,7 +300,7 @@ export default function PointEcommerce() {
                 );
               }
             }
-          
+
             dispatch(fetchSuccess());
           });
         } else {
@@ -348,7 +347,11 @@ export default function PointEcommerce() {
   };
 
   const setStatus = (dateValue) => {
-    if (new Date(new Date(dateValue.endDate).setUTCHours(0,0,0,0)) < new Date(new Date().setUTCHours(0,0,0,0))) return "Expire";
+    if (
+      new Date(new Date(dateValue.endDate).setUTCHours(0, 0, 0, 0)) <
+      new Date(new Date().setUTCHours(0, 0, 0, 0))
+    )
+      return "Expire";
     else if (dateValue.isActive) return "Active";
     else return "Inactive";
   };
@@ -446,11 +449,15 @@ export default function PointEcommerce() {
                                 </div>
                               </div> */}
 
-
                               <div className=" flex justify-between align-middle ">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>{(formik.values.id !== "") ? "แก้ไข" : "เพิ่ม"}เพิ่มแคมเปญ E-Commerce</label>
+                                    <label>
+                                      {formik.values.id !== ""
+                                        ? "แก้ไข"
+                                        : "เพิ่ม"}
+                                      แคมเปญ E-Commerce
+                                    </label>
                                   </div>
                                 </div>
 
@@ -579,23 +586,48 @@ export default function PointEcommerce() {
                                 </div>
                                 <div className="w-full lg:w-11/12 px-4 margin-auto-t-b flex">
                                   <input
-                                    type="text"
+                                    type="number"
                                     className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="purchaseAmount"
                                     name="purchaseAmount"
-                                    maxLength={5}
+                                    // maxLength={5}
+                                    // max={99999}
                                     disabled={
                                       formik.values.type === "2" ? true : false
                                     }
-                                    onChange={(event) => {
-                                      setIsChange(true);
-                                      setlangSymbo(
-                                        ValidateService.onHandleNumber(event)
-                                      );
-                                      formik.values.purchaseAmount =
-                                        ValidateService.onHandleNumber(event);
+                                    onChange={(e) => {
+                                      if (e.target.value > 99999.99) {
+                                        formik.handleChange({
+                                          target: {
+                                            name: "purchaseAmount",
+                                            value: 99999.99,
+                                          },
+                                        });
+                                      } else {
+                                        formik.handleChange({
+                                          target: {
+                                            name: "purchaseAmount",
+                                            value:
+                                              parseFloat(e.target.value) || 0,
+                                          },
+                                        });
+                                      }
                                     }}
-                                    onBlur={formik.handleBlur}
+                                    onBlur={(e) => {
+                                      if (e.target.value > 99999) {
+                                        e.preventDefault();
+                                      } else {
+                                        formik.handleChange({
+                                          target: {
+                                            name: "purchaseAmount",
+                                            value:
+                                              parseFloat(
+                                                e.target.value
+                                              ).toFixed(2) || 0,
+                                          },
+                                        });
+                                      }
+                                    }}
                                     autoComplete="purchaseAmount"
                                     value={formik.values.purchaseAmount}
                                   />
@@ -699,10 +731,14 @@ export default function PointEcommerce() {
                                     onChange={(event) => {
                                       setIsChange(true);
                                       setlangSymbo(
-                                        ValidateService.onHandleNumber(event)
+                                        ValidateService.onHandleNumberValue(
+                                          event
+                                        )
                                       );
                                       formik.values.productAmount =
-                                        ValidateService.onHandleNumber(event);
+                                        ValidateService.onHandleNumberValue(
+                                          event
+                                        );
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="productAmount"
@@ -776,10 +812,14 @@ export default function PointEcommerce() {
                                     onChange={(event) => {
                                       setIsChange(true);
                                       setlangSymbo(
-                                        ValidateService.onHandleNumber(event)
+                                        ValidateService.onHandleNumberValue(
+                                          event
+                                        )
                                       );
                                       formik.values.points =
-                                        ValidateService.onHandleNumber(event);
+                                        ValidateService.onHandleNumberValue(
+                                          event
+                                        );
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="points"
@@ -813,7 +853,9 @@ export default function PointEcommerce() {
                                   <span className="text-sm ml-2 text-red-500">
                                     *
                                   </span>
-                                  {errorStartDate || errorEndDate || errorDate ? (
+                                  {errorStartDate ||
+                                  errorEndDate ||
+                                  errorDate ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       &nbsp;
                                     </div>
@@ -847,7 +889,9 @@ export default function PointEcommerce() {
                                               new Date(),
                                               false
                                             );
-                                            setStartDateCode(moment(new Date(), "DD/MM/YYYY"))
+                                            setStartDateCode(
+                                              moment(new Date(), "DD/MM/YYYY")
+                                            );
                                             setErrorStartDate(true);
                                           } else {
                                             if (
@@ -858,7 +902,9 @@ export default function PointEcommerce() {
                                             )
                                               setErrorDate(true);
                                             else setErrorDate(false);
-                                            setStartDateCode(moment(e).toDate())
+                                            setStartDateCode(
+                                              moment(e).toDate()
+                                            );
                                             setErrorStartDate(false);
                                             formik.setFieldValue(
                                               "startDate",
@@ -866,12 +912,21 @@ export default function PointEcommerce() {
                                               false
                                             );
                                             if (formik.values.endDate != null) {
-                                              if (moment(e).toDate() >= formik.values.endDate) {
-                                                setEndDateCode(moment(e).add(1, "days").toDate())
+                                              if (
+                                                moment(e).toDate() >=
+                                                formik.values.endDate
+                                              ) {
+                                                setEndDateCode(
+                                                  moment(e)
+                                                    .add(1, "days")
+                                                    .toDate()
+                                                );
                                                 formik.handleChange({
                                                   target: {
                                                     name: "endDate",
-                                                    value: moment(e).add(1, "days").toDate(),
+                                                    value: moment(e)
+                                                      .add(1, "days")
+                                                      .toDate(),
                                                   },
                                                 });
                                               }
@@ -895,9 +950,9 @@ export default function PointEcommerce() {
                                         )}
                                       </div>
                                     ) : null}
-                                         {errorDate ? (
+                                    {errorDate ? (
                                       <div className="text-sm py-2 px-2 text-red-500">
-                                           <>&nbsp;</>
+                                        <>&nbsp;</>
                                       </div>
                                     ) : null}
                                   </div>
@@ -922,7 +977,9 @@ export default function PointEcommerce() {
                                   <span className="text-sm ml-2 text-red-500">
                                     *
                                   </span>
-                                  {errorEndDate || errorStartDate || errorDate ? (
+                                  {errorEndDate ||
+                                  errorStartDate ||
+                                  errorDate ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       &nbsp;
                                     </div>
@@ -974,7 +1031,6 @@ export default function PointEcommerce() {
                                           );
                                         }
                                       }}
-
                                       // disabledDate={(current) => {
                                       //   if (formik.values.startDate != null) {
                                       //     let day = formik.values.startDate
@@ -988,7 +1044,9 @@ export default function PointEcommerce() {
                                           return (
                                             current &&
                                             current <
-                                              moment(new Date(day)).add(-1, "days").endOf("day")
+                                              moment(new Date(day))
+                                                .add(-1, "days")
+                                                .endOf("day")
                                           );
                                         }
                                       }}
@@ -998,7 +1056,7 @@ export default function PointEcommerce() {
                                       // )}
                                     />
                                   </ConfigProvider>
-                    
+
                                   {errorEndDate || errorStartDate ? (
                                     <div className="text-sm py-2 px-2 text-red-500">
                                       {errorEndDate ? (
@@ -1009,11 +1067,10 @@ export default function PointEcommerce() {
                                     </div>
                                   ) : null}
                                   {errorDate ? (
-                                      <div className="text-sm py-2 px-2 text-red-500">
-                                        * วันที่เริ่มต้น
-                                        ต้องน้อยกว่าวันที่สิ้นสุด
-                                      </div>
-                                    ) : null}
+                                    <div className="text-sm py-2 px-2 text-red-500">
+                                      * วันที่เริ่มต้น ต้องน้อยกว่าวันที่สิ้นสุด
+                                    </div>
+                                  ) : null}
                                 </div>
                                 <div className="w-full lg:w-1/12 px-4 mb-2">
                                   <label
