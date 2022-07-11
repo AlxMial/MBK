@@ -315,10 +315,38 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                           type="number"
                           name="deliveryCost"
                           maxLength={100}
-                          onBlur={formik.handleBlur}
+                          // onBlur={formik.handleBlur}
                           value={formik.values.deliveryCost}
                           onChange={(e) => {
-                            formik.handleChange(e);
+                            // formik.handleChange(e);
+                            if (e.target.value > 99999.99) {
+                              formik.handleChange({
+                                target: {
+                                  name: "deliveryCost",
+                                  value: 99999.99,
+                                },
+                              });
+                            } else {
+                              formik.handleChange({
+                                target: {
+                                  name: "deliveryCost",
+                                  value: parseFloat(e.target.value) || 0,
+                                },
+                              });
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value > 99999) {
+                              e.preventDefault();
+                            } else {
+                              formik.handleChange({
+                                target: {
+                                  name: "deliveryCost",
+                                  value:
+                                    parseFloat(e.target.value).toFixed(2) || 0,
+                                },
+                              });
+                            }
                           }}
                         />
                       </div>

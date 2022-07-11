@@ -21,9 +21,7 @@ const LogisticTable = ({
   const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(
-    listLogistic ? listLogistic.length : 0 / usersPerPage
-  );
+  const pageCount = Math.ceil(listLogistic.length / usersPerPage);
 
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
@@ -54,29 +52,27 @@ const LogisticTable = ({
   }
 
   const deleteLogistic = () => {
-
-        // var filtered = listLogistic.filter( function(value, index, arr){
-        //     if(value.id !== deleteValue)
-        //     {
-        //         return value;
-        //     }
-        // });
-        // listLogistic = filtered;
-        // setListLogistic(
-        //     listLogistic.filter((val) => {
-        //         return val.id !== deleteValue;
-        //     })
-        // );
-        // closeModalSubject();
-        axios.delete(`/logistic/${deleteValue}`).then(() => {
-            setListLogistic(
-                listLogistic.filter((val) => {
-                    return val.id !== deleteValue;
-                })
-            );
-          closeModalSubject();
-        });
-      
+    // var filtered = listLogistic.filter( function(value, index, arr){
+    //     if(value.id !== deleteValue)
+    //     {
+    //         return value;
+    //     }
+    // });
+    // listLogistic = filtered;
+    // setListLogistic(
+    //     listLogistic.filter((val) => {
+    //         return val.id !== deleteValue;
+    //     })
+    // );
+    // closeModalSubject();
+    axios.delete(`/logistic/${deleteValue}`).then(() => {
+      setListLogistic(
+        listLogistic.filter((val) => {
+          return val.id !== deleteValue;
+        })
+      );
+      closeModalSubject();
+    });
   };
 
   const handleChangeShowToEmp = (value, newValue) => {
@@ -184,11 +180,10 @@ const LogisticTable = ({
                     <td className={tdClass + " text-center"}>
                       <i
                         className={
-                          "fas fa-trash cursor-pointer" +
-                          (" text-red-500")
+                          "fas fa-trash cursor-pointer" + " text-red-500"
                         }
                         onClick={(e) => {
-                           openModalSubject(value.id);
+                          openModalSubject(value.id);
                         }}
                       ></i>
                       {/* <span className={tdSpan}>
