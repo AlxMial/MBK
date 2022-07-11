@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "services/axios";
@@ -58,7 +58,9 @@ export default function PointStore() {
   const [deleteValue, setDeleteValue] = useState("");
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
-  const [ isModified, setIsModified ] = useState(false);
+  const [isModified, setIsModified] = useState(false);
+
+  const shopname = useRef();
   const { addToast } = useToasts();
   const changePage = ({ selected }) => {
     setPageNumber(selected);
@@ -87,8 +89,7 @@ export default function PointStore() {
   }
 
   function closeModal() {
-    if(isModified)
-    {
+    if (isModified) {
       setIsOpenEdit(true);
     } else setIsOpen(false);
   }
@@ -105,8 +106,7 @@ export default function PointStore() {
     formik.handleSubmit();
     const valueError = JSON.stringify(formik.errors);
     setIsOpenEdit(false);
-    if (valueError.length <= 2)
-      setIsOpen(false); 
+    if (valueError.length <= 2) setIsOpen(false);
   };
 
   const onReturn = () => {
@@ -114,7 +114,6 @@ export default function PointStore() {
     setIsOpenEdit(false);
     setIsOpen(false);
   };
-
 
   /* Modal */
   function openModalSubject(id) {
@@ -290,6 +289,45 @@ export default function PointStore() {
     });
   };
 
+  const getUniqueListBy = (arr, key) => {
+    return [...new Map(arr.map((item) => [item[key], item])).values()];
+  };
+
+  const SubmitModel = (e) => {
+    e.preventDefault();
+    let isUnique = true;
+    let item = arr;
+    let i = 0;
+    let Unique = getUniqueListBy(item, "value");
+    item.filter((e) => {
+      e.i = i;
+      if (e.value == null || e.value.trim() == "") {
+        e.error = "ไม่สมารถเป็นค่าว่างได้";
+        isUnique = false;
+      } else {
+        e.error = null;
+      }
+      i++;
+    });
+    item.filter((e) => {
+      let _Unique = Unique.find((ev) => ev.i == e.i);
+      if (_Unique == null && (e.error == null || e.error.trim() == "")) {
+        e.error = "ข้อมูลซ้ำ";
+        isUnique = false;
+      }
+    });
+
+    console.log(isUnique);
+    setArr(item);
+    setIsModified(false);
+    setTimeout(() => {
+      setIsModified(true);
+    }, 200);
+    if (isUnique) {
+      formik.handleSubmit();
+    }
+    //
+  };
   useEffect(() => {
     /* Default Value for Testing */
     fetchData();
@@ -341,18 +379,18 @@ export default function PointStore() {
                       <>
                         <div className={"flex-auto "}>
                           <div className="w-full mt-2">
-                            <form onSubmit={formik.handleSubmit}>
-                              {/* <div className="relative w-full mb-3">
-                                <div className=" align-middle  mb-3">
-                                  <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>เพิ่มร้านค้า</label>
-                                  </div>
-                                </div>
-                              </div> */}
+                            <form
+                            // onSubmit={SubmitModel}
+                            >
                               <div className=" flex justify-between align-middle ">
                                 <div className=" align-middle  mb-3">
                                   <div className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-base text-green-mbk font-bold whitespace-nowrap p-4">
-                                    <label>{(formik.values.id !== "") ? "แก้ไข" : "เพิ่ม"}ร้านค้า</label>
+                                    <label>
+                                      {formik.values.id !== ""
+                                        ? "แก้ไข"
+                                        : "เพิ่ม"}
+                                      ร้านค้า
+                                    </label>
                                   </div>
                                 </div>
 
@@ -389,12 +427,16 @@ export default function PointStore() {
                                 </div>
                                 <div className="w-full lg:w-11/12 px-4 margin-auto-t-b">
                                   <input
+                                    ref={shopname}
                                     type="text"
                                     className="border-0 px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full  text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointStoreName"
                                     name="pointStoreName"
                                     maxLength={100}
-                                    onChange={(e) => { setIsModified(true); formik.handleChange(e);}}
+                                    onChange={(e) => {
+                                      setIsModified(true);
+                                      formik.handleChange(e);
+                                    }}
                                     onBlur={formik.handleBlur}
                                     value={formik.values.pointStoreName}
                                     autoComplete="pointStoreName"
@@ -481,17 +523,27 @@ export default function PointStore() {
                                                   <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                                                     <div className="w-full margin-auto-t-b">
                                                       <input
-                                                        onChange={(e) =>{
+                                                        onChange={(e) => {
                                                           setIsModified(true);
                                                           handleChangeBranch(e);
-                                                        }
-                                                        }
+                                                        }}
                                                         value={item.value}
                                                         id={i}
                                                         maxLength={100}
                                                         type={item.type}
                                                         className="border-0 margin-auto-t-b px-2 text-left py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full  text-sm  focus:outline-none focus:ring ease-linear transition-all duration-150"
                                                       />
+                                                      {item.error ==
+                                                      null ? null : (
+                                                        <div
+                                                          style={{
+                                                            color: "red",
+                                                            fontSize: "12px",
+                                                          }}
+                                                        >
+                                                          {item.error}
+                                                        </div>
+                                                      )}
                                                     </div>
                                                   </td>
                                                   <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
@@ -530,7 +582,8 @@ export default function PointStore() {
                                       className={
                                         "bg-gold-mbk text-white active:bg-gold-mbk font-bold uppercase text-sm px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                                       }
-                                      type="submit"
+                                      // type="submit"
+                                      onClick={SubmitModel}
                                     >
                                       บันทึกข้อมูล
                                     </button>
@@ -544,7 +597,7 @@ export default function PointStore() {
                     </div>
                   </div>
                 </Modal>
-                <ConfirmEdit 
+                <ConfirmEdit
                   showModal={modalIsOpenEdit}
                   message={"ร้านค้า"}
                   hideModal={() => {
