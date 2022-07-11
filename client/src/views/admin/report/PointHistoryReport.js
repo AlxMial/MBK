@@ -278,8 +278,8 @@ export default function PointHistoryReport() {
         "isExpire",
         "memberName",
         "dateUseCode",
-        "dateUseCode",
-        "dateUseCode",
+        "pointStoreName",
+        "pointBranchName",
       ];
       if (!response.data.error) {
         exportExcel(response.data, name, TitleColumns, columns, "Coupon");

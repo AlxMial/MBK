@@ -10,6 +10,8 @@ const {
   tbRedemptionProduct,
   tbMemberReward,
   tbCouponCode,
+  tbPointStoreHD,
+  tbPointStoreDT,
 } = require("../../models");
 const { validateToken } = require("../../middlewares/AuthMiddleware");
 const Sequelize = require("sequelize");
@@ -1025,9 +1027,19 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
   tbPointCodeDT.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });
   tbMemberPoint.belongsTo(tbPointCodeHD, { foreignKey: "tbPointCodeHDId" });
   tbMemberPoint.belongsTo(tbMember, { foreignKey: "tbMemberId" });
+  tbPointStoreDT.belongsTo(tbPointStoreHD, { foreignKey: "id" });
+  const listPointStoreHD = await tbPointStoreHD.findAll({
+    where: { isDeleted: false },
+    include: [
+      {
+        model: tbPointStoreDT,
+        where: { isDeleted: false },
+        required: false,
+      },
+    ],
+  });
   const id = parseInt(req.params.id, 10);
-  tbPointCodeDT
-    .findAll({
+  tbPointCodeDT.findAll({
       where: { tbPointCodeHDId: id, isDeleted: false },
       required: false,
       include: [
@@ -1057,17 +1069,30 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
       objs.forEach((obj) => {
         let fullname = "";
         let redeemDate = "";
+        let pointStoreName = "";
+        let pointBranchName = "";
+
         const code = Encrypt.DecodeKey(obj.code).toUpperCase();
         if (obj.tbPointCodeHD.tbMemberPoints.length > 0) {
           Encrypt.decodePointCode(obj.tbPointCodeHD.tbMemberPoints);
           tbMemberPoints = obj.tbPointCodeHD.tbMemberPoints.find(
             (el) => el.code.toUpperCase() === code
           );
+          
           if (tbMemberPoints !== undefined) {
             redeemDate = tbMemberPoints.redeemDate;
             if (tbMemberPoints.tbMember !== undefined) {
               const memeber = Encrypt.decryptAllData(tbMemberPoints.tbMember);
               fullname = memeber.firstName + " " + memeber.lastName;
+            }
+            const StoreHD = listPointStoreHD.find(el => el.id === tbMemberPoints.pointsStoreHdId);
+            if(StoreHD !== undefined && StoreHD.pointStoreName !== null) {
+              pointStoreName = StoreHD.pointStoreName;
+               const StoreDT = StoreHD.tbPointStoreDTs.length > 0 ? StoreHD.tbPointStoreDTs.find(el => el.tbPointStoreHDId === StoreHD.id) : undefined;
+               if(StoreDT !== undefined ) {
+                //StoreDT.find(el => el.id === tbMemberPoints.pointsStoreDtId);
+                pointBranchName = StoreDT.pointBranchName !== null ? StoreDT.pointBranchName : "";
+               }
             }
           }
         }
@@ -1077,6 +1102,8 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
           isExpire: obj.isExpire ? "หมดอายุ" : "ยังไม่หมดอายุ",
           memberName: fullname,
           dateUseCode: redeemDate,
+          pointStoreName: pointStoreName,
+          pointBranchName: pointBranchName,
         });
       });
       res.json(tutorials);
