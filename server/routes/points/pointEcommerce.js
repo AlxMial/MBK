@@ -33,6 +33,7 @@ router.post("/",validateToken, async (req, res) => {
 router.get("/", validateToken, async (req, res) => {
   const listPointEcommerce = await tbPointEcommerce.findAll({
     where: { isDeleted: false },
+    order :[['createdAt', 'DESC']]
   });
   res.json({
     status: true,

@@ -58,7 +58,8 @@ router.post("/", validateToken, async (req, res) => {
 
 router.get("/", validateToken, async (req, res) => {
   const listPointStore = await tbPointStoreHD.findAll({
-    where: { isDeleted: false },  order: ["ordering"]
+    where: { isDeleted: false },
+    order: [["createdAt", "DESC"]],
   });
 
   Encrypt.encryptValueIdArray(listPointStore);
@@ -73,7 +74,7 @@ router.get("/", validateToken, async (req, res) => {
 router.get("/byId/:id", validateToken, async (req, res) => {
   const id = Encrypt.DecodeKey(req.params.id);
   const listPointStore = await tbPointStoreHD.findOne({
-    where: { id: id, isDeleted: false }
+    where: { id: id, isDeleted: false },
   });
 
   Encrypt.encryptValueId(listPointStore);
@@ -167,7 +168,8 @@ router.delete("/:pointStoreId", validateToken, async (req, res) => {
 
 router.get("/listPointStore", validateLineToken, async (req, res) => {
   let listPointStore = await tbPointStoreHD.findAll({
-    where: { isDeleted: false },  order: ["pointStoreName","ordering"]
+    where: { isDeleted: false },
+    order: ["pointStoreName", "ordering"],
   });
   const listPointStoreDT = await tbPointStoreDT.findAll({
     where: { isDeleted: false },
