@@ -59,7 +59,7 @@ router.post("/", validateToken, async (req, res) => {
 router.get("/", validateToken, async (req, res) => {
   const listPointStore = await tbPointStoreHD.findAll({
     where: { isDeleted: false },
-    order: [["createdAt", "DESC"]],
+    order: ["ordering",["createdAt", "DESC"]],
   });
 
   Encrypt.encryptValueIdArray(listPointStore);

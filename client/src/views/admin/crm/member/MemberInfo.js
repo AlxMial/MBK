@@ -383,6 +383,7 @@ export default function MemberInfo() {
       formik.values.registerDate === ""
         ? new moment(new Date()).toDate()
         : formik.values.registerDate;
+        
 
     fatchAddress();
     fetchPermission();

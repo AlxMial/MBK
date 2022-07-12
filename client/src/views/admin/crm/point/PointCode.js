@@ -1114,12 +1114,21 @@ export default function PointCode() {
                                             );
                                           }
                                           if (formik.values.endDate != null) {
-                                            if (moment(e).toDate() >= formik.values.endDate) {
-                                              setEndDateCode(moment(e).add(1, "days").toDate())
+                                            if (
+                                              moment(e).toDate() >=
+                                              formik.values.endDate
+                                            ) {
+                                              setEndDateCode(
+                                                moment(e)
+                                                  .add(1, "days")
+                                                  .toDate()
+                                              );
                                               formik.handleChange({
                                                 target: {
                                                   name: "endDate",
-                                                  value: moment(e).add(1, "days").toDate(),
+                                                  value: moment(e)
+                                                    .add(1, "days")
+                                                    .toDate(),
                                                 },
                                               });
                                             }
@@ -1199,11 +1208,13 @@ export default function PointCode() {
                                       }}
                                       disabledDate={(current) => {
                                         if (startDateCode != null) {
-                                          let day = startDateCode
+                                          let day = startDateCode;
                                           return (
                                             current &&
                                             current <
-                                              moment(new Date(day)).add(-1, "days").endOf("day")
+                                              moment(new Date(day))
+                                                .add(-1, "days")
+                                                .endOf("day")
                                           );
                                         }
                                       }}
@@ -1221,7 +1232,6 @@ export default function PointCode() {
                                       //   new Date(formikImport.values.endDate),
                                       //   "DD/MM/YYYY"
                                       // )}
-
                                     />
                                   </ConfigProvider>
                                   {formikImport.touched.endDate &&
@@ -1812,7 +1822,9 @@ export default function PointCode() {
                                               false
                                             );
                                           } else {
-                                            setStartDateCode(moment(e).toDate());
+                                            setStartDateCode(
+                                              moment(e).toDate()
+                                            );
                                             setErrorStartDate(false);
                                             formik.setFieldValue(
                                               "startDate",
@@ -1822,14 +1834,26 @@ export default function PointCode() {
                                           }
 
                                           if (endDateCode != null) {
-                                            if (moment(e).toDate() >= endDateCode) {
-                                              console.log('enddate')
-                                              setEndDateCode(moment(e).add(1, "days").toDate())
-                                              console.log(moment(e).add(1, "days").toDate())
+                                            if (
+                                              moment(e).toDate() >= endDateCode
+                                            ) {
+                                              console.log("enddate");
+                                              setEndDateCode(
+                                                moment(e)
+                                                  .add(1, "days")
+                                                  .toDate()
+                                              );
+                                              console.log(
+                                                moment(e)
+                                                  .add(1, "days")
+                                                  .toDate()
+                                              );
                                               formik.handleChange({
                                                 target: {
                                                   name: "endDate",
-                                                  value: moment(e).add(1, "days").toDate(),
+                                                  value: moment(e)
+                                                    .add(1, "days")
+                                                    .toDate(),
                                                 },
                                               });
                                             }
@@ -1916,7 +1940,9 @@ export default function PointCode() {
                                           return (
                                             current &&
                                             current <
-                                              moment(new Date(day)).add(-1, "days").endOf("day")
+                                              moment(new Date(day))
+                                                .add(-1, "days")
+                                                .endOf("day")
                                           );
                                         }
                                       }}

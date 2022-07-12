@@ -65,12 +65,12 @@ const Payment = ({ props, setOrderHD }) => {
             <div className="w-full">
                 <div className='flex justify-between'>
                     <div className='py-2 margin-auto-t-b lg:w-7/12'>
-                        <LabelUC label={payment && payment.bankName} />
-                        <LabelUC label={orderHD && (orderHD.paymentType == 2 ? "ผ่านบัตรเครดิต" : "" )} />
+                        <LabelUC label={orderHD && (orderHD.paymentType == 2 ? "ผ่านบัตรเครดิต" : payment && payment.bankName ) } />
+                        {/* <LabelUC label={orderHD && (orderHD.paymentType == 2 ? "ผ่านบัตรเครดิต" : "" )} /> */}
                         {/* <div className='text-blueGray-400 text-sm mt-1 font-bold' >{orderHD && (orderHD.paymentType == 2 ? "ผ่านบัตรเครดิต" : "" )}</div> */}
                         <div className='text-blueGray-400 text-sm mt-1' >{orderHD && (orderHD.paymentType == 2 ? "หมายเลข " + (orderHD.creditCard == null ? "" : orderHD.creditCard) : "" )}</div>
-                        <div className='text-blueGray-400 text-sm mt-1' >{payment && payment.accountName}</div>
-                        <div className='text-blueGray-400 text-sm mt-1' >{orderHD && orderHD.paymentType == 1  ? "เลขบัญชี " : ""}{payment && payment.accountNumber}</div>
+                        <div className='text-blueGray-400 text-sm mt-1' >{payment && (orderHD.paymentType == 2 ? "" : payment.accountName) }</div>
+                        <div className='text-blueGray-400 text-sm mt-1' >{orderHD && orderHD.paymentType == 1  ? "เลขบัญชี" + (payment && payment.accountNumber) : ""}</div>
                         {/* <div className='text-blueGray-400 text-sm mt-1' >{orderHD && orderHD.memberName}</div> */}
                         <div className='text-blueGray-400 text-sm mt-1' >
                             {orderHD && (orderHD.paymentDate) ?   'วันที่ชำระ ' +  moment(orderHD.paymentDate).format("DD/MM/YYYY HH:mm") + ' น.' : "ยังไม่ได้ชำระ"}

@@ -1073,14 +1073,17 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
         let redeemDate = "";
         let pointStoreName = "";
         let pointBranchName = "";
-
+        
         const code = Encrypt.DecodeKey(obj.code).toUpperCase();
+        const codeNone = Encrypt.DecodeKey(obj.codeNone).toUpperCase();
         if (obj.tbPointCodeHD.tbMemberPoints.length > 0) {
           Encrypt.decodePointCode(obj.tbPointCodeHD.tbMemberPoints);
           tbMemberPoints = obj.tbPointCodeHD.tbMemberPoints.find(
-            (el) => el.code.toUpperCase() === code
+            (el) => el.code.toUpperCase() == code || 
+            el.code.toUpperCase() == code ||
+            el.code.toUpperCase() == codeNone
           );
-          
+
           if (tbMemberPoints !== undefined) {
             redeemDate = tbMemberPoints.redeemDate;
             if (tbMemberPoints.tbMember !== undefined) {
