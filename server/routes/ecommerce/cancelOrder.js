@@ -205,19 +205,9 @@ router.post("/cancelOrder", validateLineToken, async (req, res) => {
   let { orderId, cancelDetail, description } = req.body;
   let status = true;
   let msg = "";
-  let t
+  let t;
   try {
     t = await db.sequelize.transaction();
-    //#region add tb Cancel
-    const data = await tbCancelOrder.create({
-      orderId: Encrypt.DecodeKey(orderId),
-      cancelStatus: 1,
-      cancelType: 2,
-      cancelDetail: cancelDetail,
-      description: description,
-      isDeleted: false,
-    });
-    //#region add tb Cancel
 
     //#region update ราคาสินค้า
     const OrderDTData = await tbOrderDT.findAll({
@@ -228,7 +218,16 @@ router.post("/cancelOrder", validateLineToken, async (req, res) => {
         isFree: false,
       },
     });
-
+    //#region add tb Cancel
+    const data = await tbCancelOrder.create({
+      orderId: Encrypt.DecodeKey(orderId),
+      cancelStatus: 1,
+      cancelType: 2,
+      cancelDetail: cancelDetail,
+      description: description,
+      isDeleted: false,
+    });
+    //#region add tb Cancel
     if (OrderDTData) {
       for (var i = 0; i < OrderDTData.length; i++) {
         let _tbStockData = await tbStock.findOne({
@@ -263,7 +262,6 @@ router.post("/cancelOrder", validateLineToken, async (req, res) => {
     if (t) {
       await t.rollback();
     }
-
   }
 
   res.json({
@@ -272,5 +270,6 @@ router.post("/cancelOrder", validateLineToken, async (req, res) => {
     tbCancelOrder: req.body,
   });
 });
+//#endregion line liff
 //#endregion line liff
 module.exports = router;

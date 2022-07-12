@@ -6,9 +6,10 @@ const { validateToken } = require("../../middlewares/AuthMiddleware");
 const { validateLineToken } = require("../../middlewares/LineMiddleware");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-const { tbReturnOrder, tbImage,tbOrderHD } = require("../../models");
+const { tbReturnOrder, tbImage, tbOrderHD } = require("../../models");
 const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
+const db = require("../../models");
 
 router.post("/", validateToken, async (req, res) => {
   const data = await tbReturnOrder.create(req.body);
@@ -57,7 +58,8 @@ router.get("/", validateToken, async (req, res) => {
           "orderDate",
         ],
       ],
-    },order: [["createdAt", "DESC"]],
+    },
+    order: [["createdAt", "DESC"]],
   });
   res.json({
     status: true,
@@ -115,7 +117,10 @@ router.post("/returnOrder", validateLineToken, async (req, res) => {
   let { orderId, returnDetail, description, returnImage } = req.body;
   let status = true;
   let msg = "";
+  let t;
   try {
+    t = await db.sequelize.transaction();
+    //#region update
     const data = await tbReturnOrder.create({
       orderId: Encrypt.DecodeKey(orderId),
       returnStatus: 1,
@@ -133,7 +138,12 @@ router.post("/returnOrder", validateLineToken, async (req, res) => {
         relatedTable: "tbReturnOrder",
       });
     }
+    //#endregion update
+    await t.commit();
   } catch (e) {
+    if (t) {
+      await t.rollback();
+    }
     status = false;
     msg = e.message;
   }

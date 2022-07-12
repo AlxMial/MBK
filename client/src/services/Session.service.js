@@ -1,3 +1,4 @@
+import moment from "moment";
 import { IsNullOrEmpty } from "./default.service";
 const name = "MBK";
 
@@ -52,7 +53,6 @@ export const removephon = () => {
   sessionStorage.removeItem(name + "-phon");
 };
 
-
 export const setaccessToken = (phon) => {
   sessionStorage.setItem("accessToken", phon);
 };
@@ -64,3 +64,31 @@ export const getaccessToken = () => {
 export const removeaccessToken = () => {
   sessionStorage.removeItem("accessToken");
 };
+
+export const setImageStorage = (img) => {
+  sessionStorage.setItem(
+    name + "-ImageStorage" + img.id,
+    JSON.stringify({
+      data: img.data,
+      exp: moment(new Date()).add(30, "m").toDate(),
+    })
+  );
+};
+export const getImageStorage = (id) => {
+  let img = sessionStorage.getItem(name + "-ImageStorage" + id);
+  if (img == null) {
+    return null;
+  } else {
+    img = JSON.parse(img);
+    let time = moment(new Date()).toDate();
+    let timeExp = moment(new Date(img.exp)).toDate();
+    if (timeExp > time) {
+      return img.data;
+    } else {
+      return null;
+    }
+  }
+};
+// export const removeImageStorage = () => {
+//   sessionStorage.removeItem("accessToken");
+// };

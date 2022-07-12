@@ -21,7 +21,7 @@ const sequelize = new Sequelize(
     dialect: config.database.dialect,
   }
 );
-
+const db = require("../../../models");
 const {
   tbOrderHD,
   tbMember,
@@ -326,7 +326,7 @@ const isFlashSale = (e) => {
   return isFlash;
 };
 
-//#endregionregion ตรวจสอบ FlashSale
+//#endregion ตรวจสอบ FlashSale
 //ข้อมูลสินค้า
 const getorderDT = async (DT) => {
   let orderDT = [];
@@ -818,13 +818,6 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       //#region รันรหัสสินค้า
       const genorderNumber = async () => {
         const today = moment().format("YYYYMM");
-        // let data = await tbOrderHD.count({
-        //   where: {
-        //     orderNumber: {
-        //       [Op.like]: "%" + today + "%",
-        //     },
-        //   },
-        // });
         let data = await tbOrderHD.findOne({
           attributes: ["orderNumber"],
           where: {
@@ -860,7 +853,9 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
       orderhd.netTotal = total;
       orderhd.stockNumber = stockNumber;
 
+      let t;
       try {
+        t = await db.sequelize.transaction();
         //#region create dt
         const _tbOrderHD = await tbOrderHD.create(orderhd);
         if (_tbOrderHD) {
@@ -944,7 +939,12 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
             });
         }
         //#endregion 2c2p
+
+        await t.commit();
       } catch (e) {
+        if (t) {
+          await t.rollback();
+        }
         status = false;
         msg = e.message;
       }
@@ -1071,7 +1071,9 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
       }
 
       if (status) {
+        let t;
         try {
+          t = await db.sequelize.transaction();
           const updtbOrderHD = await tbOrderHD.update(
             {
               logisticId: Encrypt.DecodeKey(data.logisticId),
@@ -1104,7 +1106,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             },
             { where: { id: Encrypt.DecodeKey(data.id) } }
           );
-     
+
           const dataDel = await tbOrderDT.destroy({
             where: {
               orderId: Encrypt.DecodeKey(data.id),
@@ -1119,7 +1121,11 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
               const _tbOrderDT = await tbOrderDT.create(orderDT[i]);
             }
           }
+          await t.commit();
         } catch (e) {
+          if (t) {
+            await t.rollback();
+          }
           status = false;
           msg = e.message;
         }
@@ -1131,7 +1137,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             "0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22";
           let payload = {
             merchantID: "764764000011180",
-            invoiceNo: data.orderHd.id + "-" + data.orderHd.orderNumber+1,
+            invoiceNo: data.orderHd.id + "-" + data.orderHd.orderNumber + 1,
             description: "item 1",
             amount: data.orderHd.netTotal,
             currencyCode: "THB",
@@ -1146,7 +1152,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           };
 
           const token = jwt.sign(payload, secretKey);
-          console.log(token)
+          console.log(token);
 
           await axios
             .post("https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken", {
@@ -1154,7 +1160,7 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
             })
             .then(async function (res) {
               // handle success
-              console.log(res.data)
+              console.log(res.data);
               let payload = res.data.payload;
               const decoded = jwt.decode(payload);
               const _2c2p = await tb2c2p.create({
@@ -1201,47 +1207,60 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
       where: { uid: uid },
     });
     if (Member) {
-      //#region อัพโหลดรูป
-      const _tbImage = await tbImage.create({
-        createdAt: new Date(),
-        relatedId: Encrypt.DecodeKey(data.id),
-        image: data.Image,
-        isDeleted: false,
-        relatedTable: "tbOrderHD",
-      });
-      //#endregion อัพโหลดรูป
-      //#region อัพถานะการจ่ายเงิน
-      const _tbOrderHDupd = await tbOrderHD.update(
-        {
-          paymentStatus: 2,
-          paymentDate: new Date(),
-        },
-        {
+      //#region update ข้อมูล
+      let t;
+      try {
+        t = await db.sequelize.transaction();
+        //#region อัพโหลดรูป
+        const _tbImage = await tbImage.create({
+          createdAt: new Date(),
+          relatedId: Encrypt.DecodeKey(data.id),
+          image: data.Image,
+          isDeleted: false,
+          relatedTable: "tbOrderHD",
+        });
+        //#endregion อัพโหลดรูป
+        //#region อัพถานะการจ่ายเงิน
+        const _tbOrderHDupd = await tbOrderHD.update(
+          {
+            paymentStatus: 2,
+            paymentDate: new Date(),
+          },
+          {
+            where: {
+              id: Encrypt.DecodeKey(data.id),
+            },
+          }
+        );
+        //#endregion อัพถานะการจ่ายเงิน
+        //#region อัพถานะคูปอง
+        const _tbOrderHD = await tbOrderHD.findOne({
+          attributes: ["memberRewardId", "transportStatus"],
           where: {
             id: Encrypt.DecodeKey(data.id),
           },
+        });
+        if (_tbOrderHD) {
+          if (_tbOrderHD.memberRewardId != null) {
+            await tbMemberReward.update(
+              {
+                isUsedCoupon: true,
+                deliverStatus: _tbOrderHD.transportStatus,
+              },
+              { where: { id: _tbOrderHD.memberRewardId } }
+            );
+          }
         }
-      );
-      //#endregion อัพถานะการจ่ายเงิน
-      //#region อัพถานะคูปอง
-      const _tbOrderHD = await tbOrderHD.findOne({
-        attributes: ["memberRewardId", "transportStatus"],
-        where: {
-          id: Encrypt.DecodeKey(data.id),
-        },
-      });
-      if (_tbOrderHD) {
-        if (_tbOrderHD.memberRewardId != null) {
-          await tbMemberReward.update(
-            {
-              isUsedCoupon: true,
-              deliverStatus: _tbOrderHD.transportStatus,
-            },
-            { where: { id: _tbOrderHD.memberRewardId } }
-          );
+        //#endregion อัพถานะคูปอง
+        await t.commit();
+      } catch (e) {
+        if (t) {
+          await t.rollback();
         }
+        status = false;
+        msg = e.message;
       }
-      //#endregion อัพถานะคูปอง
+      //#endregion update ข้อมูล
     } else {
       status = false;
       msg = "auth";
@@ -2089,11 +2108,14 @@ router.post("/upd_shopcart", async (req, res) => {
   // const uid = Encrypt.DecodeKey(req.user.uid);
   const { id, quantity, type, uid } = req.body;
   let shop_orders = [];
+  let t;
   try {
     const _tbCartHD = await tbCartHD.findOne({
       attributes: ["id"],
       where: { uid: uid },
     });
+
+    t = await db.sequelize.transaction();
     if (_tbCartHD) {
       //#region ข้อมูลมีตระกร้า
       const _tbCartDT = await tbCartDT.findOne({
@@ -2105,15 +2127,17 @@ router.post("/upd_shopcart", async (req, res) => {
       });
       //#endregion ข้อมูลมีตระกร้า
       if (_tbCartDT) {
-        //ดึงจำนวนคงเหลือ
+        //#region ดึงจำนวนคงเหลือ
         const _tbStock = await tbStock.findOne({
           attributes: ["id", "productCount"],
           where: { id: Encrypt.DecodeKey(id) },
         });
+        //#endregion ดึงจำนวนคงเหลือ
         if (_tbStock) {
           const addamount = quantity; //จำนวนที่เพิ่ม
           const oldamount = _tbCartDT.amount; // จำนวนในตระกร้า
           const productCount = _tbStock.productCount; // จำนวนสินค้า
+          //#region update
           if (type == "add" || type == "plus") {
             if (oldamount + addamount <= productCount) {
               ///upd จำนวน
@@ -2187,6 +2211,10 @@ router.post("/upd_shopcart", async (req, res) => {
               }
             }
           }
+          //#endregion update
+        } else {
+          status = false;
+          msg = "!Stock empty";
         }
       } else {
         //ไม่มีให้เพิ่ม
@@ -2209,6 +2237,7 @@ router.post("/upd_shopcart", async (req, res) => {
         });
       }
     }
+    await t.commit();
 
     const _tbCartHDData = await tbCartHD.findOne({
       attributes: ["id"],
@@ -2227,6 +2256,9 @@ router.post("/upd_shopcart", async (req, res) => {
       });
     }
   } catch (e) {
+    if (t) {
+      await t.rollback();
+    }
     status = false;
     msg = e.message;
   }
