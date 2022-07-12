@@ -161,7 +161,10 @@ const Member = () => {
                 </div>
               </div>
             </div>
-            <div className="absolute bottom-0 text-white font-bold text-xs ">
+            <div
+              className="absolute bottom-0 text-white font-bold text-xs "
+              style={{ fontSize: "0.65rem" }}
+            >
               {/* {"รหัสสมาชิก : " + tbMember.memberCard + " "+ width  + " "+ height } */}
               {"รหัสสมาชิก : " + (isError ? "-" : tbMember.memberCard)}
             </div>
