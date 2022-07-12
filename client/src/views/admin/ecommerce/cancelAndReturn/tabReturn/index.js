@@ -59,7 +59,7 @@ const TabReturn = () => {
             x.sumPrice.toString().toLowerCase().includes(e) ||
             x.returnStatus.toLowerCase().includes(e) ||
             x.returnDetail.toLowerCase().includes(e) ||
-            x.description.toLowerCase().includes(e)
+            (x.description==null ?"":x.description).toLowerCase().includes(e)
         )
       );
     }

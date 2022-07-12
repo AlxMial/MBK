@@ -68,7 +68,7 @@ const TabCancel = () => {
               .toLowerCase()
               .includes(e) ||
             x.cancelDetail.toString().toLowerCase().includes(e) ||
-            x.cancelOtherRemark.toString().toLowerCase().includes(e)
+            (x.cancelOtherRemark==null ? "" : x.cancelOtherRemark).toString().toLowerCase().includes(e)
         )
       );
     }
