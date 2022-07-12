@@ -53,7 +53,7 @@ const MyOrder = () => {
               className="px-1"
               style={{
                 width: "16.6%",
-                minWidth: "58px",
+                minWidth: "62px",
                 textAlign: "center",
                 textDecoration: selectMenu === "1" ? "underline" : "",
               }}
@@ -68,7 +68,7 @@ const MyOrder = () => {
               className="px-1"
               style={{
                 width: "18%",
-                minWidth: "66px",
+                minWidth: "70px",
                 textAlign: "center",
                 textDecoration: selectMenu === "2" ? "underline" : "",
               }}
@@ -83,7 +83,7 @@ const MyOrder = () => {
               className="px-1"
               style={{
                 width: "17%",
-                minWidth: "61px",
+                minWidth: "65px",
                 textAlign: "center",
                 textDecoration: selectMenu === "3" ? "underline" : "",
               }}
