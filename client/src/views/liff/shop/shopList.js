@@ -362,6 +362,7 @@ const ShopList = () => {
               textDecoration: selectMenu == 1 ? "underline" : "",
               textUnderlineOffset: "5px",
               width: "80px",
+              color: selectMenu == 1 ? "#007a40" : "#000",
             }}
             onClick={() => {
               setselectMenu(1);
@@ -375,6 +376,7 @@ const ShopList = () => {
               textDecoration: selectMenu == 2 ? "underline" : "",
               textUnderlineOffset: "5px",
               width: "70px",
+              color: selectMenu == 2 ? "#007a40" : "#000",
             }}
             onClick={() => {
               setselectMenu(2);
