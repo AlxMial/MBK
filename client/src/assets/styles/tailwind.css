@@ -86,11 +86,17 @@ body {
 
 /*font-bold*/
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
 /*font-bold*/
 * {
-  font-family:'IBM Plex Sans Thai', sans-serif;
+  font-family:'Noto Sans Thai', sans-serif;
 }
+
+/* @font-face {
+  font-family: "Noto Sans";
+  src: url("../../assets/fonts/NotoSansThai-Regular.ttf") format("opentype");;
+}  */
+
 
 /* @font-face {
   font-family: "TATSana Chon";
