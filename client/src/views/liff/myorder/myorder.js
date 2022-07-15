@@ -22,6 +22,26 @@ const MyOrder = () => {
   const [selectMenu, setselectMenu] = useState(id);
   useEffect(() => {}, []);
 
+  const MenuUC = ({ num, width, minWidth, text }) => {
+    return (
+      <div
+        className="px-1"
+        style={{
+          width: width,
+          minWidth: minWidth,
+          textAlign: "center",
+          color: selectMenu == num ? "#007a40" : "#000",
+          textDecoration: selectMenu == num ? "underline" : "",
+        }}
+        onClick={() => {
+          history.push(path.myorder.replace(":id", num));
+          setselectMenu(num);
+        }}
+      >
+        {text}
+      </div>
+    );
+  };
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
@@ -49,94 +69,32 @@ const MyOrder = () => {
             className="w-full flex font-bold relative"
             style={{ fontSize: "12px" }}
           >
-            <div
-              className="px-1"
-              style={{
-                width: "16.6%",
-                minWidth: "62px",
-                textAlign: "center",
-                textDecoration: selectMenu === "1" ? "underline" : "",
-              }}
-              onClick={() => {
-                history.push(path.myorder.replace(":id", "1"));
-                setselectMenu("1");
-              }}
-            >
-              ที่ต้องชำระ
-            </div>
-            <div
-              className="px-1"
-              style={{
-                width: "18%",
-                minWidth: "70px",
-                textAlign: "center",
-                textDecoration: selectMenu === "2" ? "underline" : "",
-              }}
-              onClick={() => {
-                history.push(path.myorder.replace(":id", "2"));
-                setselectMenu("2");
-              }}
-            >
-              เตรียมสินค้า
-            </div>
-            <div
-              className="px-1"
-              style={{
-                width: "17%",
-                minWidth: "65px",
-                textAlign: "center",
-                textDecoration: selectMenu === "3" ? "underline" : "",
-              }}
-              onClick={() => {
-                history.push(path.myorder.replace(":id", "3"));
-                setselectMenu("3");
-              }}
-            >
-              ที่ต้องได้รับ
-            </div>
-            <div
-              className="px-1"
-              style={{
-                width: "16%",
-                textAlign: "center",
-                textDecoration: selectMenu === "4" ? "underline" : "",
-              }}
-              onClick={() => {
-                history.push(path.myorder.replace(":id", "4"));
-                setselectMenu("4");
-              }}
-            >
-              สำเร็จ
-            </div>
-            <div
-              className="px-1"
-              style={{
-                width: "16.2%",
-                textAlign: "center",
-                textDecoration: selectMenu === "5" ? "underline" : "",
-              }}
-              onClick={() => {
-                history.push(path.myorder.replace(":id", "5"));
-                setselectMenu("5");
-              }}
-            >
-              ยกเลิก
-            </div>
-            <div
-              className="px-1"
-              style={{
-                width: "16.2%",
-                minWidth: "50px",
-                textAlign: "center",
-                textDecoration: selectMenu === "6" ? "underline" : "",
-              }}
-              onClick={() => {
-                history.push(path.myorder.replace(":id", "6"));
-                setselectMenu("6");
-              }}
-            >
-              คืนสินค้า
-            </div>
+            <MenuUC
+              num={1}
+              width={"16.6%"}
+              minWidth={"70px"}
+              text={"ที่ต้องชำระ"}
+            />
+            <MenuUC
+              num={2}
+              width={"18%"}
+              minWidth={"75px"}
+              text={"เตรียมสินค้า"}
+            />
+            <MenuUC
+              num={3}
+              width={"17%"}
+              minWidth={"70px"}
+              text={"ที่ต้องได้รับ"}
+            />
+            <MenuUC num={4} width={"16%"} minWidth={""} text={"สำเร็จ"} />
+            <MenuUC num={5} width={"16.2%"} minWidth={""} text={"ยกเลิก"} />
+            <MenuUC
+              num={6}
+              width={"16.2%"}
+              minWidth={"57px"}
+              text={"คืนสินค้า"}
+            />
           </div>
         </div>
       </div>
@@ -150,17 +108,17 @@ const MyOrder = () => {
         }}
       >
         <div className="w-full h-full" style={{ width: "98%", margin: "auto" }}>
-          {selectMenu === "1" ? (
+          {selectMenu == 1 ? (
             <Tobepaid />
-          ) : selectMenu === "2" ? (
+          ) : selectMenu == 2 ? (
             <Prepare />
-          ) : selectMenu === "3" ? (
+          ) : selectMenu == 3 ? (
             <Toreceive />
-          ) : selectMenu === "4" ? (
+          ) : selectMenu == 4 ? (
             <Succeed />
-          ) : selectMenu === "5" ? (
+          ) : selectMenu == 5 ? (
             <Cancel />
-          ) : selectMenu === "6" ? (
+          ) : selectMenu == 6 ? (
             <Return />
           ) : (
             <div> 404 </div>
