@@ -85,11 +85,14 @@ body {
 
 
 /*font-bold*/
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap');
+
+/*font-bold*/
 * {
-  font-family: "Noto Sans","Noto-Sans-Bold","AnekMalayalam", sans-serif;
+  font-family:'IBM Plex Sans Thai', sans-serif;
 }
 
-@font-face {
+/* @font-face {
   font-family: "TATSana Chon";
   src: url("../../assets/fonts/TATSANA CHON-REG.OTF") format("opentype");
 }
@@ -137,7 +140,7 @@ body {
 
 .THSarabunBold {
   font-family: "THSarabunBold";
-}
+} */
 
 /*
 Grouping content
