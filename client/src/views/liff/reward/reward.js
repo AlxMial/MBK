@@ -88,7 +88,11 @@ const Reward = () => {
                   return (
                     <div
                       className=" mb-2"
-                      style={{ display: "inline-block", width: "50%" }}
+                      style={{
+                        display: "inline-block",
+                        width: "50%",
+                        fontSize: "11px",
+                      }}
                       key={i}
                       onClick={() => {
                         history.push(path.inforeward.replace(":id", e.id));
