@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-// import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 import { Radio } from "antd";
-// import DatePicker from "react-mobile-datepicker";
 import * as Address from "@services/GetAddress.js";
 import { path, getMember, membersDpd } from "@services/liff.services";
 import * as Session from "@services/Session.service";
 import {
   InputUC,
   SelectUC,
-  validationSchema,
-  validateShopAddress,
   validateShopUpdate,
-  // DatePickerContainer,
-  // monthMap,
 } from "./profile";
 import {
   optionsDay30,
@@ -29,7 +23,10 @@ import Select from "react-select";
 import ValidateService from "services/validateValue";
 import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import Error from "./error";
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
 const Updateprofile = () => {
+  const dispatch = useDispatch();
   const useStyle = styleSelect();
   const [isLoading, setIsLoading] = useState(false);
   let history = useHistory();
@@ -168,6 +165,7 @@ const Updateprofile = () => {
     );
   };
   useEffect(() => {
+    dispatch(backPage(true));
     address();
     getMembers();
     setOptionYear();

@@ -8,10 +8,13 @@ import { IsNullOrEmpty } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 import { styleSelectLine } from "assets/styles/theme/ReactSelect";
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
 import Error from "./error";
 // components
 
 const GetReward = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
@@ -186,6 +189,7 @@ const GetReward = () => {
     );
   };
   useEffect(() => {
+    dispatch(backPage(true));
     getMembers();
     getpointStore();
   }, []);

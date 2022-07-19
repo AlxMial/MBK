@@ -83,7 +83,7 @@ const MyPointUC = () => {
         <div className=" text-sm font-bold text-center mt-4 ">
           {
             /*Memberpoints.memberpoints*/ tbMember.memberPoint +
-              " คะแนน จะหมดอายุ 31/12/2567" // +
+              " คะแนน หมดอายุ 31/12/2567" // +
             // (IsNullOrEmpty(Memberpoints.enddate)
             // ? "-"
             // : moment(Memberpoints.enddate.split("T")[0])

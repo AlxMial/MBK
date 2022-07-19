@@ -12,6 +12,9 @@ import {
   get_shopcart,
   getPromotionstores,
 } from "@services/liff.services";
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
+
 import AddressModel from "./addressModel";
 import LogisticModel from "./logisticModel";
 import DetailModel from "./detailModel";
@@ -22,6 +25,7 @@ import CouponModel from "./couponModel";
 // components
 
 const MakeOrder = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
@@ -348,6 +352,7 @@ const MakeOrder = () => {
     return _promotionDelivery;
   };
   useEffect(() => {
+    dispatch(backPage(true));
     GetPromotionstores(getProducts);
   }, []);
 

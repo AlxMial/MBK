@@ -23,7 +23,7 @@ import rewardRedeem from "views/liff/reward/reward.redeem";
 import rewardSpin from "views/liff/reward/reward.spin";
 import rewardExchange from "views/liff/reward/reward.exchange";
 
-import shopList from "views/liff/shop/shopList";
+import shopList from "views/liff/shop/shopList/shopList";
 import returnPage from "views/liff/shop/return";
 import cancelPage from "views/liff/shop/cancel";
 import showProducts from "views/liff/shop/showProducts";

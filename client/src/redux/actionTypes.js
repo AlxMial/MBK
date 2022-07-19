@@ -7,3 +7,6 @@ export const SET_CURRENT_SHOPSETTING = 'set_current_shopsetting';
 
 //auth
 export const LOGOUT = "LOGOUT";
+
+//auth
+export const BACKPAGE = "BACKPAGE";

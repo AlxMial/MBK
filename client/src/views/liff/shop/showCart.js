@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
-import axios from "services/axios";
 import { path } from "services/liff.services";
 import * as Storage from "@services/Storage.service";
 import * as Session from "@services/Session.service";
@@ -9,12 +8,15 @@ import * as fn from "@services/default.service";
 import ImageUC from "components/Image/index";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import AlertModel from "components/ConfirmDialog/alertModel";
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
 
 import { get_shopcart, upd_shopcart } from "@services/liff.services";
 import EmptyOrder from "../emptyOrder";
 // components
 
 const ShowCart = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const [isLoading, setIsLoading] = useState(false);
   const [confirmDelete, setconfirmDelete] = useState(false);
@@ -59,10 +61,10 @@ const ShowCart = () => {
 
                     e.priceDiscount = e.price - e.saleDiscount;
                   } else {
-                 
                     if (e.discount > 0) {
                       e.priceDiscount = e.price - e.discount;
-                      price += parseFloat(e.price - e.discount) * parseInt(quantity);
+                      price +=
+                        parseFloat(e.price - e.discount) * parseInt(quantity);
                     } else {
                       price += parseFloat(e.price) * parseInt(quantity);
                     }
@@ -185,6 +187,7 @@ const ShowCart = () => {
   };
 
   useEffect(() => {
+    dispatch(backPage(true));
     getProducts();
   }, []);
 

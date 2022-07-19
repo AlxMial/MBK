@@ -3,6 +3,8 @@ import { useHistory, useParams } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 import { path } from "services/liff.services";
 import axios from "services/axios";
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
 import { IsNullOrEmpty } from "services/default.service";
 import * as Storage from "@services/Storage.service";
 import * as Session from "@services/Session.service";
@@ -11,9 +13,11 @@ import FilesService from "../../../services/files";
 import SlideShow from "./SlideShow";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { upd_shopcart, get_shopcart } from "@services/liff.services";
+
 // components
 
 const ShowProducts = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
   const { addToast } = useToasts();
@@ -181,6 +185,7 @@ const ShowProducts = () => {
     }, [delay]);
   };
   useEffect(() => {
+    dispatch(backPage(true));
     fetchDatatbStock();
     fetchImg();
     Get_shopcart(); // ดึงจำนวนในตระกร้า
@@ -221,7 +226,7 @@ const ShowProducts = () => {
               >
                 <i
                   className="fas fa-shopping-cart relative icon-cart"
-                  style={{ color: "#ddd" }}
+                  style={{ color: "#d0b027" }}
                 ></i>
                 {!IsNullOrEmpty(cartNumberBadge) && cartNumberBadge > 0 ? (
                   <div
@@ -277,38 +282,51 @@ const ShowProducts = () => {
 
               <div className="font-bold mt-2 ">ราคาสินค้า</div>
               <div
-                className="flex mt-2 relative"
+                className="w-full flex mt-2 relative"
                 style={{
                   color: tbStock.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
                 }}
               >
-                <div
-                  style={{
-                    color: tbStock.discount > 0 ? "#ddd" : "#047738",
-                    textDecoration:
-                      tbStock.discount > 0 ? "line-through" : "none",
-                  }}
-                >
-                  {"฿ " + fn.formatMoney(tbStock.price)}
-                </div>
-                {tbStock.discount > 0 ? (
-                  <div style={{ color: "red", paddingLeft: "10px" }}>
-                    {"฿ " + fn.formatMoney(tbStock.priceDiscount)}
-                  </div>
-                ) : null}
                 {tbStock.discount > 0 ? (
                   <div
-                    className="absolute text-white text-xs"
+                    className=" text-white text-xs flex"
                     style={{
                       borderRadius: "5px",
                       padding: "0 10px",
                       right: "10px",
                       background: "red",
+                      width: "100px",
+                      justifyContent: "center",
                     }}
                   >
                     {"SALE -" + fn.formatMoney(tbStock.percent) + "%"}
                   </div>
                 ) : null}
+                <div
+                  className="flex"
+                  style={{
+                    width:
+                      "calc(100% - " +
+                      (tbStock.discount > 0 ? "100px" : "0px") +
+                      ")",
+                    justifyContent: "end",
+                  }}
+                >
+                  <div
+                    style={{
+                      color: tbStock.discount > 0 ? "#ddd" : "#047738",
+                      textDecoration:
+                        tbStock.discount > 0 ? "line-through" : "none",
+                    }}
+                  >
+                    {"฿ " + fn.formatMoney(tbStock.price)}
+                  </div>
+                  {tbStock.discount > 0 ? (
+                    <div style={{ color: "red", paddingLeft: "10px" }}>
+                      {"฿ " + fn.formatMoney(tbStock.priceDiscount)}
+                    </div>
+                  ) : null}
+                </div>
               </div>
             </div>
 

@@ -5,7 +5,7 @@ import * as Session from "@services/Session.service";
 import { useHistory } from "react-router-dom";
 import liff from "@line/liff";
 import { IsNullOrEmpty } from "@services/default.service";
-// import DeviceOrientation, { Orientation } from "react-screen-orientation";
+import { useSelector } from "react-redux";
 
 import {
   path,
@@ -13,6 +13,7 @@ import {
   checkRegister as apiCheckRegister,
 } from "@services/liff.services";
 import config from "@services/helpers";
+
 // components
 const getRoutes = () => {
   return routes.map((prop, key) => {
@@ -113,6 +114,8 @@ const LiffAPP = () => {
   const [view, setview] = useState(false);
   const isInClient = config.dev ? true : liff.isInClient();
 
+  const { backpage } = useSelector(({ common }) => common);
+
   let pathname = window.location.pathname;
   let bg = "100px";
   let ismemberpage = false;
@@ -173,6 +176,21 @@ const LiffAPP = () => {
 
   return (
     <>
+      {backpage ? (
+        <div
+          className="absolute"
+          style={{
+            top: "10px",
+            left: "10px",
+            color: "#fff",
+          }}
+          onClick={() => {
+            history.goBack();
+          }}
+        >
+          <i className="fas fa-arrow-left" style={{ fontSize: "25px" }}></i>
+        </div>
+      ) : null}
       {!isInClient ? (
         <div style={{ height: "100vh" }}>
           <div
@@ -183,7 +201,7 @@ const LiffAPP = () => {
               <img
                 src={require("assets/img/mbk/Logo.png").default}
                 alt="logo_mbk"
-                className=" mt-6 "
+                // className=" mt-6 "
                 style={{
                   objectFit: "fill",
                   maxWidth: "150px",
@@ -222,26 +240,15 @@ const LiffAPP = () => {
             }
             style={{ height: bg }}
           >
-            <div className="w-full h-full">
+            <div
+              className="w-full h-full flex"
+              style={{ justifyContent: "center", alignItems: "center" }}
+            >
               {pathname
                 .toLowerCase()
                 .includes("shoplist") ? null : ismemberpage &&
                 !pathname.includes("/line/coupon") &&
                 !pathname.includes("/line/product") ? (
-                // <img
-                //   className="w-full h-full"
-                //   src={
-                //     pathname.includes("point") ||
-                //     pathname.toLowerCase().includes("/reward")
-                //       ? require("assets/img/mbk/line_head_img.jpg").default
-                //       : require("assets/img/mbk/line_head_img.jpg").default
-                //   }
-                //   alt="line_head_img"
-                //   style={{
-                //     objectFit: "cover",
-                //     // maxHeight: "220px"
-                //   }}
-                // ></img>
                 <div className="w-full " style={{ position: "relative" }}>
                   <img
                     className="w-full h-full"
@@ -267,11 +274,11 @@ const LiffAPP = () => {
                   </div>
                 </div>
               ) : (
-                <div className="flex"  style={{justifyContent: "center" }}>
+                <div className="flex" style={{ justifyContent: "center" }}>
                   <img
                     src={require("assets/img/mbk/Logo.png").default}
                     alt="logo_mbk"
-                    className=" mt-6 "
+                    // className=" mt-6 "
                     style={{
                       objectFit: "fill",
                       maxWidth: "150px",

@@ -5,8 +5,11 @@ import { path } from "services/liff.services";
 import ImageUC from "components/Image/index";
 import Spinner from "components/Loadings/spinner/Spinner";
 import ConfirmDialogNew from "components/ConfirmDialog/ConfirmDialogNew";
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
 // components
 const InfoCoupon = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   let { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -27,9 +30,6 @@ const InfoCoupon = () => {
       }
     );
   };
-  useEffect(() => {
-    GetCouponByID();
-  }, []);
 
   const onConfirmDialog = () => {
     UseCouponByID(() => {
@@ -51,6 +51,10 @@ const InfoCoupon = () => {
       }
     );
   };
+  useEffect(() => {
+    dispatch(backPage(true));
+    GetCouponByID();
+  }, []);
   return (
     <>
       {isOpenDialog && (

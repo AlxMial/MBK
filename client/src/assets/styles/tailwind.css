@@ -4333,17 +4333,22 @@ input[type="number"] {
 
 .cart-number-badge {
   position: relative;
-  border-radius: 2.75rem;
-  min-width: 0.6875rem;
-  line-height: 1.2em;
-  padding: 0 0.3125rem;
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+  /* line-height: 1.2em; */
+  /* padding: 0 0.3125rem; */
   text-align: center;
   border: 0.125rem solid var(--brand-primary-color, #007a40);
-  color: var(--brand-primary-color, #007a40);
-  background-color: #fff;
+  color:#FFF;
+  background-color: var(--brand-primary-color, #007a40);;
   left: -1.125rem;
   top: -0.5rem;
   margin-right: -0.875rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px !important;
 }
 
 .icon-cart {

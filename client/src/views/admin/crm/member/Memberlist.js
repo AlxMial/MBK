@@ -25,6 +25,8 @@ export default function MemberList() {
   const [typePermission, setTypePermission] = useState("");
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
+
+  const [isExport, setisExport] = useState(false);
   const dispatch = useDispatch();
 
   /* Modal */
@@ -217,6 +219,7 @@ export default function MemberList() {
         setListUser(response.data.tbMember);
         setListSerch(response.data.tbMember);
       }
+      setisExport(response.data.isExport);
     });
     // const role = await GetPermissionByUserName();
     // if (role.data.data.filter((e) => e.id === 10).length > 0) {
@@ -320,14 +323,15 @@ export default function MemberList() {
                       className="imgExcel margin-a"
                     ></img>{" "}Export Excel
                   </button> */}
-
+                 
                   <div className="flex mt-2 float-right">
+                  {isExport ? 
                     <img
                       src={require("assets/img/mbk/excel.png").default}
                       alt="..."
                       onClick={() => Excel("ข้อมูลสมาชิก")}
                       className="imgExcel margin-auto-t-b cursor-pointer "
-                    ></img>
+                    ></img> :null}
                     {/* <span onClick={() => Excel("ข้อมูลสมาชิก")} className="text-gray-500 font-bold margin-auto-t-b ml-2 cursor-pointer ">Export Excel</span> */}
                     {/* <Link to="/admin/membersinfo" className={(typePermission === "1") ? " " : " hidden"}>
                         <button

@@ -2,11 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
-import axios from "services/axios";
 import { path } from "services/liff.services";
-import * as Storage from "@services/Storage.service";
-import * as fn from "@services/default.service";
-
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
 import Tobepaid from "./tobepaid";
 import Prepare from "./prepare";
 import Toreceive from "./toreceive";
@@ -15,12 +13,18 @@ import Cancel from "./cancel";
 import Return from "./return";
 
 const MyOrder = () => {
+  const dispatch = useDispatch();
   let { id } = useParams();
   const history = useHistory();
   const { addToast } = useToasts();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectMenu, setselectMenu] = useState(id);
-  useEffect(() => {}, []);
+  const [selectMenu, setselectMenu] = useState(null);
+  // setselectMenu(id);
+
+  useEffect(() => {
+    // setselectMenu(id);
+    dispatch(backPage(true));
+  }, []);
 
   const MenuUC = ({ num, width, minWidth, text }) => {
     return (
@@ -30,12 +34,12 @@ const MyOrder = () => {
           width: width,
           minWidth: minWidth,
           textAlign: "center",
-          color: selectMenu == num ? "#007a40" : "#000",
-          textDecoration: selectMenu == num ? "underline" : "",
+          color: id == num ? "#007a40" : "#000",
+          textDecoration: id == num ? "underline" : "",
         }}
         onClick={() => {
           history.push(path.myorder.replace(":id", num));
-          setselectMenu(num);
+          // setselectMenu(num);
         }}
       >
         {text}
@@ -108,17 +112,17 @@ const MyOrder = () => {
         }}
       >
         <div className="w-full h-full" style={{ width: "98%", margin: "auto" }}>
-          {selectMenu == 1 ? (
+          {id == 1 ? (
             <Tobepaid />
-          ) : selectMenu == 2 ? (
+          ) : id == 2 ? (
             <Prepare />
-          ) : selectMenu == 3 ? (
+          ) : id == 3 ? (
             <Toreceive />
-          ) : selectMenu == 4 ? (
+          ) : id == 4 ? (
             <Succeed />
-          ) : selectMenu == 5 ? (
+          ) : id == 5 ? (
             <Cancel />
-          ) : selectMenu == 6 ? (
+          ) : id == 6 ? (
             <Return />
           ) : (
             <div> 404 </div>

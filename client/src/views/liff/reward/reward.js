@@ -79,12 +79,16 @@ const Reward = () => {
             {Redemptionconditionshd.length > 0 ? (
               <div
                 className="w-full line-scroll"
-                style={{ margin: "auto", height: "calc(100vh - 310px)" }}
+                style={{
+                  margin: "auto",
+                  height: "calc(100vh - 310px)",
+                }}
               >
                 {[...Redemptionconditionshd].map((e, i) => {
                   return (
                     <div
-                      className="w-full mb-2"
+                      className=" mb-2"
+                      style={{ display: "inline-block", width: "50%" }}
                       key={i}
                       onClick={() => {
                         history.push(path.inforeward.replace(":id", e.id));

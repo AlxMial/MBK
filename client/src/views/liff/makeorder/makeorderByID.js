@@ -12,7 +12,6 @@ import {
   getPromotionstores,
   cancelOrder,
 } from "@services/liff.services";
-import moment from "moment";
 import AddressModel from "./addressModel";
 import LogisticModel from "./logisticModel";
 import DetailModel from "./detailModel";
@@ -20,9 +19,12 @@ import PaymentModel from "./paymentModel";
 import FooterButton from "./footerButton";
 import CouponModel from "./couponModel";
 import CancelModel from "../components/cancelModel";
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
 // components
 
 const MakeOrderById = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const history = useHistory();
   const { addToast } = useToasts();
@@ -172,7 +174,7 @@ const MakeOrderById = () => {
     doSaveUpdateOrder(
       { data: updatrOrder },
       (res) => {
-        console.log(res)
+        console.log(res);
         if (res.status) {
           if (RadioPayment === 1) {
             history.push(path.paymentInfo.replace(":id", id));
@@ -270,9 +272,6 @@ const MakeOrderById = () => {
         );
         if (productList != null) {
           data = { type: "product", data: productList.stockId };
-          // if (freebies.length < 1) {
-          //   getfreebies(productList);
-          // }
         }
       }
     }
@@ -301,16 +300,13 @@ const MakeOrderById = () => {
     }
     return _promotionDelivery;
   };
-  useEffect(() => {
-    GetPromotionstores(getProducts);
-  }, []);
+
   const Cancelorder = () => {
     setIsLoading(true);
     cancelOrder(
       { orderId: id, cancelDetail: Cancelvalue, description: remark },
       (res) => {
         setisOpenmodel(false);
-        // getProducts();
         history.push(path.orderpaymentdone.replace(":id", id));
       },
       () => {},
@@ -319,6 +315,10 @@ const MakeOrderById = () => {
       }
     );
   };
+  useEffect(() => {
+    dispatch(backPage(true));
+    GetPromotionstores(getProducts);
+  }, []);
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}

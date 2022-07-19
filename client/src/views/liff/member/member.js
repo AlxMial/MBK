@@ -148,16 +148,15 @@ const Member = () => {
                 <div className="text-white font-bold text-xs mt-2">
                   {isError ? "-" : tbMember.firstName + " " + tbMember.lastName}
                 </div>
+                <div
+                  className="text-white font-bold text-xs mt-1"
+                  style={{ position: "fixed" }}
+                >
+                  {isError ? "-" : "เบอร์โทรศัพท์ " + tbMember.phone}
+                </div>
                 <div className="flex">
-                  <div>
-                    {/* <i
-                      className="fas fa-solid fa-user"
-                      style={{ color: "#faae3e" }}
-                    ></i> */}
-                  </div>
-                  <div className="px-2 text-white font-bold text-xs ">
-                    {/* {tbMember.isMemberType === "1" ? "Retail" : "Wholesale"} */}
-                  </div>
+                  <div></div>
+                  <div className="px-2 text-white font-bold text-xs "></div>
                 </div>
               </div>
             </div>
@@ -206,7 +205,7 @@ const Member = () => {
               <div className="text-right ">
                 <span className=" text-2xs text-white ">
                   {
-                    "จะหมดอายุ : 31/12/2567" //+
+                    "หมดอายุ : 31/12/2567" //+
                     // liff_dateToString(Memberpoints.enddate, "DD/MM/yyyy")
                     // (IsNullOrEmpty(Memberpoints.enddate)
                     //   ? "-"

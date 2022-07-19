@@ -12,9 +12,13 @@ import ReturnModel from "../../components/returnModel"; //popup คืนสิ�
 import CancelDetail from "./cancelDetail";
 import ReturnDetail from "./returnDetail";
 import { path } from "@services/liff.services";
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
+
 // components
 
 const OrderPaymentDone = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const history = useHistory();
   const { addToast } = useToasts();
@@ -63,6 +67,7 @@ const OrderPaymentDone = () => {
     );
   };
   useEffect(() => {
+    dispatch(backPage(true));
     getProducts();
   }, []);
 

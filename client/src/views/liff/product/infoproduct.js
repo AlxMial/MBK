@@ -6,9 +6,12 @@ import {
 import { path } from "services/liff.services";
 import ImageUC from "components/Image/index";
 import Spinner from "components/Loadings/spinner/Spinner";
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
 // components
 
 const InfoProduct = () => {
+  const dispatch = useDispatch();
   const history = useHistory();
   let { id } = useParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +32,7 @@ const InfoProduct = () => {
     );
   };
   useEffect(() => {
+    dispatch(backPage(true));
     GetMyProductById();
   }, []);
   return (

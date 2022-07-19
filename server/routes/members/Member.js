@@ -66,10 +66,15 @@ router.get("/", validateToken, async (req, res) => {
       "consentDate",
       "isPolicy1",
       "isPolicy2",
-      "remark"
+      "remark",
     ],
     where: { isDeleted: false },
   });
+  let role = Encrypt.DecodeKey(req.user.role);
+  let isExport = true;
+  if (role == 3) {
+    isExport = false;
+  }
   if (listMembers.length > 0) {
     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
     Encrypt.encryptValueIdArray(ValuesDecrypt);
@@ -77,8 +82,14 @@ router.get("/", validateToken, async (req, res) => {
       Encrypt.encryptPhoneArray(ValuesDecrypt);
       Encrypt.encryptEmailArray(ValuesDecrypt);
     }
-    res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
-  } else res.json({ error: "not found member" });
+
+    res.json({
+      status: true,
+      message: "success",
+      tbMember: ValuesDecrypt,
+      isExport: isExport,
+    });
+  } else res.json({ error: "not found member", isExport: isExport });
 });
 
 // router.get("/Show", validateToken, async (req, res) => {
@@ -119,7 +130,7 @@ router.get("/export", validateToken, async (req, res) => {
       "isPolicy2",
       "isCustomer",
       "eating",
-      "remark"
+      "remark",
     ],
     where: { isDeleted: false },
   });

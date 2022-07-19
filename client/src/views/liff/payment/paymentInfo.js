@@ -13,8 +13,11 @@ import { CopyToClipboard } from "react-copy-to-clipboard";
 import WaitingPayment from "./waitingPayment";
 import Error from "../error";
 import { sendEmailWaiting } from "services/liff.services";
+import { useDispatch } from "react-redux";
+import { backPage } from "redux/actions/common";
 
 const PaymentInfo = () => {
+  const dispatch = useDispatch();
   let { id } = useParams();
   const history = useHistory();
   const { addToast } = useToasts();
@@ -126,6 +129,7 @@ const PaymentInfo = () => {
     }
   };
   useEffect(() => {
+    dispatch(backPage(true));
     GetOrder();
   }, []);
 
