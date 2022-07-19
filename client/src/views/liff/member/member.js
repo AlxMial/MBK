@@ -109,7 +109,7 @@ const Member = () => {
                       : require("assets/img/mbk/user-no-profile.png").default
                   }
                   alt="..."
-                  className="w-15 h-15 rounded-full border-2 border-blueGray-50 shadow"
+                  className="w-15 h-15 mt-1  rounded-full border-2 border-blueGray-50 shadow"
                 ></img>
               </div>
               <div style={{ paddingLeft: "10px" }}>
@@ -152,7 +152,7 @@ const Member = () => {
                   className="text-white font-bold text-xs mt-1"
                   style={{ position: "fixed" }}
                 >
-                  {isError ? "-" : "เบอร์โทรศัพท์ " + tbMember.phone}
+                  {isError ? "-" : "" + tbMember.phone}
                 </div>
                 <div className="flex">
                   <div></div>
