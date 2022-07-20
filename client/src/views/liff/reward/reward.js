@@ -8,10 +8,13 @@ import ImageUC from "components/Image/index";
 import { path } from "services/liff.services";
 import EmptyOrder from "../emptyOrder";
 import Error from "../error";
+import { backPage } from "redux/actions/common";
+import { useDispatch } from "react-redux";
 // components
 
 const Reward = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [Redemptionconditionshd, setRedemptionconditionshd] = useState([]);
 
@@ -58,6 +61,7 @@ const Reward = () => {
   };
   useEffect(() => {
     GetRedemptionconditionshd();
+    dispatch(backPage(false));
   }, []);
   return (
     <>

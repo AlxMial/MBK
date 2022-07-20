@@ -5,10 +5,13 @@ import { liff_dateToString } from "@services/default.service";
 import Spinner from "components/Loadings/spinner/Spinner";
 import MyPoint from "./myPointUC";
 import Error from "./error";
+import { backPage } from "redux/actions/common";
+import { useDispatch } from "react-redux";
 // components
 
 const Point = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [dataPoints, setDataPoints] = useState([]);
   const [modeldata, setmodeldata] = useState({
@@ -51,6 +54,7 @@ const Point = () => {
   };
   useEffect(() => {
     GetMemberPointsList();
+    dispatch(backPage(false));
   }, []);
   return (
     <>
