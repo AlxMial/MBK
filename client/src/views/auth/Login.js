@@ -44,7 +44,7 @@ export default function Login() {
               autoDismiss: true,
             }
           );
-        } else if (width < 1180) {
+        } else if (width < 768) {
           /*ปรับการ Login Mobile ให้ตรวจสอบเฉพาะ Admin*/
           addToast(
             "ไม่สามารถทำการเข้าสู่ระบบได้ ต้องใช้งานผ่านระบบ Computer เท่านั้น",

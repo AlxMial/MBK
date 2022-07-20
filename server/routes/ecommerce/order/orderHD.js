@@ -2316,6 +2316,7 @@ router.post(
               "id",
               "price",
               "discount",
+              "productName",
               "productCount",
               "isFlashSale",
               "startDateCampaign",
