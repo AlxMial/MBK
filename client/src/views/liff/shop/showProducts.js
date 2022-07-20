@@ -295,12 +295,12 @@ const ShowProducts = () => {
                       padding: "0 10px",
                       fontSize: "10px",
                       background: "red",
-                      width: "100px",
+                      // width: "100px",
                       justifyContent: "center",
                       fontWeight: "bold",
                     }}
                   >
-                    {"SALE -" + fn.formatMoney(tbStock.percent) + "%"}
+                    {"SALE -" + parseInt(fn.formatMoney(tbStock.percent)) + "%"}
                   </div>
                 ) : null}
                 <div

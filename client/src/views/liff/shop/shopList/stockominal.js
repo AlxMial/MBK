@@ -45,8 +45,16 @@ const StockominalUC = ({ data }) => {
                         borderRadius: "5px",
                       }}
                     >
-                      <div className="text-xs text-white px-2">
-                        {"SALE -" + fn.formatMoney(e.percent) + "%"}
+                      <div className="text-xs text-white px-2"
+                        style={{
+                          borderRadius: "5px",
+                          padding: "0 10px",
+                          fontSize: "10px",
+                          background: "red",
+                          justifyContent: "center",
+                          fontWeight: "bold",
+                        }}>
+                        {"SALE -" + parseInt(fn.formatMoney(e.percent)) + "%"}
                       </div>
                     </div>
                   ) : null}
