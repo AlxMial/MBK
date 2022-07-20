@@ -231,15 +231,15 @@ const Updateprofile = () => {
         res.data.status
           ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
           : res.data.isPhone
-          ? (msg.msg =
+            ? (msg.msg =
               "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-          : res.data.isEmail
-          ? (msg.msg =
-              "บันทึกข้อมูลไม่สำเร็จ เนื่องจากอีเมลเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-          : res.data.isMemberCard
-          ? (msg.msg =
-              "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
-          : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
+            : res.data.isEmail
+              ? (msg.msg =
+                "บันทึกข้อมูลไม่สำเร็จ เนื่องจากอีเมลเคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
+              : res.data.isMemberCard
+                ? (msg.msg =
+                  "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+                : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
         addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
       },
@@ -255,7 +255,7 @@ const Updateprofile = () => {
     <>
       <Error data={modeldata} setmodeldata={setmodeldata} />
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
+      <div className="bg-green-mbk" style={{ height: "calc(100vh - 90px)" }}>
         <div
           style={{
             width: "90%",

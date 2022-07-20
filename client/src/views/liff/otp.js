@@ -69,7 +69,7 @@ const Otp = () => {
   }, []);
   return (
     <>
-      <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
+      <div className="bg-green-mbk" style={{ height: "calc(100vh - 90px)" }}>
         <div
           style={{
             width: "90%",

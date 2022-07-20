@@ -250,8 +250,8 @@ const ShowCart = () => {
                   <div className="px-2 relative" style={{ width: "70%" }}>
                     <div className="flex" style={{ height: "35px" }}>
                       <div
-                        className="font-bold line-clamp-2 text-sm"
-                        style={{ width: "calc(100% - 20px)" }}
+                        className="font-bold line-clamp-2 "
+                        style={{ width: "calc(100% - 20px)", fontSize: "12px" }}
                       >
                         {e.productName}
                       </div>
@@ -282,13 +282,13 @@ const ShowCart = () => {
                               color: fn.isFlashSale(e)
                                 ? "rgba(0,0,0,.54)"
                                 : e.discount > 0
-                                ? "rgba(0,0,0,.54)"
-                                : "#000",
+                                  ? "rgba(0,0,0,.54)"
+                                  : "#000",
                               textDecoration: fn.isFlashSale(e)
                                 ? "line-through"
                                 : e.discount > 0
-                                ? "line-through"
-                                : "none",
+                                  ? "line-through"
+                                  : "none",
                             }}
                           >
                             {"฿ " + fn.formatMoney(e.price)}
@@ -368,7 +368,7 @@ const ShowCart = () => {
                           name="plus"
                           disabled={
                             e.quantity >=
-                            CartItem.find((f) => f.id === e.id).productCount
+                              CartItem.find((f) => f.id === e.id).productCount
                               ? true
                               : false
                           }
@@ -376,7 +376,7 @@ const ShowCart = () => {
                           style={{
                             color:
                               e.quantity >=
-                              CartItem.find((f) => f.id === e.id).productCount
+                                CartItem.find((f) => f.id === e.id).productCount
                                 ? "var(--mq-txt-color, rgb(170, 170, 170))"
                                 : "#000",
                           }}
@@ -462,11 +462,11 @@ const ShowCart = () => {
             >
               {usecoupon != null
                 ? "-฿ " +
-                  fn.formatMoney(
-                    usecoupon.discountType === "2"
-                      ? (usecoupon.discount / 100) * sumprice
-                      : usecoupon.discount
-                  )
+                fn.formatMoney(
+                  usecoupon.discountType === "2"
+                    ? (usecoupon.discount / 100) * sumprice
+                    : usecoupon.discount
+                )
                 : "ใช้ส่วนลด >"}
             </div>
             <div className="px-2">
@@ -506,8 +506,8 @@ const ShowCart = () => {
                 usecoupon == null
                   ? sumprice
                   : usecoupon.discount > sumprice
-                  ? 0
-                  : sumprice -
+                    ? 0
+                    : sumprice -
                     (usecoupon.discountType === "2"
                       ? (usecoupon.discount / 100) * sumprice
                       : usecoupon.discount)

@@ -85,13 +85,13 @@ const ShopList = () => {
             if (today >= startDateCampaign && today <= endDateCampaign) {
               let startTimeCampaign = new Date(
                 new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-                  " " +
-                  e.startTimeCampaign
+                " " +
+                e.startTimeCampaign
               );
               let endTimeCampaign = new Date(
                 new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-                  " " +
-                  e.endTimeCampaign
+                " " +
+                e.endTimeCampaign
               );
               today = new Date();
               if (today >= startTimeCampaign && today <= endTimeCampaign) {
@@ -147,13 +147,13 @@ const ShopList = () => {
             if (today >= startDateCampaign && today <= endDateCampaign) {
               let startTimeCampaign = new Date(
                 new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-                  " " +
-                  e.startTimeCampaign
+                " " +
+                e.startTimeCampaign
               );
               let endTimeCampaign = new Date(
                 new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-                  " " +
-                  e.endTimeCampaign
+                " " +
+                e.endTimeCampaign
               );
               today = new Date();
               if (today > startTimeCampaign && today < endTimeCampaign) {
@@ -280,7 +280,7 @@ const ShopList = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="h-full">
-      <div
+        <div
           style={{
             height: 150 - y + "px",
             margin: "auto",
@@ -378,7 +378,7 @@ const ShopList = () => {
             ></i>
             {!fn.IsNullOrEmpty(cartNumberBadge) ? (
               cartNumberBadge > 0 ? (
-                <div className="cart-number-badge">{cartNumberBadge}</div>
+                <div className="cart-number-badge" ><div className="absolute" style={{ paddingTop: "2px" }}>{cartNumberBadge}</div></div>
               ) : null
             ) : null}
           </div>

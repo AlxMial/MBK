@@ -132,7 +132,7 @@ const MakeOrderById = () => {
             history.push(path.shopList);
           }
         },
-        () => {},
+        () => { },
         () => {
           setIsLoading(false);
         }
@@ -183,7 +183,7 @@ const MakeOrderById = () => {
           }
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -309,7 +309,7 @@ const MakeOrderById = () => {
         setisOpenmodel(false);
         history.push(path.orderpaymentdone.replace(":id", id));
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -388,17 +388,17 @@ const MakeOrderById = () => {
                     >
                       {usecoupon != null
                         ? "-฿ " +
-                          fn.formatMoney(
-                            usecoupon.discountType === "2"
-                              ? (usecoupon.discount / 100) * sumprice
-                              : usecoupon.discount
-                          )
+                        fn.formatMoney(
+                          usecoupon.discountType === "2"
+                            ? (usecoupon.discount / 100) * sumprice
+                            : usecoupon.discount
+                        )
                         : "ใช้ส่วนลด >"}
                     </div>
                     <div className="px-2">
                       {usecoupon != null &&
-                      OrderHD.paymentStatus != 3 &&
-                      !OrderHD.isCancel ? (
+                        OrderHD.paymentStatus != 3 &&
+                        !OrderHD.isCancel ? (
                         <i
                           className="fas fa-times-circle"
                           style={{ color: "red" }}
@@ -454,7 +454,7 @@ const MakeOrderById = () => {
             >
               <div style={{ width: "90%", margin: "auto" }}>
                 <div>
-                  <div className="flex relative mb-2">
+                  <div className="flex relative mb-2  text-12">
                     <div>{"ยอดรวมสินค้า (" + amount + " ชิ้น)"} : </div>
                     {OrderHD != null ? (
                       <div className="absolute" style={{ right: "0" }}>

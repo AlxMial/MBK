@@ -117,7 +117,7 @@ const LiffAPP = () => {
   const { backpage } = useSelector(({ common }) => common);
 
   let pathname = window.location.pathname;
-  let bg = "100px";
+  let bg = "90px";
   let ismemberpage = false;
   if (pathname.includes("register")) {
     Session.removecheckRegister();
@@ -129,7 +129,7 @@ const LiffAPP = () => {
     pathname.toLowerCase().includes("point") ||
     pathname.toLowerCase().includes("/reward")
   ) {
-    bg = "250px";
+    bg = "243px";
     ismemberpage = true;
   } else if (pathname.toLowerCase().includes("shoplist")) {
     bg = "0px";
@@ -183,9 +183,16 @@ const LiffAPP = () => {
             top: "10px",
             left: "10px",
             color: "#fff",
+            zIndex: "1",
           }}
           onClick={() => {
-            history.goBack();
+            const _pushMyOrder = localStorage.getItem("pushMyOrder");
+            if (pathname.includes("myorder") && _pushMyOrder) {
+              localStorage.removeItem("pushMyOrder");
+              history.push(_pushMyOrder);
+            } else {
+              history.goBack();
+            }
           }}
         >
           <i className="fas fa-arrow-left" style={{ fontSize: "25px" }}></i>
@@ -195,9 +202,14 @@ const LiffAPP = () => {
         <div style={{ height: "100vh" }}>
           <div
             className={"noselect bg-green-mbk flex"}
-            style={{ height: "100px" }}
+            style={{ height: "90px" }}
           >
-            <div className="w-full flex" style={{ justifyContent: "center" }}>
+            <div className="flex items-center" style={{
+              justifyContent: "center", position: "absolute",
+              height: "90px",
+              width: "100%",
+              top: "0"
+            }}>
               <img
                 src={require("assets/img/mbk/Logo.png").default}
                 alt="logo_mbk"
@@ -206,7 +218,7 @@ const LiffAPP = () => {
                   objectFit: "fill",
                   maxWidth: "150px",
                   height: "auto",
-                  top: "1.75rem",
+                  // top: "1.75rem",
                 }}
               ></img>
             </div>
@@ -233,8 +245,8 @@ const LiffAPP = () => {
             className={
               "noselect " +
               (!ismemberpage ||
-              pathname.includes("/line/coupon") ||
-              pathname.includes("/line/product")
+                pathname.includes("/line/coupon") ||
+                pathname.includes("/line/product")
                 ? "bg-green-mbk flex"
                 : "")
             }
@@ -247,8 +259,8 @@ const LiffAPP = () => {
               {pathname
                 .toLowerCase()
                 .includes("shoplist") ? null : ismemberpage &&
-                !pathname.includes("/line/coupon") &&
-                !pathname.includes("/line/product") ? (
+                  !pathname.includes("/line/coupon") &&
+                  !pathname.includes("/line/product") ? (
                 <div className="w-full " style={{ position: "relative" }}>
                   <img
                     className="w-full h-full"
@@ -256,10 +268,15 @@ const LiffAPP = () => {
                     alt="line_head_img"
                     style={{
                       objectFit: "cover",
-                      height: "250px",
+                      height: "243px",
                     }}
                   ></img>
-                  <div className="flex" style={{ justifyContent: "center" }}>
+                  <div className="flex items-center" style={{
+                    justifyContent: "center", position: "absolute",
+                    height: "90px",
+                    width: "100%",
+                    top: "0"
+                  }}>
                     <img
                       className="w-full h-full absolute flex"
                       src={require("assets/img/mbk/Logo.png").default}
@@ -268,13 +285,18 @@ const LiffAPP = () => {
                         objectFit: "fill",
                         maxWidth: "150px",
                         height: "auto",
-                        top: "1.75rem",
+                        // top: "1.75rem",
                       }}
                     ></img>
                   </div>
                 </div>
               ) : (
-                <div className="flex" style={{ justifyContent: "center" }}>
+                <div className="flex items-center" style={{
+                  justifyContent: "center", position: "absolute",
+                  height: "90px",
+                  width: "100%",
+                  top: "0"
+                }}>
                   <img
                     src={require("assets/img/mbk/Logo.png").default}
                     alt="logo_mbk"
@@ -283,7 +305,7 @@ const LiffAPP = () => {
                       objectFit: "fill",
                       maxWidth: "150px",
                       height: "auto",
-                      top: "1.75rem",
+                      // top: "1.75rem",
                     }}
                   ></img>
                 </div>

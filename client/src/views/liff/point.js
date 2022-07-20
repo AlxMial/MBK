@@ -124,10 +124,10 @@ const Point = () => {
                       {e.campaignType == "1"
                         ? "กรอก Code จากสินค้า"
                         : e.campaignType == "2"
-                        ? "ซื้อสินค้าออนไลน์"
-                        : e.campaignType == "3"
-                        ? "สมัครสมาชิก"
-                        : "แลกรางวัล"}
+                          ? "ซื้อสินค้าออนไลน์"
+                          : e.campaignType == "3"
+                            ? "สมัครสมาชิก"
+                            : "แลกรางวัล"}
                     </div>
                     <div className="absolute" style={{ right: "0" }}>
                       <div

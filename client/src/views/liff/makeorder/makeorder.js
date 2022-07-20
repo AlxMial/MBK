@@ -198,7 +198,7 @@ const MakeOrder = () => {
             } else {
             }
           },
-          () => {},
+          () => { },
           () => {
             setIsLoading(false);
           }
@@ -418,11 +418,11 @@ const MakeOrder = () => {
                   >
                     {usecoupon != null
                       ? "-฿ " +
-                        fn.formatMoney(
-                          usecoupon.discountType === "2"
-                            ? (usecoupon.discount / 100) * sumprice
-                            : usecoupon.discount
-                        )
+                      fn.formatMoney(
+                        usecoupon.discountType === "2"
+                          ? (usecoupon.discount / 100) * sumprice
+                          : usecoupon.discount
+                      )
                       : "ใช้ส่วนลด >"}
                   </div>
                   <div className="px-2">
@@ -483,7 +483,7 @@ const MakeOrder = () => {
             >
               <div style={{ width: "90%", margin: "auto" }}>
                 <div>
-                  <div className="flex relative mb-2">
+                  <div className="flex relative mb-2  text-12">
                     <div>ยอดรวมสินค้า : </div>
                     <div className="absolute" style={{ right: "0" }}>
                       {"฿ " + fn.formatMoney(sumprice)}
@@ -545,7 +545,7 @@ const MakeOrder = () => {
                       </div>
                     )}
                   </div>
-                  <div className="flex relative mb-2">
+                  <div className="flex relative mb-2  text-12">
                     <div>ยอดรวมสินค้า : </div>
                     <div
                       className="absolute text-green-mbk font-blod "

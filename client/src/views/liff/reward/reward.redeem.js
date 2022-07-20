@@ -96,7 +96,7 @@ const Rewardredeem = () => {
             className="bg-green-mbk absolute w-full noselect"
             style={{
               marginTop: "0px",
-              height: "calc(100vh - 100px)",
+              height: "calc(100vh - 90px)",
             }}
           ></div>
           <div className="mt-6 absolute  w-full noselect text-center text-white font-bold text-lg">

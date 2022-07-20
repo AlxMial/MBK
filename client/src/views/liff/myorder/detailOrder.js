@@ -75,8 +75,8 @@ const DetailOrder = ({
                       {e.cancelStatus == 1
                         ? "รอดำเนินการ"
                         : e.cancelStatus == 2
-                        ? "คืนเงิน"
-                        : "ไม่คืนเงิน"}
+                          ? "คืนเงิน"
+                          : "ไม่คืนเงิน"}
                     </div>
                   ) : null}
                   {returnStatus == true ? (
@@ -97,74 +97,74 @@ const DetailOrder = ({
                         {e.returnStatus == 1
                           ? "รอดำเนินการ"
                           : e.returnStatus == 2
-                          ? "คืนสำเร็จ"
-                          : "การคืนถูกปฏิเสธ"}
+                            ? "คืนสำเร็จ"
+                            : "การคืนถูกปฏิเสธ"}
                       </div>
                     ) : null
                   ) : null}
                 </div>
                 {[...e.dt].length > 0
                   ? [...e.dt].map((dt, j) => {
-                      return (
-                        <div key={j} className="w-full flex mb-2 text-xs">
-                          <div style={{ width: "80px", height: "80px" }}>
-                            <ImageUC
-                              style={{
-                                width: "80px",
-                                height: "80px",
-                              }}
-                              find={1}
-                              relatedid={dt.id}
-                              relatedtable={["stock1"]}
-                              alt="flash_sale"
-                              className=" border-2 border-blueGray-50  animated-img"
-                            ></ImageUC>
+                    return (
+                      <div key={j} className="w-full flex mb-2 text-xs">
+                        <div style={{ width: "80px", height: "80px" }}>
+                          <ImageUC
+                            style={{
+                              width: "80px",
+                              height: "80px",
+                            }}
+                            find={1}
+                            relatedid={dt.id}
+                            relatedtable={["stock1"]}
+                            alt="flash_sale"
+                            className=" border-2 border-blueGray-50  animated-img"
+                          ></ImageUC>
+                        </div>
+                        <div
+                          className=" px-2 relative "
+                          style={{ width: "calc(100% - 80px)" }}
+                        >
+                          <div className="font-bold line-clamp-1">
+                            {dt.productName}
                           </div>
-                          <div
-                            className=" px-2 relative "
-                            style={{ width: "calc(100% - 80px)" }}
-                          >
-                            <div className="font-bold line-clamp-1">
-                              {dt.productName}
-                            </div>
 
-                            <div className="flex text-sm">
+                          <div className="flex text-12">
+                            <div
+                              className="flex absolute"
+                              style={{ right: "0" }}
+                            >
                               <div
-                                className="flex absolute"
-                                style={{ right: "0" }}
-                              >
-                                <div
-                                  style={{
-                                    textDecoration:
-                                      dt.discount > 0 ? "line-through" : "none",
-                                    color: dt.isFree
-                                      ? "red"
-                                      : dt.discount > 0
+                                style={{
+                                  textDecoration:
+                                    dt.discount > 0 ? "line-through" : "none",
+                                  color: dt.isFree
+                                    ? "red"
+                                    : dt.discount > 0
                                       ? "#ddd"
                                       : "#047738",
-                                  }}
+                                }}
+                              >
+                                {dt.isFree
+                                  ? "Free"
+                                  : "฿ " + fn.formatMoney(dt.price)}
+                              </div>
+                              {dt.discount > 0 ? (
+                                <div
+                                  className="px-2"
+                                  style={{ color: "red" }}
                                 >
-                                  {dt.isFree
-                                    ? "Free"
-                                    : "฿ " + fn.formatMoney(dt.price)}
+                                  {"฿ " + fn.formatMoney(dt.discount)}
                                 </div>
-                                {dt.discount > 0 ? (
-                                  <div
-                                    className="px-2"
-                                    style={{ color: "red" }}
-                                  >
-                                    {"฿ " + fn.formatMoney(dt.discount)}
-                                  </div>
-                                ) : null}
-                              </div>
-                              <div className="text-liff-gray-mbk">
-                                {"x" + dt.amount}
-                              </div>
+                              ) : null}
+                            </div>
+                            <div className="text-liff-gray-mbk">
+                              {"x" + dt.amount}
                             </div>
                           </div>
                         </div>
-                      );
-                    })
+                      </div>
+                    );
+                  })
                   : null}
 
                 <div
@@ -229,11 +229,11 @@ const DetailOrder = ({
                   onClick(e);
                 }}
               >
-                <div className="font-bold">
+                <div className="font-bold text-12">
                   {"ยอดรวมสินค้า ( " + e.amount + " ชิ้น)"}
                 </div>
                 <div
-                  className="font-bold absolute "
+                  className="font-bold absolute text-12 "
                   style={{ right: "0", color: "#047738" }}
                 >
                   {"฿ " + fn.formatMoney(e.price)}

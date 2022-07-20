@@ -42,7 +42,7 @@ const PurchaseOrderExport = ({ props }) => {
                             </th>
                         </tr>
                     </thead>
-                    <tbody  style={{ borderBottom: "1px solid  #e5e7eb"}} >
+                    <tbody style={{ borderBottom: "1px solid  #e5e7eb" }} >
                         {orderDT
                             .map(function (value, key) {
                                 return (
@@ -115,10 +115,10 @@ const PurchaseOrderExport = ({ props }) => {
 
                                 </span>
                             </td>
-                            <td className={tdClassFooter + ' text-right'}>
+                            <td className={tdClassFooter + ' text-right text-12'}>
                                 {"ยอดรวมสินค้า (" + orderHD.stockNumber + " ชิ้น)"}
                             </td>
-                            <td className={tdClassFooter + ' text-right font-bold'}>
+                            <td className={tdClassFooter + ' text-right font-bold text-12'}>
                                 <span className={' pr-4'}>
                                     {fn.formatMoney(sumPrice)}
                                 </span>

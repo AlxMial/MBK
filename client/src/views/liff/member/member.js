@@ -60,7 +60,7 @@ const Member = () => {
           setMemberpoints(res.data);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -75,7 +75,7 @@ const Member = () => {
     <>
       {/* card */}
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="noselect absolute w-full" style={{ marginTop: "-150px" }}>
+      <div className="noselect absolute w-full" style={{ top: "90px" }}>
         <div
           className=" flex margin-a shadow-2xl"
           style={{
@@ -85,16 +85,15 @@ const Member = () => {
             borderRadius: "15px",
             backgroundColor: "#007A40",
             border: "2px solid white",
-            backgroundImage: `url(${
-              IsNullOrEmpty(tbMember)
-                ? null
-                : require("assets/img/mbk/Green.png").default
+            backgroundImage: `url(${IsNullOrEmpty(tbMember)
+              ? null
+              : require("assets/img/mbk/Green.png").default
               // : require(tbMember.memberType === "1"
               //     ? "assets/img/mbk/Green.png"
               //     : tbMember.memberType === "2"
               //     ? "assets/img/mbk/Silver.png"
               //     : "assets/img/mbk/Gold.png").default
-            })`,
+              })`,
             // backgroundSize: "cover",
             // objectFit: "cover",
           }}
@@ -121,17 +120,17 @@ const Member = () => {
                     backgroundColor: isError
                       ? "#ffffff"
                       : tbMember.memberType === "1"
-                      ? "#cbe8ba"
-                      : tbMember.memberType === "2"
-                      ? "#ebebeb"
-                      : "#f3eac1",
+                        ? "#cbe8ba"
+                        : tbMember.memberType === "2"
+                          ? "#ebebeb"
+                          : "#f3eac1",
                     color: isError
                       ? "#000000"
                       : tbMember.memberType === "1"
-                      ? "#047738"
-                      : tbMember.memberType === "2"
-                      ? "#929292"
-                      : "#d0af2c",
+                        ? "#047738"
+                        : tbMember.memberType === "2"
+                          ? "#929292"
+                          : "#d0af2c",
                     borderRadius: "20px",
                     padding: "2px 10px",
                     textAlign: "center",
@@ -140,10 +139,10 @@ const Member = () => {
                   {isError
                     ? "-"
                     : tbMember.memberType === "1"
-                    ? "GREEN MEMBER"
-                    : tbMember.memberType === "2"
-                    ? "SLIVER MEMBER"
-                    : "GOLD MEMBER"}
+                      ? "GREEN MEMBER"
+                      : tbMember.memberType === "2"
+                        ? "SLIVER MEMBER"
+                        : "GOLD MEMBER"}
                 </div>
                 <div className="text-white font-bold text-xs mt-2">
                   {isError ? "-" : tbMember.firstName + " " + tbMember.lastName}

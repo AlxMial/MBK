@@ -11,9 +11,9 @@ const Expire = ({ data }) => {
         <div className="flex relative h-full" style={{ padding: '10px' }}>
           {data.length > 0 ?
             <div className="my-2 mx-auto text-green-mbk font-bold text-xs h-full">
-              {[...data].filter((e) => { return new Date(e.expiredDate) < new Date() || e.isUsedCoupon === true || e.isCancel === true  }).map((e, i) => {
+              {[...data].filter((e) => { return new Date(e.expiredDate) < new Date() || e.isUsedCoupon === true || e.isCancel === true }).map((e, i) => {
                 return (
-                  <div key={i} className="w-full  mb-4" >
+                  <div key={i} className=" mb-2 inline-block" style={{ width: "50%" }} >
                     <div className="w-full" style={{
                       filter: "grayscale(1)",
                       opacity: "0.5"
@@ -38,21 +38,22 @@ const Expire = ({ data }) => {
                             width: "100px",
                             height: "25px",
                             color: "#FFFFFF"
-                          }}>{e.isUsedCoupon ? "ถูกใช้ไปแล้ว" : e.isCancel ? "ยกเลิก" :  "หมดอายุ"}</div>
+                          }}>{e.isUsedCoupon ? "ถูกใช้ไปแล้ว" : e.isCancel ? "ยกเลิก" : "หมดอายุ"}</div>
                         </div>
                       </div>
-                      <div className="w-full font-bold flex my-2 mx-auto" style={{ width: "80%", fontSize: "14px", color: "#000000" }}>
-                        <div className="flex" style={{ width: "calc(100% - 30px)", alignItems: "center" }}>{e.couponName}</div>
-                        <div style={{ width: "30px", textAlign: "right" }}>
-                          <i className="flex fas fa-angle-right justify-end" style={{ alignItems: "center", fontSize: "25px" }}></i>
+                      <div className="w-full font-bold flex  mx-auto  items-center justify-between" style={{ width: "80%", color: "#000000", height: "35px", fontSize: "11px", }}>
+                        <div className="flex" style={{ alignItems: "center" }}>{e.couponName}</div>
+                        <div >
+                          <i className="fas fa-chevron-right" style={{ alignItems: "center" }}></i>
                         </div>
                       </div>
-                      <div className="w-full mx-auto" style={{ width: "80%", fontSize: "12px", color: "#ddd", }}>
+                      <div className="w-full mx-auto font-normal text-liff-gray-mbk" style={{ width: "80%", fontSize: "11px", }}>
                         {e.points + " คะแนน"}
                       </div>
-                      <div className="w-full mx-auto" style={{ width: "80%", fontSize: "12px", color: "#ddd" }}>
+                      <div className="w-full mx-auto font-normal text-liff-gray-mbk" style={{ width: "80%", fontSize: "11px", }}>
                         {"ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add(543, "year").format("DD MMM YYYY")}
                       </div>
+                      <div class="liff-inline mb-2 mx-auto" style={{ width: "80%" }}></div>
                     </div>
 
                   </div>

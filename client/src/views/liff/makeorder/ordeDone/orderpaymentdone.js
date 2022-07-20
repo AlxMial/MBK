@@ -44,7 +44,7 @@ const OrderPaymentDone = () => {
             // }
           }
         },
-        () => {},
+        () => { },
         () => {
           setIsLoading(false);
         }
@@ -60,7 +60,7 @@ const OrderPaymentDone = () => {
         setisOpenmodel(false);
         getProducts();
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -97,8 +97,8 @@ const OrderPaymentDone = () => {
               <ReturnDetail OrderHD={OrderHD} />
             ) : null}
             {OrderHD.tbCancelOrder == null &&
-            OrderHD.tbReturnOrder == null &&
-            OrderHD.paymentStatus == 2 ? (
+              OrderHD.tbReturnOrder == null &&
+              OrderHD.paymentStatus == 2 ? (
               <>
                 <div
                   className="flex mt-2 text-sm "
@@ -158,7 +158,7 @@ const OrderPaymentDone = () => {
             </div>
 
             {(OrderHD.paymentStatus === 3 && OrderHD.transportStatus === 1) ||
-            OrderHD.transportStatus === 2 ? (
+              OrderHD.transportStatus === 2 ? (
               <div>
                 <div
                   className="flex mt-2 "
@@ -244,8 +244,8 @@ const OrderPaymentDone = () => {
                               color: e.isFree
                                 ? "red"
                                 : e.discount > 0
-                                ? "rgba(0,0,0,.54)"
-                                : "",
+                                  ? "rgba(0,0,0,.54)"
+                                  : "",
                               textDecoration:
                                 e.discount > 0 ? "line-through" : "none",
                             }}
@@ -283,7 +283,7 @@ const OrderPaymentDone = () => {
               }}
             >
               <div style={{ width: "95%", margin: "auto" }}>
-                <div className="flex relative mb-2 font-bold">
+                <div className="flex relative mb-2 font-bold text-12">
                   <div>{"ยอดรวมสินค้า (" + OrderHD.stockNumber + " ชิ้น)"}</div>
                   <div className="absolute" style={{ right: "0" }}>
                     {"฿ " + fn.formatMoney(OrderHD.sumprice)}
@@ -322,25 +322,25 @@ const OrderPaymentDone = () => {
                     className={
                       "absolute " +
                       (OrderHD.hddiscountDelivery > 0 &&
-                      fn.formatMoney(
-                        OrderHD.hddeliveryCost - OrderHD.hddiscountDelivery
-                      ) > 0
+                        fn.formatMoney(
+                          OrderHD.hddeliveryCost - OrderHD.hddiscountDelivery
+                        ) > 0
                         ? " text-gold-mbk"
                         : "")
                     }
                     style={{ right: "0" }}
                   >
                     {(OrderHD.hddiscountDelivery > 0 &&
-                    fn.formatMoney(
-                      OrderHD.hddeliveryCost - OrderHD.hddiscountDelivery
-                    ) > 0
+                      fn.formatMoney(
+                        OrderHD.hddeliveryCost - OrderHD.hddiscountDelivery
+                      ) > 0
                       ? "-"
                       : "") +
                       "฿ " +
                       (OrderHD.hddiscountDelivery > 0
                         ? fn.formatMoney(
-                            OrderHD.hddeliveryCost - OrderHD.hddiscountDelivery
-                          )
+                          OrderHD.hddeliveryCost - OrderHD.hddiscountDelivery
+                        )
                         : 0)}
                   </div>
                 </div>
@@ -387,8 +387,8 @@ const OrderPaymentDone = () => {
             >
               {OrderHD != null ? (
                 OrderHD.paymentStatus == 3 &&
-                (OrderHD.transportStatus == 1 ||
-                  OrderHD.transportStatus == 2) ? (
+                  (OrderHD.transportStatus == 1 ||
+                    OrderHD.transportStatus == 2) ? (
                   <>
                     <div style={{ width: "90%", margin: "auto" }}>
                       <div>
@@ -404,8 +404,8 @@ const OrderPaymentDone = () => {
                             {OrderHD.transportStatus == 1
                               ? "เตรียมสินค้า"
                               : OrderHD.transportStatus == 2
-                              ? "อยู่ระหว่างการจัดส่ง"
-                              : ""}
+                                ? "อยู่ระหว่างการจัดส่ง"
+                                : ""}
                           </div>
                         </div>
                       </div>

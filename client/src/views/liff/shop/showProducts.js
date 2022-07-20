@@ -147,8 +147,8 @@ const ShowProducts = () => {
       const current_date = new Date().getTime();
       let _endTimeCampaign = new Date(
         new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-          " " +
-          endTimeCampaign
+        " " +
+        endTimeCampaign
       );
 
       let seconds_left =
@@ -233,7 +233,7 @@ const ShowProducts = () => {
                     className="cart-number-badge"
                     style={{ fontSize: "11px" }}
                   >
-                    {cartNumberBadge}
+                    <div className="absolute" style={{ paddingTop: "2px" }}>{cartNumberBadge}</div>
                   </div>
                 ) : null}
               </div>
@@ -282,7 +282,7 @@ const ShowProducts = () => {
 
               <div className="font-bold mt-2 ">ราคาสินค้า</div>
               <div
-                className="w-full flex mt-2 relative"
+                className="w-full flex mt-2 relative justify-between items-center"
                 style={{
                   color: tbStock.discount > 0 ? "rgba(0,0,0,.54)" : "#000",
                 }}
@@ -293,24 +293,25 @@ const ShowProducts = () => {
                     style={{
                       borderRadius: "5px",
                       padding: "0 10px",
-                      right: "10px",
+                      fontSize: "10px",
                       background: "red",
                       width: "100px",
                       justifyContent: "center",
+                      fontWeight: "bold",
                     }}
                   >
                     {"SALE -" + fn.formatMoney(tbStock.percent) + "%"}
                   </div>
                 ) : null}
                 <div
-                  className="flex"
-                  style={{
-                    width:
-                      "calc(100% - " +
-                      (tbStock.discount > 0 ? "100px" : "0px") +
-                      ")",
-                    justifyContent: "end",
-                  }}
+                  className="flex items-center"
+                // style={{
+                //   width:
+                //     "calc(100% - " +
+                //     (tbStock.discount > 0 ? "100px" : "0px") +
+                //     ")",
+                //   justifyContent: "end",
+                // }}
                 >
                   <div
                     style={{

@@ -9,7 +9,7 @@ const PurchaseOrder = ({ props }) => {
     const tdSpan = "text-gray-mbk hover:text-gray-mbk ";
 
     const thClassFooter = "px-2  py-2 text-sm  border-l-0 border-r-0 whitespace-nowrap text-left text-blueGray-500 ";
-    const tdClassFooter = "border-t-0  py-1 pl-2 align-middle border-l-0 border-r-0 py-1 text-sm whitespace-normal";
+    const tdClassFooter = "border-t-0  py-1 pl-2 align-middle border-l-0 border-r-0 py-1 text-12 whitespace-normal";
     const tdSpanFooter = "text-gray-mbk hover:text-gray-mbk ";
     // const footerClass = "py-1 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-blueGray-500 ";
     // const footerSumPrice = "py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left text-green-mbk ";
@@ -42,7 +42,7 @@ const PurchaseOrder = ({ props }) => {
                             </th>
                         </tr>
                     </thead>
-                    <tbody  style={{ borderBottom: "1px solid  #e5e7eb"}} >
+                    <tbody style={{ borderBottom: "1px solid  #e5e7eb" }} >
                         {orderDT
                             .map(function (value, key) {
                                 return (
@@ -115,10 +115,10 @@ const PurchaseOrder = ({ props }) => {
 
                                 </span>
                             </td>
-                            <td className={tdClassFooter + ' text-right'}>
+                            <td className={tdClassFooter + ' text-right text-12'}>
                                 {"ยอดรวมสินค้า (" + orderHD.stockNumber + " ชิ้น)"}
                             </td>
-                            <td className={tdClassFooter + ' text-right font-bold'}>
+                            <td className={tdClassFooter + ' text-right font-bold text-12'}>
                                 <span className={' pr-4'}>
                                     {fn.formatMoney(sumPrice)}
                                 </span>

@@ -62,7 +62,7 @@ const MyPointUC = () => {
   return (
     <>
       <div className="line-text-brown">
-        <div className=" text-lg text-center font-bold mt-4">คะแนนของฉัน</div>
+        <div className=" text-lg text-center font-bold">คะแนนของฉัน</div>
         <div className="text-center mt-6">
           <div
             className="text-3xl font-bold shadow-lg"
@@ -80,10 +80,10 @@ const MyPointUC = () => {
             </span>
           </div>
         </div>
-        <div className=" text-sm font-bold text-center mt-4 ">
+        <div className=" text-sm font-bold text-center mt-6 ">
           {
             /*Memberpoints.memberpoints*/ tbMember.memberPoint +
-              " คะแนน หมดอายุ 31/12/2567" // +
+            " คะแนน หมดอายุ 31/12/2567" // +
             // (IsNullOrEmpty(Memberpoints.enddate)
             // ? "-"
             // : moment(Memberpoints.enddate.split("T")[0])

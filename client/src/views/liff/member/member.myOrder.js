@@ -45,7 +45,7 @@ const MyOrder = () => {
           setDataError();
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -82,6 +82,7 @@ const MyOrder = () => {
               className="text-liff-gray-mbk text-xs"
               style={{ width: "50%", textAlign: "end" }}
               onClick={() => {
+                localStorage.setItem("pushMyOrder", path.member)
                 history.push(path.myorder.replace(":id", "1"));
               }}
             >
@@ -139,7 +140,7 @@ const MyOrder = () => {
                       )}
                       {hd.paymentStatus == 3 && (
                         <div
-                          className="absolute px-2 text-white border right-0"
+                          className="absolute px-2 text-white border right-0 text-12"
                           style={{
                             borderRadius: "10px",
                             border: "none",
@@ -147,15 +148,15 @@ const MyOrder = () => {
                               hd.transportStatus == 1
                                 ? "rgb(255, 168, 52)"
                                 : hd.transportStatus == 1
-                                ? "rgb(255, 168, 52)"
-                                : "#047738",
+                                  ? "rgb(255, 168, 52)"
+                                  : "#047738",
                           }}
                         >
                           {hd.transportStatus == 1
                             ? "เตรียมส่ง"
                             : hd.transportStatus == 2
-                            ? "กำลังส่ง"
-                            : "ส่งแล้ว"}
+                              ? "กำลังส่ง"
+                              : "ส่งแล้ว"}
                         </div>
                       )}
                     </div>
@@ -203,8 +204,8 @@ const MyOrder = () => {
                                     color: e.isFree
                                       ? "red"
                                       : e.discount > 0
-                                      ? "#ddd"
-                                      : "#047738",
+                                        ? "#ddd"
+                                        : "#047738",
                                   }}
                                 >
                                   {e.isFree
@@ -236,13 +237,13 @@ const MyOrder = () => {
 
                     <div className="flex">
                       <div
-                        className="text-sm font-bold"
+                        className="text-12 font-bold"
                         style={{ width: "50%" }}
                       >
                         {"ยอดรวมสินค้า (" + hd.stockNumber + " ชิ้น)"}
                       </div>
                       <div
-                        className="font-bold text-sm"
+                        className="font-bold text-12"
                         style={{
                           width: "50%",
                           textAlign: "end",
@@ -259,7 +260,7 @@ const MyOrder = () => {
           ) : (
             <div className="flex justify-center items-center h-full">
               <div style={{ height: "50px" }}>
-                <EmptyOrder text={"ยังไม่คำสั่งชื้อ"} />
+                <EmptyOrder text={"ยังไม่มีคำสั่งชื้อ"} />
               </div>
             </div>
           )}

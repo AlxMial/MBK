@@ -139,7 +139,7 @@ const Reward = () => {
                         className="mt-2 text-ms mx-auto"
                         style={{ maxWidth: "80%" }}
                       >
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center" style={{ height: "35px" }}>
                           <div className="font-bold ">{e.redemptionName} </div>
                           <i className="fas fa-chevron-right"></i>
                         </div>

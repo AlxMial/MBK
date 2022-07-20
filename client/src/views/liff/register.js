@@ -98,7 +98,7 @@ const Register = () => {
     consentDate: new Date(),
     isPolicy1: false,
     isPolicy2: false,
-    isCustomer:"1",
+    isCustomer: "1",
     eating: "",
   });
 
@@ -301,7 +301,7 @@ const Register = () => {
     if (element !== null) {
       if (element.currentTarget.scrollTop > 1000) {
         setEnableButton(false);
-      }else {
+      } else {
         if (element.currentTarget.offsetHeight + element.currentTarget.scrollTop >= element.currentTarget.scrollHeight) {
           setEnableButton(false);
         }
@@ -388,15 +388,15 @@ const Register = () => {
         res.data.status
           ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
           : res.data.isPhone === false
-          ? (msg.msg =
+            ? (msg.msg =
               "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-          : res.data.isEmail === false
-          ? (msg.msg =
-              "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
-          : res.data.isMemberCard === false
-          ? (msg.msg =
-              "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
-          : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
+            : res.data.isEmail === false
+              ? (msg.msg =
+                "บันทึกข้อมูลไม่สำเร็จ Email ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+              : res.data.isMemberCard === false
+                ? (msg.msg =
+                  "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+                : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
         // addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
         if (res.data.status) {
@@ -414,7 +414,7 @@ const Register = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {page === "register" ? (
-        <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
+        <div className="bg-green-mbk" style={{ height: "calc(100vh - 90px)" }}>
           <div
             style={{
               width: "90%",
@@ -684,7 +684,7 @@ const Register = () => {
                     ...prevState,
                     ["province"]: e.value,
                     ["district"]: district[0].value,
-                    ["subDistrict"]: (subDistrict.length > 0) ? subDistrict[0].value : "", 
+                    ["subDistrict"]: (subDistrict.length > 0) ? subDistrict[0].value : "",
                     ["postcode"]: (postcode) ? postcode : "",
                   }));
                 }}
@@ -776,7 +776,7 @@ const Register = () => {
                   className=" w-6\/12 bg-green-mbk text-white font-bold uppercase px-3 py-2 text-sm rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                   type="button"
                   style={{ width: "50%" }}
-                  // onClick={windowclose}
+                // onClick={windowclose}
                 >
                   {"ยกเลิก"}
                 </button>
@@ -1648,7 +1648,7 @@ const Register = () => {
       {page === "otp" ? (
         <div
           className=" noselect bg-green-mbk"
-          style={{ height: "calc(100vh - 100px)" }}
+          style={{ height: "calc(100vh - 90px)" }}
         >
           <div
             style={{

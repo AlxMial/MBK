@@ -146,12 +146,12 @@ const AddAddress = () => {
         res.data.status
           ? (msg = { msg: "บันทึกข้อมูลสำเร็จ", appearance: "success" })
           : !res.data.isPhone === false
-          ? (msg.msg =
+            ? (msg.msg =
               "บันทึกข้อมูลไม่สำเร็จ เนื่องจากเบอร์โทรศัพท์เคยมีการลงทะเบียนไว้เรียบร้อยแล้ว")
-          : !res.data.isMemberCard === false
-          ? (msg.msg =
-              "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
-          : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
+            : !res.data.isMemberCard === false
+              ? (msg.msg =
+                "บันทึกข้อมูลไม่สำเร็จ รหัส Member Card ซ้ำกับระบบที่เคยลงทะเบียนไว้เรียบร้อยแล้ว")
+              : (msg.msg = "บันทึกข้อมูลไม่สำเร็จ");
 
         // addToast(msg.msg, { appearance: msg.appearance, autoDismiss: true });
         history.goBack();
@@ -181,7 +181,7 @@ const AddAddress = () => {
           {"เพิ่มที่อยู่"}
         </div>
       </div>
-      <div className="bg-green-mbk" style={{ height: "calc(100vh - 100px)" }}>
+      <div className="bg-green-mbk" style={{ height: "calc(100vh - 90px)" }}>
         <div
           style={{
             width: "90%",
@@ -213,7 +213,7 @@ const AddAddress = () => {
               value={Data.firstName}
               error={errors.firstName}
               valid={true}
-              // disabled={true}
+            // disabled={true}
             />
             <InputUC
               name="lastName"
@@ -224,7 +224,7 @@ const AddAddress = () => {
               value={Data.lastName}
               error={errors.lastName}
               valid={true}
-              // disabled={true}
+            // disabled={true}
             />
             <InputUC
               name="phone"
@@ -234,7 +234,7 @@ const AddAddress = () => {
               value={Data.phone}
               error={errors.phone}
               valid={true}
-              // disabled={true}
+            // disabled={true}
             />
             {false && (
               <SelectUC
@@ -352,7 +352,7 @@ const AddAddress = () => {
                 value={Data.email}
                 error={errors.email}
                 valid={true}
-                // disabled={true}
+              // disabled={true}
               />
             )}
             <div className="mb-5" style={{ display: "none" }}>

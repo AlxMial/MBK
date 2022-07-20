@@ -11,12 +11,14 @@ import { styleSelectLine } from "assets/styles/theme/ReactSelect";
 import { useDispatch } from "react-redux";
 import { backPage } from "redux/actions/common";
 import Error from "./error";
+import AlertModel from "components/ConfirmDialog/alertModel";
 // components
 
 const GetReward = () => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { addToast } = useToasts();
+  const [isOpenAlert, setIsOpenAlert] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [rewardCode, setrewardCode] = useState([
     { index: 0, code: "", state: null },
@@ -87,10 +89,10 @@ const GetReward = () => {
                     e.isInvalid
                       ? (ee.state = false)
                       : e.isExpire
-                      ? (ee.state = false)
-                      : e.isUse
-                      ? (ee.state = false)
-                      : (ee.state = true);
+                        ? (ee.state = false)
+                        : e.isUse
+                          ? (ee.state = false)
+                          : (ee.state = true);
                   }
                 });
               });
@@ -98,8 +100,7 @@ const GetReward = () => {
               let alreadySeen = [];
               var index = 0;
               _rewardCode.forEach(function (str) {
-                if(!IsNullOrEmpty(str.code ))
-                {
+                if (!IsNullOrEmpty(str.code)) {
                   const value = alreadySeen.filter((e) => {
                     return e == str.code
                   });
@@ -109,7 +110,7 @@ const GetReward = () => {
                   } else {
                     _rewardCode[index]["isDuplicate"] = false;
                   }
-                }else{
+                } else {
                   _rewardCode[index]["isDuplicate"] = false;
                 }
                 index++;
@@ -140,6 +141,8 @@ const GetReward = () => {
         .finally((e) => {
           setIsLoading(false);
         });
+    } else {
+      setIsOpenAlert(true);
     }
   };
   const getMembers = async () => {
@@ -149,7 +152,7 @@ const GetReward = () => {
           settbMember(res.data.tbMember);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -195,9 +198,19 @@ const GetReward = () => {
   }, []);
   return (
     <>
+      {isOpenAlert && (
+        <AlertModel
+          className={" liff-Dialog "}
+          showModal={isOpenAlert}
+          message={"กรุณากรอกโค้ด"}
+          confirmModal={async () => {
+            setIsOpenAlert(false);
+          }}
+        />
+      )}
       <Error data={modeldata} setmodeldata={setmodeldata} />
       {isLoading ? <Spinner customText={"Loading"} /> : null}
-      <div className="bg-green-mbk " style={{ height: "calc(100vh - 100px)" }}>
+      <div className="bg-green-mbk " style={{ height: "calc(100vh - 90px)" }}>
         <div
           style={{
             width: "90%",
@@ -318,13 +331,13 @@ const GetReward = () => {
                           _succeedData.isInvalid
                             ? (msg.msg = "ไม่ถูกต้อง")
                             : _succeedData.isExpire
-                            ? (msg.msg = "หมดอายุแล้ว")
-                            : _succeedData.isUse
-                            ? (msg.msg = "ถูกใช้แล้ว")
-                            : (msg = {
-                                msg: "สะสมคะแนนสำเร็จ",
-                                icon: "fas fa-check-circle text-green-mbk",
-                              });
+                              ? (msg.msg = "หมดอายุแล้ว")
+                              : _succeedData.isUse
+                                ? (msg.msg = "ถูกใช้แล้ว")
+                                : (msg = {
+                                  msg: "สะสมคะแนนสำเร็จ",
+                                  icon: "fas fa-check-circle text-green-mbk",
+                                });
                         }
                       }
                       return (
