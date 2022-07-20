@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
-// import Spinner from "components/Loadings/spinner/Spinner";
+import Spinner from "components/Loadings/spinner/Spinner";
 // import { useToasts } from "react-toast-notifications";
 import InputMask from "react-input-mask";
 import axios from "services/axios";
@@ -19,10 +19,11 @@ const ShowCart = () => {
 
   const history = useHistory();
   // const { addToast } = useToasts();
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [tbcouponcodes, settbcouponcodes] = useState([]);
 
   const fetchgettbcouponcodes = async () => {
+    setIsLoading(true);
     await axios.get("redemptions/gettbcouponcodes").then(async (response) => {
       // console.log(response);
       if (response.status) {
@@ -31,8 +32,10 @@ const ShowCart = () => {
           const base64 = await FilesService.buffer64UTF8(data[i].image.data);
           data[i].image = base64
         }
-
+        setIsLoading(false);
         settbcouponcodes(data)
+      } else {
+        setIsLoading(false);
       }
     });
   };
@@ -58,7 +61,7 @@ const ShowCart = () => {
   }, []);
   return (
     <>
-      {/* {isLoading ? <Spinner customText={"Loading"} /> : null} */}
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="bg-green-mbk">
         <div
           style={{ height: "40px" }}
@@ -71,7 +74,7 @@ const ShowCart = () => {
       <div
         className="mt-2 line-scroll relative"
         style={{
-          height: "calc(100% - 160px)",
+          height: "calc(100% - 250px)",
           overflow: "scroll",
           width: "95%",
           marginLeft: "auto",
@@ -131,17 +134,17 @@ const ShowCart = () => {
                     ></img>
 
                   </div>
-                  <div className="px-2 py-5 relative" style={{ width: "calc(100% - 120px)" }}>
+                  <div className="px-2 py-5 relative" style={{ width: "calc(85% - 80px)" }}>
                     <div className="text-base text-bold">{e.couponName}</div>
                     <div className="flex absolute w-full" style={{ bottom: "0" }}>
 
-                      <div className="flex" style={{ width: "110px", color: "var(--mq-txt-color, rgb(122, 122, 122))", fontSize: "12px", alignItems: "end" }}>
+                      <div className="flex" style={{ width: "120px", color: "var(--mq-txt-color, rgb(122, 122, 122))", fontSize: "12px", alignItems: "end" }}>
                         {!e.isNotExpired ? "ใช้ได้ถึง " + moment(e.expireDate).locale("th").add(543, "years").format("DD MMM yyyy") : ""}
                       </div>
                       <div className="bg-green-mbk text-white text-center text-lg  font-bold"
                         style={{
-                          margin: "auto",
-                          width: "100px",
+                          marginLeft:"1rem",
+                          width: "120px",
                           borderRadius: "20px",
                           padding: "10px",
                           alignItems: "center",
@@ -163,7 +166,9 @@ const ShowCart = () => {
 
 
 
-        <div className="absolute w-full flex" style={{ bottom: "40px" }}>
+        
+      </div>
+      <div className="absolute w-full flex" style={{ bottom: "40px" }}>
           <div style={{ width: "100%", padding: "10px" }}>
             <div
               className="flex bg-green-mbk text-white text-center text-lg  font-bold "
@@ -183,7 +188,6 @@ const ShowCart = () => {
             </div>
           </div>
         </div>
-      </div>
     </>
   );
 };

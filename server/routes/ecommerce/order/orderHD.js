@@ -344,6 +344,7 @@ const getorderDT = async (DT) => {
           "price",
           "discount",
           "discountType",
+          "productName",
           "productCount",
           "salePercent",
           "saleDiscount",

@@ -259,7 +259,7 @@ const Updateprofile = () => {
         <div
           style={{
             width: "90%",
-            padding: "10px",
+            padding: "0px 10px 10px 10px",
             margin: "auto",
           }}
         >
