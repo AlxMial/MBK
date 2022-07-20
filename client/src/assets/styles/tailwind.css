@@ -84,11 +84,13 @@ body {
 }
 
 /*font-bold*/
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600;700&display=swap');
 /*font-bold*/
 * {
-  font-family: "Noto Sans Thai", sans-serif;
+  font-family:'Noto Sans Thai','Noto Sans', sans-serif;
 }
 
 /* @font-face {
@@ -1724,7 +1726,8 @@ select {
 }
 
 .font-bold {
-  font-family: "Noto Sans";
+  /* font-family: 'Noto Sans Thai'; */
+  font-family:'Noto Sans Thai','Noto Sans';
   font-weight: 700;
 }
 
