@@ -65,7 +65,7 @@ const MyPointUC = () => {
         <div className=" text-lg text-center font-bold">คะแนนของฉัน</div>
         <div className="text-center mt-6">
           <div
-            className="text-3xl font-bold shadow-lg"
+            className="text-3xl font-bold shadow-lg flex items-center justify-center"
             style={{
               backgroundColor: "#FFF",
               height: "45px",
