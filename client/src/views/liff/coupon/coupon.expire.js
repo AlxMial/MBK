@@ -32,7 +32,7 @@ const Expire = ({ data }) => {
                             className=" animated-img"
                           ></ImageUC>
 
-                          <div className="absolute px-2" style={{
+                          <div className="absolute px-2 flex items-center" style={{
                             top: "10px",
                             backgroundColor: "#000",
                             width: "100px",

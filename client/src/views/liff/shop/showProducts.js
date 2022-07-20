@@ -231,7 +231,7 @@ const ShowProducts = () => {
                 {!IsNullOrEmpty(cartNumberBadge) && cartNumberBadge > 0 ? (
                   <div
                     className="cart-number-badge"
-                    style={{ fontSize: "11px" }}
+                  // style={{ fontSize: "11px" }}
                   >
                     <div className="absolute" style={{ paddingTop: "2px" }}>{cartNumberBadge}</div>
                   </div>

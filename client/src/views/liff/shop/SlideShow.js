@@ -29,14 +29,14 @@ const SlideShow = (prop) => {
                 <img
                   src={e.url}
                   alt="..."
-                  className="w-15 h-15  border-2 border-blueGray-50 "
+                  className="w-15 h-15 "
                   onClick={() => {
                     if (e.typeLink != null) {
                       if (!e.typeLink) {
                         history.push(path.showProducts.replace(":id", e.stockId));
 
                       } else {
-                        prop.setcategoryview (e.productCategoryId, prop.selectMenu)
+                        prop.setcategoryview(e.productCategoryId, prop.selectMenu)
                       }
                     }
                   }}

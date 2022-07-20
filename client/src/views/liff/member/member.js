@@ -13,11 +13,14 @@ import Spinner from "components/Loadings/spinner/Spinner";
 import * as Session from "@services/Session.service";
 import ModelPolicy from "./modelpolicy";
 import "./index.scss";
+import { backPage } from "redux/actions/common";
+import { useDispatch } from "react-redux";
 
 // components
 
 const Member = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const { TabPane } = Tabs;
   const tabsChange = (e) => {
@@ -70,7 +73,9 @@ const Member = () => {
   useEffect(() => {
     getMembers();
     getMemberpoints();
+    dispatch(backPage(false));
   }, []);
+
   return (
     <>
       {/* card */}
@@ -151,7 +156,7 @@ const Member = () => {
                   className="text-white font-bold text-xs mt-1"
                   style={{ position: "fixed" }}
                 >
-                  {isError ? "-" : "" + tbMember.phone}
+                  <span><i className="fas fa-phone-alt mr-1"></i></span> {isError ? "-" : "" + (tbMember.phone ? tbMember.phone.substring(0, tbMember.phone.length - 4) + 'XXXX' : '')}
                 </div>
                 <div className="flex">
                   <div></div>

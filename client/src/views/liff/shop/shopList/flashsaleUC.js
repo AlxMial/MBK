@@ -16,8 +16,8 @@ const FlashsaleUC = ({ data }) => {
       const current_date = new Date().getTime();
       let _endTimeCampaign = new Date(
         new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-          " " +
-          endTimeCampaign
+        " " +
+        endTimeCampaign
       );
 
       let seconds_left =
@@ -68,7 +68,7 @@ const FlashsaleUC = ({ data }) => {
             <img
               src={require("assets/img/mbk/flash_sale.png").default}
               alt="flash_sale"
-              className="border-2 border-blueGray-50 "
+              className=""
               style={{ width: "100px" }}
             ></img>
           </div>

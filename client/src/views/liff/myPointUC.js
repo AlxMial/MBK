@@ -73,6 +73,7 @@ const MyPointUC = () => {
               margin: "auto",
               borderRadius: "20px",
               color: "#007a40",
+              paddingTop: '5px'
             }}
           >
             <span>
