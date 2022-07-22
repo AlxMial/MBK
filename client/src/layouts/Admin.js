@@ -26,6 +26,9 @@ import PointHistoryReport from "views/admin/report/PointHistoryReport";
 import CollectPointsReport from "views/admin/report/CollectPointsReport";
 import CampaignRewardReport from "views/admin/report/CampaignRewardReport";
 import CampaignExchangeHistoryReport from "views/admin/report/CampaignExchangeHistoryReport";
+
+import ProductCategory from "views/admin/ecommerce/productcategory";
+
 export default function Admin() {
   let history = useHistory();
   const { height, width } = useWindowDimensions();
@@ -88,6 +91,8 @@ export default function Admin() {
               <Route path="/admin/allRewardReport" exact component={CampaignRewardReport} />
               <Route path="/admin/collectRewardReport" exact component={CampaignExchangeHistoryReport} />
               
+              <Route path="/admin/productCategory" exact component={ProductCategory} />
+
               <Redirect from="/admin" to="/admin/users" />              
             </Switch>
             {/* <FooterAdmin /> */}
