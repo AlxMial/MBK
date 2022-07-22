@@ -252,6 +252,13 @@ router.put("/", validateToken, async (req, res) => {
     }
   }
 
+  try{
+    req.body.firstName = Encrypt.EncodeKey(req.body.firstName);
+    req.body.lastName = Encrypt.EncodeKey(req.body.lastName);
+  }catch{
+
+  }
+
   const dataUpdate = await tbOrderHD.update(req.body, {
     where: { id: req.body.id },
   });
@@ -898,8 +905,12 @@ router.post("/doSaveOrder", validateLineToken, async (req, res) => {
         //#region 2c2p
         if (orderhd.paymentType == 2) {
           // orderId = 6
+          //sandbox
           let secretKey =
             "0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22";
+          //production
+          // let secretKey =
+          //   "E02D173E018D61DC6A96F8146FEB38F3F1BD6F5350833D671DC89409772E871D";
           let payload = {
             merchantID: "764764000011180",
             invoiceNo: orderId + "-" + orderhd.orderNumber,
@@ -1136,6 +1147,9 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           // orderId = 6
           let secretKey =
             "0181112C92043EA4AD2976E082A3C5F20C1137ED39FFC5D651C7A420BA51AF22";
+          //production
+          // let secretKey =
+          //   "E02D173E018D61DC6A96F8146FEB38F3F1BD6F5350833D671DC89409772E871D";
           let payload = {
             merchantID: "764764000011180",
             invoiceNo: data.orderHd.id + "-" + data.orderHd.orderNumber + 1,
@@ -1153,15 +1167,15 @@ router.post("/doSaveUpdateOrder", validateLineToken, async (req, res) => {
           };
 
           const token = jwt.sign(payload, secretKey);
-          console.log(token);
-
+          // console.log(token);
+          // https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken
           await axios
             .post("https://sandbox-pgw.2c2p.com/payment/4.1/PaymentToken", {
               payload: token,
             })
             .then(async function (res) {
               // handle success
-              console.log(res.data);
+              // console.log(res.data);
               let payload = res.data.payload;
               const decoded = jwt.decode(payload);
               const _2c2p = await tb2c2p.create({
@@ -1274,6 +1288,114 @@ router.post("/doSaveSlip", validateLineToken, async (req, res) => {
     status: status,
     msg: msg,
   });
+});
+
+router.get("/getOrderOver48Hour", async (req, res) => {
+  let OrderHDData = [];
+  const attributesOrderHD = [
+    "id",
+    "orderNumber",
+    "logisticId",
+    "paymentId",
+    "stockNumber",
+    "couponCodeId",
+    "paymentStatus",
+    "orderDate",
+    "deliveryCost",
+    "discountDelivery",
+    "discountCoupon",
+    "discountStorePromotion",
+    "netTotal",
+  ];
+  const attributesOrderDT = [
+    "id",
+    "amount",
+    "price",
+    "discount",
+    "discountType",
+    "stockId",
+    "isFree",
+  ];
+  try {
+    tbOrderHD.hasMany(tbCancelOrder, {
+      foreignKey: "orderId",
+    });
+    tbOrderHD.hasMany(tbCancelOrder, {
+      foreignKey: "orderId",
+    });
+    tbOrderHD.hasMany(tbOrderDT, {
+      foreignKey: "orderId",
+    });
+
+    //#region รายการที่ต้องชำระ
+
+      ///
+
+      let _OrderHDData = await tbOrderHD.findAll({
+        attributes: attributesOrderHD,
+        where: {
+          isCancel: false,
+          IsDeleted: false,
+          paymentStatus: [1],
+          transportStatus: 1,
+          isReturn: false,
+        },
+        include: [
+          {
+            attributes: ["id", "orderId"],
+            model: tbCancelOrder,
+            where: {
+              isDeleted: false,
+            },
+            required: false,
+          },
+          {
+            attributes: attributesOrderDT,
+            model: tbOrderDT,
+            where: {
+              isDeleted: false,
+            },
+            required: false,
+          },
+        ],
+        order: [["orderNumber", "DESC"]],
+      });
+
+      //#region ตรวจสอบ เกิน 48 ชม.ให้ยกเลิก auto
+      for (var i = 0; i < _OrderHDData.length; i++) {
+        let hd = _OrderHDData[i].dataValues;
+        //ไม่มีการยกเลิก
+        if (hd.tbCancelOrders.length < 1) {
+          if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
+            console.log(hd.orderNumber)
+            const data = await tbCancelOrder.create({
+              orderId: hd.id,
+              cancelStatus: 3,
+              cancelType: 3,
+              cancelDetail: "Auto",
+              description: "Auto",
+              isDeleted: false,
+            });
+            const _tbOrderHD = await tbOrderHD.update(
+              {
+                isCancel: true,
+              },
+              {
+                where: {
+                  id: hd.id,
+                },
+              }
+            );
+          }
+        }
+      }
+      //#endregion ตรวจสอบ เกิน 48 ชม.ให้ยกเลิก auto
+      //#endregion รายการที่ต้องชำระ
+    
+    res.json({ data: _OrderHDData });
+  } catch {
+    res.json({ data: "error" });
+  }
 });
 
 router.post("/getOrderHD", validateLineToken, async (req, res) => {
