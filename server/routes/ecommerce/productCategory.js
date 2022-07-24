@@ -123,19 +123,45 @@ router.get(
     let status = true;
     let msg = "";
     let ProductCategory = [];
+    let _tbProductCategory = [];
 
     try {
-      const _tbProductCategory = await tbProductCategory.findAll({
-        attributes: ["id", "categoryName"],
+      _tbProductCategory = await tbProductCategory.findAll({
+        // attributes: ["id", "categoryName"],
         where: { isDeleted: false },
+        attributes: {
+          include: [
+            [
+              Sequelize.literal(`(
+                      select image from tbimages t
+                          where relatedId = tbProductCategory.id
+                          and relatedTable = 'tbProductCategory'
+                          and isDeleted = 0
+                  )`),
+              "image",
+            ],
+          ],
+        },
       });
 
-      _tbProductCategory.map((e, i) => {
+      for await (const i of _tbProductCategory.map((j) => {
+        return j;
+      })) {
+        let e = i;
+        // console.log(e.dataValues.image);
         ProductCategory.push({
           id: Encrypt.EncodeKey(e.id),
           name: e.categoryName,
+          img: e.dataValues.image
         });
-      });
+      }
+
+      // _tbProductCategory.map((e, i) => {
+      //   ProductCategory.push({
+      //     id: Encrypt.EncodeKey(e.id),
+      //     name: e.categoryName,
+      //   });
+      // });
     } catch (e) {
       status = false;
       msg = e.message;
