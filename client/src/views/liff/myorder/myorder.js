@@ -108,7 +108,7 @@ const MyOrder = () => {
         style={{
           alignItems: "center",
           justifyContent: "center",
-          height: "calc(100% - 280px)",
+          height: "calc(100% - 350px)",
         }}
       >
         <div className="w-full h-full" style={{ width: "98%", margin: "auto" }}>
@@ -129,7 +129,7 @@ const MyOrder = () => {
           )}
         </div>
       </div>
-      <div className="absolute w-full flex" style={{ bottom: "0" }}>
+      <div className="absolute w-full flex" style={{ bottom: "100px" }}>
         <div className=" w-full" style={{ padding: "10px" }}>
           <div
             className="flex bg-green-mbk text-white text-center text-lg  font-bold bt-line"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import SlideShow from './SlideShowMain'
+// import SlideShow from './SlideShowMain'
 import axios from "services/axios";
 import Spinner from "components/Loadings/spinner/Spinner";
 import FilesService from "../../../../services/files";
