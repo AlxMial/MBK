@@ -14,7 +14,7 @@ const Slide = (prop) => {
         centerPadding: '60px',
         slidesToShow: 3,
         // autoplaySpeed: 2000,
-        // autoplay: true,
+        autoplay: true,
         responsive: [
             {
                 breakpoint: 768,
