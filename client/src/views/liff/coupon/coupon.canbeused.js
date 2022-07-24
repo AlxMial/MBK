@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 // components
 
 const Canbeused = ({ data }) => {
+  console.log('data', data)
   const history = useHistory();
   return (
     <>
@@ -14,7 +15,7 @@ const Canbeused = ({ data }) => {
           {data.length > 0 ?
             <div className="w-full mt-2 mb-2 font-bold text-xs">
               {[...data].filter((e) => {
-                return e.isCancel === false && e.isUsedCoupon === false && new Date(e.expiredDate) > new Date()
+                return e.isCancel === false && e.isUsedCoupon === false && (e.expiredDate && new Date(e.expiredDate) > new Date() || !e.expiredDate)
               }).map((e, i) => {
                 return (
                   <div key={i} className=" mb-2 inline-block" style={{ width: "50%" }} >
@@ -48,7 +49,7 @@ const Canbeused = ({ data }) => {
                     <div className="w-full  mx-auto font-normal text-liff-gray-mbk" style={{ width: "80%", fontSize: "11px", }}>
                       {"ใช้ได้ถึง " + (e.expiredDate === null ? "-" : moment(e.expiredDate).locale("th").add(543, "year").format("DD MMM YYYY"))}
                     </div>
-                    <div class="liff-inline mb-2 mx-auto" style={{ width: "80%" }}></div>
+                    <div className="liff-inline mb-2 mx-auto" style={{ width: "80%" }}></div>
                   </div>
 
                 )

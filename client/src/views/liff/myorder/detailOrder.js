@@ -168,13 +168,13 @@ const DetailOrder = ({
                   : null}
 
                 <div
-                  className="w-full flex mb-2"
+                  className="w-full flex mb-2 justify-between"
                   style={{
                     fontSize: "12px",
-                    justifyContent: "end",
                     color: "#ddd",
                   }}
                 >
+                  <div className="left"></div>
                   <div className="font-bold">{"ดูรายละเอียดคำสั่งซื้อ >"}</div>
                 </div>
               </div>

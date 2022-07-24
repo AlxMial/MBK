@@ -24,7 +24,7 @@ const InfoCoupon = () => {
           setMyCoupon(res.data.coupon);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -69,7 +69,7 @@ const InfoCoupon = () => {
                   </div>
                 </div>
                 <div className=" px-2 relative" style={{ width: "70%" }}>
-                  <div className="w-full  font-bold line-clamp-2 text-base">
+                  <div className="w-full  font-bold line-clamp-2 text-sm">
                     {" "}
                     {MyCoupon.couponName}{" "}
                   </div>

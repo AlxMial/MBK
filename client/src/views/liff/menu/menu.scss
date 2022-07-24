@@ -1,0 +1,37 @@
+.menu-box {
+    height: 110px;
+}
+
+.menu-bg {
+    height: 60px;
+    z-index: -1;
+    border-top-right-radius: 50px 30px;
+    border-top-left-radius: 50px 30px;
+}
+
+.menu-item {
+    width: 60px;
+}
+
+.menu-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 22px;
+    // background-color: #f7fadf;
+}
+
+.menu-icon-point {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+}
+
+.menu-bg-icon-non-active {
+    background-color: #f7fadf;
+}
+
+.menu-icon-text-active,
+.text-menu-point {
+    color: #f7fadf;
+}

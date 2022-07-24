@@ -16,6 +16,9 @@ import FlashsaleUC from "./flashsaleUC";
 import StockominalUC from "./stockominal";
 import { useDispatch } from "react-redux";
 import { backPage } from "redux/actions/common";
+import ProductCategory from "../shopMain/productCategory";
+
+// import Menu from "views/liff/menu";
 
 const useStyle = styleSelectLine();
 // components
@@ -41,13 +44,17 @@ const ShopList = () => {
   const [tbStockiewFlashSale, settbStockiewFlashSale] = useState([]); //แสดงตาม category
 
   const [isLoadingData, setisLoadingData] = useState(false); //แสดงตาม category
+  const [isShowProductOfCategory, setisShowProductOfCategory] = useState(false);
+  const [categoryName, setCategoryName] = useState(null);
 
-  const setselectMenu = (e) => {
+  // console.log('shopListCategory', location && location.state && location.state.productCategoryId);
+  const setselectMenu = (e, _category) => {
     setselectmenu(e);
-    setcategoryview(category, e);
+    setcategoryview(_category ?? category, e);
   };
 
   const setcategoryview = (id, e) => {
+    console.log("setcategoryview", id, e);
     setcategory(id);
     setisLoadingData(true);
     setTimeout(() => {
@@ -263,12 +270,28 @@ const ShopList = () => {
     });
   };
   useEffect(() => {
-    dispatch(backPage(false));
+    dispatch(backPage(true));
     fetchDataImgBanner();
     fetchDatatbStock();
     fetchproductCategory();
     Get_shopcart();
+    if (history.location && history.location.state && history.location.state.selectedMenu) {
+      setselectMenu(history.location.state.selectedMenu);
+    }
   }, []);
+
+  useEffect(() => {
+    if (tbStock && productCategory && history.location && history.location.state && history.location.state.productCategoryId) {
+      // console.log("productCategoryId", history.location.state.productCategoryId);
+      setisShowProductOfCategory(true);
+      setselectmenu(4);
+      setcategoryview(history.location.state.productCategoryId, 4);
+      const _cateName = productCategory.filter(e => e.value === history.location.state.productCategoryId);
+      if (_cateName && _cateName.length > 0) {
+        setCategoryName(_cateName[0].label);
+      }
+    }
+  }, [tbStock, productCategory]);
 
   let isFlashsale = false;
   tbStockiewFlashSale.map((e, i) => {
@@ -276,17 +299,28 @@ const ShopList = () => {
       isFlashsale = true;
     }
   });
+
+  const onClickProductCategory = (id) => {
+    setselectmenu(4);
+    setcategoryview(id, 4);
+    setisShowProductOfCategory(true);
+    const _cateName = productCategory.filter(e => e.value === history.location.state.productCategoryId);
+    if (_cateName && _cateName.length > 0) {
+      setCategoryName(_cateName[0].label);
+    }
+  }
+
   return (
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="h-full">
-        <div
+        {/* <div
           style={{
             height: 150 - y + "px",
             margin: "auto",
             display: y > 120 ? "none" : "",
           }}
-          className={"wfull animated-SlideShow "}
+          className={"wfull animated-SlideShow shoplist-banner"}
         >
           {ImgBanner.length > 0 && IsImgBanner ? (
             <SlideShow
@@ -310,41 +344,98 @@ const ShopList = () => {
           ) : (
             <div className="animated-img"></div>
           )}
+        </div> */}
+        <div className="bg-green-mbk">
+          <div
+            style={{ height: "40px" }}
+            className=" noselect text-lg text-white font-bold text-center "
+          >
+            {"ร้านค้าออนไลน์"}
+          </div>
         </div>
-
         <div
           className="flex relative  mt-2"
           style={{ height: "40px", alignItems: "center", fontSize: "12px" }}
         >
-          <div
-            className="px-2"
-            style={{
-              textDecoration: selectMenu == 1 ? "underline" : "",
-              textUnderlineOffset: "5px",
-              width: "80px",
-              color: selectMenu == 1 ? "#007a40" : "#000",
-            }}
-            onClick={() => {
-              setselectMenu(1);
-            }}
-          >
-            สินค้าทั้งหมด
-          </div>
-          <div
-            className="px-2"
-            style={{
-              textDecoration: selectMenu == 2 ? "underline" : "",
-              textUnderlineOffset: "5px",
-              width: "70px",
-              color: selectMenu == 2 ? "#007a40" : "#000",
-            }}
-            onClick={() => {
-              setselectMenu(2);
-            }}
-          >
-            สินค้าขายดี
-          </div>
-          <div className="px-2" style={{ width: "calc(100% - 185px)" }}>
+          {isShowProductOfCategory ? (
+            <div className="title-category flex">
+              <div
+                className="px-2"
+                style={{
+                  textDecoration: selectMenu == 3 ? "underline" : "",
+                  textUnderlineOffset: "5px",
+                  // width: "90px",
+                  color: selectMenu == 3 ? "#007a40" : "#000",
+                }}
+                onClick={() => {
+                  history.replace({
+                    pathname: path.shopListCategory,
+                    state: { selectedMenu: 3 }
+                  });
+
+                  setisShowProductOfCategory(false);
+                  setselectMenu(3);
+                }}
+              >
+                {'หมวดหมู่สินค้า > '}
+              </div>
+              <div>{categoryName}</div>
+            </div>
+          ) : <>
+            <div
+              className="px-2"
+              style={{
+                textDecoration: selectMenu == 1 ? "underline" : "",
+                textUnderlineOffset: "5px",
+                width: "80px",
+                color: selectMenu == 1 ? "#007a40" : "#000",
+              }}
+              onClick={() => {
+                history.replace({
+                  pathname: path.shopList,
+                  state: {}
+                });
+                setisShowProductOfCategory(false);
+                setselectMenu(1, 0);
+              }}
+            >
+              สินค้าทั้งหมด
+            </div>
+            <div
+              className="px-2"
+              style={{
+                textDecoration: selectMenu == 2 ? "underline" : "",
+                textUnderlineOffset: "5px",
+                width: "70px",
+                color: selectMenu == 2 ? "#007a40" : "#000",
+              }}
+              onClick={() => {
+                history.replace({
+                  pathname: path.shopList,
+                  state: {}
+                });
+                setisShowProductOfCategory(false);
+                setselectMenu(2, 0);
+              }}
+            >
+              สินค้าขายดี
+            </div>
+            <div
+              className="px-2"
+              style={{
+                textDecoration: selectMenu == 3 ? "underline" : "",
+                textUnderlineOffset: "5px",
+                // width: "90px",
+                color: selectMenu == 3 ? "#007a40" : "#000",
+              }}
+              onClick={() => {
+                setselectMenu(3);
+              }}
+            >
+              สินค้าตามหมวดหมู่
+            </div>
+          </>}
+          {/* <div className="px-2" style={{ width: "calc(100% - 185px)" }}>
             {productCategory.length > 0 ? (
               <Select
                 className="text-gray-mbk   w-full border-none"
@@ -363,7 +454,7 @@ const ShopList = () => {
                 styles={useStyle}
               />
             ) : null}
-          </div>
+          </div> */}
           <div
             className="px-2 absolute flex"
             style={{ right: "0" }}
@@ -384,25 +475,43 @@ const ShopList = () => {
           </div>
         </div>
         <div className="liff-inline" />
-        {isLoadingData ? null : (
+        {selectMenu === 3 ? (
           <div
             id="scroll"
             className="product-scroll "
             style={{
-              width: "90%",
               margin: "auto",
-              height: "calc(100% - " + (y > 120 ? 58 : 210 - y) + "px)",
+              height: "calc(100% - 210px)",
               overflow: "scroll",
             }}
-            onScroll={listenScrollEvent}
+          // onScroll={listenScrollEvent}
           >
-            {/* flash_sale */}
-            {isFlashsale ? <FlashsaleUC data={tbStockiewFlashSale} /> : null}
-
-            <StockominalUC data={tbStockiewNominal} />
+            <ProductCategory showHeader={false} setselectMenu={onClickProductCategory} />
           </div>
-        )}
+        ) :
+          (!isLoadingData && (
+            <div
+              id="scroll"
+              className="product-scroll "
+              style={{
+                width: "90%",
+                margin: "auto",
+                // height: "calc(100% - " + (y > 120 ? 58 : 210 - y) + "px)",
+                height: "calc(100% - 210px)",
+                overflow: "scroll",
+              }}
+            // onScroll={listenScrollEvent}
+            >
+              {/* flash_sale */}
+              {isFlashsale ? <FlashsaleUC data={tbStockiewFlashSale} /> : null}
+
+              <StockominalUC data={tbStockiewNominal} />
+            </div>
+          )
+          )
+        }
       </div>
+      {/* <Menu currentMenu='shoplist' /> */}
     </>
   );
 };

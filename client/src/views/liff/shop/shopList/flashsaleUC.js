@@ -4,7 +4,7 @@ import ImageUC from "components/Image/index";
 import { path } from "services/liff.services";
 import * as fn from "services/default.service";
 
-const FlashsaleUC = ({ data }) => {
+const FlashsaleUC = ({ data, isShowLogo = true }) => {
   const history = useHistory();
   const pad = (n) => {
     return (n < 10 ? "0" : "") + n;
@@ -54,17 +54,17 @@ const FlashsaleUC = ({ data }) => {
     }, [delay]);
   };
   return (
-    <div className="mt-2">
+    <div className={(isShowLogo ? '"mt-2"' : '')}>
       <div
-        className="shadow"
+        className={(isShowLogo ? '"shadow"' : '')}
         style={{
           border: "1px solid #FFF",
           borderRadius: "10px",
           width: "100%",
         }}
       >
-        <div className="mt-2 px-2 py-2">
-          <div>
+        <div className={"px-2 py-2 " + (isShowLogo ? 'mt-2' : '')}>
+          {isShowLogo && <div>
             <img
               src={require("assets/img/mbk/flash_sale.png").default}
               alt="flash_sale"
@@ -72,8 +72,9 @@ const FlashsaleUC = ({ data }) => {
               style={{ width: "100px" }}
             ></img>
           </div>
+          }
           <div
-            className="flex mt-2 line-scroll "
+            className={"flex line-scroll " + (isShowLogo ? 'mt-2' : '')}
             style={{
               overflowX: "auto",
               width: "100%",
@@ -87,6 +88,7 @@ const FlashsaleUC = ({ data }) => {
                     key={i}
                     className="relative"
                     style={{
+                      width: "calc(50vw - 9px - 5%)",
                       minWidth: "calc(50vw - 9px - 5%)",
                       padding: "0px 10px",
                     }}
@@ -130,12 +132,12 @@ const FlashsaleUC = ({ data }) => {
                       {e.isBestSeller ? (
                         <img
                           style={{
-                            width: "40px",
-                            height: "40px",
-                            top: "0",
-                            right: "0",
+                            width: "70px",
+                            height: "70px",
+                            top: "-20px",
+                            left: "-10px",
                           }}
-                          src={require("assets/img/mbk/icon_hot.png").default}
+                          src={require("assets/img/shop-main/hot-logo.png").default}
                           alt="icon_hot"
                           className="w-32 absolute"
                         ></img>

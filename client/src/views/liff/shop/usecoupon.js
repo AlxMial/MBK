@@ -134,19 +134,17 @@ const ShowCart = () => {
                     ></img>
 
                   </div>
-                  <div className="px-2 py-5 relative" style={{ width: "calc(85% - 80px)" }}>
-                    <div className="text-base text-bold">{e.couponName}</div>
+                  <div className="px-2 py-2 relative" style={{ width: "calc(85% - 80px)" }}>
+                    <div className="text-sm font-bold">{e.couponName}</div>
                     <div className="flex absolute w-full" style={{ bottom: "0" }}>
 
-                      <div className="flex" style={{ width: "120px", color: "var(--mq-txt-color, rgb(122, 122, 122))", fontSize: "12px", alignItems: "end" }}>
+                      <div className="flex text-xs justify-between" style={{ width: "120px", color: "var(--mq-txt-color, rgb(122, 122, 122))", alignItems: "end" }}>
                         {!e.isNotExpired ? "ใช้ได้ถึง " + moment(e.expireDate).locale("th").add(543, "years").format("DD MMM yyyy") : ""}
                       </div>
-                      <div className="bg-green-mbk text-white text-center text-lg  font-bold"
+                      <div className="bg-green-mbk text-white text-center text-sm font-bold"
                         style={{
-                          marginLeft:"1rem",
-                          width: "120px",
                           borderRadius: "20px",
-                          padding: "10px",
+                          padding: "5px 10px",
                           alignItems: "center",
                           justifyContent: "center",
                           right: "0"
@@ -166,28 +164,28 @@ const ShowCart = () => {
 
 
 
-        
+
       </div>
       <div className="absolute w-full flex" style={{ bottom: "40px" }}>
-          <div style={{ width: "100%", padding: "10px" }}>
-            <div
-              className="flex bg-green-mbk text-white text-center text-lg  font-bold "
-              style={{
-                margin: "auto",
-                height: "40px",
-                borderRadius: "10px",
-                padding: "5px",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              onClick={() => {
-                history.goBack()
-              }}
-            >
-              {"กลับไปที่ชำระเงิน"}
-            </div>
+        <div style={{ width: "100%", padding: "10px" }}>
+          <div
+            className="flex bg-green-mbk text-white text-center text-lg  font-bold "
+            style={{
+              margin: "auto",
+              height: "40px",
+              borderRadius: "10px",
+              padding: "5px",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+            onClick={() => {
+              history.goBack()
+            }}
+          >
+            {"กลับไปที่ชำระเงิน"}
           </div>
         </div>
+      </div>
     </>
   );
 };

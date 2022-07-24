@@ -108,7 +108,7 @@ const MyOrder = () => {
         style={{
           alignItems: "center",
           justifyContent: "center",
-          height: "calc(100% - 235px)",
+          height: "calc(100% - 280px)",
         }}
       >
         <div className="w-full h-full" style={{ width: "98%", margin: "auto" }}>

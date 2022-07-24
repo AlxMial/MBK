@@ -62,12 +62,12 @@ const StockominalUC = ({ data }) => {
                   {e.isBestSeller ? (
                     <img
                       style={{
-                        width: "40px",
-                        height: "40px",
-                        top: "0",
-                        right: "0",
+                        width: "70px",
+                        height: "70px",
+                        top: "-20px",
+                        left: "-10px",
                       }}
-                      src={require("assets/img/mbk/icon_hot.png").default}
+                      src={require("assets/img/shop-main/hot-logo.png").default}
                       alt="icon_hot"
                       className="w-32 absolute"
                     ></img>
@@ -86,7 +86,7 @@ const StockominalUC = ({ data }) => {
                   {e.productName}
                 </div>
                 <div
-                  className="flex mb-1 "
+                  className="flex mb-1 px-1"
                   style={{
                     bottom: "0",
                     left: "10px",
@@ -109,7 +109,7 @@ const StockominalUC = ({ data }) => {
                 </div>
                 <div
                   className="absolute"
-                  style={{ bottom: "0", right: "10px", color: "gray" }}
+                  style={{ bottom: "0", right: "4px", color: "gray" }}
                 >
                   <i
                     className="fas fa-shopping-cart"

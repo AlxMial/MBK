@@ -103,7 +103,7 @@ const Point = () => {
               width: "90%",
               padding: "10px",
               margin: "auto",
-              height: "calc(100% - 365px)",
+              height: "calc(100% - 475px)",
             }}
           >
             {[...dataPoints].map((e, i) => {

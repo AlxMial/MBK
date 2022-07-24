@@ -11,7 +11,7 @@ const Expire = ({ data }) => {
         <div className="flex relative h-full" style={{ padding: '10px' }}>
           {data.length > 0 ?
             <div className="my-2 mx-auto text-green-mbk font-bold text-xs h-full">
-              {[...data].filter((e) => { return new Date(e.expiredDate) < new Date() || e.isUsedCoupon === true || e.isCancel === true }).map((e, i) => {
+              {[...data].filter((e) => { return (e.expiredDate && new Date(e.expiredDate) < new Date()) || e.isUsedCoupon === true || e.isCancel === true }).map((e, i) => {
                 return (
                   <div key={i} className=" mb-2 inline-block" style={{ width: "50%" }} >
                     <div className="w-full" style={{
@@ -53,7 +53,7 @@ const Expire = ({ data }) => {
                       <div className="w-full mx-auto font-normal text-liff-gray-mbk" style={{ width: "80%", fontSize: "11px", }}>
                         {"ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add(543, "year").format("DD MMM YYYY")}
                       </div>
-                      <div class="liff-inline mb-2 mx-auto" style={{ width: "80%" }}></div>
+                      <div className="liff-inline mb-2 mx-auto" style={{ width: "80%" }}></div>
                     </div>
 
                   </div>

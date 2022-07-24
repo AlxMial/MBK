@@ -519,11 +519,11 @@ const MakeOrderById = () => {
                       </div>
                     )}
                   </div>
-                  <div className="flex relative mb-2">
+                  <div className="flex relative mb-2 justify-between">
                     <div>ยอดสุทธิ : </div>
                     <div
-                      className="absolute text-green-mbk font-blod "
-                      style={{ right: "0", fontSize: "20px" }}
+                      className="text-green-mbk font-blod "
+                      style={{ fontSize: "20px" }}
                     >
                       {"฿ " + fn.formatMoney(calctotel())}
                     </div>

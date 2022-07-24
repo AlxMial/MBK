@@ -181,8 +181,8 @@ const InfoReward = () => {
             Redemptionconditionshd.redemptionType == 2
               ? "ต้องการหมุนวงล้อ ใช่หรือไม่"
               : Redemptionconditionshd.rewardType == 1
-              ? "ต้องการแลกคูปอง ใช่หรือไม่"
-              : "ต้องการแลกของสมนาคุณ ใช่หรือไม่"
+                ? "ต้องการแลกคูปอง ใช่หรือไม่"
+                : "ต้องการแลกของสมนาคุณ ใช่หรือไม่"
           }
           hideModal={() => {
             setIsOpenDialog(false);
@@ -200,7 +200,7 @@ const InfoReward = () => {
           {Redemptionconditionshd != null ? (
             <>
               <div className="w-full h-full absolute">
-                <div className="mb-4" style={{ height: "150px" }}>
+                <div className="mb-6" style={{ height: "150px" }}>
                   <div
                     style={{ width: "220px", height: "150px", margin: "auto" }}
                   >
@@ -240,11 +240,11 @@ const InfoReward = () => {
                     boxShadow: "0px -2px 10px 0px #aba6a6",
                   }}
                 >
-                  <div className="font-bold mt-4  mb-4 text-center text-xl">
+                  <div className="font-bold mt-2 mb-4 text-center text-xl">
                     {Redemptionconditionshd.redemptionName}
                   </div>
                   <div className="liff-inline" />
-                  <div className="font-bold text-center mt-2 mb-4 text-sm">
+                  <div className="font-bold text-center mt-4 mb-4 text-sm">
                     รายละเอียด
                   </div>
                   <div className="liff-inline" />
@@ -291,8 +291,8 @@ const InfoReward = () => {
                     {Redemptionconditionshd.redemptionType == 2
                       ? "หมุนวงล้อ"
                       : Redemptionconditionshd.rewardType == 1
-                      ? "แลกคูปอง"
-                      : "แลกสินค้า"}
+                        ? "แลกคูปอง"
+                        : "แลกสินค้า"}
                   </div>
                 </div>
               </div>

@@ -181,11 +181,11 @@ const AddAddress = () => {
           {"เพิ่มที่อยู่"}
         </div>
       </div>
-      <div className="bg-green-mbk" style={{ height: "calc(100vh - 90px)" }}>
+      <div className="bg-green-mbk" style={{ height: "calc(100vh - 130px)" }}>
         <div
           style={{
             width: "90%",
-            padding: "10px",
+            padding: "0 10px",
             margin: "auto",
           }}
         >

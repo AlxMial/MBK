@@ -99,7 +99,7 @@ const Rewardredeem = () => {
               height: "calc(100vh - 90px)",
             }}
           ></div>
-          <div className="mt-6 absolute  w-full noselect text-center text-white font-bold text-lg">
+          <div className="mt-6 absolute  w-full noselect text-center text-white font-bold text-sm">
             <div>แลกคูปองสำเร็จ</div>
           </div>
 

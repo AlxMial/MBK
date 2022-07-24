@@ -1,0 +1,41 @@
+.banner-section .images-wrap img {
+    // height: 180px;
+    object-fit: cover;
+}
+
+.banner-section .each-slideshow-indicator {
+    background-color: '#ccc';
+}
+
+.banner-section .react-slideshow-container+ul.indicators .each-slideshow-indicator:before {
+    background-color: #ccc;
+    width: 8px !important;
+    height: 8px !important;
+}
+
+.banner-section .react-slideshow-container+ul.indicators .each-slideshow-indicator.active:before {
+    background-color: #047738 !important;
+}
+
+.slide-container .images-wrap .each-slide {
+    padding: 0 10%;
+}
+
+.banner-section .slick-list {
+    text-align: center;
+    padding: 0 10%;
+}
+
+.slick-current .box-image {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+.slick-current .box-image img {
+    height: calc(100vw - 180px) !important;
+    filter: blur(0) !important;
+}
+
+.slick-dots li {
+    width: 5px !important;
+}

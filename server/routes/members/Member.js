@@ -588,8 +588,8 @@ router.post("/checkRegister", async (req, res) => {
               uid: Encrypt.EncodeKey(member.uid),
               keyWord: Encrypt.EncodeKey(
                 Encrypt.EncodeKey(req.headers["user-agent"]) +
-                  "," +
-                  Encrypt.EncodeKey(req.headers["host"])
+                "," +
+                Encrypt.EncodeKey(req.headers["host"])
               ),
             })
           ),
@@ -960,10 +960,10 @@ router.get("/getMyOrder", validateLineToken, async (req, res) => {
             let discount =
               dt.discount > 0
                 ? // ? dt.discountType == 1
-                  //   ? parseFloat(dt.price) - parseFloat(dt.discount)
-                  //   : parseFloat(dt.price) -
-                  //   (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
-                  parseFloat(dt.price) - parseFloat(dt.discount)
+                //   ? parseFloat(dt.price) - parseFloat(dt.discount)
+                //   : parseFloat(dt.price) -
+                //   (parseFloat(dt.discount) / 100) * parseFloat(dt.price)
+                parseFloat(dt.price) - parseFloat(dt.discount)
                 : 0;
 
             if (j < 2) {
@@ -1125,8 +1125,8 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
                 deliverStatus == "Wait"
                   ? 1
                   : deliverStatus == "InTransit"
-                  ? 2
-                  : 3,
+                    ? 2
+                    : 3,
             };
             if (product.length < 2) {
               product.push(data);
@@ -1233,7 +1233,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
                 : false,
               isUsedCoupon: _coupon[i].isUsedCoupon,
               points: _tbRedemptionConditionsHD.dataValues.points,
-              expiredDate: _RedemptionCoupon.expireDate,
+              expiredDate: _RedemptionCoupon.isNotExpired ? null : _RedemptionCoupon.expireDate,
               isDeleted: _RedemptionCoupon.isDeleted,
               isCancel: _RedemptionCoupon.isCancel,
               CouponCodeId: Encrypt.EncodeKey(_coupon[i].TableHDId),
@@ -1312,8 +1312,8 @@ router.get("/getMyProduct", validateLineToken, async (req, res) => {
                 deliverStatus == "Wait"
                   ? 1
                   : deliverStatus == "InTransit"
-                  ? 2
-                  : 3,
+                    ? 2
+                    : 3,
             };
             product.push(data);
           }
@@ -1544,8 +1544,8 @@ router.post("/getMyProductById", validateLineToken, async (req, res) => {
               deliverStatus == "Wait"
                 ? 1
                 : deliverStatus == "InTransit"
-                ? 2
-                : 3,
+                  ? 2
+                  : 3,
           };
         }
       }

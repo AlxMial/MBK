@@ -24,7 +24,7 @@ const InfoCoupon = () => {
           setMyCoupon(res.data.coupon);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -45,7 +45,7 @@ const InfoCoupon = () => {
           callback();
         }
       },
-      () => {},
+      () => { },
       () => {
         //   setIsLoading(false);
       }
@@ -75,7 +75,7 @@ const InfoCoupon = () => {
       <div style={{ height: "calc(50% - 160px)", backgroundColor: "#007a40" }}>
         {MyCoupon != null ? (
           <div className="w-full h-full absolute">
-            <div className="mb-4" style={{ height: "150px" }}>
+            <div className="mb-6" style={{ height: "150px" }}>
               <div style={{ width: "220px", height: "150px", margin: "auto" }}>
                 <ImageUC
                   find={1}
@@ -97,7 +97,7 @@ const InfoCoupon = () => {
                 boxShadow: "0px -2px 10px 0px #aba6a6",
               }}
             >
-              <div className="font-bold mt-4  mb-4 text-center text-xl">
+              <div className="font-bold mt-2  mb-4 text-center text-xl">
                 {MyCoupon.couponName}
               </div>
               <div

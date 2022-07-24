@@ -341,7 +341,7 @@ const OrderPaymentDone = () => {
                         ? fn.formatMoney(
                           OrderHD.hddeliveryCost - OrderHD.hddiscountDelivery
                         )
-                        : 0)}
+                        : '0.00')}
                   </div>
                 </div>
                 <div className="flex relative mb-2 text-sm">
@@ -358,23 +358,21 @@ const OrderPaymentDone = () => {
                       fn.formatMoney(OrderHD.hddiscountCoupon)}
                   </div>
                 </div>
-                <div className="flex relative  mt-4">
+                <div className="flex relative  mt-4 justify-between">
                   <div
-                    className="flex text-sm"
-                    style={{ width: "50%", alignItems: "end" }}
+                    className=" text-sm"
                   >
                     ยอดสุทธิ :
                   </div>
                   <div
-                    className="flex text-green-mbk font-blod text-xl"
-                    style={{ right: "0", justifyContent: "end", width: "50%" }}
+                    style={{ fontSize: "20px" }}
+                    className=" text-green-mbk font-blod "
                   >
                     {"฿ " + fn.formatMoney(OrderHD.netTotal)}
                   </div>
                 </div>
                 <div
-                  className="flex relative mb-2 w-full text-gold-mbk"
-                  style={{ justifyContent: "end" }}
+                  className="mb-2 w-full text-gold-mbk text-right"
                 >
                   {"+ " + OrderHD.points + " points"}
                 </div>

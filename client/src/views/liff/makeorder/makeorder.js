@@ -483,7 +483,7 @@ const MakeOrder = () => {
             >
               <div style={{ width: "90%", margin: "auto" }}>
                 <div>
-                  <div className="flex relative mb-2  text-12">
+                  <div className="flex relative mb-2 ">
                     <div>ยอดรวมสินค้า : </div>
                     <div className="absolute" style={{ right: "0" }}>
                       {"฿ " + fn.formatMoney(sumprice)}
@@ -545,7 +545,7 @@ const MakeOrder = () => {
                       </div>
                     )}
                   </div>
-                  <div className="flex relative mb-2  text-12">
+                  <div className="flex relative mb-2 ">
                     <div>ยอดรวมสินค้า : </div>
                     <div
                       className="absolute text-green-mbk font-blod "

@@ -162,6 +162,7 @@ const Reward = () => {
                     </div>
                   );
                 })}
+                <div className="footer" style={{ height: '110px' }}></div>
               </div>
             ) : (
               <div
@@ -181,6 +182,7 @@ const Reward = () => {
             )}
           </div>
         </div>
+
       </div>
     </>
   );

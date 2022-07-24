@@ -4250,21 +4250,27 @@ strike {
   display: none !important;
 }
 
-.react-slideshow-container {
+.shoplist-banner .react-slideshow-container {
   height: 100%;
 }
 
-.react-slideshow-container + ul.indicators {
+.shoplist-banner .react-slideshow-container + ul.indicators {
   margin-top: -20px !important;
 }
 
-.react-slideshow-container + ul.indicators .each-slideshow-indicator:before {
+.shoplist-banner
+  .react-slideshow-container
+  + ul.indicators
+  .each-slideshow-indicator:before {
   background-color: #ffffff !important;
   width: 10px !important;
   height: 10px !important;
 }
 
-.react-slideshow-container + ul.indicators .each-slideshow-indicator {
+.shoplist-banner
+  .react-slideshow-container
+  + ul.indicators
+  .each-slideshow-indicator {
   background-color: #ddd !important;
   /* opacity: .7 !important */
 }
@@ -5137,4 +5143,11 @@ span.rc-time-picker.time-picker-input.hidtext .rc-time-picker-input {
 .input-mark:focus {
   --tw-ring-color: #d0b027;
   border-color: #d0b027;
+}
+
+.blur-xs {
+  filter: blur(1px);
+}
+.blur-sm {
+  filter: blur(4px);
 }

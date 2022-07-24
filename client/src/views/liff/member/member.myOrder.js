@@ -82,7 +82,7 @@ const MyOrder = () => {
               className="text-liff-gray-mbk text-xs"
               style={{ width: "50%", textAlign: "end" }}
               onClick={() => {
-                localStorage.setItem("pushMyOrder", path.member)
+                localStorage.setItem("pushMyOrder", window.location.pathname)
                 history.push(path.myorder.replace(":id", "1"));
               }}
             >
@@ -227,9 +227,10 @@ const MyOrder = () => {
                       );
                     })}
                     <div
-                      className="w-full flex mb-2 text-liff-gray-mbk"
-                      style={{ fontSize: "12px", justifyContent: "end" }}
+                      className="w-full flex mb-2 text-liff-gray-mbk justify-between"
+                      style={{ fontSize: "12px" }}
                     >
+                      <div className="left"></div>
                       <div className="font-bold  text-12">
                         {"ดูรายละเอียดคำสั่งซื้อ >"}
                       </div>

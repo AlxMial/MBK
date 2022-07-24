@@ -40,6 +40,7 @@ import paymentsucceed from "views/liff/makeorder/paymentsucceed";
 import paymentInfo from "views/liff/payment/paymentInfo";
 
 import myorder from "views/liff/myorder/myorder";
+import ShopMain from "views/liff/shop/shopMain";
 
 export const path = {
   privacypolicy: "/line/privacypolicy",
@@ -61,9 +62,11 @@ export const path = {
   cancelPage: "/line/cancelPage/:id",
   returnPage: "/line/returnPage/:id",
   shopList: "/line/shopList",
+  shopListCategory: "/line/shopList",
   showProducts: "/line/showProducts/:id",
   showCart: "/line/showCart",
   usecoupon: "/line/usecoupon/:id",
+  shopMain: "/line/shopMain",
 
   makeorder: "/line/makeorder/:id",
   makeorderbyid: "/line/makeorderbyid/:id",
@@ -163,6 +166,14 @@ export const routes = [
     component: shopList,
   },
   {
+    path: path.shopListCategory,
+    component: shopList,
+  },
+  {
+    path: path.shopMain,
+    component: ShopMain,
+  },
+  {
     path: path.cancelPage,
     component: cancelPage,
   },
@@ -238,7 +249,7 @@ const httpPost = (path, data, s, e, f) => {
     });
 };
 
-export const checkRegister = (s, e = () => {}, f = () => {}) => {
+export const checkRegister = (s, e = () => { }, f = () => { }) => {
   let _uid = Session.getLiff().uid;
   axios
     .post("/members/checkRegister", { uid: _uid })
@@ -253,117 +264,117 @@ export const checkRegister = (s, e = () => {}, f = () => {}) => {
     });
 };
 
-export const getMember = (s, e = () => {}, f = () => {}) => {
+export const getMember = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMember", s, e, f);
 };
-export const getMyOrder = (s, e = () => {}, f = () => {}) => {
+export const getMyOrder = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMyOrder", s, e, f);
 };
-export const getMyReward = (s, e = () => {}, f = () => {}) => {
+export const getMyReward = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMyReward", s, e, f);
 };
-export const getMyCoupon = (s, e = () => {}, f = () => {}) => {
+export const getMyCoupon = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMyCoupon", s, e, f);
 };
-export const getCouponByID = (data, s, e = () => {}, f = () => {}) => {
+export const getCouponByID = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/members/getCouponByID", data, s, e, f);
 };
-export const useCouponByID = (data, s, e = () => {}, f = () => {}) => {
+export const useCouponByID = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/members/useCouponByID", data, s, e, f);
 };
-export const getMyProduct = (s, e = () => {}, f = () => {}) => {
+export const getMyProduct = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMyProduct", s, e, f);
 };
-export const getMyProductById = (data, s, e = () => {}, f = () => {}) => {
+export const getMyProductById = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/members/getMyProductById", data, s, e, f);
 };
 
-export const getRedemptionconditionshd = (s, e = () => {}, f = () => {}) => {
+export const getRedemptionconditionshd = (s, e = () => { }, f = () => { }) => {
   httpGet("/redeem/getRedemptionconditionshd", s, e, f);
 };
 export const getRedemptionconditionshdById = (
   data,
   s,
-  e = () => {},
-  f = () => {}
+  e = () => { },
+  f = () => { }
 ) => {
   httpPost("/redeem/getRedemptionconditionshdById", data, s, e, f);
 };
 
-export const useCoupon = (data, s, e = () => {}, f = () => {}) => {
+export const useCoupon = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/redeem/useCoupon", data, s, e, f);
 };
-export const useProduct = (data, s, e = () => {}, f = () => {}) => {
+export const useProduct = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/redeem/useProduct", data, s, e, f);
 };
-export const useGame = (data, s, e = () => {}, f = () => {}) => {
+export const useGame = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/redeem/useGame", data, s, e, f);
 };
 
-export const getMemberpoints = (s, e = () => {}, f = () => {}) => {
+export const getMemberpoints = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMemberPoints", s, e, f);
 };
-export const getMemberPointsList = (s, e = () => {}, f = () => {}) => {
+export const getMemberPointsList = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMemberPointsList", s, e, f);
 };
-export const getMemberAddress = (s, e = () => {}, f = () => {}) => {
+export const getMemberAddress = (s, e = () => { }, f = () => { }) => {
   httpGet("/members/getMemberAddress", s, e, f);
 };
-export const addMemberAddress = (data, s, e = () => {}, f = () => {}) => {
+export const addMemberAddress = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/members/addMemberAddress", data, s, e, f);
 };
-export const gettbPayment = (s, e = () => {}, f = () => {}) => {
+export const gettbPayment = (s, e = () => { }, f = () => { }) => {
   httpGet("/payment/gettbPayment", s, e, f);
 };
-export const getPaymentsucceed = (data, s, e = () => {}, f = () => {}) => {
+export const getPaymentsucceed = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/payment/getPaymentsucceed ", data, s, e, f);
 };
 
-export const gettbLogistic = (s, e = () => {}, f = () => {}) => {
+export const gettbLogistic = (s, e = () => { }, f = () => { }) => {
   httpGet("/logistic/gettbLogistic", s, e, f);
 };
 
-export const getPromotionstores = (s, e = () => {}, f = () => {}) => {
+export const getPromotionstores = (s, e = () => { }, f = () => { }) => {
   httpGet("/payment/getPromotionstores", s, e, f);
 };
 
-export const doSaveOrder = (data, s, e = () => {}, f = () => {}) => {
+export const doSaveOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/doSaveOrder", data, s, e, f);
 };
-export const doSaveSlip = (data, s, e = () => {}, f = () => {}) => {
+export const doSaveSlip = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/doSaveSlip", data, s, e, f);
 };
 
-export const doSaveUpdateOrder = (data, s, e = () => {}, f = () => {}) => {
+export const doSaveUpdateOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/doSaveUpdateOrder", data, s, e, f);
 };
 
-export const upd_shopcart = (data, s, e = () => {}, f = () => {}) => {
+export const upd_shopcart = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/upd_shopcart", data, s, e, f);
 };
-export const get_shopcart = (data, s, e = () => {}, f = () => {}) => {
+export const get_shopcart = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/get_shopcart", data, s, e, f);
 };
 
 //PaymentStatus ,TransportStatus
-export const getOrderHD = (data, s, e = () => {}, f = () => {}) => {
+export const getOrderHD = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/getOrderHD", data, s, e, f);
 };
-export const getOrder = (data, s, e = () => {}, f = () => {}) => {
+export const getOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/getOrder", data, s, e, f);
 };
-export const getOrderHDById = (data, s, e = () => {}, f = () => {}) => {
+export const getOrderHDById = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/order/orderHD/getOrderHDById", data, s, e, f);
 };
 
-export const cancelOrder = (data, s, e = () => {}, f = () => {}) => {
+export const cancelOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/cancelOrder/cancelOrder", data, s, e, f);
 };
-export const returnOrder = (data, s, e = () => {}, f = () => {}) => {
+export const returnOrder = (data, s, e = () => { }, f = () => { }) => {
   httpPost("/returnOrder/returnOrder ", data, s, e, f);
 };
 
-export const membersDpd = (data, s, e = () => {}, f = () => {}) => {
+export const membersDpd = (data, s, e = () => { }, f = () => { }) => {
   axios
     .put("members", data)
     .then((res) => {
@@ -376,7 +387,7 @@ export const membersDpd = (data, s, e = () => {}, f = () => {}) => {
       f();
     });
 };
-export const redeem = (data, s, e = () => {}, f = () => {}) => {
+export const redeem = (data, s, e = () => { }, f = () => { }) => {
   axios
     .post("/redeem", data)
     .then((res) => {
@@ -390,7 +401,7 @@ export const redeem = (data, s, e = () => {}, f = () => {}) => {
     });
 };
 
-export const listPointStore = (s, e = () => {}, f = () => {}) => {
+export const listPointStore = (s, e = () => { }, f = () => { }) => {
   axios
     .get("pointStore/listPointStore")
     .then((res) => {
@@ -404,7 +415,7 @@ export const listPointStore = (s, e = () => {}, f = () => {}) => {
     });
 };
 
-export const sendEmailSuccess = (data, s, e = () => {}, f = () => {}) => {
+export const sendEmailSuccess = (data, s, e = () => { }, f = () => { }) => {
   axios
     .post("mails/paymentsuccess", data)
     .then((res) => {
@@ -430,7 +441,7 @@ export const sendEmailSuccess = (data, s, e = () => {}, f = () => {}) => {
 };
 
 
-export const cancelSuccess = (data, s, e = () => {}, f = () => {}) => {
+export const cancelSuccess = (data, s, e = () => { }, f = () => { }) => {
   axios
     .post("mails/cancelsuccess", data)
     .then((res) => {
@@ -444,7 +455,7 @@ export const cancelSuccess = (data, s, e = () => {}, f = () => {}) => {
     });
 };
 
-export const sendEmailWaiting = (data, s, e = () => {}, f = () => {}) => {
+export const sendEmailWaiting = (data, s, e = () => { }, f = () => { }) => {
   axios
     .post("mails/paymentwatiting", data)
     .then((res) => {

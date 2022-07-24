@@ -189,15 +189,15 @@ const Member = () => {
             </div>
             <div className="absolute right-0 bottom-0">
               <div>
-                <div className="flex" style={{ justifyContent: "right" }}>
+                <div className="flex justify-between">
                   <img
                     src={require("assets/img/mbk/Coint1.png").default}
                     alt="..."
                     className="w-6 h-6 rounded-full border-2 border-blueGray-50 shadow"
                   ></img>
-                  <span className="text-white font-bold text-xl pl-2 margin-auto-t-b">
+                  <div className="text-white font-bold text-xl margin-auto-t-b">
                     {tbMember.memberPoint === null ? 0 : tbMember.memberPoint}
-                  </span>
+                  </div>
                 </div>
               </div>
               <div className="text-right mt-2 "></div>
@@ -224,10 +224,10 @@ const Member = () => {
         </div>
         <div className="mt-2">
           <div
-            className="bg-green-mbk flex text-white font-bold text-xs relative margin-a shadow-2xl"
+            className="bg-green-mbk flex items-center px-2 text-white font-bold text-xs relative margin-a shadow-2xl"
             style={{
               width: "90%",
-              padding: "10px",
+              // padding: "10px",
               height: "40px",
               marginTop: "-2px",
               borderRadius: "10px",

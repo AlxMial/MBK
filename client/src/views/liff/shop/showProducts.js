@@ -338,7 +338,7 @@ const ShowProducts = () => {
             </div>
           </div>
 
-          <div className="absolute w-full" style={{ bottom: "0" }}>
+          <div className="absolute w-full z-2 bg-white" style={{ bottom: "0" }}>
             <div className="liff-inline" />
             <div style={{ width: "95%", margin: "auto" }}>
               <div className="mt-2">

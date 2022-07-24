@@ -13,6 +13,7 @@ import {
   checkRegister as apiCheckRegister,
 } from "@services/liff.services";
 import config from "@services/helpers";
+import Menu from "views/liff/menu";
 
 // components
 const getRoutes = () => {
@@ -117,6 +118,7 @@ const LiffAPP = () => {
   const { backpage } = useSelector(({ common }) => common);
 
   let pathname = window.location.pathname;
+  const isShopMain = pathname.toLowerCase().includes('shopmain');
   let bg = "90px";
   let ismemberpage = false;
   if (pathname.includes("register")) {
@@ -131,9 +133,10 @@ const LiffAPP = () => {
   ) {
     bg = "243px";
     ismemberpage = true;
-  } else if (pathname.toLowerCase().includes("shoplist")) {
-    bg = "0px";
   }
+  // else if (pathname.toLowerCase().includes("shoplist")) {
+  //   bg = "0px";
+  // }
 
   if (!view) {
     initLine(
@@ -201,12 +204,12 @@ const LiffAPP = () => {
       {!isInClient ? (
         <div style={{ height: "100vh" }}>
           <div
-            className={"noselect bg-green-mbk flex"}
+            className={"noselect bg-green-mbk flex " + pathname.toLowerCase().includes('shopmain') ? 'relative' : ''}
             style={{ height: "90px" }}
           >
             <div className="flex items-center" style={{
               justifyContent: "center", position: "absolute",
-              height: "90px",
+              height: bg,
               width: "100%",
               top: "0"
             }}>
@@ -238,39 +241,73 @@ const LiffAPP = () => {
         <Spinner customText={"Loading"} />
       ) : (
         <div
-          className="noselect"
+          className={"noselect " + (isShopMain ? 'line-scroll relative' : '')}
           style={{ display: !view ? "none" : "", height: "100vh" }}
         >
           <div
             className={
               "noselect " +
-              (!ismemberpage ||
+              ((!ismemberpage ||
                 pathname.includes("/line/coupon") ||
-                pathname.includes("/line/product")
+                pathname.includes("/line/product")) &&
+                !isShopMain
                 ? "bg-green-mbk flex"
                 : "")
             }
             style={{ height: bg }}
           >
+            {isShopMain &&
+              <img
+                className="w-full h-full absolute flex"
+                src={require("assets/img/shop-main/bg-shop-main-w.jpg").default}
+                alt="line_head_img"
+                style={{
+                  objectFit: "fill",
+                  height: "auto",
+                }}
+              ></img>
+            }
             <div
-              className="w-full h-full flex"
+              className={"w-full h-full flex " + (pathname.toLowerCase().includes('shopmain') ? 'relative' : '')}
               style={{ justifyContent: "center", alignItems: "center" }}
             >
-              {pathname
-                .toLowerCase()
-                .includes("shoplist") ? null : ismemberpage &&
+              {
+                // pathname
+                //   .toLowerCase()
+                //   .includes("shoplist") ? null : 
+                ismemberpage &&
                   !pathname.includes("/line/coupon") &&
                   !pathname.includes("/line/product") ? (
-                <div className="w-full " style={{ position: "relative" }}>
-                  <img
-                    className="w-full h-full"
-                    src={require("assets/img/mbk/Header.jpg").default}
-                    alt="line_head_img"
-                    style={{
-                      objectFit: "cover",
-                      height: "243px",
-                    }}
-                  ></img>
+                  <div className="w-full " style={{ position: "relative" }}>
+                    <img
+                      className="w-full h-full"
+                      src={require("assets/img/mbk/Header.jpg").default}
+                      alt="line_head_img"
+                      style={{
+                        objectFit: "cover",
+                        height: "243px",
+                      }}
+                    ></img>
+                    <div className="flex items-center" style={{
+                      justifyContent: "center", position: "absolute",
+                      height: "90px",
+                      width: "100%",
+                      top: "0"
+                    }}>
+                      <img
+                        className="w-full h-full absolute flex"
+                        src={require("assets/img/mbk/Logo.png").default}
+                        alt="line_head_img"
+                        style={{
+                          objectFit: "fill",
+                          maxWidth: "150px",
+                          height: "auto",
+                          // top: "1.75rem",
+                        }}
+                      ></img>
+                    </div>
+                  </div>
+                ) : (
                   <div className="flex items-center" style={{
                     justifyContent: "center", position: "absolute",
                     height: "90px",
@@ -278,9 +315,9 @@ const LiffAPP = () => {
                     top: "0"
                   }}>
                     <img
-                      className="w-full h-full absolute flex"
                       src={require("assets/img/mbk/Logo.png").default}
-                      alt="line_head_img"
+                      alt="logo_mbk"
+                      // className=" mt-6 "
                       style={{
                         objectFit: "fill",
                         maxWidth: "150px",
@@ -289,35 +326,22 @@ const LiffAPP = () => {
                       }}
                     ></img>
                   </div>
-                </div>
-              ) : (
-                <div className="flex items-center" style={{
-                  justifyContent: "center", position: "absolute",
-                  height: "90px",
-                  width: "100%",
-                  top: "0"
-                }}>
-                  <img
-                    src={require("assets/img/mbk/Logo.png").default}
-                    alt="logo_mbk"
-                    // className=" mt-6 "
-                    style={{
-                      objectFit: "fill",
-                      maxWidth: "150px",
-                      height: "auto",
-                      // top: "1.75rem",
-                    }}
-                  ></img>
-                </div>
-              )}
+                )}
             </div>
           </div>
           <Switch>
             {getRoutes()}
             <Redirect from="/line/" to="/line/register" />
           </Switch>
+          {(pathname.toLowerCase().includes("point") ||
+            pathname.toLowerCase().includes("shopmain") ||
+            pathname.toLowerCase().includes("myorder") ||
+            pathname.toLowerCase().includes("/reward")) &&
+            <Menu currentMenu={pathname} />
+          }
         </div>
-      )}
+      )
+      }
     </>
   );
 };

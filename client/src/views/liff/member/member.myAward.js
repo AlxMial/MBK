@@ -37,6 +37,7 @@ const MyAward = () => {
         if (res.status) {
           if (res.data.status) {
             setisError(false);
+            console.log('setcouponItem', res.data.coupon);
             setcouponItem(res.data.coupon);
             setproductItem(res.data.product);
           } else {
@@ -225,8 +226,8 @@ const MyAward = () => {
                             {e.status == 1
                               ? "เตรียมจัดส่ง"
                               : e.status == 2
-                              ? "อยู่ระหว่างจัดส่ง"
-                              : "ส่งแล้ว"}
+                                ? "อยู่ระหว่างจัดส่ง"
+                                : "ส่งแล้ว"}
                           </div>
                           {e.trackingNo != null ? (
                             <div className="absolute" style={{ right: "0" }}>

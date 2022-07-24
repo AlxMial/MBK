@@ -13,7 +13,7 @@ const CouponSucceed = () => {
                     <div className="w-full flex mb-2" style={{ justifyContent: "center" }}>
                         <i className="fas fa-check-circle" style={{ color: "#FFFFFF", fontSize: "50px" }}></i>
                     </div>
-                    <div className="w-full flex" style={{ justifyContent: "center", color: "#FFFFFF", fontSize: "50px" }}>
+                    <div className="w-full flex text-sm font-bold" style={{ justifyContent: "center", color: "#FFFFFF" }}>
                         แลกสินค้าสำเร็จ
                     </div>
                 </div>
