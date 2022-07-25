@@ -9,6 +9,7 @@ const Op = Sequelize.Op;
 const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
+
 router.post("/", validateToken, async (req, res) => {
   let postCodeHD;
   if (req.body.pointCodeSymbol) {

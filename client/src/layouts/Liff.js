@@ -42,6 +42,7 @@ const initLine = (callback, setView, pathname) => {
     );
   }
 };
+
 const runApp = (callback, setView, pathname) => {
   if (config.dev) {
     Session.setLiff({
@@ -168,7 +169,6 @@ const LiffAPP = () => {
 
   useEffect(() => {
     window.addEventListener("popstate", function (event) {
-      console.log(window.location.pathname);
       if (window.location.pathname.includes("line/register")) {
         liff.closeWindow();
       } else {
