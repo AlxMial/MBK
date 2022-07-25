@@ -128,45 +128,43 @@ router.get(
 
     try {
 
-      const qry = `INSERT INTO mbk_database.tbcouponcodes 
-      SELECT * FROM mbk_temp.tbcouponcodes 
-      where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) 
-      and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
-      db.sequelize
-        .query(qry, null, { raw: true })
-        .then((result) => {
-          
-        });
-
-      _tbProductCategory = await tbProductCategory.findAll({
-        // attributes: ["id", "categoryName"],
-        where: { isDeleted: false },
-        attributes: {
-          include: [
-            [
-              Sequelize.literal(`(
-                      select image from tbimages t
-                          where relatedId = tbProductCategory.id
-                          and relatedTable = 'tbProductCategory'
-                          and isDeleted = 0
-                  )`),
-              "image",
-            ],
-          ],
-        },
-      });
-
-      for await (const i of _tbProductCategory.map((j) => {
-        return j;
-      })) {
-        let e = i;
-        // console.log(e.dataValues.image);
-        ProductCategory.push({
-          id: Encrypt.EncodeKey(e.id),
-          name: e.categoryName,
-          img: e.dataValues.image
-        });
+      const [data] = await db.sequelize
+        .query(`select product.id, product.categoryName as name, image.image as img
+      from tbProductCategories product
+      left join tbimages image on product.id = image.relatedId and image.relatedTable = 'tbProductCategory'
+      where product.isDeleted = 0`);
+      if (data) {
+        ProductCategory = data;
+        // console.log('result', data);
       }
+
+      // _tbProductCategory = await tbProductCategory.findAll({
+      //   where: { isDeleted: false },
+      //   attributes: {
+      //     include: [
+      //       [
+      //         Sequelize.literal(`(
+      //                 select image from tbimages t
+      //                     where relatedId = tbProductCategory.id
+      //                     and relatedTable = 'tbProductCategory'
+      //                     and isDeleted = 0
+      //             )`),
+      //         "image",
+      //       ],
+      //     ],
+      //   },
+      // });
+
+      // for await (const i of _tbProductCategory.map((j) => {
+      //   return j;
+      // })) {
+      //   let e = i;
+      //   ProductCategory.push({
+      //     id: Encrypt.EncodeKey(e.id),
+      //     name: e.categoryName,
+      //     img: e.dataValues.image
+      //   });
+      // }
 
       // _tbProductCategory.map((e, i) => {
       //   ProductCategory.push({
@@ -178,6 +176,7 @@ router.get(
       status = false;
       msg = e.message;
     }
+
     res.json({
       status: status,
       msg: msg,

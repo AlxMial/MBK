@@ -14,6 +14,7 @@ const ProductCategory = ({ showHeader = true, setselectMenu }) => {
         await axios.get("productCategory/getProductCategory").then((response) => {
             if (response.status) {
                 const data = response.data.tbProductCategory;
+                // console.log('data', data);
                 data.map(item => {
                     if (item.img) {
                         item.img = FilesService.buffer64UTF8(item.img);
@@ -91,6 +92,7 @@ const ProductCategory = ({ showHeader = true, setselectMenu }) => {
                                     key={index}>
                                     <div className="category-image text-center">
                                         <img
+                                            loading="lazy"
                                             // src={item.img}
                                             src={item.img ?? require("assets/img/mbk/no-image.png").default}
                                             alt="category"

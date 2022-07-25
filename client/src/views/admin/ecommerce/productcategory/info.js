@@ -36,7 +36,8 @@ const Info = (prop) => {
       setErrorImage(dataImage);
       if (!dataImage) {
         image.src = URL.createObjectURL(e.target.files[0]);
-        const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        // const base64 = await FilesService.convertToBase64(e.target.files[0]);
+        const base64 = await fn.resizeFile(e.target.files[0]);// 500px * 500px
         setdataModel((pre) => ({ ...pre, dataImage: base64 }));
       }
     }

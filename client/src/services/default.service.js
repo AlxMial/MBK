@@ -1,5 +1,6 @@
 import moment from "moment";
 import * as Storage from "@services/Storage.service";
+import Resizer from "react-image-file-resizer";
 const crypto = require("crypto");
 const ENC_KEY = "bf3c199c2470cb477d907b1e0917c17b";
 const IV = "5183666c72eec9e4";
@@ -140,21 +141,21 @@ export const isFlashSale = (e) => {
     let _today = new Date();
     let today = new Date(
       _today.getFullYear() +
-        "/" +
-        (_today.getMonth() + 1) +
-        "/" +
-        _today.getDate()
+      "/" +
+      (_today.getMonth() + 1) +
+      "/" +
+      _today.getDate()
     );
     if (today >= startDateCampaign && today <= endDateCampaign) {
       let startTimeCampaign = new Date(
         new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-          " " +
-          e.startTimeCampaign
+        " " +
+        e.startTimeCampaign
       );
       let endTimeCampaign = new Date(
         new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-          " " +
-          e.endTimeCampaign
+        " " +
+        e.endTimeCampaign
       );
       today = new Date();
       // อยู่ในเวลา
@@ -166,3 +167,19 @@ export const isFlashSale = (e) => {
 
   return isFlash;
 };
+
+export const resizeFile = file =>
+  new Promise(resolve => {
+    Resizer.imageFileResizer(
+      file,
+      400,
+      400,
+      "JPEG",
+      100,
+      0,
+      uri => {
+        resolve(uri);
+      },
+      "base64"
+    );
+  });
