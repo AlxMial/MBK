@@ -751,7 +751,7 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
               ],
             });
 
-            if (_tbCouponCode) {
+            if (_tbCouponCode && _tbCouponCode.tbRedemptionCoupon.startDate <= new Date()) {
               const _tbImage = await tbImage.findOne({
                 attributes: ["image"],
                 where: {

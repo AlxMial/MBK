@@ -7,6 +7,8 @@ import Spinner from "components/Loadings/spinner/Spinner";
 import ConfirmDialogNew from "components/ConfirmDialog/ConfirmDialogNew";
 import { useDispatch } from "react-redux";
 import { backPage } from "redux/actions/common";
+import moment from "moment";
+
 // components
 const InfoCoupon = () => {
   const dispatch = useDispatch();
@@ -124,7 +126,7 @@ const InfoCoupon = () => {
             </div>
           </div>
         ) : null}
-        {MyCoupon != null ? (
+        {MyCoupon != null && MyCoupon.isCouponStart ? (
           <div className="absolute w-full flex" style={{ bottom: "10px" }}>
             <div
               className=" w-full"
@@ -153,6 +155,12 @@ const InfoCoupon = () => {
             </div>
           </div>
         ) : null}
+
+        {MyCoupon && !MyCoupon.isCouponStart &&
+          <div className="absolute w-full flex text-xs justify-center" style={{ bottom: "30px" }}>
+            {`สามารถใช้คูปองได้ตั้งแต่วันที่  ${moment(MyCoupon.startDate).locale("th").add(543, "year").format("DD MMM YYYY")}`}
+          </div>
+        }
       </div>
     </>
   );

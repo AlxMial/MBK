@@ -20,7 +20,7 @@ const Coupon = () => {
           setMyCoupon({ isdata: true, MyCoupon: res.data.coupon });
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }

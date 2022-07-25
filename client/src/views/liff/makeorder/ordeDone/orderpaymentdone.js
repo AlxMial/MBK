@@ -121,7 +121,17 @@ const OrderPaymentDone = () => {
                 </div>
               </>
             ) : null}
-
+            <div className="text-sm mt-4 mx-auto text-gold-mbk font-bold w-full"
+              style={{
+                width: "95%",
+              }}>
+              <span>
+                <i
+                  className="fas fa-truck mr-2"
+                ></i>
+              </span>
+              ที่ต้องได้รับ
+            </div>
             <div
               className="flex mt-2 text-sm "
               style={{
@@ -146,7 +156,7 @@ const OrderPaymentDone = () => {
                 }}
               >
                 <div
-                  className="text-liff-gray-mbk text-sm"
+                  className="text-green-mbk text-sm"
                   style={{
                     width: "50px",
                     textAlign: "end",
@@ -388,23 +398,53 @@ const OrderPaymentDone = () => {
                   (OrderHD.transportStatus == 1 ||
                     OrderHD.transportStatus == 2) ? (
                   <>
-                    <div style={{ width: "90%", margin: "auto" }}>
+                    <div style={{ width: "95%", margin: "auto" }}>
+                      <div className="liff-inline mb-2" />
                       <div>
                         <div className="flex relative mb-2 text-gold-mbk ">
-                          <div>
-                            {OrderHD.transportStatus == 1 ? (
-                              <i className="fas fa-shopping-bag"></i>
+                          {
+                            OrderHD.transportStatus == 1 ? (
+                              <>
+                                <div>
+                                  <i className="fas fa-shopping-bag"></i>
+                                </div>
+                                <div className=" px-2 ">
+                                  เตรียมสินค้า
+                                </div>
+                              </>
                             ) : (
-                              <i className="fas fa-truck"></i>
-                            )}
-                          </div>
-                          <div className=" px-2 ">
-                            {OrderHD.transportStatus == 1
-                              ? "เตรียมสินค้า"
-                              : OrderHD.transportStatus == 2
-                                ? "อยู่ระหว่างการจัดส่ง"
-                                : ""}
-                          </div>
+                              <>
+                                <div
+                                  className="flex relative justify-between w-full"
+                                >
+                                  <div className="text-12 text-gold-mbk">
+                                    <span>
+                                      <i class="fas fa-box-open mr-2"></i>
+                                    </span>
+                                    <span className="font-bold">หมายเลขพัสดุ : </span>{OrderHD.trackNo ? OrderHD.trackNo : "-"}
+                                  </div>
+                                  <div>
+                                    <CopyToClipboard
+                                      text={OrderHD.trackNo}
+                                      onCopy={() => {
+                                        addToast("คัดลอกเรียบร้อยแล้ว", {
+                                          appearance: "success",
+                                          autoDismiss: true,
+                                        });
+                                      }}
+                                    >
+                                      <div
+                                        className=" text-12 text-green-mbk "
+                                      >
+                                        คัดลอก
+                                      </div>
+                                    </CopyToClipboard>
+                                  </div>
+                                </div>
+                              </>
+                            )
+                          }
+
                         </div>
                       </div>
                     </div>

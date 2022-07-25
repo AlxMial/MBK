@@ -4,7 +4,7 @@ import ImageUC from "components/Image/index";
 // components
 
 const Expire = ({ data }) => {
-  console.log(data)
+  // console.log(data)
   return (
     <>
       <div className="mt-2 h-full">

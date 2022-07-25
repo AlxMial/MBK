@@ -128,7 +128,7 @@ const PaymentModel = ({
                             className="text-liff-gray-mbk"
                             style={{ fontWeight: "100" }}
                           >
-                            {"เลขบัญชี : " + accountName}
+                            {"ชื่อบัญชี : " + accountName}
                           </div>
                           <div
                             className="text-liff-gray-mbk"

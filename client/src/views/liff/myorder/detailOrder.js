@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import ImageUC from "components/Image/index";
 import * as fn from "@services/default.service";
 import ReturnModel from "../components/returnModel"; //popup คืนสินค้า
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import { useToasts } from "react-toast-notifications";
+
 const DetailOrder = ({
   OrderHD,
   onClick,
@@ -10,6 +13,7 @@ const DetailOrder = ({
   succeedOrder,
   GetOrderHD,
 }) => {
+  const { addToast } = useToasts();
   const [returnModel, setReturnModel] = useState({ isOpen: false });
 
   return (
@@ -30,15 +34,16 @@ const DetailOrder = ({
             >
               <div
                 className="w-full"
-                onClick={() => {
-                  onClick(e);
-                }}
               >
                 <div
                   className="liff-inline mb-2"
                   style={{ height: "5px", backgroundColor: "#ebebeb" }}
                 />
-                <div className="w-full flex mb-2 relative text-xs">
+                <div className="w-full flex mb-2 relative text-xs"
+                  onClick={() => {
+                    onClick(e);
+                  }}
+                >
                   <div className="flex" style={{ width: "calc(100% - 120px)" }}>
                     <div className="font-bold" style={{ minWidth: "85px" }}>
                       หมายเลขคำสั่งซื้อ :{" "}
@@ -106,7 +111,10 @@ const DetailOrder = ({
                 {[...e.dt].length > 0
                   ? [...e.dt].map((dt, j) => {
                     return (
-                      <div key={j} className="w-full flex mb-2 text-xs">
+                      <div key={j} className="w-full flex mb-2 text-xs"
+                        onClick={() => {
+                          onClick(e);
+                        }}>
                         <div style={{ width: "80px", height: "80px" }}>
                           <ImageUC
                             style={{
@@ -169,6 +177,9 @@ const DetailOrder = ({
 
                 <div
                   className="w-full flex mb-2 justify-between"
+                  onClick={() => {
+                    onClick(e);
+                  }}
                   style={{
                     fontSize: "12px",
                     color: "#ddd",
@@ -180,6 +191,9 @@ const DetailOrder = ({
               </div>
               {succeedOrder == true ? (
                 <div
+                  onClick={() => {
+                    onClick(e);
+                  }}
                   className="w-full flex mb-2"
                   style={{
                     fontSize: "12px",
@@ -239,6 +253,37 @@ const DetailOrder = ({
                   {"฿ " + fn.formatMoney(e.price)}
                 </div>
               </div>
+
+              {e.isToReceive && (
+                <>
+                  <div className="liff-inline mb-2" />
+                  <div
+                    className="flex relative"
+                  >
+                    <div className="text-12 text-gold-mbk">
+                      <span>
+                        <i class="fas fa-box-open mr-2"></i>
+                      </span>
+                      <span className="font-bold">หมายเลขพัสดุ : </span>{e.trackNo ? e.trackNo : "-"}
+                    </div>
+                    <CopyToClipboard
+                      text={e.trackNo}
+                      onCopy={() => {
+                        addToast("คัดลอกเรียบร้อยแล้ว", {
+                          appearance: "success",
+                          autoDismiss: true,
+                        });
+                      }}
+                    >
+                      <div
+                        className="absolute text-12 text-green-mbk right-0"
+                      >
+                        คัดลอก
+                      </div>
+                    </CopyToClipboard>
+                  </div>
+                </>
+              )}
             </div>
           );
         })}

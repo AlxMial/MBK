@@ -89,10 +89,10 @@ const GetReward = () => {
                     e.isInvalid
                       ? (ee.state = false)
                       : e.isExpire
-                      ? (ee.state = false)
-                      : e.isUse
-                      ? (ee.state = false)
-                      : (ee.state = true);
+                        ? (ee.state = false)
+                        : e.isUse
+                          ? (ee.state = false)
+                          : (ee.state = true);
                   }
                 });
               });
@@ -154,7 +154,7 @@ const GetReward = () => {
           settbMember(res.data.tbMember);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -310,7 +310,7 @@ const GetReward = () => {
                     }}
                   >
                     {[...rewardCode].map((e, i) => {
-                      console.log(e);
+                      // console.log(e);
                       let _succeedData = succeedData.find(
                         (item) =>
                           item.coupon.toLowerCase() === e.code.toLowerCase()
@@ -334,13 +334,13 @@ const GetReward = () => {
                           _succeedData.isInvalid
                             ? (msg.msg = "ไม่ถูกต้อง")
                             : _succeedData.isExpire
-                            ? (msg.msg = "หมดอายุแล้ว")
-                            : _succeedData.isUse
-                            ? (msg.msg = "ถูกใช้แล้ว")
-                            : (msg = {
-                                msg: "สะสมคะแนนสำเร็จ",
-                                icon: "fas fa-check-circle text-green-mbk",
-                              });
+                              ? (msg.msg = "หมดอายุแล้ว")
+                              : _succeedData.isUse
+                                ? (msg.msg = "ถูกใช้แล้ว")
+                                : (msg = {
+                                  msg: "สะสมคะแนนสำเร็จ",
+                                  icon: "fas fa-check-circle text-green-mbk",
+                                });
                         }
                       }
                       return (

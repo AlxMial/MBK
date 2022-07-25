@@ -21,6 +21,10 @@ const Toreceive = () => {
       },
       (res) => {
         if (res.status) {
+          const _orderHD = res.data.OrderHD;
+          if (_orderHD.length > 0) {
+            _orderHD[0].isToReceive = true;
+          }
           setOrderHD(res.data.OrderHD);
         }
       },

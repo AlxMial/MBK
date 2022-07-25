@@ -54,7 +54,7 @@ router.post("/", validateLineToken, async (req, res) => {
       foreignKey: "tbPointCodeHDId",
     });
     const productNameData = await tbPointCodeHD.findAll({
-      attributes: ["id", "pointCodePoint", "endDate","isActive"],
+      attributes: ["id", "pointCodePoint", "endDate", "isActive"],
       where: {
         isDeleted: false,
       },
@@ -69,7 +69,7 @@ router.post("/", validateLineToken, async (req, res) => {
             "isExpire",
             "isDeleted",
             "tbPointCodeHDId",
-            
+
           ],
 
           model: tbPointCodeDT,
@@ -95,7 +95,7 @@ router.post("/", validateLineToken, async (req, res) => {
           let dt = productNameData[x].dataValues.tbPointCodeDTs[i].dataValues;
           if (
             new Date(new Date(hd.endDate).setUTCHours(0, 0, 0, 0)) <
-              new Date(new Date().setUTCHours(0, 0, 0, 0)) ||
+            new Date(new Date().setUTCHours(0, 0, 0, 0)) ||
             !productNameData[x].dataValues.isActive
           ) {
             status = {
@@ -106,7 +106,7 @@ router.post("/", validateLineToken, async (req, res) => {
               isInvalid: false,
               isExpire: true,
               isUse: false,
-              isDuplicate:false,
+              isDuplicate: false,
             };
           } else if (dt.isUse) {
             status = {
@@ -118,7 +118,7 @@ router.post("/", validateLineToken, async (req, res) => {
               isInvalid: false,
               isExpire: false,
               isUse: true,
-              isDuplicate:false,
+              isDuplicate: false,
             };
           } else {
             status = {
@@ -129,7 +129,7 @@ router.post("/", validateLineToken, async (req, res) => {
               isInvalid: false,
               isExpire: false,
               isUse: false,
-              isDuplicate:false,
+              isDuplicate: false,
             };
           }
 
@@ -154,7 +154,7 @@ router.post("/", validateLineToken, async (req, res) => {
               isDeleted: false,
               tbMemberId: req.body.memberId,
               tbPointCodeHDId: dt.tbPointCodeHDId,
-              pointsStoreHdId: Encrypt.DecodeKey(req.body.storeId) ,
+              pointsStoreHdId: Encrypt.DecodeKey(req.body.storeId),
               pointsStoreDtId: (req.body.branchId) ? Encrypt.DecodeKey(req.body.branchId) : null
             };
 
@@ -183,7 +183,7 @@ router.post("/", validateLineToken, async (req, res) => {
           isInvalid: true,
           isExpire: false,
           isUse: false,
-          isDuplicate:false,
+          isDuplicate: false,
         };
         statusRedeem.push(status);
       });
@@ -199,7 +199,7 @@ router.post("/", validateLineToken, async (req, res) => {
             isInvalid: true,
             isExpire: false,
             isUse: false,
-            isDuplicate:false,
+            isDuplicate: false,
           };
           statusRedeem.push(status);
         }
@@ -339,11 +339,11 @@ router.post("/", validateLineToken, async (req, res) => {
     // for (var i = 0; i < redeemCode.length; i++) {
 
     // }
-    return res.status(200).json({ data: statusRedeem,status:true });
+    return res.status(200).json({ data: statusRedeem, status: true });
   } catch (err) {
     res.status(200).json({
       coupon: err.message,
-      status:false,
+      status: false,
       isValid: false,
       isInvalid: true,
       isExpire: false,
@@ -392,8 +392,8 @@ router.get(
               if (item[i].redemptionType == 1) {
                 if (item[i].rewardType == 1) {
                   const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
-                    attributes: ["id"],
-                    where: { redemptionConditionsHDId: item[i].id },
+                    attributes: ["id", "expireDate"],
+                    where: { redemptionConditionsHDId: item[i].id, isCancel: false },
                   });
 
                   item[i].dataValues.redemptionId = Encrypt.EncodeKey(
@@ -402,6 +402,9 @@ router.get(
                   item[i].dataValues.id = Encrypt.EncodeKey(
                     item[i].dataValues.id
                   );
+                  // pe : ใช้วันที่หมดอายุคูปอง
+                  item[i].dataValues.endDate = _tbRedemptionCoupon.dataValues.isNotExpired
+                    ? null : _tbRedemptionCoupon.dataValues.expireDate;
                   RedemptionConditionsHD.push(item[i]);
                 } else {
                   const _tbRedemptionProduct =
@@ -844,7 +847,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
               // สุ่มจาก list
               itemrendom =
                 RedemptionList[
-                  Math.floor(Math.random() * RedemptionList.length)
+                Math.floor(Math.random() * RedemptionList.length)
                 ];
               if (itemrendom.type == "Coupon") {
                 // ใช้คูปอง

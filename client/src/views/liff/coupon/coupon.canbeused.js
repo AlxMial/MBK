@@ -6,7 +6,7 @@ import { useHistory } from "react-router-dom";
 // components
 
 const Canbeused = ({ data }) => {
-  console.log('data', data)
+  // console.log('data', data)
   const history = useHistory();
   return (
     <>

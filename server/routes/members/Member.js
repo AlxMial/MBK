@@ -1016,7 +1016,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
       //Coupon
 
       let _coupon = await tbMemberReward.findAll({
-        // limit: 2,
+        limit: 2,
         attributes: [
           "id",
           "rewardType",
@@ -1031,6 +1031,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
           rewardType: "Coupon",
           isUsedCoupon: false,
         },
+        order: [["redeemDate", "DESC"]],
       });
 
       if (_coupon) {
@@ -1044,7 +1045,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
             attributes: ["id"],
             where: {
               isDeleted: false,
-              id: _coupon[i].TableHDId,
+              id: _coupon[i].dataValues.TableHDId,
             },
             include: [
               {
@@ -1065,21 +1066,24 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
             let _RedemptionCoupon =
               _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues;
 
-            if (
-              _RedemptionCoupon.startDate <= new Date() &&
-              _RedemptionCoupon.expireDate >= new Date()
-            ) {
-              _coupon[i].dataValues.couponName = _RedemptionCoupon.couponName;
-              _coupon[i].dataValues.expireDate = _RedemptionCoupon.expireDate;
-              if (coupon.length < 2) {
-                coupon.push({
-                  id: Encrypt.EncodeKey(_RedemptionCoupon.id),
-                  couponId: Encrypt.EncodeKey(_coupon[i].TableHDId),
-                  couponName: _coupon[i].dataValues.couponName,
-                  expireDate: _coupon[i].dataValues.expireDate,
-                });
-              }
+            // if (
+            //   _RedemptionCoupon.startDate <= new Date() &&
+            //   _RedemptionCoupon.expireDate >= new Date()
+            // ) {
+            _coupon[i].dataValues.couponName = _RedemptionCoupon.couponName;
+            _coupon[i].dataValues.expireDate = _RedemptionCoupon.expireDate;
+            console.log('_coupon[i].dataValues', _coupon[i].dataValues)
+            if (coupon.length < 2) {
+              coupon.push({
+                id: Encrypt.EncodeKey(_RedemptionCoupon.id),
+                couponId: Encrypt.EncodeKey(_coupon[i].dataValues.TableHDId),
+                couponName: _coupon[i].dataValues.couponName,
+                redeemDate: _coupon[i].dataValues.redeemDate,
+                // expireDate: _coupon[i].dataValues.expireDate,
+                expiredDate: _RedemptionCoupon.isNotExpired ? null : _RedemptionCoupon.expireDate,
+              });
             }
+            // }
           }
         }
       }
@@ -1177,6 +1181,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
           memberId: Member.id,
           rewardType: "Coupon",
         },
+        order: [["redeemDate", "DESC"]],
       });
       if (_coupon) {
         for (var i = 0; i < _coupon.length; i++) {
@@ -1231,8 +1236,10 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
                   ? true
                   : false
                 : false,
+              isCouponStart: _RedemptionCoupon.startDate <= new Date(),
               isUsedCoupon: _coupon[i].isUsedCoupon,
               points: _tbRedemptionConditionsHD.dataValues.points,
+              startDate: _RedemptionCoupon.startDate,
               expiredDate: _RedemptionCoupon.isNotExpired ? null : _RedemptionCoupon.expireDate,
               isDeleted: _RedemptionCoupon.isDeleted,
               isCancel: _RedemptionCoupon.isCancel,
@@ -1382,6 +1389,7 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
               "couponName",
               "description",
               "redemptionConditionsHDId",
+              "startDate"
             ],
             // where: { isDeleted: false },
             include: [
@@ -1421,6 +1429,7 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
           description: description,
           points: points,
           codeCoupon: codeCoupon,
+          startDate: _RedemptionCoupon.startDate,
           couponType:
             _tbCouponCode.tbRedemptionCoupon.tbRedemptionConditionsHD
               .couponType,

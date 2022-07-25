@@ -37,7 +37,7 @@ const MyAward = () => {
         if (res.status) {
           if (res.data.status) {
             setisError(false);
-            console.log('setcouponItem', res.data.coupon);
+            // console.log('setcouponItem', res);
             setcouponItem(res.data.coupon);
             setproductItem(res.data.product);
           } else {
@@ -123,11 +123,12 @@ const MyAward = () => {
                         {e.couponName}
                       </div>
                       <div className="text-liff-gray-mbk text-12">
-                        {"ใช้ได้ถึง " +
+                        {(!e.expiredDate ? "ไม่หมดอายุ" :
+                          "ใช้ได้ถึง " +
                           moment(e.expiredDate)
                             .locale("th")
                             .add(543, "years")
-                            .format("DD MMM YYYY")}
+                            .format("DD MMM YYYY"))}
                       </div>
                     </div>
                   </div>

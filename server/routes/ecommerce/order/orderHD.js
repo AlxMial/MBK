@@ -252,10 +252,10 @@ router.put("/", validateToken, async (req, res) => {
     }
   }
 
-  try{
+  try {
     req.body.firstName = Encrypt.EncodeKey(req.body.firstName);
     req.body.lastName = Encrypt.EncodeKey(req.body.lastName);
-  }catch{
+  } catch {
 
   }
 
@@ -307,21 +307,21 @@ const isFlashSale = (e) => {
   let _today = new Date();
   let today = new Date(
     _today.getFullYear() +
-      "/" +
-      (_today.getMonth() + 1) +
-      "/" +
-      _today.getDate()
+    "/" +
+    (_today.getMonth() + 1) +
+    "/" +
+    _today.getDate()
   );
   if (today >= startDateCampaign && today <= endDateCampaign) {
     let startTimeCampaign = new Date(
       new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-        " " +
-        e.startTimeCampaign
+      " " +
+      e.startTimeCampaign
     );
     let endTimeCampaign = new Date(
       new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-        " " +
-        e.endTimeCampaign
+      " " +
+      e.endTimeCampaign
     );
     today = new Date();
     // อยู่ในเวลา
@@ -1329,68 +1329,68 @@ router.get("/getOrderOver48Hour", async (req, res) => {
 
     //#region รายการที่ต้องชำระ
 
-      ///
+    ///
 
-      let _OrderHDData = await tbOrderHD.findAll({
-        attributes: attributesOrderHD,
-        where: {
-          isCancel: false,
-          IsDeleted: false,
-          paymentStatus: [1],
-          transportStatus: 1,
-          isReturn: false,
+    let _OrderHDData = await tbOrderHD.findAll({
+      attributes: attributesOrderHD,
+      where: {
+        isCancel: false,
+        IsDeleted: false,
+        paymentStatus: [1],
+        transportStatus: 1,
+        isReturn: false,
+      },
+      include: [
+        {
+          attributes: ["id", "orderId"],
+          model: tbCancelOrder,
+          where: {
+            isDeleted: false,
+          },
+          required: false,
         },
-        include: [
-          {
-            attributes: ["id", "orderId"],
-            model: tbCancelOrder,
-            where: {
-              isDeleted: false,
-            },
-            required: false,
+        {
+          attributes: attributesOrderDT,
+          model: tbOrderDT,
+          where: {
+            isDeleted: false,
           },
-          {
-            attributes: attributesOrderDT,
-            model: tbOrderDT,
-            where: {
-              isDeleted: false,
-            },
-            required: false,
-          },
-        ],
-        order: [["orderNumber", "DESC"]],
-      });
+          required: false,
+        },
+      ],
+      order: [["orderNumber", "DESC"]],
+    });
 
-      //#region ตรวจสอบ เกิน 48 ชม.ให้ยกเลิก auto
-      for (var i = 0; i < _OrderHDData.length; i++) {
-        let hd = _OrderHDData[i].dataValues;
-        //ไม่มีการยกเลิก
-        if (hd.tbCancelOrders.length < 1) {
-          if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
-            const data = await tbCancelOrder.create({
-              orderId: hd.id,
-              cancelStatus: 3,
-              cancelType: 3,
-              cancelDetail: "Auto",
-              description: "Auto",
-              isDeleted: false,
-            });
-            const _tbOrderHD = await tbOrderHD.update(
-              {
-                isCancel: true,
+    //#region ตรวจสอบ เกิน 48 ชม.ให้ยกเลิก auto
+    for (var i = 0; i < _OrderHDData.length; i++) {
+      let hd = _OrderHDData[i].dataValues;
+      //ไม่มีการยกเลิก
+      if (hd.tbCancelOrders.length < 1) {
+        if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
+          const data = await tbCancelOrder.create({
+            orderId: hd.id,
+            cancelStatus: 3,
+            cancelType: 3,
+            cancelDetail: "Auto",
+            description: "Auto",
+            isDeleted: false,
+          });
+          const _tbOrderHD = await tbOrderHD.update(
+            {
+              isCancel: true,
+            },
+            {
+              where: {
+                id: hd.id,
               },
-              {
-                where: {
-                  id: hd.id,
-                },
-              }
-            );
-          }
+            }
+          );
         }
       }
-      //#endregion ตรวจสอบ เกิน 48 ชม.ให้ยกเลิก auto
-      //#endregion รายการที่ต้องชำระ
-    
+    }
+    //#endregion ตรวจสอบ เกิน 48 ชม.ให้ยกเลิก auto
+    //#endregion รายการที่ต้องชำระ
+
     res.json({ data: _OrderHDData });
   } catch {
     res.json({ data: "error" });
@@ -1417,6 +1417,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
     "discountCoupon",
     "discountStorePromotion",
     "netTotal",
+    "trackNo"
   ];
   const attributesOrderDT = [
     "id",
@@ -1772,6 +1773,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         // hd.amount = stockNumber;
         // hd.price = netTotal;
         hd.id = Encrypt.EncodeKey(hd.id);
+        console.log('hd', hd)
         OrderHD.push({
           id: hd.id,
           orderNumber: hd.orderNumber,
@@ -1779,6 +1781,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
           price: hd.netTotal,
           returnStatus: hd.returnStatus,
           cancelStatus: hd.cancelStatus,
+          trackNo: hd.trackNo,
           dt: hd.dt,
           isPaySlip: hd.isPaySlip == null ? null : hd.isPaySlip,
         });
@@ -1858,8 +1861,8 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         email: member ? Encrypt.DecodeKey(member.dataValues.email) : null,
         memberName: member
           ? Encrypt.DecodeKey(member.dataValues.firstName) +
-            " " +
-            Encrypt.DecodeKey(member.dataValues.lastName)
+          " " +
+          Encrypt.DecodeKey(member.dataValues.lastName)
           : null,
         price: OrderHDData.dataValues.netTotal,
         Payment: _tbPayment,
@@ -1932,6 +1935,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         "discountStorePromotion",
         "points",
         "netTotal",
+        "trackNo"
       ],
       where: {
         IsDeleted: false,
@@ -2165,6 +2169,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
       OrderHD = {
         id: hd.id,
         dt: hd.dt,
+        trackNo: hd.trackNo,
         sumprice: hd.sumprice,
         deliveryCost: hd.deliveryCost,
         olddeliveryCost: olddeliveryCost,
