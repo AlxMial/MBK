@@ -9,6 +9,7 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
+const db = require("../../models");
 
 router.post("/", validateToken, async (req, res) => {
   const data = await tbProductCategory.create(req.body);
@@ -126,6 +127,17 @@ router.get(
     let _tbProductCategory = [];
 
     try {
+
+      const qry = `INSERT INTO mbk_database.tbcouponcodes 
+      SELECT * FROM mbk_temp.tbcouponcodes 
+      where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) 
+      and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
+      db.sequelize
+        .query(qry, null, { raw: true })
+        .then((result) => {
+          
+        });
+
       _tbProductCategory = await tbProductCategory.findAll({
         // attributes: ["id", "categoryName"],
         where: { isDeleted: false },
