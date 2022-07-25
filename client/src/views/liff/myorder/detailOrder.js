@@ -39,7 +39,7 @@ const DetailOrder = ({
                   className="liff-inline mb-2"
                   style={{ height: "5px", backgroundColor: "#ebebeb" }}
                 />
-                <div className="w-full flex mb-2 relative text-xs"
+                <div className="w-full flex mb-2 relative text-xs justify-between"
                   onClick={() => {
                     onClick(e);
                   }}
@@ -67,7 +67,7 @@ const DetailOrder = ({
                   ) : null}
                   {cancelStatus == true ? (
                     <div
-                      className="absolute flex"
+                      className=" flex"
                       style={{
                         right: "10px",
                         width: "90px",
@@ -129,7 +129,7 @@ const DetailOrder = ({
                           ></ImageUC>
                         </div>
                         <div
-                          className=" px-2 relative "
+                          className=" pl-2 relative "
                           style={{ width: "calc(100% - 80px)" }}
                         >
                           <div className="font-bold line-clamp-1">
@@ -158,7 +158,7 @@ const DetailOrder = ({
                               </div>
                               {dt.discount > 0 ? (
                                 <div
-                                  className="px-2"
+                                  className="pl-2"
                                   style={{ color: "red" }}
                                 >
                                   {"฿ " + fn.formatMoney(dt.discount)}
