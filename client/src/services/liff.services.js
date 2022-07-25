@@ -62,6 +62,7 @@ export const path = {
   cancelPage: "/line/cancelPage/:id",
   returnPage: "/line/returnPage/:id",
   shopList: "/line/shopList",
+  shopmain: "/line/shopmain",
   shopListCategory: "/line/shopList",
   showProducts: "/line/showProducts/:id",
   showCart: "/line/showCart",

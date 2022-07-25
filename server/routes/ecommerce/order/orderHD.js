@@ -1367,7 +1367,6 @@ router.get("/getOrderOver48Hour", async (req, res) => {
         //ไม่มีการยกเลิก
         if (hd.tbCancelOrders.length < 1) {
           if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
-            console.log(hd.orderNumber)
             const data = await tbCancelOrder.create({
               orderId: hd.id,
               cancelStatus: 3,
@@ -1482,24 +1481,24 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         //ไม่มีการยกเลิก
         if (hd.tbCancelOrders.length < 1) {
           if ((new Date() - hd.orderDate) / 1000 / 60 / 60 / 24 > 2) {
-            const data = await tbCancelOrder.create({
-              orderId: hd.id,
-              cancelStatus: 3,
-              cancelType: 3,
-              cancelDetail: "Auto",
-              description: "Auto",
-              isDeleted: false,
-            });
-            const _tbOrderHD = await tbOrderHD.update(
-              {
-                isCancel: true,
-              },
-              {
-                where: {
-                  id: hd.id,
-                },
-              }
-            );
+            // const data = await tbCancelOrder.create({
+            //   orderId: hd.id,
+            //   cancelStatus: 3,
+            //   cancelType: 3,
+            //   cancelDetail: "Auto",
+            //   description: "Auto",
+            //   isDeleted: false,
+            // });
+            // const _tbOrderHD = await tbOrderHD.update(
+            //   {
+            //     isCancel: true,
+            //   },
+            //   {
+            //     where: {
+            //       id: hd.id,
+            //     },
+            //   }
+            // );
           } else {
             if (hd.paymentStatus == 2) {
               hd.isPaySlip = true;

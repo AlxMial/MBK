@@ -77,7 +77,7 @@ const GetReward = () => {
           storeId: valueStore,
           branchId: valueBranch,
         })
-        .then((res) => {
+        .then(async (res) => {
           if (res.status) {
             if (res.data.status) {
               let _rewardCode = rewardCode;
@@ -89,10 +89,10 @@ const GetReward = () => {
                     e.isInvalid
                       ? (ee.state = false)
                       : e.isExpire
-                        ? (ee.state = false)
-                        : e.isUse
-                          ? (ee.state = false)
-                          : (ee.state = true);
+                      ? (ee.state = false)
+                      : e.isUse
+                      ? (ee.state = false)
+                      : (ee.state = true);
                   }
                 });
               });
@@ -102,7 +102,7 @@ const GetReward = () => {
               _rewardCode.forEach(function (str) {
                 if (!IsNullOrEmpty(str.code)) {
                   const value = alreadySeen.filter((e) => {
-                    return e == str.code
+                    return e == str.code;
                   });
                   alreadySeen.push(str.code);
                   if (value.length > 0) {
@@ -118,15 +118,17 @@ const GetReward = () => {
               setrewardCode(_rewardCode);
               setsucceedData(res.data.data);
               let succeed = true;
-              _rewardCode.map((e, i) => {
+              await _rewardCode.map((e, i) => {
                 if (!IsNullOrEmpty(e.code)) {
-                  if (e.state === false) {
+                  if (e.isDuplicate === true) {
                     succeed = false;
                   }
                 }
               });
+              console.log(_rewardCode);
+              console.log(succeed);
               if (succeed) {
-                setconfirmsucceed(true);
+                // setconfirmsucceed(true);
               }
             } else {
               setDataError();
@@ -152,7 +154,7 @@ const GetReward = () => {
           settbMember(res.data.tbMember);
         }
       },
-      () => { },
+      () => {},
       () => {
         setIsLoading(false);
       }
@@ -169,7 +171,7 @@ const GetReward = () => {
             setoptionsStore(list);
             if (!IsNullOrEmpty(list)) {
               setvalueStore(list[0].value);
-              console.log(list[0].value)
+              console.log(list[0].value);
               if (list[0].DT.length > 0) {
                 setoptionsbranch(list[0].DT);
                 setvalueBranch(list[0].DT[0].value);
@@ -308,6 +310,7 @@ const GetReward = () => {
                     }}
                   >
                     {[...rewardCode].map((e, i) => {
+                      console.log(e);
                       let _succeedData = succeedData.find(
                         (item) =>
                           item.coupon.toLowerCase() === e.code.toLowerCase()
@@ -316,28 +319,28 @@ const GetReward = () => {
                         msg: "",
                         icon: "fas fa-times-circle text-red-500",
                       };
-                      if (e.state === true) {
-                        msg = {
-                          msg: "กรอก Code สำเร็จ",
-                          icon: "fas fa-check-circle text-green-mbk",
-                        };
-                      } else if (e.isDuplicate === true) {
+                      if (e.isDuplicate === true) {
                         msg = {
                           msg: "กรอกรหัสซ้ำ",
                           icon: "fas fa-times-circle text-red-500",
+                        };
+                      } else if (e.state === true) {
+                        msg = {
+                          msg: "กรอก Code สำเร็จ",
+                          icon: "fas fa-check-circle text-green-mbk",
                         };
                       } else {
                         if (!IsNullOrEmpty(_succeedData)) {
                           _succeedData.isInvalid
                             ? (msg.msg = "ไม่ถูกต้อง")
                             : _succeedData.isExpire
-                              ? (msg.msg = "หมดอายุแล้ว")
-                              : _succeedData.isUse
-                                ? (msg.msg = "ถูกใช้แล้ว")
-                                : (msg = {
-                                  msg: "สะสมคะแนนสำเร็จ",
-                                  icon: "fas fa-check-circle text-green-mbk",
-                                });
+                            ? (msg.msg = "หมดอายุแล้ว")
+                            : _succeedData.isUse
+                            ? (msg.msg = "ถูกใช้แล้ว")
+                            : (msg = {
+                                msg: "สะสมคะแนนสำเร็จ",
+                                icon: "fas fa-check-circle text-green-mbk",
+                              });
                         }
                       }
                       return (
@@ -360,7 +363,7 @@ const GetReward = () => {
                           <div className="noselect  w-full margin-auto-t-b">
                             <InputMask
                               className={
-                                (e.state === true
+                                (e.state === true && !e.isDuplicate
                                   ? " pointer-events-none "
                                   : "") +
                                 " line-input border-0 px-2 py-2 placeholder-blueGray-300 text-gray-mbk bg-white  text-sm  w-full "
@@ -381,8 +384,8 @@ const GetReward = () => {
                               placeholder={"รหัสที่ " + (i + 1)}
                               // mask={"***-****************"}
                               maskChar=" "
-                              disabled={e.state ? true : false}
-                              readOnly={e.state ? true : false}
+                              disabled={e.state && !e.isDuplicate ? true : false}
+                              readOnly={e.state && !e.isDuplicate ? true : false}
                             />
 
                             {!IsNullOrEmpty(_succeedData) || e.state ? (
