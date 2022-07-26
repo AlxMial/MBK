@@ -116,7 +116,13 @@ const Stock = () => {
     const data = listStock.filter((x) => x.id === id);
     if (data && data.length > 0) {
       for (const field in data[0]) {
-        formik.setFieldValue(field, data[0][field], false);
+        let _field = data[0][field];
+        if ("startDateCampaign,endDateCampaign".includes(field)) {
+          if (_field == null) {
+            _field = "";
+          }
+        }
+        formik.setFieldValue(field, _field, false);
       }
 
       await getStockImage(id);
@@ -200,6 +206,47 @@ const Stock = () => {
       productCategoryId: yup.string().required("* กรุณากรอก หมวดหมู่สินค้า"),
       price: yup.string().required("* กรุณากรอก ราคา"),
       // discount: yup.string().required("* กรุณากรอก ส่วนลด"),
+
+      startDateCampaign: yup.string().when("isFlashSale", {
+        is: true,
+        then: yup.string().required("* กรุณากรอก ระยะเวลาแคมเปญ"),
+      }),
+
+      endDateCampaign: yup.string().when("isFlashSale", {
+        is: true,
+        then: yup.string().required("* กรุณากรอก ระยะเวลาแคมเปญ"),
+      }),
+      
+      startTimeCampaign: yup.string().when("isFlashSale", {
+        is: true,
+        then: yup.string().required("* กรุณากรอก ช่วงเวลาแคมเปญ"),
+      }),
+
+      endTimeCampaign: yup.string().when("isFlashSale", {
+        is: true,
+        then: yup.string().required("* กรุณากรอก ช่วงเวลาแคมเปญ"),
+      }),
+
+      saleDiscount: yup.number().when("isFlashSale", {
+        is: true,
+        then: yup
+          .number()
+          .test(
+            "Is positive?",
+            "* ส่วนลดต้องมากกว่า 0",
+            (value) => value > 0
+          ),
+      }),
+      salePercent: yup.number().when("isFlashSale", {
+        is: true,
+        then: yup
+          .number()
+          .test(
+            "Is positive?",
+            "* เปอร์เซ็นต์ต้องมากกว่า 0",
+            (value) => value > 0
+          ),
+      }),
     }),
     onSubmit: (values) => {
       if (!errorImage) {

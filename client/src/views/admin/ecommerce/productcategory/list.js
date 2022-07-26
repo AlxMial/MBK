@@ -104,6 +104,10 @@ const List = ({ dataList, fetchData }) => {
                         ? " text-right"
                         : "")
                     }
+                    style={{
+                      width:
+                        item === "ลำดับที่" || item === "จัดการ" ? "50px" : "",
+                    }}
                   >
                     {item}
                   </th>
@@ -135,6 +139,11 @@ const List = ({ dataList, fetchData }) => {
                       onClick={() => {
                         openModal(value.id);
                       }}
+                      title={
+                        fn.IsNullOrEmpty(value.description)
+                          ? "-"
+                          : value.description
+                      }
                     >
                       <span className={tdSpan}>
                         {fn.IsNullOrEmpty(value.description)
@@ -143,7 +152,7 @@ const List = ({ dataList, fetchData }) => {
                       </span>
                     </td>
                     <td
-                      className={tdClass}
+                      className={tdClass + " text-center"}
                       onClick={() => {
                         openModal(value.id);
                       }}

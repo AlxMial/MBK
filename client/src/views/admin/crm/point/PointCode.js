@@ -227,7 +227,15 @@ export default function PointCode() {
               .toString()
               .includes(e) ||
             x.status.toLowerCase().toString().includes(e) ||
-            x.useCount.toString().includes(e)
+            x.useCount.toString().includes(e) ||
+            (x.endDate === null
+              ? ""
+              : moment(x.endDate).format("DD/MM/YYYY")
+            ).includes(e) ||
+            (x.startDate === null
+              ? ""
+              : moment(x.startDate).format("DD/MM/YYYY")
+            ).includes(e)
         )
       );
       setPageNumber(0);
@@ -1627,7 +1635,7 @@ export default function PointCode() {
                                 </div>
                                 <div className="w-full lg:w-5/12 px-4 margin-auto-t-b ">
                                   <input
-                                    type="text"
+                                    type="number"
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodePoint"
                                     name="pointCodePoint"
@@ -1638,7 +1646,7 @@ export default function PointCode() {
                                         ValidateService.onHandleNumber(event)
                                       );
                                       formik.values.pointCodePoint =
-                                        ValidateService.onHandleNumber(event);
+                                        ValidateService.onHandleNumberValue(event);
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointCodePoint"
@@ -1693,7 +1701,8 @@ export default function PointCode() {
                                 </div>
                                 <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                                   <input
-                                    type="text"
+                                    type="number"
+                                    maxlength="4"
                                     className="border-0 px-2 text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded w-full text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="pointCodeQuantityCode"
                                     name="pointCodeQuantityCode"
@@ -1716,7 +1725,7 @@ export default function PointCode() {
                                         ValidateService.onHandleNumber(event)
                                       );
                                       formik.values.pointCodeQuantityCode =
-                                        ValidateService.onHandleNumber(event);
+                                        ValidateService.onHandleNumberValue(event);
 
                                       if (
                                         parseInt(event.target.value) > 1000000

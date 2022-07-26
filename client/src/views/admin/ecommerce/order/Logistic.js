@@ -55,19 +55,19 @@ const Logistic = ({
     if (orderHDold.transportStatus == 1) {
       return [
         { value: 1, label: "เตรียมส่ง" },
-        { value: 2, label: "กำลังส่ง" },
+        { value: 2, label: "อยู่ระหว่างจัดส่ง" },
         { value: 3, label: "ส่งแล้ว" },
       ];
     } else if (orderHDold.transportStatus == 2) {
       return [
         { value: 1, label: "เตรียมส่ง", isDisabled: true },
-        { value: 2, label: "กำลังส่ง" },
+        { value: 2, label: "อยู่ระหว่างจัดส่ง" },
         { value: 3, label: "ส่งแล้ว" },
       ];
     } else {
       return [
         { value: 1, label: "เตรียมส่ง", isDisabled: true },
-        { value: 2, label: "กำลังส่ง", isDisabled: true },
+        { value: 2, label: "อยู่ระหว่างจัดส่ง", isDisabled: true },
         { value: 3, label: "ส่งแล้ว" },
       ];
     }
@@ -205,7 +205,7 @@ const Logistic = ({
               <label className="text-blueGray-600 text-sm ml-2 mr-2">
                 {orderHD.trackNo}
               </label>
-              {isCanEdit && orderHD.transportStatus > 1 && (
+              {isCanEdit && paymentStatus == 3 && (
                 <i
                   className="fas fa-pen cursor-pointer"
                   onClick={() => setisChangeTrackNo(true)}
@@ -253,18 +253,17 @@ const Logistic = ({
               if (tbCancelOrder === undefined) {
                 let tbCancelOrder = {
                   cancelDetail: OpenmodelCancel[0].value,
-                  cancelStatus:"3"
+                  cancelStatus: "3",
                 };
                 setCancelReason(true);
                 settbCancelOrder(tbCancelOrder);
               }
 
-              if(!e.target.checked)
-              {  
+              if (!e.target.checked) {
                 let tbCancelOrder = {
                   cancelDetail: OpenmodelCancel[0].value,
                   cancelOtherRemark: "",
-                  cancelStatus:"3"
+                  cancelStatus: "3",
                 };
                 settbCancelOrder(tbCancelOrder);
                 setCancelReason(false);
@@ -287,7 +286,10 @@ const Logistic = ({
               name="cancelDetail"
               onChange={(value) => {
                 if (tbCancelOrder == null) {
-                  tbCancelOrder = { cancelDetail: value.value ,cancelStatus: "3"};
+                  tbCancelOrder = {
+                    cancelDetail: value.value,
+                    cancelStatus: "3",
+                  };
                 } else {
                   tbCancelOrder.cancelDetail = value.value;
                 }
@@ -297,12 +299,13 @@ const Logistic = ({
               options={OpenmodelCancel}
               value={ValidateService.defaultValue(
                 OpenmodelCancel,
-                tbCancelOrder == null
-                  ? null
-                  : tbCancelOrder.cancelDetail
-      
+                tbCancelOrder == null ? null : tbCancelOrder.cancelDetail
               )}
-              isDisabled={isCancel && orderHD.transportStatus == 1  && isCanEdit ? false : true}
+              isDisabled={
+                isCancel && orderHD.transportStatus == 1 && isCanEdit
+                  ? false
+                  : true
+              }
               // bgColor={getStatus(transportStatus).bg}
             />
           </div>
@@ -322,21 +325,25 @@ const Logistic = ({
               }
               rows={3}
               maxLength={255}
-              disabled={isCancel && orderHD.transportStatus == 1 && isCanEdit ? false : true}
+              disabled={
+                isCancel && orderHD.transportStatus == 1 && isCanEdit
+                  ? false
+                  : true
+              }
               onChange={(e) => {
                 if (tbCancelOrder == null) {
-                  tbCancelOrder = { cancelOtherRemark: e.target.value,cancelStatus: "3"  };
+                  tbCancelOrder = {
+                    cancelOtherRemark: e.target.value,
+                    cancelStatus: "3",
+                  };
                 } else {
                   setDalay(e.target.value);
                   tbCancelOrder.cancelOtherRemark = e.target.value;
                 }
                 settbCancelOrder(tbCancelOrder);
-                if( e.target.value == '')
-                  setCancelReason(true);
-                else
-                  setCancelReason(false);
+                if (e.target.value == "") setCancelReason(true);
+                else setCancelReason(false);
                 // settbCancelOrder({ ...tbCancelOrder, cancelOtherRemark: e.target.value });
-
               }}
             />
           </div>
@@ -396,7 +403,7 @@ const Logistic = ({
                 setDalay(tbCancelOrder.cancelStatus);
                 settbCancelOrder(tbCancelOrder);
               }}
-              disabled={isCancel && isCanEdit  ? false : true}
+              disabled={isCancel && isCanEdit ? false : true}
               value={
                 !isCancel
                   ? ""

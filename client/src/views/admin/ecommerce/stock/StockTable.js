@@ -54,8 +54,8 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
               <th className={thClass + " text-center"}>ลำดับที่</th>
               <th className={thClass}>ชื่อสินค้า</th>
               <th className={thClass}>หมวดหมู่สินค้า</th>
-              <th className={thClass}>ราคา</th>
-              <th className={thClass}>จำนวนสินค้าในคลัง</th>
+              <th className={thClass + " text-right"}>ราคา</th>
+              <th className={thClass + " text-right"}>จำนวนสินค้าในคลัง</th>
               <th className={thClass + " text-center"}>สถานะ</th>
               <th className={thClass + " text-center"}>สินค้าขายดี</th>
               <th className={thClass + " text-center"}>FLASH SALE</th>

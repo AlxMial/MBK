@@ -77,7 +77,7 @@ const PaymentTable = ({ listPayment , setListPayment , openModal }) => {
               <th className={thClass}>เลขบัญชี</th>
               <th className={thClass}>ชื่อบัญชี</th>
               <th className={thClass}>สาขาธนาคาร</th>
-              <th className={thClass}>จัดการ</th>
+              <th className={thClass + " text-center"}>จัดการ</th>
             </tr>
           </thead>
           <tbody>
@@ -128,7 +128,7 @@ const PaymentTable = ({ listPayment , setListPayment , openModal }) => {
                     >
                       <span className={tdSpan}>{value.bankBranchName}</span>
                     </td>
-                    <td className={tdClass}>
+                    <td className={tdClass  + " text-center"}>
                       <span className={tdSpan}>
                         <i
                           className="fas fa-trash text-red-500 cursor-pointer"

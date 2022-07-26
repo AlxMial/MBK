@@ -1,4 +1,4 @@
-import React, {  useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "services/axios";
 import ReactPaginate from "react-paginate";
 import { exportExcel } from "services/exportExcel";
@@ -7,7 +7,7 @@ import { useFormik } from "formik";
 import moment from "moment";
 import Spinner from "components/Loadings/spinner/Spinner";
 import useWindowDimensions from "services/useWindowDimensions";
-import ReactTooltip from 'react-tooltip';
+import ReactTooltip from "react-tooltip";
 //import Select from "react-select";
 import SelectUC from "components/SelectUC";
 import { useToasts } from "react-toast-notifications";
@@ -20,13 +20,13 @@ export default function CampaignExchangeHistoryReport() {
   const { addToast } = useToasts();
   const UseStyleSelect = styleSelect();
   const [listSearch, setListSerch] = useState([]);
-  const [listCampaignExchange, setListCampaignExchange] = useState([]);    
+  const [listCampaignExchange, setListCampaignExchange] = useState([]);
   const { width } = useWindowDimensions();
   const [forcePage, setForcePage] = useState(0);
-  const [pageNumber, setPageNumber] = useState(0);  
+  const [pageNumber, setPageNumber] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
-  const pagesVisited = pageNumber * usersPerPage;  
+  const pagesVisited = pageNumber * usersPerPage;
   let dataSubDistrict = [];
   let dataDistrict = [];
   let dataProvice = [];
@@ -43,16 +43,16 @@ export default function CampaignExchangeHistoryReport() {
     { value: "1", label: "ใช้แล้ว" },
   ];
   const dropdown = [
-    { label: "ส่งแล้ว", value: "Done" },
     { label: "เตรียมส่ง", value: "Wait" },
     { label: "อยู่ระหว่างจัดส่ง", value: "InTransit" },
+    { label: "ส่งแล้ว", value: "Done" },
   ];
-  const formSerch =  useFormik({
-    initialValues:  { 
-      inputSerch: "",    
+  const formSerch = useFormik({
+    initialValues: {
+      inputSerch: "",
       startDate: null,
-      endDate: null, 
-    }
+      endDate: null,
+    },
   });
 
   const getCss = (value) => {
@@ -60,7 +60,7 @@ export default function CampaignExchangeHistoryReport() {
       return {
         control: (base, state) => ({
           ...base,
-          background: "hsl(148deg 48% 83%)",         
+          background: "hsl(148deg 48% 83%)",
         }),
       };
     else if (value && value == "Wait")
@@ -78,100 +78,128 @@ export default function CampaignExchangeHistoryReport() {
         }),
       };
   };
-  const InputSearch = () => {   
-      const inputSerch = formSerch.values.inputSerch;
-      let startDate = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
-      let endDate = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
+  const InputSearch = () => {
+    const inputSerch = formSerch.values.inputSerch;
+    let startDate =
+      formSerch.values.startDate !== null
+        ? convertToDate(formSerch.values.startDate)
+        : null;
+    let endDate =
+      formSerch.values.endDate !== null
+        ? convertToDate(formSerch.values.endDate)
+        : null;
     if (inputSerch === "" && startDate === null && endDate === null) {
-        setListCampaignExchange(listSearch.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
-    } else {     
-        setListCampaignExchange(
-        listSearch.filter(
-        (x) => {
-          const _startDate = x.startDate !== "" ? convertToDate(x.startDate) : null;
-          const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
-          let isDate = false;
-            if(x.startDate !== '' && x.endDate !== '') {             
+      setListCampaignExchange(
+        listSearch.sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+      );
+    } else {
+      setListCampaignExchange(
+        listSearch
+          .filter((x) => {
+            const _startDate =
+              x.startDate !== "" ? convertToDate(x.startDate) : null;
+            const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
+            let isDate = false;
+            if (x.startDate !== "" && x.endDate !== "") {
               isDate = true;
-            }            
-            if((inputSerch !== "" ? 
-            (Search(x.redemptionName, inputSerch) ||
-            Search(x.redemptionTypeStr, inputSerch) ||
-            Search(x.rewardTypeStr, inputSerch) ||
-            Search(x.memberName, inputSerch) ||
-            Search(x.phone, inputSerch) ||
-            Search(x.code, inputSerch) ||
-            Search(x.points, inputSerch) ||
-            Search(x.statusStr, inputSerch) ||
-            Search(x.deliverStatusStr, inputSerch) ||
-            Search(x.trackingNo, inputSerch) ||
-            Search(x.addressMember, inputSerch)
-           ) : true) &&
-
-           SearchByDate(_startDate, _endDate)) {
-                return true;
+            }
+            if (
+              (inputSerch !== ""
+                ? Search(x.redemptionName, inputSerch) ||
+                  Search(x.redemptionTypeStr, inputSerch) ||
+                  Search(x.rewardTypeStr, inputSerch) ||
+                  Search(x.memberName, inputSerch) ||
+                  Search(x.phone, inputSerch) ||
+                  Search(x.code, inputSerch) ||
+                  Search(x.points, inputSerch) ||
+                  Search(x.statusStr, inputSerch) ||
+                  Search(x.deliverStatusStr, inputSerch) ||
+                  Search(x.trackingNo, inputSerch) ||
+                  Search(x.addressMember, inputSerch)
+                : true) &&
+              SearchByDate(_startDate, _endDate)
+            ) {
+              return true;
             }
             return false;
-          }            
-        ).sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate))
-     );
+          })
+          .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
+      );
       setPageNumber(0);
       setForcePage(0);
     }
   };
 
-  const Search = (val, inputSerch) =>  {
+  const Search = (val, inputSerch) => {
     let status = false;
-    if(val !== '' && val !== null && val !== undefined) {
-      status =  val.toString().toLowerCase().includes(inputSerch);
+    if (val !== "" && val !== null && val !== undefined) {
+      status = val.toString().toLowerCase().includes(inputSerch);
     }
     return status;
-  }
-
-  const SearchByDate = (dataST_Date, dataED_Date) =>  {
-    let isSearch = false;
-    let st_Date = formSerch.values.startDate !== null ? convertToDate(formSerch.values.startDate): null;         
-    let ed_Date = formSerch.values.endDate !== null ? convertToDate(formSerch.values.endDate): null;   
-    if(((st_Date !== null && ed_Date !== null) && 
-        ((st_Date <= dataST_Date  && st_Date <= dataED_Date && ed_Date >= dataST_Date && ed_Date >= dataED_Date) || 
-         (st_Date <= dataST_Date  && ed_Date >= dataST_Date && !(st_Date <= dataED_Date  && ed_Date >= dataED_Date)) ||
-         (!(st_Date <= dataST_Date  && ed_Date >= dataST_Date) && st_Date <= dataED_Date  && ed_Date >= dataED_Date))) 
-         
-         
-         || ((st_Date !== null && ed_Date === null) && (st_Date <= dataST_Date || st_Date <= dataED_Date))
-         || ((st_Date === null && ed_Date !== null) && (ed_Date >= dataST_Date || ed_Date >= dataED_Date))
-         || (st_Date === null && ed_Date === null)) {
-          isSearch = true;
-    }
-    return isSearch;
-  }
-
-  const convertToDate = (e) => {    
-   const date = new Date(e);
-         date.setHours(0,0,0,0);
-   return date;
   };
 
-  const setDataSearch = (e, type) => {    
+  const SearchByDate = (dataST_Date, dataED_Date) => {
+    let isSearch = false;
+    let st_Date =
+      formSerch.values.startDate !== null
+        ? convertToDate(formSerch.values.startDate)
+        : null;
+    let ed_Date =
+      formSerch.values.endDate !== null
+        ? convertToDate(formSerch.values.endDate)
+        : null;
+    if (
+      (st_Date !== null &&
+        ed_Date !== null &&
+        ((st_Date <= dataST_Date &&
+          st_Date <= dataED_Date &&
+          ed_Date >= dataST_Date &&
+          ed_Date >= dataED_Date) ||
+          (st_Date <= dataST_Date &&
+            ed_Date >= dataST_Date &&
+            !(st_Date <= dataED_Date && ed_Date >= dataED_Date)) ||
+          (!(st_Date <= dataST_Date && ed_Date >= dataST_Date) &&
+            st_Date <= dataED_Date &&
+            ed_Date >= dataED_Date))) ||
+      (st_Date !== null &&
+        ed_Date === null &&
+        (st_Date <= dataST_Date || st_Date <= dataED_Date)) ||
+      (st_Date === null &&
+        ed_Date !== null &&
+        (ed_Date >= dataST_Date || ed_Date >= dataED_Date)) ||
+      (st_Date === null && ed_Date === null)
+    ) {
+      isSearch = true;
+    }
+    return isSearch;
+  };
+
+  const convertToDate = (e) => {
+    const date = new Date(e);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  };
+
+  const setDataSearch = (e, type) => {
     const s_Date = formSerch.values.startDate;
     const e_Date = formSerch.values.endDate;
     if (type === "s_input") {
       formSerch.values.inputSerch = e.toLowerCase();
-      InputSearch();      
-    } else if(type === "s_stdate") {  
+      InputSearch();
+    } else if (type === "s_stdate") {
       formSerch.setFieldValue("startDate", e);
-      if(e > e_Date && e_Date !== null) {
+      if (e > e_Date && e_Date !== null) {
         formSerch.setFieldValue("startDate", e_Date);
       }
-    } else if(type === "s_eddate") {  
+    } else if (type === "s_eddate") {
       formSerch.setFieldValue("endDate", e);
-      if(e < s_Date && s_Date !== null) {
+      if (e < s_Date && s_Date !== null && e !== null) {
         formSerch.setFieldValue("endDate", s_Date);
-      }  
-    }   
+      }
+    }
   };
 
-  const showTrackingNo = (e) => {  
+  const showTrackingNo = (e) => {
     const index = e - 1;
     setListCampaignExchange((s) => {
       const newArr = s.slice();
@@ -181,7 +209,7 @@ export default function CampaignExchangeHistoryReport() {
     });
   };
 
-  const editTrackingNo = (e, val) => {  
+  const editTrackingNo = (e, val) => {
     const index = e - 1;
     setListCampaignExchange((s) => {
       const newArr = s.slice();
@@ -190,7 +218,7 @@ export default function CampaignExchangeHistoryReport() {
     });
   };
 
-  const editdeliverStatus = (e, val) => {  
+  const editdeliverStatus = (e, val) => {
     const index = e - 1;
     setListCampaignExchange((s) => {
       const newArr = s.slice();
@@ -199,7 +227,7 @@ export default function CampaignExchangeHistoryReport() {
       return newArr;
     });
   };
-  const saveTrackingNo = (e) => {  
+  const saveTrackingNo = (e) => {
     const index = e - 1;
     setListCampaignExchange((s) => {
       const newArr = s.slice();
@@ -214,12 +242,12 @@ export default function CampaignExchangeHistoryReport() {
       id: e.id,
       deliverStatus: e.deliverStatus,
       trackingNo: e.trackingNo,
-      addBy: sessionStorage.getItem('user'),
-      updateBy: sessionStorage.getItem('user'),
-    }
-    axios.post('report/doSaveUpdateMemberReward', newItem).then(res => {
+      addBy: sessionStorage.getItem("user"),
+      updateBy: sessionStorage.getItem("user"),
+    };
+    axios.post("report/doSaveUpdateMemberReward", newItem).then((res) => {
       if (res.data.status) {
-      } else {        
+      } else {
         addToast("บันทึกข้อมูลไม่สำเร็จ", {
           appearance: "warning",
           autoDismiss: true,
@@ -227,9 +255,8 @@ export default function CampaignExchangeHistoryReport() {
       }
       setIsLoading(false);
     });
-  }
+  };
 
- 
   const pageCount = Math.ceil(listCampaignExchange.length / usersPerPage);
 
   const changePage = ({ selected }) => {
@@ -282,16 +309,16 @@ export default function CampaignExchangeHistoryReport() {
       "address",
       "provinceStr",
       "districtStr",
-      "subDistrictStr",     
-      "postcode"
+      "subDistrictStr",
+      "postcode",
     ];
     let count = 0;
-    listCampaignExchange.forEach(el => { 
-        count++; 
-        el.listNo = count;
+    listCampaignExchange.forEach((el) => {
+      count++;
+      el.listNo = count;
     });
     exportExcel(
-        listCampaignExchange,
+      listCampaignExchange,
       "รายงานประวัติการแลกของรางวัล",
       TitleColumns,
       columns,
@@ -301,35 +328,72 @@ export default function CampaignExchangeHistoryReport() {
   };
 
   const fatchAddress = async () => {
-    dataDistrict =  Address.getDistrict().then((response) => {
+    dataDistrict = Address.getDistrict().then((response) => {
       dataDistrict = response;
     });
-    dataSubDistrict =  Address.getSubDistrict();
+    dataSubDistrict = Address.getSubDistrict();
     Address.getProvince().then((response) => {
-        dataProvice = response;
+      dataProvice = response;
     });
   };
   useEffect(() => {
-      fatchAddress();
-      axios.get("report/ShowCampaignExchange").then((response) => {
-        if (response.data.length > 0) {
-            response.data.forEach(e => {
-              console.log(dropdown)
-              e.redemptionTypeStr = (e.redemptionType !== "" ? (redemptionType.find(el => el.value == e.redemptionType).label) : ""); 
-              e.rewardTypeStr = ((e.rewardType !== '' &&  e.rewardType !== undefined) ? rewardType.find(el => el.value == e.rewardType).label : ""); 
-              e.statusStr =  ((e.rewardType === '1') ? rewardStatus.find(el => el.value == e.isUsedCoupon.toString()).label : ""); 
-              e.deliverStatusStr = (e.isShowControl && e.deliverStatus !=='' &&  e.deliverStatus) ? dropdown.find(el => el.value == e.deliverStatus).label : "";                
+    fatchAddress();
+    axios.get("report/ShowCampaignExchange").then((response) => {
+      if (response.data.length > 0) {
+        response.data.forEach((e) => {
+          console.log(dropdown);
+          e.redemptionTypeStr =
+            e.redemptionType !== ""
+              ? redemptionType.find((el) => el.value == e.redemptionType).label
+              : "";
+          e.rewardTypeStr =
+            e.rewardType !== "" && e.rewardType !== undefined
+              ? rewardType.find((el) => el.value == e.rewardType).label
+              : "";
+          e.statusStr =
+            e.rewardType === "1"
+              ? rewardStatus.find((el) => el.value == e.isUsedCoupon.toString())
+                  .label
+              : "";
+          e.deliverStatusStr =
+            e.isShowControl && e.deliverStatus !== "" && e.deliverStatus
+              ? dropdown.find((el) => el.value == e.deliverStatus).label
+              : "";
 
-              e.subDistrictStr = (e.subDistrict > 0 ? dataSubDistrict.find(el => el.value == e.subDistrict).label : "");
-              e.districtStr = (e.district > 0 ? dataDistrict.find(el => el.value == e.district).label : "");
-              e.provinceStr = (e.province > 0 ? dataProvice.find(el => el.value == e.province).label : "");
-              e.addressMember = e.address.concat(" ").concat(e.subDistrictStr).concat(" ").concat(e.districtStr).concat(" ")
-                                .concat(e.provinceStr).concat(" ").concat(e.postcode);            
-          });                  
-          setListSerch(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
-          setListCampaignExchange(response.data.sort((a, b) =>  new Date(b.startDate) - new Date(a.startDate)));
-        }
-      });   
+          e.subDistrictStr =
+            e.subDistrict > 0
+              ? dataSubDistrict.find((el) => el.value == e.subDistrict).label
+              : "";
+          e.districtStr =
+            e.district > 0
+              ? dataDistrict.find((el) => el.value == e.district).label
+              : "";
+          e.provinceStr =
+            e.province > 0
+              ? dataProvice.find((el) => el.value == e.province).label
+              : "";
+          e.addressMember = e.address
+            .concat(" ")
+            .concat(e.subDistrictStr)
+            .concat(" ")
+            .concat(e.districtStr)
+            .concat(" ")
+            .concat(e.provinceStr)
+            .concat(" ")
+            .concat(e.postcode);
+        });
+        setListSerch(
+          response.data.sort(
+            (a, b) => new Date(b.startDate) - new Date(a.startDate)
+          )
+        );
+        setListCampaignExchange(
+          response.data.sort(
+            (a, b) => new Date(b.startDate) - new Date(a.startDate)
+          )
+        );
+      }
+    });
   }, []);
 
   return (
@@ -342,21 +406,23 @@ export default function CampaignExchangeHistoryReport() {
       ) : (
         <></>
       )}
-       <div className="flex flex-warp">
+      <div className="flex flex-warp">
         <span className="text-sm margin-auto-t-b font-bold ">
           <i className="fas fa-cog"></i>&nbsp;&nbsp;
         </span>
         <span className="text-base margin-auto-t-b font-bold">
           รายงาน&nbsp;&nbsp;/&nbsp;&nbsp;
         </span>
-        <span className="text-base margin-auto font-bold">รายงานประวัติการแลกของรางวัล</span>
+        <span className="text-base margin-auto font-bold">
+          รายงานประวัติการแลกของรางวัล
+        </span>
       </div>
       <div className="w-full px-4">
-         <div className="flex flex-warp py-2 mt-6 ">
-            <span className="text-lg  text-green-mbk margin-auto font-bold">
+        <div className="flex flex-warp py-2 mt-6 ">
+          <span className="text-lg  text-green-mbk margin-auto font-bold">
             รายงานประวัติการแลกของรางวัล
-            </span>
-          </div>
+          </span>
+        </div>
         <div
           className={
             "py-4 relative flex flex-col min-w-0 break-words w-full mb-6 border rounded-b bg-white Overflow-list "
@@ -379,22 +445,22 @@ export default function CampaignExchangeHistoryReport() {
               </div>
               <div className="lg:w-1/12 px-2 margin-auto-t-b ">
                 <label
-                className="text-blueGray-600 text-sm font-bold "
-                htmlFor="grid-password"
+                  className="text-blueGray-600 text-sm font-bold "
+                  htmlFor="grid-password"
                 >
-                วันที่เริ่มต้น
-                </label>                
-            </div>
-            <div className="w-full lg:w-3/12 px-4 margin-auto-t-b">
+                  วันที่เริ่มต้น
+                </label>
+              </div>
+              <div className="w-full lg:w-3/12 px-4 margin-auto-t-b">
                 <div className="relative">
-                <ConfigProvider >
+                  <ConfigProvider>
                     <DatePicker
-                    inputReadOnly={true}
-                    format={"DD/MM/yyyy"}
-                    placeholder="เลือกวันที่"
-                    showToday={false}
-                    //defaultValue={startDateCode}
-                    style={{
+                      inputReadOnly={true}
+                      format={"DD/MM/yyyy"}
+                      placeholder="เลือกวันที่"
+                      showToday={false}
+                      //defaultValue={startDateCode}
+                      style={{
                         height: "100%",
                         width: "100%",
                         borderRadius: "0.25rem",
@@ -404,57 +470,64 @@ export default function CampaignExchangeHistoryReport() {
                         paddingBottom: "0.5rem",
                         paddingLeft: "0.5rem",
                         paddingRight: "0.5rem",
-                    }}
-                    value={ 
-                      formSerch.values.startDate !== null 
-                      ? moment(new Date(formSerch.values.startDate),"DD/MM/YYYY") : ""
-                    }
-                    onChange={(e) => {
-                      setDataSearch(e, "s_stdate");
-                    }}
+                      }}
+                      value={
+                        formSerch.values.startDate !== null
+                          ? moment(
+                              new Date(formSerch.values.startDate),
+                              "DD/MM/YYYY"
+                            )
+                          : ""
+                      }
+                      onChange={(e) => {
+                        setDataSearch(e, "s_stdate");
+                      }}
                     />
-                </ConfigProvider> 
+                  </ConfigProvider>
                 </div>
-            </div>
-            <div
-                className={
-                "w-full mb-4" +
-                (width < 764 ? " block" : " hidden")
-                }
-            ></div>
-            <div className="lg\:w-auto  margin-auto-t-b ">
+              </div>
+              <div
+                className={"w-full mb-4" + (width < 764 ? " block" : " hidden")}
+              ></div>
+              <div className="lg\:w-auto  margin-auto-t-b ">
                 <label
-                className="text-blueGray-600 text-sm font-bold "
-                htmlFor="grid-password"
-                >ถึง</label>                
-            </div>
+                  className="text-blueGray-600 text-sm font-bold "
+                  htmlFor="grid-password"
+                >
+                  ถึง
+                </label>
+              </div>
 
-            <div className="w-full lg:w-3/12 px-4 margin-auto-t-b">
-                <ConfigProvider >
-                <DatePicker
+              <div className="w-full lg:w-3/12 px-4 margin-auto-t-b">
+                <ConfigProvider>
+                  <DatePicker
                     inputReadOnly={true}
                     format={"DD/MM/yyyy"}
                     placeholder="เลือกวันที่"
                     showToday={false}
                     //defaultValue={endDateCode}
                     style={{
-                    height: "100%",
-                    width: "100%",
-                    borderRadius: "0.25rem",
-                    cursor: "pointer",
-                    margin: "0px",
-                    paddingTop: "0.5rem",
-                    paddingBottom: "0.5rem",
-                    paddingLeft: "0.5rem",
-                    paddingRight: "0.5rem",
+                      height: "100%",
+                      width: "100%",
+                      borderRadius: "0.25rem",
+                      cursor: "pointer",
+                      margin: "0px",
+                      paddingTop: "0.5rem",
+                      paddingBottom: "0.5rem",
+                      paddingLeft: "0.5rem",
+                      paddingRight: "0.5rem",
                     }}
-                    value={ 
-                      formSerch.values.endDate !== null 
-                      ? moment(new Date(formSerch.values.endDate),"DD/MM/YYYY") : ""
+                    value={
+                      formSerch.values.endDate !== null
+                        ? moment(
+                            new Date(formSerch.values.endDate),
+                            "DD/MM/YYYY"
+                          )
+                        : ""
                     }
                     onChange={(e) => {
-                      setDataSearch(e, "s_eddate");                         
-                    }}     
+                      setDataSearch(e, "s_eddate");
+                    }}
                     disabledDate={(current) => {
                       if (formSerch.values.startDate != null) {
                         let day = formSerch.values.startDate;
@@ -464,39 +537,36 @@ export default function CampaignExchangeHistoryReport() {
                             moment(new Date(day)).add(-1, "days").endOf("day")
                         );
                       }
-                    }}               
-                />
+                    }}
+                  />
                 </ConfigProvider>
-            </div>
-            <div className="lg\:w-auto text-right">
-                    <button
-                      className="bg-gold-mbk text-black active:bg-gold-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
-                      type="button"
-                      onClick={() => {
-                        InputSearch();
-                      }}
-                    >
-                      <span className="text-white text-sm px-2">
-                        ค้นหา
-                      </span>
-                    </button>
-                </div>
+              </div>
+              <div className="lg\:w-auto text-right">
+                <button
+                  className="bg-gold-mbk text-black active:bg-gold-mbk font-bold  text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                  type="button"
+                  onClick={() => {
+                    InputSearch();
+                  }}
+                >
+                  <span className="text-white text-sm px-2">ค้นหา</span>
+                </button>
+              </div>
               <div className="lg:w-1/12">
-                  <div className="flex p-2 float-right">
-                    <img
-                      src={require("assets/img/mbk/excel.png").default}
-                      alt="..."
-                      onClick={() => Excel()}
-                      className="imgExcel margin-auto-t-b cursor-pointer "
-                    ></img>
-                  </div>
+                <div className="flex p-2 float-right">
+                  <img
+                    src={require("assets/img/mbk/excel.png").default}
+                    alt="..."
+                    onClick={() => Excel()}
+                    className="imgExcel margin-auto-t-b cursor-pointer "
+                  ></img>
                 </div>
+              </div>
               <div
                 className={
                   "lg:w-6/12 text-right" + (width < 764 ? " block" : " hidden")
                 }
-              >  
-              </div>             
+              ></div>
             </div>
           </div>
           <div className="block w-full overflow-x-auto  px-4 py-2">
@@ -516,8 +586,8 @@ export default function CampaignExchangeHistoryReport() {
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
                     }
                   >
-                   แคมเปญ
-                  </th>                 
+                    แคมเปญ
+                  </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
@@ -538,7 +608,7 @@ export default function CampaignExchangeHistoryReport() {
                     }
                   >
                     ประเภทแคมเปญ
-                  </th> 
+                  </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
@@ -560,7 +630,7 @@ export default function CampaignExchangeHistoryReport() {
                     }
                   >
                     เบอร์โทรศัพท์
-                  </th>                 
+                  </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
@@ -574,48 +644,47 @@ export default function CampaignExchangeHistoryReport() {
                     }
                   >
                     คะแนน
-                  </th> 
+                  </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
                     สถานะ
-                  </th>   
+                  </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
                     วันที่แลก
-                  </th>   
+                  </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
                     สถานะการส่ง
-                  </th> 
+                  </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
                     หมายเหตุเลขพัสดุ
-                  </th>    
+                  </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   >
                     ที่อยู่
-                  </th>  
+                  </th>
                   <th
                     className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
-                  >
-                  </th>                        
+                  ></th>
                 </tr>
               </thead>
               <tbody>
@@ -626,13 +695,9 @@ export default function CampaignExchangeHistoryReport() {
                     return (
                       <tr key={key}>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
-                          <span className="px-4 margin-a">
-                            {item.listNo}
-                          </span>
+                          <span className="px-4 margin-a">{item.listNo}</span>
                         </td>
-                        <td                         
-                          className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer"
-                        >
+                        <td className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                           <span
                             title={item.redemptionName}
                             className="text-gray-mbk  hover:text-gray-mbk "
@@ -641,39 +706,35 @@ export default function CampaignExchangeHistoryReport() {
                           </span>
                           <span className="details">more info here</span>
                         </td>
-                        <td                         
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
-                        >
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          { item.startDate !== "" ? moment(item.startDate).format("DD/MM/YYYY") : ""}
+                            {item.startDate !== ""
+                              ? moment(item.startDate).format("DD/MM/YYYY")
+                              : ""}
                           </span>
                         </td>
-                        <td                         
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
-                        >
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          {item.endDate !== "" ? moment(item.endDate).format("DD/MM/YYYY") : ""}
+                            {item.endDate !== ""
+                              ? moment(item.endDate).format("DD/MM/YYYY")
+                              : ""}
                           </span>
                         </td>
-                        <td                          
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
-                        >
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          {item.redemptionTypeStr}
+                            {item.redemptionTypeStr}
                           </span>
                         </td>
-                        <td                         
-                          className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer"
-                        >
+                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
-                          {item.rewardTypeStr}
+                            {item.rewardTypeStr}
                           </span>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
                             {item.memberName}
                           </span>
-                        </td>                       
+                        </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
                           <span className="text-gray-mbk  hover:text-gray-mbk ">
                             {item.phone}
@@ -689,22 +750,29 @@ export default function CampaignExchangeHistoryReport() {
                             {item.points}
                           </span>
                         </td>
-                        <td className =  { (item.isUsedCoupon === 1 ? "text-green-500 " : "text-red-700 ") + "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "}>
-                          { item.rewardType === '2' ? "" : item.statusStr }
+                        <td
+                          className={
+                            (item.isUsedCoupon === 1
+                              ? "text-green-500 "
+                              : "text-red-700 ") +
+                            "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center "
+                          }
+                        >
+                          {item.rewardType === "2" ? "" : item.statusStr}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
                           {moment(item.redeemDate).format("DD/MM/YYYY")}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                           {/* {item.deliverStatus} */}
-                           <div className="relative w-32 mt-2 mb-2">
-                            { item.isShowControl ?
+                          {/* {item.deliverStatus} */}
+                          <div className="relative w-32 mt-2 mb-2">
+                            {item.isShowControl ? (
                               <SelectUC
                                 id={key}
                                 name="dropdown"
                                 onChange={(e) => {
                                   editdeliverStatus(item.listNo, e.value);
-                                }}                                
+                                }}
                                 menuPortalTarget={document.body}
                                 menuPosition="fixed"
                                 className="border-0 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-32 ease-linear transition-all duration-150"
@@ -718,78 +786,113 @@ export default function CampaignExchangeHistoryReport() {
                                     : ""
                                 }
                                 customStyles={getCss(item.deliverStatus)}
-                              /> : <div></div>
-                            }
-                            </div>
+                              />
+                            ) : (
+                              <div></div>
+                            )}
+                          </div>
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                        { (item.isShowControl) ?
-                              item.isShowTKNo ?
-                                <input
-                                    type="text"
-                                    className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-32 ease-linear transition-all duration-150"
-                                    id={key}
-                                    name="lastName"
-                                    maxLength={100}
-                                    onBlur={() => {
-                                      saveTrackingNo(item.listNo);
-                                    }}
-                                    onChange = {(e) => {
-                                        editTrackingNo(item.listNo, e);
-                                      }}
-                                    value= {item.trackingNo}
-                                  />
-                                  :
-                                  <div className="w-32 flex text-right"> <div className="TextWordWarp-150 w-32 mr-3 " title={item.trackingNo}>{item.trackingNo}</div> <i className="fa fa-pen mr-2" onClick={() => {showTrackingNo(item.listNo);}}></i></div>
-                            :   <div></div>
-                            }
+                          {item.isShowControl ? (
+                            item.isShowTKNo ? (
+                              <input
+                                type="text"
+                                className="border-0 px-2 py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-32 ease-linear transition-all duration-150"
+                                id={key}
+                                name="lastName"
+                                maxLength={100}
+                                onBlur={() => {
+                                  saveTrackingNo(item.listNo);
+                                }}
+                                onChange={(e) => {
+                                  editTrackingNo(item.listNo, e);
+                                }}
+                                value={item.trackingNo}
+                                onKeyDown={(e) => {
+                                  if (e.keyCode === 13) {
+                                    saveTrackingNo(item.listNo);
+                                  }
+                                }}
+                              />
+                            ) : (
+                              <div className="w-32 flex text-right">
+                                {" "}
+                                <div
+                                  className="TextWordWarp-150 w-32 mr-3 "
+                                  title={item.trackingNo}
+                                >
+                                  {item.trackingNo}
+                                </div>{" "}
+                                <i
+                                  className="fa fa-pen mr-2"
+                                  onClick={() => {
+                                    showTrackingNo(item.listNo);
+                                  }}
+                                ></i>
+                              </div>
+                            )
+                          ) : (
+                            <div></div>
+                          )}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0  border-r-0 text-sm whitespace-nowrap text-center ">
-                       
                           <div className="flex">
-                          {  item.isShowControl ?
-                            <i className="fa fa-home  text-right text-underline cursor-pointer" data-tip={item.addressMember}></i>
-                            : <div></div>}  
-                            <div className="text-underline  cursor-pointer"  data-tip={item.addressMember}
-                                  style={{
-                                    width: "40px",
-                                    textAlign: "end",
-                                  }}
-                                > {  item.isShowControl ? "ดูที่อยู่" : ""} </div>
-                          </div>    
-                          {  item.isShowControl ?                                    
-                          <ReactTooltip globalEventOff="click" />  
-                          : ""}                              
+                            {item.isShowControl ? (
+                              <i
+                                className="fa fa-home  text-right text-underline cursor-pointer"
+                                data-tip={item.addressMember}
+                              ></i>
+                            ) : (
+                              <div></div>
+                            )}
+                            <div
+                              className="text-underline  cursor-pointer"
+                              data-tip={item.addressMember}
+                              style={{
+                                width: "40px",
+                                textAlign: "end",
+                              }}
+                            >
+                              {" "}
+                              {item.isShowControl ? "ดูที่อยู่" : ""}{" "}
+                            </div>
+                          </div>
+                          {item.isShowControl ? (
+                            <ReactTooltip globalEventOff="click" />
+                          ) : (
+                            ""
+                          )}
                         </td>
                         <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                        { item.isShowControl ?
-                          <CopyToClipboard
-                                text={item.addressMember}
-                                onCopy={() => {
-                                  addToast("คัดลอกเรียบร้อยแล้ว", {
-                                    appearance: "success",
-                                    autoDismiss: true,
-                                  });
+                          {item.isShowControl ? (
+                            <CopyToClipboard
+                              text={item.addressMember}
+                              onCopy={() => {
+                                addToast("คัดลอกเรียบร้อยแล้ว", {
+                                  appearance: "success",
+                                  autoDismiss: true,
+                                });
+                              }}
+                            >
+                              <div
+                                className="mr-2 text-underline  cursor-pointer"
+                                style={{
+                                  width: "50px",
+                                  textAlign: "end",
                                 }}
                               >
-                                <div
-                                  className="mr-2 text-underline  cursor-pointer"
-                                  style={{
-                                    width: "50px",
-                                    textAlign: "end",
-                                  }}
-                                >
-                                  คัดลอก
-                                </div>
-                          </CopyToClipboard>
-                          : <div></div>
-                        }
+                                คัดลอก
+                              </div>
+                            </CopyToClipboard>
+                          ) : (
+                            <div></div>
+                          )}
                         </td>
                       </tr>
                     );
                   })}
               </tbody>
-            </table>           
+            </table>
           </div>
           <div className="px-4">
             <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">

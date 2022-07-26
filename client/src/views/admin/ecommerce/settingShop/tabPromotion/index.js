@@ -57,7 +57,8 @@ const Promotion = () => {
               .toLowerCase()
               .toString()
               .includes(e) ||
-            x.description.toLowerCase().includes(e)
+            x.description.toLowerCase().includes(e) ||
+            (x.isInactive?"เปิดการใช้งาน":"ปิดการใช้งาน") .includes(e)
         )
       );
     }

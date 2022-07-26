@@ -76,6 +76,11 @@ export default function PointEcommerce() {
   const nonSelect = [];
 
   function openModal(value) {
+    setErrorPoint(false);
+    setErrorPrice(false);
+    setErrorUnitProduct(false);
+    setErrorEndDate(false);
+    setErrorStartDate(false);
     if (value) {
       setIsNew(false);
       if (value) {
@@ -99,9 +104,6 @@ export default function PointEcommerce() {
         formik.setFieldValue("isActive", value.isActive);
       }
     } else {
-      setErrorPoint(false);
-      setErrorPrice(false);
-      setErrorUnitProduct(false);
       setStartDateCode(moment(new Date(), "DD/MM/YYYY"));
       const dt = new Date();
       dt.setDate(dt.getDate() + 1);

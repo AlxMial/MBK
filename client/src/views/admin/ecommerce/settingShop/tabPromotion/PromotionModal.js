@@ -181,7 +181,10 @@ const PromotionModal = ({
                                 target: {
                                   name: "buy",
                                   value:
-                                    parseFloat(e.target.value).toFixed(2) || 0,
+                                    e.target.value !== ""
+                                      ? parseFloat(e.target.value).toFixed(2) ||
+                                        0
+                                      : "",
                                 },
                               });
                             }
@@ -279,7 +282,10 @@ const PromotionModal = ({
                                 target: {
                                   name: "discount",
                                   value:
-                                    parseFloat(e.target.value).toFixed(2) || 0,
+                                    e.target.value !== ""
+                                      ? parseFloat(e.target.value).toFixed(2) ||
+                                        0
+                                      : "",
                                 },
                               });
                             }
@@ -340,7 +346,7 @@ const PromotionModal = ({
                                 target: {
                                   name: "percentDiscount",
                                   value:
-                                    parseFloat(e.target.value).toFixed(2) || 0,
+                                  e.target.value !== ""?parseFloat(e.target.value).toFixed(2) || 0 :"",
                                 },
                               });
                             }
@@ -402,7 +408,7 @@ const PromotionModal = ({
                                 target: {
                                   name: "percentDiscountAmount",
                                   value:
-                                    parseFloat(e.target.value).toFixed(2) || 0,
+                                  e.target.value !== ""?parseFloat(e.target.value).toFixed(2) || 0:"",
                                 },
                               });
                             }

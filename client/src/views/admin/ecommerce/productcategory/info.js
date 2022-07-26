@@ -37,7 +37,7 @@ const Info = (prop) => {
       if (!dataImage) {
         image.src = URL.createObjectURL(e.target.files[0]);
         // const base64 = await FilesService.convertToBase64(e.target.files[0]);
-        const base64 = await fn.resizeFile(e.target.files[0]);// 500px * 500px
+        const base64 = await fn.resizeFile(e.target.files[0]); // 500px * 500px
         setdataModel((pre) => ({ ...pre, dataImage: base64 }));
       }
     }
@@ -67,6 +67,7 @@ const Info = (prop) => {
             dispatch(fetchSuccess());
           });
       } else {
+        dataModel.updateBy = sessionStorage.getItem("user");
         axios
           .put("productCategory", dataModel)
           .then((res) => {
@@ -264,7 +265,7 @@ const Info = (prop) => {
           infoModel.onClose();
         }}
         confirmModal={() => {
-          doSave()
+          doSave();
           setmodalIsOpenEdit(false);
         }}
         returnModal={() => {

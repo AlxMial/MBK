@@ -69,6 +69,7 @@ router.get("/", validateToken, async (req, res) => {
       "remark",
     ],
     where: { isDeleted: false },
+    order: [["createdAt", "DESC"]],
   });
   let role = Encrypt.DecodeKey(req.user.role);
   let isExport = true;

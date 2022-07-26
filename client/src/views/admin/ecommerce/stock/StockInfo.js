@@ -555,7 +555,7 @@ const StockInfo = ({
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
-                          type="text"
+                          type="number"
                           maxLength={5}
                           id="productCount"
                           className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -566,7 +566,7 @@ const StockInfo = ({
                           onChange={(e) => {
                             setDelayValue(ValidateService.onHandleNumber(e));
                             formik.values.productCount =
-                              ValidateService.onHandleNumber(e);
+                              ValidateService.onHandleNumberValue(e);
                           }}
                         />
                       </div>
@@ -594,7 +594,7 @@ const StockInfo = ({
                           onChange={(e) => {
                             setDelayValue(ValidateService.onHandleNumber(e));
                             formik.values.weight =
-                              ValidateService.onHandleNumber(e);
+                              ValidateService.onHandleNumberValue(e);
                           }}
                         />
                       </div>
@@ -684,7 +684,7 @@ const StockInfo = ({
                   {/* ระยะเวลาแคมเปญ */}
                   <div className="flex flex-wrap mt-4">
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                      <LabelUC label="ระยะเวลาแคมเปญ" />
+                      <LabelUC label="ระยะเวลาแคมเปญ" isRequired={true} />
                     </div>
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
@@ -709,19 +709,21 @@ const StockInfo = ({
                                   value: moment(e).toDate(),
                                 },
                               });
-                              if (formik.values.endDateCampaign != null) {
-                                if (
-                                  moment(e).toDate() >=
-                                  formik.values.endDateCampaign
-                                ) {
-                                  formik.handleChange({
-                                    target: {
-                                      name: "endDateCampaign",
-                                      value: moment(e).toDate(),
-                                    },
-                                  });
+                              setTimeout(() => {
+                                if (formik.values.endDateCampaign != null) {
+                                  if (
+                                    moment(e).toDate() >=
+                                    formik.values.endDateCampaign
+                                  ) {
+                                    formik.handleChange({
+                                      target: {
+                                        name: "endDateCampaign",
+                                        value: moment(e).toDate(),
+                                      },
+                                    });
+                                  }
                                 }
-                              }
+                              }, 100);
                             }
                           }}
                           value={
@@ -733,6 +735,14 @@ const StockInfo = ({
                               : null
                           }
                         />
+                      </div>
+                      <div className="relative w-full px-4">
+                        {formik.touched.startDateCampaign &&
+                        formik.errors.startDateCampaign ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            {formik.errors.startDateCampaign}
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                     <div className="w-full lg:w-1/12 px-4 margin-auto-t-b">
@@ -777,12 +787,20 @@ const StockInfo = ({
                           }}
                         />
                       </div>
+                      <div className="relative w-full px-4">
+                        {formik.touched.endDateCampaign &&
+                        formik.errors.endDateCampaign ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            {formik.errors.endDateCampaign}
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
                   {/*  ช่วงเวลาแคมเปญ */}
                   <div className="flex flex-wrap mt-4">
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                      <LabelUC label="ช่วงเวลาแคมเปญ" />
+                      <LabelUC label="ช่วงเวลาแคมเปญ" isRequired={true} />
                     </div>
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
@@ -864,6 +882,14 @@ const StockInfo = ({
                           }}
                         />
                       </div>
+                      <div className="relative w-full px-4">
+                        {formik.touched.startTimeCampaign &&
+                        formik.errors.startTimeCampaign ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            {formik.errors.startTimeCampaign}
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                     <div className="w-full lg:w-1/12 px-4 margin-auto-t-b">
                       <LabelUC label="ถึง" moreClassName=" text-center" />
@@ -923,12 +949,20 @@ const StockInfo = ({
                           }}
                         />
                       </div>
+                      <div className="relative w-full px-4">
+                        {formik.touched.endTimeCampaign &&
+                        formik.errors.endTimeCampaign ? (
+                          <div className="text-sm py-2 px-2  text-red-500">
+                            {formik.errors.endTimeCampaign}
+                          </div>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
 
                   <div className="flex flex-wrap mt-4">
                     <div className="w-full lg:w-2/12 px-4 margin-auto-t-b ">
-                      <LabelUC label="ส่วนลด" />
+                      <LabelUC label="ส่วนลด" isRequired={true} />
                       <div className="relative w-full px-4"></div>
                     </div>
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
@@ -1030,9 +1064,9 @@ const StockInfo = ({
                         />
                       </div>
                       <div className="relative w-full px-4">
-                        {formik.touched.discount && formik.errors.discount ? (
+                        {formik.touched.salePercent && formik.errors.salePercent ? (
                           <div className="text-sm py-2 px-2  text-red-500">
-                            &nbsp;
+                           {formik.errors.salePercent}
                           </div>
                         ) : null}
                       </div>

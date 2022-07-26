@@ -452,12 +452,13 @@ export default function ConditioRewardInfo() {
     },
     validationSchema: Yup.object({
       couponName: Yup.string().required("* กรุณากรอก ชื่อคูปอง"),
-      couponCount: Yup.number().required("* กรุณากรอก จำนวนคูปอง"),
-      // .test(
-      //   "Is positive?",
-      //   "* จำนวนคูปองต้องมากกว่า 0",
-      //   (value) => value > 0
-      // ),
+      couponCount: Yup.number()
+        .required("* กรุณากรอก จำนวนคูปอง")
+        .test(
+          "Is positive?",
+          "* จำนวนคูปองต้องมากกว่า 0",
+          (value) => value > 0
+        ),
       discount: Yup.number()
         .required("* กรุณากรอก ส่วนลด")
         .test(
@@ -1070,7 +1071,6 @@ export default function ConditioRewardInfo() {
                   </div>
                   <div className="w-full lg:w-1/12 px-4 margin-auto-t-b ">
                     <LabelUC label="สิ้นสุด" isRequired={true} />
-  
                   </div>
                   <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
                     <div className="relative">
@@ -1126,7 +1126,9 @@ export default function ConditioRewardInfo() {
                             return (
                               current &&
                               current <
-                                moment(new Date(day)).add(-1, "days").endOf("day")
+                                moment(new Date(day))
+                                  .add(-1, "days")
+                                  .endOf("day")
                             );
                           }
                         }}

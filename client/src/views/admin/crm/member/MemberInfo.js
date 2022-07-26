@@ -163,11 +163,18 @@ export default function MemberInfo() {
           ? "* กรุณากรอก นามสกุล"
           : "* Please enter your Last Name"
       ),
-      phone: Yup.string().required(
-        Storage.GetLanguage() === "th"
-          ? "* กรุณากรอก เบอร์โทรศัพท์"
-          : "* Please enter your Phone Number"
-      ),
+      phone: Yup.string()
+        .required(
+          Storage.GetLanguage() === "th"
+            ? "* กรุณากรอก เบอร์โทรศัพท์"
+            : "* Please enter your Phone Number"
+        )
+        .test(
+          "len",
+          "* เบอร์โทรศัพท์ไม่ถูกต้อง",
+          (val) =>
+            val && val.replaceAll(" ", "").replaceAll("-", "").length === 10
+        ),
       email: Yup.string()
         .matches(
           EmailRegExp,
@@ -383,7 +390,6 @@ export default function MemberInfo() {
       formik.values.registerDate === ""
         ? new moment(new Date()).toDate()
         : formik.values.registerDate;
-        
 
     fatchAddress();
     fetchPermission();

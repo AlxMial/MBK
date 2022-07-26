@@ -18,7 +18,7 @@ const ProductCategorylist = () => {
         dataList.filter((f) => {
           if (
             f.categoryName.includes(e) ||
-            f.description.includes(e) ||
+            (f.description || "-").includes(e) ||
             (f.isInactive ? "แสดง" : "ไม่แสดง").includes(e)
           ) {
             return f;
@@ -45,7 +45,7 @@ const ProductCategorylist = () => {
   };
   useEffect(() => {
     fetchData();
-  },[]);
+  }, []);
   return (
     <>
       <PageTitle page="ProductCategory" />
