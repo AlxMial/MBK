@@ -44,8 +44,8 @@ const Slide = (prop) => {
                     <img
                         src={e.url}
                         alt="..."
-                        className='rounded-md h-full object-cover blur-xs'
-                        style={{ height: _img_height }}
+                        className='h-full object-cover blur-xs'
+                        style={{ height: _img_height, borderRadius: "15px" }}
                         onClick={() => {
                             if (e.typeLink != null) {
                                 if (!e.typeLink) {

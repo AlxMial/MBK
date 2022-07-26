@@ -11,8 +11,8 @@ const BestSellerUC = ({ data }) => {
       <div
         className="shadow"
         style={{
-          border: "1px solid #FFF",
-          borderRadius: "10px",
+          // border: "1px solid #FFF",
+          borderRadius: "15px",
           width: "100%",
         }}
       >

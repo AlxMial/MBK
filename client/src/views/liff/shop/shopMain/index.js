@@ -174,7 +174,7 @@ const ShopMain = () => {
                                 ></img>
                             </div>
                         </div>
-                        <div className="bg-white  mt-3" style={{ borderRadius: '10px' }}>
+                        <div className="bg-white  mt-3" style={{ borderRadius: '15px' }}>
                             {tbStockViewFlashSale && (
                                 <div
                                     id="scroll"
@@ -206,7 +206,7 @@ const ShopMain = () => {
                             ></img>
                         </div>
                     </div>
-                    <div className="bg-white p-3" style={{ borderRadius: '10px' }}>
+                    <div className="bg-white p-3" style={{ borderRadius: '15px' }}>
                         {tbBestSeller && (
                             <div
                                 id="scroll"
