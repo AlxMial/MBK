@@ -58,8 +58,8 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
       <div
         className={(isShowLogo ? '"shadow"' : '')}
         style={{
-          border: "1px solid #FFF",
-          borderRadius: "10px",
+          // border: "1px solid #FFF",
+          // borderRadius: "10px",
           width: "100%",
         }}
       >
@@ -90,7 +90,7 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                     style={{
                       width: "calc(50vw - 9px - 5%)",
                       minWidth: "calc(50vw - 9px - 5%)",
-                      padding: "0px 10px",
+                      padding: "35px 10px 0 10px",
                     }}
                     onClick={() => {
                       history.push(path.showProducts.replace(":id", e.id));
@@ -98,15 +98,17 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                   >
                     <div className="relative" style={{ height: "150px" }}>
                       <div
-                        className="absolute text-white font-bold"
+                        className="absolute text-white font-bold flex items-center justify-center"
                         style={{
-                          backgroundColor: "rgb(213 183 65 / 90%)",
+                          // backgroundColor: "rgb(213 183 65 / 90%)",
+                          backgroundColor: "#FBC300",
                           width: "100%",
-                          bottom: "0",
+                          top: "-35px",
                           height: "30px",
-                          borderRadius: "20px 0 20px 0",
-                          padding: "5px",
+                          borderRadius: "5px 15px",
+                          // padding: "5px",
                           textAlign: "center",
+                          fontSize: "18px",
                           zIndex: "1",
                         }}
                       >
