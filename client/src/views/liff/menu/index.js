@@ -65,7 +65,7 @@ const Menu = ({ currentMenu }) => {
                         })
                     }
                 </div>
-                <div className="menu-bg bg-green-mbk w-full absolute bottom-0"></div>
+                <div className="menu-bg w-full absolute bottom-0" style={{ backgroundColor: '#007934' }}></div>
             </div>
         </div>
     )

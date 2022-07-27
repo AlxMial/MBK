@@ -101,7 +101,7 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                         className="absolute text-white font-bold flex items-center justify-center"
                         style={{
                           // backgroundColor: "rgb(213 183 65 / 90%)",
-                          backgroundColor: "#FBC300",
+                          backgroundColor: "#d0af21",
                           width: "100%",
                           top: "-35px",
                           height: "30px",
