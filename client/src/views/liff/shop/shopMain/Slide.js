@@ -44,7 +44,7 @@ const Slide = (prop) => {
                     <img
                         src={e.url}
                         alt="..."
-                        className='h-full object-cover blur-xs'
+                        className='h-full object-cover blur-xs w-full'
                         style={{ height: _img_height, borderRadius: "15px" }}
                         onClick={() => {
                             if (e.typeLink != null) {
@@ -62,9 +62,8 @@ const Slide = (prop) => {
             )
         });
 
-    const _height = window.innerWidth + 'px';
-    const _slide_height = (`calc(${_height} - 180px)`);
-    const _img_height = (`calc(${_height} - 210px)`);
+    const _img_h = (window.innerWidth - 96) * 2 / 3;
+    const _img_height = (`calc(${_img_h - 32}px)`);
     return (
         <Slider {...settings} >
             {renderSlides()}
