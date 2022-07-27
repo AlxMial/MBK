@@ -239,19 +239,19 @@ const MakeOrderById = () => {
     let data = { data: 0 };
     if (promotionstores.length > 0 && totel > 0) {
       let prodiscountList = promotionstores.find(
-        (e) => (e.condition == 1 || e.condition == 2) && e.buy <= totel
+        (e) => (parseInt(e.condition) === 1 || parseInt(e.condition) === 2) && e.buy <= totel
       );
       if (prodiscountList != null) {
         valueType = "coupon";
         let pro = promotionstores.filter((e) => {
-          if ((e.condition == 1 || e.condition == 2) && e.buy <= totel) {
+          if ((parseInt(e.condition) === 1 || parseInt(e.condition) === 2) && e.buy <= totel) {
             return e;
           }
         });
 
         pro.map((e, i) => {
           let discount = 0;
-          if (e.condition === 1) {
+          if (parseInt(e.condition) === 1) {
             discount = e.discount;
           } else {
             discount = (e.percentDiscount / 100) * totel;
@@ -268,7 +268,7 @@ const MakeOrderById = () => {
         //สินค้า
         valueType = "product";
         let productList = promotionstores.find(
-          (e) => e.condition == 3 && e.buy <= totel
+          (e) => parseInt(e.condition) === 3 && e.buy <= totel
         );
         if (productList != null) {
           data = { type: "product", data: productList.stockId };

@@ -255,9 +255,7 @@ router.put("/", validateToken, async (req, res) => {
   try {
     req.body.firstName = Encrypt.EncodeKey(req.body.firstName);
     req.body.lastName = Encrypt.EncodeKey(req.body.lastName);
-  } catch {
-
-  }
+  } catch {}
 
   const dataUpdate = await tbOrderHD.update(req.body, {
     where: { id: req.body.id },
@@ -307,21 +305,21 @@ const isFlashSale = (e) => {
   let _today = new Date();
   let today = new Date(
     _today.getFullYear() +
-    "/" +
-    (_today.getMonth() + 1) +
-    "/" +
-    _today.getDate()
+      "/" +
+      (_today.getMonth() + 1) +
+      "/" +
+      _today.getDate()
   );
   if (today >= startDateCampaign && today <= endDateCampaign) {
     let startTimeCampaign = new Date(
       new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-      " " +
-      e.startTimeCampaign
+        " " +
+        e.startTimeCampaign
     );
     let endTimeCampaign = new Date(
       new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-      " " +
-      e.endTimeCampaign
+        " " +
+        e.endTimeCampaign
     );
     today = new Date();
     // อยู่ในเวลา
@@ -517,15 +515,17 @@ const getStorePromotion = async (total) => {
             },
           });
           if (_tbStock) {
-            orderDT.push({
-              stockId: productList.stockId,
-              amount: 1,
-              price: 0,
-              discount: 0,
-              discountType: 0,
-              isFlashSale: false,
-              isFree: true,
-            });
+            if (_tbStock.productCount > 0) {
+              orderDT.push({
+                stockId: productList.stockId,
+                amount: 1,
+                price: 0,
+                discount: 0,
+                discountType: 0,
+                isFlashSale: false,
+                isFree: true,
+              });
+            }
           }
         }
       }
@@ -1417,7 +1417,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
     "discountCoupon",
     "discountStorePromotion",
     "netTotal",
-    "trackNo"
+    "trackNo",
   ];
   const attributesOrderDT = [
     "id",
@@ -1773,7 +1773,7 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
         // hd.amount = stockNumber;
         // hd.price = netTotal;
         hd.id = Encrypt.EncodeKey(hd.id);
-        console.log('hd', hd)
+        console.log("hd", hd);
         OrderHD.push({
           id: hd.id,
           orderNumber: hd.orderNumber,
@@ -1861,8 +1861,8 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         email: member ? Encrypt.DecodeKey(member.dataValues.email) : null,
         memberName: member
           ? Encrypt.DecodeKey(member.dataValues.firstName) +
-          " " +
-          Encrypt.DecodeKey(member.dataValues.lastName)
+            " " +
+            Encrypt.DecodeKey(member.dataValues.lastName)
           : null,
         price: OrderHDData.dataValues.netTotal,
         Payment: _tbPayment,
@@ -1935,7 +1935,7 @@ router.post("/getOrderHDById", validateLineToken, async (req, res) => {
         "discountStorePromotion",
         "points",
         "netTotal",
-        "trackNo"
+        "trackNo",
       ],
       where: {
         IsDeleted: false,

@@ -198,7 +198,7 @@ const MakeOrder = () => {
             } else {
             }
           },
-          () => { },
+          () => {},
           () => {
             setIsLoading(false);
           }
@@ -271,19 +271,24 @@ const MakeOrder = () => {
     let data = { data: 0 };
     if (promotionstores.length > 0 && totel > 0) {
       let prodiscountList = promotionstores.find(
-        (e) => (e.condition == 1 || e.condition == 2) && e.buy <= totel
+        (e) =>
+          (parseInt(e.condition) === 1 || parseInt(e.condition) === 2) &&
+          e.buy <= totel
       );
       if (prodiscountList != null) {
         valueType = "coupon";
         let pro = promotionstores.filter((e) => {
-          if ((e.condition == 1 || e.condition == 2) && e.buy <= totel) {
+          if (
+            (parseInt(e.condition) === 1 || parseInt(e.condition) === 2) &&
+            e.buy <= totel
+          ) {
             return e;
           }
         });
 
         pro.map((e, i) => {
           let discount = 0;
-          if (e.condition === 1) {
+          if (parseInt(e.condition) === 1) {
             discount = e.discount;
           } else {
             discount = (e.percentDiscount / 100) * totel;
@@ -300,7 +305,7 @@ const MakeOrder = () => {
         //สินค้า
         valueType = "product";
         let productList = promotionstores.find(
-          (e) => e.condition == 3 && e.buy <= totel
+          (e) => parseInt(e.condition) === 3 && e.buy <= totel
         );
         if (productList != null) {
           data = { type: "product", data: productList.stockId };
@@ -418,11 +423,11 @@ const MakeOrder = () => {
                   >
                     {usecoupon != null
                       ? "-฿ " +
-                      fn.formatMoney(
-                        usecoupon.discountType === "2"
-                          ? (usecoupon.discount / 100) * sumprice
-                          : usecoupon.discount
-                      )
+                        fn.formatMoney(
+                          usecoupon.discountType === "2"
+                            ? (usecoupon.discount / 100) * sumprice
+                            : usecoupon.discount
+                        )
                       : "ใช้ส่วนลด >"}
                   </div>
                   <div className="px-2">
