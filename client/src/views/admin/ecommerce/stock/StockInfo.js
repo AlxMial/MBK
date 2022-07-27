@@ -182,7 +182,7 @@ const StockInfo = ({
       if (value !== "" && value > 0) {
         if (formik.values.price !== "" && formik.values.price > 0) {
           Calculate = (value / formik.values.price) * 100;
-          formik.setFieldValue("percent", Calculate.toFixed(2));
+          formik.setFieldValue("percent", Math.round(Calculate.toFixed(2)).toFixed(2));//
         }
       } else {
         formik.setFieldValue("percent", "0");

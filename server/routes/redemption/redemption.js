@@ -609,21 +609,66 @@ router.put("/", validateToken, async (req, res) => {
 
 router.delete("/:redemptionId", validateToken, async (req, res) => {
   const redemptionId = Encrypt.DecodeKey(req.params.redemptionId);
-  tbRedemptionProduct.update(
-    { isDeleted: true },
-    { where: { redemptionConditionsHDId: redemptionId } }
-  );
-  tbRedemptionCoupon.update(
-    { isDeleted: true },
-    { where: { redemptionConditionsHDId: redemptionId } }
-  );
-  tbRedemptionConditionsHD.update(
-    { isDeleted: true },
-    { where: { id: redemptionId } }
-  );
+  let status = true;
+  let isDelete = true;
+  let msg = "success";
+  try {
+    const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
+      attributes: ["id"],
+      where: { redemptionConditionsHDId: redemptionId, isDeleted: false },
+    });
+
+    if (_tbRedemptionProduct != null) {
+      const _tbMemberReward = await tbMemberReward.findOne({
+        attributes: ["id"],
+        where: { TableHDID: _tbRedemptionProduct.id },
+      });
+      if (_tbMemberReward != null) {
+        isDelete = false;
+        status = false;
+        msg = "isUse";
+      }
+    }
+    if (isDelete) {
+      const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
+        attributes: ["id"],
+        where: { redemptionConditionsHDId: redemptionId, isDeleted: false },
+      });
+      if (_tbRedemptionCoupon != null) {
+        const _tbCouponCode = await tbCouponCode.findOne({
+          attributes: ["id"],
+          where: { redemptionCouponId: _tbRedemptionCoupon.id, isUse: true },
+        });
+        if (_tbCouponCode != null) {
+          isDelete = false;
+          status = false;
+          msg = "isUse";
+        }
+      }
+    }
+    if (isDelete) {
+      // delete
+      tbRedemptionProduct.update(
+        { isDeleted: true },
+        { where: { redemptionConditionsHDId: redemptionId } }
+      );
+      tbRedemptionCoupon.update(
+        { isDeleted: true },
+        { where: { redemptionConditionsHDId: redemptionId } }
+      );
+      tbRedemptionConditionsHD.update(
+        { isDeleted: true },
+        { where: { id: redemptionId } }
+      );
+    }
+  } catch (err) {
+    status = false;
+    msg = err.message;
+  }
+
   res.json({
-    status: true,
-    message: "success",
+    status: status,
+    message: msg,
     tbRedemptionConditionsHD: null,
   });
 });
@@ -751,7 +796,10 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
               ],
             });
 
-            if (_tbCouponCode && _tbCouponCode.tbRedemptionCoupon.startDate <= new Date()) {
+            if (
+              _tbCouponCode &&
+              _tbCouponCode.tbRedemptionCoupon.startDate <= new Date()
+            ) {
               const _tbImage = await tbImage.findOne({
                 attributes: ["image"],
                 where: {

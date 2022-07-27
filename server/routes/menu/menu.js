@@ -8,11 +8,10 @@ const ValidateEncrypt = require("../../services/crypto");
 const Encrypt = new ValidateEncrypt();
 
 router.get("/", validateToken, async (req, res) => {
-
-  const menu = await tbMenu.findAll();
+  const menu = await tbMenu.findAll({ order: [["listNo", "ASC"]] });
   const menuShow = [];
   const listMenu = await tbPermission.findAll({
-    where: { role: Encrypt.DecodeKey(req.user.role),isEnable:true },
+    where: { role: Encrypt.DecodeKey(req.user.role), isEnable: true },
   });
   try {
     if (menu && listMenu) {
@@ -21,8 +20,7 @@ router.get("/", validateToken, async (req, res) => {
         _menu.chlied = [];
         listMenu.map((l, i) => {
           let _listMenu = l.dataValues;
-          if (_menu.id == _listMenu.menuId && _listMenu.isEnable)
-          {
+          if (_menu.id == _listMenu.menuId && _listMenu.isEnable) {
             _menu.chlied.push(_listMenu);
             menuShow.push(_menu);
           }

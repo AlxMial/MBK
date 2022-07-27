@@ -96,9 +96,11 @@ export default function CampaignExchangeHistoryReport() {
       setListCampaignExchange(
         listSearch
           .filter((x) => {
-            const _startDate =
-              x.startDate !== "" ? convertToDate(x.startDate) : null;
-            const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
+            // const _startDate =
+            //   x.startDate !== "" ? convertToDate(x.startDate) : null;
+            // const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
+            const _startDate = x.redeemDate !== "" ? convertToDate(x.redeemDate) : null;
+            const _endDate =x.redeemDate !== "" ? convertToDate(x.redeemDate) : null;
             let isDate = false;
             if (x.startDate !== "" && x.endDate !== "") {
               isDate = true;

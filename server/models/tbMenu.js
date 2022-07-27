@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    listNo: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     addBy: {
       type: DataTypes.STRING,
       allowNull: true,

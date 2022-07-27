@@ -216,7 +216,7 @@ const Stock = () => {
         is: true,
         then: yup.string().required("* กรุณากรอก ระยะเวลาแคมเปญ"),
       }),
-      
+
       startTimeCampaign: yup.string().when("isFlashSale", {
         is: true,
         then: yup.string().required("* กรุณากรอก ช่วงเวลาแคมเปญ"),
@@ -231,11 +231,7 @@ const Stock = () => {
         is: true,
         then: yup
           .number()
-          .test(
-            "Is positive?",
-            "* ส่วนลดต้องมากกว่า 0",
-            (value) => value > 0
-          ),
+          .test("Is positive?", "* ส่วนลดต้องมากกว่า 0", (value) => value > 0),
       }),
       salePercent: yup.number().when("isFlashSale", {
         is: true,

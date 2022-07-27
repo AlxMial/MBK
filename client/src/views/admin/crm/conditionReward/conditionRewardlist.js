@@ -6,10 +6,12 @@ import ReactPaginate from "react-paginate";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import ValidateService from "services/validateValue";
 import { fetchLoading, fetchSuccess } from "redux/actions/common";
+import { useToasts } from "react-toast-notifications";
 import moment from "moment";
 // components
 
 export default function ConditionRewardList() {
+  const { addToast } = useToasts();
   const [listRedemption, setListRedemption] = useState([]);
   const [listSearch, setListSerch] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
@@ -105,12 +107,26 @@ export default function ConditionRewardList() {
   };
 
   const deleteRedemption = (e) => {
-    axios.delete(`/redemptions/${e}`).then(() => {
-      setListRedemption(
-        listRedemption.filter((val) => {
-          return val.id !== e;
-        })
-      );
+    axios.delete(`/redemptions/${e}`).then((res) => {
+      console.log(res);
+      if (res.status == 200) {
+        if (res.data.status) {
+          setListRedemption(
+            listRedemption.filter((val) => {
+              return val.id !== e;
+            })
+          );
+          addToast("ลบข้อมูลสำเร็จ", {
+            appearance: "success",
+            autoDismiss: true,
+          });
+        } else {
+          addToast("ลบข้อมูลไม่สำเร็จ เนื่องจากถูกนำไปใช้งาน", {
+            appearance: "warning",
+            autoDismiss: true,
+          });
+        }
+      }
       closeModalSubject();
     });
   };
@@ -310,9 +326,7 @@ export default function ConditionRewardList() {
                       return (
                         <tr key={key}>
                           <td className=" w-10 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
-        
-                              {pagesVisited + key + 1}
-                       
+                            {pagesVisited + key + 1}
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
                             <Link
@@ -344,7 +358,7 @@ export default function ConditionRewardList() {
                             >
                               <div
                                 className={
-                                  (value.redemptionType == 2 ? " hidden" : " ")
+                                  value.redemptionType == 2 ? " hidden" : " "
                                 }
                               >
                                 {ValidateService.defaultValueText(
@@ -375,7 +389,10 @@ export default function ConditionRewardList() {
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              { value.isNotExpired} { value.isNotExpired ? "ไม่มีวันหมดอายุ" : moment(value.endDate).format("DD/MM/YYYY")}
+                              {value.isNotExpired}{" "}
+                              {value.isNotExpired
+                                ? "ไม่มีวันหมดอายุ"
+                                : moment(value.endDate).format("DD/MM/YYYY")}
                             </Link>
                           </td>
                           <td className="w-24 border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
