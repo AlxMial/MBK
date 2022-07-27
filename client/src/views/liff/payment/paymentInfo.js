@@ -15,7 +15,7 @@ import Error from "../error";
 import { sendEmailWaiting } from "services/liff.services";
 import { useDispatch } from "react-redux";
 import { backPage } from "redux/actions/common";
-
+import jsQR from "jsqr";
 const PaymentInfo = () => {
   const dispatch = useDispatch();
   let { id } = useParams();
@@ -33,7 +33,7 @@ const PaymentInfo = () => {
   });
 
   const [statuspayment, setstatuspayment] = useState(true);
-  const [status, setstatus] = useState(true);
+  // const [status, setstatus] = useState(true);
 
   const GetOrder = () => {
     setIsLoading(true);
@@ -54,11 +54,11 @@ const PaymentInfo = () => {
             });
           }
         } else {
-          setstatus(false);
+          // setstatus(false);
           setstatuspayment(false);
         }
       },
-      () => { },
+      () => {},
       () => {
         setIsLoading(false);
       }
@@ -68,14 +68,83 @@ const PaymentInfo = () => {
   //รูปสลิป
   const onChangeslip = async (e) => {
     const image = document.getElementById("SlipImage");
-    image.src = URL.createObjectURL(e.target.files[0]);
-    const base64 = await FilesService.convertToBase64(e.target.files[0]);
-    setSlipImage(base64);
-    // addToast("อัพโหลดสลิปเรียบร้อยแล้ว", {
-    //   appearance: "success",
-    //   autoDismiss: true,
-    // });
+
+    let base64 = await FilesService.convertToBase64(e.target.files[0]);
+    if (await verifyslip(base64)) {
+      base64 = await reduce_image_file_size(base64);
+      setSlipImage(base64);
+      image.src = URL.createObjectURL(e.target.files[0]);
+    } else {
+      addToast("แนบได้เฉพาะสลิปโอนเงินเท่านั่น", {
+        appearance: "warning",
+        autoDismiss: true,
+      });
+    }
   };
+  const reduce_image_file_size = async (
+    base64Str,
+    MAX_WIDTH = 450,
+    MAX_HEIGHT = 450
+  ) => {
+    let resized_base64 = await new Promise((resolve) => {
+      let img = new Image();
+      img.src = base64Str;
+      img.onload = () => {
+        let canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL()); // this will return base64 image results after resize
+      };
+    });
+    return resized_base64;
+  };
+  const verifyslip = async (base64Str) => {
+    let isVerity = await new Promise((resolve) => {
+      const canvas = document.createElement("canvas");
+      const c2d = canvas.getContext("2d");
+      let img = new Image();
+      img.src = base64Str;
+      img.onload = () => {
+        try {
+          const [width, height] = [img.naturalWidth, img.naturalHeight];
+          canvas.width = width;
+          canvas.height = height;
+          c2d.drawImage(img, 0, 0);
+          const imageData = c2d.getImageData(0, 0, width, height);
+          const jsqrResult = jsQR(
+            imageData.data,
+            imageData.width,
+            imageData.height
+          );
+          if (jsqrResult !== null) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        } catch (error) {
+          resolve(false);
+        }
+      };
+    });
+    return isVerity;
+  };
+
   const saveSlip = () => {
     if (SlipImage != null) {
       setIsLoading(true);
@@ -116,7 +185,7 @@ const PaymentInfo = () => {
             });
           }
         },
-        () => { },
+        () => {},
         () => {
           setIsLoading(true);
         }
@@ -324,7 +393,7 @@ const PaymentInfo = () => {
                                             liff.getLineVersion() || ""
                                           ).split(".");
                                           if (
-                                            parseInt(majorVer) == 10 &&
+                                            parseInt(majorVer) === 10 &&
                                             parseInt(minorVer) < 11
                                           ) {
                                             // LINE 10.3.0 - 10.10.0
@@ -396,17 +465,20 @@ const PaymentInfo = () => {
                                         },
                                       ])
                                       .then(() => {
-                                        addToast("บันทึก QR Code เรียบร้อยแล้ว", {
-                                          appearance: "success",
-                                          autoDismiss: true,
-                                        });
+                                        addToast(
+                                          "บันทึก QR Code เรียบร้อยแล้ว",
+                                          {
+                                            appearance: "success",
+                                            autoDismiss: true,
+                                          }
+                                        );
                                         console.log("message sent");
                                       })
                                       .catch((err) => {
                                         console.log("error", err);
                                       });
                                   } else {
-                                    console.log("Login" + config.liffId)
+                                    console.log("Login" + config.liffId);
                                     liff.login();
                                   }
                                 },

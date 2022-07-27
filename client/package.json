@@ -26,6 +26,7 @@
     "gulp-append-prepend": "1.0.8",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.1",
+    "jsqr": "^1.4.0",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.3",
     "postcss": "8.2.8",
