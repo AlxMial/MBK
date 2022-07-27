@@ -425,8 +425,8 @@ export default function PointHistoryReport() {
     if (listtbPointCodeDT.length === 1) {
       dataPopUp.values.code = listtbPointCodeDT[0].code;
       dataPopUp.values.pointCodeName = list_pointHD[0].pointCodeName;
-      dataPopUp.values.startDate = listtbPointCodeDT[0].startDate;
-      dataPopUp.values.endDate = listtbPointCodeDT[0].endDate;
+      dataPopUp.values.startDate = list_pointHD[0].startDate;
+      dataPopUp.values.endDate = list_pointHD[0].endDate;
       dataPopUp.values.memberName =
         listMemberpoint !== undefined
           ? listMemberpoint.tbMember.firstName +

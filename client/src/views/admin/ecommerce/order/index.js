@@ -193,13 +193,17 @@ const Order = () => {
           !isChangeOrderNumber)
       ) {
         let Error = false;
-        if (tbCancelOrder != null) {
-          if (tbCancelOrder.cancelOtherRemark == "") {
-            setCancelReason(true);
-            Error = true;
+        if (isCancel) {
+          if (tbCancelOrder != null) {
+            if (tbCancelOrder.cancelOtherRemark == "") {
+              setCancelReason(true);
+              Error = true;
+            }
+          } else {
+            setCancelReason(false);
           }
         } else {
-          setCancelReason(false);
+          // tbCancelOrder = {};
         }
         if (!Error) {
           const res = await axios.get("order/orderHD/ById/" + orderHD.id);

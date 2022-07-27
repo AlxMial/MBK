@@ -5151,3 +5151,12 @@ span.rc-time-picker.time-picker-input.hidtext .rc-time-picker-input {
 .blur-sm {
   filter: blur(4px);
 }
+
+.profile-pic #eCouponImage{
+  width: 190px;
+   height: 132px ;
+}
+.profile-pic #label-image-eCouponImage {
+  width: 190px;
+  height: 132px ;
+}

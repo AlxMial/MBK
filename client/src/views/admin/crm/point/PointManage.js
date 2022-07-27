@@ -15,6 +15,7 @@ import { set } from "react-ga";
 export default function PointManage() {
   const { TabPane } = Tabs;
   const [typePermission, setTypePermission] = useState(false);
+  const [permissioncontrol, setPermissioncontrol] = useState([]);
   const [isModified, setModified] = useState(false);
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
   const [activeTab, setActiveTab] = useState("1");
@@ -111,6 +112,11 @@ export default function PointManage() {
     if (role.data.data !== null) {
       if (role.data.data.length > 0) {
         setTypePermission(role.data.data[0].isEnable);
+        let Permission = [];
+        role.data.data.filter((e) => {
+          Permission.push({ controlName: e.controlName, isEnable: e.isEnable });
+        });
+        setPermissioncontrol(Permission);
       } else {
         setTypePermission(false);
       }
@@ -149,7 +155,20 @@ export default function PointManage() {
         <TabPane tab="E-Commerce" key="2">
           <PointEcommerce />
         </TabPane>
-        <TabPane tab="Code" id="tabCode" key="3" disabled={typePermission}>
+        <TabPane
+          tab="Code"
+          id="tabCode"
+          key="3"
+          disabled={
+            permissioncontrol.find((e) =>
+              e.controlName.trim().toLowerCase().includes("tabcode")
+            ) === undefined
+              ? false
+              : !permissioncontrol.find((e) =>
+                  e.controlName.trim().toLowerCase().includes("tabcode")
+                ).isEnable
+          }
+        >
           <PointCode />
         </TabPane>
         <TabPane id="tabStore" tab="Store" key="4">
