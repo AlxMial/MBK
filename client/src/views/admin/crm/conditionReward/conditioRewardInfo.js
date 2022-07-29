@@ -679,8 +679,12 @@ export default function ConditioRewardInfo() {
             formikCoupon.setFieldValue("discountType", "1");
             formik.setFieldValue("isActive", true);
           }
-          dispatch(fetchSuccess());
         }
+      })
+      .finally(() => {
+        setTimeout(() => {
+          dispatch(fetchSuccess());
+        }, 500);
       });
   }
 
