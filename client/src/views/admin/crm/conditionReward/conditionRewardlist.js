@@ -403,7 +403,12 @@ export default function ConditionRewardList() {
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              {new Date(value.endDate) < new Date()
+                              {new Date(
+                                moment(new Date(value.endDate)).format(
+                                  "YYYY-MM-DD"
+                                )
+                              ) <
+                              new Date(moment(new Date()).format("YYYY-MM-DD"))
                                 ? "หมดอายุ"
                                 : value.isActive
                                 ? "เปิดการใช้งาน"
