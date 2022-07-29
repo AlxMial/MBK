@@ -16,13 +16,11 @@ const ProductCategorylist = () => {
     if (!fn.IsNullOrEmpty(e)) {
       setdataListSearch(
         dataList.filter((f) => {
-          if (
+          return (
             f.categoryName.includes(e) ||
             (f.description || "-").includes(e) ||
             (f.isInactive ? "แสดง" : "ไม่แสดง").includes(e)
-          ) {
-            return f;
-          }
+          );
         })
       );
     } else {
@@ -43,6 +41,7 @@ const ProductCategorylist = () => {
     }
     dispatch(fetchSuccess());
   };
+
   useEffect(() => {
     fetchData();
   }, []);

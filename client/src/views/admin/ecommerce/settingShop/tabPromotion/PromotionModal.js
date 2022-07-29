@@ -219,6 +219,9 @@ const PromotionModal = ({
                             } else if (e.target.value === "2") {
                               formik.values.discount = "";
                             } else {
+                              formik.values.percentDiscount = "";
+                              formik.values.percentDiscountAmount = "";
+                              formik.values.discount = "";
                             }
                             setErrorDiscout(false);
                             setErrorPercentDiscount(false);
@@ -346,7 +349,10 @@ const PromotionModal = ({
                                 target: {
                                   name: "percentDiscount",
                                   value:
-                                  e.target.value !== ""?parseFloat(e.target.value).toFixed(2) || 0 :"",
+                                    e.target.value !== ""
+                                      ? parseFloat(e.target.value).toFixed(2) ||
+                                        0
+                                      : "",
                                 },
                               });
                             }
@@ -408,7 +414,10 @@ const PromotionModal = ({
                                 target: {
                                   name: "percentDiscountAmount",
                                   value:
-                                  e.target.value !== ""?parseFloat(e.target.value).toFixed(2) || 0:"",
+                                    e.target.value !== ""
+                                      ? parseFloat(e.target.value).toFixed(2) ||
+                                        0
+                                      : "",
                                 },
                               });
                             }

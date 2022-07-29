@@ -105,10 +105,9 @@ export default function UserInfo() {
 
   const onEditValue = () => {
     if (isModefied) {
-      setIsBack(true)
+      setIsBack(true);
       formik.handleSubmit();
-      if (formik.values.password === "" && !enablePassword ) 
-      {  
+      if (formik.values.password === "" && !enablePassword) {
         setErrorPassword(true);
       }
       setIsOpenEdit(false);
@@ -214,7 +213,7 @@ export default function UserInfo() {
               formik.setFieldValue("confirmPassword", "");
               formik.setFieldValue("password", "");
               setIsModified(false);
-              if(isBack) history.push("/admin/users");
+              if (isBack) history.push("/admin/users");
               if (modalIsOpenEdit) history.push("/admin/users");
               else history.push(`/admin/usersinfo/${res.data.tbUser.id}`);
 
@@ -253,8 +252,8 @@ export default function UserInfo() {
               fetchData();
               setConfirmPassword(false);
               setIsOpenEdit(false);
-              
-              if(isBack) history.push("/admin/users");
+
+              if (isBack) history.push("/admin/users");
               if (modalIsOpenEdit) history.push("/admin/users");
               // formik.setFieldValue("confirmPassword", "");
               // formik.setFieldValue("password", "");
@@ -646,9 +645,15 @@ export default function UserInfo() {
                         Password
                       </label>
                       <span className="text-sm ml-2 text-red-500">*</span>
-                      <div className={(strongPassword || weakPassword || poorPassword
+                      <div
+                        className={
+                          strongPassword || weakPassword || poorPassword
                             ? " "
-                            : " hidden ")}>&nbsp;</div>
+                            : " hidden "
+                        }
+                      >
+                        &nbsp;
+                      </div>
                     </div>
                   </div>
                   <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
@@ -680,8 +685,14 @@ export default function UserInfo() {
                             e.target.value
                           );
 
-                          setPoorPassword(poorRegExp.test(e.target.value)|| weakRegExp.test(e.target.value));
-                          setWeakPassword(weakRegExp.test(e.target.value) && poorRegExp.test(e.target.value));
+                          setPoorPassword(
+                            poorRegExp.test(e.target.value) ||
+                              weakRegExp.test(e.target.value)
+                          );
+                          setWeakPassword(
+                            weakRegExp.test(e.target.value) &&
+                              poorRegExp.test(e.target.value)
+                          );
                           setStrongPassword(strongRegExp.test(e.target.value));
 
                           setErrorPassword1(!poorPassword);
@@ -722,8 +733,12 @@ export default function UserInfo() {
                         <li
                           className={
                             " w-full lg:w-4/12 " +
-                            (poorPassword ? " " : " hidden" ) +
-                            (strongPassword && weakPassword && poorPassword ? " bg-green-500" : weakPassword && poorPassword ? " bg-yellow-500" : " bg-red-500")
+                            (poorPassword ? " " : " hidden") +
+                            (strongPassword && weakPassword && poorPassword
+                              ? " bg-green-500"
+                              : weakPassword && poorPassword
+                              ? " bg-yellow-500"
+                              : " bg-red-500")
                           }
                           style={{
                             height: "0.5rem",
@@ -736,8 +751,12 @@ export default function UserInfo() {
                         <li
                           className={
                             " w-full lg:w-4/12 " +
-                            (weakPassword && poorPassword ? " " : " hidden ")+
-                            (strongPassword && weakPassword && poorPassword  ? " bg-green-500" : weakPassword && poorPassword ? " bg-yellow-500" : " bg-red-500")
+                            (weakPassword && poorPassword ? " " : " hidden ") +
+                            (strongPassword && weakPassword && poorPassword
+                              ? " bg-green-500"
+                              : weakPassword && poorPassword
+                              ? " bg-yellow-500"
+                              : " bg-red-500")
                           }
                           style={{ height: "0.5rem" }}
                         >
@@ -748,8 +767,12 @@ export default function UserInfo() {
                             " w-full lg:w-4/12" +
                             (strongPassword && weakPassword && poorPassword
                               ? " "
-                              : " hidden ")+
-                            (strongPassword && weakPassword && poorPassword  ? " bg-green-500" : weakPassword && poorPassword  ? " bg-yellow-500" : " bg-red-500")
+                              : " hidden ") +
+                            (strongPassword && weakPassword && poorPassword
+                              ? " bg-green-500"
+                              : weakPassword && poorPassword
+                              ? " bg-yellow-500"
+                              : " bg-red-500")
                           }
                           style={{
                             height: "0.5rem",
@@ -900,6 +923,9 @@ export default function UserInfo() {
                         styles={useStyle}
                       /> */}
                       <SelectUC
+                        isDisabled={
+                          formik.values.userName === "admin" ? true : false
+                        }
                         name="role"
                         onChange={(value) => {
                           formik.setFieldValue("role", value.value);

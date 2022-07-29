@@ -146,7 +146,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
       }
     }
   }, [logisticCategorylist]);
-
+  useEffect(() => {}, [formik.values.deliveryCost]);
   return (
     <>
       <Modal
@@ -311,15 +311,16 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                     </div>
                     <div className="w-full lg:w-6/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
-                        <InputUC
-                          type="number"
+                        <input
+                          className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
+                          type="text"
                           name="deliveryCost"
-                          maxLength={100}
+                          maxLength={10}
                           // onBlur={formik.handleBlur}
                           value={formik.values.deliveryCost}
                           onChange={(e) => {
-                            // formik.handleChange(e);
-                            if (e.target.value > 99999.99) {
+                            // setDelayValue(e.target.value);
+                            if (parseFloat(e.target.value) > 99999.99) {
                               formik.handleChange({
                                 target: {
                                   name: "deliveryCost",
@@ -336,8 +337,14 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                             }
                           }}
                           onBlur={(e) => {
-                            if (e.target.value > 99999) {
-                              e.preventDefault();
+                            // setDelayValue(e.target.value);
+                            if (parseFloat(e.target.value) > 99999.99) {
+                              formik.handleChange({
+                                target: {
+                                  name: "deliveryCost",
+                                  value: parseFloat(99999.99).toFixed(2) || 0,
+                                },
+                              });
                             } else {
                               formik.handleChange({
                                 target: {

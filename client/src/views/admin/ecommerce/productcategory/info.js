@@ -10,7 +10,6 @@ import axios from "services/axios";
 import useWindowDimensions from "services/useWindowDimensions";
 import ProfilePictureUC from "components/ProfilePictureUC";
 import ValidateService from "services/validateValue";
-import FilesService from "services/files";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 import {
   customStyles,
