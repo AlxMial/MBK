@@ -17,6 +17,7 @@ export default function CollectPointsReport() {
   const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
+  const pageCount = Math.ceil(listPoint.length / usersPerPage) || 1;
 
   const formSerch = useFormik({
     initialValues: {
@@ -64,28 +65,30 @@ export default function CollectPointsReport() {
                   : new Date(moment(new Date(x.endDate)).format("yyy-MM-DD"));
 
               let isdate =
-                (startDate != null &&
-                  endDate == null &&
-                  startDate < _startDate) ||
-                (startDate != null &&
-                  endDate != null &&
-                  _endDate != null &&
-                  _startDate != null &&
-                  ((startDate >= _startDate && startDate <= _endDate) ||
-                    (endDate >= _startDate && endDate < _endDate))) ||
-                (startDate == null &&
-                  endDate != null &&
-                  endDate > _startDate) ||
-                (_startDate != null &&
-                  _endDate == null &&
-                  _startDate >= startDate &&
-                  _startDate <= endDate) ||
-                (_startDate == null &&
-                  _endDate != null &&
-                  _endDate >= startDate &&
-                  _endDate <= endDate);
+                _startDate == null && _endDate == null
+                  ? true
+                  : (startDate != null &&
+                      endDate == null &&
+                      startDate < _startDate) ||
+                    (startDate != null &&
+                      endDate != null &&
+                      _endDate != null &&
+                      _startDate != null &&
+                      ((startDate >= _startDate && startDate <= _endDate) ||
+                        (endDate >= _startDate && endDate < _endDate))) ||
+                    (startDate == null &&
+                      endDate != null &&
+                      endDate > _startDate) ||
+                    (_startDate != null &&
+                      _endDate == null &&
+                      _startDate >= startDate &&
+                      _startDate <= endDate) ||
+                    (_startDate == null &&
+                      _endDate != null &&
+                      _endDate >= startDate &&
+                      _endDate <= endDate);
 
-              if (
+              return (
                 isdate &&
                 (Search(x.CampaignName, inputSerch) ||
                   Search(x.code, inputSerch) ||
@@ -112,15 +115,15 @@ export default function CollectPointsReport() {
                     inputSerch
                   ) ||
                   Search(
-                    x.campaignType == "1"
+                    parseInt(x.campaignType) === 1
                       ? "กรอก Code จากสินค้า"
-                      : x.campaignType == "2"
+                      : parseInt(x.campaignType) === 2
                       ? "ซื้อสินค้าออนไลน์"
-                      : x.campaignType == "3"
+                      : parseInt(x.campaignType) === 3
                       ? "สมัครสมาชิก"
-                      : x.campaignType == "4"
+                      : parseInt(x.campaignType) === 4
                       ? "แลกคูปอง"
-                      : x.campaignType == "5"
+                      : parseInt(x.campaignType) === 5
                       ? "แลกของสมนาคุณ"
                       : "เล่นเกมส์",
                     inputSerch
@@ -129,9 +132,7 @@ export default function CollectPointsReport() {
                     "123".includes(x.campaignType) ? "รับคะแนน" : "แลกคะแนน",
                     inputSerch
                   ))
-              ) {
-                return x;
-              }
+              );
             })
             .sort((a, b) => new Date(b.startDate) - new Date(a.startDate))
         );
@@ -175,8 +176,6 @@ export default function CollectPointsReport() {
     }
   };
 
-  const pageCount = Math.ceil(listPoint.length / usersPerPage);
-
   const changePage = ({ selected }) => {
     setPageNumber(selected);
     setForcePage(selected);
@@ -217,7 +216,7 @@ export default function CollectPointsReport() {
       "code",
     ];
 
-    let count = 0;
+    // let count = 0;
     let _listPoint = [];
 
     listPoint.map((e, i) => {
@@ -228,15 +227,15 @@ export default function CollectPointsReport() {
           e.startDate == null ? "-" : moment(e.startDate).format("DD/MM/YYYY"),
         end: e.endDate == null ? "-" : moment(e.endDate).format("DD/MM/YYYY"),
         campaignType:
-          e.campaignType == "1"
+          parseInt(e.campaignType) === 1
             ? "กรอก Code จากสินค้า"
-            : e.campaignType == "2"
+            : parseInt(e.campaignType) === 2
             ? "ซื้อสินค้าออนไลน์"
-            : e.campaignType == "3"
+            : parseInt(e.campaignType) === 3
             ? "สมัครสมาชิก"
-            : e.campaignType == "4"
+            : parseInt(e.campaignType) === 4
             ? "แลกคูปอง"
-            : e.campaignType == "5"
+            : parseInt(e.campaignType) === 5
             ? "แลกของสมนาคุณ"
             : "เล่นเกม",
         firstName: e.firstName,
@@ -252,6 +251,7 @@ export default function CollectPointsReport() {
         memberCard: e.memberCard,
         rewardType: e.rewardType == null ? "-" : e.rewardType,
       });
+      return e;
     });
     exportExcel(
       _listPoint,
@@ -285,6 +285,66 @@ export default function CollectPointsReport() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const dataTable = {
+    head: [
+      { name: "ลำดับที่", css: "text-center" },
+      { name: "แคมเปญ", css: "text-left" },
+      { name: "วันที่เริ่มต้น", css: "text-center" },
+      { name: "วันที่สิ้นสุด", css: "text-center" },
+      { name: "ประเภท", css: "text-left" },
+      { name: "ชื่อลูกค้า", css: "text-left" },
+      { name: "เบอร์โทรศัพท์", css: "text-left" },
+      { name: "Code", css: "text-center" },
+      { name: "คะแนน", css: "text-center" },
+      { name: "สถานะ", css: "text-center" },
+      { name: "วันที่แลก", css: "text-center" },
+    ],
+    DT: [
+      { name: "listNo", css: "text-center" },
+      { name: "CampaignName", css: "text-left" },
+      { name: "startDate", css: "text-center" },
+      { name: "endDate", css: "text-center" },
+      { name: "campaignType", css: "text-left" },
+      { name: "fullName", css: "text-left" },
+      { name: "phone", css: "text-left" },
+      { name: "code", css: "text-center" },
+      { name: "points", css: "text-right" },
+      { name: "status", css: "text-center" },
+      { name: "redeemDate", css: "text-center" },
+    ],
+    dataDT: (e, value) => {
+      return e.name.toLowerCase().includes("date")
+        ? value[e.name] == null
+          ? "-"
+          : moment(value[e.name]).format("DD/MM/YYYY")
+        : e.name === "fullName"
+        ? value.firstName + " " + value.lastName
+        : e.name === "campaignType"
+        ? parseInt(value.campaignType) === 1
+          ? "กรอก Code จากสินค้า"
+          : parseInt(value.campaignType) === 2
+          ? "ซื้อสินค้าออนไลน์"
+          : parseInt(value.campaignType) === 3
+          ? "สมัครสมาชิก"
+          : parseInt(value.campaignType) === 4
+          ? "แลกคูปอง"
+          : parseInt(value.campaignType) === 5
+          ? "แลกของสมนาคุณ"
+          : "เล่นเกม"
+        : e.name === "points"
+        ? value.points == null
+          ? "-"
+          : ("123".includes(value.campaignType) ? "+" : "-") + value.points
+        : e.name === "status"
+        ? "123".includes(value.campaignType)
+          ? "รับคะแนน"
+          : "แลกคะแนน"
+        : value[e.name] == null
+        ? "-"
+        : value[e.name];
+    },
+  };
 
   return (
     <>
@@ -453,84 +513,19 @@ export default function CollectPointsReport() {
             <table className="items-center w-full border table-fill ">
               <thead>
                 <tr>
-                  <th
-                    className={
-                      "px-6 w-5 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    ลำดับที่
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    แคมเปญ
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    วันที่เริ่มต้น
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    วันที่สิ้นสุด
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    ประเภท
-                  </th>
-
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    ชื่อลูกค้า
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    เบอร์โทรศัพท์
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    Code
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    คะแนน
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    สถานะ
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    วันที่แลก
-                  </th>
+                  {[...dataTable.head].map((e, i) => {
+                    return (
+                      <th
+                        key={i}
+                        className={
+                          e.css +
+                          " px-6 w-5 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold  bg-blueGray-50 text-blueGray-500 "
+                        }
+                      >
+                        {e.name}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
@@ -540,92 +535,24 @@ export default function CollectPointsReport() {
                     value.listNo = pagesVisited + key + 1;
                     return (
                       <tr key={key}>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
-                          <span className="px-4 margin-a">{value.listNo}</span>
-                        </td>
-                        <td className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                          <span
-                            title={value.CampaignName}
-                            className="text-gray-mbk  hover:text-gray-mbk "
-                          >
-                            {value.CampaignName}
-                          </span>
-                          <span className="details">more info here</span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.startDate == null
-                              ? "-"
-                              : moment(value.startDate).format("DD/MM/YYYY")}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.endDate == null
-                              ? "-"
-                              : moment(value.endDate).format("DD/MM/YYYY")}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                          <span
-                            className="text-gray-mbk  hover:text-gray-mbk "
-                            style={{ textAlign: "left" }}
-                          >
-                            {value.campaignType == "1"
-                              ? "กรอก Code จากสินค้า"
-                              : value.campaignType == "2"
-                              ? "ซื้อสินค้าออนไลน์"
-                              : value.campaignType == "3"
-                              ? "สมัครสมาชิก"
-                              : value.campaignType == "4"
-                              ? "แลกคูปอง"
-                              : value.campaignType == "5"
-                              ? "แลกของสมนาคุณ"
-                              : "เล่นเกม"}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                          <span
-                            className="text-gray-mbk  hover:text-gray-mbk "
-                            style={{ textAlign: "left" }}
-                          >
-                            {value.firstName + " " + value.lastName}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left ">
-                          <span
-                            className="text-gray-mbk  hover:text-gray-mbk "
-                            style={{ textAlign: "left" }}
-                          >
-                            {value.phone}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.code == null ? "-" : value.code}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-right">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.points == null
-                              ? "-"
-                              : ("123".includes(value.campaignType)
-                                  ? "+"
-                                  : "-") + value.points}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {"123".includes(value.campaignType)
-                              ? "รับคะแนน"
-                              : "แลกคะแนน"}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {value.redeemDate == null
-                            ? "-"
-                            : moment(value.redeemDate).format("DD/MM/YYYY")}
-                        </td>
+                        {[...dataTable.DT].map((e, i) => {
+                          return (
+                            <td
+                              key={i}
+                              className={
+                                e.css +
+                                " border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap "
+                              }
+                            >
+                              <span
+                                className="px-4 margin-a"
+                                title={dataTable.dataDT(e, value)}
+                              >
+                                {dataTable.dataDT(e, value)}
+                              </span>
+                            </td>
+                          );
+                        })}
                       </tr>
                     );
                   })}

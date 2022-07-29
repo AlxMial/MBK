@@ -19,15 +19,17 @@ const LogisticTable = ({
     "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
   const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(listLogistic.length / usersPerPage);
+  const pageCount = Math.ceil(listLogistic.length / usersPerPage)||1;
 
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
 
   const logisticTypeList = [
@@ -236,6 +238,7 @@ const LogisticTable = ({
               nextLinkClassName={"nextBttn"}
               disabledClassName={"paginationDisabled"}
               activeClassName={"paginationActive"}
+              forcePage={forcePage}
             />
           </div>
         </div>

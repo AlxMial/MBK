@@ -16,7 +16,8 @@ const TabReturn = () => {
   const [listData, setListData] = useState([]);
   const [listSearch, setListSearch] = useState([]);
   const [open, setOpen] = useState(false);
-
+  const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const fetchData = async () => {
     dispatch(fetchLoading());
     await axios.get("returnOrder").then(async (response) => {
@@ -163,6 +164,10 @@ const TabReturn = () => {
           <ReturnList
             listData={listData}
             handleChangeStatus={handleChangeStatus}
+            pageNumber={pageNumber}
+            setPageNumber={setPageNumber}
+            forcePage={forcePage}
+            setForcePage={setForcePage}
           />
         </div>
       </div>

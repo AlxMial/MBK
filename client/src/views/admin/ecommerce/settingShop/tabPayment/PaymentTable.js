@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import ReactPaginate from "react-paginate";
 import axios from "services/axios";
 
-const PaymentTable = ({ listPayment , setListPayment , openModal }) => {
+const PaymentTable = ({ listPayment, setListPayment, openModal }) => {
   const thClass =
     "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
   const tdClass =
@@ -11,14 +11,16 @@ const PaymentTable = ({ listPayment , setListPayment , openModal }) => {
   const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
 
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(listPayment.length / usersPerPage);
+  const pageCount = Math.ceil(listPayment.length / usersPerPage) || 1;
 
   const [deleteValue, setDeleteValue] = useState("");
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
 
   const [modalIsOpenDeleted, setIsOpenDeleted] = useState(false);
@@ -31,12 +33,11 @@ const PaymentTable = ({ listPayment , setListPayment , openModal }) => {
   function closeModalDeleted() {
     setIsOpenDeleted(false);
   }
-  function arrayRemove(arr, value) { 
-    
-    return arr.filter(function(ele){ 
-        return ele.id != value; 
+  function arrayRemove(arr, value) {
+    return arr.filter(function (ele) {
+      return ele.id != value;
     });
-}
+  }
 
   const deletePayment = () => {
     // let id = null;
@@ -50,11 +51,11 @@ const PaymentTable = ({ listPayment , setListPayment , openModal }) => {
     // listPayment = filtered;
     // closeModalDeleted();
     axios.delete(`/payment/${deleteValue}`).then(() => {
-        setListPayment(
-            listPayment.filter((val) => {
-                return val.id !== deleteValue;
-            })
-        );
+      setListPayment(
+        listPayment.filter((val) => {
+          return val.id !== deleteValue;
+        })
+      );
       closeModalDeleted();
     });
     // axios.delete(`/payment/${deleteValue}`).then(() => {
@@ -128,7 +129,7 @@ const PaymentTable = ({ listPayment , setListPayment , openModal }) => {
                     >
                       <span className={tdSpan}>{value.bankBranchName}</span>
                     </td>
-                    <td className={tdClass  + " text-center"}>
+                    <td className={tdClass + " text-center"}>
                       <span className={tdSpan}>
                         <i
                           className="fas fa-trash text-red-500 cursor-pointer"
@@ -164,6 +165,7 @@ const PaymentTable = ({ listPayment , setListPayment , openModal }) => {
               nextLinkClassName={"nextBttn"}
               disabledClassName={"paginationDisabled"}
               activeClassName={"paginationActive"}
+              forcePage={forcePage}
             />
           </div>
         </div>

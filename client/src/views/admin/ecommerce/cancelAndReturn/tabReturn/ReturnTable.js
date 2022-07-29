@@ -4,17 +4,24 @@ import SelectUC from "components/SelectUC";
 import ValidateService from "services/validateValue";
 import moment from "moment";
 
-const ReturnTable = ({ listData, handleChangeStatus }) => {
+const ReturnTable = ({
+  listData,
+  handleChangeStatus,
+  pageNumber,
+  setPageNumber,
+  forcePage,
+  setForcePage,
+}) => {
   const thClass =
     "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
   const tdClass =
     "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
   const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
 
-  const [pageNumber, setPageNumber] = useState(0);
+  // const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 8;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(listData.length / usersPerPage);
+  const pageCount = Math.ceil(listData.length / usersPerPage)||1;
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
@@ -82,7 +89,12 @@ const ReturnTable = ({ listData, handleChangeStatus }) => {
                   <th
                     key={index}
                     className={
-                      thClass + (item === "ลำดับที่" ? " text-center" : (item==="ยอดสุทธิ") ? " text-right pr-8" :  "")
+                      thClass +
+                      (item === "ลำดับที่"
+                        ? " text-center"
+                        : item === "ยอดสุทธิ"
+                        ? " text-right pr-8"
+                        : "")
                     }
                   >
                     {item}
@@ -114,7 +126,7 @@ const ReturnTable = ({ listData, handleChangeStatus }) => {
                     <td className={tdClass}>
                       <span className={tdSpan}>{value.memberName}</span>
                     </td>
-                    <td className={tdClass +" text-right pr-8"}>
+                    <td className={tdClass + " text-right pr-8"}>
                       <span className={tdSpan}>{value.sumPrice}</span>
                     </td>
                     <td className={tdClass}>
@@ -166,6 +178,7 @@ const ReturnTable = ({ listData, handleChangeStatus }) => {
               nextLinkClassName={"nextBttn"}
               disabledClassName={"paginationDisabled"}
               activeClassName={"paginationActive"}
+              forcePage={forcePage}
             />
           </div>
         </div>

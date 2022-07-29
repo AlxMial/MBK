@@ -5,8 +5,8 @@ import ReactPaginate from "react-paginate";
 import Modal from "react-modal";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import * as Storage from "../../../services/Storage.service";
-import { useDispatch } from 'react-redux';
-import { fetchLoading, fetchSuccess } from 'redux/actions/common';
+import { useDispatch } from "react-redux";
+import { fetchLoading, fetchSuccess } from "redux/actions/common";
 // components
 Modal.setAppElement("#root");
 
@@ -15,17 +15,18 @@ export default function UserList() {
   const [listUser, setListUser] = useState([]);
   const [listSearch, setListSerch] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   // const [deleteNumber, setDeleteNumber] = useState(0);
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
 
-  const options = [
-    { value: "1", label: "ผู้ดูแลระบบ" },
-    { value: "2", label: "บัญชี" },
-    { value: "3", label: "การตลาด" },
-  ];
+  // const options = [
+  //   { value: "1", label: "ผู้ดูแลระบบ" },
+  //   { value: "2", label: "บัญชี" },
+  //   { value: "3", label: "การตลาด" },
+  // ];
 
   /* Modal */
   function openModalSubject(id) {
@@ -54,13 +55,15 @@ export default function UserList() {
         )
       );
       setPageNumber(0);
+      setForcePage(0);
     }
   };
 
-  const pageCount = Math.ceil(listUser.length / usersPerPage);
+  const pageCount = Math.ceil(listUser.length / usersPerPage) || 1;
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
 
   const ChangeSelect = (options, value) => {
@@ -335,7 +338,10 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200" title={value.firstName+" "+value.lastName}>
+                              <div
+                                className="TextWordWarp-200"
+                                title={value.firstName + " " + value.lastName}
+                              >
                                 {value.firstName} {value.lastName}
                               </div>
                             </Link>
@@ -345,7 +351,10 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200" title={value.email}>
+                              <div
+                                className="TextWordWarp-200"
+                                title={value.email}
+                              >
                                 {value.email}
                               </div>
                             </Link>
@@ -355,7 +364,10 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200" title={value.position}>
+                              <div
+                                className="TextWordWarp-200"
+                                title={value.position}
+                              >
                                 {value.position}
                               </div>
                             </Link>
@@ -365,7 +377,10 @@ export default function UserList() {
                               className="text-gray-mbk hover:text-gray-mbk "
                               to={`/admin/usersinfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-150"  title={value.role}>
+                              <div
+                                className="TextWordWarp-150"
+                                title={value.role}
+                              >
                                 {value.role}
                               </div>
                             </Link>
@@ -375,12 +390,14 @@ export default function UserList() {
                             <i
                               className={
                                 "fas fa-trash cursor-pointer" +
-                                (sessionStorage.getItem("user") === value.userName
+                                (sessionStorage.getItem("user") ===
+                                value.userName
                                   ? " text-gray-500"
                                   : " text-red-500")
                               }
                               onClick={(e) => {
-                                sessionStorage.getItem("user") === value.userName
+                                sessionStorage.getItem("user") ===
+                                value.userName
                                   ? e.preventDefault()
                                   : openModalSubject(value.id, value.userName);
                               }}
@@ -408,8 +425,15 @@ export default function UserList() {
             </div>
             <div className="px-4">
               <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
-                <div className="lg:w-6/12 font-bold"        style={{ alignSelf: "stretch" }}>
-                {((pagesVisited+10) > listUser.length ? listUser.length : (pagesVisited+10))} {"/"}{listUser.length} {" "}รายการ
+                <div
+                  className="lg:w-6/12 font-bold"
+                  style={{ alignSelf: "stretch" }}
+                >
+                  {pagesVisited + 10 > listUser.length
+                    ? listUser.length
+                    : pagesVisited + 10}{" "}
+                  {"/"}
+                  {listUser.length} รายการ
                 </div>
                 <div className="lg:w-6/12">
                   <ReactPaginate
@@ -422,6 +446,7 @@ export default function UserList() {
                     nextLinkClassName={"nextBttn"}
                     disabledClassName={"paginationDisabled"}
                     activeClassName={"paginationActive"}
+                    forcePage={forcePage}
                   />
                 </div>
               </div>

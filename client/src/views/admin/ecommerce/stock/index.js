@@ -24,6 +24,8 @@ const Stock = () => {
   const [errorImage, setErrorImage] = useState(false);
   let history = useHistory();
 
+  const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const _defaultImage = {
     id: null,
     image: null,
@@ -108,6 +110,8 @@ const Stock = () => {
         )
       );
     }
+    setPageNumber(0);
+    setForcePage(0);
   };
 
   const openModal = async (id) => {
@@ -341,6 +345,10 @@ const Stock = () => {
             listStock={listStock}
             openModal={openModal}
             setListStock={handleDeleteList}
+            pageNumber={pageNumber}
+            setPageNumber={setPageNumber}
+            forcePage={forcePage}
+            setForcePage={setForcePage}
           />
         </div>
       </div>

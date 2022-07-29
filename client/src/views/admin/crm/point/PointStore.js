@@ -49,11 +49,12 @@ export default function PointStore() {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [isNew, setIsNew] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
   const useStyle = customEcomStyles();
   const useStyleMobile = customStylesMobile();
-  const pageCount = Math.ceil(listStore.length / usersPerPage);
+  const pageCount = Math.ceil(listStore.length / usersPerPage) || 1;
   const [langSymbo, setlangSymbo] = useState("");
   const [deleteValue, setDeleteValue] = useState("");
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
@@ -133,8 +134,9 @@ export default function PointStore() {
       setlistStore(
         listSearch.filter((x) => x.pointStoreName.toLowerCase().includes(e))
       );
-      setPageNumber(0);
     }
+    setPageNumber(0);
+    setForcePage(0);
   };
 
   /* formik */
@@ -710,6 +712,7 @@ export default function PointStore() {
                   nextLinkClassName={"nextBttn"}
                   disabledClassName={"paginationDisabled"}
                   activeClassName={"paginationActive"}
+                  forcePage={forcePage}
                 />
               </div>
             </div>

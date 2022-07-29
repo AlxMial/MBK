@@ -52,7 +52,7 @@ export default function PointCode() {
   const pagesVisited = pageNumber * usersPerPage;
   const [modalIsOpen, setIsOpen] = useState(false);
   const [modalIsOpenImport, setIsOpenImport] = useState(false);
-  const pageCount = Math.ceil(listPointCode.length / usersPerPage);
+  const pageCount = Math.ceil(listPointCode.length / usersPerPage) || 1;
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
   const [isEnable, setIsEnable] = useState(false);
@@ -1646,7 +1646,9 @@ export default function PointCode() {
                                         ValidateService.onHandleNumber(event)
                                       );
                                       formik.values.pointCodePoint =
-                                        ValidateService.onHandleNumberValue(event);
+                                        ValidateService.onHandleNumberValue(
+                                          event
+                                        );
                                     }}
                                     onBlur={formik.handleBlur}
                                     autoComplete="pointCodePoint"
@@ -1725,7 +1727,9 @@ export default function PointCode() {
                                         ValidateService.onHandleNumber(event)
                                       );
                                       formik.values.pointCodeQuantityCode =
-                                        ValidateService.onHandleNumberValue(event);
+                                        ValidateService.onHandleNumberValue(
+                                          event
+                                        );
 
                                       if (
                                         parseInt(event.target.value) > 1000000

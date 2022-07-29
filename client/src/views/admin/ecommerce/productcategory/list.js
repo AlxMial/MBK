@@ -19,15 +19,17 @@ const List = ({ dataList, fetchData }) => {
   const tdSpan = "text-gray-mbk ";
   const { addToast } = useToasts();
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const [infoModel, setinfoModel] = useState({ open: false });
   const [openConfirmDelete, setopenConfirmDelete] = useState({ open: false });
 
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(dataList.length / usersPerPage);
+  const pageCount = Math.ceil(dataList.length / usersPerPage) || 1;
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
 
   const openModal = async (id) => {
@@ -184,7 +186,7 @@ const List = ({ dataList, fetchData }) => {
           <div className="lg:w-6/12 font-bold" style={{ alignSelf: "stretch" }}>
             {pagesVisited + 10 > dataList.length
               ? dataList.length
-              : pagesVisited + 10}{" "}
+              : pagesVisited + 10}
             {"/"}
             {dataList.length} รายการ
           </div>
@@ -199,6 +201,7 @@ const List = ({ dataList, fetchData }) => {
               nextLinkClassName={"nextBttn"}
               disabledClassName={"paginationDisabled"}
               activeClassName={"paginationActive"}
+              forcePage={forcePage}
             />
           </div>
         </div>

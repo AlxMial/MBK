@@ -16,6 +16,8 @@ const TabCancel = () => {
   const [listData, setListData] = useState([]);
   const [listSearch, setListSearch] = useState([]);
   const [open, setOpen] = useState(false);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   // const [cancelStatus, setCancelStatus] = useState(false);
 
   const fetchData = async () => {
@@ -68,10 +70,16 @@ const TabCancel = () => {
               .toLowerCase()
               .includes(e) ||
             x.cancelDetail.toString().toLowerCase().includes(e) ||
-            (x.cancelOtherRemark==null ? "" : x.cancelOtherRemark).toString().toLowerCase().includes(e)
+            (x.cancelOtherRemark == null ? "" : x.cancelOtherRemark)
+              .toString()
+              .toLowerCase()
+              .includes(e)
         )
       );
     }
+
+    setPageNumber(0);
+    setForcePage(0);
   };
 
   const formik = useFormik({
@@ -193,6 +201,10 @@ const TabCancel = () => {
           <CancelList
             listData={listData}
             handleChangeStatus={handleChangeStatus}
+            pageNumber={pageNumber}
+            setPageNumber={setPageNumber}
+            forcePage={forcePage}
+            setForcePage={setForcePage}
           />
         </div>
       </div>

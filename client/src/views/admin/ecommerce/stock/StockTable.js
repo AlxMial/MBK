@@ -6,7 +6,10 @@ import { fetchLoading } from "redux/actions/common";
 import { useDispatch } from "react-redux";
 import { fetchSuccess } from "redux/actions/common";
 
-const StockTable = ({ listStock, openModal, setListStock }) => {
+const StockTable = ({ listStock, openModal, setListStock,
+  pageNumber, setPageNumber,
+  forcePage, setForcePage
+}) => {
   const thClass =
     "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
   const tdClass =
@@ -14,17 +17,18 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
   const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
 
   const [open, setOpen] = useState(false);
-  const [pageNumber, setPageNumber] = useState(0);
+  // const [pageNumber, setPageNumber] = useState(0);
+  // const [forcePage, setForcePage] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(listStock.length / usersPerPage);
+  const pageCount = Math.ceil(listStock.length / usersPerPage) || 1;
   const [deleteValue, setDeleteValue] = useState("");
   const dispatch = useDispatch();
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
-
   const showList = [
     { label: "แสดง", value: true },
     { label: "ไม่แสดง", value: false },
@@ -240,6 +244,7 @@ const StockTable = ({ listStock, openModal, setListStock }) => {
               nextLinkClassName={"nextBttn"}
               disabledClassName={"paginationDisabled"}
               activeClassName={"paginationActive"}
+              forcePage={forcePage}
             />
           </div>
         </div>

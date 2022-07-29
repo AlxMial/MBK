@@ -10,7 +10,14 @@ import { useDispatch } from "react-redux";
 // import { fetchLoading, fetchSuccess } from "redux/actions/common";
 // import { exportExcel } from "services/exportExcel";
 
-const OrderTable = ({ orderList, openModal }) => {
+const OrderTable = ({
+  orderList,
+  openModal,
+  pageNumber,
+  setPageNumber,
+  forcePage,
+  setForcePage,
+}) => {
   Modal.setAppElement("#root");
   const dispatch = useDispatch();
   const thClass =
@@ -21,13 +28,14 @@ const OrderTable = ({ orderList, openModal }) => {
 
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState("");
-  const [pageNumber, setPageNumber] = useState(0);
+  // const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(orderList.length / usersPerPage);
+  const pageCount = Math.ceil(orderList.length / usersPerPage) || 1;
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
 
   const getStatus = (value) => {
@@ -314,6 +322,7 @@ const OrderTable = ({ orderList, openModal }) => {
               nextLinkClassName={"nextBttn"}
               disabledClassName={"paginationDisabled"}
               activeClassName={"paginationActive"}
+              forcePage={forcePage}
             />
           </div>
         </div>

@@ -4,20 +4,28 @@ import SelectUC from "components/SelectUC";
 import ValidateService from "services/validateValue";
 import moment from "moment";
 
-const CancelTable = ({ listData, handleChangeStatus }) => {
+const CancelTable = ({
+  listData,
+  handleChangeStatus,
+  pageNumber,
+  setPageNumber,
+  forcePage,
+  setForcePage,
+}) => {
   const thClass =
     "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
   const tdClass =
     "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
   const tdSpan = "text-gray-mbk ";
 
-  const [pageNumber, setPageNumber] = useState(0);
+  // const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 8;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(listData.length / usersPerPage);
+  const pageCount = Math.ceil(listData.length / usersPerPage) || 1;
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
 
   const getoption = (value) => {
@@ -72,7 +80,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
 
   return (
     <>
-            <div className="block w-full overflow-x-auto  px-4 py-2">
+      <div className="block w-full overflow-x-auto  px-4 py-2">
         {/* Projects table */}
         <table className="items-center w-full border ">
           <thead>
@@ -82,7 +90,12 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
                   <th
                     key={index}
                     className={
-                      thClass + (item === "ลำดับที่" ? " text-center" : (item === "ยอดสุทธิ") ? " text-right pr-8" : "")
+                      thClass +
+                      (item === "ลำดับที่"
+                        ? " text-center"
+                        : item === "ยอดสุทธิ"
+                        ? " text-right pr-8"
+                        : "")
                     }
                   >
                     {item}
@@ -114,7 +127,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
                     <td className={tdClass}>
                       <span className={tdSpan}>{value.memberName}</span>
                     </td>
-                    <td className={tdClass +" text-right pr-8"}>
+                    <td className={tdClass + " text-right pr-8"}>
                       <span className={tdSpan}>{value.sumPrice}</span>
                     </td>
                     <td className={tdClass}>
@@ -166,6 +179,7 @@ const CancelTable = ({ listData, handleChangeStatus }) => {
               nextLinkClassName={"nextBttn"}
               disabledClassName={"paginationDisabled"}
               activeClassName={"paginationActive"}
+              forcePage={forcePage}
             />
           </div>
         </div>

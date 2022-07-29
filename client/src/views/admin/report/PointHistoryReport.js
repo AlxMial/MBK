@@ -26,8 +26,8 @@ export default function PointHistoryReport() {
   const [listPointCodeDt, setListPointCodeDt] = useState([]);
   const [pointHDId, setPointHDId] = useState(0);
   const { height, width } = useWindowDimensions();
-  const [forcePage, setForcePage] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingPoint, setIsLoadingPoint] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -211,7 +211,7 @@ export default function PointHistoryReport() {
   function afterOpenModal(type) {
     // references are now sync'd and can be accessed.
   }
-  const pageCount = Math.ceil(listPointCode.length / usersPerPage);
+  const pageCount = Math.ceil(listPointCode.length / usersPerPage)||1;
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);

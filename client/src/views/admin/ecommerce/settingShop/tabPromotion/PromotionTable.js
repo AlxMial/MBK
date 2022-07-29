@@ -11,15 +11,16 @@ const PromotionTable = ({ listPromotion, setListPromotion, openModal }) => {
   const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
 
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(listPromotion.length / usersPerPage);
+  const pageCount = Math.ceil(listPromotion.length / usersPerPage)||1;
   const [deleteValue, setDeleteValue] = useState("");
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
-
   const deletePromotion = () => {
     axios.delete(`/promotionStore/${deleteValue}`).then(() => {
       setListPromotion(
@@ -171,6 +172,7 @@ const PromotionTable = ({ listPromotion, setListPromotion, openModal }) => {
               nextLinkClassName={"nextBttn"}
               disabledClassName={"paginationDisabled"}
               activeClassName={"paginationActive"}
+              forcePage={forcePage}
             />
           </div>
         </div>

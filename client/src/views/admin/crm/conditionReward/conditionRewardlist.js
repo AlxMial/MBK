@@ -15,6 +15,7 @@ export default function ConditionRewardList() {
   const [listRedemption, setListRedemption] = useState([]);
   const [listSearch, setListSerch] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const [deleteNumber, setDeleteNumber] = useState(0);
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
@@ -70,8 +71,9 @@ export default function ConditionRewardList() {
           }
         })
       );
-      setPageNumber(0);
     }
+    setPageNumber(0);
+    setForcePage(0);
   };
 
   const handleChange = (e) => {
@@ -100,10 +102,11 @@ export default function ConditionRewardList() {
     }
   };
 
-  const pageCount = Math.ceil(listRedemption.length / RedemptionsPerPage);
+  const pageCount = Math.ceil(listRedemption.length / RedemptionsPerPage) || 1;
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
 
   const deleteRedemption = (e) => {
@@ -459,6 +462,7 @@ export default function ConditionRewardList() {
                     nextLinkClassName={"nextBttn"}
                     disabledClassName={"paginationDisabled"}
                     activeClassName={"paginationActive"}
+                    forcePage={forcePage}
                   />
                 </div>
               </div>

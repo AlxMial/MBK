@@ -19,6 +19,7 @@ export default function MemberList() {
   const [listUser, setListUser] = useState([]);
   const [listSearch, setListSerch] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -59,61 +60,17 @@ export default function MemberList() {
             moment(x.registerDate).format("DD/MM/YYYY").includes(e)
         )
       );
-      setPageNumber(0);
     }
+    setPageNumber(0);
+    setForcePage(0);
   };
 
-  // const handleChange = (e) => {
-  //   const { name, checked } = e.target;
-  //   if (name === "allSelect") {
-  //     let tempUser = listUser.map((user) => {
-  //       return { ...user, isDeleted: checked };
-  //     });
-  //     setListUser(tempUser);
-  //     setDeleteNumber(tempUser.filter((x) => x.isDeleted === true).length);
-  //   } else {
-  //     let tempUser = listUser.map((user) =>
-  //       user.id.toString() === name
-  //         ? {
-  //             ...user,
-  //             isDeleted: checked,
-  //           }
-  //         : user
-  //     );
-  //     setListUser(tempUser);
-  //     setDeleteNumber(tempUser.filter((x) => x.isDeleted === true).length);
-  //   }
-  // };
-
-  const pageCount = Math.ceil(listUser.length / usersPerPage);
+  const pageCount = Math.ceil(listUser.length / usersPerPage) || 1;
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
+    setForcePage(selected);
   };
-
-  /* API Deleted */
-  // const deleteByList = async () => {
-  //   if (deleteNumber > 0) {
-  //     var ArrayDeleted = [];
-  //     listUser.forEach((field) => {
-  //       if (field.isDeleted === true) {
-  //         ArrayDeleted.push(field.id);
-  //       } else field.isDeleted = false;
-  //     });
-  //     if (ArrayDeleted.length > 0) {
-  //       console.log(ArrayDeleted);
-  //       axios.delete(`/members/multidelete/${ArrayDeleted}`).then(() => {
-  //         setDeleteNumber(0);
-  //         setListUser(
-  //           listUser.filter((val) => {
-  //             return val.isDeleted !== true;
-  //           })
-  //         );
-  //       });
-  //     }
-  //     closeModalSubject();
-  //   }
-  // };
 
   const deleteUser = (e) => {
     axios.delete(`/members/${e}`).then(() => {
@@ -221,33 +178,6 @@ export default function MemberList() {
       }
       setisExport(response.data.isExport);
     });
-    // const role = await GetPermissionByUserName();
-    // if (role.data.data.filter((e) => e.id === 10).length > 0) {
-    //   setTypePermission("1");
-    //   axios.get("members/Show").then((response) => {
-    //     dispatch(fetchSuccess());
-    //     if (response.data.error) {
-    //       console.log(response.data.error);
-    //     } else {
-    //       setListUser(response.data.tbMember);
-    //       setListSerch(response.data.tbMember);
-    //     }
-    //   });
-    // } else if (role.data.data.filter((e) => e.id === 1).length > 0) {
-    //   setTypePermission("3");
-    //   axios.get("members").then((response) => {
-    //     dispatch(fetchSuccess());
-    //     if (response.data.error) {
-    //       console.log(response.data.error);
-    //     } else {
-    //       setListUser(response.data.tbMember);
-    //       setListSerch(response.data.tbMember);
-    //     }
-    //   });
-    // } else {
-    //   dispatch(fetchSuccess());
-    //   setTypePermission("2");
-    // }
   };
 
   useEffect(() => {
@@ -256,20 +186,7 @@ export default function MemberList() {
 
   return (
     <>
-      {isLoading ? (
-        <>
-          {" "}
-          <Spinner customText={"Loading"} />
-        </>
-      ) : (
-        <></>
-      )}
-      {/* <div className="flex flex-warp">
-        <span className="text-sm font-bold margin-auto-t-b">
-          <i className="fas fa-user-friends"></i>&nbsp;
-        </span>
-        <span className="text-base margin-auto font-bold">จัดการสมาชิก</span>
-      </div> */}
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
 
       <div className="flex flex-warp">
         <span className="text-sm margin-auto-t-b font-bold ">
@@ -323,15 +240,16 @@ export default function MemberList() {
                       className="imgExcel margin-a"
                     ></img>{" "}Export Excel
                   </button> */}
-                 
+
                   <div className="flex mt-2 float-right">
-                  {isExport ? 
-                    <img
-                      src={require("assets/img/mbk/excel.png").default}
-                      alt="..."
-                      onClick={() => Excel("ข้อมูลสมาชิก")}
-                      className="imgExcel margin-auto-t-b cursor-pointer "
-                    ></img> :null}
+                    {isExport ? (
+                      <img
+                        src={require("assets/img/mbk/excel.png").default}
+                        alt="..."
+                        onClick={() => Excel("ข้อมูลสมาชิก")}
+                        className="imgExcel margin-auto-t-b cursor-pointer "
+                      ></img>
+                    ) : null}
                     {/* <span onClick={() => Excel("ข้อมูลสมาชิก")} className="text-gray-500 font-bold margin-auto-t-b ml-2 cursor-pointer ">Export Excel</span> */}
                     {/* <Link to="/admin/membersinfo" className={(typePermission === "1") ? " " : " hidden"}>
                         <button
@@ -558,6 +476,7 @@ export default function MemberList() {
                     nextLinkClassName={"nextBttn"}
                     disabledClassName={"paginationDisabled"}
                     activeClassName={"paginationActive"}
+                    forcePage={forcePage}
                   />
                 </div>
               </div>

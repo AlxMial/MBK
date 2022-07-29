@@ -35,11 +35,12 @@ export default function PointEcommerce() {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [isNew, setIsNew] = useState(0);
   const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
   const useStyle = customEcomStyles();
   const useStyleMobile = customStylesMobile();
-  const pageCount = Math.ceil(listEcommerce.length / usersPerPage);
+  const pageCount = Math.ceil(listEcommerce.length / usersPerPage)||1;
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [errorEndDate, setErrorEndDate] = useState(false);
   const [errorDate, setErrorDate] = useState(false);
@@ -213,6 +214,8 @@ export default function PointEcommerce() {
         )
       );
     }
+    setPageNumber(0);
+    setForcePage(0);
   };
 
   /* formik */
@@ -1290,6 +1293,7 @@ export default function PointEcommerce() {
               nextLinkClassName={"nextBttn"}
               disabledClassName={"paginationDisabled"}
               activeClassName={"paginationActive"}
+              forcePage={forcePage}
             />
           </div>
         </div>

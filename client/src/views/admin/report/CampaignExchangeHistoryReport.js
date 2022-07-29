@@ -99,8 +99,10 @@ export default function CampaignExchangeHistoryReport() {
             // const _startDate =
             //   x.startDate !== "" ? convertToDate(x.startDate) : null;
             // const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
-            const _startDate = x.redeemDate !== "" ? convertToDate(x.redeemDate) : null;
-            const _endDate =x.redeemDate !== "" ? convertToDate(x.redeemDate) : null;
+            const _startDate =
+              x.redeemDate !== "" ? convertToDate(x.redeemDate) : null;
+            const _endDate =
+              x.redeemDate !== "" ? convertToDate(x.redeemDate) : null;
             let isDate = false;
             if (x.startDate !== "" && x.endDate !== "") {
               isDate = true;
@@ -259,7 +261,7 @@ export default function CampaignExchangeHistoryReport() {
     });
   };
 
-  const pageCount = Math.ceil(listCampaignExchange.length / usersPerPage);
+  const pageCount = Math.ceil(listCampaignExchange.length / usersPerPage) || 1;
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);

@@ -35,6 +35,10 @@ const Order = () => {
   const [cancelReason, setCancelReason] = useState(false);
   const [cancelStatus, setcancelStatus] = useState(null);
   const [block, setBlock] = useState(false);
+
+  const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
+
   const [ismodalIsOpenEdit, setmodalIsOpenEdit] = useState({
     open: false,
     callback: () => {},
@@ -121,6 +125,8 @@ const Order = () => {
         )
       );
     }
+    setPageNumber(0);
+    setForcePage(0);
   };
 
   const openModal = async (id) => {
@@ -520,7 +526,14 @@ const Order = () => {
               </div>
             </div>
           </div>
-          <OrderList orderList={orderList} openModal={openModal} />
+          <OrderList
+            orderList={orderList}
+            openModal={openModal}
+            pageNumber={pageNumber}
+            setPageNumber={setPageNumber}
+            forcePage={forcePage}
+            setForcePage={setForcePage}
+          />
         </div>
       </div>
       <ConfirmEdit

@@ -17,19 +17,7 @@ export default function CampaignRewardReport() {
   const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const listCampaignType = [
-    { value: "1", type: "Code", status: "แลกคะแนน" },
-    { value: "2", type: "E-Commerce", status: "รับคะแนน" },
-    { value: "3", type: "Register", status: "รับคะแนน" },
-  ];
-  const redemptionType = [
-    { value: "1", label: "Standard" },
-    { value: "2", label: "Game" },
-  ];
-  const rewardType = [
-    { value: "1", label: "E-Coupon" },
-    { value: "2", label: "สินค้า" },
-  ];
+  const pageCount = Math.ceil(listCampaign.length / usersPerPage) || 1;
   const formSerch = useFormik({
     initialValues: {
       inputSerch: "",
@@ -58,10 +46,10 @@ export default function CampaignRewardReport() {
             const _startDate =
               x.startDate !== "" ? convertToDate(x.startDate) : null;
             const _endDate = x.endDate !== "" ? convertToDate(x.endDate) : null;
-            let isDate = false;
-            if (x.startDate !== "" && x.endDate !== "") {
-              isDate = true;
-            }
+            // let isDate = false;
+            // if (x.startDate !== "" && x.endDate !== "") {
+            //   isDate = true;
+            // }
             if (
               (inputSerch !== ""
                 ? Search(x.CampaignName, inputSerch) ||
@@ -169,8 +157,6 @@ export default function CampaignRewardReport() {
     }
   };
 
-  const pageCount = Math.ceil(listCampaign.length / usersPerPage);
-
   const changePage = ({ selected }) => {
     setPageNumber(selected);
     setForcePage(selected);
@@ -223,6 +209,7 @@ export default function CampaignRewardReport() {
         use: e.use == null ? "-" : e.use,
         toTal: e.count == null ? "-" : e.count - e.use,
       });
+      return e;
     });
     exportExcel(
       _listCampaign,
@@ -248,16 +235,49 @@ export default function CampaignRewardReport() {
     });
   }, []);
 
+  const dataTable = {
+    head: [
+      { name: "ลำดับที่", css: "text-center" },
+      { name: "แคมเปญ", css: "text-left" },
+      { name: "คะแนน", css: "text-center" },
+      { name: "วันที่เริ่มต้น", css: "text-center" },
+      { name: "วันที่สิ้นสุด", css: "text-center" },
+      { name: "วันที่หมดอายุ", css: "text-center" },
+      { name: "ประเภทแคมเปญ", css: "text-center" },
+      { name: "ประเภทรางวัล", css: "text-center" },
+      { name: "จำนวนรางวัล", css: "text-right" },
+      { name: "แลกแล้ว", css: "text-right" },
+      { name: "คงเหลือ", css: "text-right" },
+    ],
+    DT: [
+      { name: "listNo", css: "text-center" },
+      { name: "CampaignName", css: "text-left" },
+      { name: "points", css: "text-center" },
+      { name: "startDate", css: "text-center" },
+      { name: "endDate", css: "text-center" },
+      { name: "expiredDate", css: "text-center" },
+      { name: "redemptionType", css: "text-center" },
+      { name: "rewardType", css: "text-center" },
+      { name: "count", css: "text-right" },
+      { name: "use", css: "text-right" },
+      { name: "count", css: "text-right" },
+    ],
+    dataDT: (e, value) => {
+      return e.name.toLowerCase().includes("date")
+        ? value[e.name] == null
+          ? "-"
+          : moment(value[e.name]).format("DD/MM/YYYY")
+        : e.name === "remain"
+        ? value.count - value.use
+        : value[e.name] == null
+        ? "-"
+        : value[e.name];
+    },
+  };
+
   return (
     <>
-      {isLoading ? (
-        <>
-          {" "}
-          <Spinner customText={"Loading"} />
-        </>
-      ) : (
-        <></>
-      )}
+      {isLoading ? <Spinner customText={"Loading"} /> : null}
       <div className="flex flex-warp">
         <span className="text-sm margin-auto-t-b font-bold ">
           <i className="fas fa-cog"></i>&nbsp;&nbsp;
@@ -426,84 +446,19 @@ export default function CampaignRewardReport() {
             <table className="items-center w-full border table-fill ">
               <thead>
                 <tr>
-                  <th
-                    className={
-                      "px-6 w-5 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    ลำดับที่
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    แคมเปญ
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    คะแนน
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    วันที่เริ่มต้น
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    วันที่สิ้นสุด
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    วันที่หมดอายุ
-                  </th>
-
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    ประเภทแคมเปญ
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    ประเภทรางวัล
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    จำนวนรางวัล
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    แลกแล้ว
-                  </th>
-                  <th
-                    className={
-                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
-                    }
-                  >
-                    คงเหลือ
-                  </th>
+                  {[...dataTable.head].map((e, i) => {
+                    return (
+                      <th
+                        key={i}
+                        className={
+                          e.css +
+                          " px-6 w-5 align-middle border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold  bg-blueGray-50 text-blueGray-500 "
+                        }
+                      >
+                        {e.name}
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
@@ -513,63 +468,24 @@ export default function CampaignRewardReport() {
                     value.listNo = pagesVisited + key + 1;
                     return (
                       <tr key={key}>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center">
-                          <span className="px-4 margin-a">{value.listNo}</span>
-                        </td>
-                        <td className=" focus-within:border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-left cursor-pointer">
-                          <span
-                            title={value.CampaignName}
-                            className="text-gray-mbk  hover:text-gray-mbk "
-                          >
-                            {value.CampaignName}
-                          </span>
-                          <span className="details">more info here</span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.points}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {moment(value.startDate).format("DD/MM/YYYY")}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {moment(value.endDate).format("DD/MM/YYYY")}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.expireDate == null
-                              ? "-"
-                              : moment(value.expiredDate).format("DD/MM/YYYY")}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.redemptionType}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.rewardType == null ? "-" : value.rewardType}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.count}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center">
-                          <span className="text-gray-mbk  hover:text-gray-mbk ">
-                            {value.use}
-                          </span>
-                        </td>
-                        <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center ">
-                          {value.count == null ? "" : value.count - value.use}
-                        </td>
+                        {[...dataTable.DT].map((e, i) => {
+                          return (
+                            <td
+                              key={i}
+                              className={
+                                e.css +
+                                " border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap "
+                              }
+                            >
+                              <span
+                                className="px-4 margin-a"
+                                title={dataTable.dataDT(e, value)}
+                              >
+                                {dataTable.dataDT(e, value)}
+                              </span>
+                            </td>
+                          );
+                        })}
                       </tr>
                     );
                   })}
