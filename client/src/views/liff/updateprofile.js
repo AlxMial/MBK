@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 import { Radio } from "antd";
-import * as Address from "@services/GetAddress.js";
+import * as Address from "@services/GetAddressLine.js";
 import { path, getMember, membersDpd } from "@services/liff.services";
 import * as Session from "@services/Session.service";
 import {
@@ -55,11 +55,11 @@ const Updateprofile = () => {
   };
   const address = async () => {
     const province = await Address.getProvince();
-    const district = await Address.getAddress("district", "1");
-    const subDistrict = await Address.getAddress("subDistrict", "1001");
+    // const district = await Address.getAddress("district", "1");
+    // const subDistrict = await Address.getAddress("subDistrict", "1");
     setDataProvice(province);
-    setDataDistrict(district);
-    setSubDistrict(subDistrict);
+    // setDataDistrict(district);
+    // setSubDistrict(subDistrict);
   };
   const [Data, settbMember] = useState({
     id: "",

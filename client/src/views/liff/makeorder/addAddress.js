@@ -42,7 +42,7 @@ const AddAddress = () => {
   const address = async () => {
     const province = await Address.getProvince();
     const district = await Address.getAddress("district", "1");
-    const subDistrict = await Address.getAddress("subDistrict", "1001");
+    const subDistrict = await Address.getAddress("subDistrict", "1");
     setDataProvice(province);
     setDataDistrict(district);
     setSubDistrict(subDistrict);
@@ -57,8 +57,8 @@ const AddAddress = () => {
     birthDate: null,
     registerDate: null,
     address: "",
-    subDistrict: "100101",
-    district: "1001",
+    subDistrict: "1",
+    district: "1",
     province: "1",
     country: "",
     postcode: "10200",

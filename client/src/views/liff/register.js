@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import OtpInput from "react-otp-input";
 import axios from "services/axios";
 import { senderOTP, senderValidate } from "services/axios";
-import * as Address from "@services/GetAddress.js";
+import * as Address from "@services/GetAddressLine.js";
 import * as Session from "@services/Session.service";
 import { Radio } from "antd";
 import DatePicker from "react-mobile-datepicker";
@@ -64,7 +64,7 @@ const Register = () => {
   const address = async () => {
     const province = await Address.getProvince();
     const district = await Address.getAddress("district", "1");
-    const subDistrict = await Address.getAddress("subDistrict", "1001");
+    const subDistrict = await Address.getAddress("subDistrict", "1");
     setDataProvice(province);
     setDataDistrict(district);
     setSubDistrict(subDistrict);
@@ -80,8 +80,8 @@ const Register = () => {
     birthDate: moment(new Date()).toDate(),
     registerDate: moment(new Date()).toDate(),
     address: "",
-    subDistrict: "100101",
-    district: "1001",
+    subDistrict: "1",
+    district: "1",
     province: "1",
     country: "",
     postcode: "10200",

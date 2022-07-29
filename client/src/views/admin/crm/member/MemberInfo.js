@@ -144,6 +144,9 @@ export default function MemberInfo() {
       memberPoint: 0,
       memberPointExpire: new Date(),
       memberType: "1",
+      isPolicy1: false,
+      isPolicy2: false,
+      remark: "",
       addBy: "",
       updateBy: "",
     },
@@ -310,7 +313,15 @@ export default function MemberInfo() {
       var districtId = response.data.tbMember["district"];
       var subDistrictId = response.data.tbMember["subDistrict"];
       for (var columns in response.data.tbMember) {
-        if (columns === "subDistrict") {
+        if (columns === "remark") {
+          formik.setFieldValue(
+            columns,
+            response.data.tbMember[columns] == null
+              ? ""
+              : response.data.tbMember[columns],
+            false
+          );
+        } else if (columns === "subDistrict") {
           const subDistrict = await Address.getAddress(
             "subDistrict",
             districtId
@@ -361,23 +372,23 @@ export default function MemberInfo() {
     formik.values.province =
       formik.values.province === "" ? "1" : formik.values.province;
     formik.values.district =
-      formik.values.district === "" ? "1001" : formik.values.district;
+      formik.values.district === "" ? "1" : formik.values.district;
     formik.values.subDistrict =
-      formik.values.subDistrict === "" ? "100101" : formik.values.subDistrict;
+      formik.values.subDistrict === "" ? "1" : formik.values.subDistrict;
   };
 
   const fatchAddress = async () => {
     const province = await Address.getProvince();
-    const district = await Address.getAddress("district", "1");
-    const subDistrict = await Address.getAddress("subDistrict", "1001");
-    const postcode = await Address.getAddress("postcode", subDistrict[0].value);
+    // const district = await Address.getAddress("district", "1");
+    // const subDistrict = await Address.getAddress("subDistrict", "1");
+    // const postcode = await Address.getAddress("postcode", subDistrict[0].value);
     setDataProvice(province);
-    setDataDistrict(district);
-    setSubDistrict(subDistrict);
-    formik.setFieldValue("province", "1");
-    formik.setFieldValue("district", "1001");
-    formik.setFieldValue("subDistrict", "100101");
-    formik.setFieldValue("postcode", postcode);
+    // setDataDistrict(district);
+    // setSubDistrict(subDistrict);
+    // formik.setFieldValue("province", "1");
+    // formik.setFieldValue("district", "1");
+    // formik.setFieldValue("subDistrict", "1");
+    // formik.setFieldValue("postcode", postcode);
   };
 
   useEffect(() => {
@@ -983,10 +994,13 @@ export default function MemberInfo() {
                             district[0].value
                           );
                           setSubDistrict(subDistrict);
-                          formik.setFieldValue(
-                            "subDistrict",
-                            subDistrict[0].value
-                          );
+                          console.log(subDistrict);
+
+                          if (subDistrict.length > 0)
+                            formik.setFieldValue(
+                              "subDistrict",
+                              subDistrict[0].value
+                            );
                           const postcode = await Address.getAddress(
                             "postcode",
                             subDistrict[0].value
@@ -1089,7 +1103,7 @@ export default function MemberInfo() {
                                 dataSubDistrict,
                                 formik.values.subDistrict
                               )
-                            : "100101"
+                            : ""
                         }
                       />
                     </div>
