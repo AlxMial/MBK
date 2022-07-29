@@ -118,7 +118,7 @@ const Member = () => {
               </div>
               <div style={{ paddingLeft: "10px" }}>
                 <div
-                  className="mt-2 font-bold text-green-mbk text-xs"
+                  className="mt-2 font-bold text-green-mbk text-xs relative flex items-center justify-center"
                   style={{
                     // fontSize: "0.7rem",
                     minWidth: "120px",
@@ -137,17 +137,20 @@ const Member = () => {
                           ? "#929292"
                           : "#d0af2c",
                     borderRadius: "20px",
-                    padding: "2px 10px",
-                    textAlign: "center",
+                    // padding: "2px 10px",
+                    height: "25px",
+                    // textAlign: "center",
                   }}
                 >
-                  {isError
-                    ? "-"
-                    : tbMember.memberType === "1"
-                      ? "GREEN MEMBER"
-                      : tbMember.memberType === "2"
-                        ? "SLIVER MEMBER"
-                        : "GOLD MEMBER"}
+                  <div className="member-label">
+                    {isError
+                      ? "-"
+                      : tbMember.memberType === "1"
+                        ? "GREEN MEMBER"
+                        : tbMember.memberType === "2"
+                          ? "SLIVER MEMBER"
+                          : "GOLD MEMBER"}
+                  </div>
                 </div>
                 <div className="text-white font-bold text-xs mt-2">
                   {isError ? "-" : tbMember.firstName + " " + tbMember.lastName}
