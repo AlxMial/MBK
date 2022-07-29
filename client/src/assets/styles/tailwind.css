@@ -3129,6 +3129,11 @@ select {
 }
 
 @media (min-width: 768px) {
+  .md\:py-8 {
+    padding-top: 1.75rem;
+    padding-bottom: 1.75rem;
+  }
+
   .md\:block {
     display: block;
   }
@@ -3303,6 +3308,10 @@ select {
 
   .md\:w-8\/12 {
     width: 66.666667%;
+  }
+
+  .md\:w-10\/12 {
+    width: 80%;
   }
 }
 
@@ -5152,11 +5161,11 @@ span.rc-time-picker.time-picker-input.hidtext .rc-time-picker-input {
   filter: blur(4px);
 }
 
-.profile-pic #eCouponImage{
+.profile-pic #eCouponImage {
   width: 190px;
-   height: 132px ;
+  height: 132px;
 }
 .profile-pic #label-image-eCouponImage {
   width: 190px;
-  height: 132px ;
+  height: 132px;
 }

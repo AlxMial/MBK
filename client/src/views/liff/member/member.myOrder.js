@@ -126,7 +126,7 @@ const MyOrder = () => {
                       </div>
                       {hd.paymentStatus < 3 && (
                         <div
-                          className="absolute px-2 text-white border right-0"
+                          className="absolute px-2 text-white border right-0 text-12"
                           style={{
                             borderRadius: "10px",
                             background: "red",

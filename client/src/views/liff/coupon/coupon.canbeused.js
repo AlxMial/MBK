@@ -47,7 +47,7 @@ const Canbeused = ({ data }) => {
                       {e.points + " คะแนน"}
                     </div>
                     <div className="w-full  mx-auto font-normal text-liff-gray-mbk" style={{ width: "80%", fontSize: "11px", }}>
-                      {"ใช้ได้ถึง " + (e.expiredDate === null ? "-" : moment(e.expiredDate).locale("th").add(543, "year").format("DD MMM YYYY"))}
+                      {e.expiredDate !== null ? "ใช้ได้ถึง " + moment(e.expiredDate).locale("th").add(543, "years").format("DD MMM yyyy") : "ไม่หมดอายุ"}
                     </div>
                     <div className="liff-inline mb-2 mx-auto" style={{ width: "80%" }}></div>
                   </div>

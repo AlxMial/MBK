@@ -1241,6 +1241,7 @@ router.get("/getMyCoupon", validateLineToken, async (req, res) => {
               isUsedCoupon: _coupon[i].isUsedCoupon,
               points: _tbRedemptionConditionsHD.dataValues.points,
               startDate: _RedemptionCoupon.startDate,
+              isNotExpired: _RedemptionCoupon.isNotExpired,
               expiredDate: _RedemptionCoupon.isNotExpired ? null : _RedemptionCoupon.expireDate,
               isDeleted: _RedemptionCoupon.isDeleted,
               isCancel: _RedemptionCoupon.isCancel,

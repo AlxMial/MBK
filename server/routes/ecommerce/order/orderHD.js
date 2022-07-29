@@ -255,7 +255,7 @@ router.put("/", validateToken, async (req, res) => {
   try {
     req.body.firstName = Encrypt.EncodeKey(req.body.firstName);
     req.body.lastName = Encrypt.EncodeKey(req.body.lastName);
-  } catch {}
+  } catch { }
 
   const dataUpdate = await tbOrderHD.update(req.body, {
     where: { id: req.body.id },
@@ -305,21 +305,21 @@ const isFlashSale = (e) => {
   let _today = new Date();
   let today = new Date(
     _today.getFullYear() +
-      "/" +
-      (_today.getMonth() + 1) +
-      "/" +
-      _today.getDate()
+    "/" +
+    (_today.getMonth() + 1) +
+    "/" +
+    _today.getDate()
   );
   if (today >= startDateCampaign && today <= endDateCampaign) {
     let startTimeCampaign = new Date(
       new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-        " " +
-        e.startTimeCampaign
+      " " +
+      e.startTimeCampaign
     );
     let endTimeCampaign = new Date(
       new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-        " " +
-        e.endTimeCampaign
+      " " +
+      e.endTimeCampaign
     );
     today = new Date();
     // อยู่ในเวลา
@@ -1861,8 +1861,8 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         email: member ? Encrypt.DecodeKey(member.dataValues.email) : null,
         memberName: member
           ? Encrypt.DecodeKey(member.dataValues.firstName) +
-            " " +
-            Encrypt.DecodeKey(member.dataValues.lastName)
+          " " +
+          Encrypt.DecodeKey(member.dataValues.lastName)
           : null,
         price: OrderHDData.dataValues.netTotal,
         Payment: _tbPayment,
@@ -2464,6 +2464,7 @@ router.post(
             });
           }
         }
+
       }
     } catch (e) {
       status = false;

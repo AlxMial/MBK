@@ -40,6 +40,7 @@ const Reward = () => {
       (res) => {
         if (res.status) {
           if (res.data.status) {
+            // console.log('getRedemptionconditionshd', res.data.Redemptionconditionshd)
             setRedemptionconditionshd(res.data.Redemptionconditionshd);
           } else {
             setDataError();
@@ -151,11 +152,7 @@ const Reward = () => {
                           {e.points + " คะแนน"}{" "}
                         </div>
                         <div className="w-full text-liff-gray-mbk">
-                          {"ใช้ได้ถึง " +
-                            moment(e.endDate)
-                              .locale("th")
-                              .add("years", 543)
-                              .format("DD MMM yyyy")}
+                          {!e.isNotExpired ? "ใช้ได้ถึง " + moment(e.endDate).locale("th").add(543, "years").format("DD MMM yyyy") : "ไม่หมดอายุ"}
                         </div>
                         <div className="liff-inline mb-2" />
                       </div>

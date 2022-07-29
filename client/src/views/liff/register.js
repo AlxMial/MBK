@@ -333,7 +333,7 @@ const Register = () => {
       if (response.data.isEmail) {
         setSameEmail(true);
         inputEmailRef.current.focus();
-        setSamePhone(true);
+        // setSamePhone(true);
         const field = document.querySelector("input[name=email]");
         field.focus();
       } else if (response.data.isPhone) {

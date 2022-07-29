@@ -136,37 +136,38 @@ const DetailOrder = ({
                             {dt.productName}
                           </div>
 
-                          <div className="flex text-12">
-                            <div
-                              className="flex absolute"
-                              style={{ right: "0" }}
-                            >
-                              <div
-                                style={{
-                                  textDecoration:
-                                    dt.discount > 0 ? "line-through" : "none",
-                                  color: dt.isFree
-                                    ? "red"
-                                    : dt.discount > 0
-                                      ? "#ddd"
-                                      : "#047738",
-                                }}
-                              >
-                                {dt.isFree
-                                  ? "Free"
-                                  : "฿ " + fn.formatMoney(dt.price)}
-                              </div>
-                              {dt.discount > 0 ? (
-                                <div
-                                  className="pl-2"
-                                  style={{ color: "red" }}
-                                >
-                                  {"฿ " + fn.formatMoney(dt.discount)}
-                                </div>
-                              ) : null}
-                            </div>
-                            <div className="text-liff-gray-mbk">
+                          <div className="flex text-12 justify-between">
+                            <div className="text-liff-gray-mbk sec-left">
                               {"x" + dt.amount}
+                            </div>
+                            <div className="sec-right">
+                              <div
+                                className="flex"
+                              >
+                                <div
+                                  style={{
+                                    textDecoration:
+                                      dt.discount > 0 ? "line-through" : "none",
+                                    color: dt.isFree
+                                      ? "red"
+                                      : dt.discount > 0
+                                        ? "#ddd"
+                                        : "#047738",
+                                  }}
+                                >
+                                  {dt.isFree
+                                    ? "Free"
+                                    : "฿ " + fn.formatMoney(dt.price)}
+                                </div>
+                                {dt.discount > 0 ? (
+                                  <div
+                                    className="pl-2"
+                                    style={{ color: "red" }}
+                                  >
+                                    {"฿ " + fn.formatMoney(dt.discount)}
+                                  </div>
+                                ) : null}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -238,7 +239,7 @@ const DetailOrder = ({
 
               <div className="liff-inline mb-2" />
               <div
-                className="flex relative"
+                className="flex relative justify-between"
                 onClick={() => {
                   onClick(e);
                 }}
@@ -247,8 +248,8 @@ const DetailOrder = ({
                   {"ยอดรวมสินค้า ( " + e.amount + " ชิ้น)"}
                 </div>
                 <div
-                  className="font-bold absolute text-12 "
-                  style={{ right: "0", color: "#047738" }}
+                  className="font-bold text-12 "
+                  style={{ color: "#047738" }}
                 >
                   {"฿ " + fn.formatMoney(e.price)}
                 </div>

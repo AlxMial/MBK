@@ -44,6 +44,7 @@ const ShowCart = () => {
               let tbStockall = [];
               cart.map((e, i) => {
                 let tbStock = e.tbStock;
+                tbStock.quantity = 0;
                 tbStockall.push(tbStock);
               });
 
@@ -51,6 +52,7 @@ const ShowCart = () => {
               let productAction = [];
               setCartItem(tbStockall);
               let price = 0;
+
               tbStockall.filter((e) => {
                 let quantity = cart.find((o) => o.id === e.id).quantity;
                 e.quantity = quantity;
@@ -237,7 +239,7 @@ const ShowCart = () => {
             return (
               <div key={i}>
                 <div className="flex mt-2" style={{ height: "90px " }}>
-                  <div style={{ width: "30%" }}>
+                  <div style={{ width: "30%" }} className="px-2">
                     <ImageUC
                       style={{ margin: "auto", height: "90px" }}
                       find={1}
@@ -409,7 +411,7 @@ const ShowCart = () => {
         </div>
       )}
       <div className="liff-inline mb-2" />
-      <div className="flex px-2 items-center" style={{ height: "30px" }}>
+      <div className="flex px-2 items-center mx-auto" style={{ height: "30px", width: "95%", }}>
         <div className="text-xs font-bold" style={{ width: "50%" }}>
           {"ยอดรวมสินค้า (" + sumQuantity + " ชิ้น)"}
         </div>
@@ -422,29 +424,30 @@ const ShowCart = () => {
       </div>
       <div className="liff-inline mb-2" />
       <div
-        className="flex relative"
+        className="flex relative mx-auto justify-between"
         style={{
           height: "30px",
           alignItems: "center",
-          justifyContent: "center",
+          width: "95%",
           // marginTop: "0.5rem"
         }}
       >
-        <div className="px-2 absolute" style={{ left: "10px" }}>
-          <img
-            style={{ margin: "auto", width: "22px", height: "22px" }}
-            src={require("assets/img/mbk/icon_sale.png").default}
-            alt="icon_sale"
-            className="w-32 border-2 border-blueGray-50"
-          ></img>
+        <div className="sec-left flex">
+          <div className="px-2" >
+            <img
+              style={{ margin: "auto", width: "22px", height: "22px" }}
+              src={require("assets/img/mbk/icon_sale.png").default}
+              alt="icon_sale"
+              className="w-32 border-2 border-blueGray-50"
+            ></img>
+          </div>
+          <div
+            className="px-2 text-bold text-xs"
+          >
+            {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
+          </div>
         </div>
-        <div
-          className="px-2 absolute text-bold text-xs"
-          style={{ left: "50px" }}
-        >
-          {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
-        </div>
-        <div className="absolute" style={{ right: "10px" }}>
+        <div className="sec-right">
           <div className="flex">
             <div
               style={{
@@ -453,7 +456,7 @@ const ShowCart = () => {
                     ? "red"
                     : "var(--mq-txt-color, rgb(192, 192, 192))",
               }}
-              className="text-xs"
+              className="text-xs px-2"
               onClick={() => {
                 if (CartItem.length > 0) {
                   history.push(path.usecoupon.replace(":id", "cart"));
@@ -469,26 +472,25 @@ const ShowCart = () => {
                 )
                 : "ใช้ส่วนลด >"}
             </div>
-            <div className="px-2">
-              {usecoupon != null ? (
-                <i
-                  className="fas fa-times-circle"
-                  style={{ color: "red" }}
-                  onClick={Cancelcoupon}
-                ></i>
-              ) : null}
+            {usecoupon && <div className="px-2">
+              <i
+                className="fas fa-times-circle"
+                style={{ color: "red" }}
+                onClick={Cancelcoupon}
+              ></i>
             </div>
+            }
           </div>
         </div>
       </div>
       <div className="liff-inline" />
       <div></div>
       <div
-        className="flex relative mt-5"
+        className="flex relative mt-5 mx-auto justify-between"
         style={{
           height: "40px",
           alignItems: "center",
-          justifyContent: "center",
+          width: "95%",
         }}
       >
         <div
@@ -514,10 +516,10 @@ const ShowCart = () => {
               )}
           </div>
         </div>
-        <div className="px-2 " style={{ width: "40%" }}>
-          <div className="w-full" style={{ padding: "10px" }}>
+        <div className="px-2 ">
+          <div className="w-full">
             <div
-              className="flex bg-lemon-mbk text-white text-center text-base  font-bold "
+              className="flex bg-lemon-mbk text-white text-center text-base  font-bold px-4"
               style={{
                 margin: "auto",
                 height: "40px",
@@ -542,7 +544,7 @@ const ShowCart = () => {
         </div>
       </div>
 
-      <div className="absolute w-full flex" style={{ bottom: "0" }}>
+      <div className="absolute w-full flex" style={{ bottom: "20px" }}>
         <div style={{ width: "100%", padding: "10px" }}>
           <div
             className="flex bg-green-mbk text-white text-center text-base  font-bold "

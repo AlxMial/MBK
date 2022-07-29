@@ -750,6 +750,7 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
         for (var i = 0; i < _tbMemberReward.length; i++) {
           //ตรวจสอบถูกนำไปใช้ใน tbOrderHD
           const _tbOrderHD = await tbOrderHD.count({
+            attributes: ["id"],
             where: {
               memberRewardId: _tbMemberReward[i].id,
             },

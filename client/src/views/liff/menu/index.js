@@ -24,7 +24,7 @@ const Menu = ({ currentMenu }) => {
     return (
         <div className='fixed bottom-0 w-full z-2'>
             <div className="menu-box relative w-full pt-3">
-                <div className="menu-list z-2  font-bold flex justify-between w-full">
+                <div className="menu-list z-2 mx-auto font-bold flex justify-between w-full md:w-10/12">
                     {
                         menuList.map((item, index) => {
                             return (

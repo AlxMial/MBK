@@ -29,8 +29,10 @@ const ShowCart = () => {
       if (response.status) {
         let data = response.data.tbredemptioncoupons;
         for (var i = 0; i < data.length; i++) {
-          const base64 = await FilesService.buffer64UTF8(data[i].image.data);
-          data[i].image = base64
+          if (data[i].image) {
+            const base64 = await FilesService.buffer64UTF8(data[i].image.data);
+            data[i].image = base64
+          }
         }
         setIsLoading(false);
         settbcouponcodes(data)
@@ -136,12 +138,12 @@ const ShowCart = () => {
                   </div>
                   <div className="px-2 py-2 relative" style={{ width: "calc(85% - 80px)" }}>
                     <div className="text-sm font-bold">{e.couponName}</div>
-                    <div className="flex absolute w-full" style={{ bottom: "0" }}>
+                    <div className="flex absolute w-full justify-between" style={{ bottom: "0" }}>
 
                       <div className="flex text-xs justify-between" style={{ width: "120px", color: "var(--mq-txt-color, rgb(122, 122, 122))", alignItems: "end" }}>
-                        {!e.isNotExpired ? "ใช้ได้ถึง " + moment(e.expireDate).locale("th").add(543, "years").format("DD MMM yyyy") : ""}
+                        {!e.isNotExpired ? "ใช้ได้ถึง " + moment(e.expireDate).locale("th").add(543, "years").format("DD MMM yyyy") : "ไม่หมดอายุ"}
                       </div>
-                      <div className="bg-green-mbk text-white text-center text-sm font-bold"
+                      <div className="bg-green-mbk text-white text-center text-xs font-bold"
                         style={{
                           borderRadius: "20px",
                           padding: "5px 10px",

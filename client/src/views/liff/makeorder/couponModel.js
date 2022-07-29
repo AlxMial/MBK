@@ -125,7 +125,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                             .locale("th")
                             .add(543, "years")
                             .format("DD MMM yyyy")
-                          : ""}
+                          : "ไม่หมดอายุ"}
                       </div>
                       <div
                         className="bg-green-mbk text-white text-center text-lg  font-bold"

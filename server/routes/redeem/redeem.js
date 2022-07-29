@@ -392,7 +392,7 @@ router.get(
               if (item[i].redemptionType == 1) {
                 if (item[i].rewardType == 1) {
                   const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
-                    attributes: ["id", "expireDate"],
+                    attributes: ["id", "expireDate", "isNotExpired"],
                     where: { redemptionConditionsHDId: item[i].id, isCancel: false },
                   });
 
@@ -403,6 +403,7 @@ router.get(
                     item[i].dataValues.id
                   );
                   // pe : ใช้วันที่หมดอายุคูปอง
+                  item[i].dataValues.isNotExpired = _tbRedemptionCoupon.dataValues.isNotExpired;
                   item[i].dataValues.endDate = _tbRedemptionCoupon.dataValues.isNotExpired
                     ? null : _tbRedemptionCoupon.dataValues.expireDate;
                   RedemptionConditionsHD.push(item[i]);

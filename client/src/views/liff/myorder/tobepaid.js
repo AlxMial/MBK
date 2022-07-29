@@ -21,6 +21,7 @@ const Tobepaid = () => {
       },
       (res) => {
         if (res.status) {
+          console.log('res', res);
           setOrderHD(res.data.OrderHD);
         }
       },

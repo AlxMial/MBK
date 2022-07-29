@@ -12,10 +12,10 @@ const GameSucceed = ({ data }) => {
                 {data != null ?
                     <div className="w-full" style={{ height: "calc(100% - 100px)" }}>
 
-                        <div className="w-full flex text-2xl mb-2" style={{ justifyContent: "center", color: "#FFFFFF" }}>
+                        <div className="w-full flex text-lg mb-2" style={{ justifyContent: "center", color: "#FFFFFF" }}>
                             ยินดีด้วย
                         </div>
-                        <div className="w-full flex text-2xl" style={{ justifyContent: "center", color: "#FFFFFF" }}>
+                        <div className="w-full flex text-lg" style={{ justifyContent: "center", color: "#FFFFFF" }}>
                             ได้รับ
                         </div>
                         <div className="w-full flex mx-auto mt-2 justify-center" style={{

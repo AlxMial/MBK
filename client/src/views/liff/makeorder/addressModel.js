@@ -38,10 +38,17 @@ const AddressModel = ({ isAddress, onChange, setisAddress }) => {
       subDistrict = subDistrict.find(
         (e) => e.value.toString() === option[i].subDistrict
       );
+      console.log('province', province)
+      if (province && province.label === "กรุงเทพมหานคร") {
+        option[
+          i
+        ].address = `${option[i].address} แขวง${subDistrict ? subDistrict.label : '-'} ${district ? district.label : '-'} ${province.label} ${option[i].postcode} ${option[i].email}`;
+      } else {
+        option[
+          i
+        ].address = `${option[i].address} ต.${subDistrict ? subDistrict.label : '-'} อ.${district ? district.label : '-'} จ.${province.label} ${option[i].postcode} ${option[i].email}`;
+      }
 
-      option[
-        i
-      ].address = `${option[i].address} ต.${subDistrict.label} อ.${district.label} จ.${province.label} ${option[i].postcode} ${option[i].email}`;
       option[i].name = `คุณ${option[i].firstName} ${option[i].lastName}`;
       option[i].value = option[i].id;
     }

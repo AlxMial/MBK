@@ -12,17 +12,17 @@ const Slide = (prop) => {
         dots: true,
         centerMode: true,
         centerPadding: '60px',
-        slidesToShow: 3,
+        slidesToShow: 1,
         // autoplaySpeed: 2000,
         autoplay: true,
         responsive: [
             {
-                breakpoint: 768,
+                breakpoint: 1000,
                 settings: {
                     arrows: false,
                     centerMode: true,
-                    centerPadding: '40px',
-                    slidesToShow: 3
+                    centerPadding: '60px',
+                    slidesToShow: 1
                 }
             },
             {
@@ -40,11 +40,11 @@ const Slide = (prop) => {
     const renderSlides = () =>
         ImgBanner.map((e, i) => {
             return (
-                <div className="px-2 h-full py-4 box-image" key={i}>
+                <div className="px-2 h-full py-4 md:py-8 box-image" key={i}>
                     <img
                         src={e.url}
                         alt="..."
-                        className='h-full object-cover blur-xs w-full'
+                        className='h-full object-fill blur-xs w-full'
                         style={{ height: _img_height, borderRadius: "15px" }}
                         onClick={() => {
                             if (e.typeLink != null) {
@@ -62,7 +62,7 @@ const Slide = (prop) => {
             )
         });
 
-    const _img_h = (window.innerWidth - 96) * 2 / 3;
+    const _img_h = (window.innerWidth - (window.innerWidth >= 768 ? 180 : 96)) * 2 / 3;
     const _img_height = (`calc(${_img_h - 32}px)`);
     return (
         <Slider {...settings} >
