@@ -37,7 +37,7 @@ const MyAward = () => {
         if (res.status) {
           if (res.data.status) {
             setisError(false);
-            console.log('couponItem', res.data.coupon);
+            // console.log('couponItem', res.data.coupon);
             setcouponItem(res.data.coupon);
             setproductItem(res.data.product);
           } else {

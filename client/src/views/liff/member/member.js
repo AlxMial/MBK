@@ -118,7 +118,7 @@ const Member = () => {
               </div>
               <div style={{ paddingLeft: "10px" }}>
                 <div
-                  className="mt-2 font-bold text-green-mbk text-xs relative flex items-center justify-center"
+                  className="mt-2 font-bold text-green-mbk  relative flex items-center justify-center"
                   style={{
                     // fontSize: "0.7rem",
                     minWidth: "120px",
@@ -139,6 +139,8 @@ const Member = () => {
                     borderRadius: "20px",
                     // padding: "2px 10px",
                     height: "25px",
+                    fontSize: "0.7rem",
+                    lineHeight: 1,
                     // textAlign: "center",
                   }}
                 >
