@@ -92,8 +92,7 @@ class ValidateService {
     ) {
       value = options[0].value;
     }
-
-    return options
+    return options.length > 0
       ? options.find((option) => option.value.toString() === value.toString())
       : "";
   };

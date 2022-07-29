@@ -20,7 +20,7 @@ const MemberHistory = ({
   textSearch,
   settextSearch,
 }) => {
-  console.log(memberId);
+
   Modal.setAppElement("#root");
   const useStyle = customStyles();
   const useStyleMobile = customStylesMobile();

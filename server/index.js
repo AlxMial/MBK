@@ -124,6 +124,10 @@ const image = require("./routes/image/image");
 app.use("/mbkserver/image", image);
 const pointHistoryReport = require("./routes/report/Report");
 app.use("/mbkserver/report", pointHistoryReport);
+const addressRouter = require("./routes/address/address");
+app.use("/mbkserver/address", addressRouter);
+const addressLineRouter = require("./routes/address/addressLine");
+app.use("/mbkserver/addressline", addressLineRouter);
 initRoutes(app);
 
 const port = process.env.PORT || 3001;
