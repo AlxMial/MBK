@@ -2,7 +2,7 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import React, { useState } from "react";
 import ReactPaginate from "react-paginate";
 import axios from "services/axios";
-
+import { useToasts } from "react-toast-notifications";
 const PromotionTable = ({ listPromotion, setListPromotion, openModal }) => {
   const thClass =
     "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
@@ -14,13 +14,14 @@ const PromotionTable = ({ listPromotion, setListPromotion, openModal }) => {
   const [forcePage, setForcePage] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(listPromotion.length / usersPerPage)||1;
+  const pageCount = Math.ceil(listPromotion.length / usersPerPage) || 1;
   const [deleteValue, setDeleteValue] = useState("");
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const changePage = ({ selected }) => {
     setPageNumber(selected);
     setForcePage(selected);
   };
+  const { addToast } = useToasts();
   const deletePromotion = () => {
     axios.delete(`/promotionStore/${deleteValue}`).then(() => {
       setListPromotion(
@@ -29,6 +30,10 @@ const PromotionTable = ({ listPromotion, setListPromotion, openModal }) => {
         })
       );
       closeModalSubject();
+      addToast("ลบข้อมูลสำเร็จ", {
+        appearance: "success",
+        autoDismiss: true,
+      });
     });
   };
 
@@ -124,7 +129,9 @@ const PromotionTable = ({ listPromotion, setListPromotion, openModal }) => {
                         openModal(value.id);
                       }}
                     >
-                      <span className={tdSpan}>{value.isInactive?"เปิดการใช้งาน":"ปิดการใช้งาน"}</span>
+                      <span className={tdSpan}>
+                        {value.isInactive ? "เปิดการใช้งาน" : "ปิดการใช้งาน"}
+                      </span>
                     </td>
                     <td className={tdClass + " cursor-pointer text-center"}>
                       <i

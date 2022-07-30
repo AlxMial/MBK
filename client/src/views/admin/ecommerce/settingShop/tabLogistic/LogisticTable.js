@@ -5,7 +5,7 @@ import ValidateService from "services/validateValue";
 import axios from "services/axios";
 import { fetchLoading } from "redux/actions/common";
 import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
-
+import { useToasts } from "react-toast-notifications";
 const LogisticTable = ({
   listLogistic,
   setListLogistic,
@@ -22,26 +22,26 @@ const LogisticTable = ({
   const [forcePage, setForcePage] = useState(0);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(listLogistic.length / usersPerPage)||1;
+  const pageCount = Math.ceil(listLogistic.length / usersPerPage) || 1;
 
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [deleteValue, setDeleteValue] = useState("");
-
+  const { addToast } = useToasts();
   const changePage = ({ selected }) => {
     setPageNumber(selected);
     setForcePage(selected);
   };
 
-  const logisticTypeList = [
-    { label: "Kerry Express", value: "1" },
-    // { label: "Flash Express", value: "flash" },
-    { label: "ไปรษณีย์ไทย", value: "2" },
-  ];
+  // const logisticTypeList = [
+  //   { label: "Kerry Express", value: "1" },
+  //   // { label: "Flash Express", value: "flash" },
+  //   { label: "ไปรษณีย์ไทย", value: "2" },
+  // ];
 
-  const showList = [
-    { label: "แสดง", value: true },
-    { label: "ไม่แสดง", value: false },
-  ];
+  // const showList = [
+  //   { label: "แสดง", value: true },
+  //   { label: "ไม่แสดง", value: false },
+  // ];
 
   /* Modal */
   function openModalSubject(id) {
@@ -54,19 +54,6 @@ const LogisticTable = ({
   }
 
   const deleteLogistic = () => {
-    // var filtered = listLogistic.filter( function(value, index, arr){
-    //     if(value.id !== deleteValue)
-    //     {
-    //         return value;
-    //     }
-    // });
-    // listLogistic = filtered;
-    // setListLogistic(
-    //     listLogistic.filter((val) => {
-    //         return val.id !== deleteValue;
-    //     })
-    // );
-    // closeModalSubject();
     axios.delete(`/logistic/${deleteValue}`).then(() => {
       setListLogistic(
         listLogistic.filter((val) => {
@@ -74,6 +61,10 @@ const LogisticTable = ({
         })
       );
       closeModalSubject();
+      addToast("ลบข้อมูลสำเร็จ", {
+        appearance: "success",
+        autoDismiss: true,
+      });
     });
   };
 

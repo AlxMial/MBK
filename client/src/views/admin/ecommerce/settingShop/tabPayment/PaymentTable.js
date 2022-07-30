@@ -2,14 +2,14 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import React, { useState } from "react";
 import ReactPaginate from "react-paginate";
 import axios from "services/axios";
-
+import { useToasts } from "react-toast-notifications";
 const PaymentTable = ({ listPayment, setListPayment, openModal }) => {
   const thClass =
     "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
   const tdClass =
     "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
   const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
-
+  const { addToast } = useToasts();
   const [pageNumber, setPageNumber] = useState(0);
   const [forcePage, setForcePage] = useState(0);
   const usersPerPage = 10;
@@ -33,23 +33,13 @@ const PaymentTable = ({ listPayment, setListPayment, openModal }) => {
   function closeModalDeleted() {
     setIsOpenDeleted(false);
   }
-  function arrayRemove(arr, value) {
-    return arr.filter(function (ele) {
-      return ele.id != value;
-    });
-  }
+  // function arrayRemove(arr, value) {
+  //   return arr.filter(function (ele) {
+  //     return ele.id != value;
+  //   });
+  // }
 
   const deletePayment = () => {
-    // let id = null;
-    // var filtered = listPayment.filter( function(value, index, arr){
-    //     if(value.id !== deleteValue)
-    //     {
-    //         return value;
-    //     }
-    // });
-    // if(id)
-    // listPayment = filtered;
-    // closeModalDeleted();
     axios.delete(`/payment/${deleteValue}`).then(() => {
       setListPayment(
         listPayment.filter((val) => {
@@ -57,13 +47,11 @@ const PaymentTable = ({ listPayment, setListPayment, openModal }) => {
         })
       );
       closeModalDeleted();
+      addToast("ลบข้อมูลสำเร็จ", {
+        appearance: "success",
+        autoDismiss: true,
+      });
     });
-    // axios.delete(`/payment/${deleteValue}`).then(() => {
-    //   listPayment.filter((val) => {
-    //     return val.id !== deleteValue;
-    //   });
-    //   closeModalDeleted();
-    // });
   };
 
   return (
