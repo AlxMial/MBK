@@ -5,10 +5,15 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import { fetchLoading } from "redux/actions/common";
 import { useDispatch } from "react-redux";
 import { fetchSuccess } from "redux/actions/common";
-
-const StockTable = ({ listStock, openModal, setListStock,
-  pageNumber, setPageNumber,
-  forcePage, setForcePage
+import { useToasts } from "react-toast-notifications";
+const StockTable = ({
+  listStock,
+  openModal,
+  setListStock,
+  pageNumber,
+  setPageNumber,
+  forcePage,
+  setForcePage,
 }) => {
   const thClass =
     "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
@@ -24,7 +29,7 @@ const StockTable = ({ listStock, openModal, setListStock,
   const pageCount = Math.ceil(listStock.length / usersPerPage) || 1;
   const [deleteValue, setDeleteValue] = useState("");
   const dispatch = useDispatch();
-
+  const { addToast } = useToasts();
   const changePage = ({ selected }) => {
     setPageNumber(selected);
     setForcePage(selected);
@@ -38,6 +43,10 @@ const StockTable = ({ listStock, openModal, setListStock,
     dispatch(fetchLoading());
     axios.delete(`/stock/${id}`).then(() => {
       setListStock(id);
+      addToast("ลบข้อมูลสำเร็จ", {
+        appearance: "success",
+        autoDismiss: true,
+      });
     });
     setOpen(false);
     dispatch(fetchSuccess());

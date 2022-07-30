@@ -182,7 +182,10 @@ const StockInfo = ({
       if (value !== "" && value > 0) {
         if (formik.values.price !== "" && formik.values.price > 0) {
           Calculate = (value / formik.values.price) * 100;
-          formik.setFieldValue("percent", Math.round(Calculate.toFixed(2)).toFixed(2));//
+          formik.setFieldValue(
+            "percent",
+            Math.round(Calculate.toFixed(2)).toFixed(2)
+          ); //
         }
       } else {
         formik.setFieldValue("percent", "0");
@@ -213,7 +216,10 @@ const StockInfo = ({
         if (value !== "" && value > 0) {
           if (formik.values.price !== "" && formik.values.price > 0) {
             Calculate = (value / formik.values.price) * 100;
-            formik.setFieldValue("salePercent", Calculate.toFixed(2));
+            formik.setFieldValue(
+              "salePercent",
+              Math.round(Calculate.toFixed(2)).toFixed(2)
+            );
           }
         } else {
           formik.setFieldValue("salePercent", "0");
@@ -555,7 +561,7 @@ const StockInfo = ({
                     <div className="w-full lg:w-2/12 margin-auto-t-b">
                       <div className="relative w-full px-4">
                         <InputUC
-                          type="number"
+                          type="text"
                           maxLength={5}
                           id="productCount"
                           className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
@@ -779,10 +785,9 @@ const StockInfo = ({
                           disabledDate={(current) => {
                             if (formik.values.startDateCampaign != null) {
                               let day = formik.values.startDateCampaign;
-                              return (
-                                current &&
-                                current <= moment(new Date(day)).endOf("day")
-                              );
+                              day = moment(new Date(day)).endOf("day");
+                              let _current =moment(new Date(current)).endOf("day");
+                              return _current && _current < day;
                             }
                           }}
                         />
@@ -1064,9 +1069,10 @@ const StockInfo = ({
                         />
                       </div>
                       <div className="relative w-full px-4">
-                        {formik.touched.salePercent && formik.errors.salePercent ? (
+                        {formik.touched.salePercent &&
+                        formik.errors.salePercent ? (
                           <div className="text-sm py-2 px-2  text-red-500">
-                           {formik.errors.salePercent}
+                            {formik.errors.salePercent}
                           </div>
                         ) : null}
                       </div>

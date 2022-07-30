@@ -312,6 +312,9 @@ export default function ConditioRewardInfo() {
                         : res.data.tbRedemptionProduct.id,
                   };
                   await onSaveImage(ImageSave, async (resImages) => {
+                    history.push(
+                      `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
+                    );
                     if (formik.values.rewardType === "1") {
                       formikCoupon.values.id = res.data.tbRedemptionCoupon.id;
                       if (isImport) {
@@ -330,6 +333,9 @@ export default function ConditioRewardInfo() {
                                 })
                                 .then((resUpload) => {
                                   dispatch(fetchSuccess());
+                                  // history.push(
+                                  //   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
+                                  // );
                                   fetchData();
                                   addToast(
                                     Storage.GetLanguage() === "th"
@@ -349,17 +355,24 @@ export default function ConditioRewardInfo() {
                             }
                           });
                       } else {
-                        fetchData();
+                        // fetchData();
                         addToast(
                           Storage.GetLanguage() === "th"
                             ? "บันทึกข้อมูลสำเร็จ"
                             : "Save data successfully",
                           { appearance: "success", autoDismiss: true }
                         );
-                        dispatch(fetchSuccess());
+
+                        setTimeout(() => {
+                          dispatch(fetchSuccess());
+                          // window.location.reload();
+                        }, 1000);
                       }
                     } else if (formik.values.rewardType === "2") {
                       formikProduct.values.id = res.data.tbRedemptionProduct.id;
+                      // history.push(
+                      //   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
+                      // );
                       fetchData();
                       dispatch(fetchSuccess());
                       addToast(
@@ -370,9 +383,9 @@ export default function ConditioRewardInfo() {
                       );
                     }
                     dispatch(fetchSuccess());
-                    history.push(
-                      `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
-                    );
+                    // history.push(
+                    //   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
+                    // );
                     // window.location.href( `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`);
                     setIsImport(false);
                   });

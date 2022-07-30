@@ -5166,11 +5166,14 @@ span.rc-time-picker.time-picker-input.hidtext .rc-time-picker-input {
   filter: blur(4px);
 }
 
-.profile-pic #eCouponImage {
+.profile-pic #eCouponImage ,.profile-pic  #eProductImage{
   width: 190px;
   height: 132px;
+  object-fit: revert;
 }
-.profile-pic #label-image-eCouponImage {
+.profile-pic #label-image-eCouponImage,
+.profile-pic #label-image-eProductImage {
   width: 190px;
   height: 132px;
+  object-fit: revert;
 }

@@ -21,7 +21,7 @@ const ReturnTable = ({
   // const [pageNumber, setPageNumber] = useState(0);
   const usersPerPage = 8;
   const pagesVisited = pageNumber * usersPerPage;
-  const pageCount = Math.ceil(listData.length / usersPerPage)||1;
+  const pageCount = Math.ceil(listData.length / usersPerPage) || 1;
 
   const changePage = ({ selected }) => {
     setPageNumber(selected);
@@ -129,7 +129,7 @@ const ReturnTable = ({
                     <td className={tdClass + " text-right pr-8"}>
                       <span className={tdSpan}>{value.sumPrice}</span>
                     </td>
-                    <td className={tdClass}>
+                    <td className={tdClass} style={{ minWidth: "135px" }}>
                       <span className={tdSpan}>
                         <SelectUC
                           name="returnStatus"

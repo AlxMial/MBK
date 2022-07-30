@@ -130,8 +130,8 @@ const CancelTable = ({
                     <td className={tdClass + " text-right pr-8"}>
                       <span className={tdSpan}>{value.sumPrice}</span>
                     </td>
-                    <td className={tdClass}>
-                      <span className={tdSpan}>
+                    <td className={tdClass} style={{ minWidth: "135px" }}>
+                      <span className={tdSpan} >
                         <SelectUC
                           name="cancelStatus"
                           onChange={(e) => {
