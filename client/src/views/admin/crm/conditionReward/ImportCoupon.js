@@ -190,9 +190,21 @@ const ImportCoupon = ({ formik, setFile, errorImage, setErrorImage }) => {
                 onBlur={formik.handleBlur}
                 value={formik.values.discount}
                 onChange={(e) => {
+                  let value = ValidateService.onHandleNumberValue(e);
+                  value = value || 0;
+                  if (formik.values.discountType === "2") {
+                    if (value > 100) value = 100;
+                  } else {
+                    if (parseFloat(value) > 99999.99) {
+                      value = 99999.99;
+                    }
+                  }
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.discount =
-                    ValidateService.onHandleNumberValue(e);
+                  formik.values.discount = value;
+
+                  // setDelay(ValidateService.onHandleNumber(e));
+                  // formik.values.discount =
+                  //   ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />
@@ -204,6 +216,9 @@ const ImportCoupon = ({ formik, setFile, errorImage, setErrorImage }) => {
                   options={discountType}
                   name="discountType"
                   onChange={(value) => {
+                    if (value.value === "2")
+                      if (formik.values.discount > 100)
+                        formik.values.discount = 100;
                     formik.setFieldValue("discountType", value.value);
                   }}
                   value={ValidateService.defaultValue(

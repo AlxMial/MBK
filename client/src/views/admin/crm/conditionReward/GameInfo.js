@@ -35,7 +35,7 @@ const GameInfo = ({
   const { width } = useWindowDimensions();
   const [isClick, setIsClick] = useState(false);
   const [delay, setDelay] = useState();
-  const [productNumber,setProductNumber] = useState();
+  const [productNumber, setProductNumber] = useState();
   const [errorProductCount, setProductCount] = useState();
   const formikCoupon = useFormik({
     initialValues: {
@@ -69,11 +69,7 @@ const GameInfo = ({
         ),
       discount: Yup.number()
         .required("* กรุณากรอก ส่วนลด")
-        .test(
-          "Is positive?",
-          "* ส่วนลดต้องมากกว่า 0",
-          (value) => value > 0
-        ),
+        .test("Is positive?", "* ส่วนลดต้องมากกว่า 0", (value) => value > 0),
       pictureCoupon: Yup.string().required("* กรุณาเลือก รูปคูปอง"),
       startDate: Yup.string().required(
         Storage.GetLanguage() === "th"
@@ -125,19 +121,18 @@ const GameInfo = ({
     }),
     onSubmit: (values) => {
       if (formikProduct.isValid) {
-       
-        if(formikProduct.values.isNoLimitReward){
+        if (formikProduct.values.isNoLimitReward) {
           setProductNumber(false);
           formikProduct.values.rewardType = data.rewardType;
           onValidate(values);
         } else {
-          if(formikProduct.values.rewardCount > 0)
-          {
+          if (formikProduct.values.rewardCount > 0) {
             setProductNumber(false);
             formikProduct.values.rewardType = data.rewardType;
             onValidate(values);
+          } else {
+            setProductNumber(true);
           }
-          else{setProductNumber(true);}
         }
       }
     },
@@ -164,7 +159,6 @@ const GameInfo = ({
       };
     });
 
-    
     fetchData();
   }, []);
 
@@ -220,8 +214,8 @@ const GameInfo = ({
         } else {
           formikProduct.setFieldValue(columns, data[columns], false);
         }
-        if(formikProduct.values.isNoLimitReward){
-          formikProduct.setFieldValue('rewardCount','ไม่จำกัด')
+        if (formikProduct.values.isNoLimitReward) {
+          formikProduct.setFieldValue("rewardCount", "ไม่จำกัด");
         }
       }
     }
@@ -397,15 +391,26 @@ const GameInfo = ({
               >
                 <div className="relative flex justify-between px-4">
                   <InputUC
-                    name="discount"
+                    name="text"
                     type="number"
                     maxLength={7}
                     onBlur={formikCoupon.handleBlur}
                     value={formikCoupon.values.discount}
                     onChange={(e) => {
+                      let value = e.target.value;
+                      value = value || 0;
+                      if (formikCoupon.values.discountType === "2") {
+                        if (value > 100) value = 100;
+                      } else {
+                        if (parseFloat(value) > 99999.99) {
+                          value = 99999.99;
+                        }
+                      }
                       setDelay(ValidateService.onHandleNumber(e));
-                      formikCoupon.values.discount =
-                        ValidateService.onHandleNumberValue(e);
+                      formikCoupon.values.discount = parseFloat(value);
+                      // setDelay(ValidateService.onHandleNumber(e));
+                      // formikCoupon.values.discount =
+                      //   ValidateService.onHandleNumberValue(e);
                     }}
                     min="0"
                   />
@@ -417,6 +422,11 @@ const GameInfo = ({
                       options={discountType}
                       name="discountType"
                       onChange={(value) => {
+                        if (value.value === "2")
+                          if (formikCoupon.values.discount > 100)
+                            formikCoupon.values.discount = 100;
+                        formikCoupon.setFieldValue("discountType", value.value);
+
                         formikCoupon.setFieldValue("discountType", value.value);
                       }}
                       value={ValidateService.defaultValue(
@@ -908,7 +918,9 @@ const GameInfo = ({
                     onBlur={formikProduct.handleBlur}
                     value={
                       !formikProduct.values.isNoLimitReward
-                        ? formikProduct.values.rewardCount == "ไม่จำกัด" ? 0 : formikProduct.values.rewardCount 
+                        ? formikProduct.values.rewardCount == "ไม่จำกัด"
+                          ? 0
+                          : formikProduct.values.rewardCount
                         : "ไม่จำกัด"
                     }
                     onChange={(e) => {
@@ -968,7 +980,8 @@ const GameInfo = ({
                 }
               >
                 <div className="relative">
-                  {((productNumber || formikProduct.values.rewardCount <= 0) &&  !formikProduct.values.isNoLimitReward ) ? (
+                  {(productNumber || formikProduct.values.rewardCount <= 0) &&
+                  !formikProduct.values.isNoLimitReward ? (
                     <div className="text-sm py-2 px-2  text-red-500">
                       * จำนวนสูงสุดต้องมากกว่า 0
                     </div>

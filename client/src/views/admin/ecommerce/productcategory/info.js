@@ -223,8 +223,8 @@ const Info = (prop) => {
                   <div className="w-full lg:w-10/12 px-4 margin-auto-t-b ">
                     <Radio.Group
                       options={[
-                        { label: "เปิดการใช้งาน", value: true },
-                        { label: "ปิดการใช้งาน", value: false },
+                        { label: "เปิดการใช้งาน", value: false },
+                        { label: "ปิดการใช้งาน", value: true },
                       ]}
                       onChange={(e) => {
                         setdataModel((pre) => ({

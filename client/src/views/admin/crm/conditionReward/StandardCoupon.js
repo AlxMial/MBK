@@ -124,16 +124,23 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
             <div className="relative flex justify-between px-4">
               <InputUC
                 name="discount"
-                type="number"
+                type="text"
                 maxLength={7}
                 onBlur={formik.handleBlur}
                 value={formik.values.discount}
                 onChange={(e) => {
-                  if (formik.values.discountType === "2")
-                    if (e.target.value > 100) e.target.value = 100;
+                  let value = e.target.value;
+                  value = value || 0;
+                  if (formik.values.discountType === "2") {
+                    if (value > 100) value = 100;
+                  } else {
+                    if (parseFloat(value) > 99999.99) {
+                      value = 99999.99;
+                    }
+                  }
                   setDelay(ValidateService.onHandleNumber(e));
-                  formik.values.discount =
-                    ValidateService.onHandleNumberValue(e);
+                  formik.values.discount = parseFloat(value);
+                  // ValidateService.onHandleNumberValue(e);
                 }}
                 min="0"
               />
@@ -292,6 +299,7 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
                   }
                 }}
               />
+
               <CheckBoxUC
                 text="ไม่มีวันหมดอายุ"
                 name="isNotExpired"
@@ -300,15 +308,17 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
                 checked={formik.values.isNotExpired}
                 classLabel="mt-2"
               />
-            </div>
-            <div className="relative w-full px-4">
-              {formik.touched.expireDate && formik.errors.expireDate ? (
-                <div className="text-sm py-2 px-2  text-red-500">
-                  {formik.errors.expireDate}
-                </div>
-              ) : null}
+
+              <div className="relative w-full px-4">
+                {formik.touched.expireDate && formik.errors.expireDate ? (
+                  <div className="text-sm py-2 px-2  text-red-500">
+                    {formik.errors.expireDate}
+                  </div>
+                ) : null}
+              </div>
             </div>
           </div>
+
           <div className="w-full">&nbsp;</div>
           <div className="w-full lg:w-1/12  margin-auto-t-b ">
             <LabelUC label="จำนวนคูปอง" isRequired={true} />

@@ -7,11 +7,13 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import * as Storage from "../../../services/Storage.service";
 import { useDispatch } from "react-redux";
 import { fetchLoading, fetchSuccess } from "redux/actions/common";
+import { useToasts } from "react-toast-notifications";
 // components
 Modal.setAppElement("#root");
 
 export default function UserList() {
   const dispatch = useDispatch();
+  const { addToast } = useToasts();
   const [listUser, setListUser] = useState([]);
   const [listSearch, setListSerch] = useState([]);
   const [pageNumber, setPageNumber] = useState(0);
@@ -66,13 +68,13 @@ export default function UserList() {
     setForcePage(selected);
   };
 
-  const ChangeSelect = (options, value) => {
-    if (value === "") {
-      value = "1";
-    }
-    return (value = options.filter((x) => x.value === value.toString())[0]
-      .label);
-  };
+  // const ChangeSelect = (options, value) => {
+  //   if (value === "") {
+  //     value = "1";
+  //   }
+  //   return (value = options.filter((x) => x.value === value.toString())[0]
+  //     .label);
+  // };
 
   const deleteUser = (e, userName) => {
     if (sessionStorage.getItem("user") === userName) {
@@ -85,6 +87,10 @@ export default function UserList() {
           })
         );
         closeModalSubject();
+        addToast("ลบข้อมูลสำเร็จ", {
+          appearance: "success",
+          autoDismiss: true,
+        });
       });
     }
   };

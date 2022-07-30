@@ -40,7 +40,7 @@ export default function PointEcommerce() {
   const pagesVisited = pageNumber * usersPerPage;
   const useStyle = customEcomStyles();
   const useStyleMobile = customStylesMobile();
-  const pageCount = Math.ceil(listEcommerce.length / usersPerPage)||1;
+  const pageCount = Math.ceil(listEcommerce.length / usersPerPage) || 1;
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [errorEndDate, setErrorEndDate] = useState(false);
   const [errorDate, setErrorDate] = useState(false);
@@ -593,7 +593,7 @@ export default function PointEcommerce() {
                                 </div>
                                 <div className="w-full lg:w-11/12 px-4 margin-auto-t-b flex">
                                   <input
-                                    type="number"
+                                    type="text"
                                     className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                                     id="purchaseAmount"
                                     name="purchaseAmount"

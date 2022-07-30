@@ -472,7 +472,7 @@ export default function ConditioRewardInfo() {
           ? "* กรุณากรอก วันที่เริ่มต้น"
           : "* Please enter Start Date"
       ),
-      expired: Yup.string().when("isNotExpired", {
+      expireDate: Yup.string().when("isNotExpired", {
         is: false,
         then: Yup.string().required(
           Storage.GetLanguage() === "th"
@@ -523,7 +523,7 @@ export default function ConditioRewardInfo() {
           ? "* กรุณากรอก วันที่เริ่มต้น"
           : "* Please enter Start Date"
       ),
-      expired: Yup.string().when("isNotExpired", {
+      expireDate: Yup.string().when("isNotExpired", {
         is: false,
         then: Yup.string().required(
           Storage.GetLanguage() === "th"
@@ -977,7 +977,7 @@ export default function ConditioRewardInfo() {
                     <div className="relative flex px-4">
                       <InputUC
                         name="points"
-                        type="number"
+                        type="text"
                         maxLength={7}
                         onBlur={formik.handleBlur}
                         value={formik.values.points}

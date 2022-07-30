@@ -160,7 +160,7 @@ const List = ({ dataList, fetchData }) => {
                       }}
                     >
                       <span className={tdSpan}>
-                        {value.isInactive ? "แสดง" : "ไม่แสดง"}
+                        {value.isInactive ? "ไม่แสดง" : "แสดง"}
                       </span>
                     </td>
                     <td className={tdClass + " text-center"}>

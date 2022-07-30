@@ -226,7 +226,7 @@ export default function ConditionRewardList() {
                     </Link>
                     <Link to="/admin/redemptionsinfo">
                       <button
-                        className="bg-gold-mbk text-black ml-2 active:bg-gold-mbk font-bold text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
+                        className="bg-gold-mbk bg-import text-black ml-2 active:bg-gold-mbk font-bold text-xs px-2 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none  ease-linear transition-all duration-150"
                         type="button"
                       >
                         <i className="fas fa-plus-circle text-white "></i>{" "}

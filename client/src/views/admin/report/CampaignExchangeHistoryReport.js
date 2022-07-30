@@ -366,11 +366,16 @@ export default function CampaignExchangeHistoryReport() {
 
           e.subDistrictStr =
             e.subDistrict > 0
-              ? dataSubDistrict.find((el) => el.value == e.subDistrict).label
+              ? dataSubDistrict.find((el) => el.value == e.subDistrict) ===
+                undefined
+                ? ""
+                : dataSubDistrict.find((el) => el.value == e.subDistrict).label
               : "";
           e.districtStr =
             e.district > 0
-              ? dataDistrict.find((el) => el.value == e.district).label
+              ? dataDistrict.find((el) => el.value == e.district) === undefined
+                ? ""
+                : dataDistrict.find((el) => el.value == e.district).label
               : "";
           e.provinceStr =
             e.province > 0

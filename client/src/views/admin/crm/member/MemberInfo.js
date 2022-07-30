@@ -151,6 +151,11 @@ export default function MemberInfo() {
       updateBy: "",
     },
     validationSchema: Yup.object({
+      address: Yup.string().required(
+        Storage.GetLanguage() === "th"
+          ? "* กรุณากรอก ที่อยู่"
+          : "* Please enter your address"
+      ),
       memberCard: Yup.string().required(
         Storage.GetLanguage() === "th"
           ? "* กรุณากรอก รหัสสมาชิก"
@@ -937,6 +942,7 @@ export default function MemberInfo() {
                         htmlFor="grid-password"
                       >
                         ที่อยู่
+                        <span className="text-sm ml-2 text-red-500">*</span>
                       </label>
                     </div>
                   </div>
@@ -957,6 +963,18 @@ export default function MemberInfo() {
                         autoComplete="new-password"
                         disabled={typePermission === "1" ? false : true}
                       ></textarea>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-2/12 px-4 mb-4 ">
+                    <div className="relative w-full"></div>
+                  </div>
+                  <div className="w-full lg:w-8/12 px-4 margin-auto-t-b">
+                    <div className="relative w-full mb-2">
+                      {formik.touched.address && formik.errors.address ? (
+                        <div className="text-sm py-2 px-2 text-red-500">
+                          {formik.errors.address}
+                        </div>
+                      ) : null}
                     </div>
                   </div>
                   <div className="w-full lg:w-2/12 px-4 mb-4 ">

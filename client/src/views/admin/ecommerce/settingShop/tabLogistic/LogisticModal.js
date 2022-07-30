@@ -19,7 +19,7 @@ import { styleSelect } from "assets/styles/theme/ReactSelect.js";
 import axios from "services/axios";
 import { useToasts } from "react-toast-notifications";
 import LogisticCategorylist from "./LogisticCategorylist";
-
+import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
 const LogisticModal = ({ open, formik, handleModal }) => {
   Modal.setAppElement("#root");
   const useStyle = customStyles();
@@ -31,6 +31,17 @@ const LogisticModal = ({ open, formik, handleModal }) => {
   const [categoryValue, setCategoryValue] = useState(null);
   const [delayValue, setDelayValue] = useState([]);
   const [openCategory, setOpenCategory] = useState(false);
+
+  const [isModify, setisModify] = useState(false);
+  const [OpenEdit, setisOpenEdit] = useState(false);
+  const checkClose = () => {
+    if (isModify) {
+      setisOpenEdit(true);
+    } else {
+      handleModal();
+    }
+  };
+
   const logisticTypeList = [
     { label: "Kerry Express", value: "1" },
     // { label: "Flash Express", value: 'flash' },
@@ -151,7 +162,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
     <>
       <Modal
         isOpen={open}
-        onRequestClose={handleModal}
+        onRequestClose={checkClose}
         style={width <= 1180 ? useStyleMobile : useStyle}
         contentLabel="Example Modal"
         shouldCloseOnOverlayClick={false}
@@ -161,7 +172,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
             <div className="w-full flex-auto mt-2">
               <ModalHeader
                 title="เพิ่มช่องทางการส่งของ"
-                handleModal={handleModal}
+                handleModal={checkClose}
               />
               <div className="flex flex-wrap px-24 py-10 justify-center">
                 <div className="w-full lg:w-12/12 px-4 margin-auto-t-b ">
@@ -193,7 +204,10 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                               menuPosition="fixed"
                               isLoading={isLoadingSelect}
                               options={logisticCategorylist}
-                              onChange={handleChange}
+                              onChange={(e) => {
+                                setisModify(true);
+                                handleChange(e);
+                              }}
                               placeholder="เลือกข้อมูล / เพิ่มข้อมูล"
                               onCreateOption={handleCreate}
                               value={categoryValue}
@@ -238,6 +252,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                           value={formik.values.deliveryName}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
+                            setisModify(true);
                             formik.handleChange(e);
                           }}
                         />
@@ -266,6 +281,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                           onBlur={formik.handleBlur}
                           value={formik.values.description}
                           onChange={(e) => {
+                            setisModify(true);
                             formik.handleChange(e);
                           }}
                         />
@@ -292,6 +308,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                         <Radio.Group
                           options={optionsDelivery}
                           onChange={(e) => {
+                            setisModify(true);
                             formik.setFieldValue(
                               "deliveryType",
                               e.target.value
@@ -319,7 +336,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                           // onBlur={formik.handleBlur}
                           value={formik.values.deliveryCost}
                           onChange={(e) => {
-                            // setDelayValue(e.target.value);
+                            setisModify(true);
                             if (parseFloat(e.target.value) > 99999.99) {
                               formik.handleChange({
                                 target: {
@@ -355,6 +372,11 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                               });
                             }
                           }}
+                          onKeyDown={(e) => {
+                            if ("-".includes(e.key)) {
+                              e.preventDefault();
+                            }
+                          }}
                         />
                       </div>
                     </div>
@@ -372,6 +394,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                         <Radio.Group
                           options={optionsActive}
                           onChange={(e) => {
+                            setisModify(true);
                             formik.setFieldValue("isShow", e.target.value);
                           }}
                           value={formik.values.isShow === true ? "1" : "0"}
@@ -395,6 +418,22 @@ const LogisticModal = ({ open, formik, handleModal }) => {
         setProductCategoryList={setLogisticCategorylist}
         showModal={openCategory}
         hideModal={() => setOpenCategory(false)}
+      />
+      <ConfirmEdit
+        showModal={OpenEdit}
+        message={"เพิ่มช่องทางการส่งของ"}
+        hideModal={() => {
+          handleModal();
+        }}
+        confirmModal={() => {
+          formik.submitForm();
+          setisOpenEdit(false);
+          handleModal();
+        }}
+        returnModal={() => {
+          handleModal();
+          setisOpenEdit(false);
+        }}
       />
     </>
   );
