@@ -390,6 +390,7 @@ export default function PointHistoryReport() {
         if (length !== undefined && length > 0) {
           const listPointCodes = response.data[0].tbPointCodeDT;
           const listMemberPoint = response.data[0].tbMemberPoint;
+
           if (listPointCodes !== undefined && listPointCodes.length > 0) {
             setListPointCodeHD(response.data);
             setListPointCodeDt(listPointCodes);
@@ -420,8 +421,8 @@ export default function PointHistoryReport() {
     const list_Memberpoint =
       dataMember.length > 0 ? dataMember : listMemberPoint;
     const code = formSerch.values.inputSerch.trim().toUpperCase();
-    const listtbPointCodeDT = list_pointDT.filter((e) => e.code === code);
-    const listMemberpoint = list_Memberpoint.find((e) => e.code === code);
+    const listtbPointCodeDT = list_pointDT.filter((e) => e.code === code || e.code === code.replace('-','') );
+    const listMemberpoint = list_Memberpoint.find((e) => e.code === code  || e.code === code.replace('-',''));
     if (listtbPointCodeDT.length === 1) {
       dataPopUp.values.code = listtbPointCodeDT[0].code;
       dataPopUp.values.pointCodeName = list_pointHD[0].pointCodeName;

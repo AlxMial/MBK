@@ -193,6 +193,7 @@ export default function UserInfo() {
       setIsBack(false);
       if (
         !errorCurrentPassword &&
+        !confirmPassword &&
         !errorPassword &&
         !errorPassword1 &&
         !errorPassword2 &&

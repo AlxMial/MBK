@@ -135,6 +135,7 @@ export default function MemberList() {
       "eating",
     ];
     for (var i = 0; i < member.data.tbMember.length; i++) {
+
       member.data.tbMember[i]["province"] = await Address.getAddressName(
         "province",
         member.data.tbMember[i]["province"]

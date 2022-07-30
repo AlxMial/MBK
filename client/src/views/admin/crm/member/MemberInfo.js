@@ -1012,8 +1012,6 @@ export default function MemberInfo() {
                             district[0].value
                           );
                           setSubDistrict(subDistrict);
-                          console.log(subDistrict);
-
                           if (subDistrict.length > 0)
                             formik.setFieldValue(
                               "subDistrict",

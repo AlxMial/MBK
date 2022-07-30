@@ -47,6 +47,7 @@ export const getDistrict = async () => {
       });
     });
     SortValue(JsonDistrict);
+    // console.log(JsonDistrict)
     return JsonDistrict;
   }
 
@@ -162,7 +163,7 @@ export const getAddressName = async (type, id) => {
       const dataValues = await axios.get(`/address/province/ById/${id}`);
       if (dataValues.data) {
         if(dataValues.data.address.length > 0)
-          valueAddress = dataValues.data.address[0].province;
+          valueAddress = dataValues.data.address[0].provinceName;
         return valueAddress;
       }
       // await axios.get(`/address/province/ById/${id}`).then(async (response) => {

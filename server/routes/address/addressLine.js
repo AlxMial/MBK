@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
   }
 );
 
-router.get("/province", async (req, res) => {
+router.get("/province",async (req, res) => {
   try {
     const [results, data] = await sequelize.query(`select * from tbprovince`);
     res.json({
