@@ -22,7 +22,7 @@ const Product = () => {
           setMyProduct(res.data.product);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -52,6 +52,7 @@ const Product = () => {
             width: "90%",
             margin: "auto",
             height: "calc(100vh - 140px)",
+            overflowX: "hidden",
           }}
         >
           {MyProduct.length > 0 ? (
@@ -59,10 +60,10 @@ const Product = () => {
               <div style={{ width: "90%", margin: "auto" }}> </div>
               {[...MyProduct].map((e, i) => {
                 return (
-                  <div key={i}>
+                  <div key={i} className="w-full">
                     {i > 0 && <div className="liff-inline mb-2" />}
                     <div
-                      className="flex mb-2"
+                      className="flex mb-2 w-full"
                       onClick={() => {
                         history.push(
                           path.infoproduct.replace(":id", e.productId)
@@ -70,7 +71,7 @@ const Product = () => {
                       }}
                     >
                       <div style={{ width: "30%" }}>
-                        <div style={{ width: "100px", height: "120px" }}>
+                        <div style={{ width: "100%", height: "120px" }}>
                           <ImageUC
                             find={1}
                             relatedid={e.id}
@@ -128,8 +129,8 @@ const Product = () => {
                                 {e.status == 1
                                   ? "เตรียมจัดส่ง"
                                   : e.status == 2
-                                  ? "อยู่ระหว่างจัดส่ง"
-                                  : "ส่งแล้ว"}
+                                    ? "อยู่ระหว่างจัดส่ง"
+                                    : "ส่งแล้ว"}
                               </div>
                             </div>
                             <div className="footer-r">

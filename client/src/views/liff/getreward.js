@@ -417,6 +417,7 @@ const GetReward = () => {
                           lineHeight: "40px",
                           margin: "auto",
                           fontSize: "2rem",
+                          textAlign: "center",
                         }}
                         onClick={() => {
                           if (rewardCode.length <= 9) {

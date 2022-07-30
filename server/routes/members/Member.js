@@ -1432,6 +1432,7 @@ router.post("/getCouponByID", validateLineToken, async (req, res) => {
           points: points,
           codeCoupon: codeCoupon,
           startDate: _RedemptionCoupon.startDate,
+          isCouponStart: _RedemptionCoupon.startDate <= new Date(),
           couponType:
             _tbCouponCode.tbRedemptionCoupon.tbRedemptionConditionsHD
               .couponType,

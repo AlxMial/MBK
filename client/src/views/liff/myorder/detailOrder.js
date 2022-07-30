@@ -263,7 +263,7 @@ const DetailOrder = ({
                   >
                     <div className="text-12 text-gold-mbk">
                       <span>
-                        <i class="fas fa-box-open mr-2"></i>
+                        <i className="fas fa-box-open mr-2"></i>
                       </span>
                       <span className="font-bold">หมายเลขพัสดุ : </span>{e.trackNo ? e.trackNo : "-"}
                     </div>

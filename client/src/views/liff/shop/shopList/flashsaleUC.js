@@ -53,10 +53,12 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
       }
     }, [delay]);
   };
+  const _min_width = window.innerWidth >= 768 ? '185px' : "calc(50vw - 1.125rem)";
+  const _width = window.innerWidth >= 768 ? '185px' : "calc(50vw - 1.125rem)";
   return (
-    <div className={(isShowLogo ? '"mt-2"' : '')}>
+    <div className={(isShowLogo ? 'mt-2' : '')}>
       <div
-        className={(isShowLogo ? '"shadow"' : '')}
+        className={(isShowLogo ? 'shadow rounded-lg' : '')}
         style={{
           // border: "1px solid #FFF",
           // borderRadius: "10px",
@@ -64,7 +66,7 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
         }}
       >
         <div className={"px-2 py-2 " + (isShowLogo ? 'mt-2' : '')}>
-          {isShowLogo && <div>
+          {/* {isShowLogo && <div>
             <img
               src={require("assets/img/mbk/flash_sale.png").default}
               alt="flash_sale"
@@ -72,13 +74,13 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
               style={{ width: "100px" }}
             ></img>
           </div>
-          }
+          } */}
           <div
             className={"flex line-scroll " + (isShowLogo ? 'mt-2' : '')}
             style={{
               overflowX: "auto",
               width: "100%",
-              maxWidth: "340px",
+              // maxWidth: "340px",
             }}
           >
             {[...data].map((e, i) => {
@@ -88,9 +90,10 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                     key={i}
                     className="relative"
                     style={{
-                      width: "calc(50vw - 9px - 5%)",
-                      minWidth: "calc(50vw - 9px - 5%)",
+                      width: _width,
+                      minWidth: _min_width,
                       padding: "35px 10px 0 10px",
+                      maxWidth: "200px"
                     }}
                     onClick={() => {
                       history.push(path.showProducts.replace(":id", e.id));

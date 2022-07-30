@@ -39,6 +39,7 @@ const OrderPaymentDone = () => {
             let OrderHD = res.data.OrderHD;
             console.log(OrderHD);
             setOrderHD(OrderHD);
+            console.log('OrderHD', OrderHD);
             // if (!fn.IsNullOrEmpty(OrderHD.couponCodeId)) {
             //   setdiscount(OrderHD.RedemptionCoupon.tbRedemptionCoupon.discount);
             // }
@@ -121,17 +122,19 @@ const OrderPaymentDone = () => {
                 </div>
               </>
             ) : null}
-            <div className="text-sm mt-4 mx-auto text-gold-mbk font-bold w-full"
-              style={{
-                width: "95%",
-              }}>
-              <span>
-                <i
-                  className="fas fa-truck mr-2"
-                ></i>
-              </span>
-              ที่ต้องได้รับ
-            </div>
+            {OrderHD != null && OrderHD.paymentStatus == 3 && OrderHD.transportStatus == 2 && (
+              <div className="text-sm mt-4 mx-auto text-gold-mbk font-bold w-full"
+                style={{
+                  width: "95%",
+                }}>
+                <span>
+                  <i
+                    className="fas fa-truck mr-2"
+                  ></i>
+                </span>
+                ที่ต้องได้รับ
+              </div>
+            )}
             <div
               className="flex mt-2 text-sm "
               style={{
@@ -419,7 +422,7 @@ const OrderPaymentDone = () => {
                                 >
                                   <div className="text-12 text-gold-mbk">
                                     <span>
-                                      <i class="fas fa-box-open mr-2"></i>
+                                      <i className="fas fa-box-open mr-2"></i>
                                     </span>
                                     <span className="font-bold">หมายเลขพัสดุ : </span>{OrderHD.trackNo ? OrderHD.trackNo : "-"}
                                   </div>

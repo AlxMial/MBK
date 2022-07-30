@@ -201,37 +201,43 @@ const MyAward = () => {
                         style={{ bottom: "0" }}
                       >
                         <div
-                          className="flex relative w-full text-12"
+                          className="relative w-full text-12 "
                           style={{
                             color: e.status < 3 ? "#c7b15e" : "#007a40",
                           }}
                         >
-                          {e.status == 1 ? (
-                            <i
-                              className="flex fas fa-hourglass-end  px-2"
-                              style={{ alignItems: "center" }}
-                            ></i>
-                          ) : e.status == 2 ? (
-                            <i
-                              className="flex fas fa-truck px-2"
-                              style={{ alignItems: "center" }}
-                            ></i>
-                          ) : (
-                            <i
-                              className="flex fas fa-check-circle px-2"
-                              style={{ alignItems: "center" }}
-                            ></i>
-                          )}
+                          <div className="sec-left flex">
+                            {e.status == 1 ? (
+                              <i
+                                className="flex fas fa-hourglass-end  mr-2"
+                                style={{ alignItems: "center" }}
+                              ></i>
+                            ) : e.status == 2 ? (
+                              <i
+                                className="flex fas fa-truck mr-2"
+                                style={{ alignItems: "center" }}
+                              ></i>
+                            ) : (
+                              <i
+                                className="flex fas fa-check-circle mr-2"
+                                style={{ alignItems: "center" }}
+                              ></i>
+                            )}
 
-                          <div>
-                            {e.status == 1
-                              ? "เตรียมจัดส่ง"
-                              : e.status == 2
-                                ? "อยู่ระหว่างจัดส่ง"
-                                : "ส่งแล้ว"}
+                            <div>
+                              {e.status == 1
+                                ? "เตรียมจัดส่ง"
+                                : e.status == 2
+                                  ? "อยู่ระหว่างจัดส่ง"
+                                  : "ส่งแล้ว"}
+                            </div>
                           </div>
                           {e.trackingNo != null ? (
-                            <div className="absolute" style={{ right: "0" }}>
+                            <div className="sec-right flex items-center line-clamp-1">
+                              <span className="mr-2"><i
+                                className="fas fa-box-open"
+                                style={{ alignItems: "center" }}
+                              ></i></span>
                               {e.trackingNo}
                             </div>
                           ) : null}

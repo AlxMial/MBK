@@ -168,7 +168,7 @@ const ShowCart = () => {
 
 
       </div>
-      <div className="absolute w-full flex" style={{ bottom: "40px" }}>
+      <div className="absolute w-full flex" style={{ bottom: "0px" }}>
         <div style={{ width: "100%", padding: "10px" }}>
           <div
             className="flex bg-green-mbk text-white text-center text-lg  font-bold "

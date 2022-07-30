@@ -47,7 +47,7 @@ const ReturnModel = ({ returnModel, Callback }) => {
           returnModel.Callback();
           clearData();
         },
-        () => {},
+        () => { },
         () => {
           setIsLoading(false);
         }
@@ -71,7 +71,7 @@ const ReturnModel = ({ returnModel, Callback }) => {
         style={{ borderRadius: "10px" }}
       >
         <div className="w-full flex flex-wrap" style={{ minHeight: "350px" }}>
-          <div className="w-full flex-auto mt-2 h-full">
+          <div className="w-full flex-auto mt-2 h-full line-scroll">
             <div className="w-full flex-auto relative">
               <div className=" flex justify-between align-middle ">
                 <div
@@ -164,7 +164,7 @@ const ReturnModel = ({ returnModel, Callback }) => {
                 backgroundColor: "#f7f6f6",
                 padding: "10px",
                 borderRadius: "10px",
-                height: "calc(100% - 450px)",
+                height: "200px",
                 overflow: "auto",
               }}
             >
@@ -251,7 +251,7 @@ const ReturnModel = ({ returnModel, Callback }) => {
                 เจ้าหน้าที่
               </div>
             </div>
-            <div>
+            <div className="p-1">
               <div
                 className="flex outline-gold-mbk text-gold-mbk text-center text-lg font-bold bt-line "
                 onClick={doSaveReturnOrder}

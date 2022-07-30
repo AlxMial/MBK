@@ -258,11 +258,12 @@ const ShowProducts = () => {
                   <div
                     className="absolute text-white font-bold"
                     style={{
-                      backgroundColor: "rgb(213 183 65 / 90%)",
+                      // backgroundColor: "rgb(213 183 65 / 90%)",
+                      backgroundColor: "#d0af21",
                       width: "100%",
-                      bottom: "0",
+                      top: "-35px",
                       height: "30px",
-                      borderRadius: "20px 0 20px 0",
+                      borderRadius: "0 20px",
                       padding: "5px",
                       textAlign: "center",
                       zIndex: "1",
@@ -346,7 +347,7 @@ const ShowProducts = () => {
                   className="flex "
                   style={{ color: "gray", alignItems: "center" }}
                 >
-                  <div className=" text-xs px-2" style={{ color: "#ddd" }}>
+                  <div className=" text-sm mr-2" style={{ color: "#ddd" }}>
                     จำนวน
                   </div>
                   <button
