@@ -6,6 +6,8 @@ import * as fn from "services/default.service";
 
 const BestSellerUC = ({ data }) => {
   const history = useHistory();
+  const _min_width = window.innerWidth >= 768 ? '180px' : "calc(50vw - 1.125rem)";
+  const _width = window.innerWidth >= 768 ? '180px' : "calc(50vw - 1.125rem)";
   return (
     <div className="">
       <div
@@ -22,7 +24,7 @@ const BestSellerUC = ({ data }) => {
             style={{
               overflowX: "auto",
               width: "100%",
-              maxWidth: "340px",
+              // maxWidth: "340px",
             }}
           >
             {[...data].map((e, i) => {
@@ -31,9 +33,10 @@ const BestSellerUC = ({ data }) => {
                   key={i}
                   className="relative"
                   style={{
-                    width: "calc(50vw - 9px - 5%)",
-                    minWidth: "calc(50vw - 9px - 5%)",
+                    width: _width,
+                    minWidth: _min_width,
                     padding: "0px 10px",
+                    maxWidth: "200px"
                   }}
                   onClick={() => {
                     history.push(path.showProducts.replace(":id", e.id));

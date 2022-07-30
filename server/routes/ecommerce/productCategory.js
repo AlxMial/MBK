@@ -132,9 +132,18 @@ router.get(
         .query(`select product.id, product.categoryName as name, image.image as img
       from tbProductCategories product
       left join tbimages image on product.id = image.relatedId and image.relatedTable = 'tbProductCategory'
-      where product.isDeleted = 0`);
+      where product.isDeleted = 0 and product.isinactive = 0`);
       if (data) {
-        ProductCategory = data;
+        for await (const i of data.map((j) => {
+          return j;
+        })) {
+          let e = i;
+          ProductCategory.push({
+            id: Encrypt.EncodeKey(e.id),
+            name: e.name,
+            img: e.img
+          });
+        }
         // console.log('result', data);
       }
 

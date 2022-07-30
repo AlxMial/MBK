@@ -14,6 +14,8 @@ import {
 } from "@services/liff.services";
 import config from "@services/helpers";
 import Menu from "views/liff/menu";
+import { remove_product_category } from "services/Storage.service";
+import { remove_shop_banner } from "services/Storage.service";
 
 // components
 const getRoutes = () => {
@@ -175,7 +177,16 @@ const LiffAPP = () => {
         return event;
       }
     });
+
+    window.onbeforeunload = (event) => {
+      console.log('unload');
+      remove_product_category();
+      remove_shop_banner();
+      // return event;
+    };
   });
+
+
 
   return (
     <>
@@ -259,7 +270,7 @@ const LiffAPP = () => {
             {isShopMain &&
               <img
                 className="w-full h-full absolute flex"
-                src={require("assets/img/shop-main/bg-shop-main-w.jpg").default}
+                src={require("assets/img/shop-main/bg-shop-main-w.png").default}
                 alt="line_head_img"
                 style={{
                   objectFit: "fill",

@@ -3134,6 +3134,11 @@ select {
     padding-bottom: 1.75rem;
   }
 
+  .md\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
   .md\:block {
     display: block;
   }

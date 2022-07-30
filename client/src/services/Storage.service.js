@@ -139,3 +139,31 @@ export const getusecoupon = (id) => {
   return obj;
 };
 
+// product category
+export const get_product_category = () => {
+  let product = localStorage.getItem("product-category");
+  product = IsNullOrEmpty(product) ? null : JSON.parse(product);
+  return product;
+};
+export const set_product_category = (obj) => {
+  localStorage.setItem("product-category", JSON.stringify(obj));
+};
+export const remove_product_category = () => {
+  localStorage.removeItem("product-category");
+};
+
+// shop main banner
+export const get_shop_banner = () => {
+  let data = localStorage.getItem("shop-banner");
+  // console.log('get_shop_banner', data)
+  data = IsNullOrEmpty(data) ? null : JSON.parse(data);
+  return data;
+};
+export const set_shop_banner = (obj) => {
+  // console.log('set_shop_banner', obj)
+  localStorage.setItem("shop-banner", JSON.stringify(obj));
+};
+export const remove_shop_banner = () => {
+  localStorage.removeItem("shop-banner");
+};
+

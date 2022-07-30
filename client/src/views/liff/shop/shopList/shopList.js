@@ -129,7 +129,8 @@ const ShopList = () => {
             return e;
           }
         });
-
+        console.log('dataTemp', dataTemp);
+        console.log('tbStockview', tbStockview);
         let tbStockiewNominal = [];
         let tbStockiewFlashSale = [];
         tbStockview.filter((e) => {
@@ -478,7 +479,7 @@ const ShopList = () => {
         {selectMenu === 3 ? (
           <div
             id="scroll"
-            className="product-scroll "
+            className="product-scroll"
             style={{
               margin: "auto",
               height: "calc(100% - 210px)",
@@ -492,9 +493,9 @@ const ShopList = () => {
           (!isLoadingData && (
             <div
               id="scroll"
-              className="product-scroll "
+              className="product-scroll px-3"
               style={{
-                width: "90%",
+                // width: "90%",
                 margin: "auto",
                 // height: "calc(100% - " + (y > 120 ? 58 : 210 - y) + "px)",
                 height: "calc(100% - 210px)",

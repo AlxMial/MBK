@@ -11,7 +11,9 @@ import * as fn from "services/default.service";
 import BestSellerUC from './bestSellerUC';
 import ProductCategory from './productCategory';
 import Slide from './Slide';
-
+import { get_shop_banner } from 'services/Storage.service';
+import { set_shop_banner } from 'services/Storage.service';
+// import { remove_product_category } from 'services/Storage.service';
 
 const ShopMain = () => {
     const dispatch = useDispatch();
@@ -22,14 +24,21 @@ const ShopMain = () => {
     const [tbBestSeller, setTbBestSeller] = useState([]); //แสดงตาม category
 
     const fetchDataImgBanner = async () => {
-        await axios.get("stock/getImgBanner").then((response) => {
-            if (response.data.ImgBanner.length > 0) {
-                let ImgBanner = response.data.ImgBanner;
-                bufferToBase64(ImgBanner);
-            } else {
-                setIsImgBanner(false);
-            }
-        });
+        const storage_banner = await get_shop_banner();
+        // console.log("storage_banner", storage_banner);
+        if (storage_banner) {
+            // console.log("storage_banner", storage_banner);
+            setImgBanner(storage_banner);
+        } else {
+            await axios.get("stock/getImgBanner").then((response) => {
+                if (response.data.ImgBanner.length > 0) {
+                    let ImgBanner = response.data.ImgBanner;
+                    bufferToBase64(ImgBanner);
+                } else {
+                    setIsImgBanner(false);
+                }
+            });
+        }
     };
 
     const bufferToBase64 = async (ImgBanner) => {
@@ -45,6 +54,7 @@ const ShopMain = () => {
             });
         }
         setImgBanner(dataImg);
+        set_shop_banner(dataImg);
     };
 
     const fetchDatatbStock = async () => {
@@ -112,16 +122,17 @@ const ShopMain = () => {
     };
 
     useEffect(() => {
+        // remove_product_category();
         dispatch(backPage(false));
         fetchDataImgBanner();
         fetchDatatbStock();
     }, []);
 
     const _h_section1 = (window.innerWidth - 90) + 'px';
-    const _width = window.innerWidth + 'px';
-    const _height = window.innerWidth + 'px';
-    const _flashSales_height = (`calc(${_width} - 45px - 1.25rem - 40px)`);
-    const _min_h_category = (`calc((${_height} / 2) - 28px)`);
+    // const _width = window.innerWidth + 'px';
+    // const _height = window.innerWidth + 'px';
+    // const _flashSales_height = (`calc(${_width} - 45px - 1.25rem - 40px)`);
+    // const _min_h_category = (`calc((${_height} / 2) - 28px)`);
     let isFlashsale = false;
     tbStockViewFlashSale.map((e, i) => {
         if (e.isFlashSale) {
@@ -129,6 +140,10 @@ const ShopMain = () => {
         }
     });
 
+    const _padding = window.innerWidth >= 768 ? "0 0.75rem 3.75rem" : "0 0.75rem 0.75rem";
+    const b_top = document.querySelector('.best-seller-t');
+    // console.log('b_top', b_top ? b_top.clientHeight : 0);
+    const _best_seller_bottom_h = window.innerWidth >= 768 ? "auto" : ((window.innerWidth - (b_top ? b_top.clientHeight : 0)) + 'px');
     return (
         <>
             {isLoading ? <Spinner customText={"Loading"} /> : null}
@@ -160,71 +175,77 @@ const ShopMain = () => {
                     </div>
                 </div>
                 {isFlashsale && (
-                    <div className="w-full flashSale-section bg-red-600 p-3 px-6" style={{ height: _height }}>
-                        <div className="w-full flex justify-center py-2" style={{ height: '40px' }}>
-                            <div className="img-flash-sale px-2 bg-white shadow flex justify-center items-center" style={{ borderRadius: '3px' }}>
-                                <img
-                                    src={require("assets/img/shop-main/flashSale.png").default}
-                                    alt="flashSale"
-                                    style={{
-                                        objectFit: "fill",
-                                        maxWidth: "100px",
-                                        height: "auto",
-                                    }}
-                                ></img>
+                    <div className="w-full flashSale-section relative"
+                    // style={{ height: _height }}
+                    >
+                        <img
+                            src={require("assets/img/shop-main/bg-flash-sale-t.png").default}
+                            alt="flash_sale"
+                            className="w-full object-cover"
+                        ></img>
+                        <div className="flash-sale-b relative" style={{ padding: _padding }}>
+                            <img
+                                src={require("assets/img/shop-main/bg-flash-sale-b.png").default}
+                                alt="flash_sale"
+                                className="w-full absolute top-0 left-0 h-full"
+                                style={{ zIndex: '-1' }}
+                            ></img>
+                            <div className="bg-white  " style={{ borderRadius: '15px' }}>
+                                {tbStockViewFlashSale && (
+                                    <div
+                                        id="scroll"
+                                        className="product-scroll w-full"
+                                        style={{
+                                            margin: "auto",
+                                            height: 'auto',
+                                            overflow: "scroll",
+                                        }}
+                                    >
+                                        <FlashsaleUC
+                                            isShowLogo={false}
+                                            data={tbStockViewFlashSale} />
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        <div className="bg-white  mt-3" style={{ borderRadius: '15px' }}>
-                            {tbStockViewFlashSale && (
+                    </div>)}
+                <div className="w-full best-seller-section relative"
+                // style={{ height: _height }}
+                >
+                    <img
+                        src={require("assets/img/shop-main/bg-best-seller-t.png").default}
+                        alt="flash_sale"
+                        className="w-full object-cover best-seller-t"
+                    ></img>
+                    <div className="best-seller-b relative" style={{ padding: _padding, height: _best_seller_bottom_h }}>
+                        <img
+                            src={require("assets/img/shop-main/bg-best-seller-b.png").default}
+                            alt="flash_sale"
+                            className="w-full absolute top-0 left-0 h-full"
+                            style={{ zIndex: '-1' }}
+                        ></img>
+                        <div className="bg-white" style={{ borderRadius: '15px' }}>
+                            {tbBestSeller && (
                                 <div
                                     id="scroll"
                                     className="product-scroll w-full"
                                     style={{
                                         margin: "auto",
-                                        height: 'auto',
+                                        // height: _flashSales_height,
                                         overflow: "scroll",
                                     }}
                                 >
-                                    <FlashsaleUC
+                                    <BestSellerUC
                                         isShowLogo={false}
-                                        data={tbStockViewFlashSale} />
+                                        data={tbBestSeller} />
                                 </div>
                             )}
                         </div>
-                    </div>)}
-                <div className="w-full best-seller-section p-3" style={{ height: _height }}>
-                    <div className="w-full flex justify-center py-2" style={{ height: '40px' }}>
-                        <div className="img-best-seller px-2 bg-white shadow flex justify-center items-center" style={{ borderRadius: '3px' }}>
-                            <img
-                                src={require("assets/img/shop-main/best-seller.png").default}
-                                alt="best-seller"
-                                style={{
-                                    objectFit: "fill",
-                                    maxWidth: "100px",
-                                    height: "auto",
-                                }}
-                            ></img>
-                        </div>
-                    </div>
-                    <div className="bg-white p-3" style={{ borderRadius: '15px' }}>
-                        {tbBestSeller && (
-                            <div
-                                id="scroll"
-                                className="product-scroll w-full"
-                                style={{
-                                    margin: "auto",
-                                    height: _flashSales_height,
-                                    overflow: "scroll",
-                                }}
-                            >
-                                <BestSellerUC
-                                    isShowLogo={false}
-                                    data={tbBestSeller} />
-                            </div>
-                        )}
                     </div>
                 </div>
-                <ProductCategory />
+                <div className="pt-8">
+                    <ProductCategory />
+                </div>
                 <div className="footer" style={{ height: '110px' }}></div>
             </div >
         </>

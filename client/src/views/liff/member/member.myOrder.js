@@ -169,7 +169,7 @@ const MyOrder = () => {
                         >
                           <div
                             className="flex"
-                            style={{ width: "26%", justifyContent: "center" }}
+                            style={{ width: "30%", justifyContent: "center" }}
                           >
                             <div style={{ width: "80px", height: "80px" }}>
                               <ImageUC
@@ -185,15 +185,14 @@ const MyOrder = () => {
                             <div className="font-bold line-clamp-1  text-12">
                               {e.productName}
                             </div>
-                            <div className="flex">
+                            <div className="flex justify-between">
                               <div
                                 className="text-liff-gray-mbk"
-                                style={{ width: "26%" }}
+                              // style={{ width: "26%" }}
                               >
                                 {"x" + e.amount}
                               </div>
                               <div
-                                style={{ width: "70%", justifyContent: "end" }}
                                 className="flex"
                               >
                                 <div

@@ -4,6 +4,8 @@ import { useHistory } from 'react-router';
 import { path } from 'services/liff.services';
 import Spinner from "components/Loadings/spinner/Spinner";
 import FilesService from "services/files";
+import { set_product_category } from 'services/Storage.service';
+import { get_product_category } from 'services/Storage.service';
 
 const ProductCategory = ({ showHeader = true, setselectMenu }) => {
     const history = useHistory();
@@ -11,19 +13,26 @@ const ProductCategory = ({ showHeader = true, setselectMenu }) => {
     const [productCategory, setproductCategory] = useState([]);
     const fetchproductCategory = async () => {
         setIsLoading(true);
-        await axios.get("productCategory/getProductCategory").then((response) => {
-            if (response.status) {
-                const data = response.data.tbProductCategory;
-                // console.log('data', data);
-                data.map(item => {
-                    if (item.img) {
-                        item.img = FilesService.buffer64UTF8(item.img);
-                    }
-                    return item;
-                })
-                setproductCategory(data);
-            }
-        });
+        const _storage = await get_product_category();
+        if (_storage) {
+            // console.log("_storage", _storage);
+            setproductCategory(_storage);
+        } else {
+            await axios.get("productCategory/getProductCategory").then((response) => {
+                if (response.status) {
+                    const data = response.data.tbProductCategory;
+                    // console.log('data', data);
+                    data.map(item => {
+                        if (item.img) {
+                            item.img = FilesService.buffer64UTF8(item.img);
+                        }
+                        return item;
+                    })
+                    setproductCategory(data);
+                    set_product_category(data);
+                }
+            });
+        }
         setIsLoading(false);
     };
 
