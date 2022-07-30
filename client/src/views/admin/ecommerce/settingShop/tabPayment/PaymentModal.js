@@ -12,7 +12,6 @@ import FilesService from "services/files";
 import ValidateService from "services/validateValue";
 import ButtonUCSaveModal from "components/ButtonUCSaveModal";
 import ModalHeader from "views/admin/ModalHeader";
-
 const PaymentModal = ({
   open,
   formik,
@@ -28,19 +27,29 @@ const PaymentModal = ({
   const useStyle = customStyles();
   const useStyleMobile = customStylesMobile();
   const { width } = useWindowDimensions();
-
   const handleChangeImage = async (e) => {
     if (e.target.files.length > 0) {
       if (e.target.id === "filebankImageQrCode") {
-        const dataImage = ValidateService.validateImage(e.target.files[0].name);
-        setErrorImage({ ...errorImage, qr: dataImage });
-        if (!dataImage) {
-          const base64 = await FilesService.convertToBase64(e.target.files[0]);
-          setPaymentImageQrCode({
-            ...paymentImageQrCode,
-            image: base64,
-            relatedTable: "paymentQrCode",
-          });
+        if (e.target.files[0].type.includes("png")) {
+          const dataImage = ValidateService.validateImage(
+            e.target.files[0].name
+          );
+          setErrorImage({ ...errorImage, qr: dataImage });
+          if (!dataImage) {
+            const base64 = await FilesService.convertToBase64(
+              e.target.files[0]
+            );
+            setPaymentImageQrCode({
+              ...paymentImageQrCode,
+              image: base64,
+              relatedTable: "paymentQrCode",
+            });
+          }
+        } else {
+          setErrorImage((per) => ({
+            ...per,
+            qr: true,
+          }));
         }
       } else {
         const dataImage = ValidateService.validateImage(e.target.files[0].name);
@@ -191,9 +200,10 @@ const PaymentModal = ({
                       <div className="relative w-full px-4">
                         <ProfilePictureUC
                           id="bankImageQrCode"
-                          hoverText="เลือกรูปธนาคาร"
+                          hoverText="เลือกรูป QR Code"
                           src={paymentImageQrCode.image}
                           onChange={handleChangeImage}
+                          accept="image/png"
                         />
                         {errorImage.qr ? (
                           <div className="text-sm py-2 px-2  text-red-500">
