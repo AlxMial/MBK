@@ -27,9 +27,14 @@ export default function CampaignExchangeHistoryReport() {
   const [isLoading, setIsLoading] = useState(false);
   const usersPerPage = 10;
   const pagesVisited = pageNumber * usersPerPage;
-  let dataSubDistrict = [];
-  let dataDistrict = [];
-  let dataProvice = [];
+  // let dataSubDistrict = [];
+  // let dataDistrict = [];
+  // let dataProvice = [];
+
+  const [dataProvice ,setDataProvice ] = useState([]);
+  const [dataDistrict ,setDataDistrict ] = useState([]);
+  const [dataSubDistrict ,setDataSubDistrict] = useState([]);
+
   const redemptionType = [
     { value: "1", label: "Standard" },
     { value: "2", label: "Game" },
@@ -332,20 +337,31 @@ export default function CampaignExchangeHistoryReport() {
   };
 
   const fatchAddress = async () => {
-    dataDistrict = Address.getDistrict().then((response) => {
-      dataDistrict = response;
-    });
-    dataSubDistrict = Address.getSubDistrict();
-    Address.getProvince().then((response) => {
-      dataProvice = response;
-    });
+    // dataDistrict = Address.getDistrict().then((response) => {
+    //   dataDistrict = response;
+    // });
+
+    setDataProvice(await Address.getDistrict());
+    setDataSubDistrict(await Address.getSubDistrict());
+    setDataProvice(await Address.getProvince());
+    // dataSubDistrict = Address.getSubDistrict();
+
+
+    // Address.getProvince().then((response) => {
+
+    //   dataProvice = response;
+    // });
+
+
   };
   useEffect(() => {
     fatchAddress();
+
+    
     axios.get("report/ShowCampaignExchange").then((response) => {
+
       if (response.data.length > 0) {
         response.data.forEach((e) => {
-          console.log(dropdown);
           e.redemptionTypeStr =
             e.redemptionType !== ""
               ? redemptionType.find((el) => el.value == e.redemptionType).label
@@ -359,6 +375,8 @@ export default function CampaignExchangeHistoryReport() {
               ? rewardStatus.find((el) => el.value == e.isUsedCoupon.toString())
                   .label
               : "";
+
+
           e.deliverStatusStr =
             e.isShowControl && e.deliverStatus !== "" && e.deliverStatus
               ? dropdown.find((el) => el.value == e.deliverStatus).label
@@ -371,16 +389,20 @@ export default function CampaignExchangeHistoryReport() {
                 ? ""
                 : dataSubDistrict.find((el) => el.value == e.subDistrict).label
               : "";
+
+
           e.districtStr =
             e.district > 0
               ? dataDistrict.find((el) => el.value == e.district) === undefined
                 ? ""
                 : dataDistrict.find((el) => el.value == e.district).label
               : "";
+
           e.provinceStr =
-            e.province > 0
-              ? dataProvice.find((el) => el.value == e.province).label
+            e.province >= 0
+              ? dataProvice.filter((el) => el.value == e.province).label
               : "";
+
           e.addressMember = e.address
             .concat(" ")
             .concat(e.subDistrictStr)
