@@ -255,7 +255,7 @@ export default function CampaignRewardReport() {
       { name: "points", css: "text-center" },
       { name: "startDate", css: "text-center" },
       { name: "endDate", css: "text-center" },
-      { name: "expiredDate", css: "text-center" },
+      { name: "expireDate", css: "text-center" },
       { name: "redemptionType", css: "text-center" },
       { name: "rewardType", css: "text-center" },
       { name: "count", css: "text-right" },
