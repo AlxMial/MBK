@@ -58,9 +58,18 @@ const TabReturn = () => {
             x.orderDate.toLowerCase().includes(e) ||
             x.memberName.toLowerCase().includes(e) ||
             x.sumPrice.toString().toLowerCase().includes(e) ||
-            x.returnStatus.toLowerCase().includes(e) ||
+            (parseInt(x.returnStatus) === 1
+              ? "รอดำเนินการ"
+              : parseInt(x.returnStatus) === 2
+              ? "คืนสำเร็จ"
+              : "ปฎิเสธ"
+            )
+              .toLowerCase()
+              .includes(e) ||
             x.returnDetail.toLowerCase().includes(e) ||
-            (x.description==null ?"":x.description).toLowerCase().includes(e)
+            (x.description == null ? "" : x.description)
+              .toLowerCase()
+              .includes(e)
         )
       );
     }

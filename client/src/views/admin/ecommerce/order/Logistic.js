@@ -147,7 +147,7 @@ const Logistic = ({
             <LabelUC label={orderHD.tbLogistic.deliveryName} />
           </div>
           <div style={{ minWidth: "100px" }}>
-            <div className={"p-2 rounded "}>
+            <div className={"p-2 rounded "} style={{ minWidth: "140px" }}>
               {/* <div>{getStatus(orderHD).text}</div> */}
               <SelectUC
                 name="transportType"
