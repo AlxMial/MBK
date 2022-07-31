@@ -69,6 +69,7 @@ router.get("/byId/:id", validateToken, async (req, res) => {
             ],
           },
         });
+        console.log(Coupon)
 
         Product = await tbRedemptionProduct.findAll({
           where: {
@@ -442,12 +443,41 @@ router.put("/game", validateToken, async (req, res) => {
       for (var i = 0; i < req.body.listGame.length; i++) {
         req.body.listGame[i]["redemptionConditionsHDId"] = req.body.id;
         if (req.body.listGame[i].rewardType === "1") {
+
           if (req.body.listGame[i].id) {
             coupon = await tbRedemptionCoupon.update(req.body.listGame[i], {
               where: { id: req.body.listGame[i].id },
             });
           } else {
             coupon = await tbRedemptionCoupon.create(req.body.listGame[i]);
+
+
+            const generateCode = await axiosInstance
+            .post("api/coupon/generateCoupon", coupon)
+            .then(async (resGenerate) => {
+              if (resGenerate.data.status) {
+                const qry = `INSERT INTO mbk_database.tbcouponcodes SELECT * FROM mbk_temp.tbcouponcodes where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
+                db.sequelize
+                  .query(qry, null, { raw: true })
+                  .then((result) => {
+                    const deleteqry = `DELETE FROM mbk_temp.tbcouponcodes WHERE mbk_temp.tbcouponcodes.redemptionCouponId IN (select redemptionCouponId from mbk_database.tbcouponcodes)`;
+                    db.sequelize
+                      .query(deleteqry, null, { raw: true })
+                      .then((result) => {
+                        console.log(result);
+                      })
+                      .catch((error) => {
+                        console.log(error);
+                      });
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              }
+            });
+
+
+
           }
         } else if (req.body.listGame[i].rewardType === "2") {
           if (req.body.listGame[i].id) {

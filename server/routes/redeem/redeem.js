@@ -826,6 +826,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
               where: { redemptionConditionsHDId: item.id },
             });
             if (_tbRedemptionCoupon) {
+      
               for (var i = 0; i < _tbRedemptionCoupon.length; i++) {
                 const item = _tbRedemptionCoupon[i].dataValues;
                 const _tbCouponCode = await tbCouponCode.findAll({

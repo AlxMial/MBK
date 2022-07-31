@@ -4115,6 +4115,15 @@ strike {
   /* width:100px; */
 }
 
+.TextWordWarp-600 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 600px;
+  /* width:100px; */
+}
+
+
 .OtpInput input {
   width: 60% !important;
   height: 30px;
