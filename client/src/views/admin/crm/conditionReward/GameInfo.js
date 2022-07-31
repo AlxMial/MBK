@@ -669,7 +669,7 @@ const GameInfo = ({
                 <div className="relative">
                   <InputUC
                     name="couponCount"
-                    type="number"
+                    type="text"
                     maxLength={7}
                     onBlur={formikCoupon.handleBlur}
                     value={formikCoupon.values.couponCount}
@@ -997,7 +997,7 @@ const GameInfo = ({
                   (data.rewardType === "1" ? " hidden" : " ")
                 }
               >
-                <LabelUC label="รายละเอียดคูปอง" isRequired={false} />
+                <LabelUC label={"รายละเอียดของสมนาคุณ"} isRequired={false} />
               </div>
               <div
                 className={
