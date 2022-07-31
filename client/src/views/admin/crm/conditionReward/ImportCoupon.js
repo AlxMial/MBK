@@ -73,6 +73,7 @@ const ImportCoupon = ({ formik, setFile, errorImage, setErrorImage }) => {
           <div className="w-full lg:w-1/12 margin-auto-t-b">
             <div className="relative w-full">
               <LabelUC label="รูปคูปอง" isRequired={true} />
+              <span className="text-red-500 text-xs">380*254 px</span>
               {formik.touched.pictureCoupon && formik.errors.pictureCoupon ? (
                 <div className="text-sm py-2 px-2 text-red-500">&nbsp;</div>
               ) : null}

@@ -35,6 +35,7 @@ const StandardProduct = ({ formik, errorImage, setErrorImage,errorProductCount,s
           <div className="w-full lg:w-1/12 margin-auto-t-b">
             <div className="relative w-full">
               <LabelUC label="รูปสินค้าสมนาคุณ" isRequired={true} />
+              <span className="text-red-500 text-xs">380*254 px</span>
               {formik.touched.pictureProduct && formik.errors.pictureProduct ? (
                 <div className="text-sm py-2 px-2 text-red-500">&nbsp;</div>
               ) : null}
