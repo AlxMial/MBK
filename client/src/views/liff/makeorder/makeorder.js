@@ -198,7 +198,7 @@ const MakeOrder = () => {
             } else {
             }
           },
-          () => {},
+          () => { },
           () => {
             setIsLoading(false);
           }
@@ -380,31 +380,34 @@ const MakeOrder = () => {
           >
             <DetailModel data={CartItem} freebies={freebies} />
             <div
-              className="flex relative"
+              className="flex relative justify-between"
               style={{
                 height: "20px",
                 // alignItems: "center",
                 // justifyContent: "center",
                 marginTop: "0.5rem",
+                width: "95%",
               }}
             >
-              <div className="px-2 " style={{ left: "10px", width: "50px" }}>
-                <img
-                  style={{ margin: "auto", width: "22px", height: "22px" }}
-                  src={require("assets/img/mbk/icon_sale.png").default}
-                  alt="icon_sale"
-                  className="w-32 border-2 border-blueGray-50"
-                ></img>
+              <div className="sec-left flex">
+                <div className="px-2 " style={{ left: "10px", width: "50px" }}>
+                  <img
+                    style={{ margin: "auto", width: "22px", height: "22px" }}
+                    src={require("assets/img/mbk/icon_sale.png").default}
+                    alt="icon_sale"
+                    className="w-32 border-2 border-blueGray-50"
+                  ></img>
+                </div>
+                <div
+                  className="px-2 font-bold line-clamp-1"
+                // style={{ left: "50px", width: "calc(100% - 180px)" }}
+                >
+                  {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
+                </div>
               </div>
               <div
-                className="px-2 font-bold line-clamp-1"
-                style={{ left: "50px", width: "calc(100% - 180px)" }}
-              >
-                {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
-              </div>
-              <div
-                className="flex"
-                style={{ right: "10px", width: "130px", justifyContent: "end" }}
+                className="flex sec-right"
+              // style={{ right: "10px", width: "130px", justifyContent: "end" }}
               >
                 <div className="flex">
                   <div
@@ -423,22 +426,21 @@ const MakeOrder = () => {
                   >
                     {usecoupon != null
                       ? "-฿ " +
-                        fn.formatMoney(
-                          usecoupon.discountType === "2"
-                            ? (usecoupon.discount / 100) * sumprice
-                            : usecoupon.discount
-                        )
+                      fn.formatMoney(
+                        usecoupon.discountType === "2"
+                          ? (usecoupon.discount / 100) * sumprice
+                          : usecoupon.discount
+                      )
                       : "ใช้ส่วนลด >"}
                   </div>
-                  <div className="px-2">
-                    {usecoupon != null ? (
+                  {usecoupon != null &&
+                    <div className="pl-2">
                       <i
                         className="fas fa-times-circle"
                         style={{ color: "red" }}
                         onClick={Cancelcoupon}
                       ></i>
-                    ) : null}
-                  </div>
+                    </div>}
                 </div>
               </div>
             </div>
