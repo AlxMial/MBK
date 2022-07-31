@@ -45,7 +45,7 @@ const Info = (prop) => {
   };
 
   const doSave = async () => {
-    if (valid()) {
+    if (await valid()) {
       dispatch(fetchLoading());
       if (fn.IsNullOrEmpty(dataModel.id)) {
         axios
@@ -91,16 +91,44 @@ const Info = (prop) => {
       }
     }
   };
-  const valid = () => {
+  const valid = async () => {
     let isValid = true;
     let errors = {};
     if (fn.IsNullOrEmpty(dataModel.categoryName)) {
       isValid = false;
-      errors.categoryName = "กรุณาระบุชื่อหมวดหมู่สินค้า";
+      errors.categoryName = "* กรุณาระบุชื่อหมวดหมู่สินค้า";
     }
     if (fn.IsNullOrEmpty(dataModel.dataImage)) {
       isValid = false;
-      errors.dataImage = "กรุณาระบุรูปหมวดหมู่สินค้า";
+      errors.dataImage = "* กรุณาระบุรูปหมวดหมู่สินค้า";
+    }
+    if (isValid) {
+      const tbProductCategory = await axios
+        .get("productCategory", dataModel)
+        .then((res) => {
+          if (res.data.status) {
+            return res.data.tbProductCategory;
+          } else {
+            return null;
+          }
+        })
+        .catch(() => {
+          return null;
+        })
+        .finally(() => {
+          dispatch(fetchSuccess());
+        });
+      if (tbProductCategory != null) {
+        const duplicate = tbProductCategory.find(
+          (e) =>
+            e.categoryName.toLowerCase() ===
+            dataModel.categoryName.toLowerCase()
+        );
+        if (!fn.IsNullOrEmpty(duplicate)) {
+          isValid = false;
+          errors.categoryName = "* ชื่อหมวดหมู่สินค้าซ้ำ";
+        }
+      }
     }
     setdataModel((pre) => ({
       ...pre,
