@@ -730,7 +730,7 @@ export default function UserInfo() {
                         className={
                           "flex flex-wrap mt-2 " +
                           (strongPassword || weakPassword || poorPassword
-                            ? " "
+                            ? enablePassword?" hidden ":" "
                             : " hidden ")
                         }
                       >
