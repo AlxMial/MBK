@@ -21,7 +21,7 @@ const Paymentsucceed = () => {
             // password: "Has88149*",
             frommail: "no-reply@prg.co.th",
             password: "Tus92278",
-            tomail: res.data.OrderHD.email,
+            tomail: res.data.email,
             orderNumber: res.data.OrderHD.orderNumber,
             memberName: res.data.OrderHD.memberName,
             orderPrice: res.data.OrderHD.netTotal,
