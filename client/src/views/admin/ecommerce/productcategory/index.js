@@ -68,7 +68,7 @@ const ProductCategorylist = () => {
                       dataModel: {
                         categoryName: null,
                         description: null,
-                        isInactive: true,
+                        isInactive: false,
                         dataImage: null,
                         isDeleted: false,
                         errors: { categoryName: null },

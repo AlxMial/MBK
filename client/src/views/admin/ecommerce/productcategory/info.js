@@ -35,9 +35,11 @@ const Info = (prop) => {
       setErrorImage(dataImage);
       if (!dataImage) {
         image.src = URL.createObjectURL(e.target.files[0]);
-        // const base64 = await FilesService.convertToBase64(e.target.files[0]);
         const base64 = await fn.resizeFile(e.target.files[0]); // 500px * 500px
-        setdataModel((pre) => ({ ...pre, dataImage: base64 }));
+
+        let errors = dataModel.errors;
+        errors.dataImage = null;
+        setdataModel((pre) => ({ ...pre, dataImage: base64, errors: errors }));
       }
     }
   };
@@ -91,13 +93,19 @@ const Info = (prop) => {
   };
   const valid = () => {
     let isValid = true;
+    let errors = {};
     if (fn.IsNullOrEmpty(dataModel.categoryName)) {
       isValid = false;
-      setdataModel((pre) => ({
-        ...pre,
-        errors: { categoryName: "กรุณาระบุชื่อหมวดหมู่สินค้า" },
-      }));
+      errors.categoryName = "กรุณาระบุชื่อหมวดหมู่สินค้า";
     }
+    if (fn.IsNullOrEmpty(dataModel.dataImage)) {
+      isValid = false;
+      errors.dataImage = "กรุณาระบุรูปหมวดหมู่สินค้า";
+    }
+    setdataModel((pre) => ({
+      ...pre,
+      errors: errors,
+    }));
     return isValid;
   };
   const onClose = () => {
@@ -151,7 +159,7 @@ const Info = (prop) => {
                   style={{ height: "100%", overflowY: "auto" }}
                 >
                   <div className="w-full lg:w-1/12 margin-auto-t-b ">
-                    <LabelUC label="รูปหมวดหมู่สินค้า" />
+                    <LabelUC label="รูปหมวดหมู่สินค้า" isRequired={true} />
                   </div>
                   <div className="w-full  lg:w-11/12 px-4 margin-auto-t-b ">
                     <div className="relative w-full px-4">
@@ -161,9 +169,9 @@ const Info = (prop) => {
                         onChange={onChangeImage}
                         src={dataModel.dataImage}
                       />
-                      {errorImage ? (
+                      {errorImage || dataModel.errors.dataImage ? (
                         <div className="text-sm py-2 px-2  text-red-500">
-                          * ประเภทไฟล์รูปภาพไม่ถูกต้อง
+                          * {errorImage || dataModel.errors.dataImage}
                         </div>
                       ) : null}
                     </div>
@@ -180,9 +188,12 @@ const Info = (prop) => {
                         maxLength={255}
                         value={dataModel.categoryName}
                         onChange={(e) => {
+                          let errors = dataModel.errors;
+                          errors.categoryName = null;
                           setdataModel((pre) => ({
                             ...pre,
                             categoryName: e.target.value,
+                            errors: errors,
                           }));
                         }}
                       />
