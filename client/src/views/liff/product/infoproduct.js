@@ -39,7 +39,7 @@ const InfoProduct = () => {
     <>
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
-      <div style={{ height: "calc(50% - 160px)", backgroundColor: "#007a40" }}>
+      <div style={{ height: "calc(50% - 160px)" }} className="bg-green-mbk">
         {Product != null ?
           <div className="w-full absolute" style={{ height: "100%" }}>
             <div className="mb-4" style={{ height: "150px" }}>

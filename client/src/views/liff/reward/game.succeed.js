@@ -8,7 +8,7 @@ const GameSucceed = ({ data }) => {
     const history = useHistory();
     return (
         <>
-            <div style={{ height: "100%", backgroundColor: "#007a40" }}>
+            <div style={{ height: "100%" }} className="bg-green-mbk">
                 {data != null ?
                     <div className="w-full" style={{ height: "calc(100% - 100px)" }}>
 

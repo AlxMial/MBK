@@ -196,7 +196,7 @@ const InfoReward = () => {
       {isLoading ? <Spinner customText={"Loading"} /> : null}
       {/* card */}
       {page == "main" ? (
-        <div style={{ height: "250px", backgroundColor: "#007a40" }}>
+        <div style={{ height: "250px" }} className="bg-green-mbk">
           {Redemptionconditionshd != null ? (
             <>
               <div className="w-full h-full absolute">

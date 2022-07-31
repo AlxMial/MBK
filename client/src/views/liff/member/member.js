@@ -268,10 +268,10 @@ const Member = () => {
           </TabPane>
         </Tabs>
         <div
-          className="flex"
+          className="flex bg-green-mbk"
           style={{
             height: "50px",
-            backgroundColor: "#047a40",
+            // backgroundColor: "#047a40",
             fontSize: "10px",
             justifyContent: "center",
             alignItems: "center",

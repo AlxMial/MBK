@@ -8,7 +8,7 @@ const GameUC = ({ UseGame }) => {
     const [image360, setimage360] = useState(false);
     return (
         <>
-            <div style={{ height: "100%", backgroundColor: "#007a40" }}>
+            <div style={{ height: "100%" }} className=" bg-green-mbk">
                 <div className="w-full">
 
                     <div className="w-full flex" style={{

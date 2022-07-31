@@ -259,10 +259,10 @@ const ShowProducts = () => {
                 ) : null}
                 {tbStock.isFlashSale && fn.isFlashSale(tbStock) ? (
                   <div
-                    className="absolute text-white font-bold flex items-center justify-center"
+                    className="absolute text-white font-bold flex items-center justify-center bg-gold-mbk"
                     style={{
                       // backgroundColor: "rgb(213 183 65 / 90%)",
-                      backgroundColor: "#d0af21",
+                      // backgroundColor: "#d0af21",
                       width: "100%",
                       top: "-35px",
                       height: "30px",

@@ -8,7 +8,7 @@ const CouponSucceed = () => {
     const history = useHistory();
     return (
         <>
-            <div style={{ height: "100%", backgroundColor: "#007a40" }}>
+            <div style={{ height: "100%" }} className="bg-green-mbk">
                 <div className="w-full">
                     <div className="w-full flex mb-2" style={{ justifyContent: "center" }}>
                         <i className="fas fa-check-circle" style={{ color: "#FFFFFF", fontSize: "50px" }}></i>
