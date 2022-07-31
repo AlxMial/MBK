@@ -331,12 +331,12 @@ export default function ConditioRewardInfo() {
                                 .post("/uploadExcel/coupon", {
                                   couponId: res.data.tbRedemptionCoupon.id,
                                 })
-                                .then((resUpload) => {
+                                .then(async(resUpload) => {
                                   dispatch(fetchSuccess());
                                   // history.push(
                                   //   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
                                   // );
-                                  fetchData(res.data.tbRedemptionConditionsHD.id);
+                                  await fetchData(res.data.tbRedemptionConditionsHD.id);
                                   addToast(
                                     Storage.GetLanguage() === "th"
                                       ? "บันทึกข้อมูลสำเร็จ"
@@ -373,7 +373,7 @@ export default function ConditioRewardInfo() {
                       // history.push(
                       //   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
                       // );
-                      fetchData(res.data.tbRedemptionConditionsHD.id);
+                      await fetchData(res.data.tbRedemptionConditionsHD.id);
                       dispatch(fetchSuccess());
                       addToast(
                         Storage.GetLanguage() === "th"
