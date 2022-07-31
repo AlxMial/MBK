@@ -1155,6 +1155,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
           memberId: Member.id,
           rewardType: "Product",
         },
+        order: [["redeemDate", "DESC"]],
       });
       if (_product) {
         for (var i = 0; i < _product.length; i++) {

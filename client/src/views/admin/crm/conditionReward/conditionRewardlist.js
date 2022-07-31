@@ -336,7 +336,7 @@ export default function ConditionRewardList() {
                               className="text-gray-mbk  hover:text-gray-mbk "
                               to={`/admin/redemptionsInfo/${value.id}`}
                             >
-                              <div className="TextWordWarp-200">
+                              <div className="TextWordWarp-600">
                                 {value.redemptionName}
                               </div>
                             </Link>

@@ -775,7 +775,13 @@ router.post("/useGame", validateLineToken, async (req, res) => {
       if (_RedemptionConditionsHD) {
         let item = _RedemptionConditionsHD.dataValues;
         //ตรวจสอบเวลา
-        if (new Date() > item.startDate && new Date() <= item.endDate) {
+        let _st_date = new Date(item.startDate);
+        _st_date.setHours(0, 0, 0, 0);
+        let _en_date = new Date(item.endDate);
+        _en_date.setHours(0, 0, 0, 0);
+        let _now = new Date();
+        _now.setHours(0, 0, 0, 0);
+        if (_now > _st_date && _now <= _en_date) {
           if (memberPoint >= item.points) {
             //สินค้า
             const _tbRedemptionProduct = await tbRedemptionProduct.findAll({
@@ -826,6 +832,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
               where: { redemptionConditionsHDId: item.id },
             });
             if (_tbRedemptionCoupon) {
+      
               for (var i = 0; i < _tbRedemptionCoupon.length; i++) {
                 const item = _tbRedemptionCoupon[i].dataValues;
                 const _tbCouponCode = await tbCouponCode.findAll({

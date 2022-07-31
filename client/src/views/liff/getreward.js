@@ -128,7 +128,7 @@ const GetReward = () => {
               console.log(_rewardCode);
               console.log(succeed);
               if (succeed) {
-                // setconfirmsucceed(true);
+                setconfirmsucceed(true);
               }
             } else {
               setDataError();
@@ -144,7 +144,11 @@ const GetReward = () => {
           setIsLoading(false);
         });
     } else {
-      setIsOpenAlert(true);
+      const _success = rewardCode.find(e => e.code !== '' && e.state && !e.isDuplicate);
+      // console.log('_chk', _chk);
+      if (!_success) {
+        setIsOpenAlert(true);
+      }
     }
   };
   const getMembers = async () => {

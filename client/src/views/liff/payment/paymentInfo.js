@@ -354,7 +354,8 @@ const PaymentInfo = () => {
                       <div className="flex">
                         <div className="px-2" style={{ width: "50%" }}>
                           <div
-                            className="rounded flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                            className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                            style={{ borderRadius: "10px" }}
                             onClick={() => {
                               liff.init(
                                 { liffId: config.liffId },
@@ -428,7 +429,8 @@ const PaymentInfo = () => {
                         </div>
                         <div className="px-2" style={{ width: "50%" }}>
                           <div
-                            className="rounded flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                            className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                            style={{ borderRadius: "10px" }}
                             onClick={() => {
                               liff.init(
                                 { liffId: config.liffId },
@@ -521,7 +523,8 @@ const PaymentInfo = () => {
                 </div>
                 <div className="w-full">
                   <div
-                    className="rounded flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                    className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                    style={{ borderRadius: "10px" }}
                     onClick={() => {
                       if (statuspayment) {
                         setisAttachLater(true);
