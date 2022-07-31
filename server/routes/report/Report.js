@@ -446,6 +446,7 @@ router.get("/ShowCollectPoints", validateToken, async (req, res) => {
                 let item = _tbMemberPoint.find((e) => e.code == code);
 
                 _points.push({
+                  code: Encrypt.DecodeKey(code).toUpperCase(),
                   CampaignName: CampaignName,
                   campaignType: campaignType,
                   redemptionType: redemptionType,
@@ -649,7 +650,7 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
               model: tbCouponCode,
               where: {
                 isDeleted: false,
-                isUse :true
+                isUse: true,
               },
               required: true,
               include: [
@@ -1039,7 +1040,8 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
     ],
   });
   const id = parseInt(req.params.id, 10);
-  tbPointCodeDT.findAll({
+  tbPointCodeDT
+    .findAll({
       where: { tbPointCodeHDId: id, isDeleted: false },
       required: false,
       include: [
@@ -1057,31 +1059,31 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
                   model: tbMember,
                   where: { isDeleted: false },
                   required: false,
-                }
+                },
               ],
             },
           ],
-        }
+        },
       ],
     })
     .then((objs) => {
-
       let tutorials = [];
-      
+
       objs.forEach((obj) => {
         let fullname = "";
         let redeemDate = "";
         let pointStoreName = "";
         let pointBranchName = "";
-        
+
         const code = Encrypt.DecodeKey(obj.code).toUpperCase();
         const codeNone = Encrypt.DecodeKey(obj.codeNone).toUpperCase();
         if (obj.tbPointCodeHD.tbMemberPoints.length > 0) {
           Encrypt.decodePointCode(obj.tbPointCodeHD.tbMemberPoints);
           tbMemberPoints = obj.tbPointCodeHD.tbMemberPoints.find(
-            (el) => el.code.toUpperCase() == code || 
-            el.code.toUpperCase() == code ||
-            el.code.toUpperCase() == codeNone
+            (el) =>
+              el.code.toUpperCase() == code ||
+              el.code.toUpperCase() == code ||
+              el.code.toUpperCase() == codeNone
           );
 
           if (tbMemberPoints !== undefined) {
@@ -1090,17 +1092,26 @@ router.get("/exportExcel/:id", validateToken, async (req, res) => {
               const memeber = Encrypt.decryptAllData(tbMemberPoints.tbMember);
               fullname = memeber.firstName + " " + memeber.lastName;
             }
-            const StoreHD = listPointStoreHD.find(el => el.id === tbMemberPoints.pointsStoreHdId);
-            if(StoreHD !== undefined && StoreHD.pointStoreName !== null) {
+            const StoreHD = listPointStoreHD.find(
+              (el) => el.id === tbMemberPoints.pointsStoreHdId
+            );
+            if (StoreHD !== undefined && StoreHD.pointStoreName !== null) {
               pointStoreName = StoreHD.pointStoreName;
-               const StoreDT = StoreHD.tbPointStoreDTs.length > 0 ? StoreHD.tbPointStoreDTs.find(el => el.tbPointStoreHDId === StoreHD.id) : undefined;
-               if(StoreDT !== undefined ) {
+              const StoreDT =
+                StoreHD.tbPointStoreDTs.length > 0
+                  ? StoreHD.tbPointStoreDTs.find(
+                      (el) => el.tbPointStoreHDId === StoreHD.id
+                    )
+                  : undefined;
+              if (StoreDT !== undefined) {
                 //StoreDT.find(el => el.id === tbMemberPoints.pointsStoreDtId);
-                pointBranchName = StoreDT.pointBranchName !== null ? StoreDT.pointBranchName : "";
-               }
+                pointBranchName =
+                  StoreDT.pointBranchName !== null
+                    ? StoreDT.pointBranchName
+                    : "";
+              }
             }
           }
-    
         }
         tutorials.push({
           code: Encrypt.DecodeKey(obj.code).toUpperCase(),
