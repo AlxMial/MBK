@@ -141,7 +141,7 @@ const Member = () => {
                     height: "25px",
                     fontSize: "0.7rem",
                     lineHeight: 1,
-                    paddingTop: "2px"
+                    paddingTop: "1px"
                     // textAlign: "center",
                   }}
                 >
