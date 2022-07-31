@@ -54,7 +54,7 @@ const ShopList = () => {
   };
 
   const setcategoryview = (id, e) => {
-    console.log("setcategoryview", id, e);
+    // console.log("setcategoryview", id, e);
     setcategory(id);
     setisLoadingData(true);
     setTimeout(() => {
@@ -129,8 +129,8 @@ const ShopList = () => {
             return e;
           }
         });
-        console.log('dataTemp', dataTemp);
-        console.log('tbStockview', tbStockview);
+        // console.log('dataTemp', dataTemp);
+        // console.log('tbStockview', tbStockview);
         let tbStockiewNominal = [];
         let tbStockiewFlashSale = [];
         tbStockview.filter((e) => {

@@ -1017,7 +1017,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
       //Coupon
 
       let _coupon = await tbMemberReward.findAll({
-        limit: 2,
+        // limit: 2,
         attributes: [
           "id",
           "rewardType",
@@ -1066,23 +1066,31 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
           if (_tbCouponCode) {
             let _RedemptionCoupon =
               _tbCouponCode.dataValues.tbRedemptionCoupon.dataValues;
+            let _st_date = new Date(_RedemptionCoupon.startDate);
+            _st_date.setHours(0, 0, 0, 0);
+            let _ex_date = _RedemptionCoupon.isNotExpired ? new Date() : new Date(_RedemptionCoupon.expireDate);
+            _ex_date.setHours(0, 0, 0, 0);
+            let _now = new Date();
+            _now.setHours(0, 0, 0, 0);
 
-            // if (
-            //   _RedemptionCoupon.startDate <= new Date() &&
-            //   _RedemptionCoupon.expireDate >= new Date()
-            // ) {
-            _coupon[i].dataValues.couponName = _RedemptionCoupon.couponName;
-            _coupon[i].dataValues.expireDate = _RedemptionCoupon.expireDate;
-            console.log('_coupon[i].dataValues', _coupon[i].dataValues)
-            if (coupon.length < 2) {
-              coupon.push({
-                id: Encrypt.EncodeKey(_RedemptionCoupon.id),
-                couponId: Encrypt.EncodeKey(_coupon[i].dataValues.TableHDId),
-                couponName: _coupon[i].dataValues.couponName,
-                redeemDate: _coupon[i].dataValues.redeemDate,
-                // expireDate: _coupon[i].dataValues.expireDate,
-                expiredDate: _RedemptionCoupon.isNotExpired ? null : _RedemptionCoupon.expireDate,
-              });
+            if (_st_date <= _now && _ex_date >= _now) {
+              // if (
+              //   _RedemptionCoupon.startDate <= new Date() &&
+              //   _RedemptionCoupon.expireDate >= new Date()
+              // ) {
+              _coupon[i].dataValues.couponName = _RedemptionCoupon.couponName;
+              _coupon[i].dataValues.expireDate = _RedemptionCoupon.expireDate;
+              // console.log('_coupon[i].dataValues', _coupon[i].dataValues)
+              if (coupon.length < 2) {
+                coupon.push({
+                  id: Encrypt.EncodeKey(_RedemptionCoupon.id),
+                  couponId: Encrypt.EncodeKey(_coupon[i].dataValues.TableHDId),
+                  couponName: _coupon[i].dataValues.couponName,
+                  redeemDate: _coupon[i].dataValues.redeemDate,
+                  // expireDate: _coupon[i].dataValues.expireDate,
+                  expiredDate: _RedemptionCoupon.isNotExpired ? null : _RedemptionCoupon.expireDate,
+                });
+              }
             }
             // }
           }

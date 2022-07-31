@@ -36,7 +36,7 @@ const Slide = (prop) => {
             }
         ]
     };
-
+    // console.log('ImgBanner', ImgBanner);
     const renderSlides = () =>
         ImgBanner.map((e, i) => {
             return (
@@ -52,7 +52,13 @@ const Slide = (prop) => {
                                     history.push(path.showProducts.replace(":id", e.stockId));
 
                                 } else {
-                                    prop.setcategoryview(e.productCategoryId, prop.selectMenu)
+                                    history.push({
+                                        pathname: path.shopList,
+                                        state: {
+                                            productCategoryId: e.productCategoryId
+                                        }
+                                    });
+                                    // setcategoryview(e.productCategoryId, prop.selectMenu)
                                 }
                             }
                         }}

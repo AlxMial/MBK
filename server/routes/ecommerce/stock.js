@@ -218,9 +218,9 @@ router.get(
           imageName: e.imageName,
           relatedId: func.EncodeKey(e.relatedId),
           relatedTable: e.relatedTable,
-          typeLink: e.tbBanner.typeLink,
-          productCategoryId: func.EncodeKey(e.tbBanner.productCategoryId),
-          stockId: func.EncodeKey(e.tbBanner.stockId),
+          typeLink: e.tbBanner.dataValues.typeLink,
+          productCategoryId: func.EncodeKey(e.tbBanner.dataValues.productCategoryId),
+          stockId: func.EncodeKey(e.tbBanner.dataValues.stockId),
           image: e.image,
         });
       }

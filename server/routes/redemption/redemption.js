@@ -352,7 +352,7 @@ router.post("/game", validateToken, async (req, res) => {
         if (req.body.listGame[i].rewardType === "1") {
           coupon = await tbRedemptionCoupon.create(req.body.listGame[i]);
           req.body.listGame[i].id = coupon.dataValues.id;
-          console.log(coupon.dataValues.couponCount);
+          // console.log(coupon.dataValues.couponCount);
           const generateCode = await axiosInstance
             .post("api/coupon/generateCoupon", coupon)
             .then(async (resGenerate) => {
@@ -557,7 +557,7 @@ router.put("/", validateToken, async (req, res) => {
       let coupon = null;
       let product = null;
       if (req.body.rewardType === "1") {
-        console.log(req.body.coupon.expiredDate);
+        // console.log(req.body.coupon.expiredDate);
         req.body.coupon.expiredDate = req.body.coupon.isNotExpired
           ? null
           : req.body.coupon.expiredDate;

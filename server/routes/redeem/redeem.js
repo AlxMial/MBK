@@ -385,9 +385,15 @@ router.get(
         if (_RedemptionConditionsHD) {
           let item = _RedemptionConditionsHD;
           for (var i = 0; i < item.length; i++) {
-            if (
-              new Date() >= item[i].startDate &&
-              new Date() <= item[i].endDate
+            let _st = new Date(item[i].startDate);
+            _st.setHours(0, 0, 0, 0);
+            let _en = new Date(item[i].endDate);
+            _en.setHours(0, 0, 0, 0);
+            let _now = new Date();
+            _now.setHours(0, 0, 0, 0);
+            if (_st <= _now && _en >= _now
+              // new Date() >= item[i].startDate &&
+              // new Date() <= item[i].endDate
             ) {
               if (item[i].redemptionType == 1) {
                 if (item[i].rewardType == 1) {
@@ -395,18 +401,21 @@ router.get(
                     attributes: ["id", "expireDate", "isNotExpired"],
                     where: { redemptionConditionsHDId: item[i].id, isCancel: false },
                   });
-
-                  item[i].dataValues.redemptionId = Encrypt.EncodeKey(
-                    _tbRedemptionCoupon.dataValues.id
-                  );
-                  item[i].dataValues.id = Encrypt.EncodeKey(
-                    item[i].dataValues.id
-                  );
-                  // pe : ใช้วันที่หมดอายุคูปอง
-                  item[i].dataValues.isNotExpired = _tbRedemptionCoupon.dataValues.isNotExpired;
-                  item[i].dataValues.endDate = _tbRedemptionCoupon.dataValues.isNotExpired
-                    ? null : _tbRedemptionCoupon.dataValues.expireDate;
-                  RedemptionConditionsHD.push(item[i]);
+                  let _expireDate = new Date(_tbRedemptionCoupon.dataValues.isNotExpired ? new Date() : _tbRedemptionCoupon.dataValues.expireDate);
+                  _expireDate.setHours(0, 0, 0, 0);
+                  if (_tbRedemptionCoupon.dataValues.isNotExpired || _expireDate >= _now) {
+                    item[i].dataValues.redemptionId = Encrypt.EncodeKey(
+                      _tbRedemptionCoupon.dataValues.id
+                    );
+                    item[i].dataValues.id = Encrypt.EncodeKey(
+                      item[i].dataValues.id
+                    );
+                    // pe : ใช้วันที่หมดอายุคูปอง
+                    item[i].dataValues.isNotExpired = _tbRedemptionCoupon.dataValues.isNotExpired;
+                    item[i].dataValues.endDate = _tbRedemptionCoupon.dataValues.isNotExpired
+                      ? null : _tbRedemptionCoupon.dataValues.expireDate;
+                    RedemptionConditionsHD.push(item[i]);
+                  }
                 } else {
                   const _tbRedemptionProduct =
                     await tbRedemptionProduct.findOne({

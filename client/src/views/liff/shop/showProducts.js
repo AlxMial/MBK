@@ -241,12 +241,15 @@ const ShowProducts = () => {
             {/* products */}
             <div
               className="mt-2"
-              style={{ width: "95%", margin: "auto", height: "200px" }}
+              style={{
+                width: "95%", margin: "auto"
+                // , height: "200px" 
+              }}
             >
               <div
                 style={{
                   maxWidth: "200px",
-                  height: "200px",
+                  // height: "200px",
                   margin: "auto",
                 }}
                 className="relative"
@@ -256,15 +259,16 @@ const ShowProducts = () => {
                 ) : null}
                 {tbStock.isFlashSale && fn.isFlashSale(tbStock) ? (
                   <div
-                    className="absolute text-white font-bold"
+                    className="absolute text-white font-bold flex items-center justify-center"
                     style={{
                       // backgroundColor: "rgb(213 183 65 / 90%)",
                       backgroundColor: "#d0af21",
                       width: "100%",
                       top: "-35px",
                       height: "30px",
-                      borderRadius: "0 20px",
-                      padding: "5px",
+                      borderRadius: "5px 15px",
+                      // padding: "5px",
+                      fontSize: "18px",
                       textAlign: "center",
                       zIndex: "1",
                     }}

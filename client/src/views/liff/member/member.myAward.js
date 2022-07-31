@@ -232,7 +232,7 @@ const MyAward = () => {
                                   : "ส่งแล้ว"}
                             </div>
                           </div>
-                          {e.trackingNo != null ? (
+                          {e.trackingNo && (
                             <div className="sec-right flex items-center line-clamp-1">
                               <span className="mr-2"><i
                                 className="fas fa-box-open"
@@ -240,7 +240,7 @@ const MyAward = () => {
                               ></i></span>
                               {e.trackingNo}
                             </div>
-                          ) : null}
+                          )}
                         </div>
                       </div>
                     </div>

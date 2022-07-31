@@ -23,7 +23,7 @@ const MyOrder = () => {
 
   useEffect(() => {
     // setselectMenu(id);
-    dispatch(backPage(true));
+    dispatch(backPage(false));
   }, []);
 
   const MenuUC = ({ num, width, minWidth, text }) => {
