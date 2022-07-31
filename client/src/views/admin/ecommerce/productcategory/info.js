@@ -100,7 +100,7 @@ const Info = (prop) => {
     }
     if (fn.IsNullOrEmpty(dataModel.dataImage)) {
       isValid = false;
-      errors.dataImage = "* กรุณาระบุรูปหมวดหมู่สินค้า";
+      errors.dataImage = "กรุณาระบุรูปหมวดหมู่สินค้า";
     }
     if (isValid) {
       const tbProductCategory = await axios
