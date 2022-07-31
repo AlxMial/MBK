@@ -95,14 +95,14 @@ router.get("/byOrderId/:id", validateToken, async (req, res) => {
                     )`),
                         "description",
                     ],
-                    // [
-                    //     Sequelize.literal(`(
-                    //         select price from tbstocks t
-                    //             where id = tbOrderDT.stockId
-                    //             and isDeleted = 0
-                    //     )`),
-                    //     "stockPrice",
-                    // ],
+                    [
+                        Sequelize.literal(`(
+                            select weight from tbstocks t
+                                where id = tbOrderDT.stockId
+                                and isDeleted = 0
+                        )`),
+                        "weight",
+                    ],
                 ],
             },
         });
