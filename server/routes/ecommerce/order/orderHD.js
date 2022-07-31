@@ -2616,10 +2616,16 @@ router.get("/export", async (req, res) => {
   ,tborderhds.transportStatus
   ,tborderhds.trackNo
   ,tborderhds.doneDate 
-  ,tbreturnorders.returnStatus  
-  ,tbcancelorders.cancelStatus  
-  ,tbreturnorders.returnDetail 
+  ,tbcancelorders.createdAt AS createdAtCancel 
+  ,tbcancelorders.cancelStatus
   ,tbcancelorders.cancelDetail 
+  ,tbcancelorders.description AS descriptionCancel
+  ,tbcancelorders.cancelOtherRemark 
+  ,tbreturnorders.createdAt AS createdAtReturn
+  ,tbreturnorders.returnStatus  
+  ,tbreturnorders.returnDetail 
+  ,tbreturnorders.description AS descriptionReturn
+  ,tbreturnorders.returnOtherRemark  
   ,tborderhds.points
   ,tborderhds.phone 
   ,tbmembers.email

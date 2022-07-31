@@ -362,13 +362,16 @@ const Order = () => {
       "สถานะการจัดส่ง",
       "หมายเลขติดตามพัสดุ",
       "วันที่จัดส่งสำเร็จ",
+      "วันที่ยกเลิก",
       "สถานะการยกเลิก",
-      "สถานะการคืนสินค้า",
-      // "วันที่ยกเลิก/คืนสินค้า",
       "สาเหตุที่ยกเลิก",
+      "รายละเอียด",
+      "หมายเหตุ",
+      "วันที่คืนสินค้า",
+      "สถานะการคืนสินค้า",
       "สาเหตุที่คืน",
-      // "รายละเอียด",
-      // "หมายเหตุ",
+      "รายละเอียด",
+      "หมายเหตุ",
       "คะแนนสะสมที่ได้รับ",
       "เบอร์โทร",
       "อีเมล์",
@@ -402,10 +405,16 @@ const Order = () => {
       "transportStatus",
       "trackNo",
       "doneDate",
-      "returnDate",
-      "cancelDate",
-      "returnDetail",
+      "createdAtCancel",
+      "cancelStatus",
       "cancelDetail",
+      "descriptionCancel",
+      "cancelOtherRemark",
+      "createdAtReturn",
+      "returnStatus",
+      "returnDetail",
+      "descriptionReturn",
+      "returnOtherRemark",
       "points",
       "phone",
       "email",
@@ -488,6 +497,36 @@ const Order = () => {
         order.data.tbOrder[i]["cancelDetail"] === null
           ? ""
           : order.data.tbOrder[i]["cancelDetail"];
+
+      order.data.tbOrder[i]["createdAtCancel"] =
+        order.data.tbOrder[i]["createdAtCancel"] === null
+          ? ""
+          : order.data.tbOrder[i]["createdAtCancel"];
+
+      order.data.tbOrder[i]["createdAtReturn"] =
+        order.data.tbOrder[i]["createdAtReturn"] === null
+          ? ""
+          : order.data.tbOrder[i]["createdAtReturn"];
+
+      order.data.tbOrder[i]["descriptionCancel"] =
+        order.data.tbOrder[i]["descriptionCancel"] === null
+          ? ""
+          : order.data.tbOrder[i]["descriptionCancel"];
+
+      order.data.tbOrder[i]["descriptionReturn"] =
+        order.data.tbOrder[i]["descriptionReturn"] === null
+          ? ""
+          : order.data.tbOrder[i]["descriptionReturn"];
+
+      order.data.tbOrder[i]["returnOtherRemark"] =
+        order.data.tbOrder[i]["returnOtherRemark"] === null
+          ? ""
+          : order.data.tbOrder[i]["returnOtherRemark"];
+
+      order.data.tbOrder[i]["cancelOtherRemark"] =
+        order.data.tbOrder[i]["cancelOtherRemark"] === null
+          ? ""
+          : order.data.tbOrder[i]["cancelOtherRemark"];
     }
 
     exportExcel(

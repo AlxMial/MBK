@@ -162,8 +162,8 @@ export const getAddressName = async (type, id) => {
 
   if (type === "province") {
     const dataValues = await axios.get(`/addressline/province/ById/${id}`);
-    if (dataValues.data) {
-      valueAddress = dataValues.data.address[0].province;
+    if (dataValues.data.address.length > 0) {
+      valueAddress = dataValues.data.address[0].provinceName;
       return valueAddress;
     }
     // await axios.get(`/addressline/province/ById/${id}`).then(async (response) => {
@@ -175,7 +175,7 @@ export const getAddressName = async (type, id) => {
     // });
   } else if (type === "district") {
     const dataValues = await axios.get(`/addressline/district/ById/${id}`);
-    if (dataValues.data) {
+    if (dataValues.data.address.length > 0) {
       valueAddress = dataValues.data.address[0].districtName;
       return valueAddress;
     }
@@ -190,7 +190,7 @@ export const getAddressName = async (type, id) => {
   } else if (type === "subDistrict") {
     try {
       const dataValues = await axios.get(`/addressline/subdistrict/ById/${id}`);
-      if (dataValues.data) {
+      if (dataValues.data.address.length > 0) {
         valueAddress = dataValues.data.address[0].subdistrictName;
         return valueAddress;
       }

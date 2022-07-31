@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import Select from "react-select";
-import api_province from "../../../assets/data/api_province.json";
-import api_amphure from "../../../assets/data/api_amphure.json";
-import api_tombon from "../../../assets/data/api_tombon.json";
+// import api_province from "../../../assets/data/api_province.json";
+// import api_amphure from "../../../assets/data/api_amphure.json";
+// import api_tombon from "../../../assets/data/api_tombon.json";
+import * as Address from "@services/GetAddressLine.js";
 import { path } from "services/liff.services";
 import { getMemberAddress } from "@services/liff.services";
 const AddressModel = ({ isAddress, onChange, setisAddress }) => {
@@ -24,29 +25,48 @@ const AddressModel = ({ isAddress, onChange, setisAddress }) => {
   };
   const getAddress = async (option) => {
     for (var i = 0; i < option.length; i++) {
-      let province = await api_province;
-      province = province.find(
-        (e) => e.value.toString() === option[i].province
+      // let province = await Address.getProvince();
+      // province = province.find(
+      //   (e) => e.value.toString() === option[i].province
+      // );
+
+      // let district = await Address.getDistrict();
+      // district = district.find(
+      //   (e) => e.value.toString() === option[i].district
+      // );
+
+      // let subDistrict = await Address.getSubDistrict();
+      // subDistrict = subDistrict.find(
+      //   (e) => e.value.toString() === option[i].subDistrict
+      // );
+
+      let Province = await Address.getAddressName(
+        "province",
+        option[i].province
       );
 
-      let district = await api_amphure;
-      district = district.find(
-        (e) => e.value.toString() === option[i].district
+      let District = await Address.getAddressName(
+        "district",
+        option[i].district
       );
 
-      let subDistrict = await api_tombon;
-      subDistrict = subDistrict.find(
-        (e) => e.value.toString() === option[i].subDistrict
+      let SubDistrict = await Address.getAddressName(
+        "subDistrict",
+        option[i].subDistrict
       );
-      console.log('province', province)
-      if (province && province.label === "กรุงเทพมหานคร") {
-        option[
-          i
-        ].address = `${option[i].address} แขวง${subDistrict ? subDistrict.label : '-'} ${district ? district.label : '-'} ${province.label} ${option[i].postcode} ${option[i].email}`;
+
+      if (Province === "กรุงเทพมหานคร") {
+        option[i].address = `${option[i].address} แขวง${
+          SubDistrict ? SubDistrict : "-"
+        } ${District ? District : "-"} ${Province} ${
+          option[i].postcode
+        } ${option[i].email}`;
       } else {
-        option[
-          i
-        ].address = `${option[i].address} ต.${subDistrict ? subDistrict.label : '-'} อ.${district ? district.label : '-'} จ.${province.label} ${option[i].postcode} ${option[i].email}`;
+        option[i].address = `${option[i].address} ต.${
+          SubDistrict ? SubDistrict : "-"
+        } อ.${District ? District : "-"} จ.${Province} ${
+          option[i].postcode
+        } ${option[i].email}`;
       }
 
       option[i].name = `คุณ${option[i].firstName} ${option[i].lastName}`;
