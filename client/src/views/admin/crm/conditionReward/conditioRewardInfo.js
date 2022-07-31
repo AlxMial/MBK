@@ -1107,6 +1107,7 @@ export default function ConditioRewardInfo() {
                           setIsClick({
                             ...isClick,
                             expired: formik.values.isNotExpired ? false : true,
+                            redemptionEnd: true 
                           });
                         }}
                         onBlur={(e) => {

@@ -255,7 +255,7 @@ router.put("/", validateToken, async (req, res) => {
   try {
     req.body.firstName = Encrypt.EncodeKey(req.body.firstName);
     req.body.lastName = Encrypt.EncodeKey(req.body.lastName);
-  } catch { }
+  } catch {}
 
   const dataUpdate = await tbOrderHD.update(req.body, {
     where: { id: req.body.id },
@@ -305,21 +305,21 @@ const isFlashSale = (e) => {
   let _today = new Date();
   let today = new Date(
     _today.getFullYear() +
-    "/" +
-    (_today.getMonth() + 1) +
-    "/" +
-    _today.getDate()
+      "/" +
+      (_today.getMonth() + 1) +
+      "/" +
+      _today.getDate()
   );
   if (today >= startDateCampaign && today <= endDateCampaign) {
     let startTimeCampaign = new Date(
       new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-      " " +
-      e.startTimeCampaign
+        " " +
+        e.startTimeCampaign
     );
     let endTimeCampaign = new Date(
       new Date().toISOString().split("T")[0].replace(/-/g, "/") +
-      " " +
-      e.endTimeCampaign
+        " " +
+        e.endTimeCampaign
     );
     today = new Date();
     // อยู่ในเวลา
@@ -1861,8 +1861,8 @@ router.post("/getOrder", validateLineToken, async (req, res) => {
         email: member ? Encrypt.DecodeKey(member.dataValues.email) : null,
         memberName: member
           ? Encrypt.DecodeKey(member.dataValues.firstName) +
-          " " +
-          Encrypt.DecodeKey(member.dataValues.lastName)
+            " " +
+            Encrypt.DecodeKey(member.dataValues.lastName)
           : null,
         price: OrderHDData.dataValues.netTotal,
         Payment: _tbPayment,
@@ -2464,7 +2464,6 @@ router.post(
             });
           }
         }
-
       }
     } catch (e) {
       status = false;
@@ -2478,7 +2477,7 @@ router.post(
   }
 );
 
-router.get("/export", async (req, res) => {
+router.post("/export", validateToken, async (req, res) => {
   // tbOrderHD.hasMany(tbCancelOrder, {
   //   foreignKey: "orderId",
   // });
@@ -2593,7 +2592,76 @@ router.get("/export", async (req, res) => {
   // );
 
   // const data = Sequelize.literal()
-  const [results, data] = await sequelize.query(`select tborderhds.orderNumber 
+  // const [results, data] = await sequelize.query(`select tborderhds.orderNumber
+  // ,tborderhds.orderDate
+  // ,tbmembers.memberCard
+  // ,tbmembers.firstName
+  // ,tbmembers.lastName
+  // ,tbproductcategories.categoryName
+  // ,tbstocks.productName
+  // ,tborderdts.amount
+  // ,tborderdts.price
+  // ,tborderhds.deliveryCost
+  // ,tborderhds.netTotal
+  // ,tborderdts.isFlashSale
+  // ,tborderhds.discountStorePromotion
+  // ,tbstocks.discount
+  // ,tborderhds.discountCoupon
+  // ,tbcouponcodes.codeCoupon
+  // ,tborderhds.paymentType
+  // ,tborderhds.paymentStatus
+  // ,tborderhds.paymentDate
+  // ,tblogisticcategories.logisticCategory
+  // ,tborderhds.transportStatus
+  // ,tborderhds.trackNo
+  // ,tborderhds.doneDate
+  // ,tbcancelorders.createdAt AS createdAtCancel
+  // ,tbcancelorders.cancelStatus
+  // ,tbcancelorders.cancelDetail
+  // ,tbcancelorders.description AS descriptionCancel
+  // ,tbcancelorders.cancelOtherRemark
+  // ,tbreturnorders.createdAt AS createdAtReturn
+  // ,tbreturnorders.returnStatus
+  // ,tbreturnorders.returnDetail
+  // ,tbreturnorders.description AS descriptionReturn
+  // ,tbreturnorders.returnOtherRemark
+  // ,tborderhds.points
+  // ,tborderhds.phone
+  // ,tbmembers.email
+  // ,tborderhds.address
+  // ,tborderhds.province
+  // ,tborderhds.district
+  // ,tborderhds.subDistrict
+  // ,tborderhds.postcode
+  // from tborderhds
+  // left join tborderdts on tborderdts.orderId  = tborderhds.id
+  // left join tbmembers on tbmembers.id = tborderhds.memberId
+  // left join tbstocks on tbstocks.id = tborderdts.stockId
+  // left join tbproductcategories on tbproductcategories.id = tbstocks.productCategoryId
+  // left join tbcancelorders on tbcancelorders.orderId = tborderhds.id
+  // left join tbreturnorders on tbreturnorders.orderId = tborderhds.id
+  // left join tblogistics on tborderhds.logisticId  = tblogistics.id
+  // left join tblogisticcategories on tblogisticcategories.id = tblogistics.logisticCategoryId
+  // left join tbmemberrewards on tbmemberrewards.id = tborderhds.memberRewardId
+  // left join tbcouponcodes on tbcouponcodes.id = tbmemberrewards.TableHDId
+  // where tborderhds.isDeleted = 0
+  // order by orderNumber`);
+  // if (results) {
+  //   data.map((e, i) => {
+  //     let hd = e;
+  //     hd.firstName = Encrypt.DecodeKey(hd.firstName);
+  //     hd.lastName = Encrypt.DecodeKey(hd.lastName);
+  //     hd.phone = Encrypt.DecodeKey(hd.phone);
+  //     hd.address = Encrypt.DecodeKey(hd.address);
+  //     hd.email = Encrypt.DecodeKey(hd.email);
+  //     hd.memberCard = Encrypt.DecodeKey(hd.memberCard);
+  //   });
+  //   res.json({ status: true, message: "success", tbOrder: data });
+  // } else res.json({ status: false, message: "not found order", tbOrder: null });
+
+  if (req.body.ArrayWhere.length > 2) {
+    const [results, data] =
+      await sequelize.query(`select tborderhds.orderNumber 
   ,tborderhds.orderDate
   ,tbmembers.memberCard  
   ,tbmembers.firstName 
@@ -2645,20 +2713,90 @@ router.get("/export", async (req, res) => {
   left join tblogisticcategories on tblogisticcategories.id = tblogistics.logisticCategoryId 
   left join tbmemberrewards on tbmemberrewards.id = tborderhds.memberRewardId 
   left join tbcouponcodes on tbcouponcodes.id = tbmemberrewards.TableHDId 
-  where tborderhds.isDeleted = 0
-  order by orderNumber`);
-  if (results) {
-    data.map((e, i) => {
-      let hd = e;
-      hd.firstName = Encrypt.DecodeKey(hd.firstName);
-      hd.lastName = Encrypt.DecodeKey(hd.lastName);
-      hd.phone = Encrypt.DecodeKey(hd.phone);
-      hd.address = Encrypt.DecodeKey(hd.address);
-      hd.email = Encrypt.DecodeKey(hd.email);
-      hd.memberCard = Encrypt.DecodeKey(hd.memberCard);
-    });
-    res.json({ status: true, message: "success", tbOrder: data });
-  } else res.json({ status: false, message: "not found order", tbOrder: null });
+  where tborderhds.isDeleted = 0 and tborderhds.id in ${req.body.ArrayWhere}  order by orderNumber`);
+
+    if (results) {
+      data.map((e, i) => {
+        let hd = e;
+        hd.firstName = Encrypt.DecodeKey(hd.firstName);
+        hd.lastName = Encrypt.DecodeKey(hd.lastName);
+        hd.phone = Encrypt.DecodeKey(hd.phone);
+        hd.address = Encrypt.DecodeKey(hd.address);
+        hd.email = Encrypt.DecodeKey(hd.email);
+        hd.memberCard = Encrypt.DecodeKey(hd.memberCard);
+      });
+      res.json({ status: true, message: "success", tbOrder: data });
+    } else
+      res.json({ status: false, message: "not found order", tbOrder: null });
+  } else {
+    const [results, data] =
+      await sequelize.query(`select tborderhds.orderNumber 
+,tborderhds.orderDate
+,tbmembers.memberCard  
+,tbmembers.firstName 
+,tbmembers.lastName
+,tbproductcategories.categoryName 
+,tbstocks.productName
+,tborderdts.amount
+,tborderdts.price
+,tborderhds.deliveryCost 
+,tborderhds.netTotal 
+,tborderdts.isFlashSale 
+,tborderhds.discountStorePromotion 
+,tbstocks.discount
+,tborderhds.discountCoupon
+,tbcouponcodes.codeCoupon 
+,tborderhds.paymentType 
+,tborderhds.paymentStatus
+,tborderhds.paymentDate
+,tblogisticcategories.logisticCategory 
+,tborderhds.transportStatus
+,tborderhds.trackNo
+,tborderhds.doneDate 
+,tbcancelorders.createdAt AS createdAtCancel 
+,tbcancelorders.cancelStatus
+,tbcancelorders.cancelDetail 
+,tbcancelorders.description AS descriptionCancel
+,tbcancelorders.cancelOtherRemark 
+,tbreturnorders.createdAt AS createdAtReturn
+,tbreturnorders.returnStatus  
+,tbreturnorders.returnDetail 
+,tbreturnorders.description AS descriptionReturn
+,tbreturnorders.returnOtherRemark  
+,tborderhds.points
+,tborderhds.phone 
+,tbmembers.email
+,tborderhds.address
+,tborderhds.province 
+,tborderhds.district 
+,tborderhds.subDistrict 
+,tborderhds.postcode 
+from tborderhds
+left join tborderdts on tborderdts.orderId  = tborderhds.id 
+left join tbmembers on tbmembers.id = tborderhds.memberId 
+left join tbstocks on tbstocks.id = tborderdts.stockId 
+left join tbproductcategories on tbproductcategories.id = tbstocks.productCategoryId 
+left join tbcancelorders on tbcancelorders.orderId = tborderhds.id 
+left join tbreturnorders on tbreturnorders.orderId = tborderhds.id 
+left join tblogistics on tborderhds.logisticId  = tblogistics.id
+left join tblogisticcategories on tblogisticcategories.id = tblogistics.logisticCategoryId 
+left join tbmemberrewards on tbmemberrewards.id = tborderhds.memberRewardId 
+left join tbcouponcodes on tbcouponcodes.id = tbmemberrewards.TableHDId 
+where tborderhds.isDeleted = 0  order by orderNumber`);
+    if (results) {
+      data.map((e, i) => {
+        let hd = e;
+        hd.firstName = Encrypt.DecodeKey(hd.firstName);
+        hd.lastName = Encrypt.DecodeKey(hd.lastName);
+        hd.phone = Encrypt.DecodeKey(hd.phone);
+        hd.address = Encrypt.DecodeKey(hd.address);
+        hd.email = Encrypt.DecodeKey(hd.email);
+        hd.memberCard = Encrypt.DecodeKey(hd.memberCard);
+      });
+      res.json({ status: true, message: "success", tbOrder: data });
+    } else
+      res.json({ status: false, message: "not found order", tbOrder: null });
+  }
 });
 
 //#endregion line liff

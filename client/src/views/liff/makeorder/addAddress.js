@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import Spinner from "components/Loadings/spinner/Spinner";
 import { useToasts } from "react-toast-notifications";
 import { Radio } from "antd";
-import * as Address from "@services/GetAddress.js";
+import * as Address from "@services/GetAddressLine.js";
 import { path, addMemberAddress } from "@services/liff.services";
 import * as Session from "@services/Session.service";
 import {

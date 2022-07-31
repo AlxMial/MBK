@@ -101,7 +101,7 @@ const Order = () => {
           (x) =>
             x.orderNumber.toLowerCase().includes(e) ||
             x.memberName.toLowerCase().includes(e) ||
-            (x.orderDate ?? "").toString().includes(e) ||
+            (x.orderDate ? moment(x.orderDate).format("DD/MM/YYYY HH:mm:ss")  : "").toString().includes(e) ||
             (x.netTotal ?? "").toString().includes(e) ||
             (x.paymentStatus === "1"
               ? "รอการชำระเงิน"
@@ -343,7 +343,17 @@ const Order = () => {
 
   const Excel = async (sheetname) => {
     dispatch(fetchLoading());
-    let order = await axios.get("order/orderHD/export");
+    let ArrayWhere = "(";
+
+    if(orderList.length < listSearch.length){
+      ArrayWhere += "''";
+      orderList.forEach((e) => {
+        ArrayWhere += ",'" + e.id +"'"
+      })
+    }
+    ArrayWhere += ")";
+
+    let order = await axios.post("order/orderHD/export",{ArrayWhere:ArrayWhere});
     const TitleColumns = [
       "หมายเลขคำสั่งซื้อ",
       "วันที่สั่งซื้อ",
@@ -380,7 +390,7 @@ const Order = () => {
       "หมายเหตุ",
       "คะแนนสะสมที่ได้รับ",
       "เบอร์โทร",
-      "อีเมล์",
+      "อีเมล",
       "ที่อยู่",
       "จังหวัด",
       "อำเภอ",
@@ -447,22 +457,40 @@ const Order = () => {
       }
 
       order.data.tbOrder[i]["isFlashSale"] =
-        order.data.tbOrder[i]["isFlashSale"] === "1" ? "Flash Sale" : "";
+        order.data.tbOrder[i]["isFlashSale"] == "1" ? "Flash Sale" : "";
 
       order.data.tbOrder[i]["paymentType"] =
-        order.data.tbOrder[i]["paymentType"] === "1" ? "โอนเงิน" : "2c2p";
+        order.data.tbOrder[i]["paymentType"] == "1" ? "โอนเงิน" : "2c2p";
       order.data.tbOrder[i]["paymentStatus"] =
-        order.data.tbOrder[i]["paymentStatus"] === "1"
+        order.data.tbOrder[i]["paymentStatus"] == "1"
           ? "รอการชำระ"
-          : order.data.tbOrder[i]["paymentStatus"] === "2"
+          : order.data.tbOrder[i]["paymentStatus"] == "2"
           ? "รอการตรวจสอบ"
           : "สำเร็จ";
       order.data.tbOrder[i]["transportStatus"] =
-        order.data.tbOrder[i]["transportStatus"] === "1"
+        order.data.tbOrder[i]["transportStatus"] == "1"
           ? "รอการขนส่ง"
-          : order.data.tbOrder[i]["transportStatus"] === "2"
+          : order.data.tbOrder[i]["transportStatus"] == "2"
           ? "กำลังขนส่ง"
           : "สำเร็จ";
+
+          if(order.data.tbOrder[i]["cancelStatus"] == "1"){
+            order.data.tbOrder[i]["cancelStatus"] = "รอยกเลิก";
+          }else if (order.data.tbOrder[i]["cancelStatus"] == "2"){
+            order.data.tbOrder[i]["cancelStatus"] = "คืนเงิน";
+          }else if (order.data.tbOrder[i]["cancelStatus"] == "3"){
+            order.data.tbOrder[i]["cancelStatus"] = "ไม่คืนเงิน";
+          }
+    
+    
+          
+          if(order.data.tbOrder[i]["returnStatus"] == "1"){
+            order.data.tbOrder[i]["returnStatus"] = "รอการคืนสินค้า";
+          }else if (order.data.tbOrder[i]["returnStatus"] == "2"){
+            order.data.tbOrder[i]["returnStatus"] = "คืนสำเร็จ";
+          }else if (order.data.tbOrder[i]["returnStatus"] == "3"){
+            order.data.tbOrder[i]["returnStatus"] = "ปฎิเสธ";
+          }
 
       order.data.tbOrder[i]["codeCoupon"] =
         order.data.tbOrder[i]["codeCoupon"] === null
@@ -507,12 +535,16 @@ const Order = () => {
       order.data.tbOrder[i]["createdAtCancel"] =
         order.data.tbOrder[i]["createdAtCancel"] === null
           ? ""
-          : order.data.tbOrder[i]["createdAtCancel"];
+          : moment(order.data.tbOrder[i]["createdAtCancel"]).format(
+            "DD/MM/YYYY"
+          );
 
       order.data.tbOrder[i]["createdAtReturn"] =
         order.data.tbOrder[i]["createdAtReturn"] === null
           ? ""
-          : order.data.tbOrder[i]["createdAtReturn"];
+          : moment(order.data.tbOrder[i]["createdAtReturn"]).format(
+            "DD/MM/YYYY"
+          );
 
       order.data.tbOrder[i]["descriptionCancel"] =
         order.data.tbOrder[i]["descriptionCancel"] === null
@@ -533,6 +565,9 @@ const Order = () => {
         order.data.tbOrder[i]["cancelOtherRemark"] === null
           ? ""
           : order.data.tbOrder[i]["cancelOtherRemark"];
+
+
+
     }
 
     exportExcel(
