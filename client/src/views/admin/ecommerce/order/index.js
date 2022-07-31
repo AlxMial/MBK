@@ -156,6 +156,12 @@ const Order = () => {
       const res = await axios.get("order/orderDT/byOrderId/" + id);
       if (!res.data.error && res.data.tbOrderDT) {
         const _orderDT = res.data.tbOrderDT;
+        let sumWeight = 0;
+        _orderDT.map((e) => {
+          sumWeight = sumWeight + parseFloat(e.amount) * parseFloat(e.weight);
+        });
+        data[0].sumWeight = sumWeight;
+        setOrderHD(data[0]);
         setOrderDT(
           _orderDT.map((x) => {
             if (x.image) {
