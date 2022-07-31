@@ -11,7 +11,7 @@ const FooterButton = ({ sendOrder, text }) => {
       <div style={{ width: "50%", padding: "10px" }}>
         <div
           className="flex bg-green-mbk text-white text-center text-base  font-bold bt-line "
-          onClick={() => {history.push(path.shopList)}}
+          onClick={() => { history.push(path.shopMain) }}
         >
           {"ไปหน้าร้านค้า"}
         </div>

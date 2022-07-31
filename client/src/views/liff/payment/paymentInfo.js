@@ -58,7 +58,7 @@ const PaymentInfo = () => {
           setstatuspayment(false);
         }
       },
-      () => {},
+      () => { },
       () => {
         setIsLoading(false);
       }
@@ -75,7 +75,7 @@ const PaymentInfo = () => {
       setSlipImage(base64);
       image.src = URL.createObjectURL(e.target.files[0]);
     } else {
-      addToast("แนบได้เฉพาะสลิปโอนเงินเท่านั่น", {
+      addToast("แนบได้เฉพาะสลิปโอนเงินเท่านั้น", {
         appearance: "warning",
         autoDismiss: true,
       });
@@ -185,7 +185,7 @@ const PaymentInfo = () => {
             });
           }
         },
-        () => {},
+        () => { },
         () => {
           setIsLoading(true);
         }

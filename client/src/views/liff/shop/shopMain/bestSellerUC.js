@@ -5,6 +5,7 @@ import { path } from "services/liff.services";
 import * as fn from "services/default.service";
 
 const BestSellerUC = ({ data }) => {
+  // console.log('data', data);
   const history = useHistory();
   const _min_width = window.innerWidth >= 768 ? '180px' : "calc(50vw - 1.125rem)";
   const _width = window.innerWidth >= 768 ? '180px' : "calc(50vw - 1.125rem)";
@@ -55,7 +56,29 @@ const BestSellerUC = ({ data }) => {
                       alt="flash_sale"
                       className="w-32 border-2 border-blueGray-50"
                     ></ImageUC>
-
+                    {e.discount > 0 ? (
+                      <div
+                        className="absolute"
+                        style={{
+                          bottom: "0",
+                          left: "0px",
+                          backgroundColor: "red",
+                          borderRadius: "5px",
+                        }}
+                      >
+                        <div className="text-xs text-white px-2"
+                          style={{
+                            borderRadius: "5px",
+                            padding: "0 10px",
+                            fontSize: "10px",
+                            background: "red",
+                            justifyContent: "center",
+                            fontWeight: "bold",
+                          }}>
+                          {"SALE -" + parseInt(fn.formatMoney(e.percent)) + "%"}
+                        </div>
+                      </div>
+                    ) : null}
                     {e.isBestSeller ? (
                       <img
                         style={{
@@ -92,21 +115,15 @@ const BestSellerUC = ({ data }) => {
                   >
                     <div
                       style={{
-                        color: e.saleDiscount > 0 ? "#ddd" : "#000",
-                        textDecoration:
-                          e.saleDiscount > 0 ? "line-through" : "none",
+                        color: e.discount > 0 ? "#ddd" : "#000",
+                        textDecoration: e.discount > 0 ? "line-through" : "none",
                       }}
                     >
                       {"฿ " + fn.formatMoney(e.price)}
                     </div>
-                    {e.saleDiscount > 0 ? (
-                      <div
-                        style={{
-                          color: "red",
-                          paddingLeft: "10px",
-                        }}
-                      >
-                        {"฿ " + fn.formatMoney(e.price - e.saleDiscount)}
+                    {e.discount > 0 ? (
+                      <div style={{ color: "red", paddingLeft: "10px" }}>
+                        {"฿ " + fn.formatMoney(e.priceDiscount)}
                       </div>
                     ) : null}
                     <div

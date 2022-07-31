@@ -454,7 +454,7 @@ const MakeOrderById = () => {
             >
               <div style={{ width: "90%", margin: "auto" }}>
                 <div>
-                  <div className="flex relative mb-2  text-12">
+                  <div className="flex relative mb-2">
                     <div>{"ยอดรวมสินค้า (" + amount + " ชิ้น)"} : </div>
                     {OrderHD != null ? (
                       <div className="absolute" style={{ right: "0" }}>

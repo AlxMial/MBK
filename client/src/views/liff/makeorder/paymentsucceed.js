@@ -89,7 +89,7 @@ const Paymentsucceed = () => {
                     justifyContent: "center",
                   }}
                   onClick={() => {
-                    history.push(path.shopList);
+                    history.push(path.shopMain);
                   }}
                 >
                   {"ไปหน้าร้านค้า"}
@@ -106,7 +106,7 @@ const Paymentsucceed = () => {
                     history.push(path.myorder.replace(":id", "1"));
                   }}
                 >
-                  {"ไปหน้า คำสั่งซื้อของฉัน"}
+                  {"ไปหน้าคำสั่งซื้อของฉัน"}
                 </div>
               </div>
             </div>
@@ -143,7 +143,7 @@ const Paymentsucceed = () => {
                       justifyContent: "center",
                     }}
                     onClick={() => {
-                      history.push(path.shopList);
+                      history.push(path.shopMain);
                     }}
                   >
                     {"ไปหน้าร้านค้า"}
@@ -160,7 +160,7 @@ const Paymentsucceed = () => {
                       history.push(path.myorder.replace(":id", "1"));
                     }}
                   >
-                    {"ไปหน้า คำสั่งซื้อของฉัน"}
+                    {"ไปหน้าคำสั่งซื้อของฉัน"}
                   </div>
                 </div>
               </div>

@@ -557,7 +557,7 @@ const ShowCart = () => {
               justifyContent: "center",
             }}
             onClick={() => {
-              history.push(path.shopList);
+              history.push(path.shopMain);
             }}
           >
             {"ไปหน้าร้านค้า"}

@@ -93,7 +93,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                 <div className="flex mt-2">
                   <div
                     className="px-2 py-2"
-                    style={{ width: "120px", height: "120px" }}
+                    style={{ width: "120px", height: "80px" }}
                   >
                     <img
                       src={e.image}
@@ -102,13 +102,12 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                     ></img>
                   </div>
                   <div
-                    className="px-2 py-5 relative"
+                    className="px-2 pt-2 relative flex flex-col justify-between"
                     style={{ width: "calc(100% - 120px)" }}
                   >
-                    <div className="text-base text-bold">{e.couponName}</div>
+                    <div className="text-sm text-bold">{e.couponName}</div>
                     <div
-                      className="flex absolute w-full"
-                      style={{ bottom: "0" }}
+                      className="flex  w-full justify-between"
                     >
                       <div
                         className="flex"
@@ -128,15 +127,10 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                           : "ไม่หมดอายุ"}
                       </div>
                       <div
-                        className="bg-green-mbk text-white text-center text-lg  font-bold"
+                        className="flex bg-green-mbk text-white text-center text-xs font-bold items-center justify-center"
                         style={{
-                          margin: "auto",
-                          width: "100px",
                           borderRadius: "20px",
-                          padding: "10px",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          right: "0",
+                          padding: "2px 10px",
                         }}
                         onClick={() => {
                           setusecoupon(e);

@@ -39,7 +39,7 @@ const OrderPaymentDone = () => {
             let OrderHD = res.data.OrderHD;
             console.log(OrderHD);
             setOrderHD(OrderHD);
-            console.log('OrderHD', OrderHD);
+            // console.log('OrderHD', OrderHD);
             // if (!fn.IsNullOrEmpty(OrderHD.couponCodeId)) {
             //   setdiscount(OrderHD.RedemptionCoupon.tbRedemptionCoupon.discount);
             // }
@@ -68,7 +68,7 @@ const OrderPaymentDone = () => {
     );
   };
   useEffect(() => {
-    dispatch(backPage(true));
+    // dispatch(backPage(true));
     getProducts();
   }, []);
 
@@ -85,7 +85,7 @@ const OrderPaymentDone = () => {
       </div>
       <div
         className="overflow-scroll line-scroll"
-        style={{ height: "calc(100% - 200px)" }}
+        style={{ height: "calc(100% - 215px)" }}
       >
         {OrderHD != null ? (
           <>
@@ -564,15 +564,37 @@ const OrderPaymentDone = () => {
         ) : null}
 
         <div className="absolute w-full flex" style={{ bottom: "0" }}>
-          <div className="w-full" style={{ padding: "10px" }}>
-            <div
+          <div className="w-full flex py-2"
+          // style={{ padding: "10px" }}
+          >
+            <div className="px-2" style={{ width: "50%" }}>
+              <div
+                className="flex bg-green-mbk text-white text-center text-base bt-line "
+                onClick={() => {
+                  history.push(path.shopMain);
+                }}
+              >
+                {"ไปหน้าร้านค้า"}
+              </div>
+            </div>
+            <div className="px-2" style={{ width: "50%" }}>
+              <div
+                className="flex bg-gold-mbk  text-white text-center text-base  bt-line  "
+                onClick={() => {
+                  history.push(path.myorder.replace(":id", "1"));
+                }}
+              >
+                {"ไปหน้าคำสั่งซื้อของฉัน"}
+              </div>
+            </div>
+            {/* <div
               className="flex bg-green-mbk text-white text-center text-base  font-bold bt-line"
               onClick={() => {
-                history.push(path.shopList);
+                history.push(path.shopMain);
               }}
             >
               {"กลับไปที่ร้านค้า"}
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

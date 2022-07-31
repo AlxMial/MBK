@@ -47,7 +47,7 @@ const WaitingPayment = ({ price }) => {
               <div
                 className="flex bg-green-mbk text-white text-center text-base bt-line "
                 onClick={() => {
-                  history.push(path.shopList);
+                  history.push(path.shopMain);
                 }}
               >
                 {"ไปหน้าร้านค้า"}
@@ -60,7 +60,7 @@ const WaitingPayment = ({ price }) => {
                   history.push(path.myorder.replace(":id", "1"));
                 }}
               >
-                {"ไปหน้า คำสั่งซื้อของฉัน"}
+                {"ไปหน้าคำสั่งซื้อของฉัน"}
               </div>
             </div>
           </div>

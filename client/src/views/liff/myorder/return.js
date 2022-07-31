@@ -45,7 +45,7 @@ const ReturnOrder = () => {
           margin: "auto",
         }}
       >
-        {OrderHD.length > 0 ? (
+        {OrderHD && OrderHD.length > 0 ? (
           <DetailOrder
             OrderHD={OrderHD}
             onClick={(e) => {
