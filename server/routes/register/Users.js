@@ -9,15 +9,18 @@ const ValidateEncrypt = require("../../services/crypto");
 const Op = Sequelize.Op;
 const Encrypt = new ValidateEncrypt();
 const config = require("../../services/config.line");
-const sequelize = new Sequelize(config.database.database,config.database.username, config.database.password, {
-  host: config.database.host,
-  dialect:config.database.dialect,
-});
+const sequelize = new Sequelize(
+  config.database.database,
+  config.database.username,
+  config.database.password,
+  {
+    host: config.database.host,
+    dialect: config.database.dialect,
+  }
+);
 
 router.post("/login", async (req, res) => {
-
   // const [results, data] = await sequelize.query(`update  tbpointcodedts set isExpire = 1 where tbPointCodeHDId in (select id from tbpointcodehds where endDate < now() and isDeleted = 0 )`);
-
 
   const { userName, password } = req.body;
   const user = await tbUser.findOne({
@@ -32,7 +35,10 @@ router.post("/login", async (req, res) => {
       "empCode",
       "position",
     ],
-    where: { userName: Encrypt.EncodeKey(userName.toLowerCase()) },
+    where: {
+      userName: Encrypt.EncodeKey(userName.toLowerCase()),
+      isDeleted: false,
+    },
   });
 
   if (!user) {
@@ -185,7 +191,7 @@ router.get("/byId/:id", validateToken, async (req, res) => {
         "email",
         "empCode",
         "position",
-        "role"
+        "role",
       ],
       where: { id: id },
     });
@@ -225,7 +231,7 @@ router.get("/permission/:username", validateToken, async (req, res) => {
 
 router.put("/", validateToken, async (req, res) => {
   req.body.id = Encrypt.DecodeKey(req.body.id);
-  const user = await tbUser.findOne({ 
+  const user = await tbUser.findOne({
     attributes: [
       "id",
       "userName",
@@ -236,7 +242,8 @@ router.put("/", validateToken, async (req, res) => {
       "empCode",
       "position",
     ],
-    where: { id: req.body.id } });
+    where: { id: req.body.id },
+  });
 
   const userCheck = await tbUser.findOne({
     attributes: [
