@@ -377,7 +377,7 @@ const BannerModal = ({
                         src={item.picture}
                       />
                       <div className="text-red-500 text-xs text-center">
-                        1140*460 px
+                        600*400 px
                       </div>
                       {errorImage && indexShow == i ? (
                         <div className="text-sm py-2 px-2  text-red-500">
