@@ -214,6 +214,9 @@ export default function UserInfo() {
               formik.setFieldValue("confirmPassword", "");
               formik.setFieldValue("password", "");
               setIsModified(false);
+              setPoorPassword(false);
+              setWeakPassword(false);
+              setStrongPassword(false);
               if (isBack) history.push("/admin/users");
               if (modalIsOpenEdit) history.push("/admin/users");
               else history.push(`/admin/usersinfo/${res.data.tbUser.id}`);

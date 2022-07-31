@@ -29,15 +29,16 @@ const Encrypt = new ValidateEncrypt();
 const line = require("@line/bot-sdk");
 const config = require("../../services/config.line");
 const { sign } = require("jsonwebtoken");
-const sequelize = new Sequelize(
-  config.database.database,
-  config.database.username,
-  config.database.password,
-  {
-    host: config.database.host,
-    dialect: config.database.dialect,
-  }
-);
+const db = require("../../models");
+// const sequelize = new Sequelize(
+//   config.database.database,
+//   config.database.username,
+//   config.database.password,
+//   {
+//     host: config.database.host,
+//     dialect: config.database.dialect,
+//   }
+// );
 
 // import moment from "moment";
 router.get("/", validateToken, async (req, res) => {
@@ -102,45 +103,87 @@ router.get("/", validateToken, async (req, res) => {
 //   } else res.json({ error: "not found member" });
 // });
 
-router.get("/export", validateToken, async (req, res) => {
-  const listMembers = await tbMember.findAll({
-    attributes: [
-      "id",
-      "memberCard",
-      "firstName",
-      "lastName",
-      "sex",
-      "phone",
-      "email",
-      "birthDate",
-      "registerDate",
-      "address",
-      "subDistrict",
-      "district",
-      "province",
-      "country",
-      "postcode",
-      "isDeleted",
-      "uid",
-      "isMemberType",
-      "memberPoint",
-      "memberPointExpire",
-      "memberType",
-      "consentDate",
-      "isPolicy1",
-      "isPolicy2",
-      "isCustomer",
-      "eating",
-      "remark",
-    ],
-    where: { isDeleted: false },
+router.post("/export", validateToken, async (req, res) => {
+
+
+  let Inwhere = "";
+  let index = 1;
+  req.body.ArrayWhere.forEach((e) => {
+    Inwhere += Encrypt.DecodeKey(e.id);
+    if(req.body.ArrayWhere.length > index)
+      Inwhere += ","
+    index++;
   });
-  if (listMembers.length > 0) {
-    const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
-    Encrypt.encryptValueIdArray(ValuesDecrypt);
-    res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
-  } else
-    res.json({ status: false, message: "not found member", tbMember: null });
+
+//   const listMembers = await tbMember.findAll({
+//     attributes: [
+//       "id",
+//       "memberCard",
+//       "firstName",
+//       "lastName",
+//       "sex",
+//       "phone",
+//       "email",
+//       "birthDate",
+//       "registerDate",
+//       "address",
+//       "subDistrict",
+//       "district",
+//       "province",
+//       "country",
+//       "postcode",
+//       "isDeleted",
+//       "uid",
+//       "isMemberType",
+//       "memberPoint",
+//       "memberPointExpire",
+//       "memberType",
+//       "consentDate",
+//       "isPolicy1",
+//       "isPolicy2",
+//       "isCustomer",
+//       "eating",
+//       "remark",
+//     ],
+//     where: { isDeleted: false },
+//   });
+//   if (listMembers.length > 0) {
+//     const ValuesDecrypt = Encrypt.decryptAllDataArray(listMembers);
+//     Encrypt.encryptValueIdArray(ValuesDecrypt);
+//     res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
+//   } else
+//     res.json({ status: false, message: "not found member", tbMember: null });
+// });
+const qry = `
+  SELECT id, memberCard, firstName, lastName, sex, phone, email, 
+  birthDate, registerDate, address, subDistrict, district, province,
+  country, postcode, isDeleted, uid, isMemberType, memberPoint, 
+  memberPointExpire, memberType, consentDate, isPolicy1, isPolicy2,
+  isCustomer, eating, remark 
+  FROM tbMembers AS tbMember 
+  WHERE tbMember.isDeleted = false 
+  AND tbMember.id IN (${Inwhere}) `;
+
+
+  const [results, data] =
+      await db.sequelize.query(`
+      SELECT id, memberCard, firstName, lastName, sex, phone, email, 
+      birthDate, registerDate, address, subDistrict, district, province,
+      country, postcode, isDeleted, uid, isMemberType, memberPoint, 
+      memberPointExpire, memberType, consentDate, isPolicy1, isPolicy2,
+      isCustomer, eating, remark 
+      FROM tbMembers AS tbMember 
+      WHERE tbMember.isDeleted = false 
+      AND tbMember.id IN (${Inwhere})`);
+
+      if (results) {
+        const ValuesDecrypt = Encrypt.decryptAllDataArrayExport(results);
+        Encrypt.encryptValueIdArrayExport(ValuesDecrypt);
+        console.log(ValuesDecrypt)
+        res.json({ status: true, message: "success", tbMember: ValuesDecrypt });
+
+      } else
+         res.json({ status: false, message: "not found member", tbMember: null });
 });
 
 router.get("/byId/:id", validateToken, async (req, res) => {

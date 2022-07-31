@@ -85,7 +85,11 @@ export default function MemberList() {
 
   const Excel = async (sheetname) => {
     setIsLoading(true);
-    let member = await axios.get("members/export");
+    let ArrayWhere = [];
+    listUser.forEach((e) => {
+      ArrayWhere.push({ id: e.id });
+    });
+    let member = await axios.post("members/export",{ArrayWhere:ArrayWhere});
     const TitleColumns = [
       "รหัสสมาชิก",
       "ระดับสมาชิก",

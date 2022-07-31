@@ -266,6 +266,57 @@ class ValidateEncrypt {
     }
     return list;
   }
+
+
+  decryptAllDataArrayExport(list) {
+    var i = 0;
+    for (var columns in list[0]) {
+      if (
+        !columns.toLocaleLowerCase().includes("id") &&
+        !columns.toLocaleLowerCase().includes("delete") &&
+        !columns.toLocaleLowerCase().includes("created") &&
+        !columns.toLocaleLowerCase().includes("updated") &&
+        !columns.toLocaleLowerCase().includes("identity") &&
+        !columns.toLocaleLowerCase().includes("pass") &&
+        columns !== "uid" &&
+        columns !== "memberType" &&
+        columns !== "memberPointExpire" &&
+        columns !== "subDistrict" &&
+        columns !== "district" &&
+        columns !== "province" &&
+        columns !== "postcode" &&
+        columns !== "registerDate" &&
+        columns !== "uid" &&
+        columns !== "country" &&
+        columns !== "memberPoint" &&
+        columns !== "consentDate" &&
+        columns !== "isPolicy1" &&
+        columns !== "isPolicy2" &&
+        columns !== "isCustomer" &&
+        columns !== "role" &&
+        columns !== "remark" &&
+        list[columns] !== ""
+      ) {
+        for (var i = 0; i < list.length; i++) {
+          try {
+            list[i][columns] = this.DecodeKey(
+              list[i][columns]
+            );
+          } catch {
+            console.log(list[i][columns]);
+          }
+        }
+      }
+    }
+    return list;
+  }
+
+  encryptValueIdArrayExport(list) {
+    for (var i = 0; i < list.length; i++) {
+      list[i].id = this.EncodeKey(list[i].id);
+    }
+    return list;
+  }
 }
 
 module.exports = ValidateEncrypt;
