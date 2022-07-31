@@ -355,7 +355,7 @@ export default function ConditioRewardInfo() {
                             }
                           });
                       } else {
-                        // fetchData();
+                        await fetchData(res.data.tbRedemptionConditionsHD.id);
                         addToast(
                           Storage.GetLanguage() === "th"
                             ? "บันทึกข้อมูลสำเร็จ"
