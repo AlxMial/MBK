@@ -62,7 +62,7 @@ const TabCancel = () => {
             x.memberName.toLowerCase().includes(e) ||
             x.sumPrice.toString().toLowerCase().includes(e) ||
             (parseInt(x.cancelStatus) === 1
-              ? "รอการยกเลิก"
+              ? "รอยกเลิก"
               : parseInt(x.cancelStatus) === 2
               ? "คืนเงิน"
               : "ไม่คืนเงิน"
