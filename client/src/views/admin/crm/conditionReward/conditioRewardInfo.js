@@ -336,7 +336,7 @@ export default function ConditioRewardInfo() {
                                   // history.push(
                                   //   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
                                   // );
-                                  fetchData();
+                                  fetchData(res.data.tbRedemptionConditionsHD.id);
                                   addToast(
                                     Storage.GetLanguage() === "th"
                                       ? "บันทึกข้อมูลสำเร็จ"
@@ -373,7 +373,7 @@ export default function ConditioRewardInfo() {
                       // history.push(
                       //   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
                       // );
-                      fetchData();
+                      fetchData(res.data.tbRedemptionConditionsHD.id);
                       dispatch(fetchSuccess());
                       addToast(
                         Storage.GetLanguage() === "th"
@@ -573,11 +573,11 @@ export default function ConditioRewardInfo() {
     }),
   });
 
-  async function fetchData() {
+  async function fetchData(Id) {
     dispatch(fetchLoading());
 
     let response = await axios
-      .get(`/redemptions/byId/${id}`)
+      .get(`/redemptions/byId/${Id || id}`)
       .then((response) => {
         if (response.data.error) {
         } else {
