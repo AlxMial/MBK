@@ -158,7 +158,7 @@ const Order = () => {
         const _orderDT = res.data.tbOrderDT;
         let sumWeight = 0;
         _orderDT.map((e) => {
-          sumWeight = sumWeight + parseFloat(e.amount) * parseFloat(e.weight);
+          sumWeight = sumWeight + parseFloat(e.amount) * parseFloat(e.weight|| 0);
         });
         data[0].sumWeight = sumWeight;
         setOrderHD(data[0]);

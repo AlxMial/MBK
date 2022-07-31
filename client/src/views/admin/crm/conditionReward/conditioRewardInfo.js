@@ -94,7 +94,11 @@ export default function ConditioRewardInfo() {
   const { addToast } = useToasts();
   /* Method Condition */
   const OnBack = () => {
-    if (JSON.stringify(formik.touched).length > 2) {
+    if (
+      JSON.stringify(formik.touched).length > 2 ||
+      JSON.stringify(formikProduct.touched).length > 2||
+      JSON.stringify(formikCoupon.touched).length > 2
+    ) {
       openModalSubject();
     } else {
       history.push("/admin/redemptions");
@@ -331,12 +335,14 @@ export default function ConditioRewardInfo() {
                                 .post("/uploadExcel/coupon", {
                                   couponId: res.data.tbRedemptionCoupon.id,
                                 })
-                                .then(async(resUpload) => {
+                                .then(async (resUpload) => {
                                   dispatch(fetchSuccess());
                                   // history.push(
                                   //   `/admin/redemptionsinfo/${res.data.tbRedemptionConditionsHD.id}`
                                   // );
-                                  await fetchData(res.data.tbRedemptionConditionsHD.id);
+                                  await fetchData(
+                                    res.data.tbRedemptionConditionsHD.id
+                                  );
                                   addToast(
                                     Storage.GetLanguage() === "th"
                                       ? "บันทึกข้อมูลสำเร็จ"
@@ -1032,6 +1038,12 @@ export default function ConditioRewardInfo() {
                           setIsClick({ ...isClick, redemptionStart: true });
                         }}
                         onBlur={(e) => {
+                          formik.handleBlur({
+                            target: {
+                              name: "startDate",
+                              value: formik.values.startDate,
+                            },
+                          });
                           setIsClick({ ...isClick, redemptionStart: false });
                         }}
                         onChange={(e) => {
@@ -1107,10 +1119,16 @@ export default function ConditioRewardInfo() {
                           setIsClick({
                             ...isClick,
                             expired: formik.values.isNotExpired ? false : true,
-                            redemptionEnd: true 
+                            redemptionEnd: true,
                           });
                         }}
                         onBlur={(e) => {
+                          formik.handleBlur({
+                            target: {
+                              name: "endDate",
+                              value: formik.values.endDate,
+                            },
+                          });
                           setIsClick({ ...isClick, redemptionEnd: false });
                         }}
                         onChange={(e) => {

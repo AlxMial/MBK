@@ -11,7 +11,13 @@ import TextAreaUC from "components/InputUC/TextAreaUC";
 import FilesService from "../../../../services/files";
 import ValidateService from "services/validateValue";
 
-const StandardProduct = ({ formik, errorImage, setErrorImage,errorProductCount,setErrorProductCount }) => {
+const StandardProduct = ({
+  formik,
+  errorImage,
+  setErrorImage,
+  errorProductCount,
+  setErrorProductCount,
+}) => {
   const { width } = useWindowDimensions();
   const [delay, setDelay] = useState();
 
@@ -80,6 +86,7 @@ const StandardProduct = ({ formik, errorImage, setErrorImage,errorProductCount,s
                 onBlur={formik.handleBlur}
                 value={formik.values.productName}
                 onChange={(e) => {
+                  formik.setTouched({ productName: true });
                   formik.handleChange(e);
                 }}
               />
@@ -110,28 +117,30 @@ const StandardProduct = ({ formik, errorImage, setErrorImage,errorProductCount,s
           </div>
           <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
             <div className="relative flex">
-            <InputUC
-                    name="rewardCount"
-                    type="text"
-                    maxLength={7}
-                    onBlur={formik.handleBlur}
-                    value={
-                      !formik.values.isNoLimitReward
-                        ? formik.values.rewardCount == "ไม่จำกัด" ? 0 : formik.values.rewardCount 
-                        : "ไม่จำกัด"
-                    }
-                    onChange={(e) => {
-                      setDelay(ValidateService.onHandleNumber(e));
-                      formik.values.rewardCount =
-                        ValidateService.onHandleNumberValue(e);
-                      if(formik.values.rewardCount > 0)
-                        setErrorProductCount(false)
-                    }}
-                    disabled={
-                      formik.values.isNoLimitReward ? true : false
-                    }
-                    min="0"
-                  />
+              <InputUC
+                name="rewardCount"
+                type="text"
+                maxLength={7}
+                onBlur={formik.handleBlur}
+                value={
+                  !formik.values.isNoLimitReward
+                    ? formik.values.rewardCount == "ไม่จำกัด"
+                      ? 0
+                      : formik.values.rewardCount
+                    : "ไม่จำกัด"
+                }
+                onChange={(e) => {
+                  formik.setTouched({ rewardCount: true });
+                  setDelay(ValidateService.onHandleNumber(e));
+                  formik.values.rewardCount =
+                    ValidateService.onHandleNumberValue(e);
+
+                  if (formik.values.rewardCount > 0)
+                    setErrorProductCount(false);
+                }}
+                disabled={formik.values.isNoLimitReward ? true : false}
+                min="0"
+              />
               <span
                 className="margin-auto-t-b font-bold"
                 style={{ marginLeft: width < 764 ? "1rem" : "2rem" }}
@@ -144,6 +153,7 @@ const StandardProduct = ({ formik, errorImage, setErrorImage,errorProductCount,s
                 text="ไม่จำกัดจำนวนชิ้น"
                 name="isNoLimitReward"
                 onChange={(e) => {
+                  formik.setTouched({ isNoLimitReward: true });
                   formik.setFieldValue("isNoLimitReward", e.target.checked);
                   if (e.target.checked) formik.setFieldValue("rewardCount", 1);
                   else formik.setFieldValue("rewardCount", 0);
@@ -162,7 +172,9 @@ const StandardProduct = ({ formik, errorImage, setErrorImage,errorProductCount,s
           <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
           <div className="w-full lg:w-5/12 px-4 margin-auto-t-b">
             <div className="relative">
-              {errorProductCount || (!formik.values.isNoLimitReward && formik.values.rewardCount == 0 ) ? (
+              {errorProductCount ||
+              (!formik.values.isNoLimitReward &&
+                formik.values.rewardCount == 0) ? (
                 <div className="text-sm py-2 px-2  text-red-500">
                   * จำนวนสูงสุดต้องมากกว่า 0
                 </div>
@@ -181,6 +193,7 @@ const StandardProduct = ({ formik, errorImage, setErrorImage,errorProductCount,s
                 onBlur={formik.handleBlur}
                 value={formik.values.description}
                 onChange={(e) => {
+                  formik.setTouched({ description: true });
                   formik.handleChange(e);
                 }}
               />

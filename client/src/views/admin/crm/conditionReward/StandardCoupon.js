@@ -101,6 +101,7 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
                 onBlur={formik.handleBlur}
                 value={formik.values.couponName}
                 onChange={(e) => {
+                  formik.setTouched({ couponName: true });
                   formik.handleChange(e);
                 }}
               />
@@ -129,6 +130,7 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
                 onBlur={formik.handleBlur}
                 value={formik.values.discount}
                 onChange={(e) => {
+                  formik.setTouched({ discount: true });
                   let value = e.target.value;
                   value = value || 0;
                   if (formik.values.discountType === "2") {
@@ -152,6 +154,7 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
                   options={discountType}
                   name="discountType"
                   onChange={(value) => {
+                    formik.setTouched({ discountType: true });
                     if (value.value === "2")
                       if (formik.values.discount > 100)
                         formik.values.discount = 100;
@@ -187,6 +190,7 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
                   setIsClick({ ...isClick, couponStart: false });
                 }}
                 onChange={(e) => {
+                  formik.setTouched({ startDate: true });
                   setIsClick({ ...isClick, couponStart: false });
                   if (e === null) {
                     formik.setFieldValue("startDate", "", false);
@@ -260,6 +264,7 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
                   setIsClick({ ...isClick, expireDate: false });
                 }}
                 onChange={(e) => {
+                  formik.setTouched({ expireDate: true });
                   setIsClick({ ...isClick, expireDate: false });
                   if (e === null) {
                     formik.setFieldValue("expireDate", "", false);
@@ -349,6 +354,7 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
                 maxLength={7}
                 disabled={formik.values.id !== "" ? true : false}
                 onChange={(e) => {
+                  formik.setTouched({ couponCount: true });
                   setDelay(ValidateService.onHandleNumber(e));
                   formik.values.couponCount =
                     ValidateService.onHandleNumberValue(e);
@@ -405,6 +411,7 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
                 onBlur={formik.handleBlur}
                 value={formik.values.description}
                 onChange={(e) => {
+                  formik.setTouched({ description: true });
                   formik.handleChange(e);
                 }}
               />
@@ -415,7 +422,10 @@ const StandardCoupon = ({ formik, errorImage, setErrorImage }) => {
             <CheckBoxUC
               text="ยกเลิกคูปอง"
               name="isCancel"
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                formik.setTouched({ isCancel: true });
+                formik.handleChange(e);
+              }}
               onBlur={formik.handleBlur}
               checked={formik.values.isCancel}
               classLabel="mt-2"
