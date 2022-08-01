@@ -271,6 +271,7 @@ const ShowProducts = () => {
                       fontSize: "18px",
                       textAlign: "center",
                       zIndex: "1",
+                      lineHeight: "initial"
                     }}
                   >
                     <Counter

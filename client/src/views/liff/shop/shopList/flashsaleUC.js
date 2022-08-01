@@ -113,6 +113,7 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                           textAlign: "center",
                           fontSize: "18px",
                           zIndex: "1",
+                          lineHeight: "initial"
                         }}
                       >
                         <Counter

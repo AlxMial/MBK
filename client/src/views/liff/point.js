@@ -65,13 +65,14 @@ const Point = () => {
         <MyPoint />
         <div className="mt-8">
           <div
-            className="bg-green-mbk flex text-white font-bold text-xs relative "
+            className="bg-green-mbk flex text-white font-bold text-xs relative items-center"
             style={{
               width: "90%",
               padding: "10px",
               margin: "auto",
               height: "40px",
               borderRadius: "10px",
+              lineHeight: "initial",
             }}
             onClick={() => {
               history.push(path.getreward);

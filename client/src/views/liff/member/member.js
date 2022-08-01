@@ -140,8 +140,8 @@ const Member = () => {
                     // padding: "2px 10px",
                     height: "25px",
                     fontSize: "0.7rem",
-                    lineHeight: 1,
-                    paddingTop: "1px"
+                    lineHeight: "initial",
+                    // paddingTop: "1px"
                     // textAlign: "center",
                   }}
                 >
@@ -237,6 +237,7 @@ const Member = () => {
               height: "40px",
               marginTop: "-2px",
               borderRadius: "10px",
+              lineHeight: "initial",
             }}
             onClick={() => {
               history.push(path.getreward);
