@@ -64,10 +64,12 @@ const GetReward = () => {
     /// check api
     let code = [];
     rewardCode.map((e, i) => {
-      if (!IsNullOrEmpty(e.code) && e.state !== true) {
+      if (!IsNullOrEmpty(e.code) && (e.state !== true || (e.state && e.isDuplicate))) {
         code.push(e.code.replaceAll(" ", ""));
       }
     });
+    // console.log(rewardCode)
+    // console.log('confirm = ',code.length);
     if (code.length > 0) {
       setIsLoading(true);
       axios
@@ -120,13 +122,18 @@ const GetReward = () => {
               let succeed = true;
               await _rewardCode.map((e, i) => {
                 if (!IsNullOrEmpty(e.code)) {
+                  if (e.state == false) {
+                    succeed = false;
+                  }
+                }
+              });
+              await _rewardCode.map((e, i) => {
+                if (!IsNullOrEmpty(e.code)) {
                   if (e.isDuplicate === true) {
                     succeed = false;
                   }
                 }
               });
-              console.log(_rewardCode);
-              console.log(succeed);
               if (succeed) {
                 setconfirmsucceed(true);
               }
@@ -377,6 +384,7 @@ const GetReward = () => {
                               name={"code-" + (i + 1)}
                               type={"text"}
                               onChange={(e) => {
+                                // console.log(e.target.value)
                                 let item = rewardCode.map((item) => {
                                   if (item.index == i) {
                                     return { ...item, code: e.target.value };
@@ -384,6 +392,11 @@ const GetReward = () => {
                                   return item;
                                 });
                                 setrewardCode(item);
+                                // setrewardCode((s) => {
+                                //   const newArr = s.slice();
+                                //   newArr[i].code = e.target.value;
+                                //   return newArr;
+                                // });
                               }}
                               placeholder={"รหัสที่ " + (i + 1)}
                               // mask={"***-****************"}

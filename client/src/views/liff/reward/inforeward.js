@@ -220,7 +220,7 @@ const InfoReward = () => {
                       <img
                         id={"img-gane-" + Redemptionconditionshd.id}
                         className={"object-cover w-full h-ful"}
-                        src={require("assets/img/mbk/gameInfo.jpg").default}
+                        src={require("assets/img/mbk/gameInfo.png").default}
                         onError={({ currentTarget }) => {
                           currentTarget.onerror = null;
                           currentTarget.src =

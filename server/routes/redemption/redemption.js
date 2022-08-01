@@ -69,7 +69,6 @@ router.get("/byId/:id", validateToken, async (req, res) => {
             ],
           },
         });
-        console.log(Coupon)
 
         Product = await tbRedemptionProduct.findAll({
           where: {
@@ -443,7 +442,6 @@ router.put("/game", validateToken, async (req, res) => {
       for (var i = 0; i < req.body.listGame.length; i++) {
         req.body.listGame[i]["redemptionConditionsHDId"] = req.body.id;
         if (req.body.listGame[i].rewardType === "1") {
-
           if (req.body.listGame[i].id) {
             coupon = await tbRedemptionCoupon.update(req.body.listGame[i], {
               where: { id: req.body.listGame[i].id },
@@ -451,33 +449,29 @@ router.put("/game", validateToken, async (req, res) => {
           } else {
             coupon = await tbRedemptionCoupon.create(req.body.listGame[i]);
 
-
             const generateCode = await axiosInstance
-            .post("api/coupon/generateCoupon", coupon)
-            .then(async (resGenerate) => {
-              if (resGenerate.data.status) {
-                const qry = `INSERT INTO mbk_database.tbcouponcodes SELECT * FROM mbk_temp.tbcouponcodes where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
-                db.sequelize
-                  .query(qry, null, { raw: true })
-                  .then((result) => {
-                    const deleteqry = `DELETE FROM mbk_temp.tbcouponcodes WHERE mbk_temp.tbcouponcodes.redemptionCouponId IN (select redemptionCouponId from mbk_database.tbcouponcodes)`;
-                    db.sequelize
-                      .query(deleteqry, null, { raw: true })
-                      .then((result) => {
-                        console.log(result);
-                      })
-                      .catch((error) => {
-                        console.log(error);
-                      });
-                  })
-                  .catch((error) => {
-                    console.log(error);
-                  });
-              }
-            });
-
-
-
+              .post("api/coupon/generateCoupon", coupon)
+              .then(async (resGenerate) => {
+                if (resGenerate.data.status) {
+                  const qry = `INSERT INTO mbk_database.tbcouponcodes SELECT * FROM mbk_temp.tbcouponcodes where mbk_temp.tbcouponcodes.id not in (select id from mbk_database.tbcouponcodes) and mbk_temp.tbcouponcodes.redemptionCouponId in (select id from mbk_database.tbredemptioncoupons t) `;
+                  db.sequelize
+                    .query(qry, null, { raw: true })
+                    .then((result) => {
+                      const deleteqry = `DELETE FROM mbk_temp.tbcouponcodes WHERE mbk_temp.tbcouponcodes.redemptionCouponId IN (select redemptionCouponId from mbk_database.tbcouponcodes)`;
+                      db.sequelize
+                        .query(deleteqry, null, { raw: true })
+                        .then((result) => {
+                          console.log(result);
+                        })
+                        .catch((error) => {
+                          console.log(error);
+                        });
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                }
+              });
           }
         } else if (req.body.listGame[i].rewardType === "2") {
           if (req.body.listGame[i].id) {
@@ -795,7 +789,7 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
               foreignKey: "redemptionConditionsHDId",
             });
             let _tbCouponCode = await tbCouponCode.findOne({
-              where: { isDeleted: !1, id: _tbMemberReward[i].TableHDId },
+              where: { isDeleted: false, id: _tbMemberReward[i].TableHDId },
               attributes: ["id", "redemptionCouponId"],
               include: [
                 {
@@ -806,7 +800,7 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
                     "discountType",
                     "isNotExpired",
                     "startDate",
-                    "expiredDate",
+                    "expireDate",
                     "couponName",
                   ],
                   where: {
@@ -819,17 +813,24 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
                     {
                       model: tbRedemptionConditionsHD,
                       attributes: ["id", "couponType"],
-                      where: { couponType: false },
+                      where: { couponType: false, isDeleted: false },
                       required: true,
                     },
                   ],
                 },
               ],
             });
-
             if (
               _tbCouponCode &&
-              _tbCouponCode.tbRedemptionCoupon.startDate <= new Date()
+              (_tbCouponCode.tbRedemptionCoupon.expireDate
+                ? _tbCouponCode.tbRedemptionCoupon.expireDate.setHours(
+                    0,
+                    0,
+                    0,
+                    0
+                  )
+                : new Date().setHours(0, 0, 0, 0)) >=
+                new Date().setHours(0, 0, 0, 0)
             ) {
               const _tbImage = await tbImage.findOne({
                 attributes: ["image"],
@@ -843,10 +844,11 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
               });
               _tbCouponCode.dataValues.image = _tbImage.image;
               RedemptionCoupon.push({
-                id: Encrypt.EncodeKey(_tbCouponCode.dataValues.id),
+                id: _tbCouponCode.dataValues.id,
                 image: _tbCouponCode.dataValues.image,
                 couponName: _tbCouponCode.tbRedemptionCoupon.couponName,
                 discount: _tbCouponCode.tbRedemptionCoupon.discount,
+                isNotExpired: _tbCouponCode.tbRedemptionCoupon.isNotExpired,
                 discountType: _tbCouponCode.tbRedemptionCoupon.discountType,
                 expiredDate:
                   _tbCouponCode.tbRedemptionCoupon.expireDate == null

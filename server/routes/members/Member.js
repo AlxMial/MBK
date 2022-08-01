@@ -1165,6 +1165,7 @@ router.get("/getMyReward", validateLineToken, async (req, res) => {
               isDeleted: false,
               id: _product[i].TableHDId,
             },
+            order: [["createdAt", "DESC"]],
           });
           if (_tbRedemptionProduct) {
             const _RedemptionProduct = _tbRedemptionProduct.dataValues;

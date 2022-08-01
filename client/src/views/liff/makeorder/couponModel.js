@@ -15,6 +15,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
     await axios.get("redemptions/gettbcouponcodes").then(async (response) => {
       if (response.status) {
         let data = response.data.tbredemptioncoupons;
+        console.log(data)
         for (var i = 0; i < data.length; i++) {
           const base64 = await FilesService.buffer64UTF8(data[i].image.data);
           data[i].image = base64;
@@ -120,7 +121,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                       >
                         {!e.isNotExpired
                           ? "ใช้ได้ถึง " +
-                          moment(e.expireDate)
+                          moment(e.expiredDate)
                             .locale("th")
                             .add(543, "years")
                             .format("DD MMM yyyy")

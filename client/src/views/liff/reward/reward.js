@@ -131,7 +131,7 @@ const Reward = () => {
                             id={"img-gane-" + e.id}
                             className={"object-cover w-full h-ful"}
                             style={{ borderRadius: "15px" }}
-                            src={require("assets/img/mbk/gameInfo.jpg").default}
+                            src={require("assets/img/mbk/gameInfo.png").default}
                             onError={({ currentTarget }) => {
                               currentTarget.onerror = null;
                               currentTarget.src =
