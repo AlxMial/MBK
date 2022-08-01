@@ -60,7 +60,7 @@ const OrderDetail = ({
   const { width } = useWindowDimensions();
   const [openExport, setOpenExport] = useState(false);
   const [dataExport, setDataExport] = useState({});
-  const [clickExport,setClickExport] = useState(false);
+  const [clickExport, setClickExport] = useState(false);
 
   const propsPurchaseOrder = { orderHD, orderDT, openExport };
   const propsPayment = {
@@ -92,6 +92,15 @@ const OrderDetail = ({
     cancelStatus,
     paymentStatus,
   };
+
+  // change file name while exporting
+  useEffect(() => {
+    if (clickExport && orderHD) {
+      document.title = orderHD.orderNumber;
+    } else {
+      document.title = "Mah Boonkrong Rice";
+    }
+  }, [clickExport]);
 
   useEffect(async () => {
     //สถานะยกเลิก
@@ -164,7 +173,7 @@ const OrderDetail = ({
     >
       <div className="flex flex-wrap">
         <div className="w-full flex-auto mt-2">
-          <div className="flex flex-wrap justify-center" style={{height:"3.5rem"}}>
+          <div className="flex flex-wrap justify-center" style={{ height: "3.5rem" }}>
             <div className="w-full lg:w-6/12">
               <ModalHeader
                 isClose={false}
@@ -173,34 +182,34 @@ const OrderDetail = ({
             </div>
             <div className="w-full lg:w-6/12">
               <div className="flex flex-wrap justify-end">
-                    <ExportPdf
-                      props={propsPurchaseOrder}
-                      dataExport={dataExport}
-                      setClickExport={setClickExport}
-                    />
-                    <ButtonUCSaveModal
-                      onClick={() => {
-                        if (isCanEdit) {
-                          handleModal("save");
-                        }
-                      }}
-                    />
-                    <div className=" border-t-0 py-3 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap">
-                    <label
-                      className="cursor-pointer"
-                      onClick={() => handleModal()}
-                    >
-                      X
-                    </label>
-                    </div>
+                <ExportPdf
+                  props={propsPurchaseOrder}
+                  dataExport={dataExport}
+                  setClickExport={setClickExport}
+                />
+                <ButtonUCSaveModal
+                  onClick={() => {
+                    if (isCanEdit) {
+                      handleModal("save");
+                    }
+                  }}
+                />
+                <div className=" border-t-0 py-3 px-6 align-middle border-l-0 border-r-0 text-sm text-red-500 font-bold whitespace-nowrap">
+                  <label
+                    className="cursor-pointer"
+                    onClick={() => handleModal()}
+                  >
+                    X
+                  </label>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className={"flex flex-wrap justify-center  Overflow-info" }>
-          {/* <ExportHeader dataExport={dataExport} />
+          <div className={"flex flex-wrap justify-center  Overflow-info"}>
+            {/* <ExportHeader dataExport={dataExport} />
             <PurchaseOrder props={propsPurchaseOrder} /> */}
-            <div className={"w-full p-4 margin-auto-t-b flex flex-wrap "+ ((clickExport) ? " hidden":" ")}>
+            <div className={"w-full p-4 margin-auto-t-b flex flex-wrap " + ((clickExport) ? " hidden" : " ")}>
               <div className="w-full lg:w-8/12 px-4  flex flex-col">
                 <div className="w-full" id="purchaseOrder">
                   <div className="flex py-2">
