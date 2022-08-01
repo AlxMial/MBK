@@ -139,13 +139,15 @@ const Member = () => {
                     borderRadius: "20px",
                     // padding: "2px 10px",
                     height: "25px",
-                    fontSize: "0.7rem",
+                    fontSize: "11px",
                     lineHeight: "initial",
+                    boxSizing: "content-box",
+                    paddingTop: "1px",
                     // paddingTop: "1px"
                     // textAlign: "center",
                   }}
                 >
-                  <div className="member-label">
+                  <div>
                     {isError
                       ? "-"
                       : tbMember.memberType === "1"
@@ -235,7 +237,7 @@ const Member = () => {
               width: "90%",
               // padding: "10px",
               height: "40px",
-              marginTop: "-2px",
+              // marginTop: "-2px",
               borderRadius: "10px",
               lineHeight: "initial",
             }}
