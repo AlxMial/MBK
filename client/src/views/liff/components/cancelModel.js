@@ -99,7 +99,7 @@ const CancelModel = ({
             </div>
 
             <div
-              className="w-full flex outline-gold-mbk text-gold-mbk text-center text-lg  font-bold bt-line "
+              className="w-full flex border-gold-mbk text-gold-mbk text-center text-lg  font-bold bt-line "
               style={{ bottom: "0" }}
               onClick={Cancelorder}
             >

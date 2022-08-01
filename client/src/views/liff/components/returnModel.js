@@ -253,7 +253,7 @@ const ReturnModel = ({ returnModel, Callback }) => {
             </div>
             <div className="p-1">
               <div
-                className="flex outline-gold-mbk text-gold-mbk text-center text-lg font-bold bt-line "
+                className="flex border-gold-mbk text-gold-mbk text-center text-lg font-bold bt-line "
                 onClick={doSaveReturnOrder}
               >
                 {"ตกลง"}

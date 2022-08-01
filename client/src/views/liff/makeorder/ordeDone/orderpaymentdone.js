@@ -464,7 +464,7 @@ const OrderPaymentDone = () => {
               >
                 <div className="w-full" style={{ padding: "10px" }}>
                   <div
-                    className="flex outline-gold-mbk text-gold-mbk text-center text-sm justify-center"
+                    className="flex border-gold-mbk text-gold-mbk text-center text-sm justify-center"
                     style={{
                       margin: "auto",
                       height: "35px",

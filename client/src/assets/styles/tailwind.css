@@ -1502,6 +1502,10 @@ select {
   border-color: #007934;
 }
 
+.border-gold-mbk {
+  border: 1px solid #d0af21;
+}
+
 .border-blueGray-100 {
   --tw-border-opacity: 1;
   border-color: rgba(241, 245, 249, var(--tw-border-opacity));
@@ -4123,7 +4127,6 @@ strike {
   /* width:100px; */
 }
 
-
 .OtpInput input {
   width: 60% !important;
   height: 30px;
@@ -5180,13 +5183,11 @@ span.rc-time-picker.time-picker-input.hidtext .rc-time-picker-input {
   height: 132px;
   object-fit: revert;
 }
-.profile-pic #label-image-eCouponImage{
+.profile-pic #label-image-eCouponImage {
   width: 190px;
   height: 132px;
   object-fit: revert;
 }
-
-
 
 .profile-pic #eProductImage {
   width: 132px;
@@ -5199,4 +5200,3 @@ span.rc-time-picker.time-picker-input.hidtext .rc-time-picker-input {
   height: 132px;
   object-fit: revert;
 }
-

@@ -203,7 +203,7 @@ const DetailOrder = ({
                   }}
                 >
                   <div
-                    className="flex outline-gold-mbk text-gold-mbk text-center text-lg"
+                    className="flex border-gold-mbk text-gold-mbk text-center text-lg"
                     style={{
                       margin: "auto",
                       height: "35px",

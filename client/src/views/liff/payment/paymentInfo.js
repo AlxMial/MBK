@@ -354,7 +354,7 @@ const PaymentInfo = () => {
                       <div className="flex">
                         <div className="px-2" style={{ width: "50%" }}>
                           <div
-                            className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                            className="flex border-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
                             style={{ borderRadius: "10px" }}
                             onClick={() => {
                               liff.init(
@@ -429,7 +429,7 @@ const PaymentInfo = () => {
                         </div>
                         <div className="px-2" style={{ width: "50%" }}>
                           <div
-                            className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                            className="flex border-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
                             style={{ borderRadius: "10px" }}
                             onClick={() => {
                               liff.init(
@@ -523,7 +523,7 @@ const PaymentInfo = () => {
                 </div>
                 <div className="w-full">
                   <div
-                    className="flex outline-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
+                    className="flex border-gold-mbk  text-gold-mbk text-center text-lg  font-bold bt-line "
                     style={{ borderRadius: "10px" }}
                     onClick={() => {
                       if (statuspayment) {
