@@ -118,12 +118,12 @@ const ReturnDetail = ({ OrderHD }) => {
 
             <div>
               <ImageUC
-                style={{ margin: "auto" }}
+                style={{ margin: "auto", height: "100%", width: "100%", minHeight: "300px" }}
                 find={1}
                 relatedid={OrderHD.tbReturnOrder.id}
                 relatedtable={["tbReturnOrder"]}
                 alt="flash_sale"
-                className="w-32 border-2 border-blueGray-50"
+                className="w-32 border-2 border-blueGray-50 animated-img"
               ></ImageUC>
             </div>
           </div>
