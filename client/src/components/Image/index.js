@@ -60,11 +60,12 @@ const ImageUC = (prop, { setErrorFile }) => {
   useEffect(() => {
     fetchImg();
   }, []);
+  let classNamediv = other.classnamediv===undefined ?"w-full h-full flex" :other.classnamediv;
   let className = other.className;
   return (
     <div
       className={
-        "w-full h-full flex" + (other.divimage ? " " + other.divimage : "")
+        classNamediv + (other.divimage ? " " + other.divimage : "")
       }
       style={{
         justifyContent: "center",

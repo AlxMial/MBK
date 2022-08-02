@@ -761,7 +761,7 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
     });
 
     if (Member) {
-      const _tbMemberReward = await tbMemberReward.findAll({
+      let _tbMemberReward = await tbMemberReward.findAll({
         where: {
           isDeleted: !1,
           rewardType: "Coupon",
@@ -771,93 +771,195 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
         attributes: ["id", "TableHDId"],
       });
       if (_tbMemberReward) {
-        for (var i = 0; i < _tbMemberReward.length; i++) {
-          //ตรวจสอบถูกนำไปใช้ใน tbOrderHD
-          const _tbOrderHD = await tbOrderHD.count({
-            attributes: ["id"],
+        await (async () => {
+          let memberRewardIdlist = [];
+          _tbMemberReward.map((e) => {
+            memberRewardIdlist.push(e.id);
+          });
+          const _rewardusedList = await tbOrderHD.findAll({
+            attributes: ["memberRewardId"],
             where: {
-              memberRewardId: _tbMemberReward[i].id,
+              memberRewardId: memberRewardIdlist,
             },
           });
+          if (_rewardusedList) {
+            _rewardusedList.map((e) => {
+              const memberRewardId = e.memberRewardId;
+              _tbMemberReward = _tbMemberReward.filter((f) => {
+                if (f.id !== memberRewardId) {
+                  return f;
+                }
+              });
+            });
+          }
+        })();
 
-          if (_tbOrderHD == 0) {
-            tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
-            tbCouponCode.belongsTo(tbRedemptionCoupon, {
-              foreignKey: "redemptionCouponId",
-            });
-            tbRedemptionCoupon.belongsTo(tbRedemptionConditionsHD, {
-              foreignKey: "redemptionConditionsHDId",
-            });
-            let _tbCouponCode = await tbCouponCode.findOne({
-              where: { isDeleted: false, id: _tbMemberReward[i].TableHDId },
-              attributes: ["id", "redemptionCouponId"],
-              include: [
-                {
-                  model: tbRedemptionCoupon,
-                  attributes: [
-                    "id",
-                    "discount",
-                    "discountType",
-                    "isNotExpired",
-                    "startDate",
-                    "expireDate",
-                    "couponName",
-                  ],
-                  where: {
-                    isDeleted: !1,
-                    id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
-                    isCancel: false,
-                    // couponType: false,
-                  },
-                  include: [
-                    {
-                      model: tbRedemptionConditionsHD,
-                      attributes: ["id", "couponType"],
-                      where: { couponType: false, isDeleted: false },
-                      required: true,
-                    },
-                  ],
-                },
-              ],
-            });
-            if (
-              _tbCouponCode &&
-              (_tbCouponCode.tbRedemptionCoupon.expireDate
-                ? _tbCouponCode.tbRedemptionCoupon.expireDate.setHours(
-                    0,
-                    0,
-                    0,
-                    0
-                  )
-                : new Date().setHours(0, 0, 0, 0)) >=
-                new Date().setHours(0, 0, 0, 0)
-            ) {
-              const _tbImage = await tbImage.findOne({
-                attributes: ["image"],
+        await (async () => {
+          let TableHDIdList = [];
+          _tbMemberReward.map((e) => {
+            TableHDIdList.push(e.TableHDId);
+          });
+          tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+          tbCouponCode.belongsTo(tbRedemptionCoupon, {
+            foreignKey: "redemptionCouponId",
+          });
+          tbRedemptionCoupon.belongsTo(tbRedemptionConditionsHD, {
+            foreignKey: "redemptionConditionsHDId",
+          });
+          let _tbCouponCode = await tbCouponCode.findAll({
+            where: { isDeleted: false, id: TableHDIdList },
+            attributes: ["id", "redemptionCouponId"],
+            include: [
+              {
+                model: tbRedemptionCoupon,
+                attributes: [
+                  "id",
+                  "discount",
+                  "discountType",
+                  "isNotExpired",
+                  "startDate",
+                  "expireDate",
+                  "couponName",
+                ],
                 where: {
-                  isDeleted: false,
-                  relatedId: Encrypt.DecodeKey(
-                    _tbCouponCode.tbRedemptionCoupon.id
-                  ),
-                  relatedTable: "tbRedemptionCoupon",
+                  isDeleted: !1,
+                  id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
+                  isCancel: false,
+                  // couponType: false,
                 },
-              });
-              _tbCouponCode.dataValues.image = _tbImage.image;
-              RedemptionCoupon.push({
-                id: _tbCouponCode.dataValues.id,
-                image: _tbCouponCode.dataValues.image,
-                couponName: _tbCouponCode.tbRedemptionCoupon.couponName,
-                discount: _tbCouponCode.tbRedemptionCoupon.discount,
-                isNotExpired: _tbCouponCode.tbRedemptionCoupon.isNotExpired,
-                discountType: _tbCouponCode.tbRedemptionCoupon.discountType,
-                expiredDate:
-                  _tbCouponCode.tbRedemptionCoupon.expireDate == null
-                    ? "-"
-                    : _tbCouponCode.tbRedemptionCoupon.expireDate,
-              });
+                include: [
+                  {
+                    model: tbRedemptionConditionsHD,
+                    attributes: ["id", "couponType"],
+                    where: { couponType: false, isDeleted: false },
+                    required: true,
+                  },
+                ],
+              },
+            ],
+          });
+          if (_tbCouponCode) {
+            for (var i = 0; i < _tbCouponCode.length; i++) {
+              let e = _tbCouponCode[i];
+              // _tbCouponCode.map(e=>{
+              if (
+                e &&
+                (e.tbRedemptionCoupon.expireDate
+                  ? e.tbRedemptionCoupon.expireDate.setHours(0, 0, 0, 0)
+                  : new Date().setHours(0, 0, 0, 0)) >=
+                  new Date().setHours(0, 0, 0, 0)
+              ) {
+                // const _tbImage = await tbImage.findOne({
+                //   attributes: ["image"],
+                //   where: {
+                //     isDeleted: false,
+                //     relatedId: Encrypt.DecodeKey(e.tbRedemptionCoupon.id),
+                //     relatedTable: "tbRedemptionCoupon",
+                //   },
+                // });
+                e.dataValues.image = null 
+                // _tbImage.image;
+                RedemptionCoupon.push({
+                  id: e.dataValues.id,
+                  image: e.dataValues.image,
+                  imageId:e.tbRedemptionCoupon.id,
+                  couponName: e.tbRedemptionCoupon.couponName,
+                  discount: e.tbRedemptionCoupon.discount,
+                  isNotExpired: e.tbRedemptionCoupon.isNotExpired,
+                  discountType: e.tbRedemptionCoupon.discountType,
+                  expiredDate:
+                    e.tbRedemptionCoupon.expireDate == null
+                      ? "-"
+                      : e.tbRedemptionCoupon.expireDate,
+                });
+              }
             }
           }
-        }
+        })();
+
+        // for (var i = 0; i < _tbMemberReward.length; i++) {
+        //   //ตรวจสอบถูกนำไปใช้ใน tbOrderHD
+        //   // const _tbOrderHD = await tbOrderHD.count({
+        //   //   attributes: ["id"],
+        //   //   where: {
+        //   //     memberRewardId: _tbMemberReward[i].id,
+        //   //   },
+        //   // });
+
+        //   // if (_tbOrderHD == 0) {
+        //   tbRedemptionCoupon.hasMany(tbCouponCode, { foreignKey: "id" });
+        //   tbCouponCode.belongsTo(tbRedemptionCoupon, {
+        //     foreignKey: "redemptionCouponId",
+        //   });
+        //   tbRedemptionCoupon.belongsTo(tbRedemptionConditionsHD, {
+        //     foreignKey: "redemptionConditionsHDId",
+        //   });
+        //   let _tbCouponCode = await tbCouponCode.findOne({
+        //     where: { isDeleted: false, id: _tbMemberReward[i].TableHDId },
+        //     attributes: ["id", "redemptionCouponId"],
+        //     include: [
+        //       {
+        //         model: tbRedemptionCoupon,
+        //         attributes: [
+        //           "id",
+        //           "discount",
+        //           "discountType",
+        //           "isNotExpired",
+        //           "startDate",
+        //           "expireDate",
+        //           "couponName",
+        //         ],
+        //         where: {
+        //           isDeleted: !1,
+        //           id: { [Op.col]: "tbCouponCode.redemptionCouponId" },
+        //           isCancel: false,
+        //           // couponType: false,
+        //         },
+        //         include: [
+        //           {
+        //             model: tbRedemptionConditionsHD,
+        //             attributes: ["id", "couponType"],
+        //             where: { couponType: false, isDeleted: false },
+        //             required: true,
+        //           },
+        //         ],
+        //       },
+        //     ],
+        //   });
+        //   if (
+        //     _tbCouponCode &&
+        //     (_tbCouponCode.tbRedemptionCoupon.expireDate
+        //       ? _tbCouponCode.tbRedemptionCoupon.expireDate.setHours(0, 0, 0, 0)
+        //       : new Date().setHours(0, 0, 0, 0)) >=
+        //       new Date().setHours(0, 0, 0, 0)
+        //   ) {
+        //     const _tbImage = await tbImage.findOne({
+        //       attributes: ["image"],
+        //       where: {
+        //         isDeleted: false,
+        //         relatedId: Encrypt.DecodeKey(
+        //           _tbCouponCode.tbRedemptionCoupon.id
+        //         ),
+        //         relatedTable: "tbRedemptionCoupon",
+        //       },
+        //     });
+        //     _tbCouponCode.dataValues.image = _tbImage.image;
+        //     RedemptionCoupon.push({
+        //       id: _tbCouponCode.dataValues.id,
+        //       image: _tbCouponCode.dataValues.image,
+        //       couponName: _tbCouponCode.tbRedemptionCoupon.couponName,
+        //       discount: _tbCouponCode.tbRedemptionCoupon.discount,
+        //       isNotExpired: _tbCouponCode.tbRedemptionCoupon.isNotExpired,
+        //       discountType: _tbCouponCode.tbRedemptionCoupon.discountType,
+        //       expiredDate:
+        //         _tbCouponCode.tbRedemptionCoupon.expireDate == null
+        //           ? "-"
+        //           : _tbCouponCode.tbRedemptionCoupon.expireDate,
+        //     });
+        //   }
+        //   // }
+        // }
+        console.log();
       }
     }
   } catch (e) {

@@ -71,7 +71,7 @@ const ReturnModel = ({ returnModel, Callback }) => {
         style={{ borderRadius: "10px" }}
       >
         <div className="w-full flex flex-wrap" style={{ minHeight: "350px" }}>
-          <div className="w-full flex-auto mt-2 h-full line-scroll">
+          <div className="w-full flex-auto mt-2 h-full line-scroll" id="Return-scroll">
             <div className="w-full flex-auto relative">
               <div className=" flex justify-between align-middle ">
                 <div
@@ -155,6 +155,10 @@ const ReturnModel = ({ returnModel, Callback }) => {
                 name="CancelOtherRemark "
                 onBlur={(e) => {
                   setremark(e.target.value);
+                }}
+                onFocus={()=>{
+                  let scroll =document.getElementById("Return-scroll")
+                  scroll.scrollTop =scroll.scrollHeight
                 }}
               />
             </div>

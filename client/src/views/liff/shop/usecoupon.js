@@ -11,6 +11,7 @@ import * as Storage from "@services/Storage.service";
 // import ImageUC from "components/Image/index";
 import FilesService from "../../../services/files";
 import moment from "moment";
+import ImageUC from "components/Image/index";
 // components
 
 const ShowCart = () => {
@@ -30,8 +31,8 @@ const ShowCart = () => {
         let data = response.data.tbredemptioncoupons;
         for (var i = 0; i < data.length; i++) {
           if (data[i].image) {
-            const base64 = await FilesService.buffer64UTF8(data[i].image.data);
-            data[i].image = base64
+            // const base64 = await FilesService.buffer64UTF8(data[i].image.data);
+            // data[i].image = base64
           }
         }
         setIsLoading(false);
@@ -129,11 +130,19 @@ const ShowCart = () => {
                 <div className="flex mt-2">
                   <div className="px-2 py-2" style={{ width: "120px", height: "120px" }}>
 
-                    <img
+                     {/* <img
                       src={e.image}
                       alt=""
                       className="w-32 border-2 border-blueGray-50"
-                    ></img>
+                    ></img>  */}
+                     <ImageUC
+                        classnamediv =" img-tbRedemptionCoupon "
+                        find={1}
+                        relatedid={e.imageId}
+                        relatedtable={["tbRedemptionCoupon"]}
+                        alt="tbRedemptionCoupon"
+                        className=" animated-img w-32 border-2 border-blueGray-50 "
+                      ></ImageUC>
 
                   </div>
                   <div className="px-2 py-2 relative" style={{ width: "calc(85% - 80px)" }}>

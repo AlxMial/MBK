@@ -5,26 +5,30 @@ import axios from "services/axios";
 import * as Storage from "@services/Storage.service";
 import FilesService from "../../../services/files";
 import moment from "moment";
+import ImageUC from "components/Image/index";
 // components
 
 const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
   const [tbcouponcodes, settbcouponcodes] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const fetchgettbcouponcodes = async () => {
-    setIsLoading(true)
-    await axios.get("redemptions/gettbcouponcodes").then(async (response) => {
-      if (response.status) {
-        let data = response.data.tbredemptioncoupons;
-        console.log(data)
-        for (var i = 0; i < data.length; i++) {
-          const base64 = await FilesService.buffer64UTF8(data[i].image.data);
-          data[i].image = base64;
+    setIsLoading(true);
+    await axios
+      .get("redemptions/gettbcouponcodes")
+      .then(async (response) => {
+        if (response.status) {
+          let data = response.data.tbredemptioncoupons;
+          console.log(data);
+          // for (var i = 0; i < data.length; i++) {
+          //   const base64 = await FilesService.buffer64UTF8(data[i].image.data);
+          //   data[i].image = base64;
+          // }
+          settbcouponcodes(data);
         }
-        settbcouponcodes(data);
-      }
-    }).finally(() => {
-      setIsLoading(false)
-    });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
   useEffect(() => {
     fetchgettbcouponcodes();
@@ -89,67 +93,73 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
 
         {tbcouponcodes.length > 0
           ? [...tbcouponcodes].map((e, i) => {
-            return (
-              <div key={i}>
-                <div className="flex mt-2">
-                  <div
-                    className="px-2 py-2"
-                    style={{ width: "120px", height: "80px" }}
-                  >
-                    <img
+              return (
+                <div key={i}>
+                  <div className="flex mt-2">
+                    <div
+                      className="px-2 py-2"
+                      style={{ width: "120px", height: "80px" }}
+                    >
+                      {/* <img
                       src={e.image}
                       alt="icon_hot"
                       className="w-32"
-                    ></img>
-                  </div>
-                  <div
-                    className="px-2 pt-2 relative flex flex-col justify-between"
-                    style={{ width: "calc(100% - 120px)" }}
-                  >
-                    <div className="text-sm text-bold">{e.couponName}</div>
+                    ></img> */}
+                      <ImageUC
+                        classnamediv =" img-tbRedemptionCoupon "
+                        find={1}
+                        relatedid={e.imageId}
+                        relatedtable={["tbRedemptionCoupon"]}
+                        alt="tbRedemptionCoupon"
+                        className=" animated-img"
+                      ></ImageUC>
+                    </div>
                     <div
-                      className="flex  w-full justify-between"
+                      className="px-2 pt-2 relative flex flex-col justify-between"
+                      style={{ width: "calc(100% - 120px)" }}
                     >
-                      <div
-                        className="flex"
-                        style={{
-                          width: "110px",
-                          color: "var(--mq-txt-color, rgb(122, 122, 122))",
-                          fontSize: "12px",
-                          alignItems: "end",
-                        }}
-                      >
-                        {!e.isNotExpired
-                          ? "ใช้ได้ถึง " +
-                          moment(e.expiredDate)
-                            .locale("th")
-                            .add(543, "years")
-                            .format("DD MMM yyyy")
-                          : "ไม่หมดอายุ"}
-                      </div>
-                      <div
-                        className="flex bg-green-mbk text-white text-center text-xs font-bold items-center justify-center"
-                        style={{
-                          borderRadius: "20px",
-                          padding: "2px 10px",
-                        }}
-                        onClick={() => {
-                          setusecoupon(e);
-                          setopenCoupon(false);
-                          if (id === "cart") {
-                            Storage.addconpon_cart(e);
-                          }
-                        }}
-                      >
-                        ใช้ส่วนลด
+                      <div className="text-sm text-bold">{e.couponName}</div>
+                      <div className="flex  w-full justify-between">
+                        <div
+                          className="flex"
+                          style={{
+                            width: "110px",
+                            color: "var(--mq-txt-color, rgb(122, 122, 122))",
+                            fontSize: "12px",
+                            alignItems: "end",
+                          }}
+                        >
+                          {!e.isNotExpired
+                            ? "ใช้ได้ถึง " +
+                              moment(e.expiredDate)
+                                .locale("th")
+                                .add(543, "years")
+                                .format("DD MMM yyyy")
+                            : "ไม่หมดอายุ"}
+                        </div>
+                        <div
+                          className="flex bg-green-mbk text-white text-center text-xs font-bold items-center justify-center"
+                          style={{
+                            borderRadius: "20px",
+                            padding: "2px 10px",
+                          }}
+                          onClick={() => {
+                            setusecoupon(e);
+                            setopenCoupon(false);
+                            if (id === "cart") {
+                              Storage.addconpon_cart(e);
+                            }
+                          }}
+                        >
+                          ใช้ส่วนลด
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div className="liff-inline" />
                 </div>
-                <div className="liff-inline" />
-              </div>
-            );
-          })
+              );
+            })
           : null}
       </div>
       <div className="absolute w-full flex" style={{ bottom: "0px" }}>
