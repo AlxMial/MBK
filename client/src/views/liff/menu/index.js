@@ -14,6 +14,10 @@ const Menu = ({ currentMenu }) => {
 
     ];
 
+    if (currentMenu && currentMenu.includes('myorder')) {
+        currentMenu = 'myorder';
+    }
+
     const menuClick = (path) => {
         if (path.includes('myorder')) {
             localStorage.setItem('pushMyOrder', window.location.pathname);

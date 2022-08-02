@@ -15,7 +15,7 @@ const DetailOrder = ({
 }) => {
   const { addToast } = useToasts();
   const [returnModel, setReturnModel] = useState({ isOpen: false });
-  console.log('OrderHD', OrderHD);
+  // console.log('OrderHD', OrderHD);
   return (
     <>
       <div className="w-full">
