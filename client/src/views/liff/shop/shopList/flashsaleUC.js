@@ -29,6 +29,10 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
       let minutes = pad(parseInt(seconds_left / 60));
       let seconds = pad(parseInt(seconds_left % 60));
 
+      hours = hours < 0 ? 0 : hours;
+      minutes = minutes < 0 ? 0 : minutes;
+      seconds = seconds < 0 ? 0 : seconds;
+
       setCount(hours + ":" + minutes + ":" + seconds);
     }, 1000);
 
