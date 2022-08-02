@@ -55,6 +55,7 @@ const StockominalUC = ({ data }) => {
                           justifyContent: "center",
                           fontWeight: "bold",
                           lineHeight: "9px",
+                          paddingTop: "6px"
                         }}>
                         {"SALE -" + parseInt(fn.formatMoney(e.percent)) + "%"}
                       </div>
