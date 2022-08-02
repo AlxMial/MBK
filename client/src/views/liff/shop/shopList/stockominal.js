@@ -26,7 +26,7 @@ const StockominalUC = ({ data }) => {
                     style={{
                       margin: "auto",
                       minHeight: "120px",
-                      // maxHeight: "120px",
+                      maxHeight: "120px",
                     }}
                     find={1}
                     relatedid={e.id}

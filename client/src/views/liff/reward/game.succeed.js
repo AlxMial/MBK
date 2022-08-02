@@ -19,18 +19,18 @@ const GameSucceed = ({ data }) => {
                             ได้รับ
                         </div> */}
                         <div className="w-full flex mx-auto mt-6 justify-center" style={{
-                            height: "150px"
+                            height: "150px", width: "220px"
                         }}>
-                            <div style={{ height: "150px", margin: "auto", minHeight: "80px", minWidth: "150px" }}>
-                                <ImageUC
-                                    find={1}
-                                    relatedid={data.id}
-                                    relatedtable={[(data.type == "Coupon" ? "tbRedemptionCoupon" : "tbRedemptionProduct")]}
-                                    alt="img"
-                                    className=" animated-img"
-                                    imgclassname="h-full"
-                                ></ImageUC>
-                            </div>
+                            {/* <div style={{ height: "150px", minWidth: "80px", margin: "auto", maxWidth: "80%" }}> */}
+                            <ImageUC
+                                find={1}
+                                relatedid={data.id}
+                                relatedtable={[(data.type == "Coupon" ? "tbRedemptionCoupon" : "tbRedemptionProduct")]}
+                                alt="img"
+                                className=" animated-img"
+                                imgclassname="h-full"
+                            ></ImageUC>
+                            {/* </div> */}
                         </div>
 
                         <div className="flex line-clamp-1 text-lg mx-auto my-2 mt-4 text-white justify-center" style={{
@@ -60,7 +60,7 @@ const GameSucceed = ({ data }) => {
                         </div>
                     </div>
                     : null}
-                <div className="w-full" style={{ position: "absolute", bottom: "20px" }}>
+                <div className="w-full" style={{ position: "absolute", bottom: "0px" }}>
 
                     <div className="w-full flex mb-2" style={{ justifyContent: "center" }}>
                         <div className=" w-full" style={{

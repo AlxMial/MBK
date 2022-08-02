@@ -23,7 +23,7 @@ const CouponSucceed = () => {
                         style={{
                             transform: "translate(50%,-50%)",
                             right: '50%',
-                            top: 'calc(50% - 90px)'
+                            top: 'calc(50% - 130px)'
                         }}>
                         <div className="w-full flex mb-2" style={{ justifyContent: "center" }}>
                             <i className="fas fa-check-circle text-white" style={{ fontSize: "50px" }}></i>

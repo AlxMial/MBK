@@ -229,6 +229,7 @@ const GetReward = () => {
             width: "90%",
             padding: "0px 10px 10px 10px",
             margin: "auto",
+            height: "100%",
           }}
         >
           {!confirmsucceed ? (
@@ -475,7 +476,7 @@ const GetReward = () => {
             </>
           ) : (
             <>
-              <div className="noselect text-lg text-white font-bold text-center ">
+              {/* <div className="noselect text-lg text-white font-bold text-center ">
                 <i
                   className="fas fa-check-circle"
                   style={{ fontSize: "3rem" }}
@@ -484,6 +485,21 @@ const GetReward = () => {
 
               <div className="noselect text-lg text-white font-bold text-center mt-2">
                 {"สะสมคะแนนสำเร็จ"}
+              </div> */}
+              <div className="w-full relative h-full">
+                <div className="success-reward absolute w-full"
+                  style={{
+                    transform: "translate(50%,-50%)",
+                    right: '50%',
+                    top: 'calc(50% - 50px)'
+                  }}>
+                  <div className="w-full flex mb-2" style={{ justifyContent: "center" }}>
+                    <i className="fas fa-check-circle text-white" style={{ fontSize: "50px" }}></i>
+                  </div>
+                  <div className="w-full flex text-xl font-bold text-white mt-4" style={{ justifyContent: "center" }}>
+                    สะสมคะแนนสำเร็จ
+                  </div>
+                </div>
               </div>
               <div
                 className="noselect text-lg text-white font-bold text-center "

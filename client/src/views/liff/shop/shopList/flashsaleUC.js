@@ -128,6 +128,7 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                         style={{
                           margin: "auto",
                           minHeight: "120px",
+                          maxHeight: "120px",
                           height: "100%",
                         }}
                         find={1}
