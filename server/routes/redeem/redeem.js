@@ -789,7 +789,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
         _en_date.setHours(0, 0, 0, 0);
         let _now = new Date();
         _now.setHours(0, 0, 0, 0);
-        if (_now > _st_date && _now <= _en_date) {
+        if (_now >= _st_date && _now <= _en_date) {
           if (memberPoint >= item.points) {
             //สินค้า
             const _tbRedemptionProduct = await tbRedemptionProduct.findAll({
