@@ -147,7 +147,7 @@ const ShopMain = () => {
     return (
         <>
             {isLoading ? <Spinner customText={"Loading"} /> : null}
-            <div className="h-full" style={{ paddingBottom: '110px' }}>
+            <div className="h-full">
                 <div className="banner-section relative" style={{ height: _h_section1 }}>
                     {/* <div className="bg-green-mbk w-full absolute top-0" style={{ height: '90px' }}></div> */}
                     <div className={"w-full h-full animated-SlideShow "}
@@ -246,7 +246,7 @@ const ShopMain = () => {
                 <div className="pt-8">
                     <ProductCategory />
                 </div>
-                <div className="footer" style={{ height: '110px' }}></div>
+                <div className="w-full" style={{ height: '110px' }}></div>
             </div >
         </>
     )

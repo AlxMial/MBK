@@ -288,6 +288,7 @@ const DetailOrder = ({
             </div>
           );
         })}
+        <div className="w-full" style={{ height: '110px' }}></div>
       </div>
       <ReturnModel returnModel={returnModel} />
     </>

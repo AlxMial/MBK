@@ -102,9 +102,9 @@ const Point = () => {
             className="line-scroll"
             style={{
               width: "90%",
-              padding: "10px",
+              padding: "0 10px",
               margin: "auto",
-              height: "calc(100% - 475px)",
+              height: "calc(100% - 365px)",
             }}
           >
             {[...dataPoints].map((e, i) => {
@@ -157,6 +157,7 @@ const Point = () => {
                 </div>
               );
             })}
+            <div className="w-full" style={{ height: '110px' }}></div>
           </div>
         </div>
       </div>

@@ -34,7 +34,7 @@ const Menu = ({ currentMenu }) => {
                                     key={index} onClick={() => menuClick(item.path)}>
                                     {
                                         item.label === 'สะสมแต้ม' && (
-                                            <div className={"mx-auto menu-icon flex justify-center items-center "
+                                            <div className={"mx-auto menu-icon flex justify-center items-center drop-shadow-lg "
                                                 + (currentMenu && item.path
                                                     && item.path.toLowerCase().includes(currentMenu.toLowerCase())
                                                     ? 'bg-gold-mbk' : 'text-menu-point menu-bg-icon-non-active')}>
@@ -47,7 +47,7 @@ const Menu = ({ currentMenu }) => {
                                         )
                                     }
                                     {item.label !== 'สะสมแต้ม' && (
-                                        <div className={"mx-auto menu-icon flex justify-center items-center "
+                                        <div className={"mx-auto menu-icon flex justify-center items-center drop-shadow-lg "
                                             + (currentMenu && item.path
                                                 && item.path.toLowerCase().includes(currentMenu.toLowerCase())
                                                 ? 'menu-icon-text-active bg-gold-mbk' : 'text-green-mbk menu-bg-icon-non-active')}

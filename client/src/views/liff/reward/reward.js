@@ -82,85 +82,87 @@ const Reward = () => {
             </div>
 
             {Redemptionconditionshd.length > 0 ? (
-              <div
-                className="w-full line-scroll"
-                style={{
-                  margin: "auto",
-                  height: "calc(100vh - 310px)",
-                }}
-              >
-                {[...Redemptionconditionshd].map((e, i) => {
-                  return (
-                    <div
-                      className=" mb-2"
-                      style={{
-                        display: "inline-block",
-                        width: "50%",
-                        fontSize: "11px",
-                      }}
-                      key={i}
-                      onClick={() => {
-                        history.push(path.inforeward.replace(":id", e.id));
-                      }}
-                    >
+              <>
+                <div
+                  className="w-full line-scroll"
+                  style={{
+                    margin: "auto",
+                    height: "calc(100vh - 280px)",
+                  }}
+                >
+                  {[...Redemptionconditionshd].map((e, i) => {
+                    return (
                       <div
-                        className="w-ful"
+                        className=" mb-2"
                         style={{
-                          width: "auto",
-                          maxWidth: "80%",
-                          height: "auto",
-                          margin: "auto",
+                          display: "inline-block",
+                          width: "50%",
+                          fontSize: "11px",
+                        }}
+                        key={i}
+                        onClick={() => {
+                          history.push(path.inforeward.replace(":id", e.id));
                         }}
                       >
-                        {e.redemptionType == 1 ? (
-                          <ImageUC
-                            // style={{ width: "200px", height: "100px", }}
-                            find={1}
-                            relatedid={e.redemptionId}
-                            relatedtable={[
-                              e.rewardType == 1
-                                ? "tbRedemptionCoupon"
-                                : "tbRedemptionProduct",
-                            ]}
-                            alt="tbRedemptionProduct"
-                            className=" animated-img"
-                            imgclassname=" w-full h-full"
-                          />
-                        ) : (
-                          <img
-                            id={"img-gane-" + e.id}
-                            className={"object-cover w-full h-ful"}
-                            style={{ borderRadius: "15px" }}
-                            src={require("assets/img/mbk/gameInfo.png").default}
-                            onError={({ currentTarget }) => {
-                              currentTarget.onerror = null;
-                              currentTarget.src =
-                                require("assets/img/mbk/no-image.png").default;
-                            }}
-                          ></img>
-                        )}
+                        <div
+                          className="w-ful"
+                          style={{
+                            width: "auto",
+                            maxWidth: "80%",
+                            height: "auto",
+                            margin: "auto",
+                          }}
+                        >
+                          {e.redemptionType == 1 ? (
+                            <ImageUC
+                              // style={{ width: "200px", height: "100px", }}
+                              find={1}
+                              relatedid={e.redemptionId}
+                              relatedtable={[
+                                e.rewardType == 1
+                                  ? "tbRedemptionCoupon"
+                                  : "tbRedemptionProduct",
+                              ]}
+                              alt="tbRedemptionProduct"
+                              className=" animated-img"
+                              imgclassname=" w-full h-full"
+                            />
+                          ) : (
+                            <img
+                              id={"img-gane-" + e.id}
+                              className={"object-cover w-full h-ful"}
+                              style={{ borderRadius: "15px" }}
+                              src={require("assets/img/mbk/gameInfo.png").default}
+                              onError={({ currentTarget }) => {
+                                currentTarget.onerror = null;
+                                currentTarget.src =
+                                  require("assets/img/mbk/no-image.png").default;
+                              }}
+                            ></img>
+                          )}
+                        </div>
+                        <div
+                          className="mt-2 text-ms mx-auto"
+                          style={{ maxWidth: "80%" }}
+                        >
+                          <div className="flex justify-between items-center" style={{ height: "35px" }}>
+                            <div className="font-bold ">{e.redemptionName} </div>
+                            <i className="fas fa-chevron-right"></i>
+                          </div>
+                          <div className="w-full text-liff-gray-mbk">
+                            {e.points + " คะแนน"}{" "}
+                          </div>
+                          <div className="w-full text-liff-gray-mbk">
+                            {!e.isNotExpired ? "ใช้ได้ถึง " + moment(e.endDate).locale("th").add(543, "years").format("DD MMM yyyy") : "ไม่หมดอายุ"}
+                          </div>
+                          <div className="liff-inline mb-2" />
+                        </div>
                       </div>
-                      <div
-                        className="mt-2 text-ms mx-auto"
-                        style={{ maxWidth: "80%" }}
-                      >
-                        <div className="flex justify-between items-center" style={{ height: "35px" }}>
-                          <div className="font-bold ">{e.redemptionName} </div>
-                          <i className="fas fa-chevron-right"></i>
-                        </div>
-                        <div className="w-full text-liff-gray-mbk">
-                          {e.points + " คะแนน"}{" "}
-                        </div>
-                        <div className="w-full text-liff-gray-mbk">
-                          {!e.isNotExpired ? "ใช้ได้ถึง " + moment(e.endDate).locale("th").add(543, "years").format("DD MMM yyyy") : "ไม่หมดอายุ"}
-                        </div>
-                        <div className="liff-inline mb-2" />
-                      </div>
-                    </div>
-                  );
-                })}
-                <div className="footer" style={{ height: '110px' }}></div>
-              </div>
+                    );
+                  })}
+                  <div className="w-full" style={{ height: '110px' }}></div>
+                </div>
+              </>
             ) : (
               <div
                 className="w-full line-scroll"
