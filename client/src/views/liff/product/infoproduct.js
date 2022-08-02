@@ -53,11 +53,11 @@ const InfoProduct = () => {
                 ></ImageUC>
               </div>
             </div>
-            <div className="px-8 py-2 line-scroll" style={{
+            <div className="px-8 py-2 line-scroll shadow-lg" style={{
               width: "90%", margin: "auto",
               borderRadius: "40px",
               backgroundColor: "#FFFFFF",
-              boxShadow: "0px -2px 10px 0px #aba6a6"
+              // boxShadow: "0px -2px 10px 0px #aba6a6"
             }}>
 
               <div className="font-bold mt-4  mb-4 text-center line-clamp-2" style={{ fontSize: "18px" }}>{Product.productName}</div>

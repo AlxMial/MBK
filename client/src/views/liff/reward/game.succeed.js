@@ -18,10 +18,10 @@ const GameSucceed = ({ data }) => {
                         {/* <div className="w-full flex text-lg" style={{ justifyContent: "center", color: "#FFFFFF" }}>
                             ได้รับ
                         </div> */}
-                        <div className="w-full flex mx-auto mt-4 justify-center" style={{
+                        <div className="w-full flex mx-auto mt-6 justify-center" style={{
                             height: "150px"
                         }}>
-                            <div style={{ height: "150px", margin: "auto" }}>
+                            <div style={{ height: "150px", margin: "auto", minHeight: "80px", minWidth: "150px" }}>
                                 <ImageUC
                                     find={1}
                                     relatedid={data.id}
@@ -39,11 +39,11 @@ const GameSucceed = ({ data }) => {
                             {data.name}
                         </div>
                         <div style={{ height: "200px" }}>
-                            <div className="px-8 py-2" style={{
+                            <div className="px-8 py-2 shadow-lg" style={{
                                 width: "90%", margin: "auto",
                                 borderRadius: "40px",
                                 backgroundColor: "#FFFFFF",
-                                boxShadow: "0px -2px 10px 0px #aba6a6",
+                                // boxShadow: "0px -2px 10px 0px #aba6a6",
                                 height: "100%"
                             }}>
 

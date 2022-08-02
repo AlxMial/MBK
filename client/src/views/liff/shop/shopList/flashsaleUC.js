@@ -22,16 +22,13 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
 
       let seconds_left =
         (new Date(_endTimeCampaign).getTime() - current_date) / 1000;
+      seconds_left = seconds_left < 0 ? 0 : seconds_left;
 
       let hours = pad(parseInt(seconds_left / 3600));
       seconds_left = seconds_left % 3600;
 
       let minutes = pad(parseInt(seconds_left / 60));
       let seconds = pad(parseInt(seconds_left % 60));
-
-      hours = hours < 0 ? 0 : hours;
-      minutes = minutes < 0 ? 0 : minutes;
-      seconds = seconds < 0 ? 0 : seconds;
 
       setCount(hours + ":" + minutes + ":" + seconds);
     }, 1000);

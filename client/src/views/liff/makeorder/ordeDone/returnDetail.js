@@ -107,8 +107,8 @@ const ReturnDetail = ({ OrderHD }) => {
         className="Modal-line"
         style={{ borderRadius: "10px" }}
       >
-        <div className="w-full flex flex-wrap">
-          <div className="w-full flex-auto">
+        <div className="w-full flex flex-wrap h-full">
+          <div className="w-full flex-auto  h-full">
             <ModalHeader
               title="รูปภาพ"
               handleModal={() => {
@@ -116,9 +116,9 @@ const ReturnDetail = ({ OrderHD }) => {
               }}
             />
 
-            <div>
+            <div className="w-full" style={{ maxHeight: "calc(100% - 70px)" }}>
               <ImageUC
-                style={{ margin: "auto", height: "100%", width: "100%", minHeight: "300px" }}
+                style={{ margin: "auto", height: "100%", width: "100%", minHeight: "300px", maxHeight: "400px" }}
                 find={1}
                 relatedid={OrderHD.tbReturnOrder.id}
                 relatedtable={["tbReturnOrder"]}

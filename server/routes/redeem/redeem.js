@@ -504,7 +504,7 @@ router.post(
               RedemptionConditionsHD = item;
             } else {
               const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
-                attributes: ["id", "rewardCount"],
+                attributes: ["id", "rewardCount", "isNoLimitReward"],
                 where: { redemptionConditionsHDId: item.id },
               });
               item.redemptionId = Encrypt.EncodeKey(
@@ -512,6 +512,7 @@ router.post(
               );
               item.id = Encrypt.EncodeKey(item.id);
               item.rewardCount = _tbRedemptionProduct.dataValues.rewardCount;
+              item.isNoLimitReward = _tbRedemptionProduct.dataValues.isNoLimitReward;
               RedemptionConditionsHD = item;
             }
           } else {
