@@ -135,7 +135,7 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                         relatedid={e.id}
                         relatedtable={["stock1"]}
                         alt="flash_sale"
-                        className="w-32 border-2 border-blueGray-50"
+                        className="w-32 border-2 border-blueGray-50 animated-img"
                       ></ImageUC>
 
                       {e.isBestSeller ? (

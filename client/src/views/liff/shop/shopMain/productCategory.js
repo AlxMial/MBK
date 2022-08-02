@@ -6,6 +6,7 @@ import Spinner from "components/Loadings/spinner/Spinner";
 import FilesService from "services/files";
 import { set_product_category } from 'services/Storage.service';
 import { get_product_category } from 'services/Storage.service';
+import ImageUC from 'components/Image';
 
 const ProductCategory = ({ showHeader = true, setselectMenu }) => {
     const history = useHistory();
@@ -99,14 +100,23 @@ const ProductCategory = ({ showHeader = true, setselectMenu }) => {
                                     onClick={() => onClickItem(item.id)}
                                     key={index}>
                                     <div className="category-image text-center">
-                                        <img
+                                        <ImageUC
+                                            find={1}
+                                            relatedid={item.id}
+                                            relatedtable={["tbProductCategory"]}
+                                            alt="flash_sale"
+                                            className=" border-2 border-blueGray-50 animated-img"
+                                            imgclassname=" w-full h-full object-cover"
+                                            style={{ minHeight: _min_h_category, borderRadius: '5px', maxHeight: _min_h_category }}
+                                        ></ImageUC>
+                                        {/* <img
                                             loading="lazy"
                                             // src={item.img}
                                             src={item.img ?? require("assets/img/mbk/no-image.png").default}
                                             alt="category"
                                             className='object-cover w-full animated-img'
                                             style={{ minHeight: _min_h_category, borderRadius: '5px', maxHeight: _min_h_category }}
-                                        />
+                                        /> */}
                                         <div className="category-text mt-2 text-xs">
                                             {item.name}
                                         </div>
