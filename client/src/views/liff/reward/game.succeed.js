@@ -13,12 +13,12 @@ const GameSucceed = ({ data }) => {
                     <div className="w-full" style={{ height: "calc(100% - 100px)" }}>
 
                         <div className="w-full flex text-lg mb-2 text-white justify-center items-center">
-                            ยินดีด้วย ได้รับ
+                            ยินดีด้วย คุณได้รับ
                         </div>
                         {/* <div className="w-full flex text-lg" style={{ justifyContent: "center", color: "#FFFFFF" }}>
                             ได้รับ
                         </div> */}
-                        <div className="w-full flex mx-auto mt-2 justify-center" style={{
+                        <div className="w-full flex mx-auto mt-4 justify-center" style={{
                             height: "150px"
                         }}>
                             <div style={{ height: "150px", margin: "auto" }}>

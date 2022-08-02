@@ -272,7 +272,7 @@ const ShowProducts = () => {
                       textAlign: "center",
                       zIndex: "1",
                       lineHeight: "17px",
-                      // paddingTop: "2px"
+                      paddingTop: "2px"
                     }}
                   >
                     <Counter
