@@ -26,7 +26,7 @@ const StockominalUC = ({ data }) => {
                     style={{
                       margin: "auto",
                       minHeight: "120px",
-                      maxHeight: "120px",
+                      // maxHeight: "120px",
                     }}
                     find={1}
                     relatedid={e.id}
@@ -76,7 +76,7 @@ const StockominalUC = ({ data }) => {
                   ) : null}
                 </div>
                 <div
-                  className="px-1 py-2 line-scroll line-clamp-2"
+                  className="py-2 line-scroll line-clamp-2"
                   style={{
                     height: "40px",
                     lineHeight: "15px",
@@ -88,10 +88,10 @@ const StockominalUC = ({ data }) => {
                   {e.productName}
                 </div>
                 <div
-                  className="flex mb-1 px-1"
+                  className="flex mb-1"
                   style={{
                     bottom: "0",
-                    left: "10px",
+                    // left: "10px",
                     fontSize: "10px",
                   }}
                 >

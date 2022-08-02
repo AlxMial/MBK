@@ -96,7 +96,7 @@ const BestSellerUC = ({ data }) => {
                     ) : null}
                   </div>
 
-                  <div className="px-2 py-2">
+                  <div className="py-2">
                     <div
                       className="line-clamp-2"
                       style={{
@@ -111,7 +111,7 @@ const BestSellerUC = ({ data }) => {
                     className="flex relative"
                     style={{
                       bottom: "0",
-                      left: "10px",
+                      // left: "10px",
                       fontSize: "10px",
                     }}
                   >

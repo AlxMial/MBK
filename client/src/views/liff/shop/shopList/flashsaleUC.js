@@ -151,7 +151,7 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                       ) : null}
                     </div>
 
-                    <div className="px-2 py-2">
+                    <div className="py-2">
                       <div
                         className="line-clamp-2"
                         style={{
@@ -166,7 +166,7 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                       className="flex relative"
                       style={{
                         bottom: "0",
-                        left: "10px",
+                        // left: "10px",
                         fontSize: "10px",
                       }}
                     >
