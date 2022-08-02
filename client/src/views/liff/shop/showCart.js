@@ -443,6 +443,7 @@ const ShowCart = () => {
           </div>
           <div
             className="px-2 text-bold text-xs"
+            style={{ lineHeight: "23px" }}
           >
             {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
           </div>

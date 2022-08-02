@@ -69,11 +69,13 @@ const BestSellerUC = ({ data }) => {
                         <div className="text-xs text-white px-2"
                           style={{
                             borderRadius: "5px",
-                            padding: "0 10px",
+                            padding: "5px 10px",
                             fontSize: "10px",
                             background: "red",
+                            // width: "100px",
                             justifyContent: "center",
                             fontWeight: "bold",
+                            lineHeight: "9px",
                           }}>
                           {"SALE -" + parseInt(fn.formatMoney(e.percent)) + "%"}
                         </div>

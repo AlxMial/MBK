@@ -201,7 +201,7 @@ const MakeOrder = () => {
             } else {
             }
           },
-          () => {},
+          () => { },
           () => {
             setIsLoading(false);
           }
@@ -308,16 +308,16 @@ const MakeOrder = () => {
         //สินค้า
         valueType = "product";
         let productList = promotionstores.filter(
-          (e) => parseInt(e.condition) === 3 && parseFloat( e.buy) <= parseFloat(totel) 
+          (e) => parseInt(e.condition) === 3 && parseFloat(e.buy) <= parseFloat(totel)
         );
-        if (productList && productList.length>0) {
-          let highestbuy = productList.sort(function(a, b) {
-            const  buyA =parseFloat( a. buy) // ignore upper and lowercase
-            const  buyB =parseFloat( b. buy); // ignore upper and lowercase
-            if (buyA > buyB ) {
+        if (productList && productList.length > 0) {
+          let highestbuy = productList.sort(function (a, b) {
+            const buyA = parseFloat(a.buy) // ignore upper and lowercase
+            const buyB = parseFloat(b.buy); // ignore upper and lowercase
+            if (buyA > buyB) {
               return -1;
             }
-            if (buyA <buyB) {
+            if (buyA < buyB) {
               return 1;
             }
             return 0;
@@ -416,14 +416,15 @@ const MakeOrder = () => {
                 </div>
                 <div
                   className="px-2 font-bold line-clamp-1"
-                  // style={{ left: "50px", width: "calc(100% - 180px)" }}
+                  style={{ lineHeight: "23px" }}
+                // style={{ left: "50px", width: "calc(100% - 180px)" }}
                 >
                   {usecoupon != null ? usecoupon.couponName : "รหัสส่วนลด"}
                 </div>
               </div>
               <div
                 className="flex sec-right"
-                // style={{ right: "10px", width: "130px", justifyContent: "end" }}
+              // style={{ right: "10px", width: "130px", justifyContent: "end" }}
               >
                 <div className="flex">
                   <div
@@ -442,11 +443,11 @@ const MakeOrder = () => {
                   >
                     {usecoupon != null
                       ? "-฿ " +
-                        fn.formatMoney(
-                          usecoupon.discountType === "2"
-                            ? (usecoupon.discount / 100) * sumprice
-                            : usecoupon.discount
-                        )
+                      fn.formatMoney(
+                        usecoupon.discountType === "2"
+                          ? (usecoupon.discount / 100) * sumprice
+                          : usecoupon.discount
+                      )
                       : "ใช้ส่วนลด >"}
                   </div>
                   {usecoupon != null && (
