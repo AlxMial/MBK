@@ -451,6 +451,9 @@ const getStorePromotion = async (total) => {
   let status = true;
   let orderDT = [];
   try {
+    tbPromotionStore.belongsTo(tbStock, {
+      foreignKey: "stockId",
+    });
     const _tbPromotionStore = await tbPromotionStore.findAll({
       attributes: [
         "id",
@@ -466,6 +469,13 @@ const getStorePromotion = async (total) => {
         isDeleted: false,
         isInactive: true,
       },
+      include: [
+        {
+          model: tbStock,
+          attributes: ["id", "productCount"],
+          where: { productCount: { [Op.gt]: 0 } },
+        },
+      ],
     });
     if (_tbPromotionStore) {
       let prodiscountList = _tbPromotionStore.find(
@@ -497,10 +507,21 @@ const getStorePromotion = async (total) => {
       } else {
         //แถมสินค้า
 
-        let productList = _tbPromotionStore.find(
+        let productList = _tbPromotionStore.filter(
           (e) => e.condition == 3 && e.buy <= total
         );
-        if (productList) {
+        if (productList && productList.length > 0) {
+          let highestbuy = productList.sort(function (a, b) {
+            const buyA = parseFloat(a.buy); // ignore upper and lowercase
+            const buyB = parseFloat(b.buy); // ignore upper and lowercase
+            if (buyA > buyB) {
+              return -1;
+            }
+            if (buyA < buyB) {
+              return 1;
+            }
+            return 0;
+          })[0];
           type = "product";
           let _tbStock = await tbStock.findOne({
             attributes: [
@@ -511,13 +532,13 @@ const getStorePromotion = async (total) => {
               "productCount",
             ],
             where: {
-              id: productList.stockId,
+              id: highestbuy.stockId,
             },
           });
           if (_tbStock) {
             if (_tbStock.productCount > 0) {
               orderDT.push({
-                stockId: productList.stockId,
+                stockId: highestbuy.stockId,
                 amount: 1,
                 price: 0,
                 discount: 0,

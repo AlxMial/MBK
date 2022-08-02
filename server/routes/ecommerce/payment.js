@@ -8,7 +8,7 @@ const {
   tb2c2p,
   tbMember,
   tbMemberPoint,
-  tbStock
+  tbStock,
 } = require("../../models");
 const bcrypt = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -158,7 +158,7 @@ router.get("/getPromotionstores", validateLineToken, async (req, res) => {
         {
           model: tbStock,
           attributes: ["id", "productCount"],
-          where: {productCount : {[Op.gt] : 0}}
+          where: { productCount: { [Op.gt]: 0 } },
         },
       ],
     });
@@ -166,8 +166,15 @@ router.get("/getPromotionstores", validateLineToken, async (req, res) => {
       _tbPromotionStore.map((e, i) => {
         let item = e.dataValues;
         item.id = Encrypt.EncodeKey(item.id);
-        item.stockId = Encrypt.EncodeKey(item.stockId);
-        promotionStore.push(item);
+        if (parseInt(e.condition) === 3) {
+          item.stockId = Encrypt.EncodeKey(item.stockId);
+          item.productCount = item.tbStock.productCount;
+          if (parseInt(item.productCount) > 0) {
+            promotionStore.push(item);
+          }
+        } else {
+          promotionStore.push(item);
+        }
       });
     }
   } catch (e) {
@@ -209,7 +216,7 @@ router.post("/getPaymentsucceed", validateLineToken, async (req, res) => {
                   paymentDate: new Date(),
                   paymentStatus: 3,
                   creditCard: decoded.cardNo,
-                  paymentType:2
+                  paymentType: 2,
                 },
                 {
                   where: {

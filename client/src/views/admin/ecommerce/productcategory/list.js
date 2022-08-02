@@ -9,7 +9,15 @@ import { fetchLoading, fetchSuccess } from "redux/actions/common";
 import { useToasts } from "react-toast-notifications";
 import FilesService from "services/files";
 import * as fn from "@services/default.service";
-const List = ({ dataList, fetchData }) => {
+const List = ({
+  dataList,
+  fetchData,
+
+  pageNumber,
+  setPageNumber,
+  forcePage,
+  setForcePage,
+}) => {
   Modal.setAppElement("#root");
   const dispatch = useDispatch();
   const thClass =
@@ -18,8 +26,7 @@ const List = ({ dataList, fetchData }) => {
     "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
   const tdSpan = "text-gray-mbk ";
   const { addToast } = useToasts();
-  const [pageNumber, setPageNumber] = useState(0);
-  const [forcePage, setForcePage] = useState(0);
+
   const [infoModel, setinfoModel] = useState({ open: false });
   const [openConfirmDelete, setopenConfirmDelete] = useState({ open: false });
 
@@ -60,13 +67,14 @@ const List = ({ dataList, fetchData }) => {
     dispatch(fetchLoading());
     axios
       .delete(`productCategory/${id}`)
-      .then((res) => {
+      .then(async (res) => {
         if (res.data.status) {
           addToast("ลบข้อมูลสำเร็จ", {
             appearance: "success",
             autoDismiss: true,
           });
-          fetchData();
+          await fetchData();
+         
         } else {
           addToast("ลบข้อมูลหมวดหมู่สินค้าไม่สำเร็จ", {
             appearance: "warning",

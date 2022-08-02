@@ -101,7 +101,12 @@ const Order = () => {
           (x) =>
             x.orderNumber.toLowerCase().includes(e) ||
             x.memberName.toLowerCase().includes(e) ||
-            (x.orderDate ? moment(x.orderDate).format("DD/MM/YYYY HH:mm:ss")  : "").toString().includes(e) ||
+            (x.orderDate
+              ? moment(x.orderDate).format("DD/MM/YYYY HH:mm:ss")
+              : ""
+            )
+              .toString()
+              .includes(e) ||
             (x.netTotal ?? "").toString().includes(e) ||
             (x.paymentStatus === "1"
               ? "รอการชำระเงิน"
@@ -136,6 +141,9 @@ const Order = () => {
 
     const data = orderList.filter((x) => x.id === id);
     if (data && data.length > 0) {
+      if (data[0].tbCancelOrder !== undefined) {
+        data[0].isCancel = true;
+      }
       setOrderHD(data[0]);
       setOrderNumber(data[0].orderNumber);
       setTransportStatus(data[0].transportStatus);
@@ -158,7 +166,8 @@ const Order = () => {
         const _orderDT = res.data.tbOrderDT;
         let sumWeight = 0;
         _orderDT.map((e) => {
-          sumWeight = sumWeight + parseFloat(e.amount) * parseFloat(e.weight|| 0);
+          sumWeight =
+            sumWeight + parseFloat(e.amount) * parseFloat(e.weight || 0);
         });
         data[0].sumWeight = sumWeight;
         setOrderHD(data[0]);
@@ -345,15 +354,17 @@ const Order = () => {
     dispatch(fetchLoading());
     let ArrayWhere = "(";
 
-    if(orderList.length < listSearch.length){
+    if (orderList.length < listSearch.length) {
       ArrayWhere += "''";
       orderList.forEach((e) => {
-        ArrayWhere += ",'" + e.id +"'"
-      })
+        ArrayWhere += ",'" + e.id + "'";
+      });
     }
     ArrayWhere += ")";
 
-    let order = await axios.post("order/orderHD/export",{ArrayWhere:ArrayWhere});
+    let order = await axios.post("order/orderHD/export", {
+      ArrayWhere: ArrayWhere,
+    });
     const TitleColumns = [
       "หมายเลขคำสั่งซื้อ",
       "วันที่สั่งซื้อ",
@@ -474,23 +485,21 @@ const Order = () => {
           ? "กำลังขนส่ง"
           : "สำเร็จ";
 
-          if(order.data.tbOrder[i]["cancelStatus"] == "1"){
-            order.data.tbOrder[i]["cancelStatus"] = "รอยกเลิก";
-          }else if (order.data.tbOrder[i]["cancelStatus"] == "2"){
-            order.data.tbOrder[i]["cancelStatus"] = "คืนเงิน";
-          }else if (order.data.tbOrder[i]["cancelStatus"] == "3"){
-            order.data.tbOrder[i]["cancelStatus"] = "ไม่คืนเงิน";
-          }
-    
-    
-          
-          if(order.data.tbOrder[i]["returnStatus"] == "1"){
-            order.data.tbOrder[i]["returnStatus"] = "รอการคืนสินค้า";
-          }else if (order.data.tbOrder[i]["returnStatus"] == "2"){
-            order.data.tbOrder[i]["returnStatus"] = "คืนสำเร็จ";
-          }else if (order.data.tbOrder[i]["returnStatus"] == "3"){
-            order.data.tbOrder[i]["returnStatus"] = "ปฎิเสธ";
-          }
+      if (order.data.tbOrder[i]["cancelStatus"] == "1") {
+        order.data.tbOrder[i]["cancelStatus"] = "รอยกเลิก";
+      } else if (order.data.tbOrder[i]["cancelStatus"] == "2") {
+        order.data.tbOrder[i]["cancelStatus"] = "คืนเงิน";
+      } else if (order.data.tbOrder[i]["cancelStatus"] == "3") {
+        order.data.tbOrder[i]["cancelStatus"] = "ไม่คืนเงิน";
+      }
+
+      if (order.data.tbOrder[i]["returnStatus"] == "1") {
+        order.data.tbOrder[i]["returnStatus"] = "รอการคืนสินค้า";
+      } else if (order.data.tbOrder[i]["returnStatus"] == "2") {
+        order.data.tbOrder[i]["returnStatus"] = "คืนสำเร็จ";
+      } else if (order.data.tbOrder[i]["returnStatus"] == "3") {
+        order.data.tbOrder[i]["returnStatus"] = "ปฎิเสธ";
+      }
 
       order.data.tbOrder[i]["codeCoupon"] =
         order.data.tbOrder[i]["codeCoupon"] === null
@@ -536,15 +545,15 @@ const Order = () => {
         order.data.tbOrder[i]["createdAtCancel"] === null
           ? ""
           : moment(order.data.tbOrder[i]["createdAtCancel"]).format(
-            "DD/MM/YYYY"
-          );
+              "DD/MM/YYYY"
+            );
 
       order.data.tbOrder[i]["createdAtReturn"] =
         order.data.tbOrder[i]["createdAtReturn"] === null
           ? ""
           : moment(order.data.tbOrder[i]["createdAtReturn"]).format(
-            "DD/MM/YYYY"
-          );
+              "DD/MM/YYYY"
+            );
 
       order.data.tbOrder[i]["descriptionCancel"] =
         order.data.tbOrder[i]["descriptionCancel"] === null
@@ -565,9 +574,6 @@ const Order = () => {
         order.data.tbOrder[i]["cancelOtherRemark"] === null
           ? ""
           : order.data.tbOrder[i]["cancelOtherRemark"];
-
-
-
     }
 
     exportExcel(

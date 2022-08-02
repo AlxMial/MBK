@@ -122,6 +122,7 @@ router.post(
   // , validateLineToken // ดูได้โดยไม่ต้อง login
   async (req, res) => {
     let id = req.body.id;
+    const freebies = req.body.freebies || false;
     let status = true;
     let _tbStock = [];
     let msg = null;
@@ -140,7 +141,9 @@ router.post(
           Id.push(Encrypt.DecodeKey(e));
         });
         data = await tbStock.findAll({
-          where: { isDeleted: false, isInactive: true, id: Id },
+          where: freebies
+            ? { isDeleted: false, id: Id }
+            : { isDeleted: false, isInactive: true, id: Id },
         });
       }
       if (data != null) {
@@ -219,7 +222,9 @@ router.get(
           relatedId: func.EncodeKey(e.relatedId),
           relatedTable: e.relatedTable,
           typeLink: e.tbBanner.dataValues.typeLink,
-          productCategoryId: func.EncodeKey(e.tbBanner.dataValues.productCategoryId),
+          productCategoryId: func.EncodeKey(
+            e.tbBanner.dataValues.productCategoryId
+          ),
           stockId: func.EncodeKey(e.tbBanner.dataValues.stockId),
           image: e.image,
         });

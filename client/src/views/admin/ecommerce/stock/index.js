@@ -98,7 +98,7 @@ const Stock = () => {
         listSearch.filter(
           (x) =>
             x.productName.toString().toLowerCase().includes(e) ||
-            x.categoryName.toString().toLowerCase().includes(e) ||
+            (x.categoryName|| "").toString().toLowerCase().includes(e) ||
             x.status.toString().toLowerCase().includes(e) ||
             x.price.toString().toLowerCase().includes(e) ||
             x.buy.toString().toLowerCase().includes(e) ||

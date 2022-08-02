@@ -48,6 +48,7 @@ const Info = (prop) => {
     if (await valid()) {
       dispatch(fetchLoading());
       if (fn.IsNullOrEmpty(dataModel.id)) {
+        dataModel.addBy = sessionStorage.getItem("user");
         axios
           .post("productCategory", dataModel)
           .then((res) => {
@@ -122,7 +123,7 @@ const Info = (prop) => {
         const duplicate = tbProductCategory.find(
           (e) =>
             e.categoryName.toLowerCase() ===
-            dataModel.categoryName.toLowerCase()
+              dataModel.categoryName.toLowerCase() && e.id !== dataModel.id
         );
         if (!fn.IsNullOrEmpty(duplicate)) {
           isValid = false;

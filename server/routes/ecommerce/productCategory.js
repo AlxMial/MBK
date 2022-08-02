@@ -12,9 +12,11 @@ const Encrypt = new ValidateEncrypt();
 const db = require("../../models");
 
 router.post("/", validateToken, async (req, res) => {
+  req.body.createdAt = new Date();
   const data = await tbProductCategory.create(req.body);
   if (req.body.dataImage != null) {
     await tbImage.create({
+      addBy: req.body.addBy,
       createdAt: new Date(),
       relatedId: data.id,
       image: req.body.dataImage,
@@ -42,22 +44,46 @@ router.get("/", validateToken, async (req, res) => {
 
 router.get("/byId/:id", validateToken, async (req, res) => {
   const id = req.params.id;
-  const data = await tbProductCategory.findOne({ where: { id: id } });
-  const img = await tbImage.findOne({
-    where: {
-      relatedId: id,
-      isDeleted: false,
-      relatedTable: "tbProductCategory",
-    },
-  });
-  if (img) {
-    data.dataValues.dataImage = img.dataValues.image;
+  let category = {};
+  let status = true;
+  let message = "success";
+  try {
+    tbProductCategory.hasMany(tbImage, { foreignKey: "relatedId" });
+    const data = await tbProductCategory.findOne({
+      where: { id: id },
+      include: [
+        {
+          attributes: ["image"],
+          model: tbImage,
+          where: {
+            relatedId: id,
+            isDeleted: false,
+            relatedTable: "tbProductCategory",
+          },
+          order: [
+            ["id", "DESC"],
+            ["relatedTable", "DESC"],
+          ],
+          required: false,
+        },
+      ],
+    });
+    if (data) {
+      category = data.dataValues;
+      if (data.dataValues.tbImages.length > 0) {
+        category.dataImage = category.tbImages[0].dataValues.image;
+      }
+      category.tbImages = null;
+    }
+  } catch (err) {
+    status = false;
+    message = err.message;
   }
 
   res.json({
-    status: true,
-    message: "success",
-    tbProductCategory: data,
+    status: status,
+    message: message,
+    tbProductCategory: category,
   });
 });
 
@@ -127,7 +153,6 @@ router.get(
     let _tbProductCategory = [];
 
     try {
-
       const [data] = await db.sequelize
         .query(`select product.id, product.categoryName as name, image.image as img
       from tbProductCategories product
@@ -141,7 +166,7 @@ router.get(
           ProductCategory.push({
             id: Encrypt.EncodeKey(e.id),
             name: e.name,
-            img: e.img
+            img: e.img,
           });
         }
         // console.log('result', data);

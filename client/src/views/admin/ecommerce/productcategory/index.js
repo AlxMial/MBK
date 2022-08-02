@@ -10,6 +10,9 @@ import * as fn from "@services/default.service";
 import List from "./list";
 import Info from "./info";
 const ProductCategorylist = () => {
+  const [pageNumber, setPageNumber] = useState(0);
+  const [forcePage, setForcePage] = useState(0);
+
   const dispatch = useDispatch();
   const InputSearch = (e) => {
     e = e.toLowerCase();
@@ -26,6 +29,8 @@ const ProductCategorylist = () => {
     } else {
       setdataListSearch(dataList);
     }
+    setPageNumber(0);
+    setForcePage(0);
   };
   const [dataList, setdataList] = useState([]);
   const [dataListSearch, setdataListSearch] = useState([]);
@@ -39,6 +44,10 @@ const ProductCategorylist = () => {
       setdataList(productCategory);
       setdataListSearch(productCategory);
     }
+    // setTimeout(() => {
+    //   InputSearch(document.getElementById("InputSearch").value)
+    // }, 500);
+
     dispatch(fetchSuccess());
   };
 
@@ -57,7 +66,7 @@ const ProductCategorylist = () => {
           <div className="rounded-t mb-0 px-4 py-3 border-0">
             <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap ">
               <div className="w-full lg:w-6/12">
-                <InputSearchUC onChange={(e) => InputSearch(e.target.value)} />
+                <InputSearchUC onChange={(e) => InputSearch(e.target.value)} id="InputSearch"/>
               </div>
               <div className={"w-full lg:w-6/12 text-right block"}>
                 <ButtonModalUC
@@ -84,7 +93,14 @@ const ProductCategorylist = () => {
               </div>
             </div>
           </div>
-          <List dataList={dataListSearch} fetchData={fetchData} />
+          <List
+            dataList={dataListSearch}
+            fetchData={fetchData}
+            pageNumber={pageNumber}
+            setPageNumber={setPageNumber}
+            forcePage={forcePage}
+            setForcePage={setForcePage}
+          />
         </div>
       </div>
       {infoModel.open ? <Info infoModel={infoModel} /> : null}

@@ -215,7 +215,7 @@ router.post("/cancelOrder", validateLineToken, async (req, res) => {
       where: {
         IsDeleted: false,
         orderId: Encrypt.DecodeKey(orderId),
-        isFree: false,
+        // isFree: false,
       },
     });
     //#region add tb Cancel
