@@ -31,9 +31,9 @@ export default function CampaignExchangeHistoryReport() {
   // let dataDistrict = [];
   // let dataProvice = [];
 
-  const [dataProvice ,setDataProvice ] = useState([]);
-  const [dataDistrict ,setDataDistrict ] = useState([]);
-  const [dataSubDistrict ,setDataSubDistrict] = useState([]);
+  // const [dataProvice ,setDataProvice ] = useState([]);
+  // const [dataDistrict ,setDataDistrict ] = useState([]);
+  // const [dataSubDistrict ,setDataSubDistrict] = useState([]);
 
   const redemptionType = [
     { value: "1", label: "Standard" },
@@ -341,9 +341,9 @@ export default function CampaignExchangeHistoryReport() {
     //   dataDistrict = response;
     // });
 
-    setDataProvice(await Address.getDistrict());
-    setDataSubDistrict(await Address.getSubDistrict());
-    setDataProvice(await Address.getProvince());
+    // setDataProvice(await Address.getDistrict());
+    // setDataSubDistrict(await Address.getSubDistrict());
+    // setDataProvice(await Address.getProvince());
     // dataSubDistrict = Address.getSubDistrict();
 
 
@@ -354,12 +354,14 @@ export default function CampaignExchangeHistoryReport() {
 
 
   };
-  useEffect(() => {
-    fatchAddress();
+  useEffect( async () => {
+    // fatchAddress();
+    let dataDistrict = await Address.getDistrict();
+    let dataSubDistrict = await Address.getSubDistrict();
+    let dataProvice = await Address.getProvince();
 
-    
     axios.get("report/ShowCampaignExchange").then((response) => {
-
+      console.log(response.data)
       if (response.data.length > 0) {
         response.data.forEach((e) => {
           e.redemptionTypeStr =
@@ -381,7 +383,7 @@ export default function CampaignExchangeHistoryReport() {
             e.isShowControl && e.deliverStatus !== "" && e.deliverStatus
               ? dropdown.find((el) => el.value == e.deliverStatus).label
               : "";
-
+    
           e.subDistrictStr =
             e.subDistrict > 0
               ? dataSubDistrict.find((el) => el.value == e.subDistrict) ===
@@ -396,11 +398,11 @@ export default function CampaignExchangeHistoryReport() {
               ? dataDistrict.find((el) => el.value == e.district) === undefined
                 ? ""
                 : dataDistrict.find((el) => el.value == e.district).label
-              : "";
+              : ""; 
 
           e.provinceStr =
-            e.province >= 0
-              ? dataProvice.filter((el) => el.value == e.province).label
+            e.province > 0
+              ? dataProvice.filter((el) => el.value == e.province.toString())[0].label
               : "";
 
           e.addressMember = e.address
@@ -412,6 +414,9 @@ export default function CampaignExchangeHistoryReport() {
             .concat(e.provinceStr)
             .concat(" ")
             .concat(e.postcode);
+
+          
+        
         });
         setListSerch(
           response.data.sort(
