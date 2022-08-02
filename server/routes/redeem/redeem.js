@@ -808,7 +808,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
                 if (item.isNoLimitReward) {
                   //ของมีไม่จำกัด
                   RedemptionList.push({
-                    id: item.Id,
+                    id: item.id,
                     type: "Product",
                     Count: "isNoLimitReward",
                   });
@@ -821,7 +821,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
                     },
                   });
                   if (_tbMemberReward.length < item.rewardCount) {
-                    //แลกของเพิ่มได้
+                    //แลกของเพิ่มได้ 
                     RedemptionList.push({
                       id: item.id,
                       type: "Product",
@@ -906,6 +906,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
                   isDeleted: false,
                 });
               } else {
+                console.log(itemrendom.id)
                 const data = await tbMemberReward.create({
                   rewardType: "Product",
                   TableHDId: itemrendom.id,
