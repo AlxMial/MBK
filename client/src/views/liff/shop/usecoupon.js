@@ -130,19 +130,19 @@ const ShowCart = () => {
                 <div className="flex mt-2">
                   <div className="px-2 py-2" style={{ width: "120px", height: "120px" }}>
 
-                     {/* <img
+                    {/* <img
                       src={e.image}
                       alt=""
                       className="w-32 border-2 border-blueGray-50"
                     ></img>  */}
-                     <ImageUC
-                        classnamediv =" img-tbRedemptionCoupon "
-                        find={1}
-                        relatedid={e.imageId}
-                        relatedtable={["tbRedemptionCoupon"]}
-                        alt="tbRedemptionCoupon"
-                        className=" animated-img w-32 border-2 border-blueGray-50 "
-                      ></ImageUC>
+                    <ImageUC
+                      classnamediv=" img-tbRedemptionCoupon "
+                      find={1}
+                      relatedid={e.imageId}
+                      relatedtable={["tbRedemptionCoupon"]}
+                      alt="tbRedemptionCoupon"
+                      className=" animated-img w-32 border-2 border-blueGray-50 "
+                    ></ImageUC>
 
                   </div>
                   <div className="px-2 py-2 relative" style={{ width: "calc(85% - 80px)" }}>
@@ -152,10 +152,10 @@ const ShowCart = () => {
                       <div className="flex text-xs justify-between" style={{ width: "120px", color: "var(--mq-txt-color, rgb(122, 122, 122))", alignItems: "end" }}>
                         {!e.isNotExpired ? "ใช้ได้ถึง " + moment(e.expireDate).locale("th").add(543, "years").format("DD MMM yyyy") : "ไม่หมดอายุ"}
                       </div>
-                      <div className="bg-green-mbk text-white text-center text-xs font-bold"
+                      <div className="bg-green-mbk text-white text-center text-xs"
                         style={{
                           borderRadius: "20px",
-                          padding: "5px 10px",
+                          padding: "3px 10px 2px",
                           alignItems: "center",
                           justifyContent: "center",
                           right: "0"

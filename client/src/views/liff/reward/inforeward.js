@@ -182,7 +182,7 @@ const InfoReward = () => {
       if (Redemptionconditionshd.couponCount > 0) {
         isCanClick = true;
       }
-    } else if (Redemptionconditionshd.rewardCount > 0) {
+    } else if (Redemptionconditionshd.rewardCount > 0 || Redemptionconditionshd.isNoLimitReward) {
       isCanClick = true;
     }
   }
@@ -247,13 +247,13 @@ const InfoReward = () => {
                   </div>
                 </div>
                 <div
-                  className="px-8 py-2 line-scroll"
+                  className="px-8 py-2 line-scroll shadow-lg"
                   style={{
                     width: "90%",
                     margin: "auto",
                     borderRadius: "40px",
                     backgroundColor: "#FFFFFF",
-                    boxShadow: "0px -2px 10px 0px #aba6a6",
+                    // boxShadow: "0px -2px 10px 0px #aba6a6",
                   }}
                 >
                   <div className="font-bold mt-2 mb-4 text-center text-xl">
