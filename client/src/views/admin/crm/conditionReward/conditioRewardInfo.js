@@ -96,7 +96,7 @@ export default function ConditioRewardInfo() {
   const OnBack = () => {
     if (
       JSON.stringify(formik.touched).length > 2 ||
-      JSON.stringify(formikProduct.touched).length > 2||
+      JSON.stringify(formikProduct.touched).length > 2 ||
       JSON.stringify(formikCoupon.touched).length > 2
     ) {
       openModalSubject();
@@ -140,6 +140,8 @@ export default function ConditioRewardInfo() {
       startDate: new Date(),
       endDate: moment(new Date()).add(1, "days").toDate(),
       description: "",
+      collectCount: 0,
+      collectCountUse: 0,
       isDeleted: false,
       addBy: "",
       updateBy: "",
@@ -193,7 +195,7 @@ export default function ConditioRewardInfo() {
                 );
                 dispatch(fetchSuccess());
                 formik.setTouched({});
-                fetchData();
+                // fetchData();
                 addToast(
                   Storage.GetLanguage() === "th"
                     ? "บันทึกข้อมูลสำเร็จ"
@@ -219,7 +221,7 @@ export default function ConditioRewardInfo() {
               if (res.data.status) {
                 dispatch(fetchSuccess());
                 formik.setTouched({});
-                fetchData();
+                // fetchData();
                 addToast(
                   Storage.GetLanguage() === "th"
                     ? "บันทึกข้อมูลสำเร็จ"
@@ -618,9 +620,13 @@ export default function ConditioRewardInfo() {
             }
 
             if (reademptionType === "2") {
+              let CountValue = 0;
+              let CountUseValue = 0;
               for (var i = 0; i < response.data.listGame.length; i++) {
                 response.data.listGame[i]["index"] = i;
                 if (response.data.listGame[i].rewardType === "1") {
+                  CountValue = CountValue + response.data.listGame[i]["couponCount"];
+                  CountUseValue = CountUseValue + (response.data.listGame[i]["couponCount"] - response.data.listGame[i]["couponUse"]);
                   if (response.data.listGame[i]["pictureCoupon"] !== null) {
                     response.data.listGame[i]["pictureCoupon"] =
                       FilesService.buffer64UTF8(
@@ -628,6 +634,8 @@ export default function ConditioRewardInfo() {
                       );
                   }
                 } else {
+                  CountValue = CountValue + response.data.listGame[i]["productCount"];
+                  CountUseValue = CountUseValue + (response.data.listGame[i]["productCount"] - response.data.listGame[i]["productUse"]);
                   if (response.data.listGame[i]["pictureProduct"] !== null) {
                     response.data.listGame[i]["pictureProduct"] =
                       FilesService.buffer64UTF8(
@@ -636,7 +644,8 @@ export default function ConditioRewardInfo() {
                   }
                 }
               }
-
+              formik.setFieldValue('collectCount',CountValue);
+              formik.setFieldValue('collectCountUse',CountUseValue);
               setListGame(response.data.listGame);
               setListGameSearch(response.data.listGame);
             } else {
@@ -1198,7 +1207,7 @@ export default function ConditioRewardInfo() {
                     className="w-full lg:w-11/12 px-4 margin-auto-t-b"
                     // style={{ display: "none" }}
                   >
-                    <div className="relative">
+              
                       <TextAreaUC
                         name="description"
                         onBlur={formik.handleBlur}
@@ -1207,8 +1216,62 @@ export default function ConditioRewardInfo() {
                           formik.handleChange(e);
                         }}
                       />
+                
+                  </div>
+                  <div className="w-full">&nbsp;</div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b">
+                    <div className="relative w-full">
+                      <LabelUC label="จำนวนของรางวัลทั้งหมด"  />
                     </div>
                   </div>
+                  <div
+                    className="w-full lg:w-5/12 margin-auto-t-b"
+                    // style={{ width: width < 764 ? "100%" : "39.7%" }}
+                  >
+                    <div className="relative flex px-4">
+                      <InputUC
+                        name="points"
+                        type="text"
+                        value={formik.values.collectCount}
+                        disabled={true}
+                        min="0"
+                      />
+                      <span
+                        className="margin-auto-t-b font-bold"
+                        style={{
+                          marginLeft: width < 764 ? "1rem" : "2rem",
+                        }}
+                      >
+                        ชิ้น
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                    <div className="relative w-full px-4">
+                      <LabelUC label="จำนวนคงเหลือทั้งหมด"  />
+                      
+                    </div>
+                  </div>
+                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b ">
+                  <div className="relative flex px-4">
+                      <InputUC
+                        name="points"
+                        type="text"
+                        value={formik.values.collectCountUse}
+                        disabled={true}
+                        min="0"
+                      />
+                      <span
+                        className="margin-auto-t-b font-bold"
+                        style={{
+                          marginLeft: width < 764 ? "1rem" : "2rem",
+                        }}
+                      >
+                        ชิ้น
+                      </span>
+                    </div>
+                  </div>
+                  <div className="w-full">&nbsp;</div>
                   <div className="w-full lg:w-1/12 margin-auto-t-b "></div>
                   <div className="w-full lg:w-11/12 px-4 margin-auto-t-b ">
                     <Radio.Group

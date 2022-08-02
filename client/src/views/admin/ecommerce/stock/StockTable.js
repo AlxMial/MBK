@@ -18,7 +18,7 @@ const StockTable = ({
   const thClass =
     "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 ";
   const tdClass =
-    "border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
+    "border-t-0 px-2  border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap";
   const tdSpan = "text-gray-mbk  hover:text-gray-mbk ";
 
   const [open, setOpen] = useState(false);
@@ -83,7 +83,9 @@ const StockTable = ({
                 return (
                   <tr key={key} className="cursor-pointer">
                     <td
-                      className={tdClass + " text-center"}
+                      className={
+                        "border-t-0 px-2 w-20 border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center"
+                      }
                       onClick={() => {
                         openModal(value.id);
                       }}
@@ -93,56 +95,53 @@ const StockTable = ({
                       </span>
                     </td>
                     <td
-                      className={tdClass + " cursor-pointer"}
+                      className={
+                        "border-t-0 px-2 border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap  cursor-pointer"
+                      }
                       title={value.productName}
                       onClick={() => {
                         openModal(value.id);
                       }}
                     >
-                      <span className={tdSpan}>
-                        <div className="TextWordWarp-300">
-                          {" "}
-                          {value.productName}{" "}
-                        </div>
-                      </span>
+                      <div className="TextWordWarp-600">
+                        {value.productName}{" "}
+                      </div>
                     </td>
                     <td
-                      className={tdClass + " cursor-pointer"}
+                      className={
+                        "border-t-0 px-2 w-48 border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap  cursor-pointer"
+                      }
                       title={value.categoryName}
                       onClick={() => {
                         openModal(value.id);
                       }}
                     >
-                      <span className={tdSpan}>
-                        <div className="TextWordWarp-150">
-                          {" "}
-                          {value.categoryName}
-                        </div>
-                      </span>
+                        {value.categoryName}
                     </td>
                     <td
-                      className={tdClass + " text-right cursor-pointer"}
+                      className={
+                        "border-t-0 px-2 w-24 border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap  text-right cursor-pointer"
+                      }
                       onClick={() => {
                         openModal(value.id);
                       }}
                     >
-                      <span className={tdSpan}>
-                        <div className="TextWordWarp-100">
-                          {" "}
-                          {value.price} ฿{" "}
-                        </div>
-                      </span>
+                      {value.price} ฿{" "}
                     </td>
                     <td
-                      className={tdClass + " text-right cursor-pointer"}
+                      className={
+                        "border-t-0 px-2  w-24 border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap  text-right cursor-pointer"
+                      }
                       onClick={() => {
                         openModal(value.id);
                       }}
                     >
-                      <span className={tdSpan}>{value.productCount}</span>
+                      {value.productCount}
                     </td>
                     <td
-                      className={tdClass + " text-center cursor-pointer "}
+                      className={
+                        "border-t-0 px-2  w-20   border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap  text-center cursor-pointer "
+                      }
                       onClick={() => {
                         openModal(value.id);
                       }}
@@ -160,7 +159,9 @@ const StockTable = ({
                       </span>
                     </td>
                     <td
-                      className={tdClass + " cursor-pointer text-center "}
+                      className={
+                        "border-t-0 px-2  w-20  border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap  cursor-pointer text-center "
+                      }
                       onClick={() => {
                         openModal(value.id);
                       }}
@@ -183,7 +184,9 @@ const StockTable = ({
                       </span>
                     </td>
                     <td
-                      className={tdClass + " cursor-pointer text-center "}
+                      className={
+                        "border-t-0 px-2  w-20  border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap  cursor-pointer text-center "
+                      }
                       onClick={() => {
                         openModal(value.id);
                       }}
@@ -206,7 +209,9 @@ const StockTable = ({
                       </span>
                     </td>
                     <td
-                      className={tdClass + " cursor-pointer text-center"}
+                      className={
+                        "border-t-0 px-2  w-20  border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap  cursor-pointer text-center"
+                      }
                       onClick={() => {
                         openModal(value.id);
                       }}
@@ -219,7 +224,11 @@ const StockTable = ({
                         }
                       </span>
                     </td>
-                    <td className={tdClass + " cursor-pointer text-center"}>
+                    <td
+                      className={
+                        "border-t-0 px-2 w-20 border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap  cursor-pointer text-center"
+                      }
+                    >
                       <i
                         className="fas fa-trash text-red-500 cursor-pointer"
                         onClick={() => {

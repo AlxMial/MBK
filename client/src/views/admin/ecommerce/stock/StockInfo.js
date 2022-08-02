@@ -570,9 +570,11 @@ const StockInfo = ({
                           value={formik.values.productCount}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
+             
                             setDelayValue(ValidateService.onHandleNumber(e));
                             formik.values.productCount =
                               ValidateService.onHandleNumberValue(e);
+                
                           }}
                         />
                       </div>
@@ -592,15 +594,22 @@ const StockInfo = ({
                           type="text"
                           name="weight"
                           id="weight"
-                          maxLength={3}
                           className="border-0 px-2 w-full text-right py-2 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring ease-linear transition-all duration-150"
                           onBlur={formik.handleBlur}
                           value={formik.values.weight}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
-                            setDelayValue(ValidateService.onHandleNumber(e));
+                            var start = e.target.selectionStart;
+                            // setDelayValue(ValidateService.onHandleNumber(e));
+                            // formik.values.weight =
+                            //   ValidateService.onHandleNumberValue(e);
+                            var start = e.target.selectionStart;
+                            setDelayValue(
+                              ValidateService.onHandleDecimalChange(e)
+                            );
                             formik.values.weight =
-                              ValidateService.onHandleNumberValue(e);
+                              ValidateService.onHandleDecimalChange(e);
+                              e.target.setSelectionRange(start, start);
                           }}
                         />
                       </div>

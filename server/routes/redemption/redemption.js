@@ -65,7 +65,7 @@ router.get("/byId/:id", validateToken, async (req, res) => {
                   WHERE relatedId = tbRedemptionCoupon.id and relatedTable = 'tbRedemptionCoupon'
               )`),
                 "pictureCoupon",
-              ],
+              ]
             ],
           },
         });
@@ -84,18 +84,34 @@ router.get("/byId/:id", validateToken, async (req, res) => {
                   WHERE relatedId = tbRedemptionProduct.id and relatedTable = 'tbRedemptionProduct'
               )`),
                 "pictureProduct",
-              ],
+              ]
             ],
           },
         });
 
         for (var i = 0; i < Coupon.length; i++) {
+
+          const [results, data] =
+              await db.sequelize.query(`select count(tbmemberrewards.id) as countValue from tbmemberrewards 
+              inner join tbcouponcodes on  tbcouponcodes.id = tbmemberrewards.TableHDId 
+              inner join tbredemptioncoupons on tbredemptioncoupons.id = tbcouponcodes.redemptionCouponId 
+              where tbmemberrewards.rewardType='Coupon' and tbredemptioncoupons.id = ${Coupon[i].dataValues.id}`);
           Coupon[i].dataValues["rewardType"] = "1";
+          if( data.length > 0)
+            Coupon[i].dataValues["couponUse"] = data[0].countValue;
           listGame.push(Coupon[i].dataValues);
         }
 
         for (var i = 0; i < Product.length; i++) {
+
+          const [results, data] =
+          await db.sequelize.query(`  select count(tbmemberrewards.id) as countValue from tbmemberrewards 
+          inner join tbredemptionproducts on tbredemptionproducts.id = tbmemberrewards.TableHDId 
+          where rewardType = 'Product' and tbredemptionproducts.id = ${Product[i].dataValues.id}`);
+
           Product[i].dataValues["rewardType"] = "2";
+          if( data.length > 0)
+            Coupon[i].dataValues["productUse"] = data[0].countValue;
           listGame.push(Product[i].dataValues);
         }
       } else {
@@ -857,12 +873,12 @@ router.get("/gettbcouponcodes", validateLineToken, async (req, res) => {
                 //     relatedTable: "tbRedemptionCoupon",
                 //   },
                 // });
-                e.dataValues.image = null 
+                e.dataValues.image = null;
                 // _tbImage.image;
                 RedemptionCoupon.push({
                   id: e.dataValues.id,
                   image: e.dataValues.image,
-                  imageId:e.tbRedemptionCoupon.id,
+                  imageId: e.tbRedemptionCoupon.id,
                   couponName: e.tbRedemptionCoupon.couponName,
                   discount: e.tbRedemptionCoupon.discount,
                   isNotExpired: e.tbRedemptionCoupon.isNotExpired,

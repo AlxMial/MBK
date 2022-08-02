@@ -236,6 +236,20 @@ const GameList = ({ id, setListGame, listGame ,listGameSearch, setListGameSearch
                   </th>
                   <th
                     className={
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
+                    }
+                  >
+                    จำนวนทั้งหมด
+                  </th>
+                  <th
+                    className={
+                      "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-left bg-blueGray-50 text-blueGray-500 "
+                    }
+                  >
+                    จำนวนคงเหลือ
+                  </th>
+                  <th
+                    className={
                       "px-2  border border-solid py-3 text-sm  border-l-0 border-r-0 whitespace-nowrap font-semibold text-center bg-blueGray-50 text-blueGray-500 "
                     }
                   ></th>
@@ -267,8 +281,22 @@ const GameList = ({ id, setListGame, listGame ,listGameSearch, setListGameSearch
                               ? value.couponName
                               : value.productName}
                           </td>
-                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                            <i
+                          <td
+                            className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 "
+                          >
+                            {value.rewardType === "1"
+                              ? value.couponCount
+                              : value.productCount}
+                          </td>
+                          <td
+                            className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 "
+                          >
+                            {value.rewardType === "1"
+                              ? value.couponCount - value.couponUse
+                              : value.productCount - value.productUse}
+                          </td>
+                          <td className="border-t-0 px-2 w-20 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
+                            <i 
                               className="fas fa-trash text-red-500 cursor-pointer"
                               onClick={() => {
                                 openModalSubject(
