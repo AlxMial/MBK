@@ -51,9 +51,8 @@ const StockominalUC = ({ data }) => {
                           padding: "5px 10px",
                           fontSize: "10px",
                           background: "red",
-                          // width: "100px",
                           justifyContent: "center",
-                          fontWeight: "bold",
+                          // fontWeight: "bold",
                           lineHeight: "9px",
                           paddingTop: "6px"
                         }}>

@@ -101,7 +101,7 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                   >
                     <div className="relative" style={{ height: "150px" }}>
                       <div
-                        className="absolute text-white font-bold flex items-center justify-center bg-gold-mbk"
+                        className="absolute text-white flex items-center justify-center bg-gold-mbk"
                         style={{
                           // backgroundColor: "rgb(213 183 65 / 90%)",
                           // backgroundColor: "#d0af21",
@@ -114,7 +114,7 @@ const FlashsaleUC = ({ data, isShowLogo = true }) => {
                           fontSize: "18px",
                           zIndex: "1",
                           lineHeight: "17px",
-                          paddingTop: "2px"
+                          // paddingTop: "2px"
                         }}
                       >
                         <Counter

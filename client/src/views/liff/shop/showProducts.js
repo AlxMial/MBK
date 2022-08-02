@@ -259,7 +259,7 @@ const ShowProducts = () => {
                 ) : null}
                 {tbStock.isFlashSale && fn.isFlashSale(tbStock) ? (
                   <div
-                    className="absolute text-white font-bold flex items-center justify-center bg-gold-mbk"
+                    className="absolute text-white flex items-center justify-center bg-gold-mbk"
                     style={{
                       // backgroundColor: "rgb(213 183 65 / 90%)",
                       // backgroundColor: "#d0af21",
@@ -272,7 +272,7 @@ const ShowProducts = () => {
                       textAlign: "center",
                       zIndex: "1",
                       lineHeight: "17px",
-                      paddingTop: "2px"
+                      // paddingTop: "2px"
                     }}
                   >
                     <Counter
@@ -302,9 +302,8 @@ const ShowProducts = () => {
                       padding: "5px 10px",
                       fontSize: "10px",
                       background: "red",
-                      // width: "100px",
                       justifyContent: "center",
-                      fontWeight: "bold",
+                      // fontWeight: "bold",
                       lineHeight: "9px",
                       paddingTop: "6px"
                     }}
