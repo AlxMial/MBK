@@ -13,26 +13,25 @@ const ProductCategory = ({ showHeader = true, setselectMenu }) => {
     const [productCategory, setproductCategory] = useState([]);
     const fetchproductCategory = async () => {
         setIsLoading(true);
-        const _storage = await get_product_category();
-        if (_storage) {
-            // console.log("_storage", _storage);
-            setproductCategory(_storage);
-        } else {
-            await axios.get("productCategory/getProductCategory").then((response) => {
-                if (response.status) {
-                    const data = response.data.tbProductCategory;
-                    // console.log('data', data);
-                    data.map(item => {
-                        if (item.img) {
-                            item.img = FilesService.buffer64UTF8(item.img);
-                        }
-                        return item;
-                    })
-                    setproductCategory(data);
-                    set_product_category(data);
-                }
-            });
-        }
+        // const _storage = await get_product_category();
+        // if (_storage) {
+        //     setproductCategory(_storage);
+        // } else {
+        await axios.get("productCategory/getProductCategory").then((response) => {
+            if (response.status) {
+                const data = response.data.tbProductCategory;
+                // console.log('data', data);
+                data.map(item => {
+                    if (item.img) {
+                        item.img = FilesService.buffer64UTF8(item.img);
+                    }
+                    return item;
+                })
+                setproductCategory(data);
+                set_product_category(data);
+            }
+        });
+        // }
         setIsLoading(false);
     };
 

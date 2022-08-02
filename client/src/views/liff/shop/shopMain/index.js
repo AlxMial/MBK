@@ -24,21 +24,19 @@ const ShopMain = () => {
     const [tbBestSeller, setTbBestSeller] = useState([]); //แสดงตาม category
 
     const fetchDataImgBanner = async () => {
-        const storage_banner = await get_shop_banner();
-        // console.log("storage_banner", storage_banner);
-        if (storage_banner) {
-            // console.log("storage_banner", storage_banner);
-            setImgBanner(storage_banner);
-        } else {
-            await axios.get("stock/getImgBanner").then((response) => {
-                if (response.data.ImgBanner.length > 0) {
-                    let ImgBanner = response.data.ImgBanner;
-                    bufferToBase64(ImgBanner);
-                } else {
-                    setIsImgBanner(false);
-                }
-            });
-        }
+        // const storage_banner = await get_shop_banner();
+        // if (storage_banner) {
+        //     setImgBanner(storage_banner);
+        // } else {
+        await axios.get("stock/getImgBanner").then((response) => {
+            if (response.data.ImgBanner.length > 0) {
+                let ImgBanner = response.data.ImgBanner;
+                bufferToBase64(ImgBanner);
+            } else {
+                setIsImgBanner(false);
+            }
+        });
+        // }
     };
 
     const bufferToBase64 = async (ImgBanner) => {
