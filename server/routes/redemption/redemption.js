@@ -464,7 +464,7 @@ router.put("/game", validateToken, async (req, res) => {
             });
           } else {
             coupon = await tbRedemptionCoupon.create(req.body.listGame[i]);
-
+            req.body.listGame[i].id = coupon.dataValues.id;
             const generateCode = await axiosInstance
               .post("api/coupon/generateCoupon", coupon)
               .then(async (resGenerate) => {
@@ -496,6 +496,8 @@ router.put("/game", validateToken, async (req, res) => {
             });
           } else {
             product = await tbRedemptionProduct.create(req.body.listGame[i]);
+            // coupon = await tbRedemptionCoupon.create(req.body.listGame[i]);
+            req.body.listGame[i].id = product.dataValues.id;
           }
         }
         UpdateImage(req.body.listGame[i]);

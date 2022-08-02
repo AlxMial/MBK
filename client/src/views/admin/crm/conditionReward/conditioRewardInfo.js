@@ -56,6 +56,9 @@ export default function ConditioRewardInfo() {
   const [typePermission, setTypePermission] = useState("");
   const [modalIsOpenEdit, setIsOpenEdit] = useState(false);
   const [file, setFile] = useState();
+  const [visible , setVisible] = useState(true);
+  const [collectReward,setCollectReward] = useState(0);
+  const [collectRewardUse,setCollectRewardUse] = useState(0);
   const [isClick, setIsClick] = useState({
     redemptionStart: false,
     redemptionEnd: false,
@@ -94,6 +97,9 @@ export default function ConditioRewardInfo() {
   const { addToast } = useToasts();
   /* Method Condition */
   const OnBack = () => {
+    console.log(JSON.stringify(formik.touched).length);
+    console.log(JSON.stringify(formikProduct.touched).length);
+    console.log(JSON.stringify(formikCoupon.touched).length);
     if (
       JSON.stringify(formik.touched).length > 2 ||
       JSON.stringify(formikProduct.touched).length > 2 ||
@@ -140,8 +146,8 @@ export default function ConditioRewardInfo() {
       startDate: new Date(),
       endDate: moment(new Date()).add(1, "days").toDate(),
       description: "",
-      collectCount: 0,
-      collectCountUse: 0,
+      totalReward: 0,
+      totalRewardUse: 0,
       isDeleted: false,
       addBy: "",
       updateBy: "",
@@ -183,6 +189,7 @@ export default function ConditioRewardInfo() {
       if (!errorImage) {
         if (formik.values.redemptionType === "2") {
           values["listGame"] = listGame;
+          values["totalReward"] = collectReward;
           if (isNew) {
             dispatch(fetchLoading());
             formik.values.addBy = sessionStorage.getItem("user");
@@ -195,6 +202,8 @@ export default function ConditioRewardInfo() {
                 );
                 dispatch(fetchSuccess());
                 formik.setTouched({});
+                formikCoupon.setTouched({});
+                formikProduct.setTouched({});
                 // fetchData();
                 addToast(
                   Storage.GetLanguage() === "th"
@@ -205,6 +214,8 @@ export default function ConditioRewardInfo() {
               } else {
                 dispatch(fetchSuccess());
                 formik.setTouched({});
+                formikCoupon.setTouched({});
+                formikProduct.setTouched({});
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
                   {
@@ -221,6 +232,8 @@ export default function ConditioRewardInfo() {
               if (res.data.status) {
                 dispatch(fetchSuccess());
                 formik.setTouched({});
+                formikCoupon.setTouched({});
+                formikProduct.setTouched({});
                 // fetchData();
                 addToast(
                   Storage.GetLanguage() === "th"
@@ -231,6 +244,8 @@ export default function ConditioRewardInfo() {
               } else {
                 dispatch(fetchSuccess());
                 formik.setTouched({});
+                formikCoupon.setTouched({});
+                formikProduct.setTouched({});
                 addToast(
                   "บันทึกข้อมูลไม่สำเร็จ เนื่องจากชื่อเงื่อนไขซ้ำกับในระบบ",
                   {
@@ -244,6 +259,7 @@ export default function ConditioRewardInfo() {
         } else {
           let formData = new FormData();
           let errorValue = false;
+          values["totalReward"] = 0;
           if (isImport) {
             values["coupon"] = formikCouponImport.values;
             values["couponType"] = true;
@@ -408,6 +424,8 @@ export default function ConditioRewardInfo() {
                   );
                 }
                 formik.setTouched({});
+                formikCoupon.setTouched({});
+                formikProduct.setTouched({});
               });
             } else {
               formik.values.updateBy = sessionStorage.getItem("user");
@@ -440,6 +458,8 @@ export default function ConditioRewardInfo() {
                   );
                 }
                 formik.setTouched({});
+                formikCoupon.setTouched({});
+                formikProduct.setTouched({});
                 dispatch(fetchSuccess());
               });
             }
@@ -562,6 +582,7 @@ export default function ConditioRewardInfo() {
       pictureProduct: "",
       productName: "",
       rewardCount: 0,
+
       isNoLimitReward: true,
       description: "",
       isSelect: false,
@@ -622,6 +643,7 @@ export default function ConditioRewardInfo() {
             if (reademptionType === "2") {
               let CountValue = 0;
               let CountUseValue = 0;
+              setVisible(false);
               for (var i = 0; i < response.data.listGame.length; i++) {
                 response.data.listGame[i]["index"] = i;
                 if (response.data.listGame[i].rewardType === "1") {
@@ -634,8 +656,10 @@ export default function ConditioRewardInfo() {
                       );
                   }
                 } else {
-                  CountValue = CountValue + response.data.listGame[i]["productCount"];
-                  CountUseValue = CountUseValue + (response.data.listGame[i]["productCount"] - response.data.listGame[i]["productUse"]);
+                  if(!response.data.listGame[i]["isNoLimitReward"]){
+                    CountValue = CountValue + response.data.listGame[i]["productCount"];
+                    CountUseValue = CountUseValue + (response.data.listGame[i]["productCount"] - response.data.listGame[i]["productUse"]);
+                  }
                   if (response.data.listGame[i]["pictureProduct"] !== null) {
                     response.data.listGame[i]["pictureProduct"] =
                       FilesService.buffer64UTF8(
@@ -644,8 +668,10 @@ export default function ConditioRewardInfo() {
                   }
                 }
               }
-              formik.setFieldValue('collectCount',CountValue);
-              formik.setFieldValue('collectCountUse',CountUseValue);
+              setCollectReward(CountValue);
+              setCollectRewardUse(CountUseValue);
+              formik.setFieldValue('totalReward',CountValue);
+              formik.setFieldValue('totalRewardUse',CountUseValue);
               setListGame(response.data.listGame);
               setListGameSearch(response.data.listGame);
             } else {
@@ -1218,21 +1244,21 @@ export default function ConditioRewardInfo() {
                       />
                 
                   </div>
-                  <div className="w-full">&nbsp;</div>
-                  <div className="w-full lg:w-1/12 margin-auto-t-b">
+                  <div className={"w-full" + ((visible) ? " hidden" : " ") }>&nbsp;</div>
+                  <div className={"w-full lg:w-1/12 margin-auto-t-b" + ((visible) ? " hidden" : " ") }>
                     <div className="relative w-full">
                       <LabelUC label="จำนวนของรางวัลทั้งหมด"  />
                     </div>
                   </div>
                   <div
-                    className="w-full lg:w-5/12 margin-auto-t-b"
+                    className={"w-full lg:w-5/12 margin-auto-t-b" + ((visible) ? " hidden" : " ")}
                     // style={{ width: width < 764 ? "100%" : "39.7%" }}
                   >
                     <div className="relative flex px-4">
                       <InputUC
                         name="points"
                         type="text"
-                        value={formik.values.collectCount}
+                        value={collectReward}
                         disabled={true}
                         min="0"
                       />
@@ -1246,18 +1272,18 @@ export default function ConditioRewardInfo() {
                       </span>
                     </div>
                   </div>
-                  <div className="w-full lg:w-1/12 margin-auto-t-b ">
+                  <div className={"w-full lg:w-1/12 margin-auto-t-b " + ((visible) ? " hidden" : " ") }>
                     <div className="relative w-full px-4">
                       <LabelUC label="จำนวนคงเหลือทั้งหมด"  />
                       
                     </div>
                   </div>
-                  <div className="w-full lg:w-5/12 px-4 margin-auto-t-b ">
-                  <div className="relative flex px-4">
+                  <div className={"w-full lg:w-5/12 px-4 margin-auto-t-b " + ((visible) ? " hidden" : " ")}>
+                  <div className={"relative flex px-4" + ((visible) ? " hidden" : " ")}>
                       <InputUC
                         name="points"
                         type="text"
-                        value={formik.values.collectCountUse}
+                        value={collectRewardUse}
                         disabled={true}
                         min="0"
                       />
@@ -1319,6 +1345,10 @@ export default function ConditioRewardInfo() {
                   ) : (
                     <GameList
                       id={id}
+                      collectReward = {collectReward}
+                      setCollectReward={setCollectReward}
+                      collectRewardUse = {collectRewardUse}
+                      setCollectRewardUse = {setCollectRewardUse}
                       setListGame={setListGame}
                       listGame={listGame}
                       setListGameSearch={setListGameSearch}

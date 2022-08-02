@@ -12,7 +12,17 @@ import ConfirmDialog from "components/ConfirmDialog/ConfirmDialog";
 import FilesService from "services/files";
 import CheckBoxUC from "components/CheckBoxUC";
 
-const GameList = ({ id, setListGame, listGame ,listGameSearch, setListGameSearch }) => {
+const GameList = ({
+  id,
+  collectReward,
+  setCollectReward,
+  collectRewardUse,
+  setCollectRewardUse,
+  setListGame,
+  listGame,
+  listGameSearch,
+  setListGameSearch,
+}) => {
   const { width } = useWindowDimensions();
   const [delay, setDelay] = useState();
   // const [listGame, setlistGame] = useState([]);
@@ -98,6 +108,24 @@ const GameList = ({ id, setListGame, listGame ,listGameSearch, setListGameSearch
   };
 
   const handleSubmitModal = (data) => {
+    if (data.rewardType == 2) {
+      if (data.isNoLimitReward) {
+        setCollectRewardUse(parseInt(collectRewardUse) + parseInt(0));
+        setCollectReward(parseInt(collectReward) + parseInt(0));
+      } else {
+        setCollectRewardUse(
+          parseInt(collectRewardUse) + parseInt(data.rewardCount)
+        );
+        setCollectReward(parseInt(collectReward) + parseInt(data.rewardCount));
+      }
+      data["productUse"] = 0;
+    } else {
+      setCollectRewardUse(
+        parseInt(collectRewardUse) + parseInt(data.couponCount)
+      );
+      setCollectReward(parseInt(collectReward) + parseInt(data.couponCount));
+      data["couponUse"] = 0;
+    }
     if (data["index"] !== undefined) {
       setListGame((s) => {
         const newArr = s.slice();
@@ -111,7 +139,6 @@ const GameList = ({ id, setListGame, listGame ,listGameSearch, setListGameSearch
       });
     } else {
       data["index"] = listGame.length;
-      console.log(data);
       setListGame((s) => {
         return [...s, data];
       });
@@ -263,11 +290,8 @@ const GameList = ({ id, setListGame, listGame ,listGameSearch, setListGameSearch
                     .map((value, key) => {
                       return (
                         <tr key={key}>
-                          <td
-                            className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 "
-                
-                          >
-                            {key+1}
+                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 ">
+                            {key + 1}
                             {/* <CheckBoxUC onChange={(e) => { handleChange(e, key) }} checked={value.isSelect} name="isSelect" /> */}
                           </td>
                           <td
@@ -281,22 +305,18 @@ const GameList = ({ id, setListGame, listGame ,listGameSearch, setListGameSearch
                               ? value.couponName
                               : value.productName}
                           </td>
-                          <td
-                            className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 "
-                          >
+                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 ">
                             {value.rewardType === "1"
                               ? value.couponCount
-                              : value.productCount}
+                              : (value.isNoLimitReward) ? "ไม่จำกัด" : value.productCount}
                           </td>
-                          <td
-                            className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 "
-                          >
+                          <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 ">
                             {value.rewardType === "1"
                               ? value.couponCount - value.couponUse
-                              : value.productCount - value.productUse}
+                              : (value.isNoLimitReward) ? "ไม่จำกัด" : value.productCount - value.productUse }
                           </td>
                           <td className="border-t-0 px-2 w-20 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
-                            <i 
+                            <i
                               className="fas fa-trash text-red-500 cursor-pointer"
                               onClick={() => {
                                 openModalSubject(

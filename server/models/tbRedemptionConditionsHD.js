@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
+      totalReward: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
       isActive: {
         type: DataTypes.BOOLEAN,
         allowNull: true,
