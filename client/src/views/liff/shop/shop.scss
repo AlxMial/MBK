@@ -44,3 +44,10 @@
 // .flashSale-section {
 //     background: url('/assets/img/shop-main/bg-flash-sale.png') no-repeat center center;
 // }
+
+.react-toast-notifications__toast__content,
+.react-toast-notifications__toast__dismiss-button {
+    display: flex;
+    align-items: center;
+    line-height: initial !important;
+}

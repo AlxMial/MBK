@@ -115,7 +115,7 @@ const Reward = () => {
                         >
                           {e.redemptionType == 1 ? (
                             <ImageUC
-                              // style={{ width: "200px", height: "100px", }}
+                              style={{ minWidth: "120px", minHeight: "80px", }}
                               find={1}
                               relatedid={e.redemptionId}
                               relatedtable={[

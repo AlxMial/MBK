@@ -105,7 +105,7 @@ const ProductCategory = ({ showHeader = true, setselectMenu }) => {
                                             // src={item.img}
                                             src={item.img ?? require("assets/img/mbk/no-image.png").default}
                                             alt="category"
-                                            className='object-cover w-full'
+                                            className='object-cover w-full animated-img'
                                             style={{ minHeight: _min_h_category, borderRadius: '5px', maxHeight: _min_h_category }}
                                         />
                                         <div className="category-text mt-2 text-xs">

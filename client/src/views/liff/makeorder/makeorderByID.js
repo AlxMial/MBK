@@ -345,7 +345,7 @@ const MakeOrderById = () => {
             ) : null}
 
             <div
-              className="flex relative justify-between"
+              className="flex relative justify-between items-center"
               style={{
                 height: "20px",
                 // alignItems: "center",

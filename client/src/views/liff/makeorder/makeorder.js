@@ -111,11 +111,13 @@ const MakeOrder = () => {
             item.shop_orders = [];
             item.shop_orders = res.data.shop_orders;
           } else {
-            history.push(path.shopList);
+            // history.push(path.shopList);
+            history.push(path.myorder.replace(":id", "1"));
           }
         }
         if (fn.IsNullOrEmpty(item)) {
-          history.push(path.shopList);
+          // history.push(path.shopList);
+          history.push(path.myorder.replace(":id", "1"));
         } else {
           setData();
         }
@@ -123,7 +125,8 @@ const MakeOrder = () => {
     } else if (id === "byorder") {
       item = Storage.getbyorder();
       if (fn.IsNullOrEmpty(item)) {
-        history.push(path.shopList);
+        // history.push(path.shopList);
+        history.push(path.myorder.replace(":id", "1"));
       } else {
         setData();
       }
@@ -393,7 +396,7 @@ const MakeOrder = () => {
           >
             <DetailModel data={CartItem} freebies={freebies} />
             <div
-              className="flex relative justify-between"
+              className="flex relative justify-between items-center"
               style={{
                 height: "20px",
                 // alignItems: "center",

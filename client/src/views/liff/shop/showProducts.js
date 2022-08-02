@@ -298,12 +298,13 @@ const ShowProducts = () => {
                     className=" text-white text-xs flex"
                     style={{
                       borderRadius: "5px",
-                      padding: "0 10px",
+                      padding: "2px 10px",
                       fontSize: "10px",
                       background: "red",
                       // width: "100px",
                       justifyContent: "center",
                       fontWeight: "bold",
+                      lineHeight: "initial",
                     }}
                   >
                     {"SALE -" + parseInt(fn.formatMoney(tbStock.percent)) + "%"}

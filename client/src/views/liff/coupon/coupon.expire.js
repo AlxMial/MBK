@@ -24,7 +24,9 @@ const Expire = ({ data }) => {
                             <ImageUC
                               style={{
                                 width: "100%",
-                                height: "auto"
+                                height: "auto",
+                                minHeight: "80px",
+                                minWidth: "80px",
                               }}
                               find={1}
                               relatedid={e.id}

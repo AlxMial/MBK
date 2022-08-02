@@ -492,7 +492,7 @@ router.post(
           if (item.redemptionType == 1) {
             if (item.rewardType == 1) {
               const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
-                attributes: ["id"],
+                attributes: ["id", "couponCount"],
                 where: { redemptionConditionsHDId: item.id },
               });
 
@@ -500,16 +500,18 @@ router.post(
                 _tbRedemptionCoupon.dataValues.id
               );
               item.id = Encrypt.EncodeKey(item.id);
+              item.couponCount = _tbRedemptionCoupon.dataValues.couponCount;
               RedemptionConditionsHD = item;
             } else {
               const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
-                attributes: ["id"],
+                attributes: ["id", "rewardCount"],
                 where: { redemptionConditionsHDId: item.id },
               });
               item.redemptionId = Encrypt.EncodeKey(
                 _tbRedemptionProduct.dataValues.id
               );
               item.id = Encrypt.EncodeKey(item.id);
+              item.rewardCount = _tbRedemptionProduct.dataValues.rewardCount;
               RedemptionConditionsHD = item;
             }
           } else {
@@ -661,7 +663,13 @@ router.post("/useProduct", validateLineToken, async (req, res) => {
       if (_RedemptionConditionsHD) {
         let item = _RedemptionConditionsHD.dataValues;
         //ตรวจสอบเวลา
-        if (new Date() > item.startDate && new Date() <= item.endDate) {
+        let _st_date = new Date(item.startDate);
+        _st_date.setHours(0, 0, 0, 0);
+        let _en_date = new Date(item.endDate);
+        _en_date.setHours(0, 0, 0, 0);
+        let _now = new Date();
+        _now.setHours(0, 0, 0, 0);
+        if (_now > _st_date && _now <= _en_date) {
           if (memberPoint >= item.points) {
             const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
               attributes: ["id", "isNoLimitReward", "rewardCount"],
@@ -832,7 +840,7 @@ router.post("/useGame", validateLineToken, async (req, res) => {
               where: { redemptionConditionsHDId: item.id },
             });
             if (_tbRedemptionCoupon) {
-      
+
               for (var i = 0; i < _tbRedemptionCoupon.length; i++) {
                 const item = _tbRedemptionCoupon[i].dataValues;
                 const _tbCouponCode = await tbCouponCode.findAll({

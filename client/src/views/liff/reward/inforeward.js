@@ -37,6 +37,7 @@ const InfoReward = () => {
       { Id: id },
       (res) => {
         if (res.data.status) {
+          // console.log("getRedemptionconditionshdById", res.data.Redemptionconditionshd);
           setRedemptionconditionshd(res.data.Redemptionconditionshd);
         } else {
           setmodeldata({
@@ -171,6 +172,21 @@ const InfoReward = () => {
     dispatch(backPage(true));
     GetRedemptionconditionshdById();
   }, []);
+
+  let isCanClick = false;
+  if (Redemptionconditionshd) {
+    if (Redemptionconditionshd.redemptionType == 2) {
+      isCanClick = true;
+
+    } else if (Redemptionconditionshd.rewardType == 1) {
+      if (Redemptionconditionshd.couponCount > 0) {
+        isCanClick = true;
+      }
+    } else if (Redemptionconditionshd.rewardCount > 0) {
+      isCanClick = true;
+    }
+  }
+
   return (
     <>
       {isOpenDialog && (
@@ -272,7 +288,7 @@ const InfoReward = () => {
                   <div
                     className={
                       "flex text-center text-lg  font-bold text-white" +
-                      (Redemptionconditionshd.isCanRedeem
+                      (Redemptionconditionshd.isCanRedeem && isCanClick
                         ? " bg-green-mbk "
                         : " bg-gray-300")
                     }
@@ -285,21 +301,26 @@ const InfoReward = () => {
                       justifyContent: "center",
                     }}
                     onClick={() => {
-                      setIsOpenDialog(Redemptionconditionshd.isCanRedeem);
+                      if (isCanClick) {
+                        setIsOpenDialog(Redemptionconditionshd.isCanRedeem);
+                      }
                     }}
                   >
-                    {Redemptionconditionshd.redemptionType == 2
-                      ? "หมุนวงล้อ"
-                      : Redemptionconditionshd.rewardType == 1
-                        ? "แลกคูปอง"
-                        : "แลกสินค้า"}
+                    {
+                      Redemptionconditionshd.redemptionType == 2
+                        ? "หมุนวงล้อ"
+                        : Redemptionconditionshd.rewardType == 1
+                          ? (Redemptionconditionshd.couponCount === 0 ? "ขออภัยคูปองหมด" : "แลกคูปอง")
+                          : (Redemptionconditionshd.rewardCount === 0 ? "ขออภัยสินค้าหมด" : "แลกสินค้า")
+                    }
                   </div>
                 </div>
               </div>
             </>
           ) : null}
         </div>
-      ) : null}
+      ) : null
+      }
       {page == "CouponSucceed" ? <CouponSucceed /> : null}
       {page == "ProductSucceed" ? <ProductSucceed /> : null}
       {page == "gameUC" ? <GameUC UseGame={UseGame} /> : null}

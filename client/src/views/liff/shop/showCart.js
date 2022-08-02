@@ -432,7 +432,7 @@ const ShowCart = () => {
           // marginTop: "0.5rem"
         }}
       >
-        <div className="sec-left flex">
+        <div className="sec-left flex items-center">
           <div className="px-2" >
             <img
               style={{ margin: "auto", width: "22px", height: "22px" }}
@@ -448,7 +448,7 @@ const ShowCart = () => {
           </div>
         </div>
         <div className="sec-right">
-          <div className="flex">
+          <div className="flex  items-center">
             <div
               style={{
                 color:
