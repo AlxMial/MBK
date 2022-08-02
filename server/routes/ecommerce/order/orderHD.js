@@ -1651,39 +1651,88 @@ router.post("/getOrderHD", validateLineToken, async (req, res) => {
       !isReturn
     ) {
       //ยกเลิก
-      // OrderHDData = []
-      const _tbCancelOrder = await tbCancelOrder.findAll({
-        attributes: ["id", "orderId", "cancelStatus"],
+      let _OrderHDData = await tbOrderHD.findAll({
+        attributes: attributesOrderHD,
         where: {
           IsDeleted: false,
+          memberId: memberId,
         },
-      });
-      if (_tbCancelOrder) {
-        for (var i = 0; i < _tbCancelOrder.length; i++) {
-          const _tbOrderHD = await tbOrderHD.findOne({
-            attributes: attributesOrderHD,
+        include: [
+          {
+            attributes: ["id", "orderId"],
+            model: tbCancelOrder,
             where: {
-              IsDeleted: false,
-              id: _tbCancelOrder[i].orderId,
-              memberId: memberId,
+              isDeleted: false,
             },
-            include: [
-              {
-                attributes: attributesOrderDT,
-                model: tbOrderDT,
-                where: {
-                  isDeleted: false,
-                },
-                required: false,
-              },
-            ],
-          });
-          if (_tbOrderHD != null) {
-            _tbOrderHD.dataValues.cancelStatus = _tbCancelOrder[i].cancelStatus;
-            OrderHDData.push({ dataValues: _tbOrderHD.dataValues });
-          }
-        }
+            required: true,
+          },
+          {
+            attributes: attributesOrderDT,
+            model: tbOrderDT,
+            where: {
+              isDeleted: false,
+            },
+            required: false,
+          },
+        ],
+        order: [["createdAt", "DESC"]],
+      });
+      if (_OrderHDData) {
+        _OrderHDData.map((e) => {
+          OrderHDData.push({ dataValues: e.dataValues });
+        });
       }
+
+      // const _tbCancelOrder = await tbCancelOrder.findAll({
+      //   attributes: ["id", "orderId", "cancelStatus"],
+      //   where: {
+      //     IsDeleted: false,
+      //   },
+      //   order: [ ["createdAt", "DESC"],]
+
+      //   // include: [
+      //   //   {
+      //   //     attributes: attributesOrderHD,
+      //   //     model: tbOrderHD,
+      //   //     where: {
+      //   //       isDeleted: false,
+      //   //       memberId: memberId,
+      //   //     },
+      //   //     // order: [
+      //   //     //   ["id", "DESC"],
+      //   //     //   ["relatedTable", "DESC"],
+      //   //     // ],
+      //   //     required: false,
+      //   //   },
+      //   // ],
+      // });
+      // if (_tbCancelOrder) {
+      //   for (var i = 0; i < _tbCancelOrder.length; i++) {
+      //     const _tbOrderHD = await tbOrderHD.findOne({
+      //       attributes: attributesOrderHD,
+      //       where: {
+      //         IsDeleted: false,
+      //         id: _tbCancelOrder[i].orderId,
+      //         memberId: memberId,
+      //       },
+      //       include: [
+      //         {
+      //           attributes: attributesOrderDT,
+      //           model: tbOrderDT,
+      //           where: {
+      //             isDeleted: false,
+      //           },
+      //           required: false,
+      //         },
+      //       ],
+      //     });
+      //     if (_tbOrderHD != null) {
+      //       _tbOrderHD.dataValues.cancelStatus = _tbCancelOrder[i].cancelStatus;
+      //       OrderHDData.push({ dataValues: _tbOrderHD.dataValues });
+      //     }
+      //   }
+      // }
+      // console.log(OrderHDData);
     } else if (
       PaymentStatus == 3 &&
       TransportStatus == 3 &&
