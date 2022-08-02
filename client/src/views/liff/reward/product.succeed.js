@@ -9,12 +9,19 @@ const CouponSucceed = () => {
     return (
         <>
             <div style={{ height: "100%" }} className="bg-green-mbk">
-                <div className="w-full">
-                    <div className="w-full flex mb-2" style={{ justifyContent: "center" }}>
-                        <i className="fas fa-check-circle" style={{ color: "#FFFFFF", fontSize: "50px" }}></i>
-                    </div>
-                    <div className="w-full flex text-sm font-bold" style={{ justifyContent: "center", color: "#FFFFFF" }}>
-                        แลกสินค้าสำเร็จ
+                <div className="w-full relative h-full">
+                    <div className="success-reward absolute"
+                        style={{
+                            transform: "translate(50%,-50%)",
+                            right: '50%',
+                            top: 'calc(50% - 90px)'
+                        }}>
+                        <div className="w-full flex mb-2" style={{ justifyContent: "center" }}>
+                            <i className="fas fa-check-circle text-white" style={{ fontSize: "50px" }}></i>
+                        </div>
+                        <div className="w-full flex text-xl font-bold text-white mt-4" style={{ justifyContent: "center" }}>
+                            แลกสินค้าสำเร็จ
+                        </div>
                     </div>
                 </div>
 

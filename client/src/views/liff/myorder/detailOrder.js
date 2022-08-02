@@ -39,7 +39,7 @@ const DetailOrder = ({
                   className="liff-inline mb-2"
                   style={{ height: "5px", backgroundColor: "#ebebeb" }}
                 />
-                <div className="w-full flex mb-2 relative text-xs justify-between"
+                <div className="w-full flex mb-2 relative text-xs justify-between items-center" style={{ lineHeight: 'initial' }}
                   onClick={() => {
                     onClick(e);
                   }}
@@ -57,7 +57,7 @@ const DetailOrder = ({
                         right: "0",
                         color: "#FFF",
                         border: "1px solid",
-                        padding: "0 5px",
+                        padding: "0 10px",
                         borderRadius: "10px",
                         background: "red",
                       }}
@@ -70,7 +70,8 @@ const DetailOrder = ({
                       className=" flex"
                       style={{
                         right: "10px",
-                        width: "90px",
+                        // width: "90px",
+                        padding: "0 10px",
                         backgroundColor: "#ebebeb",
                         borderRadius: "10px",
                         justifyContent: "center",
@@ -89,12 +90,13 @@ const DetailOrder = ({
                       <div
                         className="flex"
                         style={{
-                          width: "120px",
+                          // width: "120px",
+                          padding: "0 10px",
                           backgroundColor: "#ebebeb",
                           borderRadius: "10px",
                           textAlign: "center",
                           color: "var(--mq-txt-color, rgb(20, 100, 246))",
-                          fontSize: "13px",
+                          // fontSize: "13px",
                           justifyContent: "center",
                           alignItems: "center",
                         }}
@@ -239,7 +241,7 @@ const DetailOrder = ({
 
               <div className="liff-inline mb-2" />
               <div
-                className="flex relative justify-between"
+                className="flex relative justify-between items-center"
                 onClick={() => {
                   onClick(e);
                 }}

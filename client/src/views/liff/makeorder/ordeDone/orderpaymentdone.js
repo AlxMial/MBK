@@ -68,7 +68,7 @@ const OrderPaymentDone = () => {
     );
   };
   useEffect(() => {
-    // dispatch(backPage(true));
+    dispatch(backPage(false));
     getProducts();
   }, []);
 
@@ -418,7 +418,7 @@ const OrderPaymentDone = () => {
                             ) : (
                               <>
                                 <div
-                                  className="flex relative justify-between w-full"
+                                  className="flex relative justify-between w-full items-center"
                                 >
                                   <div className="text-12 text-gold-mbk">
                                     <span>
