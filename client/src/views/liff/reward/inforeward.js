@@ -231,6 +231,7 @@ const InfoReward = () => {
                         ]}
                         alt="tbRedemptionCoupon"
                         className=" animated-img"
+                        imgclassname="h-full"
                       ></ImageUC>
                     ) : (
                       <img
