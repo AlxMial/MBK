@@ -697,6 +697,7 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
           expireDate: expireDate,
           count: count,
           use: use,
+          total: count - use,
         });
       });
     }
@@ -715,7 +716,7 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
       where: { redemptionType: 1 },
       include: [
         {
-          attributes: ["productName", "rewardCount"],
+          attributes: ["productName", "rewardCount", "isNoLimitReward"],
           model: tbRedemptionProduct,
           where: {
             isDeleted: false,
@@ -746,9 +747,13 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
         let count = 0;
         let use = 0;
         if (e.dataValues.tbRedemptionProducts.length > 0) {
-          count = e.dataValues.tbRedemptionProducts[0].rewardCount;
-          if (e.dataValues.tbRedemptionProducts[0].tbMemberRewards.length > 0) {
-            use = e.dataValues.tbRedemptionProducts[0].tbMemberRewards.length;
+          if (!e.dataValues.tbRedemptionProducts[0].isNoLimitReward) {
+            count = e.dataValues.tbRedemptionProducts[0].rewardCount;
+            if (
+              e.dataValues.tbRedemptionProducts[0].tbMemberRewards.length > 0
+            ) {
+              use = e.dataValues.tbRedemptionProducts[0].tbMemberRewards.length;
+            }
           }
         }
         _points.push({
@@ -761,6 +766,7 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
           expireDate: expireDate,
           count: count,
           use: use,
+          total:count - use,
         });
       });
     }
@@ -811,6 +817,7 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
           model: tbRedemptionProduct,
           where: {
             isDeleted: false,
+            isNoLimitReward: false,
           },
           include: [
             {
@@ -841,10 +848,21 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
           e.dataValues.tbRedemptionProducts.map((pe, pei) => {
             count += pe.rewardCount;
             if (pe.tbMemberRewards.length > 0) {
+              console.log(pe.tbMemberRewards);
               use += pe.tbMemberRewards.length;
             }
           });
         }
+
+        if (e.dataValues.tbRedemptionCoupons.length > 0) {
+          e.dataValues.tbRedemptionCoupons.map((pe, pei) => {
+            count += pe.couponCount;
+            pe.tbCouponCodes.map((cc, cci) => {
+              use += cc.dataValues.tbMemberRewards.length;
+            });
+          });
+        }
+
         _points.push({
           CampaignName: CampaignName,
           points: points,
@@ -855,6 +873,7 @@ router.get("/ShowCampaignReward", validateToken, async (req, res) => {
           expireDate: expireDate,
           count: count,
           use: use,
+          total: count - use,
         });
       });
     }

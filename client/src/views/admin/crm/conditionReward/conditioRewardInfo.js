@@ -657,8 +657,8 @@ export default function ConditioRewardInfo() {
                   }
                 } else {
                   if(!response.data.listGame[i]["isNoLimitReward"]){
-                    CountValue = CountValue + response.data.listGame[i]["productCount"];
-                    CountUseValue = CountUseValue + (response.data.listGame[i]["productCount"] - response.data.listGame[i]["productUse"]);
+                    CountValue = CountValue + response.data.listGame[i]["rewardCount"];
+                    CountUseValue = CountUseValue + (response.data.listGame[i]["rewardCount"] - response.data.listGame[i]["productUse"]);
                   }
                   if (response.data.listGame[i]["pictureProduct"] !== null) {
                     response.data.listGame[i]["pictureProduct"] =
@@ -966,6 +966,10 @@ export default function ConditioRewardInfo() {
                           setIsRedemptionType(
                             value.value === "1" ? false : true
                           );
+                          if(value.value == 1){
+                            setVisible(true);
+                          } else setVisible(false);
+
                           formik.setFieldValue("redemptionType", value.value);
                         }}
                         options={redemptionType}

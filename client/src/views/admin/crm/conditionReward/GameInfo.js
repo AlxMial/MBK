@@ -214,7 +214,7 @@ const GameInfo = ({
         } else {
           formikProduct.setFieldValue(columns, data[columns], false);
         }
-        if (formikProduct.values.isNoLimitReward) {
+        if (data.isNoLimitReward) {
           formikProduct.setFieldValue("rewardCount", "ไม่จำกัด");
         }
       }
@@ -900,8 +900,8 @@ const GameInfo = ({
               >
                 <LabelUC label="จำนวนสูงสุด" isRequired={true} />
                 <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
-                {formikProduct.touched.couponCount &&
-                formikProduct.errors.couponCount ? (
+                {formikProduct.touched.rewardCount &&
+                formikProduct.errors.rewardCount ? (
                   <div className="text-sm py-2 px-2  text-red-500">&nbsp;</div>
                 ) : null}
               </div>

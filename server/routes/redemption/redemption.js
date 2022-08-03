@@ -65,7 +65,7 @@ router.get("/byId/:id", validateToken, async (req, res) => {
                   WHERE relatedId = tbRedemptionCoupon.id and relatedTable = 'tbRedemptionCoupon'
               )`),
                 "pictureCoupon",
-              ]
+              ],
             ],
           },
         });
@@ -84,34 +84,32 @@ router.get("/byId/:id", validateToken, async (req, res) => {
                   WHERE relatedId = tbRedemptionProduct.id and relatedTable = 'tbRedemptionProduct'
               )`),
                 "pictureProduct",
-              ]
+              ],
             ],
           },
         });
 
         for (var i = 0; i < Coupon.length; i++) {
-
-          const [results, data] =
-              await db.sequelize.query(`select count(tbmemberrewards.id) as countValue from tbmemberrewards 
+          const [results, data] = await db.sequelize
+            .query(`select count(tbmemberrewards.id) as countValue from tbmemberrewards 
               inner join tbcouponcodes on  tbcouponcodes.id = tbmemberrewards.TableHDId 
               inner join tbredemptioncoupons on tbredemptioncoupons.id = tbcouponcodes.redemptionCouponId 
               where tbmemberrewards.rewardType='Coupon' and tbredemptioncoupons.id = ${Coupon[i].dataValues.id}`);
           Coupon[i].dataValues["rewardType"] = "1";
-          if( data.length > 0)
+          if (data.length > 0)
             Coupon[i].dataValues["couponUse"] = data[0].countValue;
           listGame.push(Coupon[i].dataValues);
         }
 
         for (var i = 0; i < Product.length; i++) {
-
-          const [results, data] =
-          await db.sequelize.query(`  select count(tbmemberrewards.id) as countValue from tbmemberrewards 
+          const [results, data] = await db.sequelize
+            .query(`  select count(tbmemberrewards.id) as countValue from tbmemberrewards 
           inner join tbredemptionproducts on tbredemptionproducts.id = tbmemberrewards.TableHDId 
           where rewardType = 'Product' and tbredemptionproducts.id = ${Product[i].dataValues.id}`);
 
           Product[i].dataValues["rewardType"] = "2";
-          if( data.length > 0)
-            Coupon[i].dataValues["productUse"] = data[0].countValue;
+          if (data.length > 0)
+            Product[i].dataValues["productUse"] = data[0].countValue;
           listGame.push(Product[i].dataValues);
         }
       } else {
@@ -716,16 +714,39 @@ router.delete("/:redemptionId", validateToken, async (req, res) => {
 });
 
 router.post("/redemptionsGame", validateToken, async (req, res) => {
-  if (req.body.rewardType === "1")
+  if (req.body.rewardType === "1") {
     tbRedemptionCoupon.update(
       { isDeleted: true },
       { where: { id: req.body.rewardId } }
     );
-  else
+    const coupon = await tbRedemptionCoupon.findOne({
+      where: { id: req.body.rewardId },
+    });
+
+    tbRedemptionConditionsHD.update(
+      {
+        totalReward: parseInt(req.body.totalReward) - parseInt(req.body.count),
+      },
+      { where: { id: coupon.dataValues.redemptionConditionsHDId } }
+    );
+  } else {
     tbRedemptionProduct.update(
       { isDeleted: true },
       { where: { id: req.body.rewardId } }
     );
+
+    const product = await tbRedemptionProduct.findOne({
+      where: { id: req.body.rewardId },
+    });
+
+    tbRedemptionConditionsHD.update(
+      {
+        totalReward: parseInt(req.body.totalReward) - parseInt(req.body.count),
+      },
+      { where: { id: product.dataValues.redemptionConditionsHDId } }
+    );
+  }
+
   res.json({
     status: true,
     message: "success",

@@ -395,7 +395,8 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                           options={optionsActive}
                           onChange={(e) => {
                             setisModify(true);
-                            formik.setFieldValue("isShow", e.target.value);
+                            console.log(e.target.value)
+                            formik.setFieldValue("isShow", (e.target.value == 1 ? true : false ));
                           }}
                           value={formik.values.isShow === true ? "1" : "0"}
                         />

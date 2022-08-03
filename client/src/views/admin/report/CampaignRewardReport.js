@@ -260,18 +260,20 @@ export default function CampaignRewardReport() {
       { name: "rewardType", css: "text-center" },
       { name: "count", css: "text-right" },
       { name: "use", css: "text-right" },
-      { name: "count", css: "text-right" },
+      { name: "total", css: "text-right" },
     ],
     dataDT: (e, value) => {
       return e.name.toLowerCase().includes("date")
-        ? value[e.name] == null
+        ?  value[e.name] == null
           ? "-"
           : moment(value[e.name]).format("DD/MM/YYYY")
         : e.name === "remain"
         ? value.count - value.use
-        : value[e.name] == null
+        : value[e.name] === "total" ?   value[e.name] = e.count - e.use  : value[e.name] == null
         ? "-"
-        : value[e.name];
+        : (e.name === "count" && value.count == 0) ? value[e.name] = 'ไม่จำกัด' : 
+        (e.name === "use" && value.count == 'ไม่จำกัด') ? value[e.name] = 'ไม่จำกัด' : 
+        (e.name === "total" && value.count == 'ไม่จำกัด') ? value[e.name] = 'ไม่จำกัด' : value[e.name];
     },
   };
 

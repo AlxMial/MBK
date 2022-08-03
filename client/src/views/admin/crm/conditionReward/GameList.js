@@ -38,6 +38,7 @@ const GameList = ({
   const [modalIsOpenSubject, setIsOpenSubject] = useState(false);
   const [rewardValue, setRewardValue] = useState("");
   const [keyValue, setKeyValue] = useState("");
+  const [countValue, setCountValue] = useState(0);
   const [index, setIndex] = useState();
   const { addToast } = useToasts();
   const [errorImage, setErrorImage] = useState();
@@ -63,16 +64,45 @@ const GameList = ({
     }
   };
 
-  const deleteGame = (e, type, key) => {
+  const deleteGame = (e, type, key, totalReward, count) => {
     if (e) {
       axios
-        .post("redemptions/redemptionsGame", { rewardId: e, rewardType: type })
+        .post("redemptions/redemptionsGame", {
+          rewardId: e,
+          rewardType: type,
+          totalReward: totalReward,
+          count: count,
+        })
         .then(() => {
           setListGame(
             listGame.filter((val) => {
               return val.id !== e;
             })
           );
+
+          let Count = 0;
+          let CountUse = 0;
+
+          listGame.map((x) => {
+            if (x.id !== e)
+              if (x.rewardType == 2) {
+                if (!x.isNoLimitReward) {
+                  Count = parseInt(Count) + parseInt(x.rewardCount);
+                  CountUse =
+                    parseInt(CountUse) +
+                    (parseInt(x.rewardCount) - parseInt(x.productUse));
+                }
+              } else {
+                Count = parseInt(Count) + parseInt(x.couponCount);
+                CountUse =
+                  parseInt(CountUse) +
+                  (parseInt(x.couponCount) - parseInt(x.couponUse));
+              }
+          });
+
+          setCollectRewardUse(CountUse);
+          setCollectReward(Count);
+
           addToast("ลบข้อมูลสำเร็จ", {
             appearance: "success",
             autoDismiss: true,
@@ -90,10 +120,11 @@ const GameList = ({
   };
 
   /* Modal */
-  function openModalSubject(id, type, key) {
+  function openModalSubject(id, type, key, count) {
     setDeleteValue(id);
     setRewardValue(type);
     setKeyValue(key);
+    setCountValue(count);
     setIsOpenSubject(true);
   }
 
@@ -108,24 +139,9 @@ const GameList = ({
   };
 
   const handleSubmitModal = (data) => {
-    if (data.rewardType == 2) {
-      if (data.isNoLimitReward) {
-        setCollectRewardUse(parseInt(collectRewardUse) + parseInt(0));
-        setCollectReward(parseInt(collectReward) + parseInt(0));
-      } else {
-        setCollectRewardUse(
-          parseInt(collectRewardUse) + parseInt(data.rewardCount)
-        );
-        setCollectReward(parseInt(collectReward) + parseInt(data.rewardCount));
-      }
-      data["productUse"] = 0;
-    } else {
-      setCollectRewardUse(
-        parseInt(collectRewardUse) + parseInt(data.couponCount)
-      );
-      setCollectReward(parseInt(collectReward) + parseInt(data.couponCount));
-      data["couponUse"] = 0;
-    }
+    let Count = 0;
+    let CountUse = 0;
+
     if (data["index"] !== undefined) {
       setListGame((s) => {
         const newArr = s.slice();
@@ -137,6 +153,30 @@ const GameList = ({
         newArr[index] = data;
         return newArr;
       });
+      if (data.rewardType == 2)
+        listGame[index].rewardCount = data.isNoLimitReward
+          ? 0
+          : data.rewardCount;
+      else listGame[index].couponCount = data.couponCount;
+
+      listGame.map((e) => {
+        if (e.rewardType == 2) {
+          if (!e.isNoLimitReward) {
+            Count = parseInt(Count) + parseInt(e.rewardCount);
+            CountUse =
+              parseInt(CountUse) +
+              (parseInt(e.rewardCount) - parseInt(e.productUse));
+          }
+        } else {
+          Count = parseInt(Count) + parseInt(e.couponCount);
+          CountUse =
+            parseInt(CountUse) +
+            (parseInt(e.couponCount) - parseInt(e.couponUse));
+        }
+      });
+
+      setCollectRewardUse(CountUse);
+      setCollectReward(Count);
     } else {
       data["index"] = listGame.length;
       setListGame((s) => {
@@ -145,7 +185,25 @@ const GameList = ({
       setListGameSearch((s) => {
         return [...s, data];
       });
+
+      if (data.rewardType == 2) {
+        if (data.isNoLimitReward) {
+          setCollectRewardUse(parseInt(collectRewardUse) + parseInt(0));
+          setCollectReward(parseInt(collectReward) + parseInt(0));
+        } else {
+          setCollectRewardUse(parseInt(collectRewardUse) + parseInt(data.rewardCount));
+          setCollectReward(parseInt(collectReward) + parseInt(data.rewardCount));
+        }
+        data["productUse"] = 0;
+      } else {
+        setCollectRewardUse(
+          parseInt(collectRewardUse) + parseInt(data.couponCount)
+        );
+        setCollectReward(parseInt(collectReward) + parseInt(data.couponCount));
+        data["couponUse"] = 0;
+      }
     }
+
     setOpen(false);
   };
 
@@ -308,12 +366,16 @@ const GameList = ({
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 ">
                             {value.rewardType === "1"
                               ? value.couponCount
-                              : (value.isNoLimitReward) ? "ไม่จำกัด" : value.productCount}
+                              : value.isNoLimitReward
+                              ? "ไม่จำกัด"
+                              : value.rewardCount}
                           </td>
                           <td className="border-t-0 px-2 align-middle border-b border-l-0 border-r-0 p-3 text-sm whitespace-nowrap text-center w-8 ">
                             {value.rewardType === "1"
                               ? value.couponCount - value.couponUse
-                              : (value.isNoLimitReward) ? "ไม่จำกัด" : value.productCount - value.productUse }
+                              : value.isNoLimitReward
+                              ? "ไม่จำกัด"
+                              : value.rewardCount - value.productUse}
                           </td>
                           <td className="border-t-0 px-2 w-20 align-middle border-b border-l-0 border-r-0 text-sm whitespace-nowrap text-center cursor-pointer">
                             <i
@@ -322,7 +384,12 @@ const GameList = ({
                                 openModalSubject(
                                   value.id,
                                   value.rewardType,
-                                  key
+                                  key,
+                                  value.rewardType == 1
+                                    ? value.couponCount
+                                    : value.isNoLimitReward
+                                    ? 0
+                                    : value.rewardCount
                                 );
                               }}
                             ></i>
@@ -342,7 +409,13 @@ const GameList = ({
           closeModalSubject();
         }}
         confirmModal={() => {
-          deleteGame(deleteValue, rewardValue, keyValue);
+          deleteGame(
+            deleteValue,
+            rewardValue,
+            keyValue,
+            collectReward,
+            countValue
+          );
         }}
       />
       {open && (
