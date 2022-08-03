@@ -704,6 +704,10 @@ export default function PointCode() {
           return val.id !== e;
         })
       );
+      addToast("ลบข้อมูลสำเร็จ", {
+        appearance: "success",
+        autoDismiss: true,
+      });
       closeModalSubject();
     });
   };

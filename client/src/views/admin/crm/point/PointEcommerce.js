@@ -185,6 +185,10 @@ export default function PointEcommerce() {
           return val.id !== deleteValue;
         })
       );
+      addToast("ลบข้อมูลสำเร็จ", {
+        appearance: "success",
+        autoDismiss: true,
+      });
       closeModalSubject();
     });
   };
