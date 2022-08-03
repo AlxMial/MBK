@@ -77,7 +77,7 @@ const ShowCart = () => {
       <div
         className="mt-2 line-scroll relative"
         style={{
-          height: "calc(100% - 250px)",
+          height: "calc(100% - 200px)",
           overflow: "scroll",
           width: "95%",
           marginLeft: "auto",
@@ -128,7 +128,7 @@ const ShowCart = () => {
             return (
               <div key={i}>
                 <div className="flex mt-2">
-                  <div className="px-2 py-2" style={{ width: "120px", height: "120px" }}>
+                  <div className="px-2 py-2" style={{ width: "120px", height: "80px", maxHeight: "80px" }}>
 
                     {/* <img
                       src={e.image}
@@ -136,12 +136,12 @@ const ShowCart = () => {
                       className="w-32 border-2 border-blueGray-50"
                     ></img>  */}
                     <ImageUC
-                      classnamediv=" img-tbRedemptionCoupon "
+                      classnamediv=" img-tbRedemptionCoupon h-full"
                       find={1}
                       relatedid={e.imageId}
                       relatedtable={["tbRedemptionCoupon"]}
                       alt="tbRedemptionCoupon"
-                      className=" animated-img w-32 border-2 border-blueGray-50 "
+                      className=" animated-img w-32 border-2 border-blueGray-50"
                     ></ImageUC>
 
                   </div>

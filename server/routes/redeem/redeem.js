@@ -500,7 +500,18 @@ router.post(
                 _tbRedemptionCoupon.dataValues.id
               );
               item.id = Encrypt.EncodeKey(item.id);
-              item.couponCount = _tbRedemptionCoupon.dataValues.couponCount;
+
+              const _tbCouponCode = await tbCouponCode.findAll({
+                limit: 1,
+                attributes: ["id"],
+                where: {
+                  redemptionCouponId: _tbRedemptionCoupon.dataValues.id,
+                  isDeleted: false,
+                  isUse: false,
+                },
+              });
+
+              item.couponCount = _tbCouponCode && _tbCouponCode.length;
               RedemptionConditionsHD = item;
             } else {
               const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
@@ -511,8 +522,25 @@ router.post(
                 _tbRedemptionProduct.dataValues.id
               );
               item.id = Encrypt.EncodeKey(item.id);
-              item.rewardCount = _tbRedemptionProduct.dataValues.rewardCount;
+
+              const _memberReward = await tbMemberReward.findAll({
+                attributes: ["id"],
+                where: {
+                  rewardType: "Product",
+                  TableHDId: _tbRedemptionProduct.dataValues.id,
+                },
+              });
+              if (
+                _memberReward.length <= _tbRedemptionProduct.dataValues.rewardCount
+              ) {
+                item.rewardCount = _tbRedemptionProduct.dataValues.rewardCount - _memberReward.length;
+              } else {
+                item.rewardCount = 0;
+              }
               item.isNoLimitReward = _tbRedemptionProduct.dataValues.isNoLimitReward;
+              if (item.isNoLimitReward) {
+                item.rewardCount = 1;
+              }
               RedemptionConditionsHD = item;
             }
           } else {
@@ -610,10 +638,12 @@ router.post("/useCoupon", validateLineToken, async (req, res) => {
                     isDeleted: false,
                   });
                 } else {
+                  console.log('here 1')
                   status = false;
                   msg = "ขออภัย คูปองหมด";
                 }
               } else {
+                console.log('here 2')
                 status = false;
                 msg = "ขออภัย คูปองหมด";
               }
@@ -670,7 +700,7 @@ router.post("/useProduct", validateLineToken, async (req, res) => {
         _en_date.setHours(0, 0, 0, 0);
         let _now = new Date();
         _now.setHours(0, 0, 0, 0);
-        if (_now > _st_date && _now <= _en_date) {
+        if (_st_date <= _now && _now <= _en_date) {
           if (memberPoint >= item.points) {
             const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
               attributes: ["id", "isNoLimitReward", "rewardCount"],

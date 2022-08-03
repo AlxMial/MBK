@@ -98,7 +98,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                 <div className="flex mt-2">
                   <div
                     className="px-2 py-2"
-                    style={{ width: "120px", height: "80px" }}
+                    style={{ width: "120px", height: "80px", maxHeight: "80px" }}
                   >
                     {/* <img
                       src={e.image}
@@ -106,7 +106,7 @@ const CouponModel = ({ setopenCoupon, setusecoupon, id }) => {
                       className="w-32"
                     ></img> */}
                     <ImageUC
-                      classnamediv=" img-tbRedemptionCoupon "
+                      classnamediv=" img-tbRedemptionCoupon h-full"
                       find={1}
                       relatedid={e.imageId}
                       relatedtable={["tbRedemptionCoupon"]}

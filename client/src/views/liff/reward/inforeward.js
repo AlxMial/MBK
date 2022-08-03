@@ -186,7 +186,7 @@ const InfoReward = () => {
       isCanClick = true;
     }
   }
-
+  console.log('Redemptionconditionshd', Redemptionconditionshd)
   return (
     <>
       {isOpenDialog && (

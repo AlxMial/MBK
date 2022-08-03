@@ -153,6 +153,7 @@ const ShowProducts = () => {
 
       let seconds_left =
         (new Date(_endTimeCampaign).getTime() - current_date) / 1000;
+      seconds_left = seconds_left < 0 ? 0 : seconds_left;
 
       let hours = pad(parseInt(seconds_left / 3600));
       seconds_left = seconds_left % 3600;
