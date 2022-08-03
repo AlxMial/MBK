@@ -218,7 +218,7 @@ const InfoReward = () => {
               <div className="w-full h-full absolute">
                 <div className="mb-6" style={{ height: "150px" }}>
                   <div
-                    style={{ width: "220px", height: "150px", margin: "auto" }}
+                    style={{ maxWidth: "220px", height: "150px", margin: "auto" }}
                   >
                     {Redemptionconditionshd.redemptionType == 1 ? (
                       <ImageUC
