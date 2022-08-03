@@ -544,6 +544,47 @@ router.post(
               RedemptionConditionsHD = item;
             }
           } else {
+            // game
+            // check coupon
+            const _tbRedemptionCoupon = await tbRedemptionCoupon.findOne({
+              attributes: ["id", "couponCount"],
+              where: { redemptionConditionsHDId: item.id },
+            });
+            const _tbCouponCode = await tbCouponCode.findAll({
+              limit: 1,
+              attributes: ["id"],
+              where: {
+                redemptionCouponId: _tbRedemptionCoupon ? _tbRedemptionCoupon.dataValues.id : 0,
+                isDeleted: false,
+                isUse: false,
+              },
+            });
+            let isCanPlayGame = false;
+            if (_tbCouponCode && _tbCouponCode.length > 0) {
+              isCanPlayGame = true;
+            } else {
+              // product
+              const _tbRedemptionProduct = await tbRedemptionProduct.findOne({
+                attributes: ["id", "rewardCount", "isNoLimitReward"],
+                where: { redemptionConditionsHDId: item.id },
+              });
+              const _memberReward = await tbMemberReward.findAll({
+                attributes: ["id"],
+                where: {
+                  rewardType: "Product",
+                  TableHDId: _tbRedemptionProduct ? _tbRedemptionProduct.dataValues.id : 0,
+                },
+              });
+              if (_tbRedemptionProduct) {
+                if (_tbRedemptionProduct.dataValues.isNoLimitReward) {
+                  isCanPlayGame = true;
+                } else if (_memberReward.length <= _tbRedemptionProduct.dataValues.rewardCount) {
+                  isCanPlayGame = _tbRedemptionProduct.dataValues.rewardCount - _memberReward.length > 0;
+                }
+              }
+
+            }
+            item.isCanPlayGame = isCanPlayGame;
             item.id = Encrypt.EncodeKey(item.id);
             RedemptionConditionsHD = item;
           }

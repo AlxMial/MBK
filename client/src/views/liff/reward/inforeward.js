@@ -175,7 +175,7 @@ const InfoReward = () => {
 
   let isCanClick = false;
   if (Redemptionconditionshd) {
-    if (Redemptionconditionshd.redemptionType == 2) {
+    if (Redemptionconditionshd.redemptionType == 2 && Redemptionconditionshd.isCanPlayGame) {
       isCanClick = true;
 
     } else if (Redemptionconditionshd.rewardType == 1) {
@@ -278,11 +278,12 @@ const InfoReward = () => {
 
               <div className="absolute w-full flex" style={{ bottom: "10px" }}>
                 <div
-                  className=" w-full"
+                  className=""
                   style={{
                     padding: "10px",
                     margin: "auto",
-                    width: "50%",
+                    minWidth: "50%",
+                    // width: "50%",
                   }}
                 >
                   <div
@@ -296,7 +297,7 @@ const InfoReward = () => {
                       margin: "auto",
                       height: "45px",
                       borderRadius: "10px",
-                      padding: "5px",
+                      padding: "5px 10px",
                       alignItems: "center",
                       justifyContent: "center",
                     }}
@@ -308,7 +309,7 @@ const InfoReward = () => {
                   >
                     {
                       Redemptionconditionshd.redemptionType == 2
-                        ? "หมุนวงล้อ"
+                        ? !Redemptionconditionshd.isCanPlayGame ? "ขออภัยของรางวัลหมด" : "หมุนวงล้อ"
                         : Redemptionconditionshd.rewardType == 1
                           ? (Redemptionconditionshd.couponCount === 0 ? "ขออภัยคูปองหมด" : "แลกคูปอง")
                           : (Redemptionconditionshd.rewardCount === 0 ? "ขออภัยสินค้าหมด" : "แลกสินค้า")
