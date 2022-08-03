@@ -216,7 +216,11 @@ const Order = () => {
         let Error = false;
         if (isCancel) {
           if (tbCancelOrder != null) {
-            if (tbCancelOrder.cancelOtherRemark == "") {
+            if (
+              tbCancelOrder.cancelOtherRemark === "" ||
+              tbCancelOrder.cancelOtherRemark === undefined ||
+              tbCancelOrder.cancelOtherRemark === null
+            ) {
               setCancelReason(true);
               Error = true;
             }

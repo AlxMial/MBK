@@ -8,7 +8,7 @@ import CheckBoxUC from "components/CheckBoxUC";
 import TextAreaUC from "components/InputUC/TextAreaUC";
 import { EncodeKey, DecodeKey } from "@services/default.service";
 import { Radio } from "antd";
-
+import * as fn from "@services/default.service";
 const Logistic = ({
   props,
   setOrderHD,
@@ -250,21 +250,24 @@ const Logistic = ({
             classSpan="text-cancel"
             onChange={(e) => {
               setIsCancel(e.target.checked);
-              if (tbCancelOrder === undefined) {
-                let tbCancelOrder = {
-                  cancelDetail: OpenmodelCancel[0].value,
-                  cancelStatus: "3",
-                };
-                setCancelReason(true);
-                settbCancelOrder(tbCancelOrder);
+              if (e.target.checked) {
+                if (tbCancelOrder === undefined || tbCancelOrder === null) {
+                  let tbCancelOrder = {
+                    cancelDetail: OpenmodelCancel[0].value,
+                    cancelStatus: "3",
+                  };
+                  setCancelReason(true);
+                  settbCancelOrder(tbCancelOrder);
+                }
               }
 
               if (!e.target.checked) {
-                let tbCancelOrder = {
-                  cancelDetail: OpenmodelCancel[0].value,
-                  cancelOtherRemark: "",
-                  cancelStatus: "3",
-                };
+                let tbCancelOrder = null;
+                // let tbCancelOrder = {
+                //   cancelDetail: OpenmodelCancel[0].value,
+                //   cancelOtherRemark: "",
+                //   cancelStatus: "3",
+                // };
                 settbCancelOrder(tbCancelOrder);
                 setCancelReason(false);
               }
@@ -344,6 +347,14 @@ const Logistic = ({
                 if (e.target.value == "") setCancelReason(true);
                 else setCancelReason(false);
                 // settbCancelOrder({ ...tbCancelOrder, cancelOtherRemark: e.target.value });
+              }}
+              onBlur={(e) => {
+                // console.log(
+                if (fn.IsNullOrEmpty(e.target.value)) {
+                  setCancelReason(true);
+                } else {
+                  setCancelReason(false);
+                }
               }}
             />
           </div>
