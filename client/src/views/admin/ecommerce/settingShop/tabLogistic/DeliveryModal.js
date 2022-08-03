@@ -11,6 +11,7 @@ import { Radio } from "antd";
 import ButtonUCSaveModal from "components/ButtonUCSaveModal";
 import ModalHeader from "views/admin/ModalHeader";
 import ConfirmEdit from "components/ConfirmDialog/ConfirmEdit";
+
 const DeliveryModal = ({ open, formik, handleModal }) => {
   Modal.setAppElement("#root");
   const useStyle = customStyles();
@@ -126,12 +127,31 @@ const DeliveryModal = ({ open, formik, handleModal }) => {
                           type="text"
                           name="deliveryCost"
                           maxLength={100}
-                          onBlur={formik.handleBlur}
+                          onBlur={(e) => {
+                            let value = e.target.value || 0;
+                            if (parseFloat(value) > 99999.99) {
+                              formik.handleChange({
+                                target: {
+                                  name: "deliveryCost",
+                                  value: parseFloat(99999.99).toFixed(2) || 0,
+                                },
+                              });
+                            } else {
+                              formik.handleChange({
+                                target: {
+                                  name: "deliveryCost",
+                                  value:
+                                    parseFloat(value).toFixed(2) || 0,
+                                },
+                              });
+                            }
+                          }}
                           value={formik.values.deliveryCost}
                           // disabled={typePermission !== "1"}
                           onChange={(e) => {
                             setisModify(true);
-                            if (parseFloat(e.target.value) > 99999.99) {
+                            let value = e.target.value || 0;
+                            if (parseFloat(value) > 99999.99) {
                               formik.handleChange({
                                 target: {
                                   name: "deliveryCost",
@@ -142,7 +162,7 @@ const DeliveryModal = ({ open, formik, handleModal }) => {
                               formik.handleChange({
                                 target: {
                                   name: "deliveryCost",
-                                  value: parseFloat(e.target.value) || 0,
+                                  value: parseFloat(value) || 0,
                                 },
                               });
                             }

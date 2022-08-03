@@ -337,7 +337,8 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                           value={formik.values.deliveryCost}
                           onChange={(e) => {
                             setisModify(true);
-                            if (parseFloat(e.target.value) > 99999.99) {
+                            let value = e.target.value || 0;
+                            if (parseFloat(value) > 99999.99) {
                               formik.handleChange({
                                 target: {
                                   name: "deliveryCost",
@@ -348,14 +349,15 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                               formik.handleChange({
                                 target: {
                                   name: "deliveryCost",
-                                  value: parseFloat(e.target.value) || 0,
+                                  value: parseFloat(value) || 0,
                                 },
                               });
                             }
                           }}
                           onBlur={(e) => {
                             // setDelayValue(e.target.value);
-                            if (parseFloat(e.target.value) > 99999.99) {
+                            let value = e.target.value || 0;
+                            if (parseFloat(value) > 99999.99) {
                               formik.handleChange({
                                 target: {
                                   name: "deliveryCost",
@@ -366,8 +368,7 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                               formik.handleChange({
                                 target: {
                                   name: "deliveryCost",
-                                  value:
-                                    parseFloat(e.target.value).toFixed(2) || 0,
+                                  value: parseFloat(value).toFixed(2) || 0,
                                 },
                               });
                             }
@@ -395,8 +396,11 @@ const LogisticModal = ({ open, formik, handleModal }) => {
                           options={optionsActive}
                           onChange={(e) => {
                             setisModify(true);
-                            console.log(e.target.value)
-                            formik.setFieldValue("isShow", (e.target.value == 1 ? true : false ));
+                            console.log(e.target.value);
+                            formik.setFieldValue(
+                              "isShow",
+                              e.target.value == 1 ? true : false
+                            );
                           }}
                           value={formik.values.isShow === true ? "1" : "0"}
                         />

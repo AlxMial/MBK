@@ -27,6 +27,7 @@ const GameInfo = ({
   handleSubmitModal,
   errorImage,
   setErrorImage,
+  hdFormik
 }) => {
   Modal.setAppElement("#root");
   const useStyle = customStyles();
@@ -614,7 +615,11 @@ const GameInfo = ({
                     }
                     disabledDate={(current) => {
                       if (formikCoupon.values.startDate != null) {
-                        let day = formikCoupon.values.startDate;
+                        let hdEndDate = hdFormik.values.endDate;
+                        let dtStartDate = formikCoupon.values.startDate
+                        let disabledDate = hdEndDate>dtStartDate ? hdEndDate:dtStartDate
+                        let day = disabledDate;
+                        // let day = formikCoupon.values.startDate;
                         return (
                           current &&
                           current <

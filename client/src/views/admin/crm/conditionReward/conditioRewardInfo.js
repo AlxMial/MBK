@@ -1329,6 +1329,7 @@ export default function ConditioRewardInfo() {
                       setFile={setFile}
                       errorImage={errorImage}
                       setErrorImage={setErrorImage}
+                      hdFormik ={formik}
                     />
                   ) : !isRedemptionType ? (
                     !isRewardType ? (
@@ -1336,6 +1337,7 @@ export default function ConditioRewardInfo() {
                         formik={formikCoupon}
                         errorImage={errorImage}
                         setErrorImage={setErrorImage}
+                        hdFormik ={formik}
                       />
                     ) : (
                       <StandardProduct
@@ -1357,6 +1359,7 @@ export default function ConditioRewardInfo() {
                       listGame={listGame}
                       setListGameSearch={setListGameSearch}
                       listGameSearch={listGameSearch}
+                      hdFormik ={formik}
                     />
                   )}
                 </div>

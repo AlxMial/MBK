@@ -15,7 +15,7 @@ import FilesService from "../../../../services/files";
 import ValidateService from "services/validateValue";
 import SelectUC from "components/SelectUC";
 
-const ImportCoupon = ({ formik, setFile, errorImage, setErrorImage }) => {
+const ImportCoupon = ({ formik, hdFormik,setFile, errorImage, setErrorImage }) => {
   const { width } = useWindowDimensions();
   const [isCancel, setIsCancel] = useState(false);
   const [delay, setDelay] = useState();
@@ -351,7 +351,10 @@ const ImportCoupon = ({ formik, setFile, errorImage, setErrorImage }) => {
                 }
                 disabledDate={(current) => {
                   if (formik.values.startDate != null) {
-                    let day = formik.values.startDate;
+                    let hdEndDate = hdFormik.values.endDate;
+                    let dtStartDate = formik.values.startDate
+                    let disabledDate = hdEndDate>dtStartDate ? hdEndDate:dtStartDate
+                    let day = disabledDate;
                     return (
                       current &&
                       current <

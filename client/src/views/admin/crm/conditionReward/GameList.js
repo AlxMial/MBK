@@ -22,6 +22,7 @@ const GameList = ({
   listGame,
   listGameSearch,
   setListGameSearch,
+  hdFormik
 }) => {
   const { width } = useWindowDimensions();
   const [delay, setDelay] = useState();
@@ -427,6 +428,7 @@ const GameList = ({
           handleModal={() => setOpen(false)}
           errorImage={errorImage}
           setErrorImage={setErrorImage}
+          hdFormik={hdFormik}
         />
       )}
     </>
