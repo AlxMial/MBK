@@ -9,7 +9,7 @@ const Expire = ({ data }) => {
       <div className="mt-2 h-full">
         <div className="flex relative h-full" style={{ padding: '10px' }}>
           {data.length > 0 ?
-            <div className="my-2 mx-auto text-green-mbk font-bold text-xs h-full">
+            <div className="my-2 mx-auto text-green-mbk font-bold text-xs h-full w-full">
               {[...data]
                 .filter((e) => { return ((e.expiredDate && new Date(e.expiredDate) < new Date()) || e.isUsedCoupon || e.isCancel) })
                 .map((e, i) => {
